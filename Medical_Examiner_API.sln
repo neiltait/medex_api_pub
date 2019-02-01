@@ -1,0 +1,23 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Medical_Examiner_API", "Medical_Examiner_API\Medical_Examiner_API.csproj", "{94AB4412-BD81-4C5C-8C9C-281B6A902CC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Medical_Examiner_API_Tests", "Medical_Examiner_API_Tests\Medical_Examiner_API_Tests.csproj", "{BBB964BF-974E-46C0-B61C-97C5295D09E0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94AB4412-BD81-4C5C-8C9C-281B6A902CC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94AB4412-BD81-4C5C-8C9C-281B6A902CC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94AB4412-BD81-4C5C-8C9C-281B6A902CC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94AB4412-BD81-4C5C-8C9C-281B6A902CC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBB964BF-974E-46C0-B61C-97C5295D09E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBB964BF-974E-46C0-B61C-97C5295D09E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBB964BF-974E-46C0-B61C-97C5295D09E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBB964BF-974E-46C0-B61C-97C5295D09E0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
