@@ -20,12 +20,12 @@ steps:
   displayName: Restore
   inputs:
     command: restore
-    projects: 'ME_Testing/ME_Testing.csproj'
+    projects: 'Medical_Examiner_API/Medical_Examiner_API.csproj'
 
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
-    projects: 'ME_Testing/ME_Testing.csproj'
+    projects: 'Medical_Examiner_API/Medical_Examiner_API.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 
 
@@ -34,8 +34,8 @@ steps:
   inputs:
     codeCoverageEnabled: True
     command: test
-    projects: 'ME_API_tests/ME_API_tests.csproj'
-    arguments: '--configuration $(BuildConfiguration) --logger "trx;LogFileName=ME_API_tests/TEST-results.xml"'
+    projects: 'Medical_Examiner_API_Tests/Medical_Examiner_API_Tests.csproj'
+    arguments: '--configuration $(BuildConfiguration) --logger "trx;LogFileName=Medical_Examiner_API_Tests/TEST-results.xml"'
 
 - task: DotNetCoreCLI@2
   displayName: Publish
@@ -48,7 +48,7 @@ steps:
   displayName: 'Publish Test Results'
   inputs:
     testResultsFormat: VSTest
-    testResultsFiles: 'ME_API_tests/TEST-results.xml'
+    testResultsFiles: 'Medical_Examiner_API_Tests/TEST-results.xml'
       
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
