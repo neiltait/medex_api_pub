@@ -44,12 +44,6 @@ steps:
     command: publish
     publishWebProjects: false
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
-
-- task: PublishTestResults@2
-  displayName: 'Publish Test Results'
-  inputs:
-    testResultsFormat: VSTest
-    testResultsFiles: '**/**.xml'
       
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
