@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Newtonsoft.Json;
+using Medical_Examiner_API;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -34,8 +35,10 @@ namespace Medical_Examiners_API.Controllers
 
         // GET api/values
         [HttpGet("{id}")]
+        //[ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<Examination>> GetExamination(string id)
         {
+ 
             try
             {
                 return Ok(await _examination_persistence.GetExaminationAsync(id));

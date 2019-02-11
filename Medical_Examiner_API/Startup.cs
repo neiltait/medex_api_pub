@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Medical_Examiner_API;
 using Medical_Examiners_API.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,6 +29,8 @@ namespace Medical_Examiners_API
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+
+            services.AddScoped<ControllerActionFilter>();
            
 
             services.AddScoped<IExaminationPersistence>((s) =>
