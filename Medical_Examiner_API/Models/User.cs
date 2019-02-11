@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Medical_Examiners_API.Models
+namespace Medical_Examiner_API.Models
 {
     public class User : Record
     {

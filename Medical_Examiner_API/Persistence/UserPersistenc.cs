@@ -5,7 +5,7 @@ using Microsoft.Azure.Documents.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Medical_Examiners_API.Persistence
+namespace Medical_Examiner_API.Persistence
 {
     public class UserPersistence : IUserPersistence
     {

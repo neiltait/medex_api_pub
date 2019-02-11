@@ -1,5 +1,5 @@
-﻿using Medical_Examiners_API;
-using Medical_Examiners_API.Models;
+﻿using Medical_Examiner_API;
+using Medical_Examiner_API.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;

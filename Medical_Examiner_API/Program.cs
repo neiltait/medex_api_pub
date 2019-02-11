@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
-namespace Medical_Examiners_API
+namespace Medical_Examiner_API
 {
     public class Program
     {
