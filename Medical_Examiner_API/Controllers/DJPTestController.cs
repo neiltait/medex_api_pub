@@ -4,18 +4,31 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+
+
 
 namespace Medical_Examiner_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DJPTestController : ControllerBase
+    public class DJPTestController : BaseController
     {
+        
+       
+
+
+        public DJPTestController(ILogger<BaseController> logger) : base(logger)
+        {
+        }
+
+
         // GET: api/DJPTest
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public IEnumerable<string> Get()
         {
+            Logger.LogInformation("djp hello world");
             return new string[] { "DJPvalue1", "DJPvalue2" };
         }
 

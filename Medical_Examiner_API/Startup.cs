@@ -30,7 +30,9 @@ namespace Medical_Examiners_API
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 
-            
+            services.AddLogging();
+
+
             services.AddScoped<ControllerActionFilter>();
            
 
@@ -50,7 +52,7 @@ namespace Medical_Examiners_API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -61,6 +63,8 @@ namespace Medical_Examiners_API
                 app.UseHsts();
             }
 
+            loggerFactory.AddConsole(LogLevel.Information);
+            
             app.UseHttpsRedirection();
             app.UseMvc();
         }
