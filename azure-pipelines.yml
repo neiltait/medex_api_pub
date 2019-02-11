@@ -7,7 +7,11 @@ resources:
 - repo: self
 
 trigger:
-- master
+ include:
+    - master
+    - release/*
+    - feature/*
+    - hotfix/*
 
 pool:
   vmImage: 'Ubuntu 16.04'
