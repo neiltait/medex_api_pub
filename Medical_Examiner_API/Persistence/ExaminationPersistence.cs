@@ -4,9 +4,9 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Medical_Examiners_API.Models;
+using Medical_Examiner_API.Models;
 
-namespace Medical_Examiners_API.Persistence
+namespace Medical_Examiner_API.Persistence
 {
     public class ExaminationPersistence : IExaminationPersistence
     {

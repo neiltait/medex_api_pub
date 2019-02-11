@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
-namespace Medical_Examiners_API.Models
+namespace Medical_Examiner_API.Models
 {
     public class Examination : Record
     {
@@ -30,7 +30,8 @@ namespace Medical_Examiners_API.Models
         [Required]
         public bool Completed { get; set; }
 
-        public Examination() {
+        public Examination()
+        {
             Completed = false;
         }
     }
