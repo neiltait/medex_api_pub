@@ -18,5 +18,7 @@
   <ItemGroup>
     <Compile Remove="Models\ExaminationPersistence.cs" />
     <Compile Remove="Models\UserPersistenc.cs" />
+    <Compile Remove="Models\IExaminationPersistence.cs" />
+    <Compile Remove="Models\IUserPersistence.cs" />
   </ItemGroup>
 </Project>
