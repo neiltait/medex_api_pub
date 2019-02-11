@@ -38,7 +38,7 @@ namespace Medical_Examiner_API
             var timeStamp = DateTime.UtcNow;
 
             var message = userName + userAuthenticationType + userIsAuthenticated;
-            controllerLogger.LogInformation(message);
+            controllerLogger.LogWarning(message);
  
 
 

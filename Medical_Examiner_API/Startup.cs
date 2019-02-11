@@ -13,6 +13,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
+
+
+//djp
+using Medical_Examiner_API.Controllers;
+
 namespace Medical_Examiners_API
 {
     public class Startup
@@ -30,7 +35,17 @@ namespace Medical_Examiners_API
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 
-            services.AddLogging();
+            //services.AddLogging();
+
+            services.AddLogging(logging =>
+            {
+
+                //logging.AddConsole();
+                //logging.AddDebug();
+                logging.SetMinimumLevel(LogLevel.Critical);
+            });
+
+
 
 
             services.AddScoped<ControllerActionFilter>();
@@ -52,7 +67,7 @@ namespace Medical_Examiners_API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -63,7 +78,8 @@ namespace Medical_Examiners_API
                 app.UseHsts();
             }
 
-            loggerFactory.AddConsole(LogLevel.Information);
+           
+          
             
             app.UseHttpsRedirection();
             app.UseMvc();

@@ -28,7 +28,6 @@ namespace Medical_Examiner_API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public IEnumerable<string> Get()
         {
-            Logger.LogInformation("djp hello world");
             return new string[] { "DJPvalue1", "DJPvalue2" };
         }
 
