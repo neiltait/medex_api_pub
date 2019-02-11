@@ -30,6 +30,7 @@ namespace Medical_Examiners_API
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 
+            
             services.AddScoped<ControllerActionFilter>();
            
 
