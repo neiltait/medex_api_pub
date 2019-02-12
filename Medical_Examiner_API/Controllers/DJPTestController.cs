@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Medical_Examiner_API.Loggers;
 
 
 
@@ -18,7 +18,7 @@ namespace Medical_Examiner_API.Controllers
        
 
 
-        public DJPTestController(ILogger<BaseController> logger) : base(logger)
+        public DJPTestController(IMELogger logger) : base(logger)
         {
         }
 
@@ -33,9 +33,10 @@ namespace Medical_Examiner_API.Controllers
 
         // GET: api/DJPTest/5
         [HttpGet("{id}", Name = "Get")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
         public string Get(int id)
         {
-            return "value";
+            return "DJP value";
         }
 
         // POST: api/DJPTest

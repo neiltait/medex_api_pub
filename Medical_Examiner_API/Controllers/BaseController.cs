@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Medical_Examiner_API.Loggers;
 
 namespace Medical_Examiner_API.Controllers
 {
@@ -12,9 +12,9 @@ namespace Medical_Examiner_API.Controllers
     [ApiController]
     public class BaseController : ControllerBase
     {
-        public ILogger<BaseController> Logger { get; set; }
+        public IMELogger Logger { get; set; }
 
-        public BaseController(ILogger<BaseController> logger)
+        public BaseController(IMELogger logger)
         {
             Logger = logger;
         }

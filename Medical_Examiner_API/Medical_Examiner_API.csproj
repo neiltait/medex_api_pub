@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Loggers\FileLogger.cs" />
     <Compile Remove="Models\ExaminationPersistence.cs" />
     <Compile Remove="Models\UserPersistenc.cs" />
   </ItemGroup>

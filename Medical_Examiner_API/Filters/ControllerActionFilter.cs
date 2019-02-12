@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using Medical_Examiner_API.Loggers;
 
 
 namespace Medical_Examiner_API
@@ -19,7 +19,8 @@ namespace Medical_Examiner_API
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            var controllerLogger = (context.Controller as Medical_Examiner_API.Controllers.BaseController).Logger;
+            var controller = context.Controller as Medical_Examiner_API.Controllers.BaseController;
+            var logger = controller.Logger;
 
             var userName = "User: " + (context.HttpContext.User.Identity.Name == null? "Unknown": context.HttpContext.User.Identity.Name);
             var userAuthenticationType = " AuthenticationType: " + (context.HttpContext.User.Identity.AuthenticationType == null ? "Unknown" : context.HttpContext.User.Identity.AuthenticationType);
@@ -38,13 +39,14 @@ namespace Medical_Examiner_API
             var timeStamp = DateTime.UtcNow;
 
             var message = userName + userAuthenticationType + userIsAuthenticated;
-            controllerLogger.LogWarning(message);
+            logger.Log(message);
+
+            
  
 
 
             var toDo = 1;
-            //var djpFile = new StreamWriter(@"C:\\Temp\djp.txt");
-            //djpFile.WriteLine("OnActionExecuting called");
+         
             
         }
     }
