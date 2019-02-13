@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Medical_Examiners_API.Models;
+using Medical_Examiner_API.Models;
 
-namespace Medical_Examiners_API.Persistence
+namespace Medical_Examiner_API.Persistence
 {
     public interface IUserPersistence
     {

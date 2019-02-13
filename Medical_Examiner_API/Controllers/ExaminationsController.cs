@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Medical_Examiners_API.Models;
+using Medical_Examiner_API.Models;
+using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -11,7 +12,7 @@ using Medical_Examiner_API;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Medical_Examiners_API.Controllers
+namespace Medical_Examiner_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -60,7 +61,7 @@ namespace Medical_Examiners_API.Controllers
             ex2.DateOfBirth = new DateTime(1998, 6, 23);
             ex3.DateOfBirth = new DateTime(1964, 1, 30);
 
-            ex1.DateOfDeath = new DateTime(2012,3,4, 13, 22, 00);
+            ex1.DateOfDeath = new DateTime(2012, 3, 4, 13, 22, 00);
             ex2.DateOfBirth = new DateTime(2017, 4, 17, 23, 1, 00);
             ex3.DateOfBirth = new DateTime(2018, 11, 29, 15, 15, 00);
 

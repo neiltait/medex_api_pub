@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Medical_Examiners_API.Controllers
+namespace Medical_Examiner_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

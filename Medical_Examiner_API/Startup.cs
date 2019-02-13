@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Medical_Examiner_API;
-using Medical_Examiners_API.Persistence;
+
+using Medical_Examiner_API.Persistence;
+using Medical_Examiner_API.Models;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +19,7 @@ using Medical_Examiner_API.Loggers;
 
 
 
-namespace Medical_Examiners_API
+namespace Medical_Examiner_API
 {
     public class Startup
     {
@@ -64,6 +67,14 @@ namespace Medical_Examiners_API
             }
             else
             {
+                app.UseExceptionHandler(appBuilder =>
+                {
+                    appBuilder.Run(async context =>
+                    {
+                        context.Response.StatusCode = 500;
+                        await context.Response.WriteAsync("An unexpected fault happened. Try again later.");
+                    });
+                });
                 app.UseHsts();
             }
 

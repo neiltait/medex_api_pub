@@ -3,15 +3,53 @@
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
+resources:
+- repo: self
+
 trigger:
-- master
+  - master
+  - release/*
+  - feature/*
+  - hotfix/*
 
 pool:
-  vmImage: 'Ubuntu-16.04'
-
+  vmImage: 'Ubuntu 16.04'
+  
 variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+- task: DotNetCoreCLI@2
+  displayName: Restore
+  inputs:
+    command: restore
+    projects: 'Medical_Examiner_API/Medical_Examiner_API.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    projects: 'Medical_Examiner_API/Medical_Examiner_API.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+
+
+- task: DotNetCoreCLI@2
+  displayName: Test
+  inputs:
+    codeCoverageEnabled: True
+    command: test
+    projects: 'Medical_Examiner_API_Tests/Medical_Examiner_API_Tests.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+    publishTestResults: true
+
+- task: DotNetCoreCLI@2
+  displayName: Publish
+  inputs:
+    command: publish
+    publishWebProjects: false
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+      
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+

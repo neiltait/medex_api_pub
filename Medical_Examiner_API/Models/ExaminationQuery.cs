@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Medical_Examiners_API.Models
+namespace Medical_Examiner_API.Models
 {
     public class ExaminationQuery : Query
     {
@@ -12,6 +12,6 @@ namespace Medical_Examiners_API.Models
         public string CaseType { get; set; }
 
         public ExaminationQuery(int page = 0, int pagesize = 30, string filter = "", string sort = "") : base(page, pagesize, filter, sort)
-        {  }
+        { }
     }
 }
