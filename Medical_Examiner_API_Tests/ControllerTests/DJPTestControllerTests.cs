@@ -1,11 +1,11 @@
 ﻿
 using FluentAssertions;
-using ME_API_tests.Models;
+
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Medical_Examiners_API.Controllers;
+
 using Medical_Examiner_API.Controllers;
 using Medical_Examiner_API.Loggers;
 using System.Threading.Tasks;
