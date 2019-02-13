@@ -104,12 +104,12 @@ namespace Medical_Examiner_API_Tests.ControllerTests
             return base.ToString();
         }
     }
-    public class DJPTestControllerTests
+    public class ControllerActionFilterTests
     {
         MELoggerMocker _mockLogger;
         DJPTestController _controller;
 
-        public DJPTestControllerTests()
+        public ControllerActionFilterTests()
         {
             _mockLogger = new MELoggerMocker();
             _controller = new DJPTestController(_mockLogger); 
