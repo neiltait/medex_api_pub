@@ -7,6 +7,6 @@ namespace Medical_Examiner_API.Loggers
 {
     public interface IMELogger
     {
-        void Log(string message);
+        void Log(string userName, string userAuthenticationType, string userIsAuthenticated, string controllerName, string controllerMethod, IList<string> parameters, string remoteIP, DateTime timeStamp);
     }
 }
