@@ -14,8 +14,7 @@ using Newtonsoft.Json;
 
 namespace Medical_Examiner_API.Controllers
 {
-    [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/examinations")]
     [ApiController]
     public class ExaminationsController : Controller
     {
@@ -43,7 +42,7 @@ namespace Medical_Examiner_API.Controllers
             {
                 return Ok(await _examination_persistence.GetExaminationAsync(id));
             }
-            catch (ArgumentException)
+            catch (DocumentClientException)
             {
                 return NotFound();
             }

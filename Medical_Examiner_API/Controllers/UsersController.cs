@@ -14,7 +14,6 @@ using Newtonsoft.Json;
 
 namespace Medical_Examiner_API.Controllers
 {
-    [Authorize]
     [Route("api/users")]
     [ApiController]
     public class UsersController : Controller

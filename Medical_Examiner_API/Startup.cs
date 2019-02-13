@@ -1,21 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Medical_Examiner_API.Persistence;
-using Medical_Examiner_API.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Okta.AspNetCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Medical_Examiner_API
 {
@@ -46,17 +36,6 @@ namespace Medical_Examiner_API
                     new Uri(Configuration["CosmosDB:URL"]),
                     Configuration["CosmosDB:PrimaryKey"]);
             });
-
-            services.AddAuthentication(sharedOptions =>
-            {
-                sharedOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                sharedOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.Authority = "https://***REMOVED***.oktapreview.com/oauth2/default";
-                options.Audience = "api://default";
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,7 +58,6 @@ namespace Medical_Examiner_API
                 app.UseHsts();
             }
 
-            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
         }
