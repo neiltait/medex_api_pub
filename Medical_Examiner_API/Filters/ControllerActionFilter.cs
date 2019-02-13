@@ -22,9 +22,9 @@ namespace Medical_Examiner_API
             var controller = context.Controller as Medical_Examiner_API.Controllers.BaseController;
             var logger = controller.Logger;
 
-            var userName = "User: " + (context.HttpContext.User.Identity.Name == null? "Unknown": context.HttpContext.User.Identity.Name);
-            var userAuthenticationType = " AuthenticationType: " + (context.HttpContext.User.Identity.AuthenticationType == null ? "Unknown" : context.HttpContext.User.Identity.AuthenticationType);
-            var userIsAuthenticated = " IsAuthenticated: " + (context.HttpContext.User.Identity.IsAuthenticated.ToString());
+            var userName = context.HttpContext.User.Identity.Name == null? "Unknown": context.HttpContext.User.Identity.Name;
+            var userAuthenticationType = context.HttpContext.User.Identity.AuthenticationType == null ? "Unknown" : context.HttpContext.User.Identity.AuthenticationType;
+            var userIsAuthenticated = context.HttpContext.User.Identity.IsAuthenticated.ToString();
             var controllerName = context.RouteData.Values.Values.ElementAt(1).ToString();
             var parameters = new List<string>();
 

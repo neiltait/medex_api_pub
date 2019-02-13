@@ -134,7 +134,8 @@ namespace Medical_Examiner_API_Tests.ControllerTests
             controllerActionFilter.OnActionExecuting(actionExecutingContext);
             var message = _mockLogger.Message;
 
-            var djp = 1;
+            var expectedMessage = "Unknown Unknown False MyMethod MyAction Unknown";
+            Assert.Equal(expectedMessage, message);
         }
     }
 }
