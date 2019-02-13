@@ -40,3 +40,4 @@ Thumbs.db
 # dotCover
 *.dotCover
 Medical_Examiner_API/appsettings.Development.json
+medical_examiner_front_end_test/appsettings.Development.json

@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Medical_Examiner_API.Persistence;
-using Medical_Examiner_API.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,13 +10,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Okta.AspNetCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-namespace Medical_Examiner_API
+namespace medical_examiner_front_end_test
 {
     public class Startup
     {
@@ -31,22 +25,6 @@ namespace Medical_Examiner_API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            services.AddScoped<IExaminationPersistence>((s) =>
-            {
-                return new ExaminationPersistence(
-                    new Uri(Configuration["CosmosDB:URL"]),
-                    Configuration["CosmosDB:PrimaryKey"]);
-            });
-
-            services.AddScoped<IUserPersistence>((s) =>
-            {
-                return new UserPersistence(
-                    new Uri(Configuration["CosmosDB:URL"]),
-                    Configuration["CosmosDB:PrimaryKey"]);
-            });
-
             services.AddAuthentication(sharedOptions =>
             {
                 sharedOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -57,6 +35,8 @@ namespace Medical_Examiner_API
                 options.Authority = "https://***REMOVED***.oktapreview.com/oauth2/default";
                 options.Audience = "api://default";
             });
+            
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,20 +48,20 @@ namespace Medical_Examiner_API
             }
             else
             {
-                app.UseExceptionHandler(appBuilder =>
-                {
-                    appBuilder.Run(async context =>
-                    {
-                        context.Response.StatusCode = 500;
-                        await context.Response.WriteAsync("An unexpected fault happened. Try again later.");
-                    });
-                });
+                app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 
-            app.UseAuthentication();
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseStaticFiles();
+            app.UseAuthentication();
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }
