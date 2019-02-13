@@ -25,7 +25,7 @@ namespace Medical_Examiner_API_Tests.ControllerTests
     class MockConnectionInfo : ConnectionInfo
     {
         public override string Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override IPAddress RemoteIpAddress { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override IPAddress RemoteIpAddress { get { return null; } set { } }
         public override int RemotePort { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public override IPAddress LocalIpAddress { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public override int LocalPort { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -69,11 +69,11 @@ namespace Medical_Examiner_API_Tests.ControllerTests
 
         public override HttpResponse Response => throw new NotImplementedException();
 
-        public override ConnectionInfo Connection => throw new NotImplementedException();
+        public override ConnectionInfo Connection { get { return _connectionInfo; } }
 
         public override WebSocketManager WebSockets => throw new NotImplementedException();
 
-        //public override AuthenticationManager Authentication => throw new NotImplementedException();
+     
          
         public override ClaimsPrincipal User { get { return _claimsPrincipal; } set { _claimsPrincipal = value; } }
         public override IDictionary<object, object> Items { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
