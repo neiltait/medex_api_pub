@@ -55,10 +55,8 @@ namespace Medical_Examiner_API
                         await context.Response.WriteAsync("An unexpected fault happened. Try again later.");
                     });
                 });
-                app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseMvc();
         }
     }
