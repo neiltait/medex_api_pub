@@ -7,17 +7,10 @@ namespace Medical_Examiner_API.Loggers
 {
     public class MELoggerMocker : IMELogger
     {
-        public string Message { get; private set; }
-        public void Log(string userName, string userAuthenticationType, string userIsAuthenticated, string controllerName, string controllerMethod, IList<string> parameters, string remoteIP, DateTime timeStamp)
+        public LogMessageActionDefault LogEntry { get; private set; }
+        public void Log(string userName, string userAuthenticationType, bool userIsAuthenticated, string controllerName, string controllerMethod, IList<string> parameters, string remoteIP, DateTime timeStamp)
         {
-            Message = userName + " " + userAuthenticationType + " " + userIsAuthenticated + " " + controllerName + " " + controllerMethod + " ";
-
-            foreach (var p in parameters)
-            {
-                Message += p + " ";
-            }
-
-            Message += remoteIP;
+            LogEntry = new LogMessageActionDefault(userName, userAuthenticationType, userIsAuthenticated, controllerName, controllerMethod, parameters, remoteIP, timeStamp);
         }
     }
 }

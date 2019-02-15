@@ -24,7 +24,7 @@ namespace Medical_Examiner_API
 
             var userName = context.HttpContext.User.Identity.Name == null? "Unknown": context.HttpContext.User.Identity.Name;
             var userAuthenticationType = context.HttpContext.User.Identity.AuthenticationType == null ? "Unknown" : context.HttpContext.User.Identity.AuthenticationType;
-            var userIsAuthenticated = context.HttpContext.User.Identity.IsAuthenticated.ToString();
+            var userIsAuthenticated = context.HttpContext.User.Identity.IsAuthenticated;
             var controllerName = context.RouteData.Values.Values.ElementAt(1).ToString();
             var parameters = new List<string>();
 

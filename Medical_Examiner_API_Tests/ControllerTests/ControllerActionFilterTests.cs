@@ -139,10 +139,12 @@ namespace Medical_Examiner_API_Tests.ControllerTests
             var actionArguments = new Dictionary<string, object>();
             var actionExecutingContext = new ActionExecutingContext(actionContext, filters, actionArguments, _controller );
             controllerActionFilter.OnActionExecuting(actionExecutingContext);
-            var message = _mockLogger.Message;
+            var logEntry = _mockLogger.LogEntry;
+
+            var logEntryContents = logEntry.UserName + " " + logEntry.UserAuthenticationType + " " + logEntry.UserIsAuthenticated.ToString() + " " + logEntry.ControllerName + " " + logEntry.ControllerMethod + " " + logEntry.RemoteIP;
 
             var expectedMessage = "Unknown Unknown False MyMethod MyAction Unknown";
-            Assert.Equal(expectedMessage, message);
+            Assert.Equal(expectedMessage, logEntryContents);
         }
     }
 }

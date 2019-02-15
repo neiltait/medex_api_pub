@@ -16,17 +16,10 @@ namespace Medical_Examiner_API.Loggers
 
         }
 
-        public void Log(string userName, string userAuthenticationType, string userIsAuthenticated, string controllerName, string controllerMethod, IList<string> parameters, string remoteIP, DateTime timeStamp)
+        public void Log(string userName, string userAuthenticationType, bool userIsAuthenticated, string controllerName, string controllerMethod, IList<string> parameters, string remoteIP, DateTime timeStamp)
         {
-            var message = timeStamp.ToLongDateString() + " "+ timeStamp.ToShortTimeString() + " " + userName + " " + userAuthenticationType + " " + userIsAuthenticated + " " + controllerName + " " + controllerMethod + " ";
-
-            foreach (var p in parameters)
-            {
-                message += p + " ";
-            }
-
-            message += remoteIP;
-            _streamWriter.WriteLine(message);
+           var logEntry = new LogMessageActionDefault(userName, userAuthenticationType, userIsAuthenticated, controllerName, controllerMethod, parameters, remoteIP, timeStamp);
+            _streamWriter.WriteLine(logEntry.ToString());
             _streamWriter.Flush();
         }
 

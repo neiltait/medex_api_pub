@@ -28,5 +28,21 @@ namespace Medical_Examiner_API.Loggers
             TimeStamp = timestamp;
 
         }
+
+        public override string ToString()
+        {
+            var contents  = UserName + " " + UserAuthenticationType + " " + UserIsAuthenticated.ToString() + " " + ControllerName + " " + ControllerMethod + " ";
+
+            foreach (var p in Parameters)
+            {
+                contents += p + " ";
+            }
+
+            contents += RemoteIP + " ";
+
+            contents += TimeStamp.ToLongDateString() + "_" + TimeStamp.ToLongTimeString();
+
+            return contents;
+        }
     }
 }
