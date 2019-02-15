@@ -13,7 +13,7 @@ namespace Medical_Examiner_API
     {
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            var toDo = 1;
+          
          
         }
 
@@ -41,7 +41,6 @@ namespace Medical_Examiner_API
             logger.Log(userName, userAuthenticationType, userIsAuthenticated, controllerName, controllerAction, parameters, remoteIP, timeStamp);
 
 
-            var toDo = 1;
          
             
         }
