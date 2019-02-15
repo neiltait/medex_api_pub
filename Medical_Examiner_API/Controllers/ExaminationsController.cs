@@ -67,13 +67,9 @@ namespace Medical_Examiner_API.Controllers
             ex2.Completed = false;
             ex3.Completed = false;
 
-            ex1.FirstName = "Robert";
-            ex2.FirstName = "Louise";
-            ex3.FirstName = "Crowbar";
-
-            ex1.LastName = "Bobert";
-            ex2.LastName = "Cheese";
-            ex3.LastName = "Jones";
+            ex1.FullName = "Robert Bobert";
+            ex2.FullName = "Louise Cheese";
+            ex3.FullName = "Crowbar Jones";
 
             ex1.CreatedAt = DateTime.Now;
             ex2.CreatedAt = DateTime.Now;

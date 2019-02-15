@@ -4,17 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Medical_Examiner_API.Models
 {
-    public class Representative
+    public class Representative : Contact
     {
-        [Required]
-        public string FullName { get; set; }
-
-        [Required]
-        public string RelationshipToDeceased { get; set; }
-
-        [Required]
-        public string ContactPhoneNumber { get; set; }
-
         [Required]
         public bool PresentAtDeath { get; set; }
 
