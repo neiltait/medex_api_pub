@@ -82,7 +82,14 @@ namespace Medical_Examiner_API_Tests.ControllerTests
         public override string TraceIdentifier { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public override ISession Session { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public override Microsoft.AspNetCore.Http.Authentication.AuthenticationManager Authentication => throw new NotImplementedException();
+        [Obsolete("Microsoft.AspNetCore.Http.Authentication.AuthenticationManager Authentication is deprecated, CS0672 warning")]
+        public override Microsoft.AspNetCore.Http.Authentication.AuthenticationManager Authentication
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         public override void Abort()
         {
