@@ -9,7 +9,7 @@ namespace Medical_Examiner_API.Persistence
     public interface IExaminationPersistence
     {
         Task<bool> SaveExaminationAsync(Examination examination);
-        Task<Examination> GetExaminationAsync(string Id);
+        Task<Examination> GetExaminationAsync(string examinationId);
         Task<IEnumerable<Examination>> GetExaminationsAsync();
     }
 }

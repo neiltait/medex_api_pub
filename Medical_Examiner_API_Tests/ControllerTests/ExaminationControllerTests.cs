@@ -48,7 +48,7 @@ namespace ME_API_tests.ControllerTests
             var task_result = response.Should().BeOfType<Task<ActionResult<Examination>>>().Subject;
             var okresult = task_result.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             var examination = okresult.Value.Should().BeAssignableTo<Examination>().Subject;
-            Assert.Equal("aaaaa", examination.Id);
+            Assert.Equal("aaaaa", examination.ExaminationId);
         }
 
         //[Fact]
