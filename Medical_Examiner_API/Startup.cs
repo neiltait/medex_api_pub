@@ -53,6 +53,14 @@ namespace Medical_Examiner_API
                     new Uri(Configuration["CosmosDB:URL"]),
                     Configuration["CosmosDB:PrimaryKey"]);
             });
+
+
+            services.AddScoped<IMELoggerPersistence>((s) =>
+            {
+                return new MELoggerPersistence(
+                    new Uri(Configuration["CosmosDB:URL"]),
+                    Configuration["CosmosDB:PrimaryKey"]);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
