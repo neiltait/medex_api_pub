@@ -28,6 +28,7 @@ namespace Medical_Examiner_API.Controllers
 
         // GET api/values
         [HttpGet]
+        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<IEnumerable<Models.User>>> GetAsync()
         {
             var Users = await _user_persistence.GetUsersAsync();
@@ -36,6 +37,7 @@ namespace Medical_Examiner_API.Controllers
 
         // GET api/values/seed
         [HttpGet("seed")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<IEnumerable<Models.User>>> Seed()
         {
             Models.User us1 = new Models.User();

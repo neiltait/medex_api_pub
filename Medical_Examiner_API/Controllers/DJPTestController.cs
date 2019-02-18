@@ -17,7 +17,7 @@ namespace Medical_Examiner_API.Controllers
         
        
 
-
+    
         public DJPTestController(IMELogger logger) : base(logger)
         {
         }
@@ -25,33 +25,38 @@ namespace Medical_Examiner_API.Controllers
 
         // GET: api/DJPTest
         [HttpGet]
-        public override IEnumerable<string> Get()
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public IEnumerable<string> Get()
         {
             return new string[] { "DJPvalue1", "DJPvalue2" };
         }
 
         // GET: api/DJPTest/5
         [HttpGet("{id}", Name = "Get")]
-        public override string Get(int id)
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public string Get(int id)
         {
             return "DJP value";
         }
 
         // POST: api/DJPTest
         [HttpPost]
-        public override void Post([FromBody] string value)
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public void Post([FromBody] string value)
         {
         }
 
         // PUT: api/DJPTest/5
         [HttpPut("{id}")]
-        public override void Put(int id, [FromBody] string value)
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public void Put(int id, [FromBody] string value)
         {
         }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public override void Delete(int id)
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public void Delete(int id)
         {
         }
     }
