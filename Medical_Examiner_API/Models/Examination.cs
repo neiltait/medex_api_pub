@@ -7,15 +7,19 @@ namespace Medical_Examiner_API.Models
     public class Examination : Record
     {
         [Required]
+        [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "examination_id")]
         public string ExaminationId { get; set; }
 
         [Required]
+        [DataType(DataType.Text)]
         [StringLength(250)]
         [JsonProperty(PropertyName = "full_name")]
         public string FullName { get; set; }
 
         [Required]
+        [DataType(DataType.Text)]
+        [StringLength(10)]
         [JsonProperty(PropertyName = "nhs_number")]
         public string NHSNumber { get; set; }
 
