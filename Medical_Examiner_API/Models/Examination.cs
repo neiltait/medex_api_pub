@@ -14,7 +14,7 @@ namespace Medical_Examiner_API.Models
         [StringLength(250)]
         [JsonProperty(PropertyName = "full_name")]
         public string FullName { get; set; }
-        
+
         [Required]
         [JsonProperty(PropertyName = "nhs_number")]
         public string NHSNumber { get; set; }
@@ -55,14 +55,15 @@ namespace Medical_Examiner_API.Models
         [JsonProperty(PropertyName = "organisation_care_before_death_location_id")]
         public string OrganisationCareBeforeDeathLocationId { get; set; }
 
+        // Initial thinking is that below is the location ID that is used for authorisation and permission queries 
         [Required]
-        [JsonProperty(PropertyName = "death_occured_location_id")]
+        [JsonProperty(PropertyName = "location_id")]
         public string DeathOccuredLocationId { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "mode_of_disposal")]
         public ModeOfDisposal ModeOfDisposal { get; set; }
-        
+
         [Required]
         [JsonProperty(PropertyName = "funderal_directors")]
         public string FuneralDirectors { get; set; }
