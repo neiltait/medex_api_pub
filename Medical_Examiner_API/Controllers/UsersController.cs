@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Medical_Examiner_API.Models;
 using Medical_Examiner_API.Persistence;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;

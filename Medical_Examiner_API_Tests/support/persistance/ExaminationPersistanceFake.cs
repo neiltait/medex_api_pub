@@ -31,17 +31,13 @@ namespace ME_API_tests.Persistance
             ex2.Completed = false;
             ex3.Completed = false;
 
-            ex1.Id = "aaaaa";
-            ex2.Id = "bbbbb";
-            ex3.Id = "12345zz";
+            ex1.ExaminationId = "aaaaa";
+            ex2.ExaminationId = "bbbbb";
+            ex3.ExaminationId = "12345zz";
 
-            ex1.FirstName = "Robert";
-            ex2.FirstName = "Louise";
-            ex3.FirstName = "Crowbar";
-
-            ex1.LastName = "Bobert";
-            ex2.LastName = "Cheese";
-            ex3.LastName = "Jones";
+            ex1.FullName = "Robert Bobert";
+            ex2.FullName = "Louise Cheese";
+            ex3.FullName = "Crowbar Jones";
 
             ex1.CreatedAt = DateTime.Now;
             ex2.CreatedAt = DateTime.Now;
@@ -57,11 +53,11 @@ namespace ME_API_tests.Persistance
         }
 
 
-        public async Task<Examination> GetExaminationAsync(string Id)
+        public async Task<Examination> GetExaminationAsync(string examinationId)
         {
             foreach (Examination examination in examinations)
             {
-                if (examination.Id == Id)
+                if (examination.ExaminationId == examinationId)
                 {
                     return await Task.FromResult(examination);
                 }

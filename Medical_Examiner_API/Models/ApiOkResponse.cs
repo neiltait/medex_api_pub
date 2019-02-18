@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace Medical_Examiner_API.Models
 {
     public class ApiOkResponse : ApiResponse
