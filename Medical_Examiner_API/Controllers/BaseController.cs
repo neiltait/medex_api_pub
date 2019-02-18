@@ -10,7 +10,7 @@ namespace Medical_Examiner_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public abstract class BaseController : ControllerBase
+    public abstract class BaseController : Controller
     {
         public IMELogger Logger { get; set; }
 

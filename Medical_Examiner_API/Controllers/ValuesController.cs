@@ -4,13 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Medical_Examiner_API.Loggers;
 
 namespace Medical_Examiner_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class ValuesController : BaseController
     {
+        public ValuesController(IMELogger logger) : base(logger)
+        {
+        }
+
         // GET api/values
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]

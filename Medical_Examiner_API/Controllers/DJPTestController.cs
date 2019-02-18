@@ -15,9 +15,6 @@ namespace Medical_Examiner_API.Controllers
     public class DJPTestController : BaseController
     {
         
-       
-
-    
         public DJPTestController(IMELogger logger) : base(logger)
         {
         }

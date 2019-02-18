@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Newtonsoft.Json;
+using Medical_Examiner_API.Loggers;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,12 +17,12 @@ namespace Medical_Examiner_API.Controllers
 {
     [Route("api/users")]
     [ApiController]
-    public class UsersController : Controller
+    public class UsersController : BaseController
     {
         public DocumentClient client = null;
         private IUserPersistence _user_persistence;
 
-        public UsersController(IUserPersistence user_persistence)
+        public UsersController(IUserPersistence user_persistence, IMELogger logger) : base(logger)
         {
             _user_persistence = user_persistence;
         }
