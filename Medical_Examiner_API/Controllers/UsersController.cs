@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models;
 using Medical_Examiner_API.Persistence;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Newtonsoft.Json;
-using Medical_Examiner_API.Loggers;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,30 +15,30 @@ namespace Medical_Examiner_API.Controllers
     [ApiController]
     public class UsersController : BaseController
     {
-        private IUserPersistence _user_persistence;
+        private readonly IUserPersistence _userPersistence;
 
-        public UsersController(IUserPersistence user_persistence, IMELogger logger) : base(logger)
+        public UsersController(IUserPersistence userPersistence, IMELogger logger) : base(logger)
         {
-            _user_persistence = user_persistence;
+            _userPersistence = userPersistence;
         }
 
         // GET api/users
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<IEnumerable<Models.User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<MEUser>>> GetUsers()
         {
-            var Users = await _user_persistence.GetUsersAsync();
-            return Ok(Users);
+            var users = await _userPersistence.GetUsersAsync();
+            return Ok(users);
         }
 
         // GET api/users/{user_id}
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<Examination>> GetUser(string user_id)
+        public async Task<ActionResult<Examination>> GetUser(string meUserId)
         {
             try
             {
-                return Ok(await _user_persistence.GetUserAsync(user_id));
+                return Ok(await _userPersistence.GetUserAsync(meUserId));
             }
             catch (DocumentClientException)
             {
@@ -54,14 +50,34 @@ namespace Medical_Examiner_API.Controllers
             }
         }
 
-        // PUT api/users
-        [HttpPut]
+        // POST api/users
+        [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<Examination>> PutUser(Models.User user)
+        public async Task<ActionResult<MEUser>> CreateUser(MEUser meUser)
         {
             try
             {
-                return Ok(await _user_persistence.CreateUserAsync(user));
+                return Ok(await _userPersistence.CreateUserAsync(meUser));
+            }
+            catch (DocumentClientException)
+            {
+                return NotFound();
+            }
+            catch (ArgumentException)
+            {
+                return NotFound();
+            }
+        }
+        
+        // POST api/users
+        [HttpPut("{UserId}")]
+
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<MEUser>> UpdateUser(MEUser meUser)
+        {
+            try
+            {
+                return Ok(await _userPersistence.CreateUserAsync(meUser));
             }
             catch (DocumentClientException)
             {

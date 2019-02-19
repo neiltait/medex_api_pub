@@ -11,19 +11,19 @@ namespace ME_API_tests.Persistance
 {
     public class UserPersistanceFake : IUserPersistence
     {
-        private List<User> users;
+        private List<MEUser> users;
 
         public UserPersistanceFake()
         {
 
             // Populate the users fake vars 
-            users = new List<User>();
+            users = new List<MEUser>();
 
             for (int count = 0; count < 10; count++)
             {
-                User u = new User();
+                MEUser u = new MEUser();
                 u.Email = Internet.Email();
-                u.UserId = "aaaaa" + count.ToString();
+                u.MEUserId = "aaaaa" + count.ToString();
                 u.FirstName = Name.First();
                 u.LastName = Name.Last();
                 u.CreatedAt = DateTime.Now;
@@ -33,16 +33,16 @@ namespace ME_API_tests.Persistance
             }
         }
 
-        public async Task<User> CreateUserAsync(User user)
+        public async Task<MEUser> CreateUserAsync(MEUser meUser)
         {
-            return await Task.FromResult(user);
+            return await Task.FromResult(meUser);
         }
 
-        public async Task<User> GetUserAsync(string UserId)
+        public async Task<MEUser> GetUserAsync(string UserId)
         {
-            foreach (User user in users)
+            foreach (MEUser user in users)
             {
-                if (user.UserId == UserId)
+                if (user.MEUserId == UserId)
                 {
                     return await Task.FromResult(user);
                 }
@@ -51,14 +51,14 @@ namespace ME_API_tests.Persistance
             throw new ArgumentException("Invalid Argument");
         }
 
-        public async Task<IEnumerable<User>> GetUsersAsync()
+        public async Task<IEnumerable<MEUser>> GetUsersAsync()
         {
             return await Task.FromResult(users);
         }
 
-        public async Task<User> SaveUserAsync(User user)
+        public async Task<MEUser> UpdateUserAsync(MEUser meUser)
         {
-            return await Task.FromResult(user);
+            return await Task.FromResult(meUser);
         }
     }
 }

@@ -4,12 +4,12 @@ using Newtonsoft.Json;
 
 namespace Medical_Examiner_API.Models
 {
-    public class User : Record
+    public class MEUser : Record
     {
         [Required]
         [DataType(DataType.Text)]
-        [JsonProperty(PropertyName = "user_id")]
-        public string UserId { get; set; }
+        [JsonProperty(PropertyName = "me_user_id")]
+        public string MEUserId { get; set; }
 
         [Required]
         [DataType(DataType.Text)]

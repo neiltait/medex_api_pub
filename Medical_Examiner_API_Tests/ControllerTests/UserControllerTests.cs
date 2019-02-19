@@ -13,16 +13,13 @@ namespace Medical_Examiner_API_Tests.ControllerTests
 {
     public class UserControllerTests
     {
-        MELoggerMocker _mockLogger;
-        UserPersistanceFake _user_persistance;
-        UsersController _controller;
+        readonly UsersController _controller;
 
         public UserControllerTests()
         {
-
-            _mockLogger = new MELoggerMocker();
-            _user_persistance = new UserPersistanceFake();
-            _controller = new UsersController(_user_persistance, _mockLogger);
+            var mockLogger = new MELoggerMocker();
+            var userPersistence = new UserPersistanceFake();
+            _controller = new UsersController(userPersistence, mockLogger);
         }
 
         [Fact]
@@ -32,9 +29,9 @@ namespace Medical_Examiner_API_Tests.ControllerTests
             var response = _controller.GetUsers();
 
             // Assert
-            var task_result = response.Should().BeOfType<Task<ActionResult<IEnumerable<User>>>>().Subject;
-            var okresult = task_result.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            var examinations = okresult.Value.Should().BeAssignableTo<ICollection<User>>().Subject;
+            var taskResult = response.Should().BeOfType<Task<ActionResult<IEnumerable<MEUser>>>>().Subject;
+            var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var examinations = okResult.Value.Should().BeAssignableTo<ICollection<MEUser>>().Subject;
             Assert.Equal(10, examinations.Count);
         }
 
@@ -45,10 +42,10 @@ namespace Medical_Examiner_API_Tests.ControllerTests
             var response = _controller.GetUser("aaaaa0");
 
             // Assert
-            var task_result = response.Should().BeOfType<Task<ActionResult<Examination>>>().Subject;
-            var okresult = task_result.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            var user = okresult.Value.Should().BeAssignableTo<User>().Subject;
-            Assert.Equal("aaaaa0", user.UserId);
+            var taskResult = response.Should().BeOfType<Task<ActionResult<Examination>>>().Subject;
+            var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var user = okResult.Value.Should().BeAssignableTo<MEUser>().Subject;
+            Assert.Equal("aaaaa0", user.MEUserId);
         }
 
         [Fact]
@@ -58,8 +55,23 @@ namespace Medical_Examiner_API_Tests.ControllerTests
             var response = _controller.GetUser("zzzzz");
 
             // Assert
-            var task_result = response.Should().BeOfType<Task<ActionResult<Examination>>>().Subject;
-            var not_found_result = task_result.Result.Result.Should().BeAssignableTo<NotFoundResult>().Subject;
+            var taskResult = response.Should().BeOfType<Task<ActionResult<Examination>>>().Subject;
+            var notFoundResult = taskResult.Result.Result.Should().BeAssignableTo<NotFoundResult>().Subject;
+        }
+        
+        [Fact]
+        public void CreateUser_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var user = new MEUser {MEUserId = "zzaabb", FirstName = "Bob", Email = "aaa@bbb.com.co.gov.uk.com", LastName = "Shmob"};
+            var response = _controller.CreateUser(user);
+
+            // Assert
+            var taskResult = response.Should().BeOfType<Task<ActionResult<MEUser>>>().Subject;
+            var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var returnUser = okResult.Value.Should().BeAssignableTo<MEUser>().Subject;
+            
+            Assert.Equal("zzaabb", returnUser.MEUserId);
         }
     }
 }

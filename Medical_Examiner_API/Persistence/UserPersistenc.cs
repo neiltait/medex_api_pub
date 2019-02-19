@@ -36,52 +36,52 @@ namespace Medical_Examiner_API.Persistence
             await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection() { Id = "Users" });
         }
 
-        public async Task<Models.User> SaveUserAsync(Models.User user)
+        public async Task<Models.MEUser> UpdateUserAsync(Models.MEUser meUser)
         {
             await EnsureSetupAsync();
 
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, "Users");
-            var doc = await _client.UpsertDocumentAsync(documentCollectionUri, user);
+            var doc = await _client.UpsertDocumentAsync(documentCollectionUri, meUser);
 
             if (doc == null)
             {
                 throw new ArgumentException("Invalid Argument");
             }
 
-            return (dynamic)doc;
+            return (Models.MEUser)doc;
         }
 
-        public async Task<Models.User> CreateUserAsync(Models.User user)
+        public async Task<Models.MEUser> CreateUserAsync(Models.MEUser meUser)
         {
             await EnsureSetupAsync();
 
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, "Users");
-            var document = await _client.CreateDocumentAsync(documentCollectionUri, user);
+            var document = await _client.CreateDocumentAsync(documentCollectionUri, meUser);
 
             if (document == null)
             {
                 throw new ArgumentException("Invalid Argument");
             }
 
-            return (dynamic)document;
+            return (Models.MEUser)document;
         }
 
-        public async Task<Models.User> GetUserAsync(string UserId)
+        public async Task<Models.MEUser> GetUserAsync(string UserId)
         {
             await EnsureSetupAsync();
 
             var documentUri = UriFactory.CreateDocumentUri(_databaseId, "Users", UserId);
-            var result = await _client.ReadDocumentAsync<Models.User>(documentUri);
+            var result = await _client.ReadDocumentAsync<Models.MEUser>(documentUri);
 
             if (result.Document == null)
             {
                 throw new ArgumentException("Invalid Argument");
             }
 
-            return (dynamic)result.Document;
+            return result.Document;
         }
 
-        public async Task<IEnumerable<Models.User>> GetUsersAsync()
+        public async Task<IEnumerable<Models.MEUser>> GetUsersAsync()
         {
             await EnsureSetupAsync();
 
@@ -89,14 +89,14 @@ namespace Medical_Examiner_API.Persistence
 
             // build the query
             var feedOptions = new FeedOptions() { MaxItemCount = -1 };
-            var query = _client.CreateDocumentQuery<Models.User>(documentCollectionUri, "SELECT * FROM Users", feedOptions);
+            var query = _client.CreateDocumentQuery<Models.MEUser>(documentCollectionUri, "SELECT * FROM Users", feedOptions);
             var queryAll = query.AsDocumentQuery();
 
             // combine the results
-            var results = new List<Models.User>();
+            var results = new List<Models.MEUser>();
             while (queryAll.HasMoreResults)
             {
-                results.AddRange(await queryAll.ExecuteNextAsync<Models.User>());
+                results.AddRange(await queryAll.ExecuteNextAsync<Models.MEUser>());
             }
 
             return results;
