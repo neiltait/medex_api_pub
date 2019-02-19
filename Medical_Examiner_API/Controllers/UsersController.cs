@@ -21,12 +21,12 @@ namespace Medical_Examiner_API.Controllers
         public DocumentClient client = null;
         private IUserPersistence _user_persistence;
 
-        public UsersController(IUserPersistence user_persistence)
+        public UsersController(IUserPersistence user_persistence, IMELoggerPersistence logger)
         {
             _user_persistence = user_persistence;
         }
 
-        // GET api/values
+        // GET api/users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Models.User>>> GetAsync()
         {
@@ -34,41 +34,22 @@ namespace Medical_Examiner_API.Controllers
             return Ok(Users);
         }
 
-        // GET api/values/seed
-        [HttpGet("seed")]
-        public async Task<ActionResult<IEnumerable<Models.User>>> Seed()
+        // GET api/users/{user_id}
+        [HttpGet("{id}")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<Examination>> GetExamination(string id)
         {
-            Models.User us1 = new Models.User();
-            Models.User us2 = new Models.User();
-            Models.User us3 = new Models.User();
-
-            us1.FirstName = "Robert";
-            us2.FirstName = "Louise";
-            us3.FirstName = "Crowbar";
-
-            us1.LastName = "Bobert";
-            us2.LastName = "Cheese";
-            us3.LastName = "Jones";
-
-            us1.CreatedAt = DateTime.Now;
-            us2.CreatedAt = DateTime.Now;
-            us3.CreatedAt = DateTime.Now;
-
-            us1.ModifiedAt = DateTime.Now;
-            us2.ModifiedAt = DateTime.Now;
-            us3.ModifiedAt = DateTime.Now;
-
-            us1.DeletedAt = null;
-            us2.DeletedAt = null;
-            us3.DeletedAt = null;
-
-
-            await _user_persistence.SaveUserAsync(us1);
-            await _user_persistence.SaveUserAsync(us2);
-            await _user_persistence.SaveUserAsync(us3);
-
-            var Examinations = await _user_persistence.GetUsersAsync();
-            return Ok(Examinations);
+            try
+            {
+                return Ok(await _user_persistence.GetUserAsync(id));
+            }
+            catch (DocumentClientException)
+            {
+                return NotFound();
+            }
         }
+
+
+
     }
 }

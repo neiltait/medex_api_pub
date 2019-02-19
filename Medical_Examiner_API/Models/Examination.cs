@@ -29,47 +29,69 @@ namespace Medical_Examiner_API.Models
 
         [Required]
         [JsonProperty(PropertyName = "house_name_number")]
+        [DataType(DataType.Text)]
+        [StringLength(250)]
         public string HouseNameNumber { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "street")]
+        [DataType(DataType.Text)]
+        [StringLength(250)]
         public string Street { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "town")]
+        [DataType(DataType.Text)]
+        [StringLength(250)]
         public string Town { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "county")]
+        [DataType(DataType.Text)]
+        [StringLength(250)]
         public string County { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "postcode")]
+        [DataType(DataType.Text)]
+        [StringLength(12)]
         public string Postcode { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "country")]
+        [DataType(DataType.Text)]
+        [StringLength(250)]
         public string Country { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "last_occupation")]
+        [DataType(DataType.Text)]
+        [StringLength(250)]
         public string LastOccupation { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "organisation_care_before_death_location_id")]
+        [DataType(DataType.Text)]
+        [StringLength(100)]
         public string OrganisationCareBeforeDeathLocationId { get; set; }
 
         // Initial thinking is that below is the location ID that is used for authorisation and permission queries 
         [Required]
         [JsonProperty(PropertyName = "location_id")]
+        [DataType(DataType.Text)]
+        [StringLength(100)]
         public string DeathOccuredLocationId { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "mode_of_disposal")]
+        [DataType(DataType.Text)]
+        [StringLength(250)]
         public ModeOfDisposal ModeOfDisposal { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "funderal_directors")]
+        [DataType(DataType.Text)]
+        [StringLength(100)]
         public string FuneralDirectors { get; set; }
 
         // Personal affects 

@@ -19,6 +19,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using ME_API_tests.Persistance;
 
 namespace Medical_Examiner_API_Tests.ControllerTests
 {
@@ -57,7 +58,7 @@ namespace Medical_Examiner_API_Tests.ControllerTests
         private ClaimsPrincipal _claimsPrincipal;
         private ConnectionInfo _connectionInfo;
 
-        public MockHttpContext() :base()
+        public MockHttpContext() : base()
         {
             _claimsPrincipal = new ClaimsPrincipal();
             _connectionInfo = new MockConnectionInfo();
@@ -73,8 +74,6 @@ namespace Medical_Examiner_API_Tests.ControllerTests
 
         public override WebSocketManager WebSockets => throw new NotImplementedException();
 
-     
-         
         public override ClaimsPrincipal User { get { return _claimsPrincipal; } set { _claimsPrincipal = value; } }
         public override IDictionary<object, object> Items { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public override IServiceProvider RequestServices { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -114,12 +113,13 @@ namespace Medical_Examiner_API_Tests.ControllerTests
     public class ControllerActionFilterTests
     {
         MELoggerMocker _mockLogger;
-        DJPTestController _controller;
+        UserPersistanceFake _user_persiustance;
+        UsersController _controller;
 
         public ControllerActionFilterTests()
         {
             _mockLogger = new MELoggerMocker();
-            _controller = new DJPTestController(_mockLogger); 
+            _controller = new UsersController(_user_persiustance, _mockLogger);
         }
 
         [Fact]
@@ -137,7 +137,7 @@ namespace Medical_Examiner_API_Tests.ControllerTests
             actionContext.ActionDescriptor = new Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor();
             var filters = new List<IFilterMetadata>();
             var actionArguments = new Dictionary<string, object>();
-            var actionExecutingContext = new ActionExecutingContext(actionContext, filters, actionArguments, _controller );
+            var actionExecutingContext = new ActionExecutingContext(actionContext, filters, actionArguments, _controller);
             controllerActionFilter.OnActionExecuting(actionExecutingContext);
             var logEntry = _mockLogger.LogEntry;
 
