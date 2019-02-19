@@ -35,7 +35,7 @@ namespace Medical_Examiner_API
 
             foreach (var parameter in context.ActionArguments)
             {
-                var paramterItem = parameter.Key.ToString() + ": " + parameter.Value == null ? "" : parameter.Value.ToString();
+                var paramterItem = $"{parameter.Key}: {parameter.Value}";
                 parameters.Add(paramterItem);
                 
             }
