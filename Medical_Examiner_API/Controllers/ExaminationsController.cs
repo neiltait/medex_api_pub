@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models;
 using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Medical_Examiner_API.Loggers;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

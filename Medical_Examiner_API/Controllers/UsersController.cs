@@ -68,10 +68,9 @@ namespace Medical_Examiner_API.Controllers
                 return NotFound();
             }
         }
-        
+
         // POST api/users
         [HttpPut("{UserId}")]
-
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<MeUser>> UpdateUser(MeUser meUser)
         {

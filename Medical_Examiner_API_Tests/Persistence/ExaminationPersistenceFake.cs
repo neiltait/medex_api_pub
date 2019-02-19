@@ -53,13 +53,9 @@ namespace Medical_Examiner_API_Tests.Persistence
 
         public async Task<Examination> GetExaminationAsync(string examinationId)
         {
-            foreach (Examination examination in _examinations)
-            {
+            foreach (var examination in _examinations)
                 if (examination.ExaminationId == examinationId)
-                {
                     return await Task.FromResult(examination);
-                }
-            }
 
             throw new ArgumentException("Invalid Argument");
         }

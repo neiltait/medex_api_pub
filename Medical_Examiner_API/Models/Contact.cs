@@ -1,10 +1,9 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
 
 namespace Medical_Examiner_API.Models
 {
-    public abstract class Contact : Record 
+    public abstract class Contact : Record
     {
         [Required]
         [JsonProperty(PropertyName = "full_name")]

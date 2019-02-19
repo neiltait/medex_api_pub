@@ -13,8 +13,6 @@ namespace Medical_Examiner_API_Tests.ControllerTests
 {
     public class ExaminationControllerTests
     {
-        readonly ExaminationsController _controller;
-
         public ExaminationControllerTests()
         {
             // Arrange 
@@ -23,17 +21,17 @@ namespace Medical_Examiner_API_Tests.ControllerTests
             _controller = new ExaminationsController(examinationPersistence, mockLogger);
         }
 
+        private readonly ExaminationsController _controller;
+
         [Fact]
-        public void GetExaminations_When_Called_Returns_Expected_Type()
+        public void GetExamination_When_Called_With_Invalid_Id_Returns_Expected_Type()
         {
             // Act
-            var response = _controller.GetExaminations();
+            var response = _controller.GetExamination("dfgdfgdfg");
 
             // Assert
-            var taskResult = response.Should().BeOfType<Task<ActionResult<IEnumerable<Examination>>>>().Subject;
-            var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            var examinations = okResult.Value.Should().BeAssignableTo<ICollection<Examination>>().Subject;
-            Assert.Equal(3, examinations.Count);
+            var taskResult = response.Should().BeOfType<Task<ActionResult<Examination>>>().Subject;
+            Assert.Equal(TaskStatus.Faulted, taskResult.Status);
         }
 
         [Fact]
@@ -50,14 +48,16 @@ namespace Medical_Examiner_API_Tests.ControllerTests
         }
 
         [Fact]
-        public void GetExamination_When_Called_With_Invalid_Id_Returns_Expected_Type()
+        public void GetExaminations_When_Called_Returns_Expected_Type()
         {
             // Act
-            var response = _controller.GetExamination("dfgdfgdfg");
+            var response = _controller.GetExaminations();
 
             // Assert
-            var taskResult = response.Should().BeOfType<Task<ActionResult<Examination>>>().Subject;
-            Assert.Equal(TaskStatus.Faulted, taskResult.Status);
+            var taskResult = response.Should().BeOfType<Task<ActionResult<IEnumerable<Examination>>>>().Subject;
+            var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var examinations = okResult.Value.Should().BeAssignableTo<ICollection<Examination>>().Subject;
+            Assert.Equal(3, examinations.Count);
         }
     }
 }

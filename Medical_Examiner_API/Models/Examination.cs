@@ -1,11 +1,17 @@
 ﻿using System;
-using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace Medical_Examiner_API.Models
 {
     public class Examination : Record
     {
+        // Linked Fields 
+        public Examination()
+        {
+            Completed = false;
+        }
+
         [Required]
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "examination_id")]
@@ -150,11 +156,5 @@ namespace Medical_Examiner_API.Models
         [Required]
         [JsonProperty(PropertyName = "coroner_status")]
         public CoronerStatus CoronerStatus { get; set; }
-
-        // Linked Fields 
-        public Examination()
-        {
-            Completed = false;
-        }
     }
 }

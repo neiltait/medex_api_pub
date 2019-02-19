@@ -13,13 +13,12 @@ namespace Medical_Examiner_API_Tests.Persistence
 
         public UserPersistenceFake()
         {
-
             // Populate the users fake vars 
             _users = new List<MeUser>();
 
-            for (int count = 0; count < 10; count++)
+            for (var count = 0; count < 10; count++)
             {
-                MeUser u = new MeUser();
+                var u = new MeUser();
                 u.Email = Internet.Email();
                 u.UserId = "aaaaa" + count;
                 u.FirstName = Name.First();
@@ -38,13 +37,9 @@ namespace Medical_Examiner_API_Tests.Persistence
 
         public async Task<MeUser> GetUserAsync(string UserId)
         {
-            foreach (MeUser user in _users)
-            {
+            foreach (var user in _users)
                 if (user.UserId == UserId)
-                {
                     return await Task.FromResult(user);
-                }
-            }
 
             throw new ArgumentException("Invalid Argument");
         }
