@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 
 using Microsoft.Extensions.Options;
 using Medical_Examiner_API.Loggers;
+using Medical_Examiner_API.Seeders;
 
 namespace Medical_Examiner_API
 {
@@ -90,6 +91,9 @@ namespace Medical_Examiner_API
             loggerFactory.AddDebug();
 
             app.UseMvc();
+
+            var locationSeeder = new LocationsSeeder();
+            locationSeeder.LoadFromFile();
         }
     }
 }
