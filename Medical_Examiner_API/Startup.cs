@@ -93,7 +93,8 @@ namespace Medical_Examiner_API
             app.UseMvc();
 
             var locationSeeder = new LocationsSeeder();
-            locationSeeder.LoadFromFile();
+            var jsonFileName = Configuration["SourceData:Locations"];
+            locationSeeder.LoadFromFile(jsonFileName);
         }
     }
 }

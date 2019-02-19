@@ -49,22 +49,22 @@ namespace Medical_Examiner_API.Seeders
 
     public class LocationsSeeder
     {
-        public void LoadFromFile()
+        public void LoadFromFile(string jsonFileName)
         {
-            try
-            {
+            //try
+            //{
                 
-                var json = File.ReadAllText(@"C:\Medical Examiners\medical_examiner_api\Source_Data\locations.json");
+                var json = File.ReadAllText(jsonFileName);
                 var result = JsonConvert.DeserializeObject<List<Location>>(json);
                 var djp2 = 2;
 
-            }
-            catch (Exception ex)
-            {
+            //}
+            //catch (Exception ex)
+            //{
 
-                var djp = ex.Message;
-                var djp1 = 1;
-            }
+            //    var djp = ex.Message;
+            //    var djp1 = 1;
+            //}
  
         }
     }
