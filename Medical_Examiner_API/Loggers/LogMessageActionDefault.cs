@@ -41,7 +41,6 @@ namespace Medical_Examiner_API.Loggers
             }
 
             contents.Append(RemoteIP + " ");
-
             contents.Append(TimeStamp.ToLongDateString() + "_" + TimeStamp.ToLongTimeString());
 
             return contents.ToString();
