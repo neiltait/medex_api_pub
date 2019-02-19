@@ -25,10 +25,12 @@ namespace Medical_Examiner_API
 
             var logger = controller.Logger;
 
-            var userName = context.HttpContext.User.Identity.Name ?? "Unknown";
-            var userAuthenticationType = context.HttpContext.User.Identity.AuthenticationType ?? "Unknown";
-            var userIsAuthenticated = context.HttpContext.User.Identity.IsAuthenticated;
-            var controllerName = context.RouteData.Values.Values.Count >= 2? context.RouteData.Values.Values.ElementAt(1).ToString(): "Unknown";
+            var identity = context.HttpContext.User.Identity;
+            var userName = identity.Name ?? "Unknown";
+            var userAuthenticationType = identity.AuthenticationType ?? "Unknown";
+            var userIsAuthenticated = identity.IsAuthenticated;
+            var routeDataValues = context.RouteData.Values.Values;
+            var controllerName = routeDataValues.Count >= 2 ? routeDataValues.ElementAt(1).ToString(): "Unknown";
             var parameters = new List<string>();
 
             foreach (var parameter in context.ActionArguments)
@@ -37,15 +39,13 @@ namespace Medical_Examiner_API
                 parameters.Add(paramterItem);
                 
             }
-            var controllerAction = context.RouteData.Values.Values.Count >= 1 ? context.RouteData.Values.Values.ElementAt(0).ToString() : "Unknown";
-            var remoteIP = context.HttpContext.Connection.RemoteIpAddress == null ? "Unknown" : context.HttpContext.Connection.RemoteIpAddress.ToString();
+            var controllerAction = routeDataValues.Count >= 1 ? routeDataValues.ElementAt(0).ToString() : "Unknown";
+            var remoteIPAddress = context.HttpContext.Connection.RemoteIpAddress;
+            var remoteIP = remoteIPAddress == null ? "Unknown" : remoteIPAddress.ToString();
             var timeStamp = DateTime.UtcNow;
 
             logger.Log(userName, userAuthenticationType, userIsAuthenticated, controllerName, controllerAction, parameters, remoteIP, timeStamp);
-
-
-         
-            
+ 
         }
     }
 }
