@@ -36,21 +36,49 @@ namespace Medical_Examiner_API.Persistence
             await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection() { Id = "Users" });
         }
 
-        public async Task SaveUserAsync(Models.User user)
+        public async Task<Models.User> SaveUserAsync(Models.User user)
         {
             await EnsureSetupAsync();
 
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, "Users");
-            await _client.UpsertDocumentAsync(documentCollectionUri, user);
+            var doc = await _client.UpsertDocumentAsync(documentCollectionUri, user);
+
+            if (doc == null)
+            {
+                throw new ArgumentException("Invalid Argument");
+            }
+
+            return (dynamic)doc;
         }
 
-        public async Task<Models.User> GetUserAsync(string Id)
+        public async Task<Models.User> CreateUserAsync(Models.User user)
         {
             await EnsureSetupAsync();
 
-            var documentUri = UriFactory.CreateDocumentUri(_databaseId, "Users", Id);
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, "Users");
+            var document = await _client.CreateDocumentAsync(documentCollectionUri, user);
+
+            if (document == null)
+            {
+                throw new ArgumentException("Invalid Argument");
+            }
+
+            return (dynamic)document;
+        }
+
+        public async Task<Models.User> GetUserAsync(string UserId)
+        {
+            await EnsureSetupAsync();
+
+            var documentUri = UriFactory.CreateDocumentUri(_databaseId, "Users", UserId);
             var result = await _client.ReadDocumentAsync<Models.User>(documentUri);
-            return result.Document;
+
+            if (result.Document == null)
+            {
+                throw new ArgumentException("Invalid Argument");
+            }
+
+            return (dynamic)result.Document;
         }
 
         public async Task<IEnumerable<Models.User>> GetUsersAsync()

@@ -19,7 +19,6 @@ namespace Medical_Examiner_API.Controllers
     [ApiController]
     public class UsersController : BaseController
     {
-        public DocumentClient client = null;
         private IUserPersistence _user_persistence;
 
         public UsersController(IUserPersistence user_persistence, IMELogger logger) : base(logger)
@@ -30,7 +29,7 @@ namespace Medical_Examiner_API.Controllers
         // GET api/users
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<IEnumerable<Models.User>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<Models.User>>> GetUsers()
         {
             var Users = await _user_persistence.GetUsersAsync();
             return Ok(Users);
@@ -39,13 +38,36 @@ namespace Medical_Examiner_API.Controllers
         // GET api/users/{user_id}
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<Examination>> GetExamination(string id)
+        public async Task<ActionResult<Examination>> GetUser(string user_id)
         {
             try
             {
-                return Ok(await _user_persistence.GetUserAsync(id));
+                return Ok(await _user_persistence.GetUserAsync(user_id));
             }
             catch (DocumentClientException)
+            {
+                return NotFound();
+            }
+            catch (ArgumentException)
+            {
+                return NotFound();
+            }
+        }
+
+        // PUT api/users
+        [HttpPut]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<Examination>> PutUser(Models.User user)
+        {
+            try
+            {
+                return Ok(await _user_persistence.CreateUserAsync(user));
+            }
+            catch (DocumentClientException)
+            {
+                return NotFound();
+            }
+            catch (ArgumentException)
             {
                 return NotFound();
             }

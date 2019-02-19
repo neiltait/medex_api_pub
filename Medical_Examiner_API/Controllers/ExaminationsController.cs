@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Medical_Examiner_API.Models;
 using Medical_Examiner_API.Persistence;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
-using Newtonsoft.Json;
-using Medical_Examiner_API;
 using Medical_Examiner_API.Loggers;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -23,7 +18,7 @@ namespace Medical_Examiner_API.Controllers
         public DocumentClient client = null;
         private IExaminationPersistence _examination_persistence;
 
-        public ExaminationsController(IExaminationPersistence examination_persistence, IMELogger logger): base(logger)
+        public ExaminationsController(IExaminationPersistence examination_persistence, IMELogger logger) : base(logger)
         {
             _examination_persistence = examination_persistence;
         }
@@ -40,11 +35,11 @@ namespace Medical_Examiner_API.Controllers
         // GET api/examinations
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<Examination>> GetExamination(string id)
+        public async Task<ActionResult<Examination>> GetExamination(string examination_id)
         {
             try
             {
-                return Ok(await _examination_persistence.GetExaminationAsync(id));
+                return Ok(await _examination_persistence.GetExaminationAsync(examination_id));
             }
             catch (DocumentClientException)
             {

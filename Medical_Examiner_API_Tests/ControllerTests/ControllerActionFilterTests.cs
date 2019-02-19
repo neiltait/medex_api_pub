@@ -1,8 +1,6 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Medical_Examiner_API.Controllers;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API;
@@ -10,7 +8,6 @@ using System.Threading.Tasks;
 using Xunit;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Http.Features;
 using System.Security.Claims;
 using System.Threading;
@@ -107,22 +104,24 @@ namespace Medical_Examiner_API_Tests.ControllerTests
             return base.ToString();
         }
     }
+
     public class ControllerActionFilterTests
     {
         MELoggerMocker _mockLogger;
-        UserPersistanceFake _user_persiustance;
+        UserPersistanceFake _user_persistance;
         UsersController _controller;
 
         public ControllerActionFilterTests()
         {
+
             _mockLogger = new MELoggerMocker();
-            _controller = new UsersController(_user_persiustance, _mockLogger);
+            _user_persistance = new UserPersistanceFake();
+            _controller = new UsersController(_user_persistance, _mockLogger);
         }
 
         [Fact]
         public void CheckCallToLogger()
         {
-
             var controllerActionFilter = new ControllerActionFilter();
             var actionContext = new ActionContext();
             actionContext.HttpContext = new MockHttpContext();

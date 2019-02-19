@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Medical_Examiner_API.Models
 {
-    public abstract class Record
+    public abstract class Record : Microsoft.Azure.Documents.Document
     {
         [Required]
         [Display(Name = "user_id")]

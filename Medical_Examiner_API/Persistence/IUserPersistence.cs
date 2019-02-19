@@ -8,8 +8,9 @@ namespace Medical_Examiner_API.Persistence
 {
     public interface IUserPersistence
     {
-        Task SaveUserAsync(User user);
-        Task<User> GetUserAsync(string Id);
+        Task<User> SaveUserAsync(User user);
+        Task<User> CreateUserAsync(User user);
+        Task<User> GetUserAsync(string UserId);
         Task<IEnumerable<User>> GetUsersAsync();
 
     }

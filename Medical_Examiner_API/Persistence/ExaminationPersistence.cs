@@ -47,11 +47,11 @@ namespace Medical_Examiner_API.Persistence
             return true;
         }
 
-        public async Task<Examination> GetExaminationAsync(string Id)
+        public async Task<Examination> GetExaminationAsync(string ExaminationId)
         {
             await EnsureSetupAsync();
 
-            var documentUri = UriFactory.CreateDocumentUri(_databaseId, "Examinations", Id);
+            var documentUri = UriFactory.CreateDocumentUri(_databaseId, "Examinations", ExaminationId);
             var result = await _client.ReadDocumentAsync<Examination>(documentUri);
 
             if (result.Document == null)
