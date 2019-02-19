@@ -13,19 +13,22 @@ namespace Medical_Examiner_API
     {
         public void OnActionExecuted(ActionExecutedContext context)
         {
-          
-         
+           
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
             var controller = context.Controller as Medical_Examiner_API.Controllers.BaseController;
+
+            if (controller == null)
+                return;
+
             var logger = controller.Logger;
 
-            var userName = context.HttpContext.User.Identity.Name == null? "Unknown": context.HttpContext.User.Identity.Name;
-            var userAuthenticationType = context.HttpContext.User.Identity.AuthenticationType == null ? "Unknown" : context.HttpContext.User.Identity.AuthenticationType;
+            var userName = context.HttpContext.User.Identity.Name ?? "Unknown";
+            var userAuthenticationType = context.HttpContext.User.Identity.AuthenticationType ?? "Unknown";
             var userIsAuthenticated = context.HttpContext.User.Identity.IsAuthenticated;
-            var controllerName = context.RouteData.Values.Values.ElementAt(1).ToString();
+            var controllerName = context.RouteData.Values.Values.Count >= 2? context.RouteData.Values.Values.ElementAt(1).ToString(): "Unknown";
             var parameters = new List<string>();
 
             foreach (var parameter in context.ActionArguments)
@@ -34,7 +37,7 @@ namespace Medical_Examiner_API
                 parameters.Add(paramterItem);
                 
             }
-            var controllerAction = context.RouteData.Values.Values.ElementAt(0).ToString();
+            var controllerAction = context.RouteData.Values.Values.Count >= 1 ? context.RouteData.Values.Values.ElementAt(0).ToString() : "Unknown";
             var remoteIP = context.HttpContext.Connection.RemoteIpAddress == null ? "Unknown" : context.HttpContext.Connection.RemoteIpAddress.ToString();
             var timeStamp = DateTime.UtcNow;
 
