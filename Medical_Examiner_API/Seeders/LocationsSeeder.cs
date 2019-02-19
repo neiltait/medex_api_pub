@@ -46,26 +46,16 @@ namespace Medical_Examiner_API.Seeders
         }
     }
 
+    
 
     public class LocationsSeeder
     {
+        public List<Location> Locations { get; private set; }
+
         public void LoadFromFile(string jsonFileName)
         {
-            //try
-            //{
-                
-                var json = File.ReadAllText(jsonFileName);
-                var result = JsonConvert.DeserializeObject<List<Location>>(json);
-                var djp2 = 2;
-
-            //}
-            //catch (Exception ex)
-            //{
-
-            //    var djp = ex.Message;
-            //    var djp1 = 1;
-            //}
- 
+            var json = File.ReadAllText(jsonFileName);
+            Locations = JsonConvert.DeserializeObject<List<Location>>(json);
         }
     }
 }
