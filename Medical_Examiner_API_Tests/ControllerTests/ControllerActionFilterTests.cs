@@ -113,8 +113,8 @@ namespace Medical_Examiner_API_Tests.ControllerTests
     }
     public class ControllerActionFilterTests
     {
-        private MELoggerMocker _mockLogger;
-        private ValuesController _controller;
+        MELoggerMocker _mockLogger;
+        ValuesController _controller;
 
         public ControllerActionFilterTests()
         {
@@ -123,10 +123,9 @@ namespace Medical_Examiner_API_Tests.ControllerTests
         }
 
         [Fact]
-        //verify that ControllerActionFilter extracts correct details from HttpContext object 
         public void CheckCallToLogger()
         {
-            //Arrange
+
             var controllerActionFilter = new ControllerActionFilter();
             var actionContext = new ActionContext();
             actionContext.HttpContext = new MockHttpContext();
@@ -139,15 +138,11 @@ namespace Medical_Examiner_API_Tests.ControllerTests
             var filters = new List<IFilterMetadata>();
             var actionArguments = new Dictionary<string, object>();
             var actionExecutingContext = new ActionExecutingContext(actionContext, filters, actionArguments, _controller );
-
-
-            //Act
             controllerActionFilter.OnActionExecuting(actionExecutingContext);
-
-
-            //Assert
             var logEntry = _mockLogger.LogEntry;
+
             var logEntryContents = logEntry.UserName + " " + logEntry.UserAuthenticationType + " " + logEntry.UserIsAuthenticated.ToString() + " " + logEntry.ControllerName + " " + logEntry.ControllerMethod + " " + logEntry.RemoteIP;
+
             var expectedMessage = "Unknown Unknown False MyMethod MyAction Unknown";
             Assert.Equal(expectedMessage, logEntryContents);
         }
