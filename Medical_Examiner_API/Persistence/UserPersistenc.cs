@@ -36,7 +36,7 @@ namespace Medical_Examiner_API.Persistence
             await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection() { Id = "Users" });
         }
 
-        public async Task<Models.MEUser> UpdateUserAsync(Models.MEUser meUser)
+        public async Task<Models.MeUser> UpdateUserAsync(Models.MeUser meUser)
         {
             await EnsureSetupAsync();
 
@@ -48,10 +48,10 @@ namespace Medical_Examiner_API.Persistence
                 throw new ArgumentException("Invalid Argument");
             }
 
-            return (Models.MEUser)doc;
+            return (Models.MeUser)doc;
         }
 
-        public async Task<Models.MEUser> CreateUserAsync(Models.MEUser meUser)
+        public async Task<Models.MeUser> CreateUserAsync(Models.MeUser meUser)
         {
             await EnsureSetupAsync();
 
@@ -63,15 +63,15 @@ namespace Medical_Examiner_API.Persistence
                 throw new ArgumentException("Invalid Argument");
             }
 
-            return (Models.MEUser)document;
+            return (Models.MeUser)document;
         }
 
-        public async Task<Models.MEUser> GetUserAsync(string UserId)
+        public async Task<Models.MeUser> GetUserAsync(string UserId)
         {
             await EnsureSetupAsync();
 
             var documentUri = UriFactory.CreateDocumentUri(_databaseId, "Users", UserId);
-            var result = await _client.ReadDocumentAsync<Models.MEUser>(documentUri);
+            var result = await _client.ReadDocumentAsync<Models.MeUser>(documentUri);
 
             if (result.Document == null)
             {
@@ -81,7 +81,7 @@ namespace Medical_Examiner_API.Persistence
             return result.Document;
         }
 
-        public async Task<IEnumerable<Models.MEUser>> GetUsersAsync()
+        public async Task<IEnumerable<Models.MeUser>> GetUsersAsync()
         {
             await EnsureSetupAsync();
 
@@ -89,14 +89,14 @@ namespace Medical_Examiner_API.Persistence
 
             // build the query
             var feedOptions = new FeedOptions() { MaxItemCount = -1 };
-            var query = _client.CreateDocumentQuery<Models.MEUser>(documentCollectionUri, "SELECT * FROM Users", feedOptions);
+            var query = _client.CreateDocumentQuery<Models.MeUser>(documentCollectionUri, "SELECT * FROM Users", feedOptions);
             var queryAll = query.AsDocumentQuery();
 
             // combine the results
-            var results = new List<Models.MEUser>();
+            var results = new List<Models.MeUser>();
             while (queryAll.HasMoreResults)
             {
-                results.AddRange(await queryAll.ExecuteNextAsync<Models.MEUser>());
+                results.AddRange(await queryAll.ExecuteNextAsync<Models.MeUser>());
             }
 
             return results;

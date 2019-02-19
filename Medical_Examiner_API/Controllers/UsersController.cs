@@ -25,7 +25,7 @@ namespace Medical_Examiner_API.Controllers
         // GET api/users
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<IEnumerable<MEUser>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<MeUser>>> GetUsers()
         {
             var users = await _userPersistence.GetUsersAsync();
             return Ok(users);
@@ -53,7 +53,7 @@ namespace Medical_Examiner_API.Controllers
         // POST api/users
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<MEUser>> CreateUser(MEUser meUser)
+        public async Task<ActionResult<MeUser>> CreateUser(MeUser meUser)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace Medical_Examiner_API.Controllers
         [HttpPut("{UserId}")]
 
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<MEUser>> UpdateUser(MEUser meUser)
+        public async Task<ActionResult<MeUser>> UpdateUser(MeUser meUser)
         {
             try
             {

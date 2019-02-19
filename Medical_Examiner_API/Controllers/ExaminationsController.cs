@@ -15,12 +15,11 @@ namespace Medical_Examiner_API.Controllers
     [ApiController]
     public class ExaminationsController : BaseController
     {
-        public DocumentClient client = null;
-        private IExaminationPersistence _examination_persistence;
+        private readonly IExaminationPersistence _examinationPersistence;
 
-        public ExaminationsController(IExaminationPersistence examination_persistence, IMELogger logger) : base(logger)
+        public ExaminationsController(IExaminationPersistence examinationPersistence, IMELogger logger) : base(logger)
         {
-            _examination_persistence = examination_persistence;
+            _examinationPersistence = examinationPersistence;
         }
 
         // GET api/examinations
@@ -28,18 +27,18 @@ namespace Medical_Examiner_API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<IEnumerable<Examination>>> GetExaminations()
         {
-            var Examinations = await _examination_persistence.GetExaminationsAsync();
+            var Examinations = await _examinationPersistence.GetExaminationsAsync();
             return Ok(Examinations);
         }
 
         // GET api/examinations
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<Examination>> GetExamination(string examination_id)
+        public async Task<ActionResult<Examination>> GetExamination(string examinationId)
         {
             try
             {
-                return Ok(await _examination_persistence.GetExaminationAsync(examination_id));
+                return Ok(await _examinationPersistence.GetExaminationAsync(examinationId));
             }
             catch (DocumentClientException)
             {

@@ -1,28 +1,26 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using Medical_Examiner_API.Models;
-using Medical_Examiner_API.Persistence;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Medical_Examiner_API.Controllers;
 using Medical_Examiner_API.Loggers;
-using ME_API_tests.Persistance;
-using System.Threading.Tasks;
+using Medical_Examiner_API.Models;
+using Medical_Examiner_API.Persistence;
+using Medical_Examiner_API_Tests.Persistence;
+using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
-namespace ME_API_tests.ControllerTests
+namespace Medical_Examiner_API_Tests.ControllerTests
 {
     public class ExaminationControllerTests
     {
-        MELoggerMocker _mockLogger;
-        ExaminationsController _controller;
-        IExaminationPersistence _examination_persistance;
+        readonly ExaminationsController _controller;
 
         public ExaminationControllerTests()
         {
             // Arrange 
-            _examination_persistance = new ExaminationPersistanceFake();
-            _mockLogger = new MELoggerMocker();
-            _controller = new ExaminationsController(_examination_persistance, _mockLogger);
+            IExaminationPersistence examinationPersistence = new ExaminationPersistenceFake();
+            var mockLogger = new MELoggerMocker();
+            _controller = new ExaminationsController(examinationPersistence, mockLogger);
         }
 
         [Fact]
@@ -32,9 +30,9 @@ namespace ME_API_tests.ControllerTests
             var response = _controller.GetExaminations();
 
             // Assert
-            var task_result = response.Should().BeOfType<Task<ActionResult<IEnumerable<Examination>>>>().Subject;
-            var okresult = task_result.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            var examinations = okresult.Value.Should().BeAssignableTo<ICollection<Examination>>().Subject;
+            var taskResult = response.Should().BeOfType<Task<ActionResult<IEnumerable<Examination>>>>().Subject;
+            var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var examinations = okResult.Value.Should().BeAssignableTo<ICollection<Examination>>().Subject;
             Assert.Equal(3, examinations.Count);
         }
 
@@ -45,22 +43,21 @@ namespace ME_API_tests.ControllerTests
             var response = _controller.GetExamination("aaaaa");
 
             // Assert
-            var task_result = response.Should().BeOfType<Task<ActionResult<Examination>>>().Subject;
-            var okresult = task_result.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            var examination = okresult.Value.Should().BeAssignableTo<Examination>().Subject;
+            var taskResult = response.Should().BeOfType<Task<ActionResult<Examination>>>().Subject;
+            var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var examination = okResult.Value.Should().BeAssignableTo<Examination>().Subject;
             Assert.Equal("aaaaa", examination.ExaminationId);
         }
 
-        //[Fact]
-        //public void GetExamination_When_Called_With_Invalid_Id_Returns_Expected_Type()
-        //{
-        //    // Act
-        //    var response = _controller.GetExamination("dfgdfgdfg");
+        [Fact]
+        public void GetExamination_When_Called_With_Invalid_Id_Returns_Expected_Type()
+        {
+            // Act
+            var response = _controller.GetExamination("dfgdfgdfg");
 
-        //    // Assert
-        //    var task_result = Assert.IsType<NotFoundObjectResult>(response);
-        //    //var task_result = response.Should().BeOfType<Task<ActionResult<Examination>>>().Subject;
-        //    //var notfound = task_result.Should().BeAssignableTo<NotFoundResult>().Subject;
-        //}
+            // Assert
+            var taskResult = response.Should().BeOfType<Task<ActionResult<Examination>>>().Subject;
+            Assert.Equal(TaskStatus.Faulted, taskResult.Status);
+        }
     }
 }

@@ -13,7 +13,8 @@ using System.Security.Claims;
 using System.Threading;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
-using ME_API_tests.Persistance;
+using Medical_Examiner_API_Tests.Persistence;
+using AuthenticationManager = Microsoft.AspNetCore.Http.Authentication.AuthenticationManager;
 
 namespace Medical_Examiner_API_Tests.ControllerTests
 {
@@ -26,36 +27,26 @@ namespace Medical_Examiner_API_Tests.ControllerTests
         public override int LocalPort { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public override X509Certificate2 ClientCertificate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
-
         public override Task<X509Certificate2> GetClientCertificateAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             throw new NotImplementedException();
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return base.ToString();
         }
     }
 
     class MockHttpContext : HttpContext
     {
         private ClaimsPrincipal _claimsPrincipal;
-        private ConnectionInfo _connectionInfo;
+        private readonly ConnectionInfo _connectionInfo;
 
-        public MockHttpContext() : base()
+        public MockHttpContext()
         {
             _claimsPrincipal = new ClaimsPrincipal();
             _connectionInfo = new MockConnectionInfo();
+        }
+
+        public override void Abort()
+        {
+            throw new NotImplementedException();
         }
 
         public override IFeatureCollection Features => throw new NotImplementedException();
@@ -67,6 +58,7 @@ namespace Medical_Examiner_API_Tests.ControllerTests
         public override ConnectionInfo Connection { get { return _connectionInfo; } }
 
         public override WebSocketManager WebSockets => throw new NotImplementedException();
+        public override AuthenticationManager Authentication { get; }
 
         public override ClaimsPrincipal User { get { return _claimsPrincipal; } set { _claimsPrincipal = value; } }
         public override IDictionary<object, object> Items { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -74,57 +66,25 @@ namespace Medical_Examiner_API_Tests.ControllerTests
         public override CancellationToken RequestAborted { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public override string TraceIdentifier { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public override ISession Session { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        [Obsolete("Microsoft.AspNetCore.Http.Authentication.AuthenticationManager Authentication is deprecated, CS0672 warning")]
-        public override Microsoft.AspNetCore.Http.Authentication.AuthenticationManager Authentication
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public override void Abort()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return base.ToString();
-        }
     }
 
     public class ControllerActionFilterTests
     {
-        MELoggerMocker _mockLogger;
-        UserPersistanceFake _user_persistance;
-        UsersController _controller;
+        private readonly MELoggerMocker _mockLogger;
+        private readonly UsersController _controller;
 
         public ControllerActionFilterTests()
         {
-
             _mockLogger = new MELoggerMocker();
-            _user_persistance = new UserPersistanceFake();
-            _controller = new UsersController(_user_persistance, _mockLogger);
+            var userPersistence = new UserPersistenceFake();
+            _controller = new UsersController(userPersistence, _mockLogger);
         }
 
         [Fact]
         public void CheckCallToLogger()
         {
             var controllerActionFilter = new ControllerActionFilter();
-            var actionContext = new ActionContext();
-            actionContext.HttpContext = new MockHttpContext();
+            var actionContext = new ActionContext {HttpContext = new MockHttpContext()};
             var identity = new ClaimsIdentity();
             actionContext.HttpContext.User.AddIdentity(identity);
             actionContext.RouteData = new Microsoft.AspNetCore.Routing.RouteData();
@@ -139,7 +99,7 @@ namespace Medical_Examiner_API_Tests.ControllerTests
 
             var logEntryContents = logEntry.UserName + " " + logEntry.UserAuthenticationType + " " + logEntry.UserIsAuthenticated.ToString() + " " + logEntry.ControllerName + " " + logEntry.ControllerMethod + " " + logEntry.RemoteIP;
 
-            var expectedMessage = "Unknown Unknown False MyMethod MyAction Unknown";
+            const string expectedMessage = "Unknown Unknown False MyMethod MyAction Unknown";
             Assert.Equal(expectedMessage, logEntryContents);
         }
     }
