@@ -114,15 +114,16 @@ namespace Medical_Examiner_API_Tests.ControllerTests
     public class ControllerActionFilterTests
     {
         private MELoggerMocker _mockLogger;
-        private DJPTestController _controller;
+        private ValuesController _controller;
 
         public ControllerActionFilterTests()
         {
             _mockLogger = new MELoggerMocker();
-            _controller = new DJPTestController(_mockLogger); 
+            _controller = new ValuesController(_mockLogger); 
         }
 
         [Fact]
+        //verify that ControllerActionFilter extracts correct details from HttpContext object 
         public void CheckCallToLogger()
         {
             //Arrange
