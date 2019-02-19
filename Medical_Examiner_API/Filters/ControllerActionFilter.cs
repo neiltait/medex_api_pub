@@ -13,36 +13,39 @@ namespace Medical_Examiner_API
     {
         public void OnActionExecuted(ActionExecutedContext context)
         {
-          
-         
+           
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
             var controller = context.Controller as Medical_Examiner_API.Controllers.BaseController;
+
+            if (controller == null)
+                return;
+
             var logger = controller.Logger;
 
-            var userName = context.HttpContext.User.Identity.Name == null? "Unknown": context.HttpContext.User.Identity.Name;
-            var userAuthenticationType = context.HttpContext.User.Identity.AuthenticationType == null ? "Unknown" : context.HttpContext.User.Identity.AuthenticationType;
-            var userIsAuthenticated = context.HttpContext.User.Identity.IsAuthenticated;
-            var controllerName = context.RouteData.Values.Values.ElementAt(1).ToString();
+            var identity = context.HttpContext.User.Identity;
+            var userName = identity.Name ?? "Unknown";
+            var userAuthenticationType = identity.AuthenticationType ?? "Unknown";
+            var userIsAuthenticated = identity.IsAuthenticated;
+            var routeDataValues = context.RouteData.Values.Values;
+            var controllerName = routeDataValues.Count >= 2 ? routeDataValues.ElementAt(1).ToString(): "Unknown";
             var parameters = new List<string>();
 
             foreach (var parameter in context.ActionArguments)
             {
-                var paramterItem = parameter.Key.ToString() + ": " + parameter.Value == null ? "" : parameter.Value.ToString();
+                var paramterItem = $"{parameter.Key}: {parameter.Value}";
                 parameters.Add(paramterItem);
                 
             }
-            var controllerAction = context.RouteData.Values.Values.ElementAt(0).ToString();
-            var remoteIP = context.HttpContext.Connection.RemoteIpAddress == null ? "Unknown" : context.HttpContext.Connection.RemoteIpAddress.ToString();
+            var controllerAction = routeDataValues.Count >= 1 ? routeDataValues.ElementAt(0).ToString() : "Unknown";
+            var remoteIPAddress = context.HttpContext.Connection.RemoteIpAddress;
+            var remoteIP = remoteIPAddress == null ? "Unknown" : remoteIPAddress.ToString();
             var timeStamp = DateTime.UtcNow;
 
             logger.Log(userName, userAuthenticationType, userIsAuthenticated, controllerName, controllerAction, parameters, remoteIP, timeStamp);
-
-
-         
-            
+ 
         }
     }
 }

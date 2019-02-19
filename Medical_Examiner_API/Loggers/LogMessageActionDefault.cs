@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text;
 
 
 namespace Medical_Examiner_API.Loggers
@@ -31,18 +32,18 @@ namespace Medical_Examiner_API.Loggers
 
         public override string ToString()
         {
-            var contents  = UserName + " " + UserAuthenticationType + " " + UserIsAuthenticated.ToString() + " " + ControllerName + " " + ControllerMethod + " ";
+            var contents = new StringBuilder();
+            contents.Append( UserName + " " + UserAuthenticationType + " " + UserIsAuthenticated.ToString() + " " + ControllerName + " " + ControllerMethod + " ");
 
             foreach (var p in Parameters)
             {
-                contents += p + " ";
+                contents.Append( p + " ");
             }
 
-            contents += RemoteIP + " ";
+            contents.Append(RemoteIP + " ");
+            contents.Append(TimeStamp.ToLongDateString() + "_" + TimeStamp.ToLongTimeString());
 
-            contents += TimeStamp.ToLongDateString() + "_" + TimeStamp.ToLongTimeString();
-
-            return contents;
+            return contents.ToString();
         }
     }
 }

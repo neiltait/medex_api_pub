@@ -7,6 +7,7 @@ using Medical_Examiner_API;
 using Medical_Examiner_API.Models;
 using Medical_Examiner_API.Persistence;
 using Medical_Examiner_API.Controllers;
+using Medical_Examiner_API.Loggers;
 using ME_API_tests.Persistance;
 using System.Threading.Tasks;
 using Xunit;
@@ -15,6 +16,7 @@ namespace ME_API_tests.ControllerTests
 {
     public class ExaminationControllerTests
     {
+        MELoggerMocker _mockLogger;
         ExaminationsController _controller;
         IExaminationPersistence _examination_persistance;
 
@@ -22,7 +24,8 @@ namespace ME_API_tests.ControllerTests
         {
             // Arrange 
             _examination_persistance = new ExaminationPersistanceFake();
-            _controller = new ExaminationsController(_examination_persistance);
+            _mockLogger = new MELoggerMocker();
+            _controller = new ExaminationsController(_examination_persistance, _mockLogger);
         }
 
         [Fact]

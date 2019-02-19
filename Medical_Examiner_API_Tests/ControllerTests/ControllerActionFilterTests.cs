@@ -114,12 +114,12 @@ namespace Medical_Examiner_API_Tests.ControllerTests
     public class ControllerActionFilterTests
     {
         MELoggerMocker _mockLogger;
-        DJPTestController _controller;
+        ValuesController _controller;
 
         public ControllerActionFilterTests()
         {
             _mockLogger = new MELoggerMocker();
-            _controller = new DJPTestController(_mockLogger); 
+            _controller = new ValuesController(_mockLogger); 
         }
 
         [Fact]

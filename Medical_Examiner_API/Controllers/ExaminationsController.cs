@@ -10,6 +10,7 @@ using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Newtonsoft.Json;
 using Medical_Examiner_API;
+using Medical_Examiner_API.Loggers;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,18 +18,19 @@ namespace Medical_Examiner_API.Controllers
 {
     [Route("api/examinations")]
     [ApiController]
-    public class ExaminationsController : Controller
+    public class ExaminationsController : BaseController
     {
         public DocumentClient client = null;
         private IExaminationPersistence _examination_persistence;
 
-        public ExaminationsController(IExaminationPersistence examination_persistence)
+        public ExaminationsController(IExaminationPersistence examination_persistence, IMELogger logger): base(logger)
         {
             _examination_persistence = examination_persistence;
         }
 
         // GET api/values
         [HttpGet]
+        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<IEnumerable<Examination>>> GetExaminations()
         {
             var Examinations = await _examination_persistence.GetExaminationsAsync();
@@ -37,7 +39,7 @@ namespace Medical_Examiner_API.Controllers
 
         // GET api/values
         [HttpGet("{id}")]
-        //[ServiceFilter(typeof(ControllerActionFilter))]
+        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<Examination>> GetExamination(string id)
         {
  
@@ -53,6 +55,7 @@ namespace Medical_Examiner_API.Controllers
 
         // GET api/values/seed
         [HttpGet("seed")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<IEnumerable<Examination>>> Seed()
         {
             Examination ex1 = new Examination();
