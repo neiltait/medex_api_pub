@@ -11,32 +11,17 @@ namespace Medical_Examiner_API.Loggers
 {
     public class MELogger : IMELogger
     {
-        //public DocumentClient client = null;
-        //private IMELoggerPersistence _MElogger_persistence;
+        private IMELoggerPersistence _MElogger_persistence;
 
-        private StreamWriter _streamWriter;
-        //public MELogger(IMELoggerPersistence MElogger_persistence)
-        public MELogger()
+        public MELogger(IMELoggerPersistence MElogger_persistence)
         {
-            var projectFolder = Environment.CurrentDirectory;
-            _streamWriter = new StreamWriter(projectFolder + "MElogging.txt");
-
-            //_MElogger_persistence = MElogger_persistence;
-
+            _MElogger_persistence = MElogger_persistence;
         }
 
         public async void Log(string userName, string userAuthenticationType, bool userIsAuthenticated, string controllerName, string controllerMethod, IList<string> parameters, string remoteIP, DateTime timeStamp)
         {
            var logEntry = new LogMessageActionDefault(userName, userAuthenticationType, userIsAuthenticated, controllerName, controllerMethod, parameters, remoteIP, timeStamp);
-            _streamWriter.WriteLine(logEntry.ToString());
-            _streamWriter.Flush();
-
-            //await _MElogger_persistence.SaveLogEntryAsync(logEntry);
-
-
-        }
-
-
-       
+           await _MElogger_persistence.SaveLogEntryAsync(logEntry);
+        } 
     }
 }

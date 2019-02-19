@@ -33,7 +33,6 @@ namespace Medical_Examiner_API.Persistence
             await _client.CreateDatabaseIfNotExistsAsync(new Database { Id = _databaseId });
             var databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
 
-            // Samples
             await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection() { Id = "MELogger" });
         }
 

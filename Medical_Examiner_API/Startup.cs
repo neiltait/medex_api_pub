@@ -34,11 +34,10 @@ namespace Medical_Examiner_API
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddSingleton<IMELogger, MELogger>();
+            services.AddScoped<IMELogger, MELogger>();
 
             services.AddScoped<ControllerActionFilter>();
            
-
             services.AddScoped<IExaminationPersistence>((s) =>
             {
                 return new ExaminationPersistence(

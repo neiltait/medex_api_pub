@@ -1,11 +1,8 @@
-﻿
-using FluentAssertions;
-
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 using Medical_Examiner_API.Controllers;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API;
