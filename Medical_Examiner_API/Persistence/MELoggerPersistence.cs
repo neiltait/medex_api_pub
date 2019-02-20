@@ -9,6 +9,9 @@ using Microsoft.Azure.Documents.Linq;
 
 namespace Medical_Examiner_API.Persistence
 {
+    /// <summary>
+    /// Class responsible for logging actions to database
+    /// </summary>
     public class MELoggerPersistence : IMELoggerPersistence
     {
         private string _databaseId;
@@ -16,6 +19,12 @@ namespace Medical_Examiner_API.Persistence
         private string _primaryKey;
         private DocumentClient _client;
 
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="endpointUri">Cosmos DB URI</param>
+        /// <param name="primaryKey">Key required for connection</param>
         public MELoggerPersistence(Uri endpointUri, string primaryKey)
         {
             _databaseId = "testing123";
@@ -23,6 +32,10 @@ namespace Medical_Examiner_API.Persistence
             _primaryKey = primaryKey;
         }
 
+        /// <summary>
+        /// Set up Cosmos DB connection
+        /// </summary>
+        /// <returns>Task</returns>
         public async Task EnsureSetupAsync()
         {
             if (_client == null)
@@ -37,6 +50,11 @@ namespace Medical_Examiner_API.Persistence
         }
 
 
+        /// <summary>
+        /// Write one log entry
+        /// </summary>
+        /// <param name="logEntry">object to be logged</param>
+        /// <returns>bool</returns>
         public async Task<bool> SaveLogEntryAsync(LogMessageActionDefault logEntry)
         {
             await EnsureSetupAsync();
