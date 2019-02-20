@@ -14,15 +14,15 @@ namespace Medical_Examiner_API.Loggers
     /// </summary>
     public class MELogger : IMELogger
     {
-        private IMELoggerPersistence _MEloggerPersistence;
+        private IMELoggerPersistence _mEloggerPersistence;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="MEloggerPersistence"></param>
-        public MELogger(IMELoggerPersistence MEloggerPersistence)
+        /// <param name="mEloggerPersistence">persistence object that writes to logging destination</param>
+        public MELogger(IMELoggerPersistence mEloggerPersistence)
         {
-            _MEloggerPersistence = MEloggerPersistence;
+            _mEloggerPersistence = mEloggerPersistence;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Medical_Examiner_API.Loggers
         public async void Log(string userName, string userAuthenticationType, bool userIsAuthenticated, string controllerName, string controllerMethod, IList<string> parameters, string remoteIP, DateTime timeStamp)
         {
            var logEntry = new LogMessageActionDefault(userName, userAuthenticationType, userIsAuthenticated, controllerName, controllerMethod, parameters, remoteIP, timeStamp);
-           await _MElogger_persistence.SaveLogEntryAsync(logEntry);
-        } 
+           await _mEloggerPersistence.SaveLogEntryAsync(logEntry);
+        }
     }
 }
