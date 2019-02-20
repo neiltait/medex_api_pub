@@ -1,11 +1,11 @@
 ﻿using System;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.Documents.Linq;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Medical_Examiner_API.Loggers;
+using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Documents.Linq;
 
 namespace Medical_Examiner_API.Persistence
 {

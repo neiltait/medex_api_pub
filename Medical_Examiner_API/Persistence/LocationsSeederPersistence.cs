@@ -1,10 +1,10 @@
 ﻿using System;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.Documents.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Medical_Examiner_API.Seeders;
+using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Documents.Linq;
 
 namespace Medical_Examiner_API.Persistence
 {
@@ -39,11 +39,6 @@ namespace Medical_Examiner_API.Persistence
         }
 
 
-        /// <summary>
-        /// Save Location to Cosmos DB
-        /// </summary>
-        /// <param name="location"></param>
-        /// <returns>Task<bool></returns>
         public async Task<bool> SaveLocationAsync(Location location)
         {
             await EnsureSetupAsync();
