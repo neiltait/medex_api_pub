@@ -38,6 +38,12 @@ namespace Medical_Examiner_API.Persistence
             await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection() { Id = _Id});
         }
 
+
+        /// <summary>
+        /// Save Location to Cosmos DB
+        /// </summary>
+        /// <param name="location"></param>
+        /// <returns>Task<bool></returns>
         public async Task<bool> SaveLocationAsync(Location location)
         {
             await EnsureSetupAsync();
