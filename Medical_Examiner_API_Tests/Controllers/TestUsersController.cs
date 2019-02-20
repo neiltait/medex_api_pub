@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Medical_Examiner_API.Controllers;
@@ -26,14 +24,9 @@ namespace Medical_Examiner_API_Tests.Controllers
         private readonly Mock<IUserPersistence> _userPersistance;
 
         /// <summary>
-        /// The Logger mock.
-        /// </summary>
-        private readonly Mock<IMELogger> _logger;
-
-        /// <summary>
         /// The system under test.
         /// </summary>
-        private UsersController _sut;
+        private readonly UsersController _sut;
 
         /// <summary>
         /// Setup
@@ -42,15 +35,19 @@ namespace Medical_Examiner_API_Tests.Controllers
         {
             _userPersistance = new Mock<IUserPersistence>();
 
-            _logger = new Mock<IMELogger>();
+            var logger = new Mock<IMELogger>();
 
-            _sut = new UsersController(_userPersistance.Object, _logger.Object);
+            _sut = new UsersController(_userPersistance.Object, logger.Object);
         }
 
+        /// <summary>
+        /// Test returning an empty list
+        /// </summary>
+        /// <returns>Async Task</returns>
         [Fact]
         public async Task TestGetEmptyResponse()
         {
-            // Arrange 
+            // Arrange
             _userPersistance.Setup(up => up.GetUsersAsync()).Returns(Task.FromResult<IEnumerable<User>>(new List<User>()));
 
             // Act
@@ -67,15 +64,19 @@ namespace Medical_Examiner_API_Tests.Controllers
             model.Users.Count().Should().Be(0);
         }
 
+        /// <summary>
+        /// Test get a list of users
+        /// </summary>
+        /// <returns>Async Task</returns>
         [Fact]
         public async Task TestGetGoodResponse()
         {
-            // Arrange 
-            var expectedUserId = "expectedUserId";
+            // Arrange
+            const string expectedUserId = "expectedUserId";
 
             _userPersistance.Setup(up => up.GetUsersAsync()).Returns(Task.FromResult<IEnumerable<User>>(new List<User>()
             {
-                new User() {Id = expectedUserId}
+                new User() { Id = expectedUserId }
             }));
 
             // Act
@@ -83,9 +84,9 @@ namespace Medical_Examiner_API_Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult) response.Result;
+            var result = (OkObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetUsersResponse>();
-            var model = (GetUsersResponse) result.Value;
+            var model = (GetUsersResponse)result.Value;
             model.Errors.Count().Should().Be(0);
             model.Success.Should().BeTrue();
 
@@ -93,17 +94,21 @@ namespace Medical_Examiner_API_Tests.Controllers
             model.Users.First().Id.Should().Be(expectedUserId);
         }
 
+        /// <summary>
+        /// Test that a good response is returned in full
+        /// </summary>
+        /// <returns>Async Task</returns>
         [Fact]
         public async Task TestGetIdGoodResponse()
         {
-            // Arrange 
-            var expectedUserId = "expectedUserId";
+            // Arrange
+            const string expectedUserId = "expectedUserId";
             var expectedUser = new User()
             {
                 Id = expectedUserId
             };
 
-            _userPersistance.Setup(up => up.GetUserAsync(It.IsAny<string>())).Returns(Task.FromResult<User>(expectedUser));
+            _userPersistance.Setup(up => up.GetUserAsync(It.IsAny<string>())).Returns(Task.FromResult(expectedUser));
 
             // Act
             var response = await _sut.GetAsync(expectedUserId);
@@ -119,11 +124,15 @@ namespace Medical_Examiner_API_Tests.Controllers
             model.Id.Should().Be(expectedUserId);
         }
 
+        /// <summary>
+        /// Test when no user is found
+        /// </summary>
+        /// <returns>Async Task</returns>
         [Fact]
         public async Task TestGetIdNotFoundResponse()
         {
-            // Arrange 
-            var expectedUserId = "expectedUserId";
+            // Arrange
+            const string expectedUserId = "expectedUserId";
 
             _userPersistance.Setup(up => up.GetUserAsync(It.IsAny<string>())).Returns(Task.FromResult<User>(null));
 
@@ -141,10 +150,14 @@ namespace Medical_Examiner_API_Tests.Controllers
             model.Id.Should().Be(null);
         }
 
+        /// <summary>
+        /// Test that model validation error causes validation failure
+        /// </summary>
+        /// <returns>Async Task</returns>
         [Fact]
         public async Task TestGetIdValidationFailure()
         {
-            // Arrange 
+            // Arrange
             _sut.ModelState.AddModelError("An", "Error");
 
             // Act
