@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Medical_Examiner_API.Models.v1;
+using Medical_Examiner_API.Models.V1;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Medical_Examiner_API.Extensions.Models

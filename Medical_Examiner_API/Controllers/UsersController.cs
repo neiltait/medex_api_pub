@@ -7,8 +7,8 @@ using Medical_Examiner_API.Extensions.Models;
 using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Medical_Examiner_API.Loggers;
-using Medical_Examiner_API.Models.v1;
-using Medical_Examiner_API.Models.v1.Users;
+using Medical_Examiner_API.Models.V1;
+using Medical_Examiner_API.Models.V1.Users;
 
 namespace Medical_Examiner_API.Controllers
 {

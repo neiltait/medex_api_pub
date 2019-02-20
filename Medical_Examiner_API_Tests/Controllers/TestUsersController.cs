@@ -5,7 +5,7 @@ using FluentAssertions;
 using Medical_Examiner_API.Controllers;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models;
-using Medical_Examiner_API.Models.v1.Users;
+using Medical_Examiner_API.Models.V1.Users;
 using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

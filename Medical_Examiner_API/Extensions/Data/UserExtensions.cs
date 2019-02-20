@@ -1,4 +1,4 @@
-﻿using Medical_Examiner_API.Models.v1.Users;
+﻿using Medical_Examiner_API.Models.V1.Users;
 using Medical_Examiner_API.Models;
 
 namespace Medical_Examiner_API.Extensions.Data
