@@ -2,38 +2,106 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Medical_Examiner_API.Models;
+using Medical_Examiner_API.Extensions.Data;
+using Medical_Examiner_API.Extensions.Models;
 using Medical_Examiner_API.Persistence;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Newtonsoft.Json;
 using Medical_Examiner_API.Loggers;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Medical_Examiner_API.Models.v1;
+using Medical_Examiner_API.Models.v1.Users;
 
 namespace Medical_Examiner_API.Controllers
 {
+    /// <summary>
+    /// Users Controller (TODO: Maybe should be called `User`)
+    /// </summary>
     [Route("api/users")]
     [ApiController]
     public class UsersController : BaseController
     {
-        public DocumentClient client = null;
-        private IUserPersistence _user_persistence;
+        /// <summary>
+        /// The User Persistance Layer
+        /// </summary>
+        private readonly IUserPersistence _userPersistence;
 
-        public UsersController(IUserPersistence user_persistence, IMELogger logger) : base(logger)
+        /// <summary>
+        /// Initialise a new instance of the Users controller.
+        /// </summary>
+        /// <param name="userPersistence">The User Persistance.</param>
+        /// <param name="logger">The Logger.</param>
+        public UsersController(IUserPersistence userPersistence, IMELogger logger)
+            : base(logger)
         {
-            _user_persistence = user_persistence;
+            _userPersistence = userPersistence;
         }
 
         // GET api/values
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<IEnumerable<Models.User>>> GetAsync()
+        public async Task<ActionResult<GetUsersResponse>> GetAsync()
         {
-            var Users = await _user_persistence.GetUsersAsync();
-            return Ok(Users);
+            var users = await _userPersistence.GetUsersAsync();
+            return Ok(new GetUsersResponse()
+            {
+                Users = users.Select(u => u.ToUserItem())
+            });
+        }
+
+        [HttpGet("{id}")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<GetUserResponse>> GetAsync(string id)
+        {
+            if (ModelState.IsValid)
+            {
+                // Throws excception when not found; maybe should return null and exception
+                // handled in logging?
+                var user = await _userPersistence.GetUserAsync(id);
+
+                if (user != null)
+                {
+                    return Ok(user.ToGetUserResponse());
+                }
+
+                return NotFound(new GetUserResponse());
+            }
+
+            return BadRequest(new GetUserResponse());
+        }
+
+        [HttpPost]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PostUserResponse>> PostAsync(PostUserRequest postUser)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = postUser.ToUser();
+
+                await _userPersistence.SaveUserAsync(user);
+
+                // TODO: Is ID populated after saving?
+                return Ok(new PostUserResponse()
+                {
+                    Id = user.Id,
+                });
+            }
+
+            return new BadRequestObjectResult(ModelState);
+        }
+
+        [HttpPut]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutUserResponse>> PutAsync(PutUserRequest putUser)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = putUser.ToUser();
+
+                await _userPersistence.SaveUserAsync(user);
+
+                return Ok(new PutUserResponse());
+            }
+
+            return new BadRequestObjectResult(ModelState);
         }
 
         // GET api/values/seed
@@ -66,12 +134,21 @@ namespace Medical_Examiner_API.Controllers
             us3.DeletedAt = null;
 
 
-            await _user_persistence.SaveUserAsync(us1);
-            await _user_persistence.SaveUserAsync(us2);
-            await _user_persistence.SaveUserAsync(us3);
+            await _userPersistence.SaveUserAsync(us1);
+            await _userPersistence.SaveUserAsync(us2);
+            await _userPersistence.SaveUserAsync(us3);
 
-            var Examinations = await _user_persistence.GetUsersAsync();
+            var Examinations = await _userPersistence.GetUsersAsync();
             return Ok(Examinations);
+        }
+
+
+        private BadRequestObjectResult BadRequest<TResponse>(TResponse response)
+            where TResponse : ResponseBase
+        {
+            response.AddModelErrors(ModelState);
+
+            return new BadRequestObjectResult(response);
         }
     }
 }
