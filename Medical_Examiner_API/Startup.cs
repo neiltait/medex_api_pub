@@ -1,6 +1,7 @@
 ﻿using System;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -62,6 +63,13 @@ namespace Medical_Examiner_API
                     new Uri(Configuration["CosmosDB:URL"]),
                     Configuration["CosmosDB:PrimaryKey"]);
             });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.Authority = Configuration["Okta:AuthorizationServerAddress"];
+                    options.Audience = Configuration["Okta:Audience"];
+                });
         }
 
         /// <summary>
@@ -92,6 +100,9 @@ namespace Medical_Examiner_API
 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            // Must be above use mvc
+            app.UseAuthentication();
 
             app.UseMvc();
         }

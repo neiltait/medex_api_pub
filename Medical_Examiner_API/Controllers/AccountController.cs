@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Okta.AspNetCore;
 using Medical_Examiner_API.Loggers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Medical_Examiner_API.Controllers
 {
@@ -14,8 +15,16 @@ namespace Medical_Examiner_API.Controllers
     [ApiController]
     public class AccountController : BaseController
     {
-        public AccountController(IMELogger logger) : base(logger)
+        public AccountController(IMELogger logger)
+            : base(logger)
         {
+        }
+
+        [Route("protected")]
+        [Authorize]
+        public string Protected()
+        {
+            return "Only if you have a valid token!";
         }
 
         [HttpGet("login")]
@@ -32,6 +41,11 @@ namespace Medical_Examiner_API.Controllers
         [HttpPost]
         public IActionResult Logout()
         {
-            return new SignOutResult(new[] { OktaDefaults.MvcAuthenticationScheme, CookieAuthenticationDefaults.AuthenticationScheme });        }
+            return new SignOutResult(new[]
+            {
+                OktaDefaults.MvcAuthenticationScheme,
+                CookieAuthenticationDefaults.AuthenticationScheme
+            });
+        }
     }
 }
