@@ -19,7 +19,6 @@ namespace Medical_Examiner_API.Persistence
         private string _primaryKey;
         private DocumentClient _client;
 
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -48,7 +47,6 @@ namespace Medical_Examiner_API.Persistence
 
             await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection() { Id = "MELogger" });
         }
-
 
         /// <summary>
         /// Write one log entry
