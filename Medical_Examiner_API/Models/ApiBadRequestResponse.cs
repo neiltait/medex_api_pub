@@ -6,12 +6,14 @@ namespace Medical_Examiner_API.Models
 {
     public class ApiBadRequestResponse : ApiResponse
     {
-        public ApiBadRequestResponse(ModelStateDictionary modelState)
+        public IEnumerable<string> Errors { get; }
+        
+        public ApiBadRequestResponse(ModelStateDictionary modelState, IEnumerable<string> errors)
             : base(400)
         {
             if (modelState.IsValid) throw new ArgumentException("ModelState must be invalid", nameof(modelState));
+            Errors = errors;
         }
 
-        public IEnumerable<string> Errors { get; }
     }
 }

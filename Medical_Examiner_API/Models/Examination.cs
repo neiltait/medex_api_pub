@@ -7,10 +7,7 @@ namespace Medical_Examiner_API.Models
     public class Examination : Record
     {
         // Linked Fields 
-        public Examination()
-        {
-            Completed = false;
-        }
+
 
         [Required]
         [DataType(DataType.Text)]
@@ -27,7 +24,7 @@ namespace Medical_Examiner_API.Models
         [DataType(DataType.Text)]
         [StringLength(10)]
         [JsonProperty(PropertyName = "nhs_number")]
-        public string NHSNumber { get; set; }
+        public string NhsNumber { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "gender")]
@@ -156,5 +153,10 @@ namespace Medical_Examiner_API.Models
         [Required]
         [JsonProperty(PropertyName = "coroner_status")]
         public CoronerStatus CoronerStatus { get; set; }
+        
+        public Examination()
+        {
+            Completed = false;
+        }
     }
 }

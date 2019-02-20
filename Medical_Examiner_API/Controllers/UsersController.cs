@@ -7,8 +7,6 @@ using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace Medical_Examiner_API.Controllers
 {
     [Route("api/users")]

@@ -36,12 +36,12 @@ namespace Medical_Examiner_API
             }
 
             var controllerAction = routeDataValues.Count >= 1 ? routeDataValues.ElementAt(0).ToString() : "Unknown";
-            var remoteIPAddress = context.HttpContext.Connection.RemoteIpAddress;
-            var remoteIP = remoteIPAddress == null ? "Unknown" : remoteIPAddress.ToString();
+            var remoteIpAddress = context.HttpContext.Connection.RemoteIpAddress;
+            var remoteIp = remoteIpAddress == null ? "Unknown" : remoteIpAddress.ToString();
             var timeStamp = DateTime.UtcNow;
 
             logger.Log(userName, userAuthenticationType, userIsAuthenticated, controllerName, controllerAction,
-                parameters, remoteIP, timeStamp);
+                parameters, remoteIp, timeStamp);
         }
     }
 }

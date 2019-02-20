@@ -6,9 +6,9 @@ namespace Medical_Examiner_API.Loggers
 {
     public class MELogger : IMELogger
     {
-        private readonly IMELoggerPersistence _MElogger_persistence;
+        private readonly IMeLoggerPersistence _MElogger_persistence;
 
-        public MELogger(IMELoggerPersistence MElogger_persistence)
+        public MELogger(IMeLoggerPersistence MElogger_persistence)
         {
             _MElogger_persistence = MElogger_persistence;
         }

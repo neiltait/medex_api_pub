@@ -33,22 +33,25 @@ namespace Medical_Examiner_API
             {
                 return new ExaminationPersistence(
                     new Uri(Configuration["CosmosDB:URL"]),
-                    Configuration["CosmosDB:PrimaryKey"]);
+                    Configuration["CosmosDB:PrimaryKey"],
+                    Configuration["CosmosDB:DatabaseId"]);
             });
 
             services.AddScoped<IUserPersistence>(s =>
             {
                 return new UserPersistence(
                     new Uri(Configuration["CosmosDB:URL"]),
-                    Configuration["CosmosDB:PrimaryKey"]);
+                    Configuration["CosmosDB:PrimaryKey"],
+                    Configuration["CosmosDB:DatabaseId"]);
             });
 
 
-            services.AddScoped<IMELoggerPersistence>(s =>
+            services.AddScoped<IMeLoggerPersistence>(s =>
             {
-                return new MELoggerPersistence(
+                return new MeLoggerPersistence(
                     new Uri(Configuration["CosmosDB:URL"]),
-                    Configuration["CosmosDB:PrimaryKey"]);
+                    Configuration["CosmosDB:PrimaryKey"],
+                    Configuration["CosmosDB:DatabaseId"]);
             });
         }
 

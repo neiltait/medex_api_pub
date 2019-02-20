@@ -7,11 +7,12 @@ namespace Medical_Examiner_API.Controllers
     [ApiController]
     public abstract class BaseController : Controller
     {
+        public IMELogger Logger { get; set; }
+        
         public BaseController(IMELogger logger)
         {
             Logger = logger;
         }
 
-        public IMELogger Logger { get; set; }
     }
 }

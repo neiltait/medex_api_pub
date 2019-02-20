@@ -6,40 +6,18 @@ using Microsoft.Azure.Documents.Client;
 
 namespace Medical_Examiner_API.Persistence
 {
-    public class MELoggerPersistence : IMELoggerPersistence
+    public class MeLoggerPersistence : PersistenceBase, IMeLoggerPersistence
     {
-        private DocumentClient _client;
-        private readonly string _databaseId;
-        private readonly Uri _endpointUri;
-        private readonly string _primaryKey;
-
-        public MELoggerPersistence(Uri endpointUri, string primaryKey)
+        public MeLoggerPersistence(Uri endpointUri, string primaryKey, string databaseId) : base(endpointUri, primaryKey, databaseId, "MELogger")
         {
-            _databaseId = "testing123";
-            _endpointUri = endpointUri;
-            _primaryKey = primaryKey;
         }
-
 
         public async Task<bool> SaveLogEntryAsync(LogMessageActionDefault logEntry)
         {
             await EnsureSetupAsync();
-
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, "MELogger");
-            await _client.UpsertDocumentAsync(documentCollectionUri, logEntry);
-
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionName);
+            await Client.UpsertDocumentAsync(documentCollectionUri, logEntry);
             return true;
-        }
-
-        public async Task EnsureSetupAsync()
-        {
-            if (_client == null) _client = new DocumentClient(_endpointUri, _primaryKey);
-
-            await _client.CreateDatabaseIfNotExistsAsync(new Database {Id = _databaseId});
-            var databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
-
-            await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri,
-                new DocumentCollection {Id = "MELogger"});
         }
     }
 }
