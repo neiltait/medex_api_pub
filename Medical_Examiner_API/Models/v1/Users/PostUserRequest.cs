@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Medical_Examiner_API.Models.v1.Users
+namespace Medical_Examiner_API.Models.V1.Users
 {
     public class PostUserRequest
     {
