@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Medical_Examiner_API.Extensions.Data;
-using Medical_Examiner_API.Extensions.Models;
+using Medical_Examiner_API.Loggers;
+using Medical_Examiner_API.Models.V1.Users;
 using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Mvc;
-using Medical_Examiner_API.Loggers;
-using Medical_Examiner_API.Models.V1;
-using Medical_Examiner_API.Models.V1.Users;
 
 namespace Medical_Examiner_API.Controllers
 {
+    /// <inheritdoc />
     /// <summary>
-    /// Users Controller (TODO: Maybe should be called `User`)
+    /// Users Controller
     /// </summary>
     [Route("api/users")]
     [ApiController]
@@ -35,7 +34,10 @@ namespace Medical_Examiner_API.Controllers
             _userPersistence = userPersistence;
         }
 
-        // GET api/values
+        /// <summary>
+        /// Get all Users.
+        /// </summary>
+        /// <returns>A GetUsersResponse.</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetUsersResponse>> GetAsync()
@@ -47,6 +49,11 @@ namespace Medical_Examiner_API.Controllers
             });
         }
 
+        /// <summary>
+        /// Get a User by its Identifier.
+        /// </summary>
+        /// <param name="id">The User Identifier.</param>
+        /// <returns>A GetUserResponse.</returns>
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetUserResponse>> GetAsync(string id)
@@ -68,6 +75,11 @@ namespace Medical_Examiner_API.Controllers
             return BadRequest(new GetUserResponse());
         }
 
+        /// <summary>
+        /// Create a new User.
+        /// </summary>
+        /// <param name="postUser">The PostUserRequest.</param>
+        /// <returns>A PostUserResponse.</returns>
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PostUserResponse>> PostAsync(PostUserRequest postUser)
@@ -88,6 +100,11 @@ namespace Medical_Examiner_API.Controllers
             return new BadRequestObjectResult(ModelState);
         }
 
+        /// <summary>
+        /// Update an existing User.
+        /// </summary>
+        /// <param name="putUser">A PutUserRequest.</param>
+        /// <returns>A PutUserResponse.</returns>
         [HttpPut]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutUserResponse>> PutAsync(PutUserRequest putUser)
@@ -133,22 +150,12 @@ namespace Medical_Examiner_API.Controllers
             us2.DeletedAt = null;
             us3.DeletedAt = null;
 
-
             await _userPersistence.SaveUserAsync(us1);
             await _userPersistence.SaveUserAsync(us2);
             await _userPersistence.SaveUserAsync(us3);
 
-            var Examinations = await _userPersistence.GetUsersAsync();
-            return Ok(Examinations);
-        }
-
-
-        private BadRequestObjectResult BadRequest<TResponse>(TResponse response)
-            where TResponse : ResponseBase
-        {
-            response.AddModelErrors(ModelState);
-
-            return new BadRequestObjectResult(response);
+            var examinations = await _userPersistence.GetUsersAsync();
+            return Ok(examinations);
         }
     }
 }
