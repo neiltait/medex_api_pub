@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Medical_Examiner_API.Models.V1.Users
 {
+    /// <summary>
+    /// Post User Request.
+    /// </summary>
     public class PostUserRequest
     {
         /// <summary>
