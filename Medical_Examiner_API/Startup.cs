@@ -1,12 +1,6 @@
 ﻿using System;
-
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
+using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Persistence;
-using Medical_Examiner_API.Models;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,21 +9,31 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-using Microsoft.Extensions.Options;
-using Medical_Examiner_API.Loggers;
-
 namespace Medical_Examiner_API
 {
+    /// <summary>
+    /// Startup
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Initialise a new instance of Startup
+        /// </summary>
+        /// <param name="configuration">The Configuration.</param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// Configuration.
+        /// </summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// Add services to the container.
+        /// </summary>
+        /// <param name="services">Service Collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -37,7 +41,7 @@ namespace Medical_Examiner_API
             services.AddScoped<IMELogger, MELogger>();
 
             services.AddScoped<ControllerActionFilter>();
-           
+
             services.AddScoped<IExaminationPersistence>((s) =>
             {
                 return new ExaminationPersistence(
@@ -52,7 +56,6 @@ namespace Medical_Examiner_API
                     Configuration["CosmosDB:PrimaryKey"]);
             });
 
-
             services.AddScoped<IMELoggerPersistence>((s) =>
             {
                 return new MELoggerPersistence(
@@ -61,12 +64,14 @@ namespace Medical_Examiner_API
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// Configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app">The App.</param>
+        /// <param name="env">The Environment.</param>
+        /// <param name="loggerFactory">The Logger Factory.</param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-
-     
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -83,7 +88,6 @@ namespace Medical_Examiner_API
                 });
             }
 
-           
             app.UseHttpsRedirection();
 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
