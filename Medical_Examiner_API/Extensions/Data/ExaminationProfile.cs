@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Medical_Examiner_API.Models;
-using Medical_Examiner_API.Models.v1.Examinations;
 using Medical_Examiner_API.Models.V1.Examinations;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Medical_Examiner_API.Extensions.Data
 {

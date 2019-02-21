@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using FluentAssertions;
 using Medical_Examiner_API.Controllers;
 using Medical_Examiner_API.Loggers;
@@ -53,9 +52,9 @@ namespace Medical_Examiner_API_Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult) response.Result;
+            var result = (OkObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetUsersResponse>();
-            var model = (GetUsersResponse) result.Value;
+            var model = (GetUsersResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
@@ -73,16 +72,16 @@ namespace Medical_Examiner_API_Tests.Controllers
             const string expectedUserId = "expectedUserId";
 
             _userPersistence.Setup(up => up.GetUsersAsync()).Returns(Task.FromResult<IEnumerable<MeUser>>(
-                new List<MeUser> {new MeUser {UserId = expectedUserId}}));
+                new List<MeUser> { new MeUser { UserId = expectedUserId } }));
 
             // Act
             var response = await Controller.GetUsers();
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult) response.Result;
+            var result = (OkObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetUsersResponse>();
-            var model = (GetUsersResponse) result.Value;
+            var model = (GetUsersResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
@@ -100,7 +99,7 @@ namespace Medical_Examiner_API_Tests.Controllers
             // Arrange
             const string expectedUserId = "expectedUserId";
 
-            var expectedUser = new MeUser {UserId = expectedUserId};
+            var expectedUser = new MeUser { UserId = expectedUserId };
 
             _userPersistence.Setup(up => up.GetUserAsync(It.IsAny<string>())).Returns(Task.FromResult(expectedUser));
 
@@ -109,9 +108,9 @@ namespace Medical_Examiner_API_Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult) response.Result;
+            var result = (OkObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetUserResponse>();
-            var model = (GetUserResponse) result.Value;
+            var model = (GetUserResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
             model.UserId.Should().Be(expectedUserId);
@@ -135,9 +134,9 @@ namespace Medical_Examiner_API_Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
-            var result = (NotFoundObjectResult) response.Result;
+            var result = (NotFoundObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetUserResponse>();
-            var model = (GetUserResponse) result.Value;
+            var model = (GetUserResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
@@ -159,9 +158,9 @@ namespace Medical_Examiner_API_Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
-            var result = (BadRequestObjectResult) response.Result;
+            var result = (BadRequestObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetUserResponse>();
-            var model = (GetUserResponse) result.Value;
+            var model = (GetUserResponse)result.Value;
             model.Errors.Count.Should().Be(1);
             model.Success.Should().BeFalse();
         }

@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Medical_Examiner_API.Extensions.Data;
 using Medical_Examiner_API.Loggers;
-using Medical_Examiner_API.Models;
-using Medical_Examiner_API.Models.v1.Examinations;
 using Medical_Examiner_API.Models.V1.Examinations;
 using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Mvc;
