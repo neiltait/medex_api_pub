@@ -96,7 +96,9 @@ namespace Medical_Examiner_API
 
             app.UseMvc();
 
-            var locationSeeder = new LocationsSeeder();
+            var locationSeedersPersistence = new LocationsSeederPersistence(new Uri(Configuration["CosmosDB:URL"]),
+                    Configuration["CosmosDB:PrimaryKey"]);
+            var locationSeeder = new LocationsSeeder(locationSeedersPersistence);
             var jsonFileName = Configuration["SourceData:Locations"];
             locationSeeder.LoadFromFile(jsonFileName);
         }
