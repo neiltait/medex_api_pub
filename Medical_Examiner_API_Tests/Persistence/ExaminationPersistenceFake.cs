@@ -1,24 +1,22 @@
-﻿using Medical_Examiner_API;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Medical_Examiner_API.Models;
 using Medical_Examiner_API.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ME_API_tests.Persistance
+namespace Medical_Examiner_API_Tests.Persistence
 {
-    public class ExaminationPersistanceFake : IExaminationPersistence
+    public class ExaminationPersistenceFake : IExaminationPersistence
     {
-        private List<Examination> examinations;
+        private readonly List<Examination> _examinations;
 
-        public ExaminationPersistanceFake()
+        public ExaminationPersistenceFake()
         {
-            examinations = new List<Examination>();
+            _examinations = new List<Examination>();
 
-            Examination ex1 = new Examination();
-            Examination ex2 = new Examination();
-            Examination ex3 = new Examination();
+            var ex1 = new Examination();
+            var ex2 = new Examination();
+            var ex3 = new Examination();
             ex1.DateOfBirth = new DateTime(2010, 2, 1);
             ex2.DateOfBirth = new DateTime(1998, 6, 23);
             ex3.DateOfBirth = new DateTime(1964, 1, 30);
@@ -47,28 +45,24 @@ namespace ME_API_tests.Persistance
             ex2.ModifiedAt = DateTime.Now;
             ex3.ModifiedAt = DateTime.Now;
 
-            examinations.Add(ex1);
-            examinations.Add(ex2);
-            examinations.Add(ex3);
+            _examinations.Add(ex1);
+            _examinations.Add(ex2);
+            _examinations.Add(ex3);
         }
 
 
         public async Task<Examination> GetExaminationAsync(string examinationId)
         {
-            foreach (Examination examination in examinations)
-            {
+            foreach (var examination in _examinations)
                 if (examination.ExaminationId == examinationId)
-                {
                     return await Task.FromResult(examination);
-                }
-            }
 
             throw new ArgumentException("Invalid Argument");
         }
 
         public async Task<IEnumerable<Examination>> GetExaminationsAsync()
         {
-            return await Task.FromResult(examinations);
+            return await Task.FromResult(_examinations);
         }
 
         public async Task<bool> SaveExaminationAsync(Examination examination)

@@ -1,16 +1,12 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Medical_Examiner_API.Models
 {
     public class ApiResponse
     {
-
         public int StatusCode { get; }
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Message { get; }
-
+        
         public ApiResponse(int statusCode, string message = null)
         {
             StatusCode = statusCode;
@@ -31,4 +27,3 @@ namespace Medical_Examiner_API.Models
         }
     }
 }
-

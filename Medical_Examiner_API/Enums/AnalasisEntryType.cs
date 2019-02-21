@@ -1,10 +1,6 @@
-﻿using System;
-using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
-
-namespace Medical_Examiner_API.Models
+﻿namespace Medical_Examiner_API.Models
 {
-    public enum AnalasisEntryType 
+    public enum AnalasisEntryType
     {
         MEOSummary = 0,
         BereavedInformation = 1,

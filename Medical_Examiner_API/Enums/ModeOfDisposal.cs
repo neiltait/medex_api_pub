@@ -1,8 +1,4 @@
-﻿using System;
-using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
-
-namespace Medical_Examiner_API.Models
+﻿namespace Medical_Examiner_API.Models
 {
     public enum ModeOfDisposal
     {
