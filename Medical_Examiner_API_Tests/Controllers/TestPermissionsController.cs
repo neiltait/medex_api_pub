@@ -81,11 +81,11 @@ namespace Medical_Examiner_API_Tests.Controllers
             // Arrange
             const string expectedPermissionId = "fake_id_02";
             const string userId = "fake_id_01";
-            
+
             _permissionPersistence.Setup(pp => pp.GetPermissionsAsync("fake_id_01")).Returns(
                 Task.FromResult<IEnumerable<Permission>>(
                     new List<Permission>
-                        {new Permission { UserId = "fake_id_01", PermissionId = expectedPermissionId } }));
+                        {new Permission {UserId = "fake_id_01", PermissionId = expectedPermissionId}}));
 
             // Act
             var response = await _permissionsController.GetPermissions(userId);
@@ -113,12 +113,10 @@ namespace Medical_Examiner_API_Tests.Controllers
             const string expectedPermissionId = "expectedPermissionId";
             const string expectedUserId = "expectedUserId";
 
-            var expectedUser = new MeUser {UserId = expectedUserId};
             var expectedPermission = new Permission {PermissionId = expectedPermissionId, UserId = expectedUserId};
 
-            _permissionPersistence.Setup(pp => pp.GetPermissionsAsync("fake_id_01")).Returns(
-                Task.FromResult<IEnumerable<Permission>>(
-                    new List<Permission> {expectedPermission}));
+            _permissionPersistence.Setup(pp => pp.GetPermissionAsync(expectedUserId, expectedPermissionId)).Returns(
+                Task.FromResult(expectedPermission));
 
             // Act
             var response = await _permissionsController.GetPermission(expectedUserId, expectedPermissionId);
@@ -147,7 +145,7 @@ namespace Medical_Examiner_API_Tests.Controllers
             _userPersistence.Setup(up => up.GetUserAsync(It.IsAny<string>())).Returns(Task.FromResult<MeUser>(null));
 
             // Act
-            var response = await _permissionsController.GetPermission(expectedUserId, );
+            var response = await _permissionsController.GetPermission(expectedUserId, "Something_that_does_not_exist");
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -171,13 +169,13 @@ namespace Medical_Examiner_API_Tests.Controllers
             _permissionsController.ModelState.AddModelError("An", "Error");
 
             // Act
-            var response = await _permissionsController.GetUser(string.Empty);
+            var response = await _permissionsController.GetPermission(string.Empty, string.Empty);
 
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
             var result = (BadRequestObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUserResponse>();
-            var model = (GetUserResponse) result.Value;
+            result.Value.Should().BeAssignableTo<GetPermissionResponse>();
+            var model = (GetPermissionResponse) result.Value;
             model.Errors.Count.Should().Be(1);
             model.Success.Should().BeFalse();
         }

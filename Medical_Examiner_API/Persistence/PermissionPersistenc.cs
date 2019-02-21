@@ -59,6 +59,7 @@ namespace Medical_Examiner_API.Persistence
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="meUserId"></param>
         /// <param name="permissionId"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
@@ -81,6 +82,7 @@ namespace Medical_Examiner_API.Persistence
         /// 
         /// </summary>
         /// <param name="userId"></param>
+        /// <param name="meUserId"></param>
         /// <returns></returns>
         public async Task<IEnumerable<Permission>> GetPermissionsAsync(string meUserId)
         {
