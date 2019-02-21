@@ -52,23 +52,20 @@ namespace Medical_Examiner_API.Persistence
             var databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
 
             await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, _documentCollection);
+            await DeleteExistingRecords();
         }
 
-        
-
         /// <summary>
-        /// Writes location object to database
+        /// Delete existing records if any in collection
         /// </summary>
-        /// <param name="location">location object to be written to database</param>
-        /// <returns>bool</returns>
-        public async Task<bool> SaveLocationAsync(Location location)
+        /// <returns>Task</returns>
+        private async Task DeleteExistingRecords()
         {
-            await EnsureSetupAsync();
-
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, _id);
-            await _client.UpsertDocumentAsync(documentCollectionUri, location);
-
-            return true;
+            var docs = _client.CreateDocumentQuery(_documentCollection.DocumentsLink);
+            foreach (var doc in docs)
+            {
+                await _client.DeleteDocumentAsync(doc.SelfLink);
+            }
         }
 
         /// <summary>

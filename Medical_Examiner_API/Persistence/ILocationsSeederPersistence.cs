@@ -12,13 +12,6 @@ namespace Medical_Examiner_API.Persistence
     public interface ILocationsSeederPersistence
     {
         /// <summary>
-        /// Writes location object to database
-        /// </summary>
-        /// <param name="location">location object to be written to database</param>
-        /// <returns>bool</returns>
-        Task<bool> SaveLocationAsync(Location location);
-
-        /// <summary>
         /// Write list of locations to database
         /// </summary>
         /// <param name="locations">IList of location objects</param>
