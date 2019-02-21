@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Medical_Examiner_API.Models;
+using Microsoft.Azure.CosmosDB.BulkExecutor;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -18,6 +19,7 @@ namespace Medical_Examiner_API.Persistence
         private Uri _endpointUri;
         private string _primaryKey;
         private DocumentClient _client;
+        private DocumentCollection _documentCollection;
 
         /// <summary>
         /// Constructor
@@ -42,10 +44,15 @@ namespace Medical_Examiner_API.Persistence
                 _client = new DocumentClient(_endpointUri, _primaryKey);
             }
 
+            if (_documentCollection == null)
+            {
+                _documentCollection = new DocumentCollection() { Id = _id };
+            }
+
             await _client.CreateDatabaseIfNotExistsAsync(new Database { Id = _databaseId });
             var databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
 
-            await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection() { Id = _id });
+            await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, _documentCollection);
         }
 
         /// <summary>
@@ -59,6 +66,14 @@ namespace Medical_Examiner_API.Persistence
 
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, _id);
             await _client.UpsertDocumentAsync(documentCollectionUri, location);
+
+            return true;
+        }
+
+        public async Task<bool> BulkSaveLocation(IList<Location> locations)
+        {
+            var bulkExecutor = new BulkExecutor(_client, _documentCollection);
+            await bulkExecutor.InitializeAsync();
 
             return true;
         }

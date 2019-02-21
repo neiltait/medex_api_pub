@@ -38,7 +38,20 @@ namespace Medical_Examiner_API.Seeders
         {
             var json = File.ReadAllText(jsonFileName);
             Locations = JsonConvert.DeserializeObject<List<Location>>(json);
-            var djp = 10;
+        }
+
+        /// <summary>
+        /// Write locations to the data layer
+        /// </summary>
+        public void SubmitToDataLayer()
+        {
+            var djpCount = 0;
+            foreach (var l in Locations)
+            {
+                ++djpCount;
+                _locationSeederPersistence.SaveLocationAsync(l);
+                var djp = 1;
+            }
         }
     }
 }

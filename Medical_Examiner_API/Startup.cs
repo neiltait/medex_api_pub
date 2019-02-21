@@ -129,6 +129,9 @@ namespace Medical_Examiner_API
             var locationSeeder = new LocationsSeeder(locationSeedersPersistence);
             var jsonFileName = Configuration["SourceData:Locations"];
             locationSeeder.LoadFromFile(jsonFileName);
+            locationSeeder.SubmitToDataLayer();
+
+            //var djp = 10;
         }
     }
 }
