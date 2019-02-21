@@ -1,8 +1,8 @@
 ﻿using System;
-using AutoMapper;
-using Medical_Examiner_API.Extensions.Data;
 using System.IO;
 using System.Reflection;
+using AutoMapper;
+using Medical_Examiner_API.Extensions.Data;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Builder;
@@ -43,13 +43,13 @@ namespace Medical_Examiner_API
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            Mapper.Initialize(cfg =>
+            Mapper.Initialize(config =>
             {
-                cfg.AddProfile<ExaminationProfile>();
+                config.AddMedicalExaminerProfiles();
             });
 
             services.AddAutoMapper();
-            
+
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
@@ -69,7 +69,6 @@ namespace Medical_Examiner_API
             services.AddScoped<IMELogger, MELogger>();
 
             services.AddScoped<ControllerActionFilter>();
-
 
             services.AddScoped<IExaminationPersistence>(s =>
             {
