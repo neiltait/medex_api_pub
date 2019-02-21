@@ -44,7 +44,7 @@ namespace Medical_Examiner_API
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "Medical Examiner Data API", Version = "v1" });
 
                 // Make all enums appear as strings
                 c.DescribeAllEnumsAsStrings();

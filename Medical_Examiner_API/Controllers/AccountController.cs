@@ -5,7 +5,7 @@ using Okta.AspNetCore;
 
 namespace Medical_Examiner_API.Controllers
 {
-    [Route("api/auth")]
+    [Route("auth")]
     [ApiController]
     public class AccountController : BaseController
     {

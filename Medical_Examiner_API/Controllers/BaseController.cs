@@ -11,7 +11,6 @@ namespace Medical_Examiner_API.Controllers
     /// <summary>
     /// Base Controller
     /// </summary>
-    [Route("api/[controller]")]
     [ApiController]
     public abstract class BaseController : Controller
     {

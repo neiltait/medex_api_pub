@@ -10,7 +10,7 @@ using Microsoft.Azure.Documents;
 
 namespace Medical_Examiner_API.Controllers
 {
-    [Route("api/examinations")]
+    [Route("examinations")]
     [ApiController]
     public class ExaminationsController : BaseController
     {
