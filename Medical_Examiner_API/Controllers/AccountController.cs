@@ -27,7 +27,7 @@ namespace Medical_Examiner_API.Controllers
         /// authenticates an authorised token for use with the data API
         /// </summary>
         /// <returns></returns>
-        [HttpGet("login")]
+        [HttpPost]
         public IActionResult Login()
         {
             if (!HttpContext.User.Identity.IsAuthenticated)
@@ -42,7 +42,7 @@ namespace Medical_Examiner_API.Controllers
         /// calls to Okta and Logs out the current authenticated user token
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
+        [HttpDelete]
         public IActionResult Logout()
         {
             return new SignOutResult(new[]

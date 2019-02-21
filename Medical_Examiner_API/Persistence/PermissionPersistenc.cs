@@ -9,10 +9,17 @@ namespace Medical_Examiner_API.Persistence
 {
     public class PermissionPersistence : PersistenceBase, IPermissionPersistence
     {
-        public PermissionPersistence(Uri endpointUri, string primaryKey, string databaseId) : base(endpointUri, primaryKey, databaseId, "Permissions")
+        public PermissionPersistence(Uri endpointUri, string primaryKey, string databaseId)
+            : base(endpointUri, primaryKey, databaseId, "Permissions")
         {
         }
 
+        /// <summary>
+        /// Update Permission
+        /// </summary>
+        /// <param name="permission"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public async Task<Permission> UpdatePermissionAsync(Permission permission)
         {
             await EnsureSetupAsync();
@@ -28,6 +35,12 @@ namespace Medical_Examiner_API.Persistence
             return (Permission) doc;
         }
 
+        /// <summary>
+        /// Create Permission
+        /// </summary>
+        /// <param name="permission"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public async Task<Permission> CreatePermissionAsync(Permission permission)
         {
             await EnsureSetupAsync();
@@ -43,7 +56,13 @@ namespace Medical_Examiner_API.Persistence
             return (Permission) document;
         }
 
-        public async Task<Permission> GetPermissionAsync(string permissionId)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="permissionId"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public async Task<Permission> GetPermissionAsync(string meUserId, string permissionId)
         {
             await EnsureSetupAsync();
 
@@ -58,7 +77,12 @@ namespace Medical_Examiner_API.Persistence
             return result.Document;
         }
 
-        public async Task<IEnumerable<Permission>> GetPermissionsAsync()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Permission>> GetPermissionsAsync(string meUserId)
         {
             await EnsureSetupAsync();
 
@@ -66,7 +90,7 @@ namespace Medical_Examiner_API.Persistence
 
             // build the query
             var feedOptions = new FeedOptions { MaxItemCount = -1};
-            var query = Client.CreateDocumentQuery<MeUser>(documentCollectionUri, $"SELECT * FROM {CollectionName}", feedOptions);
+            var query = Client.CreateDocumentQuery<MeUser>(documentCollectionUri, $"SELECT * FROM {CollectionName} WHERE user_id = {meUserId}", feedOptions);
             var queryAll = query.AsDocumentQuery();
 
             // combine the results

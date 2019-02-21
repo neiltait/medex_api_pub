@@ -15,42 +15,47 @@ namespace Medical_Examiner_API.Controllers
     /// <summary>
     /// Users Controller
     /// </summary>
-    [Route("users/{user_id}/permissions")]
+    [Route("users/{userId}/permissions")]
     [ApiController]
     public class PermissionsController : BaseController
     {
         /// <summary>
         /// The User Persistance Layer
         /// </summary>
-        private readonly IUserPersistence _userPersistence;
-        private readonly IPermissionPersistence _permissionPersistence;
+        private readonly IUserPersistence userPersistence;
+
+        private readonly IPermissionPersistence permissionPersistence;
 
         /// <summary>
-        /// Initialise a new instance of the Users controller.
+        /// Initializes a new instance of the <see cref="PermissionsController"/> class.
         /// </summary>
-        /// <param name="userPersistence">The User Persistance.</param>
+        /// <param name="userPersistence">The User Persistence.</param>
+        /// <param name="permissionPersistence">The Permission Persistence</param>
         /// <param name="logger">The Logger.</param>
-        public PermissionsController(IUserPersistence userPersistence, IPermissionPersistence permissionPersistance, IMELogger logger)
+        public PermissionsController(IUserPersistence userPersistence, IPermissionPersistence permissionPersistence,
+            IMELogger logger)
             : base(logger)
         {
-            _userPersistence = userPersistence;
+            this.userPersistence = userPersistence;
+            this.permissionPersistence = permissionPersistence;
         }
 
         /// <summary>
-        /// Get all Users.
+        /// Get all Permissions for a User ID.
         /// </summary>
-        /// <returns>A GetUsersResponse.</returns>
+        /// <param name="meUserId">The User Identifier.</param>
+        /// <returns>A GetPermissionsResponse.</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetUsersResponse>> GetPermissions()
+        public async Task<ActionResult<GetPermissionsResponse>> GetPermissions(string meUserId)
         {
             try
             {
-                var users = await _userPersistence.GetPermissionsAsync(user_id);
-                
-                return Ok(new GetUsersResponse
+                var permissions = await permissionPersistence.GetPermissionsAsync(meUserId);
+
+                return Ok(new GetPermissionsResponse
                 {
-                    Users = users.Select(u => u.ToUserItem()),
+                    Permissions = permissions.Select(p => p.ToPermissionItem()),
                 });
             }
             catch (DocumentClientException)
@@ -64,23 +69,27 @@ namespace Medical_Examiner_API.Controllers
         }
 
         /// <summary>
-        /// Get a User by its Identifier.
+        /// Get a Users permission by its Identifier.
         /// </summary>
-        /// <param name="meUserId">The User Identifier.</param>
-        /// <returns>A GetUserResponse.</returns>
+        /// <param name="meUserId">The User Id.</param>
+        /// <param name="permissionId">The Permission Id.</param>
+        /// <returns>A GetPermissionResponse.</returns>
         // GET api/users/{user_id}
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetUserResponse>> GetPermission(string meUserId)
+        public async Task<ActionResult<GetPermissionResponse>> GetPermission(string meUserId, string permissionId)
         {
-            if (!ModelState.IsValid) return BadRequest(new GetUserResponse());
-            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new GetPermissionResponse());
+            }
+
             // Throws exception when not found; maybe should return null and exception
             // handled in logging?
             try
             {
-                var user = await _userPersistence.GetUserAsync(meUserId);
-                return Ok(user.ToGetUserResponse());
+                var permission = await permissionPersistence.GetPermissionAsync(meUserId, permissionId);
+                return Ok(permission.ToGetPermissionResponse());
             }
             catch (ArgumentException)
             {
@@ -91,29 +100,35 @@ namespace Medical_Examiner_API.Controllers
                 return NotFound(new GetUserResponse());
             }
         }
-        
+
         /// <summary>
         /// Create a new User.
         /// </summary>
         /// <param name="postUser">The PostUserRequest.</param>
         /// <returns>A PostUserResponse.</returns>
-       // POST api/users
+        // POST api/users
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PostUserResponse>> CreatePermission(PostUserRequest postUser)
+        public async Task<ActionResult<PostPermissionResponse>> CreatePermission(PostPermissionRequest postPermission)
         {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestObjectResult(ModelState);
+            }
+
             try
             {
-                if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
-
-                var user = postUser.ToUser();
-                await _userPersistence.CreateUserAsync(user);
+                var permission = postPermission.ToPermission();
+                await permissionPersistence.CreatePermissionAsync(permission);
 
                 // TODO: Is ID populated after saving?
                 // TODO : Question : Should this be the whole user object? 
-                return Ok(new PostUserResponse
+                return Ok(new PostPermissionResponse
                 {
-                    UserId = user.UserId
+                    PermissionId = permission.PermissionId,
+                    UserId = permission.UserId,
+                    UserRole = permission.UserRole,
+                    LocationId = permission.LocationId,
                 });
             }
             catch (DocumentClientException)
@@ -125,23 +140,27 @@ namespace Medical_Examiner_API.Controllers
                 return NotFound();
             }
         }
-        
+
         /// <summary>
         /// Create a new User.
         /// </summary>
-        /// <param name="putUser">The PutUserRequest.</param>
-        /// <returns>A PutUserResponse.</returns>
+        /// <param name="putPermission">The PutPermissionRequest.</param>
+        /// <returns>A PutPermissionResponse.</returns>
         // POST api/users
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutUserResponse>> UpdatePermission(PutUserRequest putUser)
+        public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(PutPermissionRequest putPermission)
         {
             try
             {
-                if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
-                var user = putUser.ToUser();
-                var updated_user = await _userPersistence.UpdateUserAsync(user);
-                return Ok(updated_user.ToPutUserResponse());
+                if (!ModelState.IsValid)
+                {
+                    return new BadRequestObjectResult(ModelState);
+                }
+
+                var permission = putPermission.ToPermission();
+                var updatedPermission = await permissionPersistence.UpdatePermissionAsync(permission);
+                return Ok(updatedPermission.ToPutPermissionResponse());
             }
             catch (DocumentClientException)
             {
