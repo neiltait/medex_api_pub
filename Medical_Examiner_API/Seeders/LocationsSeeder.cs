@@ -37,6 +37,7 @@ namespace Medical_Examiner_API.Seeders
         {
             var json = File.ReadAllText(jsonFileName);
             Locations = JsonConvert.DeserializeObject<List<Location>>(json);
+            var djp = 10;
         }
     }
 }
