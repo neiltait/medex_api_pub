@@ -1,24 +1,24 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
+using FluentAssertions;
+using ME_API_tests.Persistance;
 using Medical_Examiner_API;
-using Medical_Examiner_API.Models;
-using Medical_Examiner_API.Persistence;
 using Medical_Examiner_API.Controllers;
 using Medical_Examiner_API.Loggers;
-using ME_API_tests.Persistance;
-using System.Threading.Tasks;
+using Medical_Examiner_API.Models;
+using Medical_Examiner_API.Persistence;
+using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
 namespace ME_API_tests.ControllerTests
 {
     public class ExaminationControllerTests
     {
-        MELoggerMocker _mockLogger;
-        ExaminationsController _controller;
-        IExaminationPersistence _examination_persistance;
+        private MELoggerMocker _mockLogger;
+        private ExaminationsController _controller;
+        private IExaminationPersistence _examination_persistance;
 
         public ExaminationControllerTests()
         {
