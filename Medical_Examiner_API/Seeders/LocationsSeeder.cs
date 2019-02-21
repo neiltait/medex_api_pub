@@ -45,12 +45,9 @@ namespace Medical_Examiner_API.Seeders
         /// </summary>
         public void SubmitToDataLayer()
         {
-            var djpCount = 0;
             foreach (var l in Locations)
             {
-                ++djpCount;
                 _locationSeederPersistence.SaveLocationAsync(l);
-                var djp = 1;
             }
         }
     }
