@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Medical_Examiner_API.Extensions.Data;
 using Medical_Examiner_API.Loggers;
-using Medical_Examiner_API.Models.V1.Users;
+using Medical_Examiner_API.Models;
 using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Documents;
+using Medical_Examiner_API.Models.V1.Users;
 
 namespace Medical_Examiner_API.Controllers
 {
@@ -40,122 +41,117 @@ namespace Medical_Examiner_API.Controllers
         /// <returns>A GetUsersResponse.</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetUsersResponse>> GetAsync()
+        public async Task<ActionResult<GetUsersResponse>> GetUsers()
         {
-            var users = await _userPersistence.GetUsersAsync();
-            return Ok(new GetUsersResponse()
+            try
             {
-                Users = users.Select(u => u.ToUserItem())
-            });
+                var users = await _userPersistence.GetUsersAsync();
+                
+                return Ok(new GetUsersResponse
+                {
+                    Users = users.Select(u => u.ToUserItem())
+                });
+            }
+            catch (DocumentClientException)
+            {
+                return NotFound();
+            }
+            catch (ArgumentException)
+            {
+                return NotFound();
+            }
         }
 
         /// <summary>
         /// Get a User by its Identifier.
         /// </summary>
-        /// <param name="id">The User Identifier.</param>
+        /// <param name="meUserId">The User Identifier.</param>
         /// <returns>A GetUserResponse.</returns>
+        // GET api/users/{user_id}
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetUserResponse>> GetAsync(string id)
+        public async Task<ActionResult<GetUserResponse>> GetUser(string meUserId)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return BadRequest(new GetUserResponse());
+            
+            // Throws exception when not found; maybe should return null and exception
+            // handled in logging?
+            try
             {
-                // Throws excception when not found; maybe should return null and exception
-                // handled in logging?
-                var user = await _userPersistence.GetUserAsync(id);
-
-                if (user != null)
-                {
-                    return Ok(user.ToGetUserResponse());
-                }
-
+                var user = await _userPersistence.GetUserAsync(meUserId);
+                return Ok(user.ToGetUserResponse());
+            }
+            catch (ArgumentException)
+            {
+                return NotFound(new GetUserResponse());
+            }
+            catch (NullReferenceException)
+            {
                 return NotFound(new GetUserResponse());
             }
 
             return BadRequest(new GetUserResponse());
         }
-
+        
         /// <summary>
         /// Create a new User.
         /// </summary>
         /// <param name="postUser">The PostUserRequest.</param>
         /// <returns>A PostUserResponse.</returns>
+       // POST api/users
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PostUserResponse>> PostAsync(PostUserRequest postUser)
+        public async Task<ActionResult<PostUserResponse>> CreateUser(PostUserRequest postUser)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var user = postUser.ToUser();
+                if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
 
-                await _userPersistence.SaveUserAsync(user);
+                var user = postUser.ToUser();
+                await _userPersistence.CreateUserAsync(user);
 
                 // TODO: Is ID populated after saving?
-                return Ok(new PostUserResponse()
+                // TODO : Question : Should this be the whole user object? 
+                return Ok(new PostUserResponse
                 {
-                    Id = user.Id,
+                    UserId = user.UserId
                 });
             }
-
-            return new BadRequestObjectResult(ModelState);
-        }
-
-        /// <summary>
-        /// Update an existing User.
-        /// </summary>
-        /// <param name="putUser">A PutUserRequest.</param>
-        /// <returns>A PutUserResponse.</returns>
-        [HttpPut]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutUserResponse>> PutAsync(PutUserRequest putUser)
-        {
-            if (ModelState.IsValid)
+            catch (DocumentClientException)
             {
-                var user = putUser.ToUser();
-
-                await _userPersistence.SaveUserAsync(user);
-
-                return Ok(new PutUserResponse());
+                return NotFound();
             }
-
-            return new BadRequestObjectResult(ModelState);
+            catch (ArgumentException)
+            {
+                return NotFound();
+            }
         }
-
-        // GET api/values/seed
-        [HttpGet("seed")]
+        
+        /// <summary>
+        /// Create a new User.
+        /// </summary>
+        /// <param name="putUser">The PutUserRequest.</param>
+        /// <returns>A PutUserResponse.</returns>
+        // POST api/users
+        [HttpPut("{UserId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<IEnumerable<Models.User>>> Seed()
+        public async Task<ActionResult<PutUserResponse>> UpdateUser(PutUserRequest putUser)
         {
-            Models.User us1 = new Models.User();
-            Models.User us2 = new Models.User();
-            Models.User us3 = new Models.User();
-
-            us1.FirstName = "Robert";
-            us2.FirstName = "Louise";
-            us3.FirstName = "Crowbar";
-
-            us1.LastName = "Bobert";
-            us2.LastName = "Cheese";
-            us3.LastName = "Jones";
-
-            us1.CreatedAt = DateTime.Now;
-            us2.CreatedAt = DateTime.Now;
-            us3.CreatedAt = DateTime.Now;
-
-            us1.ModifiedAt = DateTime.Now;
-            us2.ModifiedAt = DateTime.Now;
-            us3.ModifiedAt = DateTime.Now;
-
-            us1.DeletedAt = null;
-            us2.DeletedAt = null;
-            us3.DeletedAt = null;
-
-            await _userPersistence.SaveUserAsync(us1);
-            await _userPersistence.SaveUserAsync(us2);
-            await _userPersistence.SaveUserAsync(us3);
-
-            var examinations = await _userPersistence.GetUsersAsync();
-            return Ok(examinations);
+            try
+            {
+                if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
+                var user = putUser.ToUser();
+                var updated_user = await _userPersistence.UpdateUserAsync(user);
+                return Ok(updated_user.ToPutUserResponse());
+            }
+            catch (DocumentClientException)
+            {
+                return NotFound();
+            }
+            catch (ArgumentException)
+            {
+                return NotFound();
+            }
         }
     }
 }

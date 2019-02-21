@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
 namespace Medical_Examiner_API.Models
@@ -12,11 +11,11 @@ namespace Medical_Examiner_API.Models
 
         [Required]
         [JsonProperty(PropertyName = "name")]
-        public string name { get; set; }
+        public string Name { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "code")]
-        public string code { get; set; }
+        public string Code { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "parent_location_id")]

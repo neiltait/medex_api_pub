@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Medical_Examiner_API.Loggers;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Okta.AspNetCore;
-using Medical_Examiner_API.Loggers;
 
 namespace Medical_Examiner_API.Controllers
 {
@@ -21,17 +16,16 @@ namespace Medical_Examiner_API.Controllers
         [HttpGet("login")]
         public IActionResult Login()
         {
-            if (!HttpContext.User.Identity.IsAuthenticated)
-            {
-                return Challenge(OktaDefaults.MvcAuthenticationScheme);
-            }
+            if (!HttpContext.User.Identity.IsAuthenticated) return Challenge(OktaDefaults.MvcAuthenticationScheme);
 
-            return RedirectToAction("Index", "Home");
+            return Unauthorized();
         }
 
         [HttpPost]
         public IActionResult Logout()
         {
-            return new SignOutResult(new[] { OktaDefaults.MvcAuthenticationScheme, CookieAuthenticationDefaults.AuthenticationScheme });        }
+            return new SignOutResult(new[]
+                {OktaDefaults.MvcAuthenticationScheme, CookieAuthenticationDefaults.AuthenticationScheme});
+        }
     }
 }

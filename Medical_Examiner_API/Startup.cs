@@ -61,25 +61,29 @@ namespace Medical_Examiner_API
 
             services.AddScoped<ControllerActionFilter>();
 
-            services.AddScoped<IExaminationPersistence>((s) =>
+
+            services.AddScoped<IExaminationPersistence>(s =>
             {
                 return new ExaminationPersistence(
                     new Uri(Configuration["CosmosDB:URL"]),
-                    Configuration["CosmosDB:PrimaryKey"]);
+                    Configuration["CosmosDB:PrimaryKey"],
+                    Configuration["CosmosDB:DatabaseId"]);
             });
 
-            services.AddScoped<IUserPersistence>((s) =>
+            services.AddScoped<IUserPersistence>(s =>
             {
                 return new UserPersistence(
                     new Uri(Configuration["CosmosDB:URL"]),
-                    Configuration["CosmosDB:PrimaryKey"]);
+                    Configuration["CosmosDB:PrimaryKey"],
+                    Configuration["CosmosDB:DatabaseId"]);
             });
 
-            services.AddScoped<IMELoggerPersistence>((s) =>
+            services.AddScoped<IMeLoggerPersistence>(s =>
             {
-                return new MELoggerPersistence(
+                return new MeLoggerPersistence(
                     new Uri(Configuration["CosmosDB:URL"]),
-                    Configuration["CosmosDB:PrimaryKey"]);
+                    Configuration["CosmosDB:PrimaryKey"],
+                    Configuration["CosmosDB:DatabaseId"]);
             });
         }
 
@@ -92,11 +96,8 @@ namespace Medical_Examiner_API
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
             else
-            {
                 app.UseExceptionHandler(appBuilder =>
                 {
                     appBuilder.Run(async context =>
@@ -105,10 +106,8 @@ namespace Medical_Examiner_API
                         await context.Response.WriteAsync("An unexpected fault happened. Try again later.");
                     });
                 });
-            }
 
             app.UseHttpsRedirection();
-
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
