@@ -1,4 +1,6 @@
 ﻿using System;
+using AutoMapper;
+using Medical_Examiner_API.Extensions.Data;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Builder;
@@ -37,6 +39,13 @@ namespace Medical_Examiner_API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile<ExaminationProfile>();
+            });
+
+            services.AddAutoMapper();
 
             services.AddScoped<IMELogger, MELogger>();
 
