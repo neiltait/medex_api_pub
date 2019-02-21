@@ -45,10 +45,7 @@ namespace Medical_Examiner_API.Seeders
         /// </summary>
         public void SubmitToDataLayer()
         {
-            foreach (var l in Locations)
-            {
-                _locationSeederPersistence.SaveLocationAsync(l);
-            }
+            _locationSeederPersistence.SaveAllLocationsAsync(Locations);
         }
     }
 }

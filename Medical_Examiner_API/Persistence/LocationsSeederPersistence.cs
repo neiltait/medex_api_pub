@@ -54,6 +54,8 @@ namespace Medical_Examiner_API.Persistence
             await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, _documentCollection);
         }
 
+        
+
         /// <summary>
         /// Writes location object to database
         /// </summary>
@@ -65,6 +67,24 @@ namespace Medical_Examiner_API.Persistence
 
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, _id);
             await _client.UpsertDocumentAsync(documentCollectionUri, location);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Write list of location objects to database
+        /// </summary>
+        /// <param name="locations">list of location objects</param>
+        /// <returns>bool</returns>
+        public async Task<bool> SaveAllLocationsAsync(IList<Location> locations)
+        {
+            await EnsureSetupAsync();
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, _id);
+
+            foreach (var l in locations)
+            {
+                await _client.UpsertDocumentAsync(documentCollectionUri, l);
+            }
 
             return true;
         }

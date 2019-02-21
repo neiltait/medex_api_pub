@@ -17,5 +17,12 @@ namespace Medical_Examiner_API.Persistence
         /// <param name="location">location object to be written to database</param>
         /// <returns>bool</returns>
         Task<bool> SaveLocationAsync(Location location);
+
+        /// <summary>
+        /// Write list of locations to database
+        /// </summary>
+        /// <param name="locations">IList of location objects</param>
+        /// <returns>bool</returns>
+        Task<bool> SaveAllLocationsAsync(IList<Location> locations);
     }
 }
