@@ -31,5 +31,6 @@
   
   <ItemGroup>
     <Folder Include="ControllerTests" />
+    <Folder Include="ControllerTests\" />
   </ItemGroup>
 </Project>

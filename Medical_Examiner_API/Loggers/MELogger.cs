@@ -17,7 +17,7 @@ namespace Medical_Examiner_API.Loggers
         /// Constructor
         /// </summary>
         /// <param name="mEloggerPersistence">persistence object that writes to logging destination</param>
-        public MELogger(IMELoggerPersistence mEloggerPersistence)
+        public MELogger(IMeLoggerPersistence mEloggerPersistence)
         {
             _mEloggerPersistence = mEloggerPersistence;
         }
@@ -39,7 +39,7 @@ namespace Medical_Examiner_API.Loggers
         {
             var logEntry = new LogMessageActionDefault(userName, userAuthenticationType, userIsAuthenticated,
                 controllerName, controllerMethod, parameters, remoteIP, timeStamp);
-            await _MElogger_persistence.SaveLogEntryAsync(logEntry);
+            await _mEloggerPersistence.SaveLogEntryAsync(logEntry);
         }
     }
 }

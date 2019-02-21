@@ -88,23 +88,6 @@ namespace Medical_Examiner_API.Loggers
                 contents.Append(p + " ");
             }
 
-        public string UserName { get; }
-        public string UserAuthenticationType { get; }
-        public bool UserIsAuthenticated { get; }
-        public string ControllerName { get; }
-        public string ControllerMethod { get; }
-        public IList<string> Parameters { get; }
-        public string RemoteIP { get; }
-        public DateTime TimeStamp { get; }
-
-        public override string ToString()
-        {
-            var contents = new StringBuilder();
-            contents.Append(UserName + " " + UserAuthenticationType + " " + UserIsAuthenticated + " " + ControllerName +
-                            " " + ControllerMethod + " ");
-
-            foreach (var p in Parameters) contents.Append(p + " ");
-
             contents.Append(RemoteIP + " ");
             contents.Append(TimeStamp.ToLongDateString() + "_" + TimeStamp.ToLongTimeString());
 
