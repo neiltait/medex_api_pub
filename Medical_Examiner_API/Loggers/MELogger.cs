@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Medical_Examiner_API.Persistence;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -14,7 +11,7 @@ namespace Medical_Examiner_API.Loggers
     /// </summary>
     public class MELogger : IMELogger
     {
-        private IMELoggerPersistence _mEloggerPersistence;
+        private readonly IMeLoggerPersistence _mEloggerPersistence;
 
         /// <summary>
         /// Constructor
@@ -36,10 +33,13 @@ namespace Medical_Examiner_API.Loggers
         /// <param name="parameters">list of parameters passed to method</param>
         /// <param name="remoteIP">IP address of client</param>
         /// <param name="timeStamp">timestamp when method called</param>
-        public async void Log(string userName, string userAuthenticationType, bool userIsAuthenticated, string controllerName, string controllerMethod, IList<string> parameters, string remoteIP, DateTime timeStamp)
+        public async void Log(string userName, string userAuthenticationType, bool userIsAuthenticated,
+            string controllerName, string controllerMethod, IList<string> parameters, string remoteIP,
+            DateTime timeStamp)
         {
-           var logEntry = new LogMessageActionDefault(userName, userAuthenticationType, userIsAuthenticated, controllerName, controllerMethod, parameters, remoteIP, timeStamp);
-           await _mEloggerPersistence.SaveLogEntryAsync(logEntry);
+            var logEntry = new LogMessageActionDefault(userName, userAuthenticationType, userIsAuthenticated,
+                controllerName, controllerMethod, parameters, remoteIP, timeStamp);
+            await _MElogger_persistence.SaveLogEntryAsync(logEntry);
         }
     }
 }

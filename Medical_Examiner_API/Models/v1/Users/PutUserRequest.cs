@@ -10,7 +10,7 @@ namespace Medical_Examiner_API.Models.V1.Users
         /// <summary>
         /// The User identifier.
         /// </summary>
-        public string Id { get; set; }
+        public string UserId { get; set; }
 
         /// <summary>
         /// The User's first name.

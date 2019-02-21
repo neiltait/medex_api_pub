@@ -1,5 +1,4 @@
-﻿using System;
-namespace Medical_Examiner_API.Models
+﻿namespace Medical_Examiner_API.Models
 {
     public enum ExaminationGender
     {

@@ -1,15 +1,16 @@
 ﻿using Medical_Examiner_API.Extensions.Models;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models.V1;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace Medical_Examiner_API.Controllers
 {
+        
     /// <inheritdoc />
     /// <summary>
     /// Base Controller
     /// </summary>
-    [Route("api/[controller]")]
     [ApiController]
     public abstract class BaseController : Controller
     {

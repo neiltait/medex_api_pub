@@ -1,75 +1,69 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Medical_Examiner_API.Models;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Medical_Examiner_API.Persistence
 {
-    public class UserPersistence : IUserPersistence
+    public class UserPersistence : PersistenceBase, IUserPersistence
     {
-
-        private string _databaseId;
-        private Uri _endpointUri;
-        private string _primaryKey;
-        private DocumentClient _client;
-
-        public UserPersistence(Uri endpointUri, string primaryKey)
+        public UserPersistence(Uri endpointUri, string primaryKey, string databaseId) : base(endpointUri, primaryKey, databaseId, "Users")
         {
-            _databaseId = "testing123";
-            _endpointUri = endpointUri;
-            _primaryKey = primaryKey;
         }
 
-        public async Task EnsureSetupAsync()
-        {
-            if (_client == null)
-            {
-                _client = new DocumentClient(_endpointUri, _primaryKey);
-            }
-
-            await _client.CreateDatabaseIfNotExistsAsync(new Database { Id = _databaseId });
-            var databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
-
-            // Samples
-            await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection() { Id = "Users" });
-        }
-
-        public async Task SaveUserAsync(Models.User user)
+        public async Task<MeUser> UpdateUserAsync(MeUser meUser)
         {
             await EnsureSetupAsync();
 
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, "Users");
-            await _client.UpsertDocumentAsync(documentCollectionUri, user);
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionName);
+            var doc = await Client.UpsertDocumentAsync(documentCollectionUri, meUser);
+
+            if (doc == null) throw new ArgumentException("Invalid Argument");
+
+            return (MeUser) doc;
         }
 
-        public async Task<Models.User> GetUserAsync(string Id)
+        public async Task<MeUser> CreateUserAsync(MeUser meUser)
         {
             await EnsureSetupAsync();
 
-            var documentUri = UriFactory.CreateDocumentUri(_databaseId, "Users", Id);
-            var result = await _client.ReadDocumentAsync<Models.User>(documentUri);
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionName);
+            var document = await Client.CreateDocumentAsync(documentCollectionUri, meUser);
+
+            if (document == null) throw new ArgumentException("Invalid Argument");
+
+            return (MeUser) document;
+        }
+
+        public async Task<MeUser> GetUserAsync(string UserId)
+        {
+            await EnsureSetupAsync();
+
+            var documentUri = UriFactory.CreateDocumentUri(DatabaseId, CollectionName, UserId);
+            var result = await Client.ReadDocumentAsync<MeUser>(documentUri);
+
+            if (result.Document == null) throw new ArgumentException("Invalid Argument");
+
             return result.Document;
         }
 
-        public async Task<IEnumerable<Models.User>> GetUsersAsync()
+        public async Task<IEnumerable<MeUser>> GetUsersAsync()
         {
             await EnsureSetupAsync();
 
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, "Users");
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, "Users");
 
             // build the query
-            var feedOptions = new FeedOptions() { MaxItemCount = -1 };
-            var query = _client.CreateDocumentQuery<Models.User>(documentCollectionUri, "SELECT * FROM Users", feedOptions);
+            var feedOptions = new FeedOptions {MaxItemCount = -1};
+            var query = Client.CreateDocumentQuery<MeUser>(documentCollectionUri, "SELECT * FROM Users", feedOptions);
             var queryAll = query.AsDocumentQuery();
 
             // combine the results
-            var results = new List<Models.User>();
-            while (queryAll.HasMoreResults)
-            {
-                results.AddRange(await queryAll.ExecuteNextAsync<Models.User>());
-            }
+            var results = new List<MeUser>();
+            while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<MeUser>());
 
             return results;
         }

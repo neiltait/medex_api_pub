@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Medical_Examiner_API.Loggers;
 using Microsoft.Azure.Documents;
@@ -9,43 +7,21 @@ using Microsoft.Azure.Documents.Linq;
 
 namespace Medical_Examiner_API.Persistence
 {
-    /// <summary>
+
+ /// <summary>
     /// Class responsible for logging actions to database
     /// </summary>
-    public class MELoggerPersistence : IMELoggerPersistence
+    public class MeLoggerPersistence : PersistenceBase, IMeLoggerPersistence
     {
-        private string _databaseId;
-        private Uri _endpointUri;
-        private string _primaryKey;
-        private DocumentClient _client;
-
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="endpointUri">Cosmos DB URI</param>
         /// <param name="primaryKey">Key required for connection</param>
-        public MELoggerPersistence(Uri endpointUri, string primaryKey)
+        /// <param name="databaseId">Id of database</param>
+        public MeLoggerPersistence(Uri endpointUri, string primaryKey, string databaseId)
+            : base(endpointUri, primaryKey, databaseId, "MELogger")
         {
-            _databaseId = "testing123";
-            _endpointUri = endpointUri;
-            _primaryKey = primaryKey;
-        }
-
-        /// <summary>
-        /// Set up Cosmos DB connection
-        /// </summary>
-        /// <returns>Task</returns>
-        public async Task EnsureSetupAsync()
-        {
-            if (_client == null)
-            {
-                _client = new DocumentClient(_endpointUri, _primaryKey);
-            }
-
-            await _client.CreateDatabaseIfNotExistsAsync(new Database { Id = _databaseId });
-            var databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
-
-            await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection() { Id = "MELogger" });
         }
 
         /// <summary>
@@ -56,10 +32,8 @@ namespace Medical_Examiner_API.Persistence
         public async Task<bool> SaveLogEntryAsync(LogMessageActionDefault logEntry)
         {
             await EnsureSetupAsync();
-
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, "MELogger");
-            await _client.UpsertDocumentAsync(documentCollectionUri, logEntry);
-
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionName);
+            await Client.UpsertDocumentAsync(documentCollectionUri, logEntry);
             return true;
         }
     }
