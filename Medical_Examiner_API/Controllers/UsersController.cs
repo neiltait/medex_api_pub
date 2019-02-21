@@ -1,61 +1,121 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Medical_Examiner_API.Extensions.Data;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models;
 using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
+using Medical_Examiner_API.Models.V1.Users;
 
 namespace Medical_Examiner_API.Controllers
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// Users Controller
+    /// </summary>
     [Route("api/users")]
     [ApiController]
     public class UsersController : BaseController
     {
+        /// <summary>
+        /// The User Persistance Layer
+        /// </summary>
         private readonly IUserPersistence _userPersistence;
 
-        public UsersController(IUserPersistence userPersistence, IMELogger logger) : base(logger)
+        /// <summary>
+        /// Initialise a new instance of the Users controller.
+        /// </summary>
+        /// <param name="userPersistence">The User Persistance.</param>
+        /// <param name="logger">The Logger.</param>
+        public UsersController(IUserPersistence userPersistence, IMELogger logger)
+            : base(logger)
         {
             _userPersistence = userPersistence;
         }
 
-        // GET api/users
+        /// <summary>
+        /// Get all Users.
+        /// </summary>
+        /// <returns>A GetUsersResponse.</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<IEnumerable<MeUser>>> GetUsers()
+        public async Task<ActionResult<GetUsersResponse>> GetUsers()
         {
-            var users = await _userPersistence.GetUsersAsync();
-            return Ok(users);
+            try
+            {
+                var users = await _userPersistence.GetUsersAsync();
+                
+                return Ok(new GetUsersResponse
+                {
+                    Users = users.Select(u => u.ToUserItem())
+                });
+            }
+            catch (DocumentClientException)
+            {
+                return NotFound();
+            }
+            catch (ArgumentException)
+            {
+                return NotFound();
+            }
         }
 
+        /// <summary>
+        /// Get a User by its Identifier.
+        /// </summary>
+        /// <param name="meUserId">The User Identifier.</param>
+        /// <returns>A GetUserResponse.</returns>
         // GET api/users/{user_id}
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<Examination>> GetUser(string meUserId)
+        public async Task<ActionResult<GetUserResponse>> GetUser(string meUserId)
         {
+            if (!ModelState.IsValid) return BadRequest(new GetUserResponse());
+            
+            // Throws exception when not found; maybe should return null and exception
+            // handled in logging?
             try
             {
-                return Ok(await _userPersistence.GetUserAsync(meUserId));
-            }
-            catch (DocumentClientException)
-            {
-                return NotFound();
+                var user = await _userPersistence.GetUserAsync(meUserId);
+                return Ok(user.ToGetUserResponse());
             }
             catch (ArgumentException)
             {
-                return NotFound();
+                return NotFound(new GetUserResponse());
             }
-        }
+            catch (NullReferenceException)
+            {
+                return NotFound(new GetUserResponse());
+            }
 
-        // POST api/users
+            return BadRequest(new GetUserResponse());
+        }
+        
+        /// <summary>
+        /// Create a new User.
+        /// </summary>
+        /// <param name="postUser">The PostUserRequest.</param>
+        /// <returns>A PostUserResponse.</returns>
+       // POST api/users
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<MeUser>> CreateUser(MeUser meUser)
+        public async Task<ActionResult<PostUserResponse>> CreateUser(PostUserRequest postUser)
         {
             try
             {
-                return Ok(await _userPersistence.CreateUserAsync(meUser));
+                if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
+
+                var user = postUser.ToUser();
+                await _userPersistence.CreateUserAsync(user);
+
+                // TODO: Is ID populated after saving?
+                // TODO : Question : Should this be the whole user object? 
+                return Ok(new PostUserResponse
+                {
+                    UserId = user.UserId
+                });
             }
             catch (DocumentClientException)
             {
@@ -66,15 +126,23 @@ namespace Medical_Examiner_API.Controllers
                 return NotFound();
             }
         }
-
+        
+        /// <summary>
+        /// Create a new User.
+        /// </summary>
+        /// <param name="putUser">The PutUserRequest.</param>
+        /// <returns>A PutUserResponse.</returns>
         // POST api/users
         [HttpPut("{UserId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<MeUser>> UpdateUser(MeUser meUser)
+        public async Task<ActionResult<PutUserResponse>> UpdateUser(PutUserRequest putUser)
         {
             try
             {
-                return Ok(await _userPersistence.CreateUserAsync(meUser));
+                if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
+                var user = putUser.ToUser();
+                var updated_user = await _userPersistence.UpdateUserAsync(user);
+                return Ok(updated_user.ToPutUserResponse());
             }
             catch (DocumentClientException)
             {

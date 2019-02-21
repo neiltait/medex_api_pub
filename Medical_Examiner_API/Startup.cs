@@ -11,16 +11,29 @@ using Microsoft.Extensions.Logging;
 
 namespace Medical_Examiner_API
 {
+    /// <summary>
+    /// Startup
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Initialise a new instance of Startup
+        /// </summary>
+        /// <param name="configuration">The Configuration.</param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// Configuration.
+        /// </summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// Add services to the container.
+        /// </summary>
+        /// <param name="services">Service Collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -28,6 +41,7 @@ namespace Medical_Examiner_API
             services.AddScoped<IMELogger, MELogger>();
 
             services.AddScoped<ControllerActionFilter>();
+
 
             services.AddScoped<IExaminationPersistence>(s =>
             {
@@ -45,7 +59,6 @@ namespace Medical_Examiner_API
                     Configuration["CosmosDB:DatabaseId"]);
             });
 
-
             services.AddScoped<IMeLoggerPersistence>(s =>
             {
                 return new MeLoggerPersistence(
@@ -55,7 +68,12 @@ namespace Medical_Examiner_API
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// Configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app">The App.</param>
+        /// <param name="env">The Environment.</param>
+        /// <param name="loggerFactory">The Logger Factory.</param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
@@ -70,9 +88,7 @@ namespace Medical_Examiner_API
                     });
                 });
 
-
             app.UseHttpsRedirection();
-
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
