@@ -13,12 +13,12 @@ namespace Medical_Examiner_API_Tests.Mapper
     public class MapperExaminationProfileTests
     {
         /// <summary>
-        /// Mapper
+        /// Mapper.
         /// </summary>
         private readonly IMapper _mapper;
 
         /// <summary>
-        /// Setup
+        /// Setup.
         /// </summary>
         public MapperExaminationProfileTests()
         {
