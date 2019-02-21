@@ -2,50 +2,71 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Medical_Examiner_API.Extensions.Data;
+using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models;
+using Medical_Examiner_API.Models.v1.Examinations;
+using Medical_Examiner_API.Models.V1.Examinations;
 using Medical_Examiner_API.Persistence;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Newtonsoft.Json;
-using Medical_Examiner_API;
-using Medical_Examiner_API.Loggers;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Medical_Examiner_API.Controllers
 {
+    /// <summary>
+    /// Examinations Controller
+    /// </summary>
     [Route("api/examinations")]
     [ApiController]
     public class ExaminationsController : BaseController
     {
-        public DocumentClient client = null;
-        private IExaminationPersistence _examination_persistence;
+        /// <summary>
+        /// The examination persistance layer.
+        /// </summary>
+        private readonly IExaminationPersistence _examinationPersistence;
 
-        public ExaminationsController(IExaminationPersistence examination_persistence, IMELogger logger): base(logger)
+        /// <summary>
+        /// Initialise a new instance of the Examiantions Controller.
+        /// </summary>
+        /// <param name="examinationPersistence">The Examination Persistance.</param>
+        /// <param name="logger">The Logger.</param>
+        /// <param name="mapper">The Mapper.</param>
+        public ExaminationsController(IExaminationPersistence examinationPersistence, IMELogger logger, IMapper mapper)
+            : base(logger, mapper)
         {
-            _examination_persistence = examination_persistence;
+            _examinationPersistence = examinationPersistence;
         }
 
-        // GET api/values
+        /// <summary>
+        /// Get a list of <see cref="ExaminationItem"/>.
+        /// </summary>
+        /// <returns>A list of examinations.</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<IEnumerable<Examination>>> GetExaminations()
+        public async Task<ActionResult<GetExaminationsResponse>> GetExaminations()
         {
-            var Examinations = await _examination_persistence.GetExaminationsAsync();
-            return Ok(Examinations);
+            var examinations = await _examinationPersistence.GetExaminationsAsync();
+            return Ok(new GetExaminationsResponse()
+            {
+                Examinations = examinations.Select(e => Mapper.Map<ExaminationItem>(e)).ToList(),
+            });
         }
 
-        // GET api/values
+        /// <summary>
+        /// Get an Examination by Id.
+        /// </summary>
+        /// <param name="id">The Id.</param>
+        /// <returns>A GetExaminationResponse.</returns>
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<Examination>> GetExamination(string id)
+        public async Task<ActionResult<GetExaminationResponse>> GetExamination(string id)
         {
- 
             try
             {
-                return Ok(await _examination_persistence.GetExaminationAsync(id));
+                var examination = await _examinationPersistence.GetExaminationAsync(id);
+                var response = Mapper.Map<GetExaminationResponse>(examination);
+                return Ok(response);
             }
             catch (DocumentClientException)
             {
@@ -88,11 +109,11 @@ namespace Medical_Examiner_API.Controllers
             ex1.DeletedAt = null;
 
 
-            await _examination_persistence.SaveExaminationAsync(ex1);
-            await _examination_persistence.SaveExaminationAsync(ex2);
-            await _examination_persistence.SaveExaminationAsync(ex3);
+            await _examinationPersistence.SaveExaminationAsync(ex1);
+            await _examinationPersistence.SaveExaminationAsync(ex2);
+            await _examinationPersistence.SaveExaminationAsync(ex3);
 
-            var Examinations = await _examination_persistence.GetExaminationsAsync();
+            var Examinations = await _examinationPersistence.GetExaminationsAsync();
             return Ok(Examinations);
         }
     }
