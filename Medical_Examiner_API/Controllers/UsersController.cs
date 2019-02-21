@@ -54,11 +54,11 @@ namespace Medical_Examiner_API.Controllers
             }
             catch (DocumentClientException)
             {
-                return NotFound();
+                return NotFound(new GetUsersResponse());
             }
             catch (ArgumentException)
             {
-                return NotFound();
+                return NotFound(new GetUsersResponse());
             }
         }
 
@@ -103,7 +103,7 @@ namespace Medical_Examiner_API.Controllers
         {
             try
             {
-                if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
+                if (!ModelState.IsValid) return BadRequest(new PostUserResponse());
 
                 var user = Mapper.Map<MeUser>(postUser);
                 var createdUser = await _userPersistence.CreateUserAsync(user);
@@ -111,11 +111,11 @@ namespace Medical_Examiner_API.Controllers
             }
             catch (DocumentClientException)
             {
-                return NotFound();
+                return NotFound(new PostUserResponse());
             }
             catch (ArgumentException)
             {
-                return NotFound();
+                return NotFound(new PostUserResponse());
             }
         }
         
@@ -131,18 +131,18 @@ namespace Medical_Examiner_API.Controllers
         {
             try
             {
-                if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
+                if (!ModelState.IsValid) return BadRequest(new PutUserResponse());
                 var user = Mapper.Map<MeUser>(putUser);
                 var updatedUser = await _userPersistence.UpdateUserAsync(user);
                 return Ok(Mapper.Map<PutUserResponse>(updatedUser));
             }
             catch (DocumentClientException)
             {
-                return NotFound();
+                return NotFound(new PutUserResponse());
             }
             catch (ArgumentException)
             {
-                return NotFound();
+                return NotFound(new PutUserResponse());
             }
         }
     }
