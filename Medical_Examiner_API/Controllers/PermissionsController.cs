@@ -15,21 +15,22 @@ namespace Medical_Examiner_API.Controllers
     /// <summary>
     /// Users Controller
     /// </summary>
-    [Route("users")]
+    [Route("users/{user_id}/permissions")]
     [ApiController]
-    public class UsersController : BaseController
+    public class PermissionsController : BaseController
     {
         /// <summary>
         /// The User Persistance Layer
         /// </summary>
         private readonly IUserPersistence _userPersistence;
+        private readonly IPermissionPersistence _permissionPersistence;
 
         /// <summary>
         /// Initialise a new instance of the Users controller.
         /// </summary>
         /// <param name="userPersistence">The User Persistance.</param>
         /// <param name="logger">The Logger.</param>
-        public UsersController(IUserPersistence userPersistence, IMELogger logger)
+        public PermissionsController(IUserPersistence userPersistence, IPermissionPersistence permissionPersistance, IMELogger logger)
             : base(logger)
         {
             _userPersistence = userPersistence;
@@ -41,11 +42,11 @@ namespace Medical_Examiner_API.Controllers
         /// <returns>A GetUsersResponse.</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetUsersResponse>> GetUsers()
+        public async Task<ActionResult<GetUsersResponse>> GetPermissions()
         {
             try
             {
-                var users = await _userPersistence.GetUsersAsync();
+                var users = await _userPersistence.GetPermissionsAsync(user_id);
                 
                 return Ok(new GetUsersResponse
                 {
@@ -70,7 +71,7 @@ namespace Medical_Examiner_API.Controllers
         // GET api/users/{user_id}
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetUserResponse>> GetUser(string meUserId)
+        public async Task<ActionResult<GetUserResponse>> GetPermission(string meUserId)
         {
             if (!ModelState.IsValid) return BadRequest(new GetUserResponse());
             
@@ -89,8 +90,6 @@ namespace Medical_Examiner_API.Controllers
             {
                 return NotFound(new GetUserResponse());
             }
-
-            return BadRequest(new GetUserResponse());
         }
         
         /// <summary>
@@ -101,7 +100,7 @@ namespace Medical_Examiner_API.Controllers
        // POST api/users
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PostUserResponse>> CreateUser(PostUserRequest postUser)
+        public async Task<ActionResult<PostUserResponse>> CreatePermission(PostUserRequest postUser)
         {
             try
             {
@@ -135,7 +134,7 @@ namespace Medical_Examiner_API.Controllers
         // POST api/users
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutUserResponse>> UpdateUser(PutUserRequest putUser)
+        public async Task<ActionResult<PutUserResponse>> UpdatePermission(PutUserRequest putUser)
         {
             try
             {
