@@ -22,7 +22,6 @@ namespace Medical_Examiner_API_Tests.Controllers
         /// The User Persistence and permission persistence mock.
         /// </summary>
         private readonly Mock<IUserPersistence> _userPersistence;
-
         private readonly Mock<IPermissionPersistence> _permissionPersistence;
 
         /// <summary>
@@ -141,8 +140,6 @@ namespace Medical_Examiner_API_Tests.Controllers
         {
             // Arrange
             const string expectedUserId = "expectedUserId";
-
-            _userPersistence.Setup(up => up.GetUserAsync(It.IsAny<string>())).Returns(Task.FromResult<MeUser>(null));
 
             // Act
             var response = await _permissionsController.GetPermission(expectedUserId, "Something_that_does_not_exist");
