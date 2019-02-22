@@ -7,18 +7,19 @@ using Medical_Examiner_API.Extensions.Data;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models;
 using Medical_Examiner_API.Models.V1.Users;
+using Medical_Examiner_API_Tests.Controllers;
 using Medical_Examiner_API_Tests.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
 namespace Medical_Examiner_API_Tests.ControllerTests
 {
-    public class DataTypesControllerTests
+    public class DataTypesControllerTests : ControllerTestsBase<DataTypesController>
     {
         public DataTypesControllerTests()
         {
             var mockLogger = new MELoggerMocker();
-            _controller = new DataTypesController(mockLogger);
+            _controller = new DataTypesController(mockLogger, Mapper);
         }
 
         private readonly DataTypesController _controller;

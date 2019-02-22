@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Medical_Examiner_API.Enums;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models;
@@ -21,8 +22,8 @@ namespace Medical_Examiner_API.Controllers
         /// Data Types Controller initialiser 
         /// </summary>
         /// <param name="logger"></param>
-        public DataTypesController(IMELogger logger)
-            : base(logger)
+        public DataTypesController(IMELogger logger, IMapper mapper)
+            : base(logger, mapper)
         {
         }
 
