@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Medical_Examiner_API.Extensions.Data;
+using AutoMapper;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models;
+using Medical_Examiner_API.Models.V1.Users;
 using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
-using Medical_Examiner_API.Models.V1.Users;
 
 namespace Medical_Examiner_API.Controllers
 {
@@ -29,8 +29,9 @@ namespace Medical_Examiner_API.Controllers
         /// </summary>
         /// <param name="userPersistence">The User Persistance.</param>
         /// <param name="logger">The Logger.</param>
-        public UsersController(IUserPersistence userPersistence, IMELogger logger)
-            : base(logger)
+        /// <param name="mapper">The Mapper.</param>
+        public UsersController(IUserPersistence userPersistence, IMELogger logger, IMapper mapper)
+            : base(logger, mapper)
         {
             _userPersistence = userPersistence;
         }
@@ -46,19 +47,18 @@ namespace Medical_Examiner_API.Controllers
             try
             {
                 var users = await _userPersistence.GetUsersAsync();
-                
                 return Ok(new GetUsersResponse
                 {
-                    Users = users.Select(u => u.ToUserItem()),
+                    Users = users.Select(u => Mapper.Map<UserItem>(u)),
                 });
             }
             catch (DocumentClientException)
             {
-                return NotFound();
+                return NotFound(new GetUsersResponse());
             }
             catch (ArgumentException)
             {
-                return NotFound();
+                return NotFound(new GetUsersResponse());
             }
         }
 
@@ -73,13 +73,11 @@ namespace Medical_Examiner_API.Controllers
         public async Task<ActionResult<GetUserResponse>> GetUser(string meUserId)
         {
             if (!ModelState.IsValid) return BadRequest(new GetUserResponse());
-            
-            // Throws exception when not found; maybe should return null and exception
-            // handled in logging?
+
             try
             {
                 var user = await _userPersistence.GetUserAsync(meUserId);
-                return Ok(user.ToGetUserResponse());
+                return Ok(Mapper.Map<GetUserResponse>(user));
             }
             catch (ArgumentException)
             {
@@ -92,7 +90,7 @@ namespace Medical_Examiner_API.Controllers
 
             return BadRequest(new GetUserResponse());
         }
-        
+
         /// <summary>
         /// Create a new User.
         /// </summary>
@@ -105,25 +103,19 @@ namespace Medical_Examiner_API.Controllers
         {
             try
             {
-                if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
+                if (!ModelState.IsValid) return BadRequest(new PostUserResponse());
 
-                var user = postUser.ToUser();
-                await _userPersistence.CreateUserAsync(user);
-
-                // TODO: Is ID populated after saving?
-                // TODO : Question : Should this be the whole user object? 
-                return Ok(new PostUserResponse
-                {
-                    UserId = user.UserId
-                });
+                var user = Mapper.Map<MeUser>(postUser);
+                var createdUser = await _userPersistence.CreateUserAsync(user);
+                return Ok(Mapper.Map<PostUserResponse>(createdUser));
             }
             catch (DocumentClientException)
             {
-                return NotFound();
+                return NotFound(new PostUserResponse());
             }
             catch (ArgumentException)
             {
-                return NotFound();
+                return NotFound(new PostUserResponse());
             }
         }
         
@@ -139,18 +131,18 @@ namespace Medical_Examiner_API.Controllers
         {
             try
             {
-                if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
-                var user = putUser.ToUser();
-                var updated_user = await _userPersistence.UpdateUserAsync(user);
-                return Ok(updated_user.ToPutUserResponse());
+                if (!ModelState.IsValid) return BadRequest(new PutUserResponse());
+                var user = Mapper.Map<MeUser>(putUser);
+                var updatedUser = await _userPersistence.UpdateUserAsync(user);
+                return Ok(Mapper.Map<PutUserResponse>(updatedUser));
             }
             catch (DocumentClientException)
             {
-                return NotFound();
+                return NotFound(new PutUserResponse());
             }
             catch (ArgumentException)
             {
-                return NotFound();
+                return NotFound(new PutUserResponse());
             }
         }
     }

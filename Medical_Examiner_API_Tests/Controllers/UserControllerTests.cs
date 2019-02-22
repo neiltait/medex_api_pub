@@ -1,47 +1,59 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Medical_Examiner_API.Controllers;
-using Medical_Examiner_API.Extensions.Data;
 using Medical_Examiner_API.Loggers;
-using Medical_Examiner_API.Models;
 using Medical_Examiner_API.Models.V1.Users;
 using Medical_Examiner_API_Tests.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
-namespace Medical_Examiner_API_Tests.ControllerTests
+namespace Medical_Examiner_API_Tests.Controllers
 {
-    public class UserControllerTests
+    public class UserControllerTests : ControllerTestsBase<UsersController>
     {
+        /// <summary>
+        /// Initialise a new instance of the Users Controller Tests
+        /// </summary>
         public UserControllerTests()
         {
             var mockLogger = new MELoggerMocker();
             var userPersistence = new UserPersistenceFake();
-            _controller = new UsersController(userPersistence, mockLogger);
+            Controller = new UsersController(userPersistence, mockLogger, Mapper);
         }
-
-        private readonly UsersController _controller;
 
         [Fact]
         public void CreateUser_When_Called_Returns_Expected_Type()
         {
+            // Arrange
+            var expectedFirstName = "Bob";
+            var expectedEmail = "aaa@bbb.com.co.gov.uk.com";
+            var expectedLastName = "Shmob";
+            var expectedUserId = "1";
+
+            var expectedRequest = new PostUserRequest()
+            {
+                FirstName = expectedFirstName,
+                Email = expectedEmail,
+                LastName = expectedLastName,
+            };
+
             // Act
-            var user = new MeUser {FirstName = "Bob", Email = "aaa@bbb.com.co.gov.uk.com", LastName = "Shmob"};
-            var response = _controller.CreateUser(user.ToPostUserRequest());
+            var response = Controller.CreateUser(expectedRequest);
 
             // Assert
             var taskResult = response.Should().BeOfType<Task<ActionResult<PostUserResponse>>>().Subject;
             var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             var returnUser = okResult.Value.Should().BeAssignableTo<PostUserResponse>().Subject;
+
+            returnUser.UserId.Should().Be(expectedUserId);
         }
 
         [Fact]
         public void GetUser_When_Called_With_invalid_Id_Returns_Expected_Type()
         {
             // Act
-            var response = _controller.GetUser("zzzzz");
+            var response = Controller.GetUser("zzzzz");
 
             // Assert
             var taskResult = response.Should().BeOfType<Task<ActionResult<GetUserResponse>>>().Subject;
@@ -52,7 +64,7 @@ namespace Medical_Examiner_API_Tests.ControllerTests
         public void GetUser_When_Called_With_Valid_Id_Returns_Expected_Type()
         {
             // Act
-            var response = _controller.GetUser("aaaaa0");
+            var response = Controller.GetUser("aaaaa0");
 
             // Assert
             var taskResult = response.Should().BeOfType<Task<ActionResult<GetUserResponse>>>().Subject;
@@ -65,7 +77,7 @@ namespace Medical_Examiner_API_Tests.ControllerTests
         public void GetUsers_When_Called_Returns_Expected_Type()
         {
             // Act
-            var response = _controller.GetUsers();
+            var response = Controller.GetUsers();
 
             // Assert
             var taskResult = response.Should().BeOfType<Task<ActionResult<GetUsersResponse>>>().Subject;

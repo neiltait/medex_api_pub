@@ -1,36 +1,40 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using Medical_Examiner_API.Controllers;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models;
+using Medical_Examiner_API.Models.V1.Examinations;
 using Medical_Examiner_API.Persistence;
+using Medical_Examiner_API_Tests.Controllers;
 using Medical_Examiner_API_Tests.Persistence;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using Xunit;
 
 namespace Medical_Examiner_API_Tests.ControllerTests
 {
-    public class ExaminationControllerTests
+    public class ExaminationControllerTests : ControllerTestsBase<ExaminationsController>
     {
         public ExaminationControllerTests()
         {
-            // Arrange 
+            // Arrange
             IExaminationPersistence examinationPersistence = new ExaminationPersistenceFake();
             var mockLogger = new MELoggerMocker();
-            _controller = new ExaminationsController(examinationPersistence, mockLogger);
+            Controller = new ExaminationsController(examinationPersistence, mockLogger, Mapper);
         }
 
-        private readonly ExaminationsController _controller;
 
         [Fact]
         public void GetExamination_When_Called_With_Invalid_Id_Returns_Expected_Type()
         {
             // Act
-            var response = _controller.GetExamination("dfgdfgdfg");
+            var response = Controller.GetExamination("dfgdfgdfg");
 
             // Assert
-            var taskResult = response.Should().BeOfType<Task<ActionResult<Examination>>>().Subject;
+            var taskResult = response.Should().BeOfType<Task<ActionResult<GetExaminationResponse>>>().Subject;
             Assert.Equal(TaskStatus.Faulted, taskResult.Status);
         }
 
@@ -38,12 +42,12 @@ namespace Medical_Examiner_API_Tests.ControllerTests
         public void GetExamination_When_Called_With_Valid_Id_Returns_Expected_Type()
         {
             // Act
-            var response = _controller.GetExamination("aaaaa");
+            var response = Controller.GetExamination("aaaaa");
 
             // Assert
-            var taskResult = response.Should().BeOfType<Task<ActionResult<Examination>>>().Subject;
+            var taskResult = response.Should().BeOfType<Task<ActionResult<GetExaminationResponse>>>().Subject;
             var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            var examination = okResult.Value.Should().BeAssignableTo<Examination>().Subject;
+            var examination = okResult.Value.Should().BeAssignableTo<GetExaminationResponse>().Subject;
             Assert.Equal("aaaaa", examination.ExaminationId);
         }
 
@@ -51,13 +55,14 @@ namespace Medical_Examiner_API_Tests.ControllerTests
         public void GetExaminations_When_Called_Returns_Expected_Type()
         {
             // Act
-            var response = _controller.GetExaminations();
+            var response = Controller.GetExaminations();
 
             // Assert
-            var taskResult = response.Should().BeOfType<Task<ActionResult<IEnumerable<Examination>>>>().Subject;
+            var taskResult = response.Should().BeOfType<Task<ActionResult<GetExaminationsResponse>>>().Subject;
             var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            var examinations = okResult.Value.Should().BeAssignableTo<ICollection<Examination>>().Subject;
-            Assert.Equal(3, examinations.Count);
+            var examinationResponse = okResult.Value.Should().BeAssignableTo<GetExaminationsResponse>().Subject;
+            var examinations = examinationResponse.Examinations;
+            Assert.Equal(3, examinations.Count());
         }
     }
 }
