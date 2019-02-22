@@ -7,12 +7,12 @@ namespace Medical_Examiner_API.Enums
     public enum ModeOfDisposal
     {
         /// <summary>
-        /// 
+        /// Cremation
         /// </summary>
         Cremation,
         
         /// <summary>
-        /// 
+        /// Burial
         /// </summary>
         Burial
     }

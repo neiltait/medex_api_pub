@@ -10,12 +10,12 @@ namespace Medical_Examiner_API.Enums
     public enum ExaminationGender
     {
         /// <summary>
-        /// 
+        /// Male Gender
         /// </summary>
         Male,
         
         /// <summary>
-        /// 
+        /// Female Gender
         /// </summary>
         Female
         // More to come 
