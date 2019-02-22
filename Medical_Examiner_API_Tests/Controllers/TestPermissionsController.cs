@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -16,18 +17,13 @@ namespace Medical_Examiner_API_Tests.Controllers
     /// <summary>
     /// Tests the Users Controller
     /// </summary>
-    public class TestPermissionsController
+    public class TestPermissionsController : ControllerTestsBase<PermissionsController>
     {
         /// <summary>
         /// The User Persistence and permission persistence mock.
         /// </summary>
         private readonly Mock<IUserPersistence> _userPersistence;
         private readonly Mock<IPermissionPersistence> _permissionPersistence;
-
-        /// <summary>
-        /// The system under test.
-        /// </summary>
-        private readonly PermissionsController _permissionsController;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TestPermissionsController"/> class.
@@ -38,8 +34,8 @@ namespace Medical_Examiner_API_Tests.Controllers
             _userPersistence = new Mock<IUserPersistence>();
             var logger = new Mock<IMELogger>();
 
-            _permissionsController =
-                new PermissionsController(_userPersistence.Object, _permissionPersistence.Object, logger.Object);
+            Controller =
+                new PermissionsController(_userPersistence.Object, _permissionPersistence.Object, logger.Object, Mapper);
         }
 
         /// <summary>
@@ -57,7 +53,7 @@ namespace Medical_Examiner_API_Tests.Controllers
                     new List<Permission>()));
 
             // Act
-            var response = await _permissionsController.GetPermissions(userId);
+            var response = await Controller.GetPermissions(userId);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
@@ -87,7 +83,7 @@ namespace Medical_Examiner_API_Tests.Controllers
                         {new Permission {UserId = "fake_id_01", PermissionId = expectedPermissionId}}));
 
             // Act
-            var response = await _permissionsController.GetPermissions(userId);
+            var response = await Controller.GetPermissions(userId);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
@@ -118,7 +114,7 @@ namespace Medical_Examiner_API_Tests.Controllers
                 Task.FromResult(expectedPermission));
 
             // Act
-            var response = await _permissionsController.GetPermission(expectedUserId, expectedPermissionId);
+            var response = await Controller.GetPermission(expectedUserId, expectedPermissionId);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
@@ -141,14 +137,17 @@ namespace Medical_Examiner_API_Tests.Controllers
             // Arrange
             const string expectedUserId = "expectedUserId";
 
+            _permissionPersistence.Setup(up => up.GetPermissionAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Throws<NullReferenceException>();
+
             // Act
-            var response = await _permissionsController.GetPermission(expectedUserId, "Something_that_does_not_exist");
+            var response = await Controller.GetPermission(expectedUserId, "Something_that_does_not_exist");
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
             var result = (NotFoundObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUserResponse>();
-            var model = (GetUserResponse) result.Value;
+            result.Value.Should().BeAssignableTo<GetPermissionResponse>();
+            var model = (GetPermissionResponse) result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
@@ -163,10 +162,10 @@ namespace Medical_Examiner_API_Tests.Controllers
         public async Task TestGetIdValidationFailure()
         {
             // Arrange
-            _permissionsController.ModelState.AddModelError("An", "Error");
+            Controller.ModelState.AddModelError("An", "Error");
 
             // Act
-            var response = await _permissionsController.GetPermission(string.Empty, string.Empty);
+            var response = await Controller.GetPermission(string.Empty, string.Empty);
 
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();

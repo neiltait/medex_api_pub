@@ -32,7 +32,9 @@ namespace Medical_Examiner_API_Tests.Persistence
 
         public async Task<MeUser> CreateUserAsync(MeUser meUser)
         {
-            return await Task.FromResult(meUser);
+            var createdUser = meUser;
+            createdUser.UserId = "1";
+            return await Task.FromResult(createdUser);
         }
 
         public async Task<MeUser> GetUserAsync(string UserId)

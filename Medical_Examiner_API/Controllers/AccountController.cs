@@ -1,4 +1,5 @@
-﻿using Medical_Examiner_API.Loggers;
+﻿using AutoMapper;
+using Medical_Examiner_API.Loggers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Okta.AspNetCore;
@@ -18,8 +19,8 @@ namespace Medical_Examiner_API.Controllers
         /// <param name="logger">
         /// initialise with IMELogger instance
         /// </param>
-        public AccountController(IMELogger logger)
-            : base(logger)
+        public AccountController(IMELogger logger, IMapper mapper)
+            : base(logger, mapper)
         {
         }
 
