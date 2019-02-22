@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Medical_Examiner_API.Enums;
 using Medical_Examiner_API.Loggers;
@@ -16,33 +17,69 @@ namespace Medical_Examiner_API.Controllers
     [ApiController]
     public class DataTypesController : BaseController
     {
-        private readonly IExaminationPersistence _examinationPersistence;
-
-        public DataTypesController(IExaminationPersistence examinationPersistence, IMELogger logger) : base(logger)
+        /// <summary>
+        /// Data Types Controller initialiser 
+        /// </summary>
+        /// <param name="logger"></param>
+        public DataTypesController(IMELogger logger)
+            : base(logger)
         {
-            _examinationPersistence = examinationPersistence;
         }
 
-        // GET datatype/mode_of_disposal
+        /// <summary>
+        /// Returns all the data types and the values for mode of disposal 
+        /// </summary>
+        /// <returns>Dictionary of Modes of disposal</returns>
         [HttpGet("mode_of_disposal")]
-        public async Task<ActionResult<IEnumerable<Examination>>> GetModesOfDisposal()
+        public ActionResult GetModesOfDisposal()
         {
-            return Ok(EnumExtentions.GetDictionary(ModeOfDisposal));
+            return Ok(GetDictionary(typeof(ModeOfDisposal)));
         }
 
-        // GET api/examinations
-        [HttpGet("{id}")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<Examination>> GetExamination(string examinationId)
+        /// <summary>
+        /// Returns all Analysis Entry Type types
+        /// </summary>
+        /// <returns>Dictionary of Analysis Entry Type</returns>
+        [HttpGet("analysis_entry_type")]
+        public ActionResult GetAnalysisEntryTypes()
         {
-            try
-            {
-                return Ok(await _examinationPersistence.GetExaminationAsync(examinationId));
-            }
-            catch (DocumentClientException)
-            {
-                return NotFound();
-            }
+
+            return Ok(GetDictionary(typeof(AnalysisEntryType)));
         }
+        
+        /// <summary>
+        /// Returns all Coroner Statuses
+        /// </summary>
+        /// <returns>Dictionary of Coroner Statuses</returns>
+        [HttpGet("coroner_status")]
+        public ActionResult GetCoronerStatuses()
+        {
+            return Ok(GetDictionary(typeof(CoronerStatus)));
+        }
+
+        /// <summary>
+        /// Returns all Examination Genders
+        /// </summary>
+        /// <returns>Dictionary of Examination Genders</returns>
+        [HttpGet("examination_gender")]
+        public ActionResult GetExaminationGenders()
+        {
+            return Ok(GetDictionary(typeof(ExaminationGender)));
+        }
+        
+        private Dictionary<string, int> GetDictionary(Type enumeratorType)
+        {
+            var dic = new Dictionary<string, int>();
+
+            var values = Enum.GetValues(enumeratorType);
+
+            foreach (var value in values)
+            {
+                dic.Add(value.ToString(),(int)value);
+            }
+
+            return dic;
+        }
+
     }
 }
