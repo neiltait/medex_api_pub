@@ -20,7 +20,7 @@ namespace Medical_Examiner_API.Controllers
     public class UsersController : BaseController
     {
         /// <summary>
-        /// The User Persistance Layer
+        /// The User Persistence Layer
         /// </summary>
         private readonly IUserPersistence _userPersistence;
 
@@ -49,7 +49,7 @@ namespace Medical_Examiner_API.Controllers
                 
                 return Ok(new GetUsersResponse
                 {
-                    Users = users.Select(u => u.ToUserItem())
+                    Users = users.Select(u => u.ToUserItem()),
                 });
             }
             catch (DocumentClientException)
@@ -133,7 +133,7 @@ namespace Medical_Examiner_API.Controllers
         /// <param name="putUser">The PutUserRequest.</param>
         /// <returns>A PutUserResponse.</returns>
         // POST api/users
-        [HttpPut("{UserId}")]
+        [HttpPut("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutUserResponse>> UpdateUser(PutUserRequest putUser)
         {

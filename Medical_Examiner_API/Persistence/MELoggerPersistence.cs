@@ -8,7 +8,8 @@ namespace Medical_Examiner_API.Persistence
 {
     public class MeLoggerPersistence : PersistenceBase, IMeLoggerPersistence
     {
-        public MeLoggerPersistence(Uri endpointUri, string primaryKey, string databaseId) : base(endpointUri, primaryKey, databaseId, "MELogger")
+        public MeLoggerPersistence(Uri endpointUri, string primaryKey, string databaseId)
+            : base(endpointUri, primaryKey, databaseId, "MELogger")
         {
         }
 

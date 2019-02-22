@@ -10,18 +10,26 @@ using Microsoft.Azure.Documents;
 
 namespace Medical_Examiner_API.Controllers
 {
+    /// <summary>
+    /// Examinations Controler
+    /// </summary>
     [Route("examinations")]
     [ApiController]
     public class ExaminationsController : BaseController
     {
         private readonly IExaminationPersistence _examinationPersistence;
 
-        public ExaminationsController(IExaminationPersistence examinationPersistence, IMELogger logger) : base(logger)
+        public ExaminationsController(IExaminationPersistence examinationPersistence, IMELogger logger)
+            : base(logger)
         {
             _examinationPersistence = examinationPersistence;
         }
 
         // GET api/examinations
+        /// <summary>
+        /// Get All Examinations 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<IEnumerable<Examination>>> GetExaminations()
@@ -31,6 +39,11 @@ namespace Medical_Examiner_API.Controllers
         }
 
         // GET api/examinations
+        /// <summary>
+        /// Get Examination by ID
+        /// </summary>
+        /// <param name="examinationId"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<Examination>> GetExamination(string examinationId)
