@@ -73,7 +73,6 @@ namespace Medical_Examiner_API.Controllers
         /// <param name="meUserId">The User Id.</param>
         /// <param name="permissionId">The Permission Id.</param>
         /// <returns>A GetPermissionResponse.</returns>
-        // GET api/users/{user_id}
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetPermissionResponse>> GetPermission(string meUserId, string permissionId)
@@ -83,8 +82,6 @@ namespace Medical_Examiner_API.Controllers
                 return BadRequest(new GetPermissionResponse());
             }
 
-            // Throws exception when not found; maybe should return null and exception
-            // handled in logging?
             try
             {
                 var permission = await permissionPersistence.GetPermissionAsync(meUserId, permissionId);
@@ -101,11 +98,10 @@ namespace Medical_Examiner_API.Controllers
         }
 
         /// <summary>
-        /// Create a new User.
+        /// Create a new Permission.
         /// </summary>
-        /// <param name="postUser">The PostUserRequest.</param>
-        /// <returns>A PostUserResponse.</returns>
-        // POST api/users
+        /// <param name="postPermission">The PostPermissionRequest.</param>
+        /// <returns>A PostPermissionResponse.</returns>
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PostPermissionResponse>> CreatePermission(PostPermissionRequest postPermission)
@@ -141,11 +137,10 @@ namespace Medical_Examiner_API.Controllers
         }
 
         /// <summary>
-        /// Create a new User.
+        /// Create a new Permission.
         /// </summary>
         /// <param name="putPermission">The PutPermissionRequest.</param>
         /// <returns>A PutPermissionResponse.</returns>
-        // POST api/users
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(PutPermissionRequest putPermission)
