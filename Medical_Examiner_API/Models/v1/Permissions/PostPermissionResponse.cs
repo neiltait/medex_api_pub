@@ -2,7 +2,7 @@
 {
     /// <inheritdoc />
     /// <summary>
-    /// Response for Post User.
+    /// Response for Post Permission.
     /// </summary>
     public class PostPermissionResponse : ResponseBase
     {

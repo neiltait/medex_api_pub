@@ -4,7 +4,7 @@ namespace Medical_Examiner_API.Models.V1.Users
 {
     /// <inheritdoc />
     /// <summary>
-    /// Response object for a list of users.
+    /// Response object for a list of Permissions.
     /// </summary>
     public class GetPermissionsResponse : ResponseBase
     {

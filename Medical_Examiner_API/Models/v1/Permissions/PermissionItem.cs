@@ -1,7 +1,7 @@
 ﻿namespace Medical_Examiner_API.Models.V1.Users
 {
     /// <summary>
-    /// A user item as part of multiple user responses.
+    /// A user item as part of multiple permission responses.
     /// </summary>
     public class PermissionItem
     {

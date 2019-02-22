@@ -3,7 +3,7 @@
 namespace Medical_Examiner_API.Models.V1.Users
 {
     /// <summary>
-    /// Post User Request.
+    /// Post Permission Request.
     /// </summary>
     public class PostPermissionRequest
     {

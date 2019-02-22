@@ -2,7 +2,7 @@
 {
     /// <inheritdoc />
     /// <summary>
-    /// Response for Put User.
+    /// Response for Put Permission.
     /// </summary>
     public class PutPermissionResponse : ResponseBase
     {

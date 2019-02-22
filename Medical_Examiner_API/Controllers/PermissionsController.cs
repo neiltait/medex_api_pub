@@ -13,14 +13,14 @@ namespace Medical_Examiner_API.Controllers
 {
     /// <inheritdoc />
     /// <summary>
-    /// Users Controller
+    /// Permissions Controller
     /// </summary>
     [Route("users/{userId}/permissions")]
     [ApiController]
     public class PermissionsController : BaseController
     {
         /// <summary>
-        /// The User Persistance Layer
+        /// The User Persistence Layer
         /// </summary>
         private readonly IUserPersistence userPersistence;
 
