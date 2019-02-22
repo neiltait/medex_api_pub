@@ -19,10 +19,8 @@ namespace Medical_Examiner_API.Controllers
     public class PermissionsController : BaseController
     {
         /// <summary>
-        /// The User Persistence Layer
+        /// The Permission Persistence Layer
         /// </summary>
-        private readonly IUserPersistence userPersistence;
-
         private readonly IPermissionPersistence permissionPersistence;
 
         /// <summary>
@@ -35,7 +33,6 @@ namespace Medical_Examiner_API.Controllers
             IMELogger logger)
             : base(logger)
         {
-            this.userPersistence = userPersistence;
             this.permissionPersistence = permissionPersistence;
         }
 
