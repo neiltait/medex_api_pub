@@ -3,7 +3,9 @@ using Newtonsoft.Json.Converters;
 
 namespace Medical_Examiner_API.Enums
 {
-    /// <summary />
+    /// <summary>
+    /// Data type used to define the coroner status of an examination
+    /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
     public enum CoronerStatus
     {
