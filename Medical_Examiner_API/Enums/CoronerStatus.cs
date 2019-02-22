@@ -3,12 +3,28 @@ using Newtonsoft.Json.Converters;
 
 namespace Medical_Examiner_API.Enums
 {
+    /// <summary />
     [JsonConverter(typeof(StringEnumConverter))]
     public enum CoronerStatus
     {
-        None = 0,
-        PendingSend = 1,
-        SentAwaitingConfirm = 2,
-        SentConfirmed = 3
+        /// <summary>
+        /// 
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        PendingSend,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        SentAwaitingConfirm,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        SentConfirmed
     }
 }

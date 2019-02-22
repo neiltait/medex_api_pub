@@ -14,11 +14,11 @@ namespace Medical_Examiner_API.Controllers
 {
     [Route("datatype")]
     [ApiController]
-    public class DataTypeController : BaseController
+    public class DataTypesController : BaseController
     {
         private readonly IExaminationPersistence _examinationPersistence;
 
-        public DataTypeController(IExaminationPersistence examinationPersistence, IMELogger logger) : base(logger)
+        public DataTypesController(IExaminationPersistence examinationPersistence, IMELogger logger) : base(logger)
         {
             _examinationPersistence = examinationPersistence;
         }
@@ -27,7 +27,7 @@ namespace Medical_Examiner_API.Controllers
         [HttpGet("mode_of_disposal")]
         public async Task<ActionResult<IEnumerable<Examination>>> GetModesOfDisposal()
         {
-            return Ok(typeof(ModeOfDisposal).GetDictionary());
+            return Ok(EnumExtentions.GetDictionary(ModeOfDisposal));
         }
 
         // GET api/examinations

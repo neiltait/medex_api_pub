@@ -6,8 +6,15 @@ namespace Medical_Examiner_API.Enums
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ExaminationGender
     {
-        Male = 1,
-        Female = 2
+        /// <summary>
+        /// 
+        /// </summary>
+        Male,
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        Female
         // More to come 
     }
 }

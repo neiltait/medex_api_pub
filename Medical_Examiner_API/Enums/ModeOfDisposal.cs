@@ -6,7 +6,14 @@ namespace Medical_Examiner_API.Enums
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ModeOfDisposal
     {
-        Cremation = 0,
-        Burial = 1
+        /// <summary>
+        /// 
+        /// </summary>
+        Cremation,
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        Burial
     }
 }

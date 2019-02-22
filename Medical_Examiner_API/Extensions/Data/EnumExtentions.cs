@@ -17,14 +17,14 @@ namespace Medical_Examiner_API.Extensions.Data
         /// <returns>A UserItem.</returns>
         public static IDictionary<string, string> GetDictionary(this Type enumType)
         {
-
             if (enumType.IsEnum)
             {
                 Dictionary<string, string> enum_dictionary = new Dictionary<string, string>();
 
-                foreach (string value in Enum.GetValues(enumType))
+                foreach (var value in Enum.GetValues(enumType))
                 {
-                    enum_dictionary.Add(value, enumType.GetEnumName(value));
+                    var name = enumType.GetEnumName(value);
+                    enum_dictionary.Add(name, (string)value);
                 }
 
                 return enum_dictionary;

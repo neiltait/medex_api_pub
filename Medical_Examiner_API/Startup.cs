@@ -56,12 +56,9 @@ namespace Medical_Examiner_API
                 // Swagger to use those XML comments.
                 c.IncludeXmlComments(xmlPath);
             });
-
+            
             services.AddScoped<IMELogger, MELogger>();
-
             services.AddScoped<ControllerActionFilter>();
-
-
             services.AddScoped<IExaminationPersistence>(s =>
             {
                 return new ExaminationPersistence(

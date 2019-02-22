@@ -1,5 +1,12 @@
-﻿namespace Medical_Examiner_API.Enums
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace Medical_Examiner_API.Enums
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum AnalysisEntryType
     {
         /// <summary>
@@ -10,21 +17,21 @@
         /// <summary>
         /// 
         /// </summary>
-        QAPInformation = 2,
+        QAPInformation = 1,
         
         /// <summary>
         /// 
         /// </summary>
-        MEScrutiny = 3,
+        MEScrutiny = 2,
         
         /// <summary>
         /// 
         /// </summary>
-        CoronerInformation = 4,
+        CoronerInformation = 3,
         
         /// <summary>
         /// 
         /// </summary>
-        OtherInformation = 5
+        OtherInformation = 4
     }
 }
