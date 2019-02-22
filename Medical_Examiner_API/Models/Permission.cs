@@ -16,5 +16,9 @@ namespace Medical_Examiner_API.Models
         [Required]
         [JsonProperty(PropertyName = "location_id")]
         public string LocationId { get; set; }
+
+        [Required]
+        [JsonProperty(PropertyName = "user_role")]
+        public int UserRole { get; set; }
     }
 }

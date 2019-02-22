@@ -35,7 +35,7 @@ namespace Medical_Examiner_API.Controllers
         }
 
         /// <summary>
-        /// Get a list of <see cref="ExaminationItem"/>.
+        /// Get All Examinations as a list of <see cref="ExaminationItem"/>.
         /// </summary>
         /// <returns>A list of examinations.</returns>
         [HttpGet]
@@ -49,10 +49,11 @@ namespace Medical_Examiner_API.Controllers
             });
         }
 
+        // GET api/examinations
         /// <summary>
-        /// Get an Examination by Id.
+        /// Get Examination by ID
         /// </summary>
-        /// <param name="id">The Id.</param>
+        /// <param name="examinationId">The Examination Id.</param>
         /// <returns>A GetExaminationResponse.</returns>
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
