@@ -11,7 +11,7 @@ using Microsoft.Azure.Documents;
 namespace Medical_Examiner_API.Controllers
 {
     /// <summary>
-    /// 
+    /// Examinations Controler
     /// </summary>
     [Route("examinations")]
     [ApiController]
@@ -27,7 +27,7 @@ namespace Medical_Examiner_API.Controllers
 
         // GET api/examinations
         /// <summary>
-        /// 
+        /// Get All Examinations 
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -40,7 +40,7 @@ namespace Medical_Examiner_API.Controllers
 
         // GET api/examinations
         /// <summary>
-        /// 
+        /// Get Examination by ID
         /// </summary>
         /// <param name="examinationId"></param>
         /// <returns></returns>

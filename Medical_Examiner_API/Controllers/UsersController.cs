@@ -20,7 +20,7 @@ namespace Medical_Examiner_API.Controllers
     public class UsersController : BaseController
     {
         /// <summary>
-        /// The User Persistance Layer
+        /// The User Persistence Layer
         /// </summary>
         private readonly IUserPersistence _userPersistence;
 
