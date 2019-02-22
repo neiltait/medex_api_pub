@@ -3,11 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Medical_Examiner_API.Extensions.Data;
 using Medical_Examiner_API.Loggers;
-using Medical_Examiner_API.Models;
+using Medical_Examiner_API.Models.V1.Users;
 using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
-using Medical_Examiner_API.Models.V1.Users;
 
 namespace Medical_Examiner_API.Controllers
 {
