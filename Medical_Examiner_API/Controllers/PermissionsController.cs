@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Medical_Examiner_API.Extensions.Data;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models.V1.Users;
 using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
+using Permission = Medical_Examiner_API.Models.Permission;
 
 namespace Medical_Examiner_API.Controllers
 {
@@ -29,9 +31,13 @@ namespace Medical_Examiner_API.Controllers
         /// <param name="userPersistence">The User Persistence.</param>
         /// <param name="permissionPersistence">The Permission Persistence</param>
         /// <param name="logger">The Logger.</param>
-        public PermissionsController(IUserPersistence userPersistence, IPermissionPersistence permissionPersistence,
-            IMELogger logger)
-            : base(logger)
+        /// <param name="mapper">The Mapper.</param>
+        public PermissionsController(
+            IUserPersistence userPersistence,
+            IPermissionPersistence permissionPersistence,
+            IMELogger logger,
+            IMapper mapper)
+            : base(logger, mapper)
         {
             this.permissionPersistence = permissionPersistence;
         }
@@ -51,16 +57,16 @@ namespace Medical_Examiner_API.Controllers
 
                 return Ok(new GetPermissionsResponse
                 {
-                    Permissions = permissions.Select(p => p.ToPermissionItem()),
+                    Permissions = permissions.Select(p => Mapper.Map<PermissionItem>(p)),
                 });
             }
             catch (DocumentClientException)
             {
-                return NotFound();
+                return NotFound(new GetPermissionsResponse());
             }
             catch (ArgumentException)
             {
-                return NotFound();
+                return NotFound(new GetPermissionsResponse());
             }
         }
 
@@ -82,15 +88,15 @@ namespace Medical_Examiner_API.Controllers
             try
             {
                 var permission = await permissionPersistence.GetPermissionAsync(meUserId, permissionId);
-                return Ok(permission.ToGetPermissionResponse());
+                return Ok(Mapper.Map<GetPermissionResponse>(permission));
             }
             catch (ArgumentException)
             {
-                return NotFound(new GetUserResponse());
+                return NotFound(new GetPermissionResponse());
             }
             catch (NullReferenceException)
             {
-                return NotFound(new GetUserResponse());
+                return NotFound(new GetPermissionResponse());
             }
         }
 
@@ -105,31 +111,25 @@ namespace Medical_Examiner_API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return new BadRequestObjectResult(ModelState);
+                return BadRequest(new PostPermissionResponse());
             }
 
             try
             {
-                var permission = postPermission.ToPermission();
-                await permissionPersistence.CreatePermissionAsync(permission);
+                var permission = Mapper.Map<Permission>(postPermission);
+                var createdPermission = await permissionPersistence.CreatePermissionAsync(permission);
 
                 // TODO: Is ID populated after saving?
-                // TODO : Question : Should this be the whole user object? 
-                return Ok(new PostPermissionResponse
-                {
-                    PermissionId = permission.PermissionId,
-                    UserId = permission.UserId,
-                    UserRole = permission.UserRole,
-                    LocationId = permission.LocationId,
-                });
+                // TODO : Question : Should this be the whole user object?
+                return Ok(Mapper.Map<PostPermissionResponse>(createdPermission));
             }
             catch (DocumentClientException)
             {
-                return NotFound();
+                return NotFound(new PostPermissionResponse());
             }
             catch (ArgumentException)
             {
-                return NotFound();
+                return NotFound(new PostPermissionResponse());
             }
         }
 
@@ -146,20 +146,20 @@ namespace Medical_Examiner_API.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return new BadRequestObjectResult(ModelState);
+                    return BadRequest(new PutPermissionResponse());
                 }
 
-                var permission = putPermission.ToPermission();
+                var permission = Mapper.Map<Permission>(putPermission);
                 var updatedPermission = await permissionPersistence.UpdatePermissionAsync(permission);
-                return Ok(updatedPermission.ToPutPermissionResponse());
+                return Ok(Mapper.Map<PutPermissionResponse>(updatedPermission));
             }
             catch (DocumentClientException)
             {
-                return NotFound();
+                return NotFound(new PutPermissionResponse());
             }
             catch (ArgumentException)
             {
-                return NotFound();
+                return NotFound(new PutPermissionResponse());
             }
         }
     }

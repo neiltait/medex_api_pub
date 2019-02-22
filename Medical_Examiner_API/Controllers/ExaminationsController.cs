@@ -9,6 +9,7 @@ using Microsoft.Azure.Documents;
 
 namespace Medical_Examiner_API.Controllers
 {
+    /// <inheritdoc />
     /// <summary>
     /// Examinations Controller
     /// </summary>
@@ -49,7 +50,6 @@ namespace Medical_Examiner_API.Controllers
             });
         }
 
-        // GET api/examinations
         /// <summary>
         /// Get Examination by ID
         /// </summary>
