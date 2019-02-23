@@ -36,7 +36,7 @@ namespace Medical_Examiner_API.Persistence
         /// Sets up to Cosmsos DB
         /// </summary>
         /// <returns>bool</returns>
-        public async Task EnsureSetupAsync()
+        private async Task EnsureSetupAsync()
         {
             if (_client == null)
             {
