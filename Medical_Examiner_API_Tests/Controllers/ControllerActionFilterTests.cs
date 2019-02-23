@@ -5,16 +5,18 @@ using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using Medical_Examiner_API;
+using Medical_Examiner_API_Tests.Persistence;
 using Medical_Examiner_API.Controllers;
 using Medical_Examiner_API.Loggers;
-using Medical_Examiner_API_Tests.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
+using Moq;
 using Xunit;
 using AuthenticationManager = Microsoft.AspNetCore.Http.Authentication.AuthenticationManager;
 
@@ -130,15 +132,18 @@ namespace Medical_Examiner_API_Tests.ControllerTests
 
     public class ControllerActionFilterTests
     {
-        public ControllerActionFilterTests()
-        {
-            _mockLogger = new MELoggerMocker();
-            var userPersistence = new UserPersistenceFake();
-            _controller = new UsersController(userPersistence, _mockLogger);
-        }
-
         private readonly MELoggerMocker _mockLogger;
         private readonly UsersController _controller;
+        private readonly Mock<IMapper> _mapper;
+
+        public ControllerActionFilterTests()
+        {
+            _mapper = new Mock<IMapper>();
+            _mockLogger = new MELoggerMocker();
+            var userPersistence = new UserPersistenceFake();
+            _controller = new UsersController(userPersistence, _mockLogger, _mapper.Object);
+        }
+
 
         [Fact]
         public void CheckCallToLogger()

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using AutoMapper;
+using Medical_Examiner_API.Extensions.Data;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Builder;
@@ -21,7 +23,7 @@ namespace Medical_Examiner_API
     public class Startup
     {
         /// <summary>
-        /// Initialise a new instance of Startup
+        /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
         /// <param name="configuration">The Configuration.</param>
         public Startup(IConfiguration configuration)
@@ -30,7 +32,7 @@ namespace Medical_Examiner_API
         }
 
         /// <summary>
-        /// Configuration.
+        /// Gets configuration.
         /// </summary>
         public IConfiguration Configuration { get; }
 
@@ -41,6 +43,13 @@ namespace Medical_Examiner_API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            Mapper.Initialize(config =>
+            {
+                config.AddMedicalExaminerProfiles();
+            });
+
+            services.AddAutoMapper();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -62,30 +71,25 @@ namespace Medical_Examiner_API
 
             services.AddScoped<ControllerActionFilter>();
 
+            services.AddScoped<IExaminationPersistence>(s => new ExaminationPersistence(
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]));
 
-            services.AddScoped<IExaminationPersistence>(s =>
-            {
-                return new ExaminationPersistence(
-                    new Uri(Configuration["CosmosDB:URL"]),
-                    Configuration["CosmosDB:PrimaryKey"],
-                    Configuration["CosmosDB:DatabaseId"]);
-            });
+            services.AddScoped<IUserPersistence>(s => new UserPersistence(
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]));
 
-            services.AddScoped<IUserPersistence>(s =>
-            {
-                return new UserPersistence(
-                    new Uri(Configuration["CosmosDB:URL"]),
-                    Configuration["CosmosDB:PrimaryKey"],
-                    Configuration["CosmosDB:DatabaseId"]);
-            });
-
-            services.AddScoped<IMeLoggerPersistence>(s =>
-            {
-                return new MeLoggerPersistence(
-                    new Uri(Configuration["CosmosDB:URL"]),
-                    Configuration["CosmosDB:PrimaryKey"],
-                    Configuration["CosmosDB:DatabaseId"]);
-            });
+            services.AddScoped<IMeLoggerPersistence>(s => new MeLoggerPersistence(
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]));
+            
+            services.AddScoped<IPermissionPersistence>(s => new PermissionPersistence(
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]));
         }
 
         /// <summary>
@@ -97,8 +101,11 @@ namespace Medical_Examiner_API
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
             else
+            {
                 app.UseExceptionHandler(appBuilder =>
                 {
                     appBuilder.Run(async context =>
@@ -107,6 +114,7 @@ namespace Medical_Examiner_API
                         await context.Response.WriteAsync("An unexpected fault happened. Try again later.");
                     });
                 });
+            }
 
             app.UseHttpsRedirection();
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -16,28 +17,25 @@ namespace Medical_Examiner_API_Tests.Controllers
     /// <summary>
     /// Tests the Users Controller
     /// </summary>
-    public class TestUsersController
+    public class TestPermissionsController : ControllerTestsBase<PermissionsController>
     {
         /// <summary>
-        /// The User Persistence mock.
+        /// The User Persistence and permission persistence mock.
         /// </summary>
         private readonly Mock<IUserPersistence> _userPersistence;
+        private readonly Mock<IPermissionPersistence> _permissionPersistence;
 
         /// <summary>
-        /// The system under test.
+        /// Initializes a new instance of the <see cref="TestPermissionsController"/> class.
         /// </summary>
-        private readonly UsersController _userController;
-
-        /// <summary>
-        /// Setup
-        /// </summary>
-        public TestUsersController()
+        public TestPermissionsController()
         {
+            _permissionPersistence = new Mock<IPermissionPersistence>();
             _userPersistence = new Mock<IUserPersistence>();
-
             var logger = new Mock<IMELogger>();
 
-            _userController = new UsersController(_userPersistence.Object, logger.Object);
+            Controller =
+                new PermissionsController(_userPersistence.Object, _permissionPersistence.Object, logger.Object, Mapper);
         }
 
         /// <summary>
@@ -48,21 +46,24 @@ namespace Medical_Examiner_API_Tests.Controllers
         public async Task TestGetEmptyResponse()
         {
             // Arrange
-            _userPersistence.Setup(up => up.GetUsersAsync())
-                .Returns(Task.FromResult<IEnumerable<MeUser>>(new List<MeUser>()));
+            var userId = "fake_id_01";
+
+            _permissionPersistence.Setup(pp => pp.GetPermissionsAsync(userId)).Returns(
+                Task.FromResult<IEnumerable<Permission>>(
+                    new List<Permission>()));
 
             // Act
-            var response = await _userController.GetUsers();
+            var response = await Controller.GetPermissions(userId);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
             var result = (OkObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUsersResponse>();
-            var model = (GetUsersResponse) result.Value;
+            result.Value.Should().BeAssignableTo<GetPermissionsResponse>();
+            var model = (GetPermissionsResponse) result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
-            model.Users.Count().Should().Be(0);
+            model.Permissions.Count().Should().Be(0);
         }
 
         /// <summary>
@@ -73,24 +74,27 @@ namespace Medical_Examiner_API_Tests.Controllers
         public async Task TestGetGoodResponse()
         {
             // Arrange
-            const string expectedUserId = "expectedUserId";
+            const string expectedPermissionId = "fake_id_02";
+            const string userId = "fake_id_01";
 
-            _userPersistence.Setup(up => up.GetUsersAsync()).Returns(Task.FromResult<IEnumerable<MeUser>>(
-                new List<MeUser> {new MeUser {UserId = expectedUserId}}));
+            _permissionPersistence.Setup(pp => pp.GetPermissionsAsync("fake_id_01")).Returns(
+                Task.FromResult<IEnumerable<Permission>>(
+                    new List<Permission>
+                        {new Permission {UserId = "fake_id_01", PermissionId = expectedPermissionId}}));
 
             // Act
-            var response = await _userController.GetUsers();
+            var response = await Controller.GetPermissions(userId);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
             var result = (OkObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUsersResponse>();
-            var model = (GetUsersResponse) result.Value;
+            result.Value.Should().BeAssignableTo<GetPermissionsResponse>();
+            var model = (GetPermissionsResponse) result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
-            model.Users.Count().Should().Be(1);
-            model.Users.First().UserId.Should().Be(expectedUserId);
+            model.Permissions.Count().Should().Be(1);
+            model.Permissions.First().PermissionId.Should().Be(expectedPermissionId);
         }
 
         /// <summary>
@@ -101,23 +105,26 @@ namespace Medical_Examiner_API_Tests.Controllers
         public async Task TestGetIdGoodResponse()
         {
             // Arrange
+            const string expectedPermissionId = "expectedPermissionId";
             const string expectedUserId = "expectedUserId";
 
-            var expectedUser = new MeUser {UserId = expectedUserId};
+            var expectedPermission = new Permission {PermissionId = expectedPermissionId, UserId = expectedUserId};
 
-            _userPersistence.Setup(up => up.GetUserAsync(It.IsAny<string>())).Returns(Task.FromResult(expectedUser));
+            _permissionPersistence.Setup(pp => pp.GetPermissionAsync(expectedUserId, expectedPermissionId)).Returns(
+                Task.FromResult(expectedPermission));
 
             // Act
-            var response = await _userController.GetUser(expectedUserId);
+            var response = await Controller.GetPermission(expectedUserId, expectedPermissionId);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
             var result = (OkObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUserResponse>();
-            var model = (GetUserResponse) result.Value;
+            result.Value.Should().BeAssignableTo<GetPermissionResponse>();
+            var model = (GetPermissionResponse) result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
             model.UserId.Should().Be(expectedUserId);
+            model.PermissionId.Should().Be(expectedPermissionId);
         }
 
         /// <summary>
@@ -130,16 +137,17 @@ namespace Medical_Examiner_API_Tests.Controllers
             // Arrange
             const string expectedUserId = "expectedUserId";
 
-            _userPersistence.Setup(up => up.GetUserAsync(It.IsAny<string>())).Returns(Task.FromResult<MeUser>(null));
+            _permissionPersistence.Setup(up => up.GetPermissionAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Throws<NullReferenceException>();
 
             // Act
-            var response = await _userController.GetUser(expectedUserId);
+            var response = await Controller.GetPermission(expectedUserId, "Something_that_does_not_exist");
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
             var result = (NotFoundObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUserResponse>();
-            var model = (GetUserResponse) result.Value;
+            result.Value.Should().BeAssignableTo<GetPermissionResponse>();
+            var model = (GetPermissionResponse) result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
@@ -154,16 +162,16 @@ namespace Medical_Examiner_API_Tests.Controllers
         public async Task TestGetIdValidationFailure()
         {
             // Arrange
-            _userController.ModelState.AddModelError("An", "Error");
+            Controller.ModelState.AddModelError("An", "Error");
 
             // Act
-            var response = await _userController.GetUser(string.Empty);
+            var response = await Controller.GetPermission(string.Empty, string.Empty);
 
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
             var result = (BadRequestObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUserResponse>();
-            var model = (GetUserResponse) result.Value;
+            result.Value.Should().BeAssignableTo<GetPermissionResponse>();
+            var model = (GetPermissionResponse) result.Value;
             model.Errors.Count.Should().Be(1);
             model.Success.Should().BeFalse();
         }
