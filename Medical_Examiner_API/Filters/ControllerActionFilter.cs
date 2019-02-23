@@ -1,23 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Medical_Examiner_API
 {
+    /// <summary>
+    /// Handles pre and post action handling
+    /// </summary>
     public class ControllerActionFilter : IActionFilter
     {
+        /// <summary>
+        /// Called after method executed
+        /// </summary>
+        /// <remarks>Required by interface. Not intended to be used</remarks>
+        /// <param name="context">action context</param>
         public void OnActionExecuted(ActionExecutedContext context)
         {
         }
 
+        /// <summary>
+        /// Called before method executes
+        /// </summary>
+        /// <param name="context">action context</param>
         public void OnActionExecuting(ActionExecutingContext context)
         {
             var controller = context.Controller as BaseController;
 
             if (controller == null)
+            {
                 return;
+            }
 
             var logger = controller.Logger;
 
@@ -39,7 +56,6 @@ namespace Medical_Examiner_API
             var remoteIpAddress = context.HttpContext.Connection.RemoteIpAddress;
             var remoteIp = remoteIpAddress == null ? "Unknown" : remoteIpAddress.ToString();
             var timeStamp = DateTime.UtcNow;
-
             logger.Log(userName, userAuthenticationType, userIsAuthenticated, controllerName, controllerAction,
                 parameters, remoteIp, timeStamp);
         }
