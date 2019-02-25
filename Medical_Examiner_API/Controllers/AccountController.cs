@@ -13,6 +13,7 @@ namespace Medical_Examiner_API.Controllers
     /// </summary>
     [Route("auth")]
     [ApiController]
+    [Authorize]
     public class AccountController : BaseController
     {
         private readonly IAuthenticationService _authenticationService;
