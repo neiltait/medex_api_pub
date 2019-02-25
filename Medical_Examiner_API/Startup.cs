@@ -19,6 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using Medical_Examiner_API.Seeders;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -82,6 +83,21 @@ namespace Medical_Examiner_API
 
                 // Swagger to use those XML comments.
                 c.IncludeXmlComments(xmlPath);
+
+                // Make swagger do authentication
+                var security = new Dictionary<string, IEnumerable<string>>
+                {
+                    { "Bearer", System.Array.Empty<string>() },
+                };
+
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = "header",
+                    Type = "apiKey"
+                });
+                c.AddSecurityRequirement(security);
             });
             
             services.AddScoped<IMELogger, MELogger>();
@@ -155,8 +171,11 @@ namespace Medical_Examiner_API
                     Configuration["CosmosDB:PrimaryKey"]);
             var locationSeeder = new LocationsSeeder(locationSeedersPersistence);
             var jsonFileName = Configuration["SourceData:Locations"];
-            locationSeeder.LoadFromFile(jsonFileName);
-            locationSeeder.SubmitToDataLayer();
+            if (jsonFileName != null)
+            {
+                locationSeeder.LoadFromFile(jsonFileName);
+                locationSeeder.SubmitToDataLayer();
+            }
 
             //var djp = 10;
         }
@@ -194,7 +213,7 @@ namespace Medical_Examiner_API
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,
+                    ValidateIssuer = false,
                     ValidateAudience = false,
                 };
             });
