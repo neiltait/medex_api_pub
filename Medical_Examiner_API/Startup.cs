@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Text;
+using Medical_Examiner_API.Helpers;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Persistence;
+using Medical_Examiner_API.Services;
+using Medical_Examiner_API.Services.Implementations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Medical_Examiner_API
 {
@@ -17,6 +22,11 @@ namespace Medical_Examiner_API
     /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Key for Authentication Section
+        /// </summary>
+        private const string AuthenticationSection = "Authentication";
+
         /// <summary>
         /// Initialise a new instance of Startup
         /// </summary>
@@ -37,6 +47,11 @@ namespace Medical_Examiner_API
         /// <param name="services">Service Collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            // Basic authentication service
+            ConfigureAuthenticationSettings(services);
+            ConfigureAuthentication(services);
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddScoped<IMELogger, MELogger>();
@@ -63,13 +78,6 @@ namespace Medical_Examiner_API
                     new Uri(Configuration["CosmosDB:URL"]),
                     Configuration["CosmosDB:PrimaryKey"]);
             });
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.Authority = Configuration["Okta:AuthorizationServerAddress"];
-                    options.Audience = Configuration["Okta:Audience"];
-                });
         }
 
         /// <summary>
@@ -105,6 +113,45 @@ namespace Medical_Examiner_API
             app.UseAuthentication();
 
             app.UseMvc();
+        }
+
+        /// <summary>
+        /// Configure Authentication settings so we can use it elsewhere in the app using DI.
+        /// </summary>
+        /// <param name="services">Services.</param>
+        private void ConfigureAuthenticationSettings(IServiceCollection services)
+        {
+            var authenticationSection = Configuration.GetSection(AuthenticationSection);
+            services.Configure<AuthenticationSettings>(authenticationSection);
+        }
+
+        /// <summary>
+        /// Configure basic authentication so we can use tokens.
+        /// </summary>
+        /// <param name="services">Services.</param>
+        private void ConfigureAuthentication(IServiceCollection services)
+        {
+            var authenticationSection = Configuration.GetSection(AuthenticationSection);
+            var authenticationSettings = authenticationSection.Get<AuthenticationSettings>();
+
+            var key = Encoding.ASCII.GetBytes(authenticationSettings.Secret);
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidateAudience = false,
+                };
+            });
         }
     }
 }
