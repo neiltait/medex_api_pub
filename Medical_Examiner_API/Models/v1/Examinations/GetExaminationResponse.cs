@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Medical_Examiner_API.Enums;
 using Newtonsoft.Json;
 
 namespace Medical_Examiner_API.Models.V1.Examinations

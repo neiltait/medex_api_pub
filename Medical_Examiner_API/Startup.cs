@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using AutoMapper;
+﻿using AutoMapper;
 using Medical_Examiner_API.Extensions.Data;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Persistence;
@@ -14,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Medical_Examiner_API.Seeders;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace Medical_Examiner_API
 {
@@ -66,11 +66,10 @@ namespace Medical_Examiner_API
                 // Swagger to use those XML comments.
                 c.IncludeXmlComments(xmlPath);
             });
-
+            
             services.AddScoped<IMELogger, MELogger>();
-
             services.AddScoped<ControllerActionFilter>();
-
+            
             services.AddScoped<IExaminationPersistence>(s => new ExaminationPersistence(
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],
