@@ -1,6 +1,6 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
+using Medical_Examiner_API.Enums;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
 
 namespace Medical_Examiner_API.Models
 {
@@ -24,7 +24,7 @@ namespace Medical_Examiner_API.Models
 
         [Required]
         [JsonProperty(PropertyName = "analasis_entry_type")]
-        public AnalasisEntryType AnalasisEntryType { get; set; }
+        public AnalysisEntryType AnalysisEntryType { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "present_at_death")]

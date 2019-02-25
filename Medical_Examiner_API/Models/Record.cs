@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Azure.Documents;
+using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace Medical_Examiner_API.Models
 {
-    public abstract class Record
+    public abstract class Record : Document
     {
         [Required]
         [Display(Name = "user_id")]
@@ -25,6 +24,6 @@ namespace Medical_Examiner_API.Models
 
         [Display(Name = "deleted_at")]
         [DataType(DataType.DateTime)]
-        public Nullable<DateTimeOffset> DeletedAt { get; set; }
+        public DateTimeOffset? DeletedAt { get; set; }
     }
 }

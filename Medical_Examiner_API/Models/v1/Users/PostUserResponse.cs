@@ -9,6 +9,21 @@
         /// <summary>
         /// Identifier.
         /// </summary>
-        public string Id { get; set; }
+        public string UserId { get; set; }
+        
+        /// <summary>
+        /// The User's first name.
+        /// </summary>
+        public string FirstName { get; set; }
+
+        /// <summary>
+        /// The User's last name
+        /// </summary>
+        public string LastName { get; set; }
+
+        /// <summary>
+        /// The User's email address
+        /// </summary>
+        public string Email { get; set; }
     }
 }

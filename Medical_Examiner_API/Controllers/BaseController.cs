@@ -1,4 +1,5 @@
-﻿using Medical_Examiner_API.Extensions.Models;
+﻿using AutoMapper;
+using Medical_Examiner_API.Extensions.Models;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models.V1;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,6 @@ namespace Medical_Examiner_API.Controllers
     /// <summary>
     /// Base Controller
     /// </summary>
-    [Route("api/[controller]")]
     [ApiController]
     public abstract class BaseController : Controller
     {
@@ -17,15 +17,22 @@ namespace Medical_Examiner_API.Controllers
         /// Initialise a new instance of the Base Controller
         /// </summary>
         /// <param name="logger">The MELogger.</param>
-        protected BaseController(IMELogger logger)
+        /// <param name="mapper">The Mapper.</param>
+        protected BaseController(IMELogger logger, IMapper mapper)
         {
             Logger = logger;
+            Mapper = mapper;
         }
 
         /// <summary>
         /// Logger.
         /// </summary>
         public IMELogger Logger { get; set; }
+
+        /// <summary>
+        /// Mapper.
+        /// </summary>
+        public IMapper Mapper { get; }
 
         /// <summary>
         /// Bad Request Response

@@ -1,35 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Okta.AspNetCore;
+﻿using AutoMapper;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Okta.AspNetCore;
 
 namespace Medical_Examiner_API.Controllers
 {
-    [Authorize]
-    [Route("api/auth")]
+    /// <summary>
+    /// Accounts controller, handler for authentication and token verification
+    /// </summary>
+    [Route("auth")]
     [ApiController]
     public class AccountController : BaseController
     {
         private readonly IAuthenticationService _authenticationService;
 
-        public AccountController(IMELogger logger, IAuthenticationService authenticationService)
-            : base(logger)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountController"/> class.
+        /// </summary>
+        /// <param name="logger">Initialise with IMELogger instance</param>
+        /// <param name="mapper">The Mapper.</param>
+        /// <param name="authenticationService">Authentication service.</param>
+        public AccountController(IMELogger logger, IMapper mapper, IAuthenticationService authenticationService)
+            : base(logger, mapper)
         {
             _authenticationService = authenticationService;
-        }
-
-        [Route("protected")]
-        [Authorize]
-        public string Protected()
-        {
-            return "Only if you have a valid token!";
         }
 
         /// <summary>
@@ -60,7 +57,11 @@ namespace Medical_Examiner_API.Controllers
             return true;
         }
 
-        [HttpGet("login")]
+        /// <summary>
+        /// authenticates an authorised token for use with the data API
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
         public IActionResult Login()
         {
             if (!HttpContext.User.Identity.IsAuthenticated)
@@ -68,17 +69,18 @@ namespace Medical_Examiner_API.Controllers
                 return Challenge(OktaDefaults.MvcAuthenticationScheme);
             }
 
-            return RedirectToAction("Index", "Home");
+            return Unauthorized();
         }
 
-        [HttpPost]
+        /// <summary>
+        /// calls to Okta and Logs out the current authenticated user token
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete]
         public IActionResult Logout()
         {
             return new SignOutResult(new[]
-            {
-                OktaDefaults.MvcAuthenticationScheme,
-                CookieAuthenticationDefaults.AuthenticationScheme
-            });
+                {OktaDefaults.MvcAuthenticationScheme, CookieAuthenticationDefaults.AuthenticationScheme});
         }
     }
 }

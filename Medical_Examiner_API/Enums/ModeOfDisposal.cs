@@ -1,12 +1,22 @@
-﻿using System;
-using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
-namespace Medical_Examiner_API.Models
+namespace Medical_Examiner_API.Enums
 {
+    /// <summary>
+    /// Data types used to identify the mode of disposal 
+    /// </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum ModeOfDisposal
     {
-        Cremation = 0,
-        Burial = 1
+        /// <summary>
+        /// Cremation
+        /// </summary>
+        Cremation,
+        
+        /// <summary>
+        /// Burial
+        /// </summary>
+        Burial
     }
 }
