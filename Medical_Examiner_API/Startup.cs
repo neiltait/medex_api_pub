@@ -135,17 +135,6 @@ namespace Medical_Examiner_API
             }
 
             app.UseMvc();
-
-            //var locationSeedersPersistence = new LocationsSeederPersistence(new Uri(Configuration["CosmosDB:URL"]),
-            //        Configuration["CosmosDB:PrimaryKey"]);
-            //var locationSeeder = new LocationsSeeder(locationSeedersPersistence);
-            //var jsonFileName = Configuration["SourceData:Locations"];
-            //if (jsonFileName != null)
-            //{
-            //    locationSeeder.LoadFromFile(jsonFileName);
-            //    locationSeeder.SubmitToDataLayer();
-            //}
-
         }
     }
 }
