@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2016
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{03BE65AC-3442-48F9-9C0A-857D428FDD2A}"
+	ProjectSection(SolutionItems) = preProject
+		Analyzers\Analyzers.ruleset = Analyzers\Analyzers.ruleset
+		azure-pipelines.yml = azure-pipelines.yml
+		Analyzers\stylecop.json = Analyzers\stylecop.json
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.Models", "MedicalExaminer.Models\MedicalExaminer.Models.csproj", "{27D7A04D-333C-4167-8302-5B4E85951E7B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.Common", "MedicalExaminer.Common\MedicalExaminer.Common.csproj", "{3B616225-3238-4052-A052-2496BF471116}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.API", "MedicalExaminer.API\MedicalExaminer.API.csproj", "{E6E003D0-C32B-4443-87D1-364688A4FC4D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.API.Tests", "MedicalExaminer.API.Tests\MedicalExaminer.API.Tests.csproj", "{2A14EDD9-B416-45EE-B6F0-46084CEC9F16}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{27D7A04D-333C-4167-8302-5B4E85951E7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27D7A04D-333C-4167-8302-5B4E85951E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27D7A04D-333C-4167-8302-5B4E85951E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27D7A04D-333C-4167-8302-5B4E85951E7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B616225-3238-4052-A052-2496BF471116}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B616225-3238-4052-A052-2496BF471116}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B616225-3238-4052-A052-2496BF471116}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B616225-3238-4052-A052-2496BF471116}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6E003D0-C32B-4443-87D1-364688A4FC4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6E003D0-C32B-4443-87D1-364688A4FC4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6E003D0-C32B-4443-87D1-364688A4FC4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6E003D0-C32B-4443-87D1-364688A4FC4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A14EDD9-B416-45EE-B6F0-46084CEC9F16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A14EDD9-B416-45EE-B6F0-46084CEC9F16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A14EDD9-B416-45EE-B6F0-46084CEC9F16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A14EDD9-B416-45EE-B6F0-46084CEC9F16}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A0BDC707-75A0-4303-9480-6DE12D31358A}
+	EndGlobalSection
+EndGlobal
