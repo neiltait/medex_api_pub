@@ -16,7 +16,6 @@ namespace Medical_Examiner_API.Controllers
         /// </summary>
         private readonly ILocationPersistence _locationPersistence;
 
-
         /// <summary>
         /// Initialise a new instance of the Loctions Controller.
         /// </summary>
@@ -44,10 +43,25 @@ namespace Medical_Examiner_API.Controllers
             });
         }
 
-
-        public IActionResult Index()
+        /// <summary>
+        /// Get Location by ID
+        /// </summary>
+        /// <param name="locationId">The Location Id.</param>
+        /// <returns>A GetLocationsResponse.</returns>
+        [HttpGet("{id}")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<GetLocationResponse>> GetLocation(string locationId)
         {
-            return View();
+            try
+            {
+                var location = await _locationPersistence.GetLocationAsync(locationId);
+                var response = Mapper.Map<GetLocationResponse>(location);
+                return Ok(response);
+            }
+            catch (DocumentClientException)
+            {
+                return NotFound();
+            }
         }
     }
 }

@@ -75,6 +75,11 @@ namespace Medical_Examiner_API
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
 
+            services.AddScoped<ILocationPersistence>(s => new LocationPersistence(
+                 new Uri(Configuration["CosmosDB:URL"]),
+                 Configuration["CosmosDB:PrimaryKey"],
+                 Configuration["CosmosDB:DatabaseId"]));
+
             services.AddScoped<IUserPersistence>(s => new UserPersistence(
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],
@@ -131,17 +136,16 @@ namespace Medical_Examiner_API
 
             app.UseMvc();
 
-            var locationSeedersPersistence = new LocationsSeederPersistence(new Uri(Configuration["CosmosDB:URL"]),
-                    Configuration["CosmosDB:PrimaryKey"]);
-            var locationSeeder = new LocationsSeeder(locationSeedersPersistence);
-            var jsonFileName = Configuration["SourceData:Locations"];
-            if (jsonFileName != null)
-            {
-                locationSeeder.LoadFromFile(jsonFileName);
-                locationSeeder.SubmitToDataLayer();
-            }
+            //var locationSeedersPersistence = new LocationsSeederPersistence(new Uri(Configuration["CosmosDB:URL"]),
+            //        Configuration["CosmosDB:PrimaryKey"]);
+            //var locationSeeder = new LocationsSeeder(locationSeedersPersistence);
+            //var jsonFileName = Configuration["SourceData:Locations"];
+            //if (jsonFileName != null)
+            //{
+            //    locationSeeder.LoadFromFile(jsonFileName);
+            //    locationSeeder.SubmitToDataLayer();
+            //}
 
-            //var djp = 10;
         }
     }
 }
