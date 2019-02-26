@@ -23,12 +23,12 @@ steps:
   displayName: Restore
   inputs:
     command: restore
-    projects: 'Medical.Examiner.API/Medical.Examiner.API.csproj'
+    projects: 'MedicalExaminer.API/MedicalExaminer.API.csproj'
 
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
-    projects: 'Medical.Examiner.API/Medical.Examiner.API.csproj'
+    projects: 'MedicalExaminer.API/MedicalExaminer.API.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 
 
@@ -37,7 +37,7 @@ steps:
   inputs:
     codeCoverageEnabled: True
     command: test
-    projects: 'Medical.Examiner.API.Tests/Medical.Examiner.API.Tests.csproj'
+    projects: 'MedicalExaminer.API.Tests/MedicalExaminer.API.Tests.csproj'
     arguments: '--configuration $(BuildConfiguration)'
     publishTestResults: true
 
