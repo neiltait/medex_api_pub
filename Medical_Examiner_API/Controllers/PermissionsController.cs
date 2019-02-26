@@ -6,6 +6,7 @@ using Medical_Examiner_API.Extensions.Data;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models.V1.Users;
 using Medical_Examiner_API.Persistence;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Permission = Medical_Examiner_API.Models.Permission;
@@ -18,6 +19,7 @@ namespace Medical_Examiner_API.Controllers
     /// </summary>
     [Route("users/{userId}/permissions")]
     [ApiController]
+    [Authorize]
     public class PermissionsController : BaseController
     {
         /// <summary>

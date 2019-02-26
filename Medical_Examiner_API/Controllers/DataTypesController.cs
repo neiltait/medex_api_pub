@@ -9,6 +9,7 @@ using Medical_Examiner_API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Medical_Examiner_API.Extensions.Data;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,6 +17,7 @@ namespace Medical_Examiner_API.Controllers
 {
     [Route("datatype")]
     [ApiController]
+    [Authorize]
     public class DataTypesController : BaseController
     {
         /// <summary>

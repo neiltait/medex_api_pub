@@ -2,15 +2,18 @@
 using Medical_Examiner_API.Extensions.Models;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models.V1;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Medical_Examiner_API.Controllers
 {
     /// <inheritdoc />
     /// <summary>
-    /// Base Controller
+    /// Base Controller.
     /// </summary>
+    /// <remarks>By default requires Authorization.</remarks>
     [ApiController]
+    [Authorize]
     public abstract class BaseController : Controller
     {
         /// <summary>

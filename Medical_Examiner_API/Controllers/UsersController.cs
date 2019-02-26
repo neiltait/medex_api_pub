@@ -6,6 +6,7 @@ using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models;
 using Medical_Examiner_API.Models.V1.Users;
 using Medical_Examiner_API.Persistence;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 
@@ -17,6 +18,7 @@ namespace Medical_Examiner_API.Controllers
     /// </summary>
     [Route("users")]
     [ApiController]
+    [Authorize]
     public class UsersController : BaseController
     {
         /// <summary>

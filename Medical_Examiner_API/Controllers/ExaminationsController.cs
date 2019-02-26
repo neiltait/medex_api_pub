@@ -4,6 +4,7 @@ using AutoMapper;
 using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Models.V1.Examinations;
 using Medical_Examiner_API.Persistence;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 
@@ -15,6 +16,7 @@ namespace Medical_Examiner_API.Controllers
     /// </summary>
     [Route("examinations")]
     [ApiController]
+    [Authorize]
     public class ExaminationsController : BaseController
     {
         /// <summary>
