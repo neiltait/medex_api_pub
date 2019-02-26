@@ -1,0 +1,59 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Faker;
+using MedicalExaminer.Common;
+using MedicalExaminer.Models;
+
+namespace MedicalExaminer.API.Tests.Persistence
+{
+    public class UserPersistenceFake : IUserPersistence
+    {
+        private readonly List<MeUser> _users;
+
+        public UserPersistenceFake()
+        {
+            // Populate the users fake vars 
+            _users = new List<MeUser>();
+
+            for (var count = 0; count < 10; count++)
+            {
+                var u = new MeUser();
+                u.Email = Internet.Email();
+                u.UserId = "aaaaa" + count;
+                u.FirstName = Name.First();
+                u.LastName = Name.Last();
+                u.CreatedAt = DateTime.Now;
+                u.ModifiedAt = DateTime.Now;
+
+                _users.Add(u);
+            }
+        }
+
+        public async Task<MeUser> CreateUserAsync(MeUser meUser)
+        {
+            var createdUser = meUser;
+            createdUser.UserId = "1";
+            return await Task.FromResult(createdUser);
+        }
+
+        public async Task<MeUser> GetUserAsync(string UserId)
+        {
+            foreach (var user in _users)
+                if (user.UserId == UserId)
+                    return await Task.FromResult(user);
+
+            throw new ArgumentException("Invalid Argument");
+        }
+
+        public async Task<IEnumerable<MeUser>> GetUsersAsync()
+        {
+            return await Task.FromResult(_users);
+        }
+
+        public async Task<MeUser> UpdateUserAsync(MeUser meUser)
+        {
+            return await Task.FromResult(meUser);
+        }
+    }
+}
