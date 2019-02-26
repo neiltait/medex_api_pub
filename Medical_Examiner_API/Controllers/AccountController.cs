@@ -31,7 +31,7 @@ namespace Medical_Examiner_API.Controllers
         }
 
         /// <summary>
-        /// Authenticate
+        /// Authenticate without any credentials.
         /// </summary>
         /// <returns>Token.</returns>
         [AllowAnonymous]
@@ -46,16 +46,6 @@ namespace Medical_Examiner_API.Controllers
             }
 
             return Ok(token);
-        }
-
-        /// <summary>
-        /// Test Method
-        /// </summary>
-        /// <returns>True.</returns>
-        [HttpGet("test")]
-        public bool TestAuthenticate()
-        {
-            return true;
         }
 
         /// <summary>
