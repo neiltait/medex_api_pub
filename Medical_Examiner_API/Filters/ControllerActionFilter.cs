@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Medical_Examiner_API.Loggers;
 using Medical_Examiner_API.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 
