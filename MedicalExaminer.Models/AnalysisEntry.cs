@@ -23,8 +23,8 @@ namespace MedicalExaminer.Models
         public string Notes { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "analasis_entry_type")]
-        public AnalasisEntryType AnalasisEntryType { get; set; }
+        [JsonProperty(PropertyName = "analysis_entry_type")]
+        public AnalysisEntryType AnalasisEntryType { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "present_at_death")]

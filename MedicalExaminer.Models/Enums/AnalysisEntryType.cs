@@ -1,6 +1,6 @@
 ﻿namespace MedicalExaminer.Models.Enums
 {
-    public enum AnalasisEntryType
+    public enum AnalysisEntryType
     {
         MEOSummary = 0,
         BereavedInformation = 1,
