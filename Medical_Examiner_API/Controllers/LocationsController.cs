@@ -9,6 +9,12 @@ using Microsoft.Azure.Documents;
 
 namespace Medical_Examiner_API.Controllers
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// Locations Controller
+    /// </summary>
+    [Route("locations")]
+    [ApiController]
     public class LocationsController : BaseController
     {
         /// <summary>
