@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Medical_Examiner_API.Models;
+using MedicalExaminer.Models;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 
-namespace Medical_Examiner_API.Persistence
+namespace MedicalExaminer.Common
 {
     public class LocationPersistence : PersistenceBase, ILocationPersistence
     {

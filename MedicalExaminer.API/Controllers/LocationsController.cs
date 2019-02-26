@@ -1,13 +1,14 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Medical_Examiner_API.Loggers;
-using Medical_Examiner_API.Models.V1.Locations;
-using Medical_Examiner_API.Persistence;
+using MedicalExaminer.API.Filters;
+using MedicalExaminer.Common;
+using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Models.V1.Locations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 
-namespace Medical_Examiner_API.Controllers
+namespace MedicalExaminer.API.Controllers
 {
     /// <inheritdoc />
     /// <summary>

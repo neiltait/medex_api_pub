@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Medical_Examiner_API.Models;
+using MedicalExaminer.Models;
 
-namespace Medical_Examiner_API.Persistence
+namespace MedicalExaminer.Common
 {
     public interface ILocationPersistence
     {
