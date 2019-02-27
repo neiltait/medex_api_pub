@@ -55,7 +55,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="locationId">The Location Id.</param>
         /// <returns>A GetLocationsResponse.</returns>
-        [HttpGet("{id}")]
+        [HttpGet("{locationId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationResponse>> GetLocation(string locationId)
         {
