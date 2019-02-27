@@ -22,6 +22,17 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
+        public void GetLocation_When_Called_With_Invalid_Id_Returns_Expected_Type()
+        {
+            // Act
+            var response = Controller.GetLocation("dfgdfgdfg");
+
+            // Assert
+            var taskResult = response.Should().BeOfType<Task<ActionResult<GetLocationResponse>>>().Subject;
+            Assert.Equal(TaskStatus.Faulted, taskResult.Status);
+        }
+
+        [Fact]
         public void GetLocation_When_Called_With_Valid_Id_Returns_Expected_Type()
         {
             // Act
