@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using MedicalExaminer.Models.Enums;
-using Microsoft.Net.Http.Headers;
 
 namespace MedicalExaminer.API.Models.v1.Examinations
 {

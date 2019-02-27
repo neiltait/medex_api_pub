@@ -11,13 +11,13 @@ namespace MedicalExaminer.API.Tests.Validators
     public class ExaminationItemValidatorTests
     {
         [Fact]
-        public async void TestPatientGivenName()
+        public async void IncorrectPatientGivenNameRaisesError()
         {
             var nhsNumberValidator = new NhsNumberValidator();
 
             var dataToValidate = new ExaminationItem()
             {
-                GivenName = "Mark",
+                GivenName = "M",
                 Surname = "Sharkey",
                 Gender = ExaminationGender.Male
             };
@@ -25,8 +25,28 @@ namespace MedicalExaminer.API.Tests.Validators
             var sut = new CheckExaminationItemValidator(nhsNumberValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
-            result.Count.Should().Be(2);
+            result.Count.Should().Be(1);
             result[0].Message.Should().Be("Invalid Given Name");
+            result[0].Code.Should().Be("Invalid");
+        }
+
+        [Fact]
+        public async void IncorrectPatientSurnameRaisesError()
+        {
+            var nhsNumberValidator = new NhsNumberValidator();
+
+            var dataToValidate = new ExaminationItem()
+            {
+                GivenName = "Ma",
+                Surname = "S",
+                Gender = ExaminationGender.Male
+            };
+
+            var sut = new CheckExaminationItemValidator(nhsNumberValidator);
+            var result = await sut.ValidateAsync(dataToValidate);
+
+            result.Count.Should().Be(1);
+            result[0].Message.Should().Be("Invalid Surname");
             result[0].Code.Should().Be("Invalid");
         }
 

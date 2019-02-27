@@ -38,7 +38,7 @@ namespace MedicalExaminer.API.Models.Validators
 
             if (string.IsNullOrEmpty(evaluationItem.Surname) || evaluationItem.Surname.Length <= 1)
             {
-                errors.Add(new ValidationError(ValidationErrorCode.Invalid, "Invalid Surname Name"));
+                errors.Add(new ValidationError(ValidationErrorCode.Invalid, "Invalid Surname"));
             }
 
             if (evaluationItem.DateOfBirthKnown)
