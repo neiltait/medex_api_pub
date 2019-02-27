@@ -71,5 +71,26 @@ namespace MedicalExaminer.API.Controllers
                 return NotFound();
             }
         }
+
+        /// <summary>
+        /// Get Examination by ID
+        /// </summary>
+        /// <param name="examinationId">The Examination Id.</param>
+        /// <returns>A GetExaminationResponse.</returns>
+        //[HttpPost("{id}")]
+        //[ServiceFilter(typeof(ControllerActionFilter))]
+        //public async Task<ActionResult<GetExaminationResponse>> GetExamination(string examinationId)
+        //{
+        //    try
+        //    {
+        //        var examination = await _examinationPersistence.GetExaminationAsync(examinationId);
+        //        var response = Mapper.Map<GetExaminationResponse>(examination);
+        //        return Ok(response);
+        //    }
+        //    catch (DocumentClientException)
+        //    {
+        //        return NotFound();
+        //    }
+        //}
     }
 }

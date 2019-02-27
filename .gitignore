@@ -39,8 +39,8 @@ Thumbs.db
 
 # dotCover
 *.dotCover
-Medical_Examiner_API/appsettings.Development.json
-Medical_Examiner_APIMElogging.txt
+MedicalExaminer.API/appsettings.Development.json
+MedicalExaminer.APIMElogging.txt
 
 .idea/.idea.Medical_Examiner_API/riderModule.iml
 .idea/.idea.Medical_Examiner_API/.idea/contentModel.xml

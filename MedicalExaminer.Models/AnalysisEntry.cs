@@ -24,7 +24,7 @@ namespace MedicalExaminer.Models
 
         [Required]
         [JsonProperty(PropertyName = "analysis_entry_type")]
-        public AnalysisEntryType AnalasisEntryType { get; set; }
+        public AnalysisEntryType AnalysisEntryType { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "present_at_death")]

@@ -1,20 +1,28 @@
-﻿namespace MedicalExaminer.API.Models.v1.Examinations
+﻿using System;
+using System.Collections.Generic;
+using MedicalExaminer.Models.Enums;
+using Microsoft.Net.Http.Headers;
+
+namespace MedicalExaminer.API.Models.v1.Examinations
 {
     public class ExaminationItem
     {
-        /// <summary>
-        /// The Examination Identifier.
-        /// </summary>
         public string ExaminationId { get; set; }
-
-        /// <summary>
-        /// The Full Name.
-        /// </summary>
-        public string FullName { get; set; }
-
-        /// <summary>
-        /// The NHS Number.
-        /// </summary>
-        public string NHSNumber { get; set; }
+        public string PlaceDeathOccured { get; set; }
+        public string MedicalExaminerOfficeResponsible { get; set; }
+        public string Surname { get; set; }
+        public string GivenName { get; set; }
+        public ExaminationGender? Gender { get; set; }
+        public string NhsNumber { get; set; }
+        public bool NhsNumberKnown { get; set; }
+        public string HospitalNumber_1 { get; set; }
+        public string HospitalNumber_2 { get; set; }
+        public string HospitalNumber_3 { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public bool DateOfBirthKnown { get; set; }
+        public DateTime? DateOfDeath { get; set; }
+        public bool DateOfDeathKnown { get; set; }
+        public TimeSpan? TimeOfDeath { get; set; }
+        public bool TimeOfDeathKnown { get; set; }
     }
 }
