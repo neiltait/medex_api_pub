@@ -58,5 +58,20 @@ namespace MedicalExaminer.API.Tests.Controllers
             var locations = locationResponse.Locations;
             Assert.Equal(9, locations.Count());
         }
+
+        [Fact]
+        public void GetLocationsByName_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var response = Controller.GetLocationsByName("Agnes");
+
+            // Assert
+            var taskResult = response.Should().BeOfType<Task<ActionResult<GetLocationsResponse>>>().Subject;
+            var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var locationResponse = okResult.Value.Should().BeAssignableTo<GetLocationsResponse>().Subject;
+            var locations = locationResponse.Locations;
+            var locationName = locations.ElementAt(0).Name;
+            Assert.Equal("St Agnes Hospital", locationName);
+        }
     }
 }

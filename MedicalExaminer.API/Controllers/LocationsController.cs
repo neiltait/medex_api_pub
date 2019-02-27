@@ -36,7 +36,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Get All Locations as a list of <see cref="LocationItem"/>.
+        /// Get all Locations as a list of <see cref="LocationItem"/>.
         /// </summary>
         /// <returns>A list of location.</returns>
         [HttpGet]
@@ -55,7 +55,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="locationId">The Location Id.</param>
         /// <returns>A GetLocationsResponse.</returns>
-        [HttpGet("{locationId}")]
+        [HttpGet("/id/{locationId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationResponse>> GetLocation(string locationId)
         {
@@ -69,6 +69,22 @@ namespace MedicalExaminer.API.Controllers
             {
                 return NotFound();
             }
+        }
+
+        /// <summary>
+        /// Get Locations as a list of <see cref="LocationItem"/> where location name contains locationName.
+        /// </summary>
+        /// <param name="locationName">The value to be used in the selection of matching names.</param>
+        /// <returns>A list of locations whose names contain locationName.</returns>
+        [HttpGet("/name/{locationName}")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<GetLocationsResponse>> GetLocationsByName(string locationName)
+        {
+            var locations = await _locationPersistence.GetLocationsByNameAsync(locationName);
+            return Ok(new GetLocationsResponse()
+            {
+                Locations = locations.Select(location => Mapper.Map<LocationItem>(location)).ToList(),
+            });
         }
     }
 }

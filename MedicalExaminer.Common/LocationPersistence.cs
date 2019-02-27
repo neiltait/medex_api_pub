@@ -8,6 +8,9 @@ using Microsoft.Azure.Documents.Linq;
 
 namespace MedicalExaminer.Common
 {
+    /// <summary>
+    ///Manages persistence of locations
+    /// </summary>
     public class LocationPersistence : PersistenceBase, ILocationPersistence
     {
         public LocationPersistence(Uri endpointUri, string primaryKey, string databaseId) : base(endpointUri,
@@ -15,6 +18,7 @@ namespace MedicalExaminer.Common
         {
         }
 
+        /// <inheritdoc />
         public async Task<Location> GetLocationAsync(string locationId)
         {
             await EnsureSetupAsync();
@@ -25,6 +29,7 @@ namespace MedicalExaminer.Common
 
         }
 
+        /// <inheritdoc />
         public async Task<IEnumerable<Location>> GetLocationsAsync()
         {
             await EnsureSetupAsync();
@@ -36,6 +41,22 @@ namespace MedicalExaminer.Common
             var results = new List<Location>();
             while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<Location>());
             return results;
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<Location>> GetLocationsByNameAsync(string locationName)
+        {
+            await EnsureSetupAsync();
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, "Locations");
+            var feedOptions = new FeedOptions { MaxItemCount = -1 };
+            var query = Client.CreateDocumentQuery<Location>(documentCollectionUri, "SELECT * FROM Locations",
+                feedOptions);
+            var queryAll = query.AsDocumentQuery();
+            var allLocations = new List<Location>();
+                while (queryAll.HasMoreResults) allLocations.AddRange(await queryAll.ExecuteNextAsync<Location>());
+            var result = allLocations.FindAll( location => location.Name.ToUpper().Contains(locationName.ToUpper()));
+
+            return result;
         }
     }
 }

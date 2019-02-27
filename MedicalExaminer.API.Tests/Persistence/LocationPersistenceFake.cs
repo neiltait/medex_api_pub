@@ -47,8 +47,8 @@ namespace MedicalExaminer.API.Tests.Persistence
 
             trust2.LocationId = "5";
             trust2.Code = "RKK";
-            trust1.Name = "Grimsby Foundation Trust";
-            trust1.Parent = "R2";
+            trust2.Name = "Grimsby Foundation Trust";
+            trust2.Parent = "R2";
 
             site1.LocationId = "6";
             site1.Code = "R0A01";
@@ -97,6 +97,11 @@ namespace MedicalExaminer.API.Tests.Persistence
         public async Task<IEnumerable<Location>> GetLocationsAsync()
         {
             return await Task.FromResult(_locations);
+        }
+
+        public async Task<IEnumerable<Location>> GetLocationsByNameAsync(string locationName)
+        {
+            return await Task.FromResult(_locations.FindAll(location => location.Name.ToUpper().Contains(locationName.ToUpper())));
         }
     }
 }
