@@ -42,7 +42,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<Task<ActionResult<GetLocationResponse>>>().Subject;
             var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             var location = okResult.Value.Should().BeAssignableTo<GetLocationResponse>().Subject;
-            Assert.Equal("5", location.Id);
+            Assert.Equal("5", location.LocationId);
         }
 
         [Fact]

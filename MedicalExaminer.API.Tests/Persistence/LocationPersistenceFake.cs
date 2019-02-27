@@ -25,47 +25,47 @@ namespace MedicalExaminer.API.Tests.Persistence
             var site3 = new Location();
             var site4 = new Location();
 
-            national.Id = "1";
+            national.LocationId = "1";
             national.Code = "National";
             national.Name = "Medical Examiners National";
             national.Parent = null;
 
-            region1.Id = "2";
+            region1.LocationId = "2";
             region1.Code = "R1";
             region1.Name = "Region 1";
             region1.Parent = "National";
 
-            region2.Id = "3";
+            region2.LocationId = "3";
             region2.Code = "R2";
             region2.Name = "Region 2";
             region2.Parent = "National";
 
-            trust1.Id = "4";
+            trust1.LocationId = "4";
             trust1.Code = "R0A";
             trust1.Name = "Manchester University Foundation Trust";
             trust1.Parent = "R1";
 
-            trust2.Id = "5";
+            trust2.LocationId = "5";
             trust2.Code = "RKK";
             trust1.Name = "Grimsby Foundation Trust";
             trust1.Parent = "R2";
 
-            site1.Id = "6";
+            site1.LocationId = "6";
             site1.Code = "R0A01";
             site1.Name = "Old Mill Hospital";
             site1.Parent = "T1";
 
-            site2.Id = "7";
+            site2.LocationId = "7";
             site2.Code = "R0A02";
             site2.Name = "St Agnes Hospital";
             site2.Parent = "T1";
 
-            site3.Id = "8";
+            site3.LocationId = "8";
             site3.Code = "RKK01";
             site3.Name = "Leeds Road Hospital";
             site3.Parent = "T2";
 
-            site4.Id = "9";
+            site4.LocationId = "9";
             site4.Code = "RKK02";
             site4.Name = "North Hospital";
             site4.Parent = "T2";
@@ -85,7 +85,7 @@ namespace MedicalExaminer.API.Tests.Persistence
         {
             foreach (var location in _locations)
             {
-                if (location.Id == locationId)
+                if (location.LocationId == locationId)
                 {
                     return await Task.FromResult(location);
                 }

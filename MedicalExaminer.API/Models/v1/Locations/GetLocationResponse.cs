@@ -7,7 +7,7 @@ namespace MedicalExaminer.Models.V1.Locations
 {
     public class GetLocationResponse
     {
-        public string Id { get; set; }
+        public string LocationId { get; set; }
 
         public string Name { get; set; }
 

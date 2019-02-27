@@ -37,6 +37,5 @@ namespace MedicalExaminer.Common
             while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<Location>());
             return results;
         }
-
     }
 }

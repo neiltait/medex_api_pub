@@ -10,7 +10,7 @@ namespace MedicalExaminer.Models.V1.Locations
         /// <summary>
         /// The Location Identifier.
         /// </summary>
-        public string Id { get; set; }
+        public string LocationId { get; set; }
 
         /// <summary>
         /// Name.
