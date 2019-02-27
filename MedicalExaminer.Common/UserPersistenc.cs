@@ -34,7 +34,9 @@ namespace MedicalExaminer.Common
 
             if (document == null) throw new ArgumentException("Invalid Argument");
 
-            return (MeUser) document;
+            var user = document.Resource as MeUser;
+
+            return user;
         }
 
         public async Task<MeUser> GetUserAsync(string UserId)
