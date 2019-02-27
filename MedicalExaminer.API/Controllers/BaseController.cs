@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using MedicalExaminer.API.Extensions.Models;
 using MedicalExaminer.API.Models.v1;
 using MedicalExaminer.Common.Loggers;
@@ -8,9 +9,11 @@ namespace MedicalExaminer.API.Controllers
 {
     /// <inheritdoc />
     /// <summary>
-    /// Base Controller
+    /// Base Controller.
     /// </summary>
+    /// <remarks>By default requires Authorization.</remarks>
     [ApiController]
+    [Authorize]
     public abstract class BaseController : Controller
     {
         /// <summary>
