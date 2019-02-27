@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Routing;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -18,36 +14,6 @@ namespace MedicalExaminer.API.Tests
     public class ValidateRouteVariablesTests
     {
         private readonly ITestOutputHelper _testOutputHelper;
-
-        /// <summary>
-        /// Get all controllers from the domain.
-        /// </summary>
-        /// <returns>A List of types matching our controller class</returns>
-        private IEnumerable<Type> AllControllers()
-        {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var types = new List<Type>();
-
-            foreach (var assembly in assemblies)
-            {
-                if (!assembly.FullName.StartsWith("Microsoft")){
-                    try
-                    {
-                        var typesInAssembly = assembly.GetTypes()
-                            .Where(myType =>
-                                myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(Controller)));
-
-                        types.AddRange(typesInAssembly);
-                    }
-                    catch
-                    {
-                        _testOutputHelper.WriteLine("Unable to get types from: " + assembly.FullName);
-                    }
-                }
-            }
-
-            return types;
-        }
 
         /// <summary>
         /// Initialise the test.
@@ -82,7 +48,6 @@ namespace MedicalExaminer.API.Tests
                     {
                         if (parameter.GetCustomAttributes(typeof(FromBodyAttribute), false).Length == 0)
                         {
-
                             var foundInAttribute = false;
                             var actionHttpAttributes = action.GetCustomAttributes(typeof(HttpMethodAttribute), true);
                             var actionRouteAttributes = action.GetCustomAttributes(typeof(RouteAttribute), true);
@@ -118,6 +83,37 @@ namespace MedicalExaminer.API.Tests
             }
 
             Assert.True(allValid);
+        }
+
+        /// <summary>
+        /// Get all controllers from the domain.
+        /// </summary>
+        /// <returns>A List of types matching our controller class</returns>
+        private IEnumerable<Type> AllControllers()
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var types = new List<Type>();
+
+            foreach (var assembly in assemblies)
+            {
+                if (!assembly.FullName.StartsWith("Microsoft"))
+                {
+                    try
+                    {
+                        var typesInAssembly = assembly.GetTypes()
+                            .Where(myType =>
+                                myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(Controller)));
+
+                        types.AddRange(typesInAssembly);
+                    }
+                    catch
+                    {
+                        _testOutputHelper.WriteLine("Unable to get types from: " + assembly.FullName);
+                    }
+                }
+            }
+
+            return types;
         }
     }
 }
