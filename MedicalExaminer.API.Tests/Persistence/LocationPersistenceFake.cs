@@ -69,6 +69,16 @@ namespace MedicalExaminer.API.Tests.Persistence
             site4.Code = "RKK02";
             site4.Name = "North Hospital";
             site4.Parent = "T2";
+
+            _locations.Add(national);
+            _locations.Add(region1);
+            _locations.Add(region2);
+            _locations.Add(trust1);
+            _locations.Add(trust2);
+            _locations.Add(site1);
+            _locations.Add(site2);
+            _locations.Add(site3);
+            _locations.Add(site4);
         }
 
         public async Task<Location> GetLocationAsync(string locationId)
