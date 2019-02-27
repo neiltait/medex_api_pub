@@ -49,11 +49,11 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A GetPermissionsResponse.</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetPermissionsResponse>> GetPermissions(string meUserId)
+        public async Task<ActionResult<GetPermissionsResponse>> GetPermissions(string userId)
         {
             try
             {
-                var permissions = await permissionPersistence.GetPermissionsAsync(meUserId);
+                var permissions = await permissionPersistence.GetPermissionsAsync(userId);
 
                 return Ok(new GetPermissionsResponse
                 {
@@ -73,12 +73,12 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// Get a Users permission by its Identifier.
         /// </summary>
-        /// <param name="meUserId">The User Id.</param>
+        /// <param name="userId">The User Id.</param>
         /// <param name="permissionId">The Permission Id.</param>
         /// <returns>A GetPermissionResponse.</returns>
-        [HttpGet("{id}")]
+        [HttpGet("{permissionId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetPermissionResponse>> GetPermission(string meUserId, string permissionId)
+        public async Task<ActionResult<GetPermissionResponse>> GetPermission(string userId, string permissionId)
         {
             if (!ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var permission = await permissionPersistence.GetPermissionAsync(meUserId, permissionId);
+                var permission = await permissionPersistence.GetPermissionAsync(userId, permissionId);
                 return Ok(Mapper.Map<GetPermissionResponse>(permission));
             }
             catch (ArgumentException)
@@ -107,7 +107,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PostPermissionResponse.</returns>
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PostPermissionResponse>> CreatePermission(PostPermissionRequest postPermission)
+        public async Task<ActionResult<PostPermissionResponse>> CreatePermission([FromBody]PostPermissionRequest postPermission)
         {
             if (!ModelState.IsValid)
             {
@@ -140,7 +140,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutPermissionResponse.</returns>
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(PutPermissionRequest putPermission)
+        public async Task<ActionResult<PutPermissionResponse>> UpdatePermission([FromBody] PutPermissionRequest putPermission)
         {
             try
             {

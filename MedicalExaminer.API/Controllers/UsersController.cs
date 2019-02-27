@@ -69,7 +69,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="meUserId">The User Identifier.</param>
         /// <returns>A GetUserResponse.</returns>
         // GET api/users/{user_id}
-        [HttpGet("{id}")]
+        [HttpGet("{meUserId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetUserResponse>> GetUser(string meUserId)
         {
@@ -100,7 +100,7 @@ namespace MedicalExaminer.API.Controllers
        // POST api/users
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PostUserResponse>> CreateUser(PostUserRequest postUser)
+        public async Task<ActionResult<PostUserResponse>> CreateUser([FromBody] PostUserRequest postUser)
         {
             try
             {
@@ -128,7 +128,7 @@ namespace MedicalExaminer.API.Controllers
         // POST api/users
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutUserResponse>> UpdateUser(PutUserRequest putUser)
+        public async Task<ActionResult<PutUserResponse>> UpdateUser([FromBody] PutUserRequest putUser)
         {
             try
             {

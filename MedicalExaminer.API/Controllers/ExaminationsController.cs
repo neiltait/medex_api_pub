@@ -56,7 +56,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="examinationId">The Examination Id.</param>
         /// <returns>A GetExaminationResponse.</returns>
-        [HttpGet("{id}")]
+        [HttpGet("{examinationId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetExaminationResponse>> GetExamination(string examinationId)
         {
