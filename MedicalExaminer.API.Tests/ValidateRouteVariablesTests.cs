@@ -71,27 +71,47 @@ namespace MedicalExaminer.API.Tests
             {
                 var actions = controller.GetMethods().Where(m => m.GetCustomAttributes(typeof(HttpMethodAttribute), true).Length > 0);
 
+                var controllerHttpAttributes = controller.GetCustomAttributes(typeof(HttpMethodAttribute), true);
+                var controllerRouteAttributes = controller.GetCustomAttributes(typeof(RouteAttribute), true);
+
                 foreach (var action in actions)
                 {
                     var parameters = action.GetParameters();
 
                     foreach (var parameter in parameters)
                     {
-                        var foundInAttribute = false;
-                        var httpAttributes = action.GetCustomAttributes(typeof(HttpMethodAttribute), true);
-
-                        foreach (HttpMethodAttribute httpAttribute in httpAttributes)
+                        if (parameter.GetCustomAttributes(typeof(FromBodyAttribute), false).Length == 0)
                         {
-                            if (httpAttribute.Template?.Contains($"{{{parameter.Name}") == true)
+
+                            var foundInAttribute = false;
+                            var actionHttpAttributes = action.GetCustomAttributes(typeof(HttpMethodAttribute), true);
+                            var actionRouteAttributes = action.GetCustomAttributes(typeof(RouteAttribute), true);
+
+                            var httpAttributes = actionHttpAttributes.Concat(controllerHttpAttributes);
+                            var routeAttributes = actionRouteAttributes.Concat(controllerRouteAttributes);
+
+                            foreach (HttpMethodAttribute httpAttribute in httpAttributes)
                             {
-                                foundInAttribute = true;
+                                if (httpAttribute.Template?.Contains($"{{{parameter.Name}") == true)
+                                {
+                                    foundInAttribute = true;
+                                }
                             }
-                        }
 
-                        if (!foundInAttribute)
-                        {
-                            _testOutputHelper.WriteLine($"Failed to find {parameter.Name} in http attributes for Action:{action.Name} in Controller: {controller.Name}");
-                            allValid = false;
+                            foreach (RouteAttribute routeAttribute in routeAttributes)
+                            {
+                                if (routeAttribute.Template?.Contains($"{{{parameter.Name}") == true)
+                                {
+                                    foundInAttribute = true;
+                                }
+                            }
+
+                            if (!foundInAttribute)
+                            {
+                                _testOutputHelper.WriteLine(
+                                    $"Failed to find {parameter.Name} in http attributes for Action:{action.Name} in Controller: {controller.Name} or missing [FromBody] attribute.");
+                                allValid = false;
+                            }
                         }
                     }
                 }
