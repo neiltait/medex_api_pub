@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Common;
@@ -16,6 +17,7 @@ namespace MedicalExaminer.API.Controllers
     /// </summary>
     [Route("examinations")]
     [ApiController]
+    [Authorize]
     public class ExaminationsController : BaseController
     {
         /// <summary>
