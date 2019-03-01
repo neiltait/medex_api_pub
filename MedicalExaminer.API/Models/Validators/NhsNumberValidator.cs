@@ -5,9 +5,12 @@ using System.Threading.Tasks;
 
 namespace MedicalExaminer.API.Models.Validators
 {
+    /// <summary>
+    /// Validates a string input against the nhs validation
+    /// </summary>
     public class NhsNumberValidator : IValidator<string>
     {
-        private int[] _factors =
+        private readonly int[] _factors =
         {
             10,
             9,
@@ -19,31 +22,34 @@ namespace MedicalExaminer.API.Models.Validators
             3,
             2
         };
-        public async Task<IList<ValidationError>> ValidateAsync(string nhsNumber)
+
+        public async Task<IEnumerable<ValidationError>> ValidateAsync(string nhsNumber)
         {
             var errors = new List<ValidationError>();
-            nhsNumber = nhsNumber.Replace(" ", "");
+            nhsNumber = nhsNumber.Replace(" ", string.Empty);
+            nhsNumber = nhsNumber.Replace("-", string.Empty);
             if (nhsNumber.Length != 10)
             {
-                errors.Add(new ValidationError(ValidationErrorCode.Invalid, "Incorrect NHS Number"));
+                errors.Add(new ValidationError(ValidationErrorCode.Invalid, "NhsNumber", "Incorrect NHS Number"));
                 return errors;
             }
 
             if (!ValidateNhsNumber(nhsNumber))
             {
-                errors.Add(new ValidationError(ValidationErrorCode.Invalid, "Incorrect NHS Number"));
+                errors.Add(new ValidationError(ValidationErrorCode.Invalid, "NhsNumber", "Incorrect NHS Number"));
             }
+
             return errors;
         }
 
         private bool ValidateNhsNumber(string nhsNumber)
         {
-            int[] numericNhsNumber = null; 
+            int[] numericNhsNumber;
             try
             {
                 numericNhsNumber = nhsNumber.ToCharArray().Select(c => int.Parse(c.ToString())).ToArray();
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
@@ -66,12 +72,7 @@ namespace MedicalExaminer.API.Models.Validators
                 check = 0;
             }
 
-            if (check == numericNhsNumber[9])
-            {
-                return true;
-            }
-            
-            return false;
+            return check == numericNhsNumber[9];
         }
     }
 }

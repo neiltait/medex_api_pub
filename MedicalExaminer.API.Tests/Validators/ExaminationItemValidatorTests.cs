@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
-using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.Validators;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using Moq;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Validators
@@ -13,93 +14,93 @@ namespace MedicalExaminer.API.Tests.Validators
         [Fact]
         public async void IncorrectPatientGivenNameRaisesError()
         {
-            var nhsNumberValidator = new NhsNumberValidator();
+            var nhsNumberValidator = new Moq.Mock<IValidator<string>>().Object;
 
             var dataToValidate = new ExaminationItem()
             {
-                GivenName = "M",
-                Surname = "Sharkey",
-                Gender = ExaminationGender.Male
+                GivenNames = "J",
+                Surname = "Beer",
+                Gender = ExaminationGender.Female
             };
 
             var sut = new CheckExaminationItemValidator(nhsNumberValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
-            result.Count.Should().Be(1);
-            result[0].Message.Should().Be("Invalid Given Name");
-            result[0].Code.Should().Be("Invalid");
+            result.Count().Should().Be(1);
+            result.First().Message.Should().Be("Invalid Given Name");
+            result.First().Code.Should().Be("Invalid");
         }
 
         [Fact]
         public async void IncorrectPatientSurnameRaisesError()
         {
-            var nhsNumberValidator = new NhsNumberValidator();
+            var nhsNumberValidator = new Moq.Mock<IValidator<string>>().Object;
 
             var dataToValidate = new ExaminationItem()
             {
-                GivenName = "Ma",
-                Surname = "S",
-                Gender = ExaminationGender.Male
+                GivenNames = "Jo",
+                Surname = "B",
+                Gender = ExaminationGender.Female
             };
 
             var sut = new CheckExaminationItemValidator(nhsNumberValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
-            result.Count.Should().Be(1);
-            result[0].Message.Should().Be("Invalid Surname");
-            result[0].Code.Should().Be("Invalid");
+            result.Count().Should().Be(1);
+            result.First().Message.Should().Be("Invalid Surname");
+            result.First().Code.Should().Be("Invalid");
         }
 
         [Fact]
         public async void DateOfBirthKnownButNotCompletedReturnsError()
         {
-            var nhsNumberValidator = new NhsNumberValidator();
+            var nhsNumberValidator = new Moq.Mock<IValidator<string>>().Object;
             var dataToValidate = new ExaminationItem()
             {
-                GivenName = "Mark",
-                Surname = "Sharkey",
+                GivenNames = "Joanna",
+                Surname = "Beer",
                 DateOfBirthKnown = true,
                 DateOfBirth = null,
-                Gender = ExaminationGender.Male
+                Gender = ExaminationGender.Female
             };
 
             var sut = new CheckExaminationItemValidator(nhsNumberValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
-            result.Count.Should().Be(1);
-            result[0].Message.Should().Be("If date of birth is known a date must be provided");
-            result[0].Code.Should().Be("IsNull");
+            result.Count().Should().Be(1);
+            result.First().Message.Should().Be("If date of birth is known a date must be provided");
+            result.First().Code.Should().Be("IsNull");
         }
 
         [Fact]
         public async void DateOfDeathKnownButNotCompletedReturnsError()
         {
-            var nhsNumberValidator = new NhsNumberValidator();
+            var nhsNumberValidator = new Moq.Mock<IValidator<string>>().Object;
             var dataToValidate = new ExaminationItem()
             {
-                GivenName = "Mark",
-                Surname = "Sharkey",
+                GivenNames = "Joanna",
+                Surname = "Beer",
                 DateOfDeathKnown = true,
                 DateOfBirth = null,
-                Gender = ExaminationGender.Male
+                Gender = ExaminationGender.Female
             };
 
             var sut = new CheckExaminationItemValidator(nhsNumberValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
-            result.Count.Should().Be(1);
-            result[0].Message.Should().Be("If date of death is known a date must be provided.");
-            result[0].Code.Should().Be("IsNull");
+            result.Count().Should().Be(1);
+            result.First().Message.Should().Be("If date of death is known a date must be provided.");
+            result.First().Code.Should().Be("IsNull");
         }
 
         [Fact]
         public async void GenderNotCompletedExaminationItemReturnsError()
         {
-            var nhsNumberValidator = new NhsNumberValidator();
+            var nhsNumberValidator = new Moq.Mock<IValidator<string>>().Object;
             var dataToValidate = new ExaminationItem()
             {
-                GivenName = "Mark",
-                Surname = "Sharkey",
+                GivenNames = "Joanna",
+                Surname = "Beer",
                 DateOfBirthKnown = true,
                 DateOfBirth = new DateTime(1984, 12, 24),
             };
@@ -107,63 +108,66 @@ namespace MedicalExaminer.API.Tests.Validators
             var sut = new CheckExaminationItemValidator(nhsNumberValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
-            result.Count.Should().Be(1);
-            result[0].Message.Should().Be("Gender must be specified");
-            result[0].Code.Should().Be("IsNull");
+            result.Count().Should().Be(1);
+            result.First().Message.Should().Be("Gender must be specified");
+            result.First().Code.Should().Be("IsNull");
         }
 
         [Fact]
         public async void MinimumDataRequiredExaminationItemReturnsNoErrors()
         {
-            var nhsNumberValidator = new NhsNumberValidator();
+            var nhsNumberValidator = new Moq.Mock<IValidator<string>>().Object;
             var dataToValidate = new ExaminationItem()
             {
-                GivenName = "Mark",
-                Surname = "Sharkey",
+                GivenNames = "Joanna",
+                Surname = "Beer",
                 DateOfBirthKnown = true,
                 DateOfBirth = new DateTime(1984, 12, 24),
-                Gender = ExaminationGender.Male
+                Gender = ExaminationGender.Female
             };
 
             var sut = new CheckExaminationItemValidator(nhsNumberValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
-            result.Count.Should().Be(0);
+            result.Count().Should().Be(0);
         }
 
         [Fact]
         public async void DiedBeforeTheyWereBornReturnsError()
         {
-            var nhsNumberValidator = new NhsNumberValidator();
+            var nhsNumberValidator = new Moq.Mock<IValidator<string>>().Object;
             var dataToValidate = new ExaminationItem()
             {
-                GivenName = "Mark",
-                Surname = "Sharkey",
+                GivenNames = "Joanna",
+                Surname = "Beer",
                 DateOfBirthKnown = true,
                 DateOfBirth = new DateTime(2018, 12, 24),
                 DateOfDeathKnown = true,
                 DateOfDeath = new DateTime(1984, 12, 24),
                 TimeOfDeathKnown = true,
                 TimeOfDeath = new TimeSpan(12, 21, 00),
-                Gender = ExaminationGender.Male
+                Gender = ExaminationGender.Female
             };
 
             var sut = new CheckExaminationItemValidator(nhsNumberValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
-            result.Count.Should().Be(1);
-            result[0].Message.Should().Be("Date of birth must be before date of death.");
-            result[0].Code.Should().Be("Invalid");
+            result.Count().Should().Be(1);
+            result.First().Message.Should().Be("Date of birth must be before date of death.");
+            result.First().Code.Should().Be("Invalid");
         }
 
         [Fact]
         public async void FullDataRequiredExaminationItemReturnsNoErrors()
         {
-            var nhsNumberValidator = new NhsNumberValidator();
+            // Arrange
+            var nhsNumberValidator = new Moq.Mock<IValidator<string>>();
+            nhsNumberValidator.Setup(validator => validator.ValidateAsync("1111111111"))
+                .Returns(Task.FromResult(Enumerable.Empty<ValidationError>()));
             var dataToValidate = new ExaminationItem()
             {
-                GivenName = "Mark",
-                Surname = "Sharkey",
+                GivenNames = "Joanna",
+                Surname = "Beer",
                 DateOfBirthKnown = true,
                 DateOfBirth = new DateTime(1984, 12, 24),
                 DateOfDeathKnown = true,
@@ -171,16 +175,19 @@ namespace MedicalExaminer.API.Tests.Validators
                 TimeOfDeathKnown = true,
                 TimeOfDeath = new TimeSpan(12, 21, 00),
                 NhsNumberKnown = true,
-                NhsNumber = "943 476 5919",
+                NhsNumber = "1111111111",
                 MedicalExaminerOfficeResponsible = "Somewhere",
                 PlaceDeathOccured = "Somewhere Else",
-                Gender = ExaminationGender.Male
+                Gender = ExaminationGender.Female
             };
 
-            var sut = new CheckExaminationItemValidator(nhsNumberValidator);
+            var sut = new CheckExaminationItemValidator(nhsNumberValidator.Object);
+
+            // Act
             var result = await sut.ValidateAsync(dataToValidate);
 
-            result.Count.Should().Be(0);
+            // Assert
+            result.Count().Should().Be(0);
         }
     }
 }

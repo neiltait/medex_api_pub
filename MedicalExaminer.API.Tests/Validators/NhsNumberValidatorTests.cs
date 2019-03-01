@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using MedicalExaminer.API.Models.Validators;
 using Xunit;
 
@@ -14,9 +15,9 @@ namespace MedicalExaminer.API.Tests.Validators
             var sut = new NhsNumberValidator();
             var result = await sut.ValidateAsync(numberToValidate);
 
-            result.Count.Should().Be(1);
-            result[0].Message.Should().Be("Incorrect NHS Number");
-            result[0].Code.Should().Be("Invalid");
+            result.Count().Should().Be(1);
+            result.First().Message.Should().Be("Incorrect NHS Number");
+            result.First().Code.Should().Be("Invalid");
         }
 
         [Fact]
@@ -27,9 +28,9 @@ namespace MedicalExaminer.API.Tests.Validators
             var sut = new NhsNumberValidator();
             var result = await sut.ValidateAsync(numberToValidate);
 
-            result.Count.Should().Be(1);
-            result[0].Message.Should().Be("Incorrect NHS Number");
-            result[0].Code.Should().Be("Invalid");
+            result.Count().Should().Be(1);
+            result.First().Message.Should().Be("Incorrect NHS Number");
+            result.First().Code.Should().Be("Invalid");
         }
 
 
@@ -41,9 +42,9 @@ namespace MedicalExaminer.API.Tests.Validators
             var sut = new NhsNumberValidator();
             var result = await sut.ValidateAsync(numberToValidate);
 
-            result.Count.Should().Be(1);
-            result[0].Message.Should().Be("Incorrect NHS Number");
-            result[0].Code.Should().Be("Invalid");
+            result.Count().Should().Be(1);
+            result.First().Message.Should().Be("Incorrect NHS Number");
+            result.First().Code.Should().Be("Invalid");
         }
 
         [Fact]
@@ -54,7 +55,7 @@ namespace MedicalExaminer.API.Tests.Validators
             var sut = new NhsNumberValidator();
             var result = await sut.ValidateAsync(numberToValidate);
 
-            result.Count.Should().Be(0);
+            result.Count().Should().Be(0);
         }
 
         [Fact]
@@ -65,9 +66,9 @@ namespace MedicalExaminer.API.Tests.Validators
             var sut = new NhsNumberValidator();
             var result = await sut.ValidateAsync(numberToValidate);
 
-            result.Count.Should().Be(1);
-            result[0].Message.Should().Be("Incorrect NHS Number");
-            result[0].Code.Should().Be("Invalid");
+            result.Count().Should().Be(1);
+            result.First().Message.Should().Be("Incorrect NHS Number");
+            result.First().Code.Should().Be("Invalid");
         }
     }
 }

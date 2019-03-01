@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
-using MedicalExaminer.API.Models.v1.Examinations;
-using Microsoft.Azure.Documents.SystemFunctions;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.Validators
 {
+    /// <summary>
+    /// Checks the input of the new examination 
+    /// </summary>
     public class CheckExaminationItemValidator : IValidator<ExaminationItem>
     {
-        private NhsNumberValidator _nhsNumberValidator;
+        private readonly IValidator<string> _nhsNumberValidator;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="CheckExistingSpecificationVersionValidator"/> class.
+        /// Initializes a new instance of the <see cref="CheckExaminationItemValidator"/> class.
         /// </summary>
         /// <param name="context">Database context</param>
-        public CheckExaminationItemValidator(NhsNumberValidator nhsNumberValidator/*MetadataStoreContext context*/)
+        /// <param name="nhsNumberValidator">NHS Number Validator</param>
+        public CheckExaminationItemValidator(IValidator<string> nhsNumberValidator/*MetadataStoreContext context*/)
         {
             _nhsNumberValidator = nhsNumberValidator;
         }
@@ -27,25 +27,25 @@ namespace MedicalExaminer.API.Models.Validators
         /// </summary>
         /// <param name="entity">The entity to validate</param>
         /// <returns>List of <see cref="ValidationError"/></returns>
-        public async Task<IList<ValidationError>> ValidateAsync(ExaminationItem evaluationItem)
+        public async Task<IEnumerable<ValidationError>> ValidateAsync(ExaminationItem evaluationItem)
         {
             var errors = new List<ValidationError>();
 
-            if (string.IsNullOrEmpty(evaluationItem.Surname) || evaluationItem.GivenName.Length <= 1)
+            if (string.IsNullOrEmpty(evaluationItem.GivenNames) || evaluationItem.GivenNames.Length <= 1)
             {
-                errors.Add(new ValidationError(ValidationErrorCode.Invalid, "Invalid Given Name"));
+                errors.Add(new ValidationError(ValidationErrorCode.Invalid, "GivenNames", "Invalid Given Name"));
             }
 
             if (string.IsNullOrEmpty(evaluationItem.Surname) || evaluationItem.Surname.Length <= 1)
             {
-                errors.Add(new ValidationError(ValidationErrorCode.Invalid, "Invalid Surname"));
+                errors.Add(new ValidationError(ValidationErrorCode.Invalid, "Surname", "Invalid Surname"));
             }
 
             if (evaluationItem.DateOfBirthKnown)
             {
                 if (evaluationItem.DateOfBirth == null)
                 {
-                    errors.Add(new ValidationError(ValidationErrorCode.IsNull, "If date of birth is known a date must be provided"));
+                    errors.Add(new ValidationError(ValidationErrorCode.IsNull, "DateOfBirth", "If date of birth is known a date must be provided"));
                 }
             }
 
@@ -53,7 +53,7 @@ namespace MedicalExaminer.API.Models.Validators
             {
                 if (evaluationItem.DateOfDeath == null)
                 {
-                    errors.Add(new ValidationError(ValidationErrorCode.IsNull, "If date of death is known a date must be provided."));
+                    errors.Add(new ValidationError(ValidationErrorCode.IsNull, "DateOfDeath", "If date of death is known a date must be provided."));
                 }
             }
 
@@ -63,7 +63,7 @@ namespace MedicalExaminer.API.Models.Validators
                 {
                     if (evaluationItem.DateOfBirth > evaluationItem.DateOfDeath)
                     {
-                        errors.Add(new ValidationError(ValidationErrorCode.Invalid, "Date of birth must be before date of death."));
+                        errors.Add(new ValidationError(ValidationErrorCode.Invalid, "DateOfBirth", "Date of birth must be before date of death."));
                     }
                 }
             }
@@ -72,7 +72,7 @@ namespace MedicalExaminer.API.Models.Validators
             {
                 if (evaluationItem.TimeOfDeath == null)
                 {
-                    errors.Add(new ValidationError(ValidationErrorCode.IsNull, "If time of death is known a time must be provided."));
+                    errors.Add(new ValidationError(ValidationErrorCode.IsNull, "TimeOfDeath", "If time of death is known a time must be provided."));
                 }
             }
 
@@ -81,9 +81,27 @@ namespace MedicalExaminer.API.Models.Validators
                 errors.AddRange(_nhsNumberValidator.ValidateAsync(evaluationItem.NhsNumber).Result);
             }
 
+            errors.AddRange(ValidateGender(evaluationItem));
+
+            return errors;
+        }
+
+        private static IEnumerable<ValidationError> ValidateGender(ExaminationItem evaluationItem)
+        {
+            var errors = new List<ValidationError>();
             if (evaluationItem.Gender == null)
             {
-                errors.Add(new ValidationError(ValidationErrorCode.IsNull, "Gender must be specified"));
+                errors.Add(new ValidationError(ValidationErrorCode.IsNull, "Gender", "Gender must be specified"));
+                return errors;
+            }
+
+            if (evaluationItem.Gender == ExaminationGender.Other)
+            {
+                if (evaluationItem.GenderDetails == string.Empty)
+                {
+                    errors.Add(new ValidationError(ValidationErrorCode.IsNull, "GenderDetails", "If gender is other then Gender Details must be given"));
+                    return errors;
+                }
             }
 
             return errors;

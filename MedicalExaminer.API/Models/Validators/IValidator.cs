@@ -12,6 +12,6 @@ namespace MedicalExaminer.API.Models.Validators
         /// </summary>
         /// <param name="evaluationItem">Entity to validate</param>
         /// <returns>Collection of <see cref="ValidationError">ValidationErrors</see>.</returns>
-        Task<IList<ValidationError>> ValidateAsync(TEntity evaluationItem);
+        Task<IEnumerable<ValidationError>> ValidateAsync(TEntity evaluationItem);
     }
 }

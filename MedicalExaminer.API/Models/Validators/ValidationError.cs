@@ -41,30 +41,6 @@ namespace MedicalExaminer.API.Models.Validators
         /// </summary>
         /// <param name="code">The validation error code</param>
         /// <param name="property">The property that failed validation</param>
-        public ValidationError(ValidationErrorCode code, Expression<Func<object>> property)
-            : base(null)
-        {
-            this.Code = code.ToString();
-            this.Property = "";//Expressions.GetPropertyName(property);
-        }
-
-        /// <summary>
-        /// Initialises a new instance of the <see cref="ValidationError"/> class.
-        /// </summary>
-        /// <param name="code">The validation error code</param>
-        /// <param name="property">The property that failed validation</param>
-        /// <param name="message">The validation message</param>
-        public ValidationError(ValidationErrorCode code, Expression<Func<object>> property, string message) : base(message)
-        {
-            this.Code = code.ToString();
-            this.Property = "";//Expressions.GetPropertyName(property);
-        }
-
-        /// <summary>
-        /// Initialises a new instance of the <see cref="ValidationError"/> class.
-        /// </summary>
-        /// <param name="code">The validation error code</param>
-        /// <param name="property">The property that failed validation</param>
         /// <param name="message">The validation message</param>
         public ValidationError(ValidationErrorCode code, string property, string message)
             : base(message)

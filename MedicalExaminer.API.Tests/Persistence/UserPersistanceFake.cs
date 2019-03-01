@@ -18,13 +18,15 @@ namespace MedicalExaminer.API.Tests.Persistence
 
             for (var count = 0; count < 10; count++)
             {
-                var u = new MeUser();
-                u.Email = Internet.Email();
-                u.UserId = "aaaaa" + count;
-                u.FirstName = Name.First();
-                u.LastName = Name.Last();
-                u.CreatedAt = DateTime.Now;
-                u.ModifiedAt = DateTime.Now;
+                var u = new MeUser
+                {
+                    Email = Internet.Email(),
+                    UserId = "aaaaa" + count,
+                    FirstName = Name.First(),
+                    LastName = Name.Last(),
+                    CreatedAt = DateTime.Now,
+                    ModifiedAt = DateTime.Now
+                };
 
                 _users.Add(u);
             }
