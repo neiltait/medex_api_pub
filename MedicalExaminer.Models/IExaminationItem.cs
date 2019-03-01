@@ -3,101 +3,101 @@ using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models
 {
-    public class ExaminationItem : IExaminationItem
+    public interface IExaminationItem
     {
         /// <summary>
         /// Examination Id
         /// </summary>
-        public string ExaminationId { get; set; }
+        string ExaminationId { get; set; }
 
         /// <summary>
         ///  Where the death occured
         /// </summary>
-        public string PlaceDeathOccured { get; set; }
+        string PlaceDeathOccured { get; set; }
 
         /// <summary>
         /// Medical Examiner Office Responsible for dealing with the examination
         /// </summary>
-        public string MedicalExaminerOfficeResponsible { get; set; }
+        string MedicalExaminerOfficeResponsible { get; set; }
 
         /// <summary>
         /// Patients surname
         /// </summary>
-        public string Surname { get; set; }
+        string Surname { get; set; }
 
         /// <summary>
         /// Patients given names
         /// </summary>
-        public string GivenNames { get; set; }
+        string GivenNames { get; set; }
 
         /// <summary>
         /// Gender patient identifies as
         /// </summary>
-        public ExaminationGender? Gender { get; set; }
+        ExaminationGender? Gender { get; set; }
 
         /// <summary>
         /// Comments regarding the patients gender identification
         /// </summary>
-        public string GenderDetails { get; set; }
+        string GenderDetails { get; set; }
 
         /// <summary>
         /// Patients NHS Number
         /// </summary>
-        public string NhsNumber { get; set; }
+        string NhsNumber { get; set; }
 
         /// <summary>
         /// Is the patients NHS Number known
         /// </summary>
-        public bool NhsNumberKnown { get; set; }
+        bool NhsNumberKnown { get; set; }
 
         /// <summary>
         /// Patients first hospital number
         /// </summary>
-        public string HospitalNumber_1 { get; set; }
+        string HospitalNumber_1 { get; set; }
 
         /// <summary>
         /// Patients second hospital number
         /// </summary>
-        public string HospitalNumber_2 { get; set; }
+        string HospitalNumber_2 { get; set; }
 
         /// <summary>
         /// Patients third hospital number
         /// </summary>
-        public string HospitalNumber_3 { get; set; }
+        string HospitalNumber_3 { get; set; }
 
         /// <summary>
         /// Patients date of birth
         /// </summary>
-        public DateTime? DateOfBirth { get; set; }
+        DateTime? DateOfBirth { get; set; }
 
         /// <summary>
         /// Is the patients date of birth known
         /// </summary>
-        public bool DateOfBirthKnown { get; set; }
+        bool DateOfBirthKnown { get; set; }
 
         /// <summary>
         /// Patients date of death
         /// </summary>
-        public DateTime? DateOfDeath { get; set; }
+        DateTime? DateOfDeath { get; set; }
 
         /// <summary>
         /// Is the patients date of death known
         /// </summary>
-        public bool DateOfDeathKnown { get; set; }
+        bool DateOfDeathKnown { get; set; }
 
         /// <summary>
         /// Patients time of death
         /// </summary>
-        public TimeSpan? TimeOfDeath { get; set; }
+        TimeSpan? TimeOfDeath { get; set; }
 
         /// <summary>
         /// Is the patients time of death known
         /// </summary>
-        public bool TimeOfDeathKnown { get; set; }
+        bool TimeOfDeathKnown { get; set; }
 
         /// <summary>
         /// Out of hours/urgent scrutiny has taken place out of hours
         /// </summary>
-        public bool OutOfHours { get; set; }
+        bool OutOfHours { get; set; }
     }
 }

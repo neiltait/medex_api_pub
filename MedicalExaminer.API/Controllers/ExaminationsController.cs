@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1;
 using MedicalExaminer.API.Models.v1.Examinations;
@@ -22,7 +24,7 @@ namespace MedicalExaminer.API.Controllers
     /// </summary>
     [Route("examinations")]
     [ApiController]
-    [Authorize]
+//    [Authorize]
     public class ExaminationsController : BaseController
     {
         /// <summary>
@@ -81,14 +83,14 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Create a new User.
+        /// Create a new case.
         /// </summary>
-        /// <param name="postUser">The PostUserRequest.</param>
-        /// <returns>A PostUserResponse.</returns>
-        // POST api/users
+        /// <param name="postNewCaseRequest">The PostNewCaseRequest.</param>
+        /// <returns>A PostNewCaseResponse.</returns>
+        // POST api/examinations
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutExaminationResponse>> CreateUser(PostNewCaseRequest postNewCaseRequest)
+        public async Task<ActionResult<PutExaminationResponse>> CreateNewCase(PostNewCaseRequest postNewCaseRequest)
         {
             var examinationItem = Mapper.Map<ExaminationItem>(postNewCaseRequest);
             var validationResult = await _examinationValidator.ValidateAsync(examinationItem);
