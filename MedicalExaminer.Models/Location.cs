@@ -1,12 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
+
 namespace MedicalExaminer.Models
 {
     public class Location
     {
+        [Required]
         [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
+        public string LocationId { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "name")]
@@ -19,5 +21,5 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "parent")]
         public string Parent { get; set; }
+        }
     }
-}
