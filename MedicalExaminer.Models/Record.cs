@@ -8,7 +8,7 @@ namespace MedicalExaminer.Models
     public abstract class Record : Document
     {
         [Required]
-        [Display(Name = "user_id")]
+        [Display(Name = "modified_by")]
         [DataType(DataType.Text)]
         public string LastModifiedBy { get; set; }
 

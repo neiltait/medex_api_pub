@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.Common;
@@ -18,6 +19,7 @@ namespace MedicalExaminer.API.Controllers
     /// </summary>
     [Route("users/{userId}/permissions")]
     [ApiController]
+    [Authorize]
     public class PermissionsController : BaseController
     {
         /// <summary>
