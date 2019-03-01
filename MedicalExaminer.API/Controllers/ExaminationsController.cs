@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
+using MedicalExaminer.API.Models.v1;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.Validators;
 using MedicalExaminer.Common;
@@ -85,17 +88,25 @@ namespace MedicalExaminer.API.Controllers
         // POST api/users
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutExaminationResponse>> CreateUser(ExaminationItem examinationItem)
+        public async Task<ActionResult<PutExaminationResponse>> CreateUser(PostNewCaseRequest postNewCaseRequest)
         {
+            var examinationItem = Mapper.Map<ExaminationItem>(postNewCaseRequest);
             var validationResult = await _examinationValidator.ValidateAsync(examinationItem);
+            var res = new PutExaminationResponse();
             if (validationResult.Any())
             {
-               // return BadRequest(new PutExaminationResponse().AddError())
-                
+                foreach (var validationError in validationResult)
+                {
+                    res.AddError(validationError.Property, $"{validationError.Code}: {validationError.Message}");
+                }
+            }
+            else
+            {
+                //  save the examination
+                res.ExaminationId = Guid.NewGuid().ToString();
             }
 
-            var createExaminationSuccessful = await _examinationPersistence.CreateExaminationAsync(examinationItem);
-            return Ok(Mapper.Map<PutExaminationResponse>(createExaminationSuccessful));
+            return Ok(Mapper.Map<PutExaminationResponse>(res));
         }
     }
 }
