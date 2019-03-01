@@ -71,7 +71,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="meUserId">The User Identifier.</param>
         /// <returns>A GetUserResponse.</returns>
         // GET api/users/{user_id}
-        [HttpGet("{id}")]
+        [HttpGet("{meUserId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetUserResponse>> GetUser(string meUserId)
         {
