@@ -8,7 +8,7 @@ namespace MedicalExaminer.API.Models.Validators
     /// <summary>
     /// Validates a string input against the nhs validation
     /// </summary>
-    public class NhsNumberValidator : IValidator<string>
+    public class NhsNumberValidator : IValidator<NhsNumberString>
     {
         private readonly int[] _factors =
         {
@@ -23,8 +23,9 @@ namespace MedicalExaminer.API.Models.Validators
             2
         };
 
-        public async Task<IEnumerable<ValidationError>> ValidateAsync(string nhsNumber)
+        public async Task<IEnumerable<ValidationError>> ValidateAsync(NhsNumberString nhsNumberString)
         {
+            var nhsNumber = nhsNumberString.Value;
             var errors = new List<ValidationError>();
             nhsNumber = nhsNumber.Replace(" ", string.Empty);
             nhsNumber = nhsNumber.Replace("-", string.Empty);

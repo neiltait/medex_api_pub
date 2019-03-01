@@ -11,11 +11,12 @@ namespace MedicalExaminer.API.Tests.Validators
 {
     public class ExaminationItemValidatorTests
     {
+
         [Fact]
         public async void IncorrectPatientGivenNameRaisesError()
         {
-            var nhsNumberValidator = new Moq.Mock<IValidator<string>>().Object;
-
+            var nhsNumberValidator = new Moq.Mock<IValidator<NhsNumberString>>().Object;
+            var locationIdValidator = new Moq.Mock<IValidator<LocationIdString>>().Object;
             var dataToValidate = new ExaminationItem()
             {
                 GivenNames = "J",
@@ -23,7 +24,7 @@ namespace MedicalExaminer.API.Tests.Validators
                 Gender = ExaminationGender.Female
             };
 
-            var sut = new CheckExaminationItemValidator(nhsNumberValidator);
+            var sut = new CheckExaminationItemValidator(nhsNumberValidator, locationIdValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
             result.Count().Should().Be(1);
@@ -34,8 +35,8 @@ namespace MedicalExaminer.API.Tests.Validators
         [Fact]
         public async void IncorrectPatientSurnameRaisesError()
         {
-            var nhsNumberValidator = new Moq.Mock<IValidator<string>>().Object;
-
+            var nhsNumberValidator = new Moq.Mock<IValidator<NhsNumberString>>().Object;
+            var locationIdValidator = new Moq.Mock<IValidator<LocationIdString>>().Object;
             var dataToValidate = new ExaminationItem()
             {
                 GivenNames = "Jo",
@@ -43,7 +44,7 @@ namespace MedicalExaminer.API.Tests.Validators
                 Gender = ExaminationGender.Female
             };
 
-            var sut = new CheckExaminationItemValidator(nhsNumberValidator);
+            var sut = new CheckExaminationItemValidator(nhsNumberValidator, locationIdValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
             result.Count().Should().Be(1);
@@ -54,7 +55,8 @@ namespace MedicalExaminer.API.Tests.Validators
         [Fact]
         public async void DateOfBirthKnownButNotCompletedReturnsError()
         {
-            var nhsNumberValidator = new Moq.Mock<IValidator<string>>().Object;
+            var nhsNumberValidator = new Moq.Mock<IValidator<NhsNumberString>>().Object;
+            var locationIdValidator = new Moq.Mock<IValidator<LocationIdString>>().Object;
             var dataToValidate = new ExaminationItem()
             {
                 GivenNames = "Joanna",
@@ -64,7 +66,7 @@ namespace MedicalExaminer.API.Tests.Validators
                 Gender = ExaminationGender.Female
             };
 
-            var sut = new CheckExaminationItemValidator(nhsNumberValidator);
+            var sut = new CheckExaminationItemValidator(nhsNumberValidator, locationIdValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
             result.Count().Should().Be(1);
@@ -75,7 +77,8 @@ namespace MedicalExaminer.API.Tests.Validators
         [Fact]
         public async void DateOfDeathKnownButNotCompletedReturnsError()
         {
-            var nhsNumberValidator = new Moq.Mock<IValidator<string>>().Object;
+            var nhsNumberValidator = new Moq.Mock<IValidator<NhsNumberString>>().Object;
+            var locationIdValidator = new Moq.Mock<IValidator<LocationIdString>>().Object;
             var dataToValidate = new ExaminationItem()
             {
                 GivenNames = "Joanna",
@@ -85,7 +88,7 @@ namespace MedicalExaminer.API.Tests.Validators
                 Gender = ExaminationGender.Female
             };
 
-            var sut = new CheckExaminationItemValidator(nhsNumberValidator);
+            var sut = new CheckExaminationItemValidator(nhsNumberValidator, locationIdValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
             result.Count().Should().Be(1);
@@ -96,7 +99,9 @@ namespace MedicalExaminer.API.Tests.Validators
         [Fact]
         public async void GenderNotCompletedExaminationItemReturnsError()
         {
-            var nhsNumberValidator = new Moq.Mock<IValidator<string>>().Object;
+            var nhsNumberValidator = new Moq.Mock<IValidator<NhsNumberString>>().Object;
+            var locationIdValidator = new Moq.Mock<IValidator<LocationIdString>>().Object;
+
             var dataToValidate = new ExaminationItem()
             {
                 GivenNames = "Joanna",
@@ -105,7 +110,7 @@ namespace MedicalExaminer.API.Tests.Validators
                 DateOfBirth = new DateTime(1984, 12, 24),
             };
 
-            var sut = new CheckExaminationItemValidator(nhsNumberValidator);
+            var sut = new CheckExaminationItemValidator(nhsNumberValidator, locationIdValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
             result.Count().Should().Be(1);
@@ -116,7 +121,9 @@ namespace MedicalExaminer.API.Tests.Validators
         [Fact]
         public async void MinimumDataRequiredExaminationItemReturnsNoErrors()
         {
-            var nhsNumberValidator = new Moq.Mock<IValidator<string>>().Object;
+            var nhsNumberValidator = new Moq.Mock<IValidator<NhsNumberString>>().Object;
+            var locationIdValidator = new Moq.Mock<IValidator<LocationIdString>>().Object;
+
             var dataToValidate = new ExaminationItem()
             {
                 GivenNames = "Joanna",
@@ -126,7 +133,7 @@ namespace MedicalExaminer.API.Tests.Validators
                 Gender = ExaminationGender.Female
             };
 
-            var sut = new CheckExaminationItemValidator(nhsNumberValidator);
+            var sut = new CheckExaminationItemValidator(nhsNumberValidator, locationIdValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
             result.Count().Should().Be(0);
@@ -135,7 +142,9 @@ namespace MedicalExaminer.API.Tests.Validators
         [Fact]
         public async void DiedBeforeTheyWereBornReturnsError()
         {
-            var nhsNumberValidator = new Moq.Mock<IValidator<string>>().Object;
+            var nhsNumberValidator = new Moq.Mock<IValidator<NhsNumberString>>().Object;
+            var locationIdValidator = new Moq.Mock<IValidator<LocationIdString>>().Object;
+
             var dataToValidate = new ExaminationItem()
             {
                 GivenNames = "Joanna",
@@ -149,7 +158,7 @@ namespace MedicalExaminer.API.Tests.Validators
                 Gender = ExaminationGender.Female
             };
 
-            var sut = new CheckExaminationItemValidator(nhsNumberValidator);
+            var sut = new CheckExaminationItemValidator(nhsNumberValidator, locationIdValidator);
             var result = await sut.ValidateAsync(dataToValidate);
 
             result.Count().Should().Be(1);
@@ -161,9 +170,12 @@ namespace MedicalExaminer.API.Tests.Validators
         public async void FullDataRequiredExaminationItemReturnsNoErrors()
         {
             // Arrange
-            var nhsNumberValidator = new Moq.Mock<IValidator<string>>();
-            nhsNumberValidator.Setup(validator => validator.ValidateAsync("1111111111"))
+            var nhsNumberValidator = new Moq.Mock<IValidator<NhsNumberString>>();
+            nhsNumberValidator.Setup(validator => validator.ValidateAsync(new NhsNumberString("1111111111")))
                 .Returns(Task.FromResult(Enumerable.Empty<ValidationError>()));
+
+            var locationIdValidator = new Moq.Mock<IValidator<LocationIdString>>().Object;
+
             var dataToValidate = new ExaminationItem()
             {
                 GivenNames = "Joanna",
@@ -181,7 +193,7 @@ namespace MedicalExaminer.API.Tests.Validators
                 Gender = ExaminationGender.Female
             };
 
-            var sut = new CheckExaminationItemValidator(nhsNumberValidator.Object);
+            var sut = new CheckExaminationItemValidator(nhsNumberValidator.Object, locationIdValidator);
 
             // Act
             var result = await sut.ValidateAsync(dataToValidate);

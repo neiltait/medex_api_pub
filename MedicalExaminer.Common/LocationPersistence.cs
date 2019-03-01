@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using MedicalExaminer.Models;
 using Microsoft.Azure.Documents;
@@ -22,8 +23,20 @@ namespace MedicalExaminer.Common
         public async Task<Location> GetLocationAsync(string locationId)
         {
             await EnsureSetupAsync();
+            DocumentResponse<Location> result = null;
             var documentUri = UriFactory.CreateDocumentUri(DatabaseId, "Locations", locationId);
-            var result = await Client.ReadDocumentAsync<Location>(documentUri);
+            try
+            {
+                result = await Client.ReadDocumentAsync<Location>(documentUri);
+            }
+            catch (DocumentClientException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+            }
+
             if (result.Document == null) throw new ArgumentException("Invalid Argument");
             return result.Document;
 

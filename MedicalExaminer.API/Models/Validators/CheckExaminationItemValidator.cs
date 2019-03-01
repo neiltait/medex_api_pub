@@ -11,16 +11,18 @@ namespace MedicalExaminer.API.Models.Validators
     /// </summary>
     public class CheckExaminationItemValidator : IValidator<ExaminationItem>
     {
-        private readonly IValidator<string> _nhsNumberValidator;
+        private readonly IValidator<NhsNumberString> _nhsNumberValidator;
+        private readonly IValidator<LocationIdString> _locationValidator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CheckExaminationItemValidator"/> class.
         /// </summary>
         /// <param name="context">Database context</param>
         /// <param name="nhsNumberValidator">NHS Number Validator</param>
-        public CheckExaminationItemValidator(IValidator<string> nhsNumberValidator/*MetadataStoreContext context*/)
+        public CheckExaminationItemValidator(IValidator<NhsNumberString> nhsNumberValidator, IValidator<LocationIdString> locationValidator)
         {
             _nhsNumberValidator = nhsNumberValidator;
+            _locationValidator = locationValidator;
         }
         /// <summary>
         /// Performs the validation
@@ -78,8 +80,10 @@ namespace MedicalExaminer.API.Models.Validators
 
             if (evaluationItem.NhsNumberKnown)
             {
-                errors.AddRange(_nhsNumberValidator.ValidateAsync(evaluationItem.NhsNumber).Result);
+                errors.AddRange(_nhsNumberValidator.ValidateAsync(new NhsNumberString(evaluationItem.NhsNumber)).Result);
             }
+
+            errors.AddRange(_locationValidator.ValidateAsync(new LocationIdString(evaluationItem.MedicalExaminerOfficeResponsible)).Result);
 
             errors.AddRange(ValidateGender(evaluationItem));
 
