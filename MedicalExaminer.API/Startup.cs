@@ -108,6 +108,11 @@ namespace MedicalExaminer.API
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
 
+            services.AddScoped<ILocationPersistence>(s => new LocationPersistence(
+                 new Uri(Configuration["CosmosDB:URL"]),
+                 Configuration["CosmosDB:PrimaryKey"],
+                 Configuration["CosmosDB:DatabaseId"]));
+
             services.AddScoped<IUserPersistence>(s => new UserPersistence(
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],

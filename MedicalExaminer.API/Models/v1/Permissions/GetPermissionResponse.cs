@@ -1,4 +1,5 @@
-﻿namespace MedicalExaminer.API.Models.v1.Permissions
+﻿
+namespace MedicalExaminer.API.Models.v1.Permissions
 {
     /// <inheritdoc />
     /// <summary>
