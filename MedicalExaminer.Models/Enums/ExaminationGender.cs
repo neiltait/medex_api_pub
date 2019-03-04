@@ -1,9 +1,13 @@
-﻿namespace MedicalExaminer.Models.Enums
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace MedicalExaminer.Models.Enums
 {
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum ExaminationGender
     {
         Male = 1,
-        Female = 2
-        // More to come 
+        Female = 2,
+        Other = 3
     }
 }
