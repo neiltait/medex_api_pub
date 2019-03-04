@@ -41,6 +41,10 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
             Console.WriteLine("Parameters read OK for LocationsLoader...");
         }
 
+        /// <summary>
+        /// Create collection on database and load locations into it
+        /// </summary>
+        /// <returns>Task</returns>
         public  async Task Load()
         {
             await CreateCollection();
@@ -50,7 +54,7 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
         /// <summary>
         /// Create collection in database
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Task</returns>
         private async Task CreateCollection()
         {
             _client = new DocumentClient(_endpointUri, _primaryKey);
@@ -61,6 +65,11 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
             await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection);
         }
 
+        /// <summary>
+        /// Load each location in import file into container on Cosmos DB
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>Report progress to Console evertytime 1000 locations loaded</remarks>
         private static async Task LoadLocations()
         {
             Console.WriteLine("Loading locations ...");
@@ -69,9 +78,16 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
             var json = File.ReadAllText(_importFile);
             var locations = JsonConvert.DeserializeObject<List<Location>>(json);
 
+            var loadCount = 0;
             foreach (var location in locations)
             {
                 await _client.UpsertDocumentAsync(_documentCollectionUri, location);
+
+                ++loadCount;
+                if (loadCount % 1000 == 0)
+                {
+                    Console.WriteLine($"loaded {loadCount} locations out of {locations.Count}...");
+                }
             }
 
             var endTime = DateTime.Now;
