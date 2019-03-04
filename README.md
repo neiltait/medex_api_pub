@@ -20,10 +20,8 @@ Before you can use the API we need to add a key to the `appsettings.json` file; 
 
 ```json
 {
-    ...
     "Authentication": {
         "Secret": "EXAMPLE SECRET KEY USED FOR DEVELOPMENT"
     },
-    ...
 }
 ```
