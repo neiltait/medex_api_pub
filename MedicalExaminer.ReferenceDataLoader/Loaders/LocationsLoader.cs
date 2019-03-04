@@ -22,6 +22,7 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
         private static string _containerID;
         private static DocumentClient _client;
         private static Uri _documentCollectionUri;
+        private static List<Location> _locations;
 
         /// <summary>
         /// Constructor
@@ -48,6 +49,8 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
         public  async Task Load()
         {
             await CreateCollection();
+            LoadImportFile();
+            ValidateLocations();
             await LoadLocations();
         }
 
@@ -66,6 +69,27 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
         }
 
         /// <summary>
+        /// Load contents of json import file into list of location objects
+        /// </summary>
+        private void LoadImportFile()
+        {
+            var json = File.ReadAllText(_importFile);
+            _locations = JsonConvert.DeserializeObject<List<Location>>(json);
+
+            Console.WriteLine("Locations passed validation ...");
+        }
+
+        /// <summary>
+        /// Validate that all locations are consistenet and correct
+        /// </summary>
+        /// <remarks>Expect this to throw an excpetion if locations are not valid. This exception will be handled by calling code</remarks>
+        private void ValidateLocations()
+        {
+            var locationsChecker = new LocationsChecker(_locations);
+            locationsChecker.RunAllChecks();
+        }
+
+        /// <summary>
         /// Load each location in import file into container on Cosmos DB
         /// </summary>
         /// <returns></returns>
@@ -75,25 +99,24 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
             Console.WriteLine("Loading locations ...");
 
             var startTime = DateTime.Now;
-            var json = File.ReadAllText(_importFile);
-            var locations = JsonConvert.DeserializeObject<List<Location>>(json);
+            
 
             var loadCount = 0;
-            foreach (var location in locations)
+            foreach (var location in _locations)
             {
                 await _client.UpsertDocumentAsync(_documentCollectionUri, location);
 
                 ++loadCount;
                 if (loadCount % 1000 == 0)
                 {
-                    Console.WriteLine($"loaded {loadCount} locations out of {locations.Count}...");
+                    Console.WriteLine($"loaded {loadCount} locations out of {_locations.Count}...");
                 }
             }
 
             var endTime = DateTime.Now;
             var processingTime = endTime - startTime;
 
-            Console.WriteLine($"{locations.Count} locations loaded");
+            Console.WriteLine($"{_locations.Count} locations loaded");
             Console.WriteLine($"Processing time: {processingTime.Hours} Hours;  {processingTime.Minutes} Minutes; {processingTime.Seconds} Seconds");
             Console.ReadKey();
 
