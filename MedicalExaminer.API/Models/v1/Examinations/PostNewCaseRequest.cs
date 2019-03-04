@@ -42,7 +42,6 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Patients NHS Number
         /// </summary>
-        [RequiredIf("NhsNumberKnown", true)]
         public string NhsNumber { get; set; }
 
         /// <summary>
@@ -68,7 +67,6 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Patients date of birth
         /// </summary>
-        [RequiredIf("DateOfBirthKnown", true)]
         public DateTime? DateOfBirth { get; set; }
 
         /// <summary>
@@ -79,7 +77,6 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Patients date of death
         /// </summary>
-        [RequiredIf("DateOfDeathKnown", true)]
         public DateTime? DateOfDeath { get; set; }
 
         /// <summary>
@@ -90,7 +87,6 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Patients time of death
         /// </summary>
-        [RequiredIf("TimeOfDeathKnown", true)]
         public TimeSpan? TimeOfDeath { get; set; }
 
         /// <summary>
