@@ -9,8 +9,7 @@ namespace MedicalExaminer.API.Models.v1.Users
     public class GetUsersResponse : ResponseBase
     {
         /// <summary>
-        /// List of Users.
-        /// </summary>
+        /// List of Users        /// </summary>
         public IEnumerable<UserItem> Users { get; set; }
     }
 }

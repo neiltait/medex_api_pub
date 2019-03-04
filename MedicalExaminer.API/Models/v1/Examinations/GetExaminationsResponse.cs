@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MedicalExaminer.Models;
 
 namespace MedicalExaminer.API.Models.v1.Examinations
 {

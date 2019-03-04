@@ -7,10 +7,12 @@ using AutoMapper;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Helpers;
+using MedicalExaminer.API.Models.Validators;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -102,7 +104,9 @@ namespace MedicalExaminer.API
             services.AddScoped<IMELogger, MELogger>();
 
             services.AddScoped<ControllerActionFilter>();
-
+            services.AddScoped<IValidator<ExaminationItem>, CheckExaminationItemValidator>();
+            services.AddScoped<IValidator<NhsNumberString>, NhsNumberValidator>();
+            services.AddScoped<IValidator<LocationIdString>, LocationIdValidator>();
             services.AddScoped<IExaminationPersistence>(s => new ExaminationPersistence(
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],

@@ -120,7 +120,7 @@ namespace MedicalExaminer.API.Controllers
             {
                 return NotFound(new PostUserResponse());
             }
-        }
+        }        
         
         /// <summary>
         /// Create a new User.

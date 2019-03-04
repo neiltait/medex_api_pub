@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Common;
 using MedicalExaminer.Models;
 
@@ -63,6 +64,11 @@ namespace MedicalExaminer.API.Tests.Persistence
         public async Task<IEnumerable<Examination>> GetExaminationsAsync()
         {
             return await Task.FromResult(_examinations);
+        }
+
+        public Task<object> CreateExaminationAsync(ExaminationItem examinationItem)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<bool> SaveExaminationAsync(Examination examination)
