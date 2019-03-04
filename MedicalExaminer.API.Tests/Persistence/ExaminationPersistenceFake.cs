@@ -68,8 +68,7 @@ namespace MedicalExaminer.API.Tests.Persistence
 
         public Task<object> CreateExaminationAsync(ExaminationItem examinationItem)
         {
-            return new Task<object>(null);
-            //throw new NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public async Task<bool> SaveExaminationAsync(Examination examination)

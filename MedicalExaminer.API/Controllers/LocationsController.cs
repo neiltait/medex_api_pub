@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;

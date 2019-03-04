@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Extensions.Data;
+using MedicalExaminer.API.Extensions.Models;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1;
 using MedicalExaminer.API.Models.v1.Examinations;
@@ -24,7 +25,7 @@ namespace MedicalExaminer.API.Controllers
     /// </summary>
     [Route("examinations")]
     [ApiController]
-//    [Authorize]
+    [Authorize]
     public class ExaminationsController : BaseController
     {
         /// <summary>
@@ -64,7 +65,7 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// Get Examination by ID
         /// </summary>
-        /// <param name="examinationId">The Examination Id.</param>
+        /// <param name="examinationId"></param>
         /// <returns>A GetExaminationResponse.</returns>
         [HttpGet("{examinationId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
@@ -90,21 +91,17 @@ namespace MedicalExaminer.API.Controllers
         // POST api/examinations
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutExaminationResponse>> CreateNewCase(PostNewCaseRequest postNewCaseRequest)
+        public async Task<ActionResult<PutExaminationResponse>> CreateNewCase([FromBody]PostNewCaseRequest postNewCaseRequest)
         {
             var examinationItem = Mapper.Map<ExaminationItem>(postNewCaseRequest);
             var validationResult = await _examinationValidator.ValidateAsync(examinationItem);
             var res = new PutExaminationResponse();
             if (validationResult.Any())
             {
-                foreach (var validationError in validationResult)
-                {
-                    res.AddError(validationError.Property, $"{validationError.Code}: {validationError.Message}");
-                }
+                res.AddValidationErrors(validationResult);
             }
             else
             {
-                //  save the examination
                 res.ExaminationId = Guid.NewGuid().ToString();
             }
 
