@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MedicalExaminer.Models.Enums;
 
-namespace MedicalExaminer.API.Models.v1.PatientDetails
+namespace MedicalExaminer.API.Models.v1.PatientInformants
 {
-    /// <summary>
-    /// Object for creating and updating patients representative
-    /// </summary>
-    public class PutRepresentativeRequest
+    public class GetInformantResponse
     {
-        /// <summary>
-        /// Internal id for the patients representative
-        /// </summary>
         public Guid RepresentativeId { get; set; }
         /// <summary>
         /// Representatives full name

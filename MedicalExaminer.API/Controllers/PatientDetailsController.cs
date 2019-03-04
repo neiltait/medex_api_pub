@@ -25,7 +25,7 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult> PutPatientDetails(string examinationId, [FromBody] PutPatientDetailsRequest patientDetailsRequest)
         {
-
+            //  TODO: need mapper
             //var patientDetails = Mapper.Map<PutPatientDetailsRequest, PatientDetails>();
             _patientDetailsPersistence.AddPatientDetails();
             return Ok();
