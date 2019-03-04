@@ -33,7 +33,7 @@ namespace MedicalExaminer.Common
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    return null;
+                    return null;  //  whatever we want as the empty resultset as it were...
                 }
             }
 
