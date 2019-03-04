@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models.V1.Locations
 {
@@ -21,5 +22,20 @@ namespace MedicalExaminer.Models.V1.Locations
         /// The Location Code.
         /// </summary>
         public string Code { get; set; }
+
+        /// <summary>
+        /// The LocationId of the location's parent location
+        /// </summary>
+        public string ParentId { get; set; }
+
+        /// <summary>
+        /// Indicates if location is site, trust, region or national
+        /// </summary>
+        public LocationType Type { get; set; }
+
+        /// <summary>
+        /// Indicates if location is available for use
+        /// </summary>
+        public bool IsActive { get; set; }
     }
 }

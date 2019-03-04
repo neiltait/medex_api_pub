@@ -76,7 +76,7 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
         }
 
         /// <summary>
-        /// Check that no locationId is null
+        /// Check that no locationId value is null
         /// </summary>
         /// <returns></returns>
         public bool CheckLocationIdsNotNull()
