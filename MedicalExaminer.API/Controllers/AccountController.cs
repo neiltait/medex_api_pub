@@ -31,24 +31,6 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Authenticate without any credentials.
-        /// </summary>
-        /// <returns>Token.</returns>
-        [AllowAnonymous]
-        [HttpPost("authenticate")]
-        public IActionResult Authenticate()
-        {
-            var token = _authenticationService.Authenticate();
-
-            if (token == null)
-            {
-                return BadRequest();
-            }
-
-            return Ok(token);
-        }
-
-        /// <summary>
         /// authenticates an authorised token for use with the data API
         /// </summary>
         /// <returns></returns>

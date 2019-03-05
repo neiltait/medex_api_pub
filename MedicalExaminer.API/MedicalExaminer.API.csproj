@@ -37,7 +37,6 @@
     <Compile Remove="Models\UserPersistenc.cs" />
     <Compile Remove="Models\IExaminationPersistence.cs" />
     <Compile Remove="Models\IUserPersistence.cs" />
-    <Compile Remove="Controllers\ValuesController.cs" />
     <Compile Remove="Controllers\DJPTestController.cs" />
   </ItemGroup>
 

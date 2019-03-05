@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using AutoMapper;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Filters;
@@ -21,8 +20,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
+using Okta.AspNetCore;
 
 namespace MedicalExaminer.API
 {
@@ -56,10 +55,7 @@ namespace MedicalExaminer.API
         /// <param name="services">Service Collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            // Basic authentication service
-            ConfigureAuthenticationSettings(services);
             ConfigureAuthentication(services);
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -171,20 +167,10 @@ namespace MedicalExaminer.API
                 app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
             }
 
-            // Must be above use mvc
+            // Must be above UseMvc
             app.UseAuthentication();
 
             app.UseMvc();
-        }
-
-        /// <summary>
-        /// Configure Authentication settings so we can use it elsewhere in the app using DI.
-        /// </summary>
-        /// <param name="services">Services.</param>
-        private void ConfigureAuthenticationSettings(IServiceCollection services)
-        {
-            var authenticationSection = Configuration.GetSection(AuthenticationSection);
-            services.Configure<AuthenticationSettings>(authenticationSection);
         }
 
         /// <summary>
@@ -193,27 +179,12 @@ namespace MedicalExaminer.API
         /// <param name="services">Services.</param>
         private void ConfigureAuthentication(IServiceCollection services)
         {
-            var authenticationSection = Configuration.GetSection(AuthenticationSection);
-            var authenticationSettings = authenticationSection.Get<AuthenticationSettings>();
-
-            var key = Encoding.ASCII.GetBytes(authenticationSettings.Secret);
-
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters()
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                };
-            });
+                    options.Authority = Configuration["Okta:Authority"];
+                    options.Audience = "api://default";
+                });
         }
     }
 }
