@@ -6,6 +6,5 @@ namespace MedicalExaminer.Models.Enums
         MedicalExaminer = 1,
         ServiceAdministrator = 2,
         ServiceOwner = 3,
-        
     }
 }

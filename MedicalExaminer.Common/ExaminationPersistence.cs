@@ -43,5 +43,10 @@ namespace MedicalExaminer.Common
             while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<Examination>());
             return results;
         }
+
+        public Task<object> CreateExaminationAsync(ExaminationItem examinationItem)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
