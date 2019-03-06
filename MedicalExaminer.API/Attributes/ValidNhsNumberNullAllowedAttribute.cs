@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace MedicalExaminer.API.Attributes
 {
-    public class ValidNhsNumberAttribute : ValidationAttribute
+    public class ValidNhsNumberNullAllowedAttribute : ValidationAttribute
     {
         private readonly int[] _factors =
         {
@@ -20,10 +20,9 @@ namespace MedicalExaminer.API.Attributes
 
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
-            var nhsNumber = value as string;
-            if (nhsNumber == null)
+            if (!(value is string nhsNumber))
             {
-                return new ValidationResult("Incorrect NHS Number");
+                return ValidationResult.Success;
             }
             
             nhsNumber = nhsNumber.Replace(" ", string.Empty);

@@ -102,10 +102,6 @@ namespace MedicalExaminer.API
             services.AddScoped<IMELogger, MELogger>();
 
             services.AddScoped<ControllerActionFilter>();
-            //services.AddScoped<IValidator<ExaminationItem>, CheckExaminationItemValidator>();
-            
-           // services.AddScoped<IValidator<NhsNumberString>, NhsNumberValidator>();
-            //services.AddScoped<IValidator<LocationIdString>, LocationIdValidator>();
             services.AddScoped<IExaminationPersistence>(s => new ExaminationPersistence(
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],

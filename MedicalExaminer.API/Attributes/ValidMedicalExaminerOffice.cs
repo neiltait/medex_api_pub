@@ -12,12 +12,7 @@ namespace MedicalExaminer.API.Attributes
         {
             var locationPersistence = (ILocationPersistence) context.GetService(typeof(ILocationPersistence));
             var locationString = value as string;
-            if (locationString == null)
-            {
-                return new ValidationResult("The location id must be supplied");
-            }
-
-            if (locationString == string.Empty)
+            if (string.IsNullOrEmpty(locationString))
             {
                 return new ValidationResult("The location id must be supplied");
             }

@@ -53,7 +53,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Patients NHS Number
         /// </summary>
-        [ValidNhsNumber]
+        [ValidNhsNumberNullAllowed]
         public string NhsNumber { get; set; }
 
         /// <summary>
