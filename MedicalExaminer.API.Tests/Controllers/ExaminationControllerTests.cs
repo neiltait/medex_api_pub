@@ -3,13 +3,10 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Examinations;
-using MedicalExaminer.API.Models.Validators;
 using MedicalExaminer.API.Tests.Persistence;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
-using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
@@ -21,8 +18,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             IExaminationPersistence examinationPersistence = new ExaminationPersistenceFake();
             var mockLogger = new MELoggerMocker();
-            var mockValidator = new Mock<IValidator<ExaminationItem>>().Object;
-            Controller = new ExaminationsController(examinationPersistence, mockLogger, Mapper, mockValidator);
+            Controller = new ExaminationsController(examinationPersistence, mockLogger, Mapper);
         }
 
         [Fact]

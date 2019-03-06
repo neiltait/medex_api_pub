@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MedicalExaminer.Models;
 
@@ -9,6 +10,6 @@ namespace MedicalExaminer.Common
         Task<bool> SaveExaminationAsync(Examination examination);
         Task<Examination> GetExaminationAsync(string examinationId);
         Task<IEnumerable<Examination>> GetExaminationsAsync();
-        Task<object> CreateExaminationAsync(ExaminationItem examinationItem);
+        Task<Guid> CreateExaminationAsync(Examination examinationItem);
     }
 }

@@ -1,7 +1,7 @@
-﻿
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models.V1.Locations
+
 {
     public class LocationItem
     {
