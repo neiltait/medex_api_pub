@@ -87,5 +87,21 @@ namespace MedicalExaminer.API.Controllers
                 Locations = locations.Select(location => Mapper.Map<LocationItem>(location)).ToList(),
             });
         }
+
+        /// <summary>
+        /// Get Locations as a list of <see cref="LocationItem"/> where locations are under the location whose locationId = parentId
+        /// </summary>
+        /// <param name="parentId">The locationId of the location whose children are to be returned as list</param>
+        /// <returns>list of locations that are under the location whose location = parentId</returns>
+        [HttpGet("/parentId/{parentId}")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<GetLocationsResponse>> GetLocationsByParentId(string parentId)
+        {
+            var locations = await _locationPersistence.GetLocationsByParentIdAsync(parentId);
+            return Ok(new GetLocationsResponse()
+            {
+                Locations = locations.Select(location => Mapper.Map<LocationItem>(location)).ToList(),
+            });
+        }
     }
 }
