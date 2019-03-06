@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using MedicalExaminer.API.Models.v1;
-using MedicalExaminer.API.Models.Validators;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace MedicalExaminer.API.Extensions.Models
@@ -23,14 +22,6 @@ namespace MedicalExaminer.API.Extensions.Models
                 {
                     responseBase.AddError(item.Key, error.ErrorMessage);
                 }
-            }
-        }
-
-        public static void AddValidationErrors(this ResponseBase responseBase, IEnumerable<ValidationError> validationErrors)
-        {
-            foreach (var validationError in validationErrors)
-            {
-                responseBase.AddError(validationError.Property, $"{validationError.Code}: {validationError.Message}");
             }
         }
     }

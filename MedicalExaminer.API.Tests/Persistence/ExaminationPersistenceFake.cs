@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Common;
 using MedicalExaminer.Models;
 
@@ -66,7 +65,7 @@ namespace MedicalExaminer.API.Tests.Persistence
             return await Task.FromResult(_examinations);
         }
 
-        public Task<object> CreateExaminationAsync(ExaminationItem examinationItem)
+        public Task<Guid> CreateExaminationAsync(Examination examinationItem)
         {
             throw new NotImplementedException();
         }
