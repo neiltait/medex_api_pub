@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Models.Enums;
 using MedicalExaminer.Models.V1.Locations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;

@@ -75,34 +75,25 @@ namespace MedicalExaminer.Common
         /// <inheritdoc />
         public async Task<IEnumerable<Location>> GetLocationsByParentIdAsync(string parentId)
         {
-            try
+            await EnsureSetupAsync();
+            var results = new List<Location>();
+
+            var feedOptions = new FeedOptions {MaxItemCount = -1};
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, "Locations");
+            var queryString = $"SELECT * FROM Locations WHERE Locations.parentId = \"{parentId}\"";
+            var query = Client.CreateDocumentQuery<Location>(documentCollectionUri, queryString, feedOptions);
+            var queryAll = query.AsDocumentQuery();
+            var childLocations = new List<Location>();
+            while (queryAll.HasMoreResults) childLocations.AddRange(await queryAll.ExecuteNextAsync<Location>());
+
+            results.AddRange(childLocations);
+
+            if (childLocations.Count > 0)
             {
-                await EnsureSetupAsync();
-                var results = new List<Location>();
-
-                var feedOptions = new FeedOptions {MaxItemCount = -1};
-                var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, "Locations");
-                var queryString = $"SELECT * FROM Locations WHERE Locations.parentId = \"{parentId}\"";
-                var query = Client.CreateDocumentQuery<Location>(documentCollectionUri, queryString, feedOptions);
-                var queryAll = query.AsDocumentQuery();
-                var childLocations = new List<Location>();
-                while (queryAll.HasMoreResults) childLocations.AddRange(await queryAll.ExecuteNextAsync<Location>());
-
-                results.AddRange(childLocations);
-
-                if (childLocations.Count > 0)
-                {
-                    await GetNextLevelOfDescendents(results, results, feedOptions, documentCollectionUri);
-                }
-
-                return results;
+                await GetNextLevelOfDescendents(results, results, feedOptions, documentCollectionUri);
             }
-            catch (Exception ex)
-            {
-                var djp = ex.Message;
-                return null;
-            }
-           
+
+            return results;   
         }
 
         /// <summary>
@@ -116,28 +107,44 @@ namespace MedicalExaminer.Common
         /// <remarks>Uses recursion to descend levels of descendents until lowest level reached</remarks>
         private async Task GetNextLevelOfDescendents(List<Location> parents, List<Location> results, FeedOptions feedOptions, Uri documentCollectionUri)
         {
-            var queryString = new StringBuilder();
-            queryString.Append("SELECT * FROM Locations WHERE Locations.parentId IN (");
-
-            for (int count = 0; count < parents.Count; count++)
-            {
-                queryString.Append($"\"{parents[count].LocationId}\"");
-                if (count < (parents.Count -1))
-                {
-                    queryString.Append(", ");
-                }
-                else
-                {
-                    queryString.Append(")");
-                }
-            }
-
-            var djp = queryString.ToString();
-            var query = Client.CreateDocumentQuery<Location>(documentCollectionUri, queryString.ToString(), feedOptions);
-            var queryAll = query.AsDocumentQuery();
             var childLocations = new List<Location>();
-            while (queryAll.HasMoreResults) childLocations.AddRange(await queryAll.ExecuteNextAsync<Location>());
 
+            //Load parents in batches to prevent exceeding length of queryString permitted by CreateDocumentQuery
+            var initialPosition = 0; //Starting item in list to be processed in this batch. Initially zero
+            const int batchSize = 500; //Number of items to be processed in one batch
+            var finalPosition = initialPosition + batchSize; //Stop point for loading items in this batch 
+            var itemsLoaded = 0; //Number of items loaded in total.Initially zero
+
+            while (itemsLoaded < parents.Count)
+            {
+                var queryString = new StringBuilder();
+                queryString.Append("SELECT * FROM Locations WHERE Locations.parentId IN (");
+
+                for (int count = initialPosition; count < parents.Count && count < finalPosition; count++)
+                {
+                    var lastItemInThisBatch = Math.Min(parents.Count - 1, finalPosition -1);
+                    queryString.Append($"\"{parents[count].LocationId}\"");
+                    if (count < lastItemInThisBatch)
+                    {
+                        queryString.Append(", ");
+                    }
+                    else
+                    {
+                        queryString.Append(")");
+                    }
+                }
+
+                var query = Client.CreateDocumentQuery<Location>(documentCollectionUri, queryString.ToString(), feedOptions);
+                var queryAll = query.AsDocumentQuery();
+
+                while (queryAll.HasMoreResults) childLocations.AddRange(await queryAll.ExecuteNextAsync<Location>());
+
+                initialPosition = finalPosition;
+                finalPosition += batchSize;
+                itemsLoaded += batchSize;
+
+            }
+           
             if (childLocations.Count > 0)
             {
                 results.AddRange(childLocations);
