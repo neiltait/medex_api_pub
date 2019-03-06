@@ -29,7 +29,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var nhsNumberString = "12345";
             var validationContext = new Moq.Mock<IServiceProvider>().Object;
 
-            var expectedError = "Incorrect NHS Number";
+            var expectedError = "Invalid NHS Number";
             var sut = new ValidNhsNumberNullAllowedAttribute();
             // Act
             var result = sut.GetValidationResult(nhsNumberString, new ValidationContext(validationContext));
@@ -44,7 +44,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             // Arrange
             var nhsNumberString = "012345678910";
             var validationContext = new Moq.Mock<IServiceProvider>().Object;
-            var expectedError = "Incorrect NHS Number";
+            var expectedError = "Invalid NHS Number";
             var sut = new ValidNhsNumberNullAllowedAttribute();
             // Act
             var result = sut.GetValidationResult(nhsNumberString, new ValidationContext(validationContext));
@@ -59,7 +59,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             // Arrange
             var nhsNumberString = "123ac 45678";
             var validationContext = new Moq.Mock<IServiceProvider>().Object;
-            var expectedError = "Incorrect NHS Number";
+            var expectedError = "Invalid NHS Number";
             var sut = new ValidNhsNumberNullAllowedAttribute();
             // Act
             var result = sut.GetValidationResult(nhsNumberString, new ValidationContext(validationContext));
@@ -87,7 +87,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             // Arrange
             var nhsNumberString = "987 654 4321";
             var validationContext = new Moq.Mock<IServiceProvider>().Object;
-            var expectedError = "Incorrect NHS Number";
+            var expectedError = "Invalid NHS Number";
             var sut = new ValidNhsNumberNullAllowedAttribute();
             // Act
             var result = sut.GetValidationResult(nhsNumberString, new ValidationContext(validationContext));

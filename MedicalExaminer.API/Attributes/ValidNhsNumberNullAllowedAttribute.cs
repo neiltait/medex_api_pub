@@ -29,12 +29,12 @@ namespace MedicalExaminer.API.Attributes
             nhsNumber = nhsNumber.Replace("-", string.Empty);
             if (nhsNumber.Length != 10)
             {
-                return new ValidationResult("Incorrect NHS Number");
+                return new ValidationResult("Invalid NHS Number");
             }
 
             if (!ValidateNhsNumber(nhsNumber))
             {
-                return new ValidationResult("Incorrect NHS Number");
+                return new ValidationResult("Invalid NHS Number");
             }
 
             return ValidationResult.Success;
