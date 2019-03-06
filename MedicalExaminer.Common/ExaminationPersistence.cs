@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MedicalExaminer.Models;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
+using Newtonsoft.Json;
 
 namespace MedicalExaminer.Common
 {
@@ -44,9 +46,18 @@ namespace MedicalExaminer.Common
             return results;
         }
 
-        public Task<object> CreateExaminationAsync(ExaminationItem examinationItem)
+        public async Task<Guid> CreateExaminationAsync(Examination examinationItem)
         {
-            throw new NotImplementedException();
+            await EnsureSetupAsync();
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, "Examinations");
+            examinationItem.ExaminationId = Guid.NewGuid().ToString();
+            var examinationItemAsJson = JsonConvert.SerializeObject(examinationItem);
+
+            var feedOptions = new FeedOptions { MaxItemCount = -1 };
+
+            var result = Client.CreateDocumentQuery<Examination>(documentCollectionUri, examinationItemAsJson).FirstOrDefault();
+
+            return Guid.Parse(result.ExaminationId);
         }
     }
 }

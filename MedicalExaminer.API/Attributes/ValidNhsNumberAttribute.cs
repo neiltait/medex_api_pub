@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace MedicalExaminer.API.Models.Validators
+namespace MedicalExaminer.API.Attributes
 {
-    /// <summary>
-    /// Validates a string input against the nhs validation
-    /// </summary>
-    public class NhsNumberValidator : IValidator<NhsNumberString>
+    public class ValidNhsNumberAttribute : ValidationAttribute
     {
         private readonly int[] _factors =
         {
@@ -23,24 +18,27 @@ namespace MedicalExaminer.API.Models.Validators
             2
         };
 
-        public async Task<IEnumerable<ValidationError>> ValidateAsync(NhsNumberString nhsNumberString)
+        protected override ValidationResult IsValid(object value, ValidationContext context)
         {
-            var nhsNumber = nhsNumberString.Value;
-            var errors = new List<ValidationError>();
+            var nhsNumber = value as string;
+            if (nhsNumber == null)
+            {
+                return new ValidationResult("Incorrect NHS Number");
+            }
+            
             nhsNumber = nhsNumber.Replace(" ", string.Empty);
             nhsNumber = nhsNumber.Replace("-", string.Empty);
             if (nhsNumber.Length != 10)
             {
-                errors.Add(new ValidationError(ValidationErrorCode.Invalid, "NhsNumber", "Incorrect NHS Number"));
-                return errors;
+                return new ValidationResult("Incorrect NHS Number");
             }
 
             if (!ValidateNhsNumber(nhsNumber))
             {
-                errors.Add(new ValidationError(ValidationErrorCode.Invalid, "NhsNumber", "Incorrect NHS Number"));
+                return new ValidationResult("Incorrect NHS Number");
             }
 
-            return errors;
+            return ValidationResult.Success;
         }
 
         private bool ValidateNhsNumber(string nhsNumber)

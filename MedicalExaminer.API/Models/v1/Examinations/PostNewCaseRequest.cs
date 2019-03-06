@@ -1,53 +1,60 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MedicalExaminer.API.Models.Validators;
+using System.ComponentModel.DataAnnotations;
+using MedicalExaminer.API.Attributes;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.Examinations
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PostNewCaseRequest
     {
         /// <summary>
         ///  Where the death occured
         /// </summary>
+        [Required]
         public string PlaceDeathOccured { get; set; }
 
         /// <summary>
         /// Medical Examiner Office Responsible for dealing with the examination
         /// </summary>
+        [ValidMedicalExaminerOffice]
         public string MedicalExaminerOfficeResponsible { get; set; }
 
         /// <summary>
         /// Patients surname
         /// </summary>
+        [Required]
+        [MinLength(1)]
+        [MaxLength(255)]
         public string Surname { get; set; }
 
         /// <summary>
         /// Patients given names
         /// </summary>
+        [Required]
+        [MinLength(1)]
+        [MaxLength(255)]
         public string GivenNames { get; set; }
 
         /// <summary>
         /// Gender patient identifies as
         /// </summary>
+        [Required]
         public ExaminationGender? Gender { get; set; }
 
         /// <summary>
         /// Comments regarding the patients gender identification
         /// </summary>
+        [RequiredIf(nameof(Gender), ExaminationGender.Other)]
         public string GenderDetails { get; set; }
 
         /// <summary>
         /// Patients NHS Number
         /// </summary>
+        [ValidNhsNumber]
         public string NhsNumber { get; set; }
-
-        /// <summary>
-        /// Is the patients NHS Number known
-        /// </summary>
-        public bool NhsNumberKnown { get; set; }
 
         /// <summary>
         /// Patients first hospital number
@@ -67,12 +74,8 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Patients date of birth
         /// </summary>
+        [DateIsLessThanOrEqualToNullsAllowed(nameof(DateOfDeath))]
         public DateTime? DateOfBirth { get; set; }
-
-        /// <summary>
-        /// Is the patients date of birth known
-        /// </summary>
-        public bool DateOfBirthKnown { get; set; }
 
         /// <summary>
         /// Patients date of death
@@ -80,20 +83,10 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public DateTime? DateOfDeath { get; set; }
 
         /// <summary>
-        /// Is the patients date of death known
-        /// </summary>
-        public bool DateOfDeathKnown { get; set; }
-
-        /// <summary>
         /// Patients time of death
         /// </summary>
         public TimeSpan? TimeOfDeath { get; set; }
-
-        /// <summary>
-        /// Is the patients time of death known
-        /// </summary>
-        public bool TimeOfDeathKnown { get; set; }
-
+        
         /// <summary>
         /// Out of hours/urgent scrutiny has taken place out of hours
         /// </summary>

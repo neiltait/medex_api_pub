@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace MedicalExaminer.API.Models.Validators
+namespace MedicalExaminer.API.Attributes
 {
     public class RequiredIfAttribute : RequiredAttribute
     {
