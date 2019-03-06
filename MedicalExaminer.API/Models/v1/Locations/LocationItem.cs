@@ -14,27 +14,27 @@ namespace MedicalExaminer.Models.V1.Locations
         public string LocationId { get; set; }
 
         /// <summary>
-        /// Name.
+        /// Full name of the location
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// The Location Code.
+        /// The alphanumeric code that identifies a location
         /// </summary>
         public string Code { get; set; }
 
         /// <summary>
-        /// The LocationId of the location's parent location
+        /// Corresponds to the LocationId of this location's parent location
         /// </summary>
         public string ParentId { get; set; }
 
         /// <summary>
-        /// Indicates if location is site, trust, region or national
+        /// Identifies location as one of site, trust, region or national
         /// </summary>
         public LocationType Type { get; set; }
 
         /// <summary>
-        /// Indicates if location is available for use
+        /// Location is in use in Medical Examiners
         /// </summary>
         public bool IsActive { get; set; }
     }

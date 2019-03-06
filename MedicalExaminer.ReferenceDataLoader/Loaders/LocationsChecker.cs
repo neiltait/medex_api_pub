@@ -11,7 +11,7 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
     /// </summary>
     public class LocationsChecker
     {
-        private List<Location> _locations;
+        private readonly List<Location> _locations;
 
         public LocationsChecker(List<Location> locations)
         {
@@ -39,7 +39,7 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
                 {
                     if (location.ParentId != null)
                     {
-                        throw new Exception("National location has parent id");
+                        throw new Exception("National location should not have parent id");
                     }
                         
                 }

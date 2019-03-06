@@ -106,7 +106,7 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
             {
                 await _client.UpsertDocumentAsync(_documentCollectionUri, location);
 
-                ++loadCount;
+                loadCount++;
                 if (loadCount % 1000 == 0)
                 {
                     Console.WriteLine($"loaded {loadCount} locations out of {_locations.Count}...");

@@ -127,7 +127,7 @@ namespace MedicalExaminers.ReferenceDataLoader.Tests
             Exception ex = Assert.Throws<Exception>(() => locationsChecker.CheckParentIdsValid());
 
             //Assert
-            Assert.Equal("National location has parent id", ex.Message);
+            Assert.Equal("National location should not have parent id", ex.Message);
         }
 
         [Fact]
