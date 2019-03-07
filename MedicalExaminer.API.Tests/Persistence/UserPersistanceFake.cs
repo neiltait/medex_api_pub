@@ -44,7 +44,7 @@ namespace MedicalExaminer.API.Tests.Persistence
         public async Task<MeUser> GetUserAsync(string UserId)
         {
             foreach (var user in _users)
-                if (user.id == UserId)
+                if (user.UserId == UserId)
                     return await Task.FromResult(user);
 
             throw new ArgumentException("Invalid Argument");

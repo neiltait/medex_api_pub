@@ -46,7 +46,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var response = _mapper.Map<UserItem>(examination);
 
-            response.id.Should().Be(expectedUserId);
+            response.UserId.Should().Be(expectedUserId);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var response = _mapper.Map<PostUserResponse>(examination);
 
-            response.id.Should().Be(expectedUserId);
+            response.UserId.Should().Be(expectedUserId);
         }
 
         /// <summary>
@@ -135,13 +135,13 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = new PutUserRequest()
             {
-                id = expectedUserId,
+                UserId = expectedUserId,
                 FirstName = expectedFirstName,
             };
 
             var response = _mapper.Map<MeUser>(examination);
 
-            response.id.Should().Be(expectedUserId);
+            response.UserId.Should().Be(expectedUserId);
             response.FirstName.Should().Be(expectedFirstName);
         }
     }
