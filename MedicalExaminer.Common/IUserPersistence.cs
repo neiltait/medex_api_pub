@@ -10,5 +10,6 @@ namespace MedicalExaminer.Common
         Task<MeUser> CreateUserAsync(MeUser meUser);
         Task<MeUser> GetUserAsync(string UserId);
         Task<IEnumerable<MeUser>> GetUsersAsync();
+        Task<IEnumerable<MeUser>> GetMedicalExaminersAsync();
     }
 }
