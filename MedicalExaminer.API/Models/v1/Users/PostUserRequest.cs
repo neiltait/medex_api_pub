@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using  MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.Users
 {
@@ -22,5 +23,10 @@ namespace MedicalExaminer.API.Models.v1.Users
         /// </summary>
         [EmailAddress]
         public string Email { get; set; }
+
+        /// <summary>
+        /// The User's role
+        /// </summary>
+        public UserRoles UserRole { get; set; }
     }
 }

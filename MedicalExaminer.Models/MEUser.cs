@@ -6,10 +6,10 @@ namespace MedicalExaminer.Models
 {
     public class MeUser : Record
     {
-        [Required]
-        [DataType(DataType.Text)]
-        [JsonProperty(PropertyName = "user_id")]
-        public string UserId { get; set; }
+        //[Required]
+        //[DataType(DataType.Text)]
+        //[JsonProperty(PropertyName = "id")]
+        //public string UserId { get; }
 
         [Required]
         [DataType(DataType.Text)]

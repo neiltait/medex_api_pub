@@ -21,7 +21,8 @@ namespace MedicalExaminer.API.Tests.Persistence
                 var u = new MeUser
                 {
                     Email = Internet.Email(),
-                    UserId = "aaaaa" + count,
+                    //DJP
+                    //UserId = "aaaaa" + count,
                     FirstName = Name.First(),
                     LastName = Name.Last(),
                     CreatedAt = DateTime.Now,
@@ -35,14 +36,15 @@ namespace MedicalExaminer.API.Tests.Persistence
         public async Task<MeUser> CreateUserAsync(MeUser meUser)
         {
             var createdUser = meUser;
-            createdUser.UserId = "1";
+            //DJP
+           // createdUser.UserId = "1";
             return await Task.FromResult(createdUser);
         }
 
         public async Task<MeUser> GetUserAsync(string UserId)
         {
             foreach (var user in _users)
-                if (user.UserId == UserId)
+                if (user.id == UserId)
                     return await Task.FromResult(user);
 
             throw new ArgumentException("Invalid Argument");

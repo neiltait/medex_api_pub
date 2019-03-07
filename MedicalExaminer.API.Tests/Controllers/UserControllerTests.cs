@@ -46,7 +46,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             var returnUser = okResult.Value.Should().BeAssignableTo<PostUserResponse>().Subject;
 
-            returnUser.UserId.Should().Be(expectedUserId);
+            returnUser.id.Should().Be(expectedUserId);
         }
 
         [Fact]

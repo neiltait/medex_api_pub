@@ -17,6 +17,21 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
 {
+    
+    internal class MeUserFake : MeUser
+    {
+        internal string id { get; set; }
+    }
+
+    internal interface IUserPersistenceFake
+    {
+        Task<MeUserFake> UpdateUserAsync(MeUserFake meUser);
+        Task<MeUserFake> CreateUserAsync(MeUserFaxl meUser);
+        Task<MeUserFake> GetUserAsync(string UserId);
+        Task<IEnumerable<MeUserFake>> GetUsersAsync();
+        Task<IEnumerable<MeUserFake>> GetMedicalExaminersAsync();
+    }
+
     /// <summary>
     /// Users Controller Tests
     /// </summary>
@@ -25,14 +40,17 @@ namespace MedicalExaminer.API.Tests.Controllers
         /// <summary>
         /// The User Persistence mock.
         /// </summary>
-        private readonly Mock<IUserPersistence> _userPersistence;
+
+        //DJP
+        private readonly Mock<IUserPersistenceFake> _userPersistence;
+        //private readonly Mock<IUserPersistence> _userPersistence;
 
         /// <summary>
         /// Setup
         /// </summary>
         public UsersControllerTests()
         {
-            _userPersistence = new Mock<IUserPersistence>();
+            _userPersistence = new Mock<IUserPersistenceFake>();
 
             var logger = new Mock<IMELogger>();
 
@@ -75,7 +93,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             const string expectedUserId = "expectedUserId";
 
             _userPersistence.Setup(up => up.GetUsersAsync()).Returns(Task.FromResult<IEnumerable<MeUser>>(
-                new List<MeUser> { new MeUser { UserId = expectedUserId } }));
+                new List<MeUserFake> { new MeUserFake { id = expectedUserId } }));
 
             // Act
             var response = await Controller.GetUsers();
@@ -89,7 +107,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             model.Success.Should().BeTrue();
 
             model.Users.Count().Should().Be(1);
-            model.Users.First().UserId.Should().Be(expectedUserId);
+            model.Users.First().id.Should().Be(expectedUserId);
         }
 
         /// <summary>
@@ -152,7 +170,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             const string expectedUserId = "expectedUserId";
 
-            var expectedUser = new MeUser { UserId = expectedUserId };
+            var expectedUser = new MeUserFake { id = expectedUserId };
 
             _userPersistence.Setup(up => up.GetUserAsync(It.IsAny<string>())).Returns(Task.FromResult(expectedUser));
 
@@ -234,9 +252,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 FirstName = expectedFirstName,
             };
 
-            var expectedUser = new MeUser
+            var expectedUser = new MeUserFake
             {
-                UserId = expectedUserId,
+                id = expectedUserId,
                 FirstName = expectedFirstName,
             };
 
@@ -253,7 +271,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var model = (PostUserResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
-            model.UserId.Should().Be(expectedUserId);
+            model.id.Should().Be(expectedUserId);
         }
 
         /// <summary>
@@ -280,7 +298,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
-            model.UserId.Should().Be(null);
+            model.id.Should().Be(null);
         }
 
         /// <summary>
@@ -307,7 +325,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
-            model.UserId.Should().Be(null);
+            model.id.Should().Be(null);
         }
 
         /// <summary>
@@ -346,13 +364,14 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var expectedRequest = new PutUserRequest()
             {
-                UserId = expectedUserId,
+                id = expectedUserId,
                 FirstName = expectedFirstName,
             };
 
             var expectedUser = new MeUser
             {
-                UserId = expectedUserId,
+                //DJP
+                //id = expectedUserId,
                 FirstName = expectedFirstName,
             };
 
@@ -369,7 +388,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var model = (PutUserResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
-            model.UserId.Should().Be(expectedUserId);
+            model.id.Should().Be(expectedUserId);
         }
 
         /// <summary>
@@ -396,7 +415,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
-            model.UserId.Should().Be(null);
+            model.id.Should().Be(null);
         }
 
         /// <summary>
@@ -423,7 +442,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
-            model.UserId.Should().Be(null);
+            model.id.Should().Be(null);
         }
 
         /// <summary>

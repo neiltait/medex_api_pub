@@ -1,4 +1,6 @@
-﻿namespace MedicalExaminer.API.Models.v1.Users
+﻿using MedicalExaminer.Models.Enums;
+
+namespace MedicalExaminer.API.Models.v1.Users
 {
     /// <summary>
     /// A user item as part of multiple user responses.
@@ -8,7 +10,7 @@
         /// <summary>
         /// The User identifier.
         /// </summary>
-        public string UserId { get; set; }
+        public string id { get; set; }
 
         /// <summary>
         /// The User's first name.
@@ -24,5 +26,10 @@
         /// The User's email address
         /// </summary>
         public string Email { get; set; }
+
+        /// <summary>
+        /// The User's role
+        /// </summary>
+        public UserRoles UserRole { get; set; }
     }
 }

@@ -40,12 +40,13 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = new MeUser()
             {
-                UserId = expectedUserId,
+                //djp
+                //id = expectedUserId,
             };
 
             var response = _mapper.Map<UserItem>(examination);
 
-            response.UserId.Should().Be(expectedUserId);
+            response.id.Should().Be(expectedUserId);
         }
 
         /// <summary>
@@ -58,7 +59,8 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = new MeUser()
             {
-                UserId = expectedUserId,
+                //djp
+                //UserId = expectedUserId,
             };
 
             var response = _mapper.Map<GetUserResponse>(examination);
@@ -76,7 +78,8 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = new MeUser()
             {
-                UserId = expectedUserId,
+                //djp
+                //UserId = expectedUserId,
             };
 
             var response = _mapper.Map<PutUserResponse>(examination);
@@ -94,12 +97,13 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = new MeUser()
             {
-                UserId = expectedUserId,
+                //DJP
+                //UserId = expectedUserId,
             };
 
             var response = _mapper.Map<PostUserResponse>(examination);
 
-            response.UserId.Should().Be(expectedUserId);
+            response.id.Should().Be(expectedUserId);
         }
 
         /// <summary>
@@ -131,13 +135,13 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = new PutUserRequest()
             {
-                UserId = expectedUserId,
+                id = expectedUserId,
                 FirstName = expectedFirstName,
             };
 
             var response = _mapper.Map<MeUser>(examination);
 
-            response.UserId.Should().Be(expectedUserId);
+            response.id.Should().Be(expectedUserId);
             response.FirstName.Should().Be(expectedFirstName);
         }
     }
