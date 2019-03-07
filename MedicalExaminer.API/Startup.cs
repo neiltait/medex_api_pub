@@ -11,9 +11,12 @@ using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.ConnectionSettings;
+using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries;
+using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
+using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -105,7 +108,7 @@ namespace MedicalExaminer.API
 
             services.AddScoped<IMELogger, MELogger>();
             services.AddScoped<IDatabaseAccess, DatabaseAccess>();
-            services.AddScoped<ILocationConnectionSettings>(s => new LocationConnectionSetting(
+            services.AddScoped<ILocationConnectionSettings>(s => new LocationConnectionSettings(
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
@@ -116,13 +119,11 @@ namespace MedicalExaminer.API
                 Configuration["CosmosDB:DatabaseId"]));
 
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, string>, CreateExaminationService>();
+            services.AddScoped<IAsyncQueryHandler<ExaminationRetrivalQuery, Examination>, ExaminationRetrivalService>();
+            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<Examination>>, ExaminationsRetrivalService>();
 
             services.AddScoped<ControllerActionFilter>();
-            services.AddScoped<IExaminationPersistence>(s => new ExaminationPersistence(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]));
-
+            
             services.AddScoped<ILocationPersistence>(s => new LocationPersistence(
                  new Uri(Configuration["CosmosDB:URL"]),
                  Configuration["CosmosDB:PrimaryKey"],

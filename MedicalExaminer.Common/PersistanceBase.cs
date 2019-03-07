@@ -25,7 +25,7 @@ namespace MedicalExaminer.Common
         {
             if (Client == null) Client = new DocumentClient(EndpointUri, PrimaryKey);
 
-            await Client.CreateDatabaseIfNotExistsAsync(new Database {Id = DatabaseId});
+            await Client.CreateDatabaseIfNotExistsAsync(new Microsoft.Azure.Documents.Database {Id = DatabaseId});
             var databaseUri = UriFactory.CreateDatabaseUri(DatabaseId);
 
             // Samples

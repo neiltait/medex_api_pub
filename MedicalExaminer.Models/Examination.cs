@@ -15,6 +15,9 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
+        [JsonProperty(PropertyName = "time_of_death")]
+        public TimeSpan? TimeOfDeath { get; set; }
+
         [Required]
         [DataType(DataType.Text)]
         [StringLength(250)]

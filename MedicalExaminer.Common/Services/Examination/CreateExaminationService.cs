@@ -1,27 +1,30 @@
 ﻿using System;
 using System.Threading.Tasks;
+using MedicalExaminer.Common.ConnectionSettings;
+using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries;
-using MedicalExaminer.Models;
+using MedicalExaminer.Common.Queries.Examination;
 
-namespace MedicalExaminer.Common.Services
+namespace MedicalExaminer.Common.Services.Examination
 {
-    public class ExaminationRetrivalService : IAsyncQueryHandler<ExaminationRetrivalQuery, Examination>
+    public class CreateExaminationService : IAsyncQueryHandler<CreateExaminationQuery, string>
     {
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
-        public ExaminationRetrivalService(IDatabaseAccess databaseAccess, IConnectionSettings connectionSettings)
+        public CreateExaminationService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
         }
 
-        public async Task<Examination> Handle(ExaminationRetrivalQuery param)
+        public async Task<string> Handle(CreateExaminationQuery param)
         {
             using (var conn = _databaseAccess.CreateClient(_connectionSettings))
             {
                 try
                 {
-                    return await _databaseAccess.QuerySingleAsync<Examination>(_connectionSettings, param.ExaminationId.ToString());
+                    param.Examination.Id = Guid.NewGuid().ToString();
+                    return await _databaseAccess.Create<Models.Examination>(_connectionSettings, param.Examination);
 
                 }
                 catch (Exception e)

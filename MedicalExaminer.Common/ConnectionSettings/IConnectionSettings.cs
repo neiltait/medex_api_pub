@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace MedicalExaminer.Common
+namespace MedicalExaminer.Common.ConnectionSettings
 {
     public interface IConnectionSettings
     {

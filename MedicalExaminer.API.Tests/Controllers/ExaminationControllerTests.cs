@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Examinations;
-using MedicalExaminer.API.Tests.Persistence;
-using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
-using MedicalExaminer.Common.Queries;
+using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +22,12 @@ namespace MedicalExaminer.API.Tests.Controllers
         public ExaminationControllerTests()
         {
             // Arrange
-            IExaminationPersistence examinationPersistence = new ExaminationPersistenceFake();
+            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, Examination>>();
+            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<Examination>>>();
             var mockLogger = new MELoggerMocker();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            Controller = new ExaminationsController(examinationPersistence, mockLogger, Mapper, createExaminationService.Object);
+            Controller = new ExaminationsController(mockLogger, Mapper, createExaminationService.Object,
+                examinationRetrivalQuery.Object, examinationsRetrivalQuery.Object);
         }
 
         [Fact]
@@ -72,13 +74,16 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examination = CreateValidExamination();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, Examination>>();
+            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<Examination>>>();
             var examinationId = Guid.NewGuid();
-            var persistence = new Mock<IExaminationPersistence>();
-            persistence.Setup(p => p.CreateExaminationAsync(examination)).Returns(Task.FromResult(examinationId)).Verifiable();
+            
+            //persistence.Setup(p => p.CreateExaminationAsync(examination)).Returns(Task.FromResult(examinationId)).Verifiable();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             mapper.Setup(m => m.Map<Examination>(It.IsAny<PostNewCaseRequest>())).Returns(examination);
-            var sut = new ExaminationsController(persistence.Object, logger.Object, mapper.Object, createExaminationService.Object);
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object, examinationRetrivalQuery.Object
+                , examinationsRetrivalQuery.Object);
             sut.ModelState.AddModelError("test", "test");
 
             // Act
@@ -91,7 +96,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var model = (PutExaminationResponse)result.Value;
             model.Errors.Count.Should().Be(1);
             model.Success.Should().BeFalse();
-            persistence.Verify(p => p.CreateExaminationAsync(examination), Times.Never);
+            //persistence.Verify(p => p.CreateExaminationAsync(examination), Times.Never);
         }
 
         [Fact]
@@ -100,13 +105,17 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examination = CreateValidExamination();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, Examination>>();
+            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<Examination>>>();
             var examinationId = Guid.NewGuid();
-            var persistence = new Mock<IExaminationPersistence>();
-            persistence.Setup(p => p.CreateExaminationAsync(examination)).Returns(Task.FromResult(examinationId)).Verifiable();
+
+            //var persistence = new Mock<IExaminationPersistence>();
+            //persistence.Setup(p => p.CreateExaminationAsync(examination)).Returns(Task.FromResult(examinationId)).Verifiable();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             mapper.Setup(m => m.Map<Examination>(It.IsAny<PostNewCaseRequest>())).Returns(examination);
-            var sut = new ExaminationsController(persistence.Object, logger.Object, mapper.Object, createExaminationService.Object);
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object, 
+                examinationRetrivalQuery.Object, examinationsRetrivalQuery.Object);
 
             // Act
             var response = sut.CreateNewCase(CreateValidNewCaseRequest()).Result;
@@ -118,7 +127,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var model = (PutExaminationResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
-            persistence.Verify(p => p.CreateExaminationAsync(examination), Times.Exactly(1));
+            //persistence.Verify(p => p.CreateExaminationAsync(examination), Times.Exactly(1));
         }
 
         private PostNewCaseRequest CreateValidNewCaseRequest()

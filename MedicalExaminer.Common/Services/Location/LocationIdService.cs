@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
-using MedicalExaminer.Common.Queries;
-using MedicalExaminer.Models;
+using MedicalExaminer.Common.Database;
+using MedicalExaminer.Common.Queries.Location;
 
-namespace MedicalExaminer.Common.Services
+namespace MedicalExaminer.Common.Services.Location
 {
-    public class LocationIdService : IAsyncQueryHandler<LocationRetrivalByIdQuery, Location>
+    public class LocationIdService : IAsyncQueryHandler<LocationRetrivalByIdQuery, Models.Location>
     {
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
@@ -17,13 +15,13 @@ namespace MedicalExaminer.Common.Services
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
         }
-        public Task<Location> Handle(LocationRetrivalByIdQuery param)
+        public Task<Models.Location> Handle(LocationRetrivalByIdQuery param)
         {
             using (var conn = _databaseAccess.CreateClient(_connectionSettings))
             {
                 try
                 {
-                    return _databaseAccess.QuerySingleAsync<Location>(_connectionSettings, param.Id);
+                    return _databaseAccess.QuerySingleAsync<Models.Location>(_connectionSettings, param.Id);
 
                 }
                 catch (Exception e)

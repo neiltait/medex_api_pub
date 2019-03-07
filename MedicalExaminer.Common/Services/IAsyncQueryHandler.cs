@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using MedicalExaminer.Common.Queries;
 
-namespace MedicalExaminer.Common
+namespace MedicalExaminer.Common.Services
 {
     public interface IAsyncQueryHandler<in TQuery, TResult> where TQuery : IQuery<TResult>
     {

@@ -19,9 +19,7 @@ namespace MedicalExaminer.API.Attributes
 
             var validatedLocation = locationPersistence.GetLocationAsync(locationString).Result;
 
-            return ValidationResult.Success;
-            //TODO
-            //return validatedLocation == null ? new ValidationResult("The location Id has not been found") : ValidationResult.Success;
+            return validatedLocation == null ? new ValidationResult("The location Id has not been found") : ValidationResult.Success;
         }
     }
 }

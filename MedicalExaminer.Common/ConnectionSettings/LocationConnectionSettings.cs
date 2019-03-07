@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MedicalExaminer.Common.ConnectionSettings
 {
     public class LocationConnectionSettings : ILocationConnectionSettings
     {
-        public LocationConnectionSettings(Uri endPointUri, string primaryKey, string databaseId, string collection)
+        public LocationConnectionSettings(Uri endPointUri, string primaryKey, string databaseId)
         {
             EndPointUri = endPointUri;
             PrimaryKey = primaryKey;
             DatabaseId = databaseId;
-            Collection = collection;
+            Collection = "Location";
         }
 
         public Uri EndPointUri { get; }

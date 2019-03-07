@@ -1,7 +1,8 @@
 ﻿using System;
-using MedicalExaminer.Common;
-using MedicalExaminer.Common.Queries;
-using MedicalExaminer.Common.Services;
+using MedicalExaminer.Common.ConnectionSettings;
+using MedicalExaminer.Common.Database;
+using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Services.Location;
 using MedicalExaminer.Models;
 using Xunit;
 
@@ -13,7 +14,7 @@ namespace MedicalExaminer.API.Tests.Services
         public void LocationIdNotFoundReturnsEmptyResultSet()
         {
             var dbAccess = new DatabaseAccess();
-            var connectionSettings = new LocationConnectionSetting(new Uri("https://medical-examiners-sandbox.documents.azure.com:443/"),
+            var connectionSettings = new LocationConnectionSettings(new Uri("https://medical-examiners-sandbox.documents.azure.com:443/"),
                 "***REMOVED***",
                 "testing123"
                 );
