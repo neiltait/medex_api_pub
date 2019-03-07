@@ -8,12 +8,30 @@ using Microsoft.Azure.Documents.Linq;
 
 namespace MedicalExaminer.Common
 {
+    /// <summary>
+    /// Container for a UserRoles enum
+    /// </summary>
+    /// <remarks>Used to filter results by user role</remarks>
+    internal class UserRolesContainer
+    {
+        internal UserRoles Role { get; set; }
+    }
+    /// <summary>
+    /// Manages persistence of users
+    /// </summary>
     public class UserPersistence : PersistenceBase, IUserPersistence
     {
+        /// <summary>
+        /// UserPersistence constructor
+        /// </summary>
+        /// <param name="endpointUri">COSMOS DB endpoint URI</param>
+        /// <param name="primaryKey">Primary key for COSMOS DB instance</param>
+        /// <param name="databaseId">DatabaseId</param>
         public UserPersistence(Uri endpointUri, string primaryKey, string databaseId) : base(endpointUri, primaryKey, databaseId, "Users")
         {
         }
 
+        /// <inheritdoc />
         public async Task<MeUser> UpdateUserAsync(MeUser meUser)
         {
             await EnsureSetupAsync();
@@ -26,6 +44,7 @@ namespace MedicalExaminer.Common
             return (MeUser) doc;
         }
 
+        /// <inheritdoc />
         public async Task<MeUser> CreateUserAsync(MeUser meUser)
         {
             await EnsureSetupAsync();
@@ -41,6 +60,7 @@ namespace MedicalExaminer.Common
             return user;
         }
 
+        /// <inheritdoc />
         public async Task<MeUser> GetUserAsync(string UserId)
         {
             await EnsureSetupAsync();
@@ -53,38 +73,42 @@ namespace MedicalExaminer.Common
             return result.Document;
         }
 
+        /// <inheritdoc />
         public async Task<IEnumerable<MeUser>> GetUsersAsync()
         {
-            await EnsureSetupAsync();
-
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, "Users");
-
-            // build the query
-            var feedOptions = new FeedOptions {MaxItemCount = -1};
-            var query = Client.CreateDocumentQuery<MeUser>(documentCollectionUri, "SELECT * FROM Users", feedOptions);
-            var queryAll = query.AsDocumentQuery();
-
-            // combine the results
-            var results = new List<MeUser>();
-            while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<MeUser>());
-
+            var results = await GetUsersByRole(null);
             return results;
         }
 
-
+        /// <inheritdoc />
         public async Task<IEnumerable<MeUser>> GetMedicalExaminersAsync()
         {
-            var results = await GetUsersByRole(UserRoles.MedicalExaminer);
+            var filter = new UserRolesContainer
+            {
+                Role = UserRoles.MedicalExaminer
+            };
+            var results = await GetUsersByRole(filter);
             return results;
         }
 
+        /// <inheritdoc />
         public async Task<IEnumerable<MeUser>> GetMedicalExaminerOfficerAsync()
         {
-            var results = await GetUsersByRole(UserRoles.MedicalExaminerOfficer);
+            var filter = new UserRolesContainer
+            {
+                Role = UserRoles.MedicalExaminerOfficer
+            };
+            var results = await GetUsersByRole(filter);
             return results;
         }
 
-        private async Task<IEnumerable<MeUser>> GetUsersByRole(UserRoles userRole)
+        /// <summary>
+        /// Gets all users and filters bu UserRole as defined by userRoleContainer
+        /// </summary>
+        /// <param name="userRoleContainer">Used to filter results</param>
+        /// <returns>List of users</returns>
+        /// <remarks>If userRoleContainer is null then no filtering takes place</remarks>
+        private async Task<IEnumerable<MeUser>> GetUsersByRole(UserRolesContainer userRoleContainer)
         {
             await EnsureSetupAsync();
 
@@ -99,10 +123,17 @@ namespace MedicalExaminer.Common
             var results = new List<MeUser>();
             while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<MeUser>());
 
-            //Filter results to required type
-            var resultsFiltered = results.FindAll(r => r.UserRole == userRole);
-
-            return resultsFiltered;
+            //Filter results to required type if required
+            //if no filtering required then return all results
+            if (userRoleContainer != null)
+            {
+                var resultsFiltered = results.FindAll(r => r.UserRole == userRoleContainer.Role);
+                return resultsFiltered;
+            }
+            else
+            {
+                return results;
+            }
         }
     }
 }
