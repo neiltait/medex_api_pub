@@ -49,7 +49,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<Task<ActionResult<GetExaminationResponse>>>().Subject;
             var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             var examination = okResult.Value.Should().BeAssignableTo<GetExaminationResponse>().Subject;
-            Assert.Equal("aaaaa", examination.ExaminationId);
+            Assert.Equal("aaaaa", examination.Id);
         }
 
         [Fact]
