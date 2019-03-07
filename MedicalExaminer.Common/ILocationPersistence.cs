@@ -10,9 +10,9 @@ namespace MedicalExaminer.Common
     public interface ILocationPersistence
     {
         /// <summary>
-        /// Get location object that has the given id
+        /// Get location object that has the given Id
         /// </summary>
-        /// <param name="locationId">The id of location to be returned</param>
+        /// <param name="locationId">The Id of location to be returned</param>
         /// <returns>A single location</returns>
         Task<Location> GetLocationAsync(string locationId);
 

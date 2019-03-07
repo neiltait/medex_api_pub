@@ -14,11 +14,14 @@ namespace MedicalExaminer.API.Attributes
             var locationString = value as string;
             if (string.IsNullOrEmpty(locationString))
             {
-                return new ValidationResult("The location id must be supplied");
+                return new ValidationResult("The location Id must be supplied");
             }
 
             var validatedLocation = locationPersistence.GetLocationAsync(locationString).Result;
-            return validatedLocation == null ? new ValidationResult("The location id has not been found") : ValidationResult.Success;
+
+            return ValidationResult.Success;
+            //TODO
+            //return validatedLocation == null ? new ValidationResult("The location Id has not been found") : ValidationResult.Success;
         }
     }
 }

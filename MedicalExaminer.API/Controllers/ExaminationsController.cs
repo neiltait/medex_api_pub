@@ -5,6 +5,8 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries;
+using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +28,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         private readonly IExaminationPersistence _examinationPersistence;
 
+        private readonly IAsyncQueryHandler<CreateExaminationQuery, string> _examinationService;
         //private readonly IValidator<ExaminationItem> _examinationValidator;
         /// <summary>
         /// Initialise a new instance of the Examiantions Controller.
@@ -33,10 +36,14 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationPersistence">The Examination Persistance.</param>
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
-        public ExaminationsController(IExaminationPersistence examinationPersistence, IMELogger logger, IMapper mapper)
+        public ExaminationsController(IExaminationPersistence examinationPersistence,
+            IMELogger logger, 
+            IMapper mapper,
+            IAsyncQueryHandler<CreateExaminationQuery, string> examinationService)
             : base(logger, mapper)
         {
             _examinationPersistence = examinationPersistence;
+            _examinationService = examinationService;
         }
 
     /// <summary>
@@ -85,22 +92,20 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutExaminationResponse>> CreateNewCase([FromBody]PostNewCaseRequest postNewCaseRequest)
         {
-            var examinationItem = Mapper.Map<ExaminationItem>(postNewCaseRequest);
-            //var validationResult = await _examinationValidator.ValidateAsync(examinationItem);
-            var res = new PutExaminationResponse();
-            //if (validationResult.Any())
-            //{
-            //    res.AddValidationErrors(validationResult);
-            //}
-            //else
-            //{
-                var examination = Mapper.Map<Examination>(examinationItem);
-                var documentId = await _examinationPersistence.CreateExaminationAsync(examination);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutExaminationResponse());
+            }
 
-                res.ExaminationLink = new Link("examination", $"/examination/{documentId}");
-                    //}
+            var examination = Mapper.Map<Examination>(postNewCaseRequest);
+            
+            var result = _examinationService.Handle(new CreateExaminationQuery(examination));
+            var res = new PutExaminationResponse()
+            {
+                ExaminationId = result.Result
+            };
 
-            return Ok(Mapper.Map<PutExaminationResponse>(res));
+            return Ok(res);
         }
     }
 }

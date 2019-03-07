@@ -50,14 +50,14 @@ namespace MedicalExaminer.Common
         {
             await EnsureSetupAsync();
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, "Examinations");
-            examinationItem.ExaminationId = Guid.NewGuid().ToString();
+            examinationItem.Id = Guid.NewGuid().ToString();
             var examinationItemAsJson = JsonConvert.SerializeObject(examinationItem);
 
             var feedOptions = new FeedOptions { MaxItemCount = -1 };
 
             var result = Client.CreateDocumentQuery<Examination>(documentCollectionUri, examinationItemAsJson).FirstOrDefault();
 
-            return Guid.Parse(result.ExaminationId);
+            return Guid.Parse(result.Id);
         }
     }
 }

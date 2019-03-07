@@ -18,7 +18,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             // Arrange
             var locationId = "bad location";
             var locationPersistence = new Mock<ILocationPersistence>();
-            var expectedResult = "The location id has not been found";
+            var expectedResult = "The location Id has not been found";
             locationPersistence.Setup(persistence =>
                 persistence.GetLocationAsync("bad location")).Returns(Task.FromResult<Location>(null));
 
@@ -39,7 +39,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         {
             // Arrange
             var locationId = string.Empty;
-            var expectedResult = "The location id must be supplied";
+            var expectedResult = "The location Id must be supplied";
 
             var locationPersistence = new Mock<ILocationPersistence>();
             locationPersistence.Setup(persistence =>
@@ -62,7 +62,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         {
             // Arrange
             object locationId = null;
-            var expectedResult = "The location id must be supplied";
+            var expectedResult = "The location Id must be supplied";
 
             var locationPersistence = new Mock<ILocationPersistence>();
             locationPersistence.Setup(persistence =>

@@ -10,7 +10,11 @@ using MedicalExaminer.API.Helpers;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
 using MedicalExaminer.Common;
+using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -100,6 +104,18 @@ namespace MedicalExaminer.API
             });
 
             services.AddScoped<IMELogger, MELogger>();
+            services.AddScoped<IDatabaseAccess, DatabaseAccess>();
+            services.AddScoped<ILocationConnectionSettings>(s => new LocationConnectionSetting(
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]));
+
+            services.AddScoped<IExaminationConnectionSettings>(s => new ExaminationConnectionSettings(
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]));
+
+            services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, string>, CreateExaminationService>();
 
             services.AddScoped<ControllerActionFilter>();
             services.AddScoped<IExaminationPersistence>(s => new ExaminationPersistence(
@@ -126,6 +142,8 @@ namespace MedicalExaminer.API
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
+
+            
         }
 
         /// <summary>

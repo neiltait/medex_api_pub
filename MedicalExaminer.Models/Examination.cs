@@ -12,16 +12,23 @@ namespace MedicalExaminer.Models
 
         [Required]
         [DataType(DataType.Text)]
-        [JsonProperty(PropertyName = "examination_id")]
-        public string ExaminationId { get; set; }
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; set; }
 
         [Required]
         [DataType(DataType.Text)]
         [StringLength(250)]
-        [JsonProperty(PropertyName = "full_name")]
-        public string FullName { get; set; }
+        [JsonProperty(PropertyName = "given_names")]
+        public string GivenNames { get; set; }
 
         [Required]
+        [DataType(DataType.Text)]
+        [StringLength(250)]
+        [JsonProperty(PropertyName = "surname")]
+        public string Surname { get; set; }
+
+
+        //[Required]
         [DataType(DataType.Text)]
         [StringLength(10)]
         [JsonProperty(PropertyName = "nhs_number")]

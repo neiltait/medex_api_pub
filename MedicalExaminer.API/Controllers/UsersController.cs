@@ -128,7 +128,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="putUser">The PutUserRequest.</param>
         /// <returns>A PutUserResponse.</returns>
         // POST api/users
-        [HttpPut("{id}")]
+        [HttpPut("{Id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutUserResponse>> UpdateUser([FromBody] PutUserRequest putUser)
         {

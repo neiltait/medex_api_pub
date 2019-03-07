@@ -9,7 +9,7 @@ namespace MedicalExaminer.API.Extensions.Data
         public NewExaminationProfile()
         {
             CreateMap<PostNewCaseRequest, ExaminationItem>()
-                .ForMember(x => x.ExaminationId, opt => opt.Ignore());
+                .ForMember(x => x.Id, opt => opt.Ignore());
         }
     }
 }

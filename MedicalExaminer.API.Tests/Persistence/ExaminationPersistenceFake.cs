@@ -29,13 +29,13 @@ namespace MedicalExaminer.API.Tests.Persistence
             ex2.Completed = false;
             ex3.Completed = false;
 
-            ex1.ExaminationId = "aaaaa";
-            ex2.ExaminationId = "bbbbb";
-            ex3.ExaminationId = "12345zz";
+            ex1.Id = "aaaaa";
+            ex2.Id = "bbbbb";
+            ex3.Id = "12345zz";
 
-            ex1.FullName = "Robert Bobert";
-            ex2.FullName = "Louise Cheese";
-            ex3.FullName = "Crowbar Jones";
+            ex1.GivenNames = "Robert Bobert";
+            ex2.GivenNames = "Louise Cheese";
+            ex3.GivenNames = "Crowbar Jones";
 
             ex1.CreatedAt = DateTime.Now;
             ex2.CreatedAt = DateTime.Now;
@@ -54,7 +54,7 @@ namespace MedicalExaminer.API.Tests.Persistence
         public async Task<Examination> GetExaminationAsync(string examinationId)
         {
             foreach (var examination in _examinations)
-                if (examination.ExaminationId == examinationId)
+                if (examination.Id == examinationId)
                     return await Task.FromResult(examination);
 
             throw new ArgumentException("Invalid Argument");

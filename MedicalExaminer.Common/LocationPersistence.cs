@@ -19,6 +19,9 @@ namespace MedicalExaminer.Common
         {
         }
 
+
+
+
         /// <inheritdoc />
         public async Task<Location> GetLocationAsync(string locationId)
         {

@@ -40,7 +40,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = new Examination()
             {
-                ExaminationId = expectedExaminationId,
+                Id = expectedExaminationId,
             };
 
             var response = _mapper.Map<GetExaminationResponse>(examination);
@@ -58,12 +58,12 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = new Examination()
             {
-                ExaminationId = expectedExaminationId,
+                Id = expectedExaminationId,
             };
 
             var response = _mapper.Map<ExaminationItem>(examination);
 
-            response.ExaminationId.Should().Be(expectedExaminationId);
+            response.Id.Should().Be(expectedExaminationId);
         }
     }
 }

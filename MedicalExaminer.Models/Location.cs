@@ -7,7 +7,7 @@ namespace MedicalExaminer.Models
     public class Location
     {
         [Required]
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty(PropertyName = "Id")]
         public string LocationId { get; set; }
 
         [Required]

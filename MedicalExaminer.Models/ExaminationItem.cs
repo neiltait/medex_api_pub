@@ -12,8 +12,8 @@ namespace MedicalExaminer.Models
         /// </summary>
         [Required]
         [DataType(DataType.Text)]
-        [JsonProperty(PropertyName = "examination_id")]
-        public string ExaminationId { get; set; }
+        [JsonProperty(PropertyName = "Id")]
+        public string Id { get; set; }
 
         /// <summary>
         ///  Where the death occured
