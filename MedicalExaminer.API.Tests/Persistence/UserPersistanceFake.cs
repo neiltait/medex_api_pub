@@ -59,10 +59,5 @@ namespace MedicalExaminer.API.Tests.Persistence
         {
             return await Task.FromResult(meUser);
         }
-
-        public async Task<IEnumerable<MeUser>> GetMedicalExaminersAsync()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

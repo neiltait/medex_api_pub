@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 
@@ -68,26 +67,6 @@ namespace MedicalExaminer.Common
             while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<MeUser>());
 
             return results;
-        }
-
-        public async Task<IEnumerable<MeUser>> GetMedicalExaminersAsync()
-        {
-            await EnsureSetupAsync();
-
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, "Users");
-
-            // build the query
-            var feedOptions = new FeedOptions { MaxItemCount = -1 };
-            var query = Client.CreateDocumentQuery<MeUser>(documentCollectionUri, "SELECT * FROM Users", feedOptions);
-            var queryAll = query.AsDocumentQuery();
-
-            // combine the results
-            var results = new List<MeUser>();
-            while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<MeUser>());
-
-            var resultsFiltered = results.FindAll(r => r.UserRole == UserRoles.MedicalExaminer);
-
-            return resultsFiltered;
         }
     }
 }
