@@ -28,5 +28,12 @@ namespace MedicalExaminer.Common
         /// <param name="locationName">The string to be used to select locations whose names contain this value </param>
         /// <returns>A collection of locations whose names contain locationName</returns>
         Task<IEnumerable<Location>> GetLocationsByNameAsync(string locationName);
+
+        /// <summary>
+        /// Get all locations who are under the location that has its own locationId that matches the parentId passed as paramter
+        /// </summary>
+        /// <param name="parentId">The id that identifies the parent location</param>
+        /// <returns>A collection of locations who are under the location that has a locationId that matches the parentId</returns>
+        Task<IEnumerable<Location>> GetLocationsByParentIdAsync(string parentId);
     }
 }
