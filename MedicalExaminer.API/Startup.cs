@@ -5,7 +5,7 @@ using System.Reflection;
 using AutoMapper;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Filters;
-using MedicalExaminer.API.Helpers;
+using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Models.Validators;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
@@ -21,7 +21,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
-using Okta.AspNetCore;
 
 namespace MedicalExaminer.API
 {
@@ -30,11 +29,6 @@ namespace MedicalExaminer.API
     /// </summary>
     public class Startup
     {
-        /// <summary>
-        /// Key for Authentication Section
-        /// </summary>
-        private const string AuthenticationSection = "Authentication";
-
         /// <summary>
         /// Initialise a new instance of the <see cref="Startup"/> class.
         /// </summary>
@@ -55,7 +49,13 @@ namespace MedicalExaminer.API
         /// <param name="services">Service Collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureAuthentication(services);
+            var oktaSettingsSection = Configuration.GetSection("Okta");
+            var okatSettings = oktaSettingsSection.Get<OktaSettings>();
+            services.Configure<OktaSettings>(oktaSettingsSection);
+
+            services.AddSingleton<ITokenService, OktaTokenService>();
+
+            ConfigureAuthentication(services, okatSettings);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -84,7 +84,7 @@ namespace MedicalExaminer.API
                 // Make swagger do authentication
                 var security = new Dictionary<string, IEnumerable<string>>
                 {
-                    { "Bearer", System.Array.Empty<string>() },
+                    { "Bearer", Array.Empty<string>() },
                 };
 
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme
@@ -177,13 +177,14 @@ namespace MedicalExaminer.API
         /// Configure basic authentication so we can use tokens.
         /// </summary>
         /// <param name="services">Services.</param>
-        private void ConfigureAuthentication(IServiceCollection services)
+        /// <param name="oktaSettings">Okta Settings.</param>
+        private void ConfigureAuthentication(IServiceCollection services, OktaSettings oktaSettings)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.Authority = Configuration["Okta:Authority"];
-                    options.Audience = "api://default";
+                    options.Authority = oktaSettings.Authority;
+                    options.Audience = oktaSettings.Audience;
                 });
         }
     }

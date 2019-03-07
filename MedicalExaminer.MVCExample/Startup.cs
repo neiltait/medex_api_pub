@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MedicalExaminer.MVCExample.Models;
+﻿using MedicalExaminer.MVCExample.Models;
 using MedicalExaminer.MVCExample.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Okta.AspNetCore;
 
 namespace MedicalExaminer.MVCExample
@@ -36,7 +32,6 @@ namespace MedicalExaminer.MVCExample
             });
 
             services.Configure<OktaSettings>(Configuration.GetSection("Okta"));
-            services.AddSingleton<ITokenService, OktaTokenService>();
             services.AddTransient<IAPIService, MEAPIService>();
 
             services.AddAuthentication(options =>
@@ -46,11 +41,23 @@ namespace MedicalExaminer.MVCExample
                     options.DefaultChallengeScheme = OktaDefaults.MvcAuthenticationScheme;
                 })
                 .AddCookie()
-                .AddOktaMvc(new OktaMvcOptions
+                .AddOpenIdConnect(options =>
                 {
-                    OktaDomain = Configuration["Okta:Domain"],
-                    ClientId = Configuration["Okta:ClientId"],
-                    ClientSecret = Configuration["Okta:ClientSecret"]
+                    options.ClientId = Configuration["Okta:ClientId"];
+                    options.ClientSecret = Configuration["Okta:ClientSecret"];
+                    options.Authority = Configuration["okta:Authority"];
+                    options.CallbackPath = "/authorization-code/callback";
+                    options.ResponseType = "code";
+                    options.SaveTokens = true;
+                    options.UseTokenLifetime = false;
+                    options.GetClaimsFromUserInfoEndpoint = true;
+                    options.Scope.Add("openid");
+                    options.Scope.Add("profile");
+                    options.Scope.Add("email");
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        NameClaimType = "name"
+                    };
                 });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

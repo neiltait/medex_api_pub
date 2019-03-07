@@ -7,6 +7,6 @@ namespace MedicalExaminer.MVCExample.Services
 {
     public interface IAPIService
     {
-        Task<IEnumerable<string>> GetValues();
+        Task<IEnumerable<object>> GetValues(string token);
     }
 }

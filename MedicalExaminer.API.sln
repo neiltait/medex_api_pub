@@ -20,8 +20,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.API.Tests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.MVCExample", "MedicalExaminer.MVCExample\MedicalExaminer.MVCExample.csproj", "{03F4240E-EE2B-4792-943E-49769110EC90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedicalExaminer.MVCExampleSAML", "MedicalExaminer.MVCExampleSAML\MedicalExaminer.MVCExampleSAML.csproj", "{7D6516C2-6627-4182-A804-BDE9BCC4EBCD}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,10 +46,6 @@ Global
 		{03F4240E-EE2B-4792-943E-49769110EC90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03F4240E-EE2B-4792-943E-49769110EC90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03F4240E-EE2B-4792-943E-49769110EC90}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7D6516C2-6627-4182-A804-BDE9BCC4EBCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7D6516C2-6627-4182-A804-BDE9BCC4EBCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7D6516C2-6627-4182-A804-BDE9BCC4EBCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7D6516C2-6627-4182-A804-BDE9BCC4EBCD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
