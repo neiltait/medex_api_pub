@@ -30,6 +30,7 @@ namespace MedicalExaminer.Common
         {
             await EnsureSetupAsync();
 
+            meUser.UserId = Guid.NewGuid().ToString();
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionName);
             var document = await Client.CreateDocumentAsync(documentCollectionUri, meUser);
 

@@ -104,7 +104,7 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var users = await _userPersistence.GetUsersAsync();
+                var users = await _userPersistence.GetMedicalExaminersAsync();
                 return Ok(new GetUsersResponse
                 {
                     Users = users.Select(u => Mapper.Map<UserItem>(u)),
