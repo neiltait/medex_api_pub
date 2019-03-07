@@ -95,6 +95,32 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Get all Users that are of type Medical Examiner.
+        /// </summary>
+        /// <returns>A GetUsersResponse.</returns>
+        [HttpGet("/MedicalExaminers")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<GetUsersResponse>> GetMedicalExaminers()
+        {
+            try
+            {
+                var users = await _userPersistence.GetUsersAsync();
+                return Ok(new GetUsersResponse
+                {
+                    Users = users.Select(u => Mapper.Map<UserItem>(u)),
+                });
+            }
+            catch (DocumentClientException)
+            {
+                return NotFound(new GetUsersResponse());
+            }
+            catch (ArgumentException)
+            {
+                return NotFound(new GetUsersResponse());
+            }
+        }
+
+        /// <summary>
         /// Create a new User.
         /// </summary>
         /// <param name="postUser">The PostUserRequest.</param>
