@@ -40,8 +40,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = new MeUser()
             {
-                //djp
-                //id = expectedUserId,
+                UserId = expectedUserId,
             };
 
             var response = _mapper.Map<UserItem>(examination);
@@ -59,8 +58,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = new MeUser()
             {
-                //djp
-                //UserId = expectedUserId,
+                UserId = expectedUserId,
             };
 
             var response = _mapper.Map<GetUserResponse>(examination);
@@ -78,8 +76,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = new MeUser()
             {
-                //djp
-                //UserId = expectedUserId,
+                UserId = expectedUserId,
             };
 
             var response = _mapper.Map<PutUserResponse>(examination);
@@ -97,8 +94,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = new MeUser()
             {
-                //DJP
-                //UserId = expectedUserId,
+                UserId = expectedUserId,
             };
 
             var response = _mapper.Map<PostUserResponse>(examination);

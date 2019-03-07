@@ -21,8 +21,7 @@ namespace MedicalExaminer.API.Tests.Persistence
                 var u = new MeUser
                 {
                     Email = Internet.Email(),
-                    //DJP
-                    //UserId = "aaaaa" + count,
+                    UserId = "aaaaa" + count,
                     FirstName = Name.First(),
                     LastName = Name.Last(),
                     CreatedAt = DateTime.Now,
@@ -36,8 +35,7 @@ namespace MedicalExaminer.API.Tests.Persistence
         public async Task<MeUser> CreateUserAsync(MeUser meUser)
         {
             var createdUser = meUser;
-            //DJP
-           // createdUser.UserId = "1";
+            createdUser.UserId = "1";
             return await Task.FromResult(createdUser);
         }
 
@@ -61,6 +59,11 @@ namespace MedicalExaminer.API.Tests.Persistence
         }
 
         public async Task<IEnumerable<MeUser>> GetMedicalExaminersAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<MeUser>> GetMedicalExaminerOfficerAsync()
         {
             throw new NotImplementedException();
         }

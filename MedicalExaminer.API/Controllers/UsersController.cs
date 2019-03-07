@@ -95,7 +95,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Get all Users that are of type Medical Examiner.
+        /// Get all Users that are in the role of Medical Examiner.
         /// </summary>
         /// <returns>A GetUsersResponse.</returns>
         [HttpGet("/MedicalExaminers")]
@@ -105,6 +105,32 @@ namespace MedicalExaminer.API.Controllers
             try
             {
                 var users = await _userPersistence.GetMedicalExaminersAsync();
+                return Ok(new GetUsersResponse
+                {
+                    Users = users.Select(u => Mapper.Map<UserItem>(u)),
+                });
+            }
+            catch (DocumentClientException)
+            {
+                return NotFound(new GetUsersResponse());
+            }
+            catch (ArgumentException)
+            {
+                return NotFound(new GetUsersResponse());
+            }
+        }
+
+        /// <summary>
+        /// Get all Users that are in the role of Medical Examiner Officer.
+        /// </summary>
+        /// <returns>A GetUsersResponse.</returns>
+        [HttpGet("/MedicalExaminerOfficers")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<GetUsersResponse>> GetMedicalExaminerOfficers()
+        {
+            try
+            {
+                var users = await _userPersistence.GetMedicalExaminerOfficerAsync();
                 return Ok(new GetUsersResponse
                 {
                     Users = users.Select(u => Mapper.Map<UserItem>(u)),

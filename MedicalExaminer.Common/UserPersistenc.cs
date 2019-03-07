@@ -74,6 +74,18 @@ namespace MedicalExaminer.Common
 
         public async Task<IEnumerable<MeUser>> GetMedicalExaminersAsync()
         {
+            var results = await GetUsersByRole(UserRoles.MedicalExaminer);
+            return results;
+        }
+
+        public async Task<IEnumerable<MeUser>> GetMedicalExaminerOfficerAsync()
+        {
+            var results = await GetUsersByRole(UserRoles.MedicalExaminerOfficer);
+            return results;
+        }
+
+        private async Task<IEnumerable<MeUser>> GetUsersByRole(UserRoles userRole)
+        {
             await EnsureSetupAsync();
 
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, "Users");
@@ -87,7 +99,8 @@ namespace MedicalExaminer.Common
             var results = new List<MeUser>();
             while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<MeUser>());
 
-            var resultsFiltered = results.FindAll(r => r.UserRole == UserRoles.MedicalExaminer);
+            //Filter results to required type
+            var resultsFiltered = results.FindAll(r => r.UserRole == userRole);
 
             return resultsFiltered;
         }

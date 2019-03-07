@@ -11,5 +11,6 @@ namespace MedicalExaminer.Common
         Task<MeUser> GetUserAsync(string UserId);
         Task<IEnumerable<MeUser>> GetUsersAsync();
         Task<IEnumerable<MeUser>> GetMedicalExaminersAsync();
+        Task<IEnumerable<MeUser>> GetMedicalExaminerOfficerAsync();
     }
 }
