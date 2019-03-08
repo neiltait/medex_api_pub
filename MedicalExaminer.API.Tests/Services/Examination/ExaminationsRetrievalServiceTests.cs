@@ -18,20 +18,20 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public void NoExaminationsFoundReturnsNull()
         {
-            IEnumerable<IExamination> examinations = null;
+            IEnumerable<MedicalExaminer.Models.Examination> examinations = null;
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var query = new Mock<ExaminationsRetrivalQuery>().Object;
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.QueryAsync<IExamination>(connectionSettings.Object, query.QueryString))
+            dbAccess.Setup(db => db.QueryAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object, query.QueryString))
                 .Returns(Task.FromResult(examinations)).Verifiable();
             var sut = new ExaminationsRetrivalService(dbAccess.Object, connectionSettings.Object);
-            var expected = default(IEnumerable<IExamination>);
+            var expected = default(IEnumerable<MedicalExaminer.Models.Examination>);
 
             // Act
             var result = sut.Handle(query);
 
             // Assert
-            dbAccess.Verify(db => db.QueryAsync<IExamination>(connectionSettings.Object, query.QueryString), Times.Once);
+            dbAccess.Verify(db => db.QueryAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object, query.QueryString), Times.Once);
             Assert.Equal(expected, result.Result);
         }
 
@@ -51,14 +51,13 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public void ExaminationsFoundReturnsResult()
         {
-            var examination1 = new Mock<IExamination>().Object;
-            var examination2 = new Mock<IExamination>().Object;
-
-            IEnumerable<IExamination> examinations = new List<IExamination>{examination1, examination2};
+            var examination1 = new MedicalExaminer.Models.Examination();
+            var examination2 = new MedicalExaminer.Models.Examination();
+            IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>{examination1, examination2};
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var query = new Mock<ExaminationsRetrivalQuery>().Object;
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.QueryAsync<IExamination>(connectionSettings.Object, query.QueryString))
+            dbAccess.Setup(db => db.QueryAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object, query.QueryString))
                 .Returns(Task.FromResult(examinations)).Verifiable();
             var sut = new ExaminationsRetrivalService(dbAccess.Object, connectionSettings.Object);
             var expected = examinations;
@@ -67,7 +66,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var result = sut.Handle(query);
 
             // Assert
-            dbAccess.Verify(db => db.QueryAsync<IExamination>(connectionSettings.Object, query.QueryString), Times.Once);
+            dbAccess.Verify(db => db.QueryAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object, query.QueryString), Times.Once);
             Assert.Equal(expected, result.Result);
         }
     }
