@@ -65,6 +65,56 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         /// <summary>
+        /// Test returning an empty list of Medical Examiner Officers
+        /// </summary>
+        /// <returns>Async Task</returns>
+        [Fact]
+        public async Task TestGetMedicalExaminerOfficerEmptyResponse()
+        {
+            // Arrange
+            _userPersistence.Setup(up => up.GetMedicalExaminerOfficerAsync())
+                .Returns(Task.FromResult<IEnumerable<MeUser>>(new List<MeUser>()));
+
+            // Act
+            var response = await Controller.GetMedicalExaminerOfficers();
+
+            // Assert
+            response.Result.Should().BeAssignableTo<OkObjectResult>();
+            var result = (OkObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetUsersResponse>();
+            var model = (GetUsersResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.Users.Count().Should().Be(0);
+        }
+
+        /// <summary>
+        /// Test returning an empty list of Medical Examiners
+        /// </summary>
+        /// <returns>Async Task</returns>
+        [Fact]
+        public async Task TestGetMedicalExaminersEmptyResponse()
+        {
+            // Arrange
+            _userPersistence.Setup(up => up.GetMedicalExaminersAsync())
+                .Returns(Task.FromResult<IEnumerable<MeUser>>(new List<MeUser>()));
+
+            // Act
+            var response = await Controller.GetMedicalExaminers();
+
+            // Assert
+            response.Result.Should().BeAssignableTo<OkObjectResult>();
+            var result = (OkObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetUsersResponse>();
+            var model = (GetUsersResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.Users.Count().Should().Be(0);
+        }
+
+        /// <summary>
         /// Test get a list of users
         /// </summary>
         /// <returns>Async Task</returns>
@@ -79,6 +129,62 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Act
             var response = await Controller.GetUsers();
+
+            // Assert
+            response.Result.Should().BeAssignableTo<OkObjectResult>();
+            var result = (OkObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetUsersResponse>();
+            var model = (GetUsersResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.Users.Count().Should().Be(1);
+            model.Users.First().UserId.Should().Be(expectedUserId);
+        }
+
+        /// <summary>
+        /// Test get a list of Medical Examiner Officers
+        /// </summary>
+        /// <returns>Async Task</returns>
+        [Fact]
+        public async Task TestGetMedicalExaminerOfficersOkResponse()
+        {
+            // Arrange
+            const string expectedUserId = "expectedUserId";
+
+            _userPersistence.Setup(up => up.GetMedicalExaminerOfficerAsync()).Returns(Task.FromResult<IEnumerable<MeUser>>(
+                new List<MeUser> { new MeUser { UserId = expectedUserId } }));
+
+            // Act
+            var response = await Controller.GetMedicalExaminerOfficers();
+
+            // Assert
+            response.Result.Should().BeAssignableTo<OkObjectResult>();
+            var result = (OkObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetUsersResponse>();
+            var model = (GetUsersResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.Users.Count().Should().Be(1);
+            model.Users.First().UserId.Should().Be(expectedUserId);
+        }
+
+        /// <summary>
+        /// Test get a list of Medical Examiner Officers
+        /// </summary>
+        /// <returns>Async Task</returns>
+        [Fact]
+        public async Task TestGetMedicalExaminersOkResponse()
+        {
+            // Arrange
+            const string expectedUserId = "expectedUserId";
+
+            _userPersistence.Setup(up => up.GetMedicalExaminersAsync()).Returns(Task.FromResult<IEnumerable<MeUser>>(
+                new List<MeUser> { new MeUser { UserId = expectedUserId } }));
+
+            // Act
+            var response = await Controller.GetMedicalExaminers();
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
@@ -118,6 +224,56 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         /// <summary>
+        /// Test a document client exception being thrown when getting Medical Examiner Officers.
+        /// </summary>
+        /// <returns>Async Task</returns>
+        [Fact]
+        public async Task TestGetMedicalExaminerOfficerDocumentClientException()
+        {
+            // Arrange
+            _userPersistence.Setup(up => up.GetMedicalExaminerOfficerAsync())
+                .Throws(CreateDocumentClientExceptionForTesting());
+
+            // Act
+            var response = await Controller.GetMedicalExaminerOfficers();
+
+            // Assert
+            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
+            var result = (NotFoundObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetUsersResponse>();
+            var model = (GetUsersResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.Users.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Test a document client exception being thrown when getting Medical Examiners.
+        /// </summary>
+        /// <returns>Async Task</returns>
+        [Fact]
+        public async Task TestGetMedicalExaminersDocumentClientException()
+        {
+            // Arrange
+            _userPersistence.Setup(up => up.GetMedicalExaminersAsync())
+                .Throws(CreateDocumentClientExceptionForTesting());
+
+            // Act
+            var response = await Controller.GetMedicalExaminers();
+
+            // Assert
+            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
+            var result = (NotFoundObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetUsersResponse>();
+            var model = (GetUsersResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.Users.Should().BeNull();
+        }
+
+        /// <summary>
         /// Test an <see cref="ArgumentException"/> being thrown when getting users.
         /// </summary>
         /// <returns>Async Task</returns>
@@ -130,6 +286,56 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Act
             var response = await Controller.GetUsers();
+
+            // Assert
+            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
+            var result = (NotFoundObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetUsersResponse>();
+            var model = (GetUsersResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.Users.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Test an <see cref="ArgumentException"/> being thrown when getting Medical Examiner Officers.
+        /// </summary>
+        /// <returns>Async Task</returns>
+        [Fact]
+        public async Task TestGetMedicalExaminerOfficerArgumentException()
+        {
+            // Arrange
+            _userPersistence.Setup(up => up.GetMedicalExaminerOfficerAsync())
+                .Throws<ArgumentException>();
+
+            // Act
+            var response = await Controller.GetMedicalExaminerOfficers();
+
+            // Assert
+            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
+            var result = (NotFoundObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetUsersResponse>();
+            var model = (GetUsersResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.Users.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Test an <see cref="ArgumentException"/> being thrown when getting Medical Examiners
+        /// </summary>
+        /// <returns>Async Task</returns>
+        [Fact]
+        public async Task TestGetMedicalExaminersArgumentException()
+        {
+            // Arrange
+            _userPersistence.Setup(up => up.GetMedicalExaminersAsync())
+                .Throws<ArgumentException>();
+
+            // Act
+            var response = await Controller.GetMedicalExaminers();
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
