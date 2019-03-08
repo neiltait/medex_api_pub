@@ -31,7 +31,7 @@ namespace MedicalExaminer.API.Models.v1.Users
         /// <summary>
         /// The User's Id
         /// </summary>
-        public string id { get; set; }
+        //public string id { get; set; }
 
         /// <summary>
         /// The User's role
