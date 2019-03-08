@@ -10,7 +10,14 @@ using MedicalExaminer.API.Helpers;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
 using MedicalExaminer.Common;
+using MedicalExaminer.Common.ConnectionSettings;
+using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries;
+using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Common.Services.Examination;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -100,13 +107,23 @@ namespace MedicalExaminer.API
             });
 
             services.AddScoped<IMELogger, MELogger>();
-
-            services.AddScoped<ControllerActionFilter>();
-            services.AddScoped<IExaminationPersistence>(s => new ExaminationPersistence(
+            services.AddScoped<IDatabaseAccess, DatabaseAccess>();
+            services.AddScoped<ILocationConnectionSettings>(s => new LocationConnectionSettings(
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
 
+            services.AddScoped<IExaminationConnectionSettings>(s => new ExaminationConnectionSettings(
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]));
+
+            services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, string>, CreateExaminationService>();
+            services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
+            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
+
+            services.AddScoped<ControllerActionFilter>();
+            
             services.AddScoped<ILocationPersistence>(s => new LocationPersistence(
                  new Uri(Configuration["CosmosDB:URL"]),
                  Configuration["CosmosDB:PrimaryKey"],
@@ -126,6 +143,8 @@ namespace MedicalExaminer.API
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
+
+            
         }
 
         /// <summary>
