@@ -17,22 +17,23 @@ namespace MedicalExaminer.Common.Services.Examination
             _connectionSettings = connectionSettings;
         }
 
-        public async Task<string> Handle(CreateExaminationQuery param)
+        public Task<string> Handle(CreateExaminationQuery param)
         {
-            using (var conn = _databaseAccess.CreateClient(_connectionSettings))
+            if (param == null)
             {
+                throw new ArgumentNullException(nameof(param));
+            }
                 try
                 {
                     param.Examination.Id = Guid.NewGuid().ToString();
-                    return await _databaseAccess.Create(_connectionSettings, param.Examination);
-
+                    var result = _databaseAccess.Create(_connectionSettings, param.Examination);
+                    return result;
                 }
                 catch (Exception e)
                 {
                     //_logger.Log("Failed to retrieve examination data", e);
                     throw;
                 }
-            }
         }
     }
 }
