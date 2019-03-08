@@ -24,6 +24,11 @@ namespace MedicalExaminer.Common.Database
             IConnectionSettings connectionSettings,
             string queryString);
 
-       
+        Task<T> QueryAsyncOne<T>(
+            IConnectionSettings connectionSettings, 
+            string queryString, 
+            object param = null);
+
+
     }
 }

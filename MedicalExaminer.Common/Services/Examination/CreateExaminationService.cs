@@ -26,6 +26,11 @@ namespace MedicalExaminer.Common.Services.Examination
                 try
                 {
                     param.Examination.Id = Guid.NewGuid().ToString();
+                    param.Examination.PatientDetails = new Models.PatientDetails()
+                    {
+                        GivenNames = param.Examination.GivenNames,
+                        Surname = param.Examination.Surname
+                    };
                     var result = _databaseAccess.Create(_connectionSettings, param.Examination);
                     return result;
                 }
