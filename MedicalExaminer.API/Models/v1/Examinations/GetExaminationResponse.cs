@@ -9,9 +9,11 @@ namespace MedicalExaminer.API.Models.v1.Examinations
     /// </summary>
     public class GetExaminationResponse : ResponseBase
     {
-        public string ExaminationId { get; set; }
+        public string Id { get; set; }
 
-        public string FullName { get; set; }
+        public string GivenNames { get; set; }
+
+        public string Surname { get; set; }
 
         public string NHSNumber { get; set; }
 
@@ -64,5 +66,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public bool Completed { get; set; }
 
         public CoronerStatus CoronerStatus { get; set; }
+        public TimeSpan? TimeOfDeath { get; set; }
+
     }
 }

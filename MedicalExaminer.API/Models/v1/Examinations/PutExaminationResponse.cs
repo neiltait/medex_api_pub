@@ -1,9 +1,9 @@
-﻿using MedicalExaminer.Models;
+﻿using System;
 
 namespace MedicalExaminer.API.Models.v1.Examinations
 {
     public class PutExaminationResponse : ResponseBase
     {
-        public Link ExaminationLink { get; set; }
+        public string ExaminationId { get; set; }
     }
 }

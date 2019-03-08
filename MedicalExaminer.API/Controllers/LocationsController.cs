@@ -45,6 +45,7 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationsResponse>> GetLocations()
         {
+            
             var locations = await _locationPersistence.GetLocationsAsync();
             return Ok(new GetLocationsResponse()
             {
@@ -57,7 +58,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="locationId">The Location Id.</param>
         /// <returns>A GetLocationsResponse.</returns>
-        [HttpGet("/id/{locationId}")]
+        [HttpGet("/Id/{locationId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationResponse>> GetLocation(string locationId)
         {

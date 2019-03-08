@@ -140,7 +140,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="putPermission">The PutPermissionRequest.</param>
         /// <returns>A PutPermissionResponse.</returns>
-        [HttpPut("{id}")]
+        [HttpPut("{Id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutPermissionResponse>> UpdatePermission([FromBody] PutPermissionRequest putPermission)
         {

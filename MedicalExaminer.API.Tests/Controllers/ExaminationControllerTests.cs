@@ -1,12 +1,18 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Examinations;
-using MedicalExaminer.API.Tests.Persistence;
-using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
@@ -16,9 +22,12 @@ namespace MedicalExaminer.API.Tests.Controllers
         public ExaminationControllerTests()
         {
             // Arrange
-            IExaminationPersistence examinationPersistence = new ExaminationPersistenceFake();
+            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, IExamination>>();
+            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<IExamination>>>();
             var mockLogger = new MELoggerMocker();
-            Controller = new ExaminationsController(examinationPersistence, mockLogger, Mapper);
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            //Controller = new ExaminationsController(mockLogger, Mapper, createExaminationService.Object,
+            //    examinationRetrivalQuery.Object, examinationsRetrivalQuery.Object);
         }
 
         [Fact]
@@ -42,7 +51,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<Task<ActionResult<GetExaminationResponse>>>().Subject;
             var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             var examination = okResult.Value.Should().BeAssignableTo<GetExaminationResponse>().Subject;
-            Assert.Equal("aaaaa", examination.ExaminationId);
+            Assert.Equal("aaaaa", examination.Id);
         }
 
         [Fact]
@@ -57,6 +66,91 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationResponse = okResult.Value.Should().BeAssignableTo<GetExaminationsResponse>().Subject;
             var examinations = examinationResponse.Examinations;
             Assert.Equal(3, examinations.Count());
+        }
+
+        [Fact]
+        public void TestCreateCaseValidationFailure()
+        {
+            // Arrange
+            var examination = CreateValidExamination();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, IExamination>>();
+            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<IExamination>>>();
+            var examinationId = Guid.NewGuid();
+            
+            //persistence.Setup(p => p.CreateExaminationAsync(examination)).Returns(Task.FromResult(examinationId)).Verifiable();
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            mapper.Setup(m => m.Map<Examination>(It.IsAny<PostNewCaseRequest>())).Returns(examination);
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object, examinationRetrivalQuery.Object
+                , examinationsRetrivalQuery.Object);
+            sut.ModelState.AddModelError("test", "test");
+
+            // Act
+            var response = sut.CreateNewCase(CreateValidNewCaseRequest()).Result;
+
+            // Assert
+            response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
+            var result = (BadRequestObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<PutExaminationResponse>();
+            var model = (PutExaminationResponse)result.Value;
+            model.Errors.Count.Should().Be(1);
+            model.Success.Should().BeFalse();
+            //persistence.Verify(p => p.CreateExaminationAsync(examination), Times.Never);
+        }
+
+        [Fact]
+        public void ValidModelStateReturnsOkResponse()
+        {
+            // Arrange
+            var examination = CreateValidExamination();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, IExamination>>();
+            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<IExamination>>>();
+            var examinationId = Guid.NewGuid();
+
+            //var persistence = new Mock<IExaminationPersistence>();
+            //persistence.Setup(p => p.CreateExaminationAsync(examination)).Returns(Task.FromResult(examinationId)).Verifiable();
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            mapper.Setup(m => m.Map<Examination>(It.IsAny<PostNewCaseRequest>())).Returns(examination);
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object, 
+                examinationRetrivalQuery.Object, examinationsRetrivalQuery.Object);
+
+            // Act
+            var response = sut.CreateNewCase(CreateValidNewCaseRequest()).Result;
+
+            // Assert
+            response.Result.Should().BeAssignableTo<OkObjectResult>();
+            var result = (OkObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<PutExaminationResponse>();
+            var model = (PutExaminationResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+            //persistence.Verify(p => p.CreateExaminationAsync(examination), Times.Exactly(1));
+        }
+
+        private PostNewCaseRequest CreateValidNewCaseRequest()
+        {
+            return new PostNewCaseRequest()
+            {
+                GivenNames = "A",
+                Surname = "Patient",
+                Gender = ExaminationGender.Male,
+                MedicalExaminerOfficeResponsible = "7"
+            };
+        }
+
+        private Examination CreateValidExamination()
+        {
+            var examination = new Examination()
+            {
+                Gender = ExaminationGender.Male,
+                Surname = "Patient",
+                GivenNames = "Barry",
+                
+            };
+            return examination;
         }
     }
 }

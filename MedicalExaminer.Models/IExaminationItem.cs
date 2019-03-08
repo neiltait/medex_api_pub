@@ -8,7 +8,7 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Examination Id
         /// </summary>
-        string ExaminationId { get; set; }
+        string Id { get; set; }
 
         /// <summary>
         ///  Where the death occured

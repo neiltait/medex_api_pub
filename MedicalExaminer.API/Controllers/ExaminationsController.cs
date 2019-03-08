@@ -1,10 +1,15 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries;
+using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,11 +26,9 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class ExaminationsController : BaseController
     {
-        /// <summary>
-        /// The examination persistance layer.
-        /// </summary>
-        private readonly IExaminationPersistence _examinationPersistence;
-
+        private readonly IAsyncQueryHandler<CreateExaminationQuery, string> _examinationCreationService;
+        private readonly IAsyncQueryHandler<ExaminationRetrivalQuery, IExamination> _examinationRetrivalService;
+        private readonly IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<IExamination>> _examinationsRetrivalService;
         //private readonly IValidator<ExaminationItem> _examinationValidator;
         /// <summary>
         /// Initialise a new instance of the Examiantions Controller.
@@ -33,10 +36,20 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationPersistence">The Examination Persistance.</param>
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
-        public ExaminationsController(IExaminationPersistence examinationPersistence, IMELogger logger, IMapper mapper)
+        /// <param name="examinationCreationService"></param>
+        /// <param name="examinationRetrivalService"></param>
+        /// <param name="examinationsRetrivalService"></param>
+        public ExaminationsController(
+            IMELogger logger,
+            IMapper mapper,
+            IAsyncQueryHandler<CreateExaminationQuery, string> examinationCreationService,
+            IAsyncQueryHandler<ExaminationRetrivalQuery, IExamination> examinationRetrivalService,
+            IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<IExamination>> examinationsRetrivalService)
             : base(logger, mapper)
         {
-            _examinationPersistence = examinationPersistence;
+            _examinationCreationService = examinationCreationService;
+            _examinationRetrivalService = examinationRetrivalService;
+            _examinationsRetrivalService = examinationsRetrivalService;
         }
 
     /// <summary>
@@ -47,10 +60,10 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetExaminationsResponse>> GetExaminations()
         {
-            var examinations = await _examinationPersistence.GetExaminationsAsync();
+            var ex = await _examinationsRetrivalService.Handle(new ExaminationsRetrivalQuery());
             return Ok(new GetExaminationsResponse()
             {
-                Examinations = examinations.Select(e => Mapper.Map<ExaminationItem>(e)).ToList(),
+                Examinations = ex.Select(e => Mapper.Map<ExaminationItem>(e)).ToList()
             });
         }
 
@@ -63,16 +76,13 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetExaminationResponse>> GetExamination(string examinationId)
         {
-            try
-            {
-                var examination = await _examinationPersistence.GetExaminationAsync(examinationId);
-                var response = Mapper.Map<GetExaminationResponse>(examination);
-                return Ok(response);
-            }
-            catch (DocumentClientException)
-            {
-                return NotFound();
-            }
+                var result = await _examinationRetrivalService.Handle(new ExaminationRetrivalQuery(examinationId));
+                if (result == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(Mapper.Map<GetExaminationResponse>(result));
         }
 
         /// <summary>
@@ -85,22 +95,20 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutExaminationResponse>> CreateNewCase([FromBody]PostNewCaseRequest postNewCaseRequest)
         {
-            var examinationItem = Mapper.Map<ExaminationItem>(postNewCaseRequest);
-            //var validationResult = await _examinationValidator.ValidateAsync(examinationItem);
-            var res = new PutExaminationResponse();
-            //if (validationResult.Any())
-            //{
-            //    res.AddValidationErrors(validationResult);
-            //}
-            //else
-            //{
-                var examination = Mapper.Map<Examination>(examinationItem);
-                var documentId = await _examinationPersistence.CreateExaminationAsync(examination);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutExaminationResponse());
+            }
 
-                res.ExaminationLink = new Link("examination", $"/examination/{documentId}");
-                    //}
+            var examination = Mapper.Map<Examination>(postNewCaseRequest);
+            
+            var result = _examinationCreationService.Handle(new CreateExaminationQuery(examination));
+            var res = new PutExaminationResponse()
+            {
+                ExaminationId = result.Result
+            };
 
-            return Ok(Mapper.Map<PutExaminationResponse>(res));
+            return Ok(res);
         }
     }
 }
