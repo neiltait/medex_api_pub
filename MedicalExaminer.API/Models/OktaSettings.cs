@@ -8,7 +8,7 @@
         /// <summary>
         /// The Authority.
         /// </summary>
-        /// <remarks>Must be same as one issuing tokens</remarks>
+        /// <remarks>Must be same as one issuing tokens.</remarks>
         public string Authority { get; set; }
 
         /// <summary>
