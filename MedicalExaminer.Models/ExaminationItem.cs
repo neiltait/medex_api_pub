@@ -12,18 +12,20 @@ namespace MedicalExaminer.Models
         /// </summary>
         [Required]
         [DataType(DataType.Text)]
-        [JsonProperty(PropertyName = "examination_id")]
-        public string ExaminationId { get; set; }
+        [JsonProperty(PropertyName = "Id")]
+        public string Id { get; set; }
 
         /// <summary>
         ///  Where the death occured
         /// </summary>
+        [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "place_death_occured")]
         public string PlaceDeathOccured { get; set; }
 
         /// <summary>
         /// Medical Examiner Office Responsible for dealing with the examination
         /// </summary>
+        [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "medical_examiner_office_responsible")]
         public string MedicalExaminerOfficeResponsible { get; set; }
 
