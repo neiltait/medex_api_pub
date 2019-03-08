@@ -1,4 +1,6 @@
-﻿using MedicalExaminer.Models.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using MedicalExaminer.API.Attributes;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.PatientDetails
 {
@@ -7,11 +9,13 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         /// Patients Postcode
         /// </summary>
+        [Required]
         public string PostCode { get; set; }
 
         /// <summary>
         /// First line of patients addess
         /// </summary>
+        [Required]
         public string AddressLine1 { get; set; }
 
         /// <summary>
@@ -22,16 +26,19 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         /// Patients town or city
         /// </summary>
+        [Required]
         public string AddressCity { get; set; }
 
         /// <summary>
         /// Patients county
         /// </summary>
+        [Required]
         public string County { get; set; }
 
         /// <summary>
         /// Patients country
         /// </summary>
+        [Required]
         public string Country { get; set; }
 
         /// <summary>
@@ -47,6 +54,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         /// Patients funeral arrangements
         /// </summary>
+        [Required]
         public ModeOfDisposal FuneralArrangements { get; set; }
 
         /// <summary>
@@ -57,6 +65,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         /// Free text for the implant details
         /// </summary>
+        [RequiredIf(nameof(AnyImplants), true)]
         public string ImplantDetails { get; set; }
 
         /// <summary>

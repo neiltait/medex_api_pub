@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
@@ -26,8 +27,8 @@ namespace MedicalExaminer.Common.Database
 
         public async Task<string> Create<T>(IConnectionSettings connectionSettings, T document)
         {
-            var clientX = CreateClient(connectionSettings);
-            var response = await clientX.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection), document);
+            var client = CreateClient(connectionSettings);
+            var response = await client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection), document);
             if (response.StatusCode != HttpStatusCode.Created)
             {
                 return null;
@@ -78,6 +79,20 @@ namespace MedicalExaminer.Common.Database
             var results = new List<T>();
             while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<T>());
             return results;
+        }
+
+        public async Task<T> QueryAsyncOne<T>(IConnectionSettings connectionSettings, string queryString, object param = null)
+        {
+            var Client = CreateClient(connectionSettings);
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection);
+
+            var feedOptions = new FeedOptions { MaxItemCount = -1 };
+            var query = Client.CreateDocumentQuery<T>(documentCollectionUri, queryString,
+                feedOptions);
+            var queryAll = query.AsDocumentQuery();
+            var results = new List<T>();
+            while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<T>());
+            return results.FirstOrDefault();
         }
     }
 }

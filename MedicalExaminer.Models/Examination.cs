@@ -37,13 +37,16 @@ namespace MedicalExaminer.Models
         string PriorityDetails { get; set; }
         bool Completed { get; set; }
         CoronerStatus CoronerStatus { get; set; }
+
+        PatientDetails PatientDetails { get; set; }
     }
 
     public class Examination : Record, IExamination
     {
         // Linked Fields 
-
-
+        [DataType(DataType.Custom)]
+        [JsonProperty(PropertyName = "patient_details")]
+        public PatientDetails PatientDetails { get; set; }
         [Required]
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "id")]

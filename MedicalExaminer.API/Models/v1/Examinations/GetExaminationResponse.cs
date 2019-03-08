@@ -98,5 +98,6 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public string PriorityDetails { get; set; }
         public bool Completed { get; set; }
         public CoronerStatus CoronerStatus { get; set; }
+        public MedicalExaminer.Models.PatientDetails PatientDetails { get; set; }
     }
 }
