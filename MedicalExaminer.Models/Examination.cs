@@ -37,7 +37,7 @@ namespace MedicalExaminer.Models
         string PriorityDetails { get; set; }
         bool Completed { get; set; }
         CoronerStatus CoronerStatus { get; set; }
-        ClinicalProfessional ResponsibleConsultant { get; set; }
+        MedicalTeam MedicalTeam { get; set; }
     }
 
     public class Examination : Record, IExamination
@@ -172,8 +172,8 @@ namespace MedicalExaminer.Models
 
         [Required]
         [DataType(DataType.Custom)]
-        [JsonProperty(PropertyName = "responsible_consultant")]
-        public ClinicalProfessional ResponsibleConsultant { get; set; }
+        [JsonProperty(PropertyName = "medical_team")]
+        public MedicalTeam MedicalTeam { get; set; }
 
         // Flags that effect priority 
         [Required]
