@@ -65,10 +65,7 @@ namespace MedicalExaminer.API.Tests.Persistence
             return await Task.FromResult(_examinations);
         }
 
-
-        //DJP
-        //public Task<Guid> CreateExaminationAsync(Examination examinationItem)
-        public Task<string> CreateExaminationAsync(Examination examinationItem)
+        public Task<Guid> CreateExaminationAsync(Examination examinationItem)
         {
             throw new NotImplementedException();
         }

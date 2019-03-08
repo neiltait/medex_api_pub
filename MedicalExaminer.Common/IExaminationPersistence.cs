@@ -10,10 +10,6 @@ namespace MedicalExaminer.Common
         Task<bool> SaveExaminationAsync(Examination examination);
         Task<Examination> GetExaminationAsync(string examinationId);
         Task<IEnumerable<Examination>> GetExaminationsAsync();
-
-
-        //DJP
-        //Task<Guid> CreateExaminationAsync(Examination examinationItem);
-        Task<string> CreateExaminationAsync(Examination examinationItem);
+        Task<Guid> CreateExaminationAsync(Examination examinationItem);
     }
 }
