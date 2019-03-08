@@ -20,11 +20,11 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             IEnumerable<MedicalExaminer.Models.Examination> examinations = null;
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var query = new Mock<ExaminationsRetrivalQuery>().Object;
+            var query = new Mock<ExaminationsRetrievalQuery>().Object;
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.QueryAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object, query.QueryString))
                 .Returns(Task.FromResult(examinations)).Verifiable();
-            var sut = new ExaminationsRetrivalService(dbAccess.Object, connectionSettings.Object);
+            var sut = new ExaminationsRetrievalService(dbAccess.Object, connectionSettings.Object);
             var expected = default(IEnumerable<MedicalExaminer.Models.Examination>);
 
             // Act
@@ -40,9 +40,9 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             // Arrange
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            ExaminationsRetrivalQuery query = null;
+            ExaminationsRetrievalQuery query = null;
             var dbAccess = new Mock<IDatabaseAccess>();
-            var sut = new ExaminationsRetrivalService(dbAccess.Object, connectionSettings.Object);
+            var sut = new ExaminationsRetrievalService(dbAccess.Object, connectionSettings.Object);
 
             Action act = () => sut.Handle(query);
             act.Should().Throw<ArgumentNullException>();
@@ -55,11 +55,11 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examination2 = new MedicalExaminer.Models.Examination();
             IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>{examination1, examination2};
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var query = new Mock<ExaminationsRetrivalQuery>().Object;
+            var query = new Mock<ExaminationsRetrievalQuery>().Object;
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.QueryAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object, query.QueryString))
                 .Returns(Task.FromResult(examinations)).Verifiable();
-            var sut = new ExaminationsRetrivalService(dbAccess.Object, connectionSettings.Object);
+            var sut = new ExaminationsRetrievalService(dbAccess.Object, connectionSettings.Object);
             var expected = examinations;
 
             // Act

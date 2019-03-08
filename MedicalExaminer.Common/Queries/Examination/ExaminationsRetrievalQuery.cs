@@ -2,9 +2,9 @@
 
 namespace MedicalExaminer.Common.Queries.Examination
 {
-    public class ExaminationsRetrivalQuery : IQuery<IEnumerable<Models.Examination>>
+    public class ExaminationsRetrievalQuery : IQuery<IEnumerable<Models.Examination>>
     {
-        public ExaminationsRetrivalQuery()
+        public ExaminationsRetrievalQuery()
         {
             QueryString = "SELECT* FROM Examinations";
         }

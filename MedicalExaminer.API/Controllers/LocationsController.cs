@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
-using MedicalExaminer.Models.Enums;
 using MedicalExaminer.Models.V1.Locations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
@@ -58,7 +56,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="locationId">The Location Id.</param>
         /// <returns>A GetLocationsResponse.</returns>
-        [HttpGet("/Id/{locationId}")]
+        [HttpGet("/{locationId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationResponse>> GetLocation(string locationId)
         {

@@ -6,7 +6,7 @@ using MedicalExaminer.Common.Queries.Location;
 
 namespace MedicalExaminer.Common.Services.Location
 {
-    public class LocationIdService : IAsyncQueryHandler<LocationRetrivalByIdQuery, Models.Location>
+    public class LocationIdService : IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location>
     {
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
@@ -15,7 +15,7 @@ namespace MedicalExaminer.Common.Services.Location
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
         }
-        public Task<Models.Location> Handle(LocationRetrivalByIdQuery param)
+        public Task<Models.Location> Handle(LocationRetrievalByIdQuery param)
         {
             if (param == null)
             {

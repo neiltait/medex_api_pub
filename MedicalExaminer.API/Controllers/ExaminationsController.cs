@@ -27,8 +27,8 @@ namespace MedicalExaminer.API.Controllers
     public class ExaminationsController : BaseController
     {
         private readonly IAsyncQueryHandler<CreateExaminationQuery, string> _examinationCreationService;
-        private readonly IAsyncQueryHandler<ExaminationRetrivalQuery, Examination> _examinationRetrivalService;
-        private readonly IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<Examination>> _examinationsRetrivalService;
+        private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
+        private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
         //private readonly IValidator<ExaminationItem> _examinationValidator;
         /// <summary>
         /// Initialise a new instance of the Examiantions Controller.
@@ -37,19 +37,19 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
         /// <param name="examinationCreationService"></param>
-        /// <param name="examinationRetrivalService"></param>
-        /// <param name="examinationsRetrivalService"></param>
+        /// <param name="examinationRetrievalService"></param>
+        /// <param name="examinationsRetrievalService"></param>
         public ExaminationsController(
             IMELogger logger,
             IMapper mapper,
             IAsyncQueryHandler<CreateExaminationQuery, string> examinationCreationService,
-            IAsyncQueryHandler<ExaminationRetrivalQuery, Examination> examinationRetrivalService,
-            IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<Examination>> examinationsRetrivalService)
+            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
+            IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService)
             : base(logger, mapper)
         {
             _examinationCreationService = examinationCreationService;
-            _examinationRetrivalService = examinationRetrivalService;
-            _examinationsRetrivalService = examinationsRetrivalService;
+            _examinationRetrievalService = examinationRetrievalService;
+            _examinationsRetrievalService = examinationsRetrievalService;
         }
 
     /// <summary>
@@ -60,7 +60,7 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetExaminationsResponse>> GetExaminations()
         {
-            var ex = await _examinationsRetrivalService.Handle(new ExaminationsRetrivalQuery());
+            var ex = await _examinationsRetrievalService.Handle(new ExaminationsRetrievalQuery());
             return Ok(new GetExaminationsResponse()
             {
                 Examinations = ex.Select(e => Mapper.Map<ExaminationItem>(e)).ToList()
@@ -76,7 +76,7 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetExaminationResponse>> GetExamination(string examinationId)
         {
-                Examination result = await _examinationRetrivalService.Handle(new ExaminationRetrivalQuery(examinationId));
+                Examination result = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
                 if (result == null)
                 {
                     return NotFound();

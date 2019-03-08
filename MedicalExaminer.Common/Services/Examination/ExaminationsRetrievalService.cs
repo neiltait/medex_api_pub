@@ -8,16 +8,16 @@ using MedicalExaminer.Common.Queries.Examination;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
-    public class ExaminationsRetrivalService : IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<Models.Examination>>
+    public class ExaminationsRetrievalService : IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Models.Examination>>
     {
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
-        public ExaminationsRetrivalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
+        public ExaminationsRetrievalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
         }
-        public Task<IEnumerable<Models.Examination>> Handle(ExaminationsRetrivalQuery param)
+        public Task<IEnumerable<Models.Examination>> Handle(ExaminationsRetrievalQuery param)
         {
             if (param == null)
             {

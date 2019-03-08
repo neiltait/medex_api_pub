@@ -18,7 +18,7 @@ namespace MedicalExaminer.API.Tests.Services.Location
             // Arrange
             var locationId = "a";
             var connectionSettings = new Mock<ILocationConnectionSettings>();
-            var query = new Mock<LocationRetrivalByIdQuery>(locationId);
+            var query = new Mock<LocationRetrievalByIdQuery>(locationId);
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.QuerySingleAsync<MedicalExaminer.Models.Location>(connectionSettings.Object, "a"))
                 .Returns(Task.FromResult<MedicalExaminer.Models.Location>(null)).Verifiable();
@@ -40,7 +40,7 @@ namespace MedicalExaminer.API.Tests.Services.Location
         {
             // Arrange
             var connectionSettings = new Mock<ILocationConnectionSettings>();
-            LocationRetrivalByIdQuery query = null;
+            LocationRetrievalByIdQuery query = null;
             var dbAccess = new Mock<IDatabaseAccess>();
             var sut = new LocationIdService(dbAccess.Object, connectionSettings.Object);
 
@@ -56,7 +56,7 @@ namespace MedicalExaminer.API.Tests.Services.Location
             var locationId = "a";
             var location = new Mock<MedicalExaminer.Models.Location>();
             var connectionSettings = new Mock<ILocationConnectionSettings>();
-            var query = new Mock<LocationRetrivalByIdQuery>(locationId);
+            var query = new Mock<LocationRetrievalByIdQuery>(locationId);
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.QuerySingleAsync<MedicalExaminer.Models.Location>(connectionSettings.Object, "a"))
                 .Returns(Task.FromResult(location.Object)).Verifiable();
