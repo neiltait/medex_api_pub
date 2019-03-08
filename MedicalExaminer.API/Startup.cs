@@ -188,7 +188,9 @@ namespace MedicalExaminer.API
                     options.Authority = oktaSettings.Authority;
                     options.Audience = oktaSettings.Audience;
                     options.SecurityTokenValidators.Clear();
-                    options.SecurityTokenValidators.Add(new OktaJtwSecurityyTokenHandler(new OktaTokenService(oktaSettings)));
+                    options.SecurityTokenValidators.Add(
+                        new OktaJwtSecurityTokenHandler(
+                            new OktaTokenService(oktaSettings)));
                 });
         }
     }
