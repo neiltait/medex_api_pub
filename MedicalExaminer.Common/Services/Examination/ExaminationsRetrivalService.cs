@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
@@ -18,8 +19,12 @@ namespace MedicalExaminer.Common.Services.Examination
         }
         public Task<IEnumerable<Models.IExamination>> Handle(ExaminationsRetrivalQuery param)
         {
+            if (param == null)
+            {
+                throw new ArgumentNullException(nameof(param));
+            }
             // can put whatever filters in the param, just empty for now
-            return _databaseAccess.QueryAsync<Models.IExamination>(_connectionSettings, "SELECT * FROM Examinations");
+            return _databaseAccess.QueryAsync<Models.IExamination>(_connectionSettings, param.QueryString);
         }
     }
 }
