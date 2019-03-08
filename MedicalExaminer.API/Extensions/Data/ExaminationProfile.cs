@@ -16,6 +16,8 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<Examination, GetExaminationResponse>();
             CreateMap<Examination, ExaminationItem>();
+            CreateMap<PostNewCaseRequest, Examination>();
+            //CreateMap<IExamination, GetExaminationResponse>();
         }
     }
 }
