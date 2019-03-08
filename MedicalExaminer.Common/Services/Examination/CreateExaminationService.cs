@@ -24,7 +24,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 try
                 {
                     param.Examination.Id = Guid.NewGuid().ToString();
-                    return await _databaseAccess.Create<Models.Examination>(_connectionSettings, param.Examination);
+                    return await _databaseAccess.Create(_connectionSettings, param.Examination);
 
                 }
                 catch (Exception e)

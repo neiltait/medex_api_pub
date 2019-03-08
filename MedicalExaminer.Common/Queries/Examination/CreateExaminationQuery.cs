@@ -2,8 +2,8 @@
 {
     public class CreateExaminationQuery : IQuery<string>
     {
-        public Models.Examination Examination { get; }
-        public CreateExaminationQuery(Models.Examination examination)
+        public Models.IExamination Examination { get; }
+        public CreateExaminationQuery(Models.IExamination examination)
         {
             Examination = examination;
         }

@@ -22,12 +22,12 @@ namespace MedicalExaminer.API.Tests.Controllers
         public ExaminationControllerTests()
         {
             // Arrange
-            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, Examination>>();
-            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<Examination>>>();
+            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, IExamination>>();
+            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<IExamination>>>();
             var mockLogger = new MELoggerMocker();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            Controller = new ExaminationsController(mockLogger, Mapper, createExaminationService.Object,
-                examinationRetrivalQuery.Object, examinationsRetrivalQuery.Object);
+            //Controller = new ExaminationsController(mockLogger, Mapper, createExaminationService.Object,
+            //    examinationRetrivalQuery.Object, examinationsRetrivalQuery.Object);
         }
 
         [Fact]
@@ -74,8 +74,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examination = CreateValidExamination();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, Examination>>();
-            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<Examination>>>();
+            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, IExamination>>();
+            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<IExamination>>>();
             var examinationId = Guid.NewGuid();
             
             //persistence.Setup(p => p.CreateExaminationAsync(examination)).Returns(Task.FromResult(examinationId)).Verifiable();
@@ -105,8 +105,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examination = CreateValidExamination();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, Examination>>();
-            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<Examination>>>();
+            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, IExamination>>();
+            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<IExamination>>>();
             var examinationId = Guid.NewGuid();
 
             //var persistence = new Mock<IExaminationPersistence>();

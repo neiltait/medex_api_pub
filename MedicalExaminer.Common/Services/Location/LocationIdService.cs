@@ -17,18 +17,19 @@ namespace MedicalExaminer.Common.Services.Location
         }
         public Task<Models.Location> Handle(LocationRetrivalByIdQuery param)
         {
-            using (var conn = _databaseAccess.CreateClient(_connectionSettings))
+            if (param == null)
             {
-                try
-                {
-                    return _databaseAccess.QuerySingleAsync<Models.Location>(_connectionSettings, param.Id);
+                throw new ArgumentNullException(nameof(param));
+            }
 
-                }
-                catch (Exception e)
-                {
-                    //_logger.Log("Failed to retrieve examination data", e);
-                    throw;
-                }
+            try
+            {
+                return _databaseAccess.QuerySingleAsync<Models.Location>(_connectionSettings, param.Id);
+            }
+            catch (Exception e)
+            {
+                //_logger.Log("Failed to retrieve examination data", e);
+                throw;
             }
         }
     }

@@ -2,12 +2,11 @@
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
-using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.Examination;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
-    public class ExaminationRetrivalService : IAsyncQueryHandler<ExaminationRetrivalQuery, Models.Examination>
+    public class ExaminationRetrivalService : IAsyncQueryHandler<ExaminationRetrivalQuery, Models.IExamination>
     {
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
@@ -17,12 +16,16 @@ namespace MedicalExaminer.Common.Services.Examination
             _connectionSettings = connectionSettings;
         }
 
-        public async Task<Models.Examination> Handle(ExaminationRetrivalQuery param)
+        public Task<Models.IExamination> Handle(ExaminationRetrivalQuery param)
         {
+            if (param == null)
+            {
+                throw new ArgumentNullException(nameof(param));
+            }
                 try
                 {
-                    return await _databaseAccess.QuerySingleAsync<Models.Examination>(_connectionSettings, param.ExaminationId);
-
+                    var result =  _databaseAccess.QuerySingleAsync<Models.IExamination>(_connectionSettings, param.ExaminationId);
+                    return result;
                 }
                 catch (Exception e)
                 {

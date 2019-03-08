@@ -27,8 +27,8 @@ namespace MedicalExaminer.API.Controllers
     public class ExaminationsController : BaseController
     {
         private readonly IAsyncQueryHandler<CreateExaminationQuery, string> _examinationCreationService;
-        private readonly IAsyncQueryHandler<ExaminationRetrivalQuery, Examination> _examinationRetrivalService;
-        private readonly IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<Examination>> _examinationsRetrivalService;
+        private readonly IAsyncQueryHandler<ExaminationRetrivalQuery, IExamination> _examinationRetrivalService;
+        private readonly IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<IExamination>> _examinationsRetrivalService;
         //private readonly IValidator<ExaminationItem> _examinationValidator;
         /// <summary>
         /// Initialise a new instance of the Examiantions Controller.
@@ -43,8 +43,8 @@ namespace MedicalExaminer.API.Controllers
             IMELogger logger,
             IMapper mapper,
             IAsyncQueryHandler<CreateExaminationQuery, string> examinationCreationService,
-            IAsyncQueryHandler<ExaminationRetrivalQuery, Examination> examinationRetrivalService,
-            IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<Examination>> examinationsRetrivalService)
+            IAsyncQueryHandler<ExaminationRetrivalQuery, IExamination> examinationRetrivalService,
+            IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<IExamination>> examinationsRetrivalService)
             : base(logger, mapper)
         {
             _examinationCreationService = examinationCreationService;
