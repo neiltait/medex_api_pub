@@ -46,18 +46,38 @@ namespace MedicalExaminer.Common
             return results;
         }
 
-        public async Task<Guid> CreateExaminationAsync(Examination examinationItem)
+
+        //DJP
+        //public async Task<Guid> CreateExaminationAsync(Examination examinationItem)
+        public async Task<string> CreateExaminationAsync(Examination examinationItem)
         {
-            await EnsureSetupAsync();
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, "Examinations");
-            examinationItem.ExaminationId = Guid.NewGuid().ToString();
-            var examinationItemAsJson = JsonConvert.SerializeObject(examinationItem);
+            try
+            {
+                await EnsureSetupAsync();
+                var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, "Examinations");
+                examinationItem.ExaminationId = Guid.NewGuid().ToString();
+                var examinationItemAsJson = JsonConvert.SerializeObject(examinationItem);
 
-            var feedOptions = new FeedOptions { MaxItemCount = -1 };
+                var feedOptions = new FeedOptions { MaxItemCount = -1 };
 
-            var result = Client.CreateDocumentQuery<Examination>(documentCollectionUri, examinationItemAsJson).FirstOrDefault();
+                //DJP
+                //var result = Client.CreateDocumentQuery<Examination>(documentCollectionUri, examinationItemAsJson).FirstOrDefault();
+                var result = await Client.CreateDocumentAsync(documentCollectionUri, examinationItem);
 
-            return Guid.Parse(result.ExaminationId);
+                //DJP
+                //return Guid.Parse(result.ExaminationId);
+                return examinationItem.ExaminationId;
+
+            }
+            catch (Exception e)
+
+            {
+                var djp = e.Message;
+                var djp1 = 1;
+            }
+
+            return String.Empty;
+
         }
     }
 }

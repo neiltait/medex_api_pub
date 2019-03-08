@@ -86,6 +86,7 @@ namespace MedicalExaminer.API.Controllers
         public async Task<ActionResult<PutExaminationResponse>> CreateNewCase([FromBody]PostNewCaseRequest postNewCaseRequest)
         {
             var examinationItem = Mapper.Map<ExaminationItem>(postNewCaseRequest);
+    
             //var validationResult = await _examinationValidator.ValidateAsync(examinationItem);
             var res = new PutExaminationResponse();
             //if (validationResult.Any())
@@ -94,7 +95,10 @@ namespace MedicalExaminer.API.Controllers
             //}
             //else
             //{
+
                 var examination = Mapper.Map<Examination>(examinationItem);
+
+
                 var documentId = await _examinationPersistence.CreateExaminationAsync(examination);
 
                 res.ExaminationLink = new Link("examination", $"/examination/{documentId}");
