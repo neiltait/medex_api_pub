@@ -1,10 +1,10 @@
 ﻿namespace MedicalExaminer.Common.Queries.Location
 {
-    public class LocationRetrivalByIdQuery : IQuery<Models.Location>
+    public class LocationRetrievalByIdQuery : IQuery<Models.Location>
     {
         public readonly string Id;
 
-        public LocationRetrivalByIdQuery(string id)
+        public LocationRetrievalByIdQuery(string id)
         {
             Id = id;
         }

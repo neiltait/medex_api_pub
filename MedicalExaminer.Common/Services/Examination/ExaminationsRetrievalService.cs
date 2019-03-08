@@ -8,23 +8,23 @@ using MedicalExaminer.Common.Queries.Examination;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
-    public class ExaminationsRetrivalService : IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<Models.IExamination>>
+    public class ExaminationsRetrievalService : IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Models.Examination>>
     {
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
-        public ExaminationsRetrivalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
+        public ExaminationsRetrievalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
         }
-        public Task<IEnumerable<Models.IExamination>> Handle(ExaminationsRetrivalQuery param)
+        public Task<IEnumerable<Models.Examination>> Handle(ExaminationsRetrievalQuery param)
         {
             if (param == null)
             {
                 throw new ArgumentNullException(nameof(param));
             }
             // can put whatever filters in the param, just empty for now
-            return _databaseAccess.QueryAsync<Models.IExamination>(_connectionSettings, param.QueryString);
+            return _databaseAccess.QueryAsync<Models.Examination>(_connectionSettings, param.QueryString);
         }
     }
 }

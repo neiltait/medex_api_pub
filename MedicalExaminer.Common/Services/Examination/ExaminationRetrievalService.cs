@@ -6,17 +6,17 @@ using MedicalExaminer.Common.Queries.Examination;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
-    public class ExaminationRetrivalService : IAsyncQueryHandler<ExaminationRetrivalQuery, Models.IExamination>
+    public class ExaminationRetrievalService : IAsyncQueryHandler<ExaminationRetrievalQuery, Models.Examination>
     {
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
-        public ExaminationRetrivalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
+        public ExaminationRetrievalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
         }
 
-        public Task<Models.IExamination> Handle(ExaminationRetrivalQuery param)
+        public Task<Models.Examination> Handle(ExaminationRetrievalQuery param)
         {
             if (param == null)
             {
@@ -24,7 +24,7 @@ namespace MedicalExaminer.Common.Services.Examination
             }
                 try
                 {
-                    var result =  _databaseAccess.QuerySingleAsync<Models.IExamination>(_connectionSettings, param.ExaminationId);
+                    var result =  _databaseAccess.QuerySingleAsync<Models.Examination>(_connectionSettings, param.ExaminationId);
                     return result;
                 }
                 catch (Exception e)

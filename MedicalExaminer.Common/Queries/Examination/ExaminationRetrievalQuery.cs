@@ -1,9 +1,9 @@
 ﻿namespace MedicalExaminer.Common.Queries.Examination
 {
-    public class ExaminationRetrivalQuery : IQuery<Models.IExamination>
+    public class ExaminationRetrievalQuery : IQuery<Models.Examination>
     {
         public string ExaminationId { get; }
-        public ExaminationRetrivalQuery(string examinationId)
+        public ExaminationRetrievalQuery(string examinationId)
         {
             ExaminationId = examinationId;
         }

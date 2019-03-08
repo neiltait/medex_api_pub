@@ -19,53 +19,86 @@ namespace MedicalExaminer.API.Tests.Controllers
 {
     public class ExaminationControllerTests : ControllerTestsBase<ExaminationsController>
     {
-        public ExaminationControllerTests()
-        {
-            // Arrange
-            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, IExamination>>();
-            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<IExamination>>>();
-            var mockLogger = new MELoggerMocker();
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            //Controller = new ExaminationsController(mockLogger, Mapper, createExaminationService.Object,
-            //    examinationRetrivalQuery.Object, examinationsRetrivalQuery.Object);
-        }
-
         [Fact]
         public void GetExamination_When_Called_With_Invalid_Id_Returns_Expected_Type()
         {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
+                examinationRetrievalQuery.Object, examinationsRetrievalQuery.Object);
             // Act
-            var response = Controller.GetExamination("dfgdfgdfg");
+            var response = sut.GetExamination("dfgdfgdfg");
 
             // Assert
             var taskResult = response.Should().BeOfType<Task<ActionResult<GetExaminationResponse>>>().Subject;
-            Assert.Equal(TaskStatus.Faulted, taskResult.Status);
+            Assert.Equal(TaskStatus.RanToCompletion, taskResult.Status);
         }
 
         [Fact]
-        public void GetExamination_When_Called_With_Valid_Id_Returns_Expected_Type()
+        public async void GetExamination_When_Called_With_Valid_Id_Returns_Expected_Type()
         {
+            // Arrange
+            Examination examinationObj = new Examination()
+            {
+                Id = "a"
+            };
+            var getResponse = new GetExaminationResponse()
+            {
+                Id = "a"
+            };
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            mapper.Setup(m => m.Map<GetExaminationResponse>(examinationObj)).Returns(getResponse);
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var examinationsRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examinationObj));
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
+                examinationRetrievalQueryService.Object, examinationsRetrievalQueryService.Object);
             // Act
-            var response = Controller.GetExamination("aaaaa");
+            var response = sut.GetExamination("a").Result;
 
             // Assert
-            var taskResult = response.Should().BeOfType<Task<ActionResult<GetExaminationResponse>>>().Subject;
-            var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            var examination = okResult.Value.Should().BeAssignableTo<GetExaminationResponse>().Subject;
-            Assert.Equal("aaaaa", examination.Id);
+            var taskResult = response.Should().BeOfType<ActionResult<GetExaminationResponse>>().Subject;
+            var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            okResult.Value.Should().BeAssignableTo<GetExaminationResponse>();
+            Assert.Equal("a", ((GetExaminationResponse)okResult.Value).Id);
         }
 
         [Fact]
         public void GetExaminations_When_Called_Returns_Expected_Type()
         {
+            // Arrange
+            var examination1 = new Examination();
+            var examination2 = new Examination();
+            IEnumerable<Examination> examinationsResult = new List<Examination>() {examination1, examination2};
+            var er = new Mock<GetExaminationsResponse>();
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            mapper.Setup(m => m.Map<GetExaminationsResponse>(It.IsAny<Examination>())).Returns(er.Object);
+            
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var examinationsRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            examinationsRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationsRetrievalQuery>()))
+                .Returns(Task.FromResult(examinationsResult));
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
+                examinationRetrievalQueryService.Object, examinationsRetrievalQueryService.Object);
             // Act
-            var response = Controller.GetExaminations();
+            var response = sut.GetExaminations().Result;
 
             // Assert
-            var taskResult = response.Should().BeOfType<Task<ActionResult<GetExaminationsResponse>>>().Subject;
-            var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<GetExaminationsResponse>>().Subject;
+            var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             var examinationResponse = okResult.Value.Should().BeAssignableTo<GetExaminationsResponse>().Subject;
             var examinations = examinationResponse.Examinations;
-            Assert.Equal(3, examinations.Count());
+            Assert.Equal(2, examinations.Count());
         }
 
         [Fact]
@@ -74,16 +107,15 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examination = CreateValidExamination();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, IExamination>>();
-            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<IExamination>>>();
+            var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var examinationId = Guid.NewGuid();
             
-            //persistence.Setup(p => p.CreateExaminationAsync(examination)).Returns(Task.FromResult(examinationId)).Verifiable();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             mapper.Setup(m => m.Map<Examination>(It.IsAny<PostNewCaseRequest>())).Returns(examination);
-            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object, examinationRetrivalQuery.Object
-                , examinationsRetrivalQuery.Object);
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object, examinationRetrievalQuery.Object
+                , examinationsRetrievalQuery.Object);
             sut.ModelState.AddModelError("test", "test");
 
             // Act
@@ -96,7 +128,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var model = (PutExaminationResponse)result.Value;
             model.Errors.Count.Should().Be(1);
             model.Success.Should().BeFalse();
-            //persistence.Verify(p => p.CreateExaminationAsync(examination), Times.Never);
         }
 
         [Fact]
@@ -105,17 +136,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examination = CreateValidExamination();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            var examinationRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrivalQuery, IExamination>>();
-            var examinationsRetrivalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrivalQuery, IEnumerable<IExamination>>>();
+            var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var examinationId = Guid.NewGuid();
-
-            //var persistence = new Mock<IExaminationPersistence>();
-            //persistence.Setup(p => p.CreateExaminationAsync(examination)).Returns(Task.FromResult(examinationId)).Verifiable();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             mapper.Setup(m => m.Map<Examination>(It.IsAny<PostNewCaseRequest>())).Returns(examination);
             var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object, 
-                examinationRetrivalQuery.Object, examinationsRetrivalQuery.Object);
+                examinationRetrievalQuery.Object, examinationsRetrievalQuery.Object);
 
             // Act
             var response = sut.CreateNewCase(CreateValidNewCaseRequest()).Result;
@@ -127,7 +155,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var model = (PutExaminationResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
-            //persistence.Verify(p => p.CreateExaminationAsync(examination), Times.Exactly(1));
         }
 
         private PostNewCaseRequest CreateValidNewCaseRequest()
