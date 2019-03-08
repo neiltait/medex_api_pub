@@ -116,7 +116,7 @@ namespace MedicalExaminer.Common
 
             // build the query
             var feedOptions = new FeedOptions { MaxItemCount = -1 };
-            var query = Client.CreateDocumentQuery<MeUser>(documentCollectionUri, "SELECT * FROM Users", feedOptions);
+            var query = Client.CreateDocumentQuery<MeUser>(documentCollectionUri, "SELECT * FROM Users ORDER BY Users.last_name", feedOptions);
             var queryAll = query.AsDocumentQuery();
 
             // combine the results
