@@ -8,7 +8,7 @@ using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.Examinations
 {
-    public class PostMedicalTeamResponse
+    public class PostMedicalTeamRequest
     {
         /// <summary>
         /// Consultant primarily responsible for care
