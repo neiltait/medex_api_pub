@@ -7,6 +7,6 @@ namespace MedicalExaminer.API.Services
 {
     public interface ITokenService
     {
-        Task<string> UsernameForToken(string token);
+        Task<IntrospectResponse> IntrospectToken(string token);
     }
 }

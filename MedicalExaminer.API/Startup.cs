@@ -20,6 +20,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace MedicalExaminer.API
@@ -185,6 +187,8 @@ namespace MedicalExaminer.API
                 {
                     options.Authority = oktaSettings.Authority;
                     options.Audience = oktaSettings.Audience;
+                    options.SecurityTokenValidators.Clear();
+                    options.SecurityTokenValidators.Add(new OktaJtwSecurityyTokenHandler(new OktaTokenService(oktaSettings)));
                 });
         }
     }
