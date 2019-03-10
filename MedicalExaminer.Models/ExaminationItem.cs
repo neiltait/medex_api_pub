@@ -124,5 +124,8 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "out_of_hours")]
         public bool OutOfHours { get; set; }
+
+        [JsonProperty(PropertyName = "medical_team")]
+        public MedicalTeam MedicalTeam { get; set; }
     }
 }

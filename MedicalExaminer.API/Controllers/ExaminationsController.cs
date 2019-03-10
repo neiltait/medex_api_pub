@@ -39,6 +39,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationCreationService"></param>
         /// <param name="examinationRetrievalService"></param>
         /// <param name="examinationsRetrievalService"></param>
+        /// <param name="medicalTeamSetService"></param>
         public ExaminationsController(
             IMELogger logger,
             IMapper mapper,
@@ -106,6 +107,40 @@ namespace MedicalExaminer.API.Controllers
             var res = new PutExaminationResponse()
             {
                 ExaminationId = result.Result
+            };
+
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// Post Medical Team
+        /// </summary>
+        /// /// <param name="examinationId">The ID of the examination that the medical team object is to be posted to.</param>
+        /// <param name="postMedicalTeamRequest">The PostMedicalTeamRequest.</param>
+        /// <returns>A PutExaminationResponse.</returns>
+        [HttpPost("/MedicalTeam/{examinationId}")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        //public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody]PostMedicalTeamRequest postMedicalTeamRequest)
+        public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody] dynamic postMedicalTeamRequest)
+        {
+            var djp = postMedicalTeamRequest.ToObject<PostMedicalTeamRequest>();
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutExaminationResponse());
+            }
+
+            Examination examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
+            if (examination == null)
+            {
+                return NotFound();
+            }
+
+            var medicalTeamRequest = Mapper.Map<MedicalTeam>(postMedicalTeamRequest);
+
+            var res = new PutExaminationResponse()
+            {
+                ExaminationId = examinationId
             };
 
             return Ok(res);

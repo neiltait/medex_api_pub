@@ -2,6 +2,7 @@
 using System.Data;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
 namespace MedicalExaminer.Common.Database
@@ -11,6 +12,9 @@ namespace MedicalExaminer.Common.Database
         DocumentClient CreateClient(IConnectionSettings connectionSettings);
 
         Task<string> Create<T>(IConnectionSettings connectionSettings, T document);
+
+        //DJP
+        Task<string> Update(IConnectionSettings connectionSettings, Document document);
 
         Task<T> QuerySingleAsync<T>(
             IConnectionSettings connectionSettings,
