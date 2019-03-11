@@ -7,5 +7,6 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
 {
     public class PutPatientDetailsResponse : ResponseBase
     {
+        public string ExaminationId { get; set; }
     }
 }

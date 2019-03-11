@@ -15,8 +15,10 @@ using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.Examination;
+using MedicalExaminer.Common.Services.PatientDetails;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -121,6 +123,7 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, string>, CreateExaminationService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
+            services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
 
             services.AddScoped<ControllerActionFilter>();
             

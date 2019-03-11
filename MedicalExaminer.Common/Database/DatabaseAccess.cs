@@ -82,5 +82,24 @@ namespace MedicalExaminer.Common.Database
 
             return results;
         }
+
+        public async Task<string> Update(IConnectionSettings connectionSettings, Document document)
+        {
+            var client = CreateClient(connectionSettings);
+            var response = await client.ReplaceDocumentAsync(document);
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+            return response.Resource.Id;
+        }
+
+
+        public async Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, string id, T item)
+        {
+            var _client = CreateClient(connectionSettings);
+            var updateItemAsync = _client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(connectionSettings.DatabaseId, connectionSettings.Collection, id), item);
+            return (T)(dynamic)updateItemAsync.Result.Resource;
+        }
     }
 }

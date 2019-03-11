@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
 namespace MedicalExaminer.Common.Database
@@ -13,19 +14,14 @@ namespace MedicalExaminer.Common.Database
         Task<T> CreateItemAsync<T>(IConnectionSettings connectionSettings, T item,
             bool disableAutomaticIdGeneration = false);
 
+        Task<string> Update(IConnectionSettings connectionSettings, Document document);
+
+        Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, string id, T item);
         Task<T> GetItemAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate);
 
         Task<IEnumerable<T>> GetItemsAsync<T>(IConnectionSettings connectionSettings,
             Expression<Func<T, bool>> predicate);
 
-        //Task<IEnumerable<U>> GetItemsAsync<T, U>(IConnectionSettings connectionSettings,
-        //    Func<Expression<Func<T, bool>>, U> predicate);
-
-        //Task<IEnumerable<T>> QueryAsync<T>(
-        //    IConnectionSettings connectionSettings,
-        //    string queryString);
-
-        //Task<IEnumerable<U>> GetItemPartAsync<T, U>(IConnectionSettings connectionSettings,
-        //    Expression<Func<T, Func<U, bool>>> predicate);
+        
     }
 }

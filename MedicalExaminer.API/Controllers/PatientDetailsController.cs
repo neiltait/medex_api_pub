@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
-using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.PatientDetails;
-using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.PatientDetails;
+using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,16 +17,21 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class PatientDetailsController : BaseController
     {
-        //private readonly IPatientDetailsPersistence _patientDetailsPersistence;
+        private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>
+            _examinationRetrievalService;
 
-        public PatientDetailsController(IMELogger logger, IMapper mapper)
+        private IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>
+            _patientDetailsUpdateService;
+
+        public PatientDetailsController(IMELogger logger, IMapper mapper, IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService, IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination> patientDetailsUpdateService)
             : base(logger, mapper)
         {
-           // _patientDetailsPersistence = patientDetailsPersistence;
+            _examinationRetrievalService = examinationRetrievalService;
+            _patientDetailsUpdateService = patientDetailsUpdateService;
         }
 
         [HttpPut]
-        [Route("{caseId")]
+        [Route("/{caseId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutPatientDetailsResponse>> CreateNewCase(string caseId, [FromBody]PutPatientDetailsRequest putPatientDetailsRequest)
         {
@@ -38,15 +40,20 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutPatientDetailsResponse());
             }
 
-            //var examination = Mapper.Map<Examination>(postNewCaseRequest);
+            if (_examinationRetrievalService.Handle(new ExaminationRetrievalQuery(caseId)) == null)
+            {
+                return NotFound("Case was not found");
+            }
 
-            //var result = _examinationCreationService.Handle(new CreateExaminationQuery(examination));
-            //var res = new PutExaminationResponse()
-            //{
-            //    ExaminationId = result.Result
-            //};
+            var patientDetails = Mapper.Map<PatientDetails>(putPatientDetailsRequest);
 
-            return Ok();
+            var result = _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(caseId, patientDetails));
+            
+
+            return Ok(new PutPatientDetailsResponse()
+            {
+                ExaminationId = result.Result.Id
+            });
         }
 
     }
