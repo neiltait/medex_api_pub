@@ -3,11 +3,12 @@ using Newtonsoft.Json;
 
 namespace MedicalExaminer.Models
 {
-    public class ClinicalProfessional : Contact
+    public class ClinicalProfessional : Record
     {
-        [Required]
-        [JsonProperty(PropertyName = "name")]
-        public string Name { get; set; }
+        //[Required]
+        //[JsonProperty(PropertyName = "name")]
+        //[DataType(DataType.Text)]
+        //public string Name { get; set; }
 
         //[Required]
         //[JsonProperty(PropertyName = "role")]

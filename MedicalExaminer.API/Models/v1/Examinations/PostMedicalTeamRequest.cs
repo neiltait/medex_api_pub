@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
+using Newtonsoft.Json;
 
 namespace MedicalExaminer.API.Models.v1.Examinations
 {
@@ -13,11 +14,11 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Consultant primarily responsible for care of patient
         /// </summary>
-        //[Required]
-        //public ClinicalProfessional ConsultantResponsible { get; set; }
+        //[JsonProperty(PropertyName = "consultant_responsible")]
+        public Consultant ConsultantResponsible { get; set; }
 
+        //public ClinicalProfessional DJP { get; set; }
 
-        public ClinicalProfessional DJP { get; set; }
 
         ///// <summary>
         ///// Other consultants involved in care of the patient

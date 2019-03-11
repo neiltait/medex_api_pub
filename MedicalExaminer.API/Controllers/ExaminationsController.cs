@@ -125,6 +125,9 @@ namespace MedicalExaminer.API.Controllers
         {
             //var djp = postMedicalTeamRequest.ToObject<PostMedicalTeamRequest>();
 
+            var medicalTeamRequest = Mapper.Map<MedicalTeam>(postMedicalTeamRequest);
+            var test = postMedicalTeamRequest;
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(new PutExaminationResponse());
@@ -136,7 +139,7 @@ namespace MedicalExaminer.API.Controllers
                 return NotFound();
             }
 
-            var medicalTeamRequest = Mapper.Map<MedicalTeam>(postMedicalTeamRequest);
+            
 
             var res = new PutExaminationResponse()
             {

@@ -15,14 +15,15 @@ namespace MedicalExaminer.Models
     /// </summary>
     public interface IMedicalTeam
     {
-        /// <summary>
-        /// Consultant primarily responsible for care
-        /// </summary>
-        ClinicalProfessional ConsultantResponsible { get; set; }
-
         ///// <summary>
-        ///// Other consultants involved in care of the patient
+        ///// Consultant primarily responsible for care
         ///// </summary>
+        //ClinicalProfessional ConsultantResponsible { get; set; }
+
+
+        //// <summary>
+        //// Other consultants involved in care of the patient
+        //// </summary>
         //ClinicalProfessional[] ConsultantsOther { get; set; }
 
         ///// <summary>
@@ -52,12 +53,39 @@ namespace MedicalExaminer.Models
     }
 
     /// <inheritdoc />
-    public class MedicalTeam : Record, IMedicalTeam
+
+    public class MedicalTeam 
     {
-        /// <inheritdoc />
-        [Required]
-        [JsonProperty(PropertyName = "consultant_responsible")]
-        public ClinicalProfessional ConsultantResponsible { get; set; }
+
+        ///// <inheritdoc />
+        //[Required]
+        //[JsonProperty(PropertyName = "consultants_other")]
+        //public ClinicalProfessional[] ConsultantsOther { get; set; }
+
+        ///// <inheritdoc />
+        //[Required]
+        //[JsonProperty(PropertyName = "general_practitioner")]
+        //public ClinicalProfessional GeneralPractitioner { get; set; }
+
+        ///// <inheritdoc />
+        //[Required]
+        //[JsonProperty(PropertyName = "qap")]
+        //public ClinicalProfessional Qap { get; set; }
+
+        ///// <inheritdoc />
+        //[JsonProperty(PropertyName = "nursing_team_information")]
+        //public string NursingTeamInformation { get; set; }
+
+        ///// <inheritdoc />
+        //[Required]
+        //[JsonProperty(PropertyName = "medical_examiner")]
+        //public string MedicalExaminer { get; set; }
+
+        ///// <inheritdoc />
+        //[Required]
+        //// <inheritdoc />
+        //[JsonProperty(PropertyName = "consultant_responsible")]
+        public Consultant ConsultantResponsible { get; set; }
 
         ///// <inheritdoc />
         //[Required]
