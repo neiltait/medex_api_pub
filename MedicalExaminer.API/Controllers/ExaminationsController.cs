@@ -29,7 +29,7 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<CreateExaminationQuery, string> _examinationCreationService;
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
-        private readonly IAsyncUpdateDocumentHandler _medicaTteamUpdateService;
+        private readonly IAsyncUpdateDocumentHandler _medicaTeamUpdateService;
         //private readonly IValidator<ExaminationItem> _examinationValidator;
         /// <summary>
         /// Initialise a new instance of the Examiantions Controller.
@@ -47,13 +47,13 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<CreateExaminationQuery, string> examinationCreationService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
-            IAsyncUpdateDocumentHandler medicaTteamUpdateService)
+            IAsyncUpdateDocumentHandler medicaTeamUpdateService)
             : base(logger, mapper)
         {
             _examinationCreationService = examinationCreationService;
             _examinationRetrievalService = examinationRetrievalService;
             _examinationsRetrievalService = examinationsRetrievalService;
-            _medicaTteamUpdateService = medicaTteamUpdateService;
+            _medicaTeamUpdateService = medicaTeamUpdateService;
         }
 
     /// <summary>
@@ -145,7 +145,7 @@ namespace MedicalExaminer.API.Controllers
 
             examination.MedicalTeam = medicalTeamRequest;
 
-            var returnedExaminationId = await _medicaTteamUpdateService.Handle(examination);
+            var returnedExaminationId = await _medicaTeamUpdateService.Handle(examination);
 
             if (returnedExaminationId == null)
             {
