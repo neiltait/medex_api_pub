@@ -35,4 +35,8 @@
   <ItemGroup>
     <ProjectReference Include="..\MedicalExaminer.API\MedicalExaminer.API.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Services\MedicalTeam\" />
+  </ItemGroup>
 </Project>
