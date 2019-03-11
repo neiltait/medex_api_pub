@@ -11,12 +11,12 @@ namespace MedicalExaminer.Models
         [Required]
         [DataType(DataType.Text)]
         [StringLength(250)]
-        [JsonProperty(PropertyName = "given_names")]
+       // [JsonProperty(PropertyName = "given_names")]
         public string GivenNames { get; set; }
         [Required]
         [DataType(DataType.Text)]
         [StringLength(250)]
-        [JsonProperty(PropertyName = "surname")]
+ //       [JsonProperty(PropertyName = "surname")]
         public string Surname { get; set; }
     }
 }

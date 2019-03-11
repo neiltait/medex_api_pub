@@ -22,18 +22,49 @@ namespace MedicalExaminer.API.Controllers
 
         private IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>
             _patientDetailsUpdateService;
+        private IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>
+            _patientDetailsByCaseIdService;
 
-        public PatientDetailsController(IMELogger logger, IMapper mapper, IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService, IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination> patientDetailsUpdateService)
+        public PatientDetailsController(IMELogger logger, IMapper mapper, 
+            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
+            IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination> patientDetailsUpdateService,
+            IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination> patientDetailsByCaseIdService)
             : base(logger, mapper)
         {
             _examinationRetrievalService = examinationRetrievalService;
             _patientDetailsUpdateService = patientDetailsUpdateService;
+            _patientDetailsByCaseIdService = patientDetailsByCaseIdService;
         }
+
+        [HttpGet]
+        [Route("/{caseId}")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<GetPatientDetailsResponse>> GetPatientDetails(string caseId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new GetPatientDetailsResponse());
+            }
+
+            if (await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(caseId)) == null)
+            {
+                return NotFound("Case was not found");
+            }
+
+            var result = await _patientDetailsByCaseIdService.Handle(new PatientDetailsByCaseIdQuery(caseId));
+
+
+            return Ok(new GetPatientDetailsResponse()
+            {
+               // ExaminationId = result.Result.id
+            });
+        }
+
 
         [HttpPut]
         [Route("/{caseId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutPatientDetailsResponse>> CreateNewCase(string caseId, [FromBody]PutPatientDetailsRequest putPatientDetailsRequest)
+        public async Task<ActionResult<PutPatientDetailsResponse>> UpdatePatientDetails(string caseId, [FromBody]PutPatientDetailsRequest putPatientDetailsRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -52,7 +83,7 @@ namespace MedicalExaminer.API.Controllers
 
             return Ok(new PutPatientDetailsResponse()
             {
-                ExaminationId = result.Result.Id
+                ExaminationId = result.Result.id
             });
         }
 

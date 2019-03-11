@@ -1,6 +1,7 @@
 ﻿using System;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
+using Newtonsoft.Json;
 
 namespace MedicalExaminer.API.Models.v1.Examinations
 {
@@ -10,8 +11,10 @@ namespace MedicalExaminer.API.Models.v1.Examinations
     /// </summary>
     public class GetExaminationResponse : ResponseBase
     {
-        public string Id { get; set ; }
+        public string id { get; set ; }
+        [JsonProperty(PropertyName = "time_of_death")]
         public TimeSpan? TimeOfDeath { get; set; }
+        [JsonProperty(PropertyName = "given_names")]
         public string GivenNames { get; set; }
         public string Surname { get; set; }
         public string NhsNumber { get; set; }

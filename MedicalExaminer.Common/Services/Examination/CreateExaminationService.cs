@@ -17,7 +17,7 @@ namespace MedicalExaminer.Common.Services.Examination
             _connectionSettings = connectionSettings;
         }
 
-        public Task<string> Handle(CreateExaminationQuery param)
+        public async Task<string> Handle(CreateExaminationQuery param)
         {
             if (param == null)
             {
@@ -25,14 +25,9 @@ namespace MedicalExaminer.Common.Services.Examination
             }
                 try
                 {
-                    param.Examination.Id = Guid.NewGuid().ToString();
-                    param.Examination.PatientDetails = new Models.PatientDetails()
-                    {
-                        GivenNames = param.Examination.GivenNames,
-                        Surname = param.Examination.Surname
-                    };
-                    var result = _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination);
-                    return result.ContinueWith(res => res.Result.Id);
+                    param.Examination.id = Guid.NewGuid().ToString();
+                    var result = await _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination, false);
+                    return result.id;
                 }
                 catch (Exception e)
                 {

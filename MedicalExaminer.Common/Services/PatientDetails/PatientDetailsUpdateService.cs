@@ -19,20 +19,15 @@ namespace MedicalExaminer.Common.Services.PatientDetails
         }
         public async Task<Models.Examination> Handle(PatientDetailsUpdateQuery param)
         {
-            var caseToReplace = 
+            var caseToReplace = await
                 _databaseAccess
-                    .GetItemAsync<Models.Examination>(_connectionSettings, examination => examination.Id == param.CaseId)
-                    .Result;
+                    .GetItemAsync<Models.Examination>(_connectionSettings, examination => examination.Id == param.CaseId);
 
             caseToReplace.GivenNames = param.PatientDetails.GivenNames;
             caseToReplace.Surname = param.PatientDetails.Surname;
 
-            var result = await _databaseAccess.Update(_connectionSettings, caseToReplace);
-            caseToReplace =
-                _databaseAccess
-                    .GetItemAsync<Models.Examination>(_connectionSettings, examination => examination.Id == result)
-                    .Result;
-            return caseToReplace;
+            var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, caseToReplace);
+            return result;
         }
     }
 }

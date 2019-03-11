@@ -6,7 +6,7 @@ using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.PatientDetails
 {
-    public class PatientDetailsRetrievalService : IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Models.PatientDetails>
+    public class PatientDetailsRetrievalService : IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Models.Examination>
     {
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
@@ -15,12 +15,12 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
         }
-        public Task<Models.PatientDetails> Handle(PatientDetailsByCaseIdQuery param)
+        public async Task<Models.Examination> Handle(PatientDetailsByCaseIdQuery param)
         {
-            var result = _databaseAccess.GetItemAsync<IExamination>(_connectionSettings,
-                examination => examination.Id == param.ExaminationId);
+            var result = await _databaseAccess.GetItemAsync<Models.Examination>(_connectionSettings,
+                examination => examination.id == param.ExaminationId);
 
-            return result.ContinueWith(x=>x.Result.PatientDetails);
+            return result;
         }
     }
 }

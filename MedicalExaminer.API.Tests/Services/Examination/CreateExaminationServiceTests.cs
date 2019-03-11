@@ -19,7 +19,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         public void CreateExaminationQuerySuccessReturnsExaminationId()
         {
             // Arrange
-            IExamination examination = new MedicalExaminer.Models.Examination();
+            MedicalExaminer.Models.Examination examination = new MedicalExaminer.Models.Examination();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var query = new CreateExaminationQuery(examination);
             var dbAccess = new Mock<IDatabaseAccess>();

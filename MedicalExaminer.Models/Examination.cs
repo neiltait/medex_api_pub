@@ -1,13 +1,15 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.Models.Enums;
+using Microsoft.Azure.Documents;
 using Newtonsoft.Json;
+using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace MedicalExaminer.Models
 {
     public interface IExamination
     {
-        string Id { get; set; }
+        string id { get; set; }
         TimeSpan? TimeOfDeath { get; set; }
         string GivenNames { get; set; }
         string Surname { get; set; }
@@ -41,16 +43,16 @@ namespace MedicalExaminer.Models
         PatientDetails PatientDetails { get; set; }
     }
 
-    public class Examination : Record, IExamination
+    public class Examination : Resource, IExamination
     {
         // Linked Fields 
         [DataType(DataType.Custom)]
-        [JsonProperty(PropertyName = "patient_details")]
+     //   [JsonProperty(PropertyName = "patient_details")]
         public PatientDetails PatientDetails { get; set; }
         [Required]
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
+        public string id { get; set; }
 
         [JsonProperty(PropertyName = "time_of_death")]
         public TimeSpan? TimeOfDeath { get; set; }
@@ -71,135 +73,135 @@ namespace MedicalExaminer.Models
         //[Required]
         [DataType(DataType.Text)]
         [StringLength(10)]
-        [JsonProperty(PropertyName = "nhs_number")]
+     //   [JsonProperty(PropertyName = "nhs_number")]
         public string NhsNumber { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "gender")]
+     //   [JsonProperty(PropertyName = "gender")]
         public ExaminationGender Gender { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "house_name_number")]
+    //    [JsonProperty(PropertyName = "house_name_number")]
         [DataType(DataType.Text)]
         [StringLength(250)]
         public string HouseNameNumber { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "street")]
+    //    [JsonProperty(PropertyName = "street")]
         [DataType(DataType.Text)]
         [StringLength(250)]
         public string Street { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "town")]
+    //    [JsonProperty(PropertyName = "town")]
         [DataType(DataType.Text)]
         [StringLength(250)]
         public string Town { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "county")]
+    //    [JsonProperty(PropertyName = "county")]
         [DataType(DataType.Text)]
         [StringLength(250)]
         public string County { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "postcode")]
+     //   [JsonProperty(PropertyName = "postcode")]
         [DataType(DataType.Text)]
         [StringLength(12)]
         public string Postcode { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "country")]
+    //    [JsonProperty(PropertyName = "country")]
         [DataType(DataType.Text)]
         [StringLength(250)]
         public string Country { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "last_occupation")]
+    //    [JsonProperty(PropertyName = "last_occupation")]
         [DataType(DataType.Text)]
         [StringLength(250)]
         public string LastOccupation { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "organisation_care_before_death_location_id")]
+    //    [JsonProperty(PropertyName = "organisation_care_before_death_location_id")]
         [DataType(DataType.Text)]
         [StringLength(100)]
         public string OrganisationCareBeforeDeathLocationId { get; set; }
 
         // Initial thinking is that below is the location ID that is used for authorisation and permission queries 
         [Required]
-        [JsonProperty(PropertyName = "location_id")]
+   //     [JsonProperty(PropertyName = "location_id")]
         [DataType(DataType.Text)]
         [StringLength(100)]
         public string DeathOccuredLocationId { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "mode_of_disposal")]
+   //     [JsonProperty(PropertyName = "mode_of_disposal")]
         [DataType(DataType.Text)]
         [StringLength(250)]
         public ModeOfDisposal ModeOfDisposal { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "funderal_directors")]
+   //     [JsonProperty(PropertyName = "funderal_directors")]
         [DataType(DataType.Text)]
         [StringLength(100)]
         public string FuneralDirectors { get; set; }
 
         // Personal affects 
         [Required]
-        [JsonProperty(PropertyName = "personal_affects_collected")]
+   //     [JsonProperty(PropertyName = "personal_affects_collected")]
         public bool PersonalAffectsCollected { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "personal_affects_details")]
+   //     [JsonProperty(PropertyName = "personal_affects_details")]
         public string PersonalAffectsDetails { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "jewellery_collected")]
+   //     [JsonProperty(PropertyName = "jewellery_collected")]
         public bool JewelleryCollected { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "jewellery_details")]
+    //    [JsonProperty(PropertyName = "jewellery_details")]
         public string JewelleryDetails { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
-        [JsonProperty(PropertyName = "date_of_birth")]
+ //       [JsonProperty(PropertyName = "date_of_birth")]
         public DateTime DateOfBirth { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]
-        [JsonProperty(PropertyName = "date_of_death")]
+ //       [JsonProperty(PropertyName = "date_of_death")]
         public DateTimeOffset DateOfDeath { get; set; }
 
         // Flags that effect priority 
         [Required]
-        [JsonProperty(PropertyName = "faith_priority")]
+ //       [JsonProperty(PropertyName = "faith_priority")]
         public bool FaithPriority { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "child_priority")]
+ //       [JsonProperty(PropertyName = "child_priority")]
         public bool ChildPriority { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "coroner_priority")]
+ //       [JsonProperty(PropertyName = "coroner_priority")]
         public bool CoronerPriority { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "other_priority")]
+ //       [JsonProperty(PropertyName = "other_priority")]
         public bool OtherPriority { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "priority_details")]
+ //       [JsonProperty(PropertyName = "priority_details")]
         public string PriorityDetails { get; set; }
 
         // Status Fields 
         [Required]
-        [JsonProperty(PropertyName = "completed")]
+   //     [JsonProperty(PropertyName = "completed")]
         public bool Completed { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "coroner_status")]
+     //   [JsonProperty(PropertyName = "coroner_status")]
         public CoronerStatus CoronerStatus { get; set; }
         
         public Examination()

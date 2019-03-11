@@ -102,10 +102,10 @@ namespace MedicalExaminer.API.Controllers
 
             var examination = Mapper.Map<Examination>(postNewCaseRequest);
             
-            var result = _examinationCreationService.Handle(new CreateExaminationQuery(examination));
+            var result =await _examinationCreationService.Handle(new CreateExaminationQuery(examination));
             var res = new PutExaminationResponse()
             {
-                ExaminationId = result.Result
+                ExaminationId = result
             };
 
             return Ok(res);

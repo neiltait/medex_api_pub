@@ -29,22 +29,10 @@ namespace MedicalExaminer.Common.Database
         public async Task<T> CreateItemAsync<T>(IConnectionSettings connectionSettings, T item, bool disableAutomaticIdGeneration = false)
         {
             var _client = CreateClient(connectionSettings);
-            var resourceResponse = await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection), item, disableAutomaticIdGeneration: disableAutomaticIdGeneration);
+            var resourceResponse = await _client.CreateDocumentAsync(
+                UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, 
+                    connectionSettings.Collection), item);
             return (T)(dynamic)resourceResponse.Resource;
-        }
-
-        public async Task<IEnumerable<T>> QueryAsync<T>(IConnectionSettings connectionSettings, string queryString)
-        {
-            var Client = CreateClient(connectionSettings);
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection);
-
-            var feedOptions = new FeedOptions { MaxItemCount = -1 };
-            var query = Client.CreateDocumentQuery<T>(documentCollectionUri, queryString,
-                feedOptions);
-            var queryAll = query.AsDocumentQuery();
-            var results = new List<T>();
-            while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<T>());
-            return results;
         }
 
         public async Task<T> GetItemAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
@@ -82,24 +70,15 @@ namespace MedicalExaminer.Common.Database
 
             return results;
         }
-
-        public async Task<string> Update(IConnectionSettings connectionSettings, Document document)
-        {
-            var client = CreateClient(connectionSettings);
-            var response = await client.ReplaceDocumentAsync(document);
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                return null;
-            }
-            return response.Resource.Id;
-        }
-
-
-        public async Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, string id, T item)
+        
+        public async Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item)
         {
             var _client = CreateClient(connectionSettings);
-            var updateItemAsync = _client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(connectionSettings.DatabaseId, connectionSettings.Collection, id), item);
-            return (T)(dynamic)updateItemAsync.Result.Resource;
+            var updateItemAsync = await _client.UpsertDocumentAsync(
+                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
+                    item);
+
+            return (T) (dynamic) updateItemAsync.Resource;
         }
     }
 }
