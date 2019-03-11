@@ -33,7 +33,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             // Assert
             dbAccess.Verify(db => db.GetItemAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
-                x=>x.Id == examinationId), Times.Once);
+                It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()), Times.Once);
 
             Assert.Equal(expected, result.Result);
 
@@ -48,7 +48,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var dbAccess = new Mock<IDatabaseAccess>();
             var sut = new ExaminationRetrievalService(dbAccess.Object, connectionSettings.Object);
             
-            Action act = () => sut.Handle(query);
+            Action act = () => sut.Handle(query).GetAwaiter().GetResult();
             act.Should().Throw<ArgumentNullException>();
         }
 
@@ -61,7 +61,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var query = new Mock<ExaminationRetrievalQuery>(examinationId);
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.GetItemAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
-                    exam => exam.Id == query.Object.ExaminationId))
+                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
             var sut = new ExaminationRetrievalService(dbAccess.Object, connectionSettings.Object);
             var expected = examination;
@@ -71,7 +71,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             // Assert
             dbAccess.Verify(db => db.GetItemAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
-                exam => exam.Id == query.Object.ExaminationId), Times.Once);
+                It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()), Times.Once);
             Assert.Equal(expected, result.Result);
         }
     }

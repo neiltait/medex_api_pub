@@ -21,7 +21,7 @@ namespace MedicalExaminer.API.Attributes
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
             //TODO:
-            return ValidationResult.Success;
+            //return ValidationResult.Success;
             if (!(value is string nhsNumber))
             {
                 return ValidationResult.Success;

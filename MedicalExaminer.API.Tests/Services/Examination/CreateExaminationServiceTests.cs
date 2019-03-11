@@ -44,7 +44,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var dbAccess = new Mock<IDatabaseAccess>();
             var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object);
 
-            Action act = () => sut.Handle(query);
+            Action act = () => sut.Handle(query).GetAwaiter().GetResult();
             act.Should().Throw<ArgumentNullException>();
         }
     }

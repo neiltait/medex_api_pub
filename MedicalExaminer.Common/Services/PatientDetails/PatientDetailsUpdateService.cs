@@ -25,7 +25,8 @@ namespace MedicalExaminer.Common.Services.PatientDetails
 
             caseToReplace.GivenNames = param.PatientDetails.GivenNames;
             caseToReplace.Surname = param.PatientDetails.Surname;
-
+            caseToReplace.Country = param.PatientDetails.Country;
+            //caseToReplace.
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, caseToReplace);
             return result;
         }

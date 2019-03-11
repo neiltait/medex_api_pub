@@ -54,10 +54,7 @@ namespace MedicalExaminer.API.Controllers
             var result = await _patientDetailsByCaseIdService.Handle(new PatientDetailsByCaseIdQuery(caseId));
 
 
-            return Ok(new GetPatientDetailsResponse()
-            {
-               // ExaminationId = result.Result.id
-            });
+            return Ok(Mapper.Map<GetPatientDetailsResponse>(result));
         }
 
 
@@ -86,6 +83,5 @@ namespace MedicalExaminer.API.Controllers
                 ExaminationId = result.Result.id
             });
         }
-
     }
 }
