@@ -13,7 +13,6 @@ namespace MedicalExaminer.Common.Database
 
         Task<string> Create<T>(IConnectionSettings connectionSettings, T document);
 
-        //DJP
         Task<string> Update(IConnectionSettings connectionSettings, Document document);
 
         Task<T> QuerySingleAsync<T>(
