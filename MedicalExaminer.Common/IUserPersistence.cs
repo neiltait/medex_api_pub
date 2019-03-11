@@ -31,6 +31,13 @@ namespace MedicalExaminer.Common
         Task<MeUser> GetUserAsync(string UserId);
 
         /// <summary>
+        /// Get user by Email Address
+        /// </summary>
+        /// <param name="UserId">Email Address of user to return</param>
+        /// <returns>Found user</returns>
+        Task<MeUser> GetUserByEmailAddressAsync(string emailAddress);
+
+        /// <summary>
         /// Get all users
         /// </summary>
         /// <returns>List of users</returns>

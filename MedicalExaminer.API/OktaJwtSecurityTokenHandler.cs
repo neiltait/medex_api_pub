@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using MedicalExaminer.API.Services;
 using Microsoft.IdentityModel.Tokens;
@@ -55,6 +56,8 @@ namespace MedicalExaminer.API
             out SecurityToken validatedToken)
         {
             var response = _tokenService.IntrospectToken(securityToken).Result;
+
+            Console.WriteLine("Hello from token thing!?");
 
             if (!response.Active)
             {

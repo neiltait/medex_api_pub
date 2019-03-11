@@ -24,6 +24,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Okta.Sdk;
+using Okta.Sdk.Configuration;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace MedicalExaminer.API
@@ -57,6 +60,8 @@ namespace MedicalExaminer.API
             var okatSettings = oktaSettingsSection.Get<OktaSettings>();
             services.Configure<OktaSettings>(oktaSettingsSection);
 
+            ConfigureOktaClient(services);
+
             services.AddSingleton<ITokenService, OktaTokenService>();
 
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
@@ -66,7 +71,7 @@ namespace MedicalExaminer.API
                     .AllowAnyHeader();
             }));
 
-            //ConfigureAuthentication(services, okatSettings);
+            ConfigureAuthentication(services, okatSettings);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -81,7 +86,7 @@ namespace MedicalExaminer.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Medical Examiner Data API", Version = "v1" });
-                
+
                 // Make all enums appear as strings
                 c.DescribeAllEnumsAsStrings();
 
@@ -125,7 +130,7 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
 
             services.AddScoped<ControllerActionFilter>();
-            
+
             services.AddScoped<ILocationPersistence>(s => new LocationPersistence(
                  new Uri(Configuration["CosmosDB:URL"]),
                  Configuration["CosmosDB:PrimaryKey"],
@@ -145,8 +150,6 @@ namespace MedicalExaminer.API
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
-
-            
         }
 
         /// <summary>
@@ -188,7 +191,7 @@ namespace MedicalExaminer.API
             }
 
             // Must be above UseMvc
-            //app.UseAuthentication();
+            app.UseAuthentication();
 
             app.UseCors("MyPolicy");
 
@@ -210,11 +213,30 @@ namespace MedicalExaminer.API
                 {
                     options.Authority = oktaSettings.Authority;
                     options.Audience = oktaSettings.Audience;
-                    /*options.SecurityTokenValidators.Clear();
+                    options.SecurityTokenValidators.Clear();
                     options.SecurityTokenValidators.Add(
                         new OktaJwtSecurityTokenHandler(
-                            tokenService));*/
+                            tokenService));
                 });
+        }
+
+        /// <summary>
+        /// Configure Okta Client.
+        /// </summary>
+        /// <param name="services">Services.</param>
+        private void ConfigureOktaClient(IServiceCollection services)
+        {
+            // Configure okta client
+            services.AddScoped<OktaClientConfiguration>(context =>
+            {
+                var settings = context.GetRequiredService<IOptions<OktaSettings>>();
+                return new OktaClientConfiguration
+                {
+                    OktaDomain = settings.Value.Domain,
+                    Token = settings.Value.SdkToken,
+                };
+            });
+            services.AddScoped<OktaClient, OktaClient>();
         }
     }
 }

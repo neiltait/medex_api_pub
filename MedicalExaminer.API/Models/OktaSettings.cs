@@ -30,5 +30,17 @@
         /// Client Secret.
         /// </summary>
         public string ClientSecret { get; set; }
+
+        /// <summary>
+        /// Domain
+        /// </summary>
+        /// <remarks>Used for Okta SDK</remarks>
+        public string Domain { get; set; }
+
+        /// <summary>
+        /// SDK Token
+        /// </summary>
+        /// <remarks>API Access token to use SDK</remarks>
+        public string SdkToken { get; set; }
     }
 }

@@ -48,6 +48,11 @@ namespace MedicalExaminer.API.Tests.Persistence
             throw new ArgumentException("Invalid Argument");
         }
 
+        public Task<MeUser> GetUserByEmailAddressAsync(string emailAddress)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IEnumerable<MeUser>> GetUsersAsync()
         {
             return await Task.FromResult(_users);
