@@ -15,7 +15,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// Consultant primarily responsible for care of patient
         /// </summary>
         //[JsonProperty(PropertyName = "consultant_responsible")]
-        public Consultant ConsultantResponsible { get; set; }
+        public ClinicalProfessional ConsultantResponsible { get; set; }
 
         //public ClinicalProfessional DJP { get; set; }
 

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.Models.Enums;
+using Microsoft.Azure.Documents;
 using Newtonsoft.Json;
+using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace MedicalExaminer.Models
 {
@@ -42,7 +44,7 @@ namespace MedicalExaminer.Models
 
     }
 
-    public class Examination : Record, IExamination
+    public class Examination : Record,  IExamination
     {
         // Linked Fields 
         [DataType(DataType.Custom)]

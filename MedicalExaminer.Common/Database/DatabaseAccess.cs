@@ -37,12 +37,11 @@ namespace MedicalExaminer.Common.Database
             return response.Resource.Id;
         }
 
-        //DJP
         public async Task<string> Update(IConnectionSettings connectionSettings, Document document)
         {
             var client = CreateClient(connectionSettings);
             var response = await client.ReplaceDocumentAsync(document);
-            if (response.StatusCode != HttpStatusCode.Created)
+            if (response.StatusCode != HttpStatusCode.OK)
             {
                 return null;
             }
