@@ -16,7 +16,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         //[Required]
         //public ClinicalProfessional ConsultantResponsible { get; set; }
 
-        [DataType(DataType.Custom)]
+
         public ClinicalProfessional DJP { get; set; }
 
         ///// <summary>

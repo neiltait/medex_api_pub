@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Models;
 
@@ -14,10 +15,22 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public ExaminationProfile()
         {
-            CreateMap<Examination, GetExaminationResponse>();
-            CreateMap<Examination, ExaminationItem>();
-            CreateMap<PostNewCaseRequest, Examination>();
-            //CreateMap<IExamination, GetExaminationResponse>();
+            //DJP)
+            try
+            {
+                CreateMap<Examination, GetExaminationResponse>();
+                CreateMap<Examination, ExaminationItem>();
+                CreateMap<PostNewCaseRequest, Examination>();
+                //CreateMap<IExamination, GetExaminationResponse>();
+                CreateMap<PostMedicalTeamRequest, MedicalTeam>();
+
+            }
+               catch (Exception ex)
+               {
+                   var djp = ex.Message;
+                   var djp1 = 1;
+               }
+        
         }
     }
 }

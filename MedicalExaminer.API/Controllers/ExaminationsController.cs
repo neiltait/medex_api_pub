@@ -120,10 +120,10 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutExaminationResponse.</returns>
         [HttpPost("/MedicalTeam/{examinationId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        //public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody]PostMedicalTeamRequest postMedicalTeamRequest)
-        public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody] dynamic postMedicalTeamRequest)
+        public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody]PostMedicalTeamRequest postMedicalTeamRequest)
+        //public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody] dynamic postMedicalTeamRequest)
         {
-            var djp = postMedicalTeamRequest.ToObject<PostMedicalTeamRequest>();
+            //var djp = postMedicalTeamRequest.ToObject<PostMedicalTeamRequest>();
 
             if (!ModelState.IsValid)
             {
