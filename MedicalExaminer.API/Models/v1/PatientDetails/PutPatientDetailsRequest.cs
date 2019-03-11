@@ -6,6 +6,8 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
 {
     public class PutPatientDetailsRequest
     {
+        public string GivenNames { get; set; }
+        public string Surname { get; set; }
         /// <summary>
         /// Patients Postcode
         /// </summary>
