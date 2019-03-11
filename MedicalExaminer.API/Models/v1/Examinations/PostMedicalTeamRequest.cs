@@ -14,43 +14,43 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Consultant primarily responsible for care of patient
         /// </summary>
-        //[JsonProperty(PropertyName = "consultant_responsible")]
+        [Required]
         public ClinicalProfessional ConsultantResponsible { get; set; }
 
 
         /// <summary>
         /// Other consultants involved in care of the patient
         /// </summary>
-        //[Required]
+        [Required]
         public ClinicalProfessional[] ConsultantsOther { get; set; }
 
-        ///// <summary>
-        ///// Consultant primarily responsible for care
-        ///// </summary>
-        //[Required]
-        //public ClinicalProfessional GeneralPractitioner { get; set; }
+        /// <summary>
+        /// Consultant primarily responsible for care
+        /// </summary>
+        [Required]
+        public ClinicalProfessional GeneralPractitioner { get; set; }
 
-        ///// <summary>
-        ///// Clinician responsible for certification
-        ///// </summary>
-        //[Required]
-        //public ClinicalProfessional Qap { get; set; }
+        /// <summary>
+        /// Clinician responsible for certification
+        /// </summary>
+        [Required]
+        public ClinicalProfessional Qap { get; set; }
 
-        ///// <summary>
-        ///// Nursing information
-        ///// </summary>
-        //public string NursingTeamInformation { get; set; }
+        /// <summary>
+        /// Nursing information
+        /// </summary>
+        public string NursingTeamInformation { get; set; }
 
-        ///// <summary>
-        ///// Medical Examiner Id
-        ///// </summary>
-        //[Required]
-        //public string MedicalExaminer { get; set; }
+        /// <summary>
+        /// Medical Examiner Id
+        /// </summary>
+        [Required]
+        public string MedicalExaminer { get; set; }
 
-        ///// <summary>
-        ///// Medical Examiner Officer Id
-        ///// </summary>
-        //[Required]
-        //public string MedicalExaminerOfficer { get; set; }
+        /// <summary>
+        /// Medical Examiner Officer Id
+        /// </summary>
+        [Required]
+        public string MedicalExaminerOfficer { get; set; }
     }
 }

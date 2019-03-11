@@ -82,39 +82,37 @@ namespace MedicalExaminer.Models
         //public string MedicalExaminer { get; set; }
 
         ///// <inheritdoc />
-        //[Required]
-        //// <inheritdoc />
-        //[JsonProperty(PropertyName = "consultant_responsible")]
-        //public Consultant ConsultantResponsible { get; set; }
+        [Required]
+        [JsonProperty(PropertyName = "consultant_responsible")]
         public ClinicalProfessional ConsultantResponsible { get; set; }
 
         ///// <inheritdoc />
-        //[Required]
-        //[JsonProperty(PropertyName = "consultants_other")]
+        [Required]
+        [JsonProperty(PropertyName = "consultants_other")]
         public ClinicalProfessional[] ConsultantsOther { get; set; }
 
         ///// <inheritdoc />
-        //[Required]
-        //[JsonProperty(PropertyName = "general_practitioner")]
-        //public ClinicalProfessional GeneralPractitioner { get; set; }
+        [Required]
+        [JsonProperty(PropertyName = "general_practitioner")]
+        public ClinicalProfessional GeneralPractitioner { get; set; }
 
         ///// <inheritdoc />
-        //[Required]
-        //[JsonProperty(PropertyName = "qap")]
-        //public ClinicalProfessional Qap { get; set; }
+        [Required]
+        [JsonProperty(PropertyName = "qap")]
+        public ClinicalProfessional Qap { get; set; }
 
         ///// <inheritdoc />
-        //[JsonProperty(PropertyName = "nursing_team_information")]
-        //public string NursingTeamInformation { get; set; }
+        [JsonProperty(PropertyName = "nursing_team_information")]
+        public string NursingTeamInformation { get; set; }
 
         ///// <inheritdoc />
-        //[Required]
-        //[JsonProperty(PropertyName = "medical_examiner")]
-        //public string MedicalExaminer { get; set; }
+        [Required]
+        [JsonProperty(PropertyName = "medical_examiner")]
+        public string MedicalExaminer { get; set; }
 
         ///// <inheritdoc />
-        //[Required]
-        //[JsonProperty(PropertyName = "medical_examiner_officer")]
-        //public string MedicalExaminerOfficer { get; set; }
+        [Required]
+        [JsonProperty(PropertyName = "medical_examiner_officer")]
+        public string MedicalExaminerOfficer { get; set; }
     }
 }
