@@ -2,6 +2,7 @@
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.PatientDetails;
+using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.PatientDetails
 {
@@ -16,10 +17,10 @@ namespace MedicalExaminer.Common.Services.PatientDetails
         }
         public Task<Models.PatientDetails> Handle(PatientDetailsByCaseIdQuery param)
         {
-            var result = _databaseAccess.QueryAsyncOne<Models.PatientDetails>(_connectionSettings,
-                $"SELECT e.patient_details.given_names as GivenNames, e.patient_details.surname as Surname FROM Examinations e WHERE e.id = '{param.ExaminationId}'");
+            var result = _databaseAccess.GetItemAsync<IExamination>(_connectionSettings,
+                examination => examination.Id == param.ExaminationId);
 
-            return result;
+            return result.ContinueWith(x=>x.Result.PatientDetails);
         }
     }
 }

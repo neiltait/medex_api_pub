@@ -31,8 +31,8 @@ namespace MedicalExaminer.Common.Services.Examination
                         GivenNames = param.Examination.GivenNames,
                         Surname = param.Examination.Surname
                     };
-                    var result = _databaseAccess.Create(_connectionSettings, param.Examination);
-                    return result;
+                    var result = _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination);
+                    return result.ContinueWith(res => res.Result.Id);
                 }
                 catch (Exception e)
                 {

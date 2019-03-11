@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
@@ -20,13 +21,32 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var primaryKey = "***REMOVED***";
             var databaseId = "testing123-djp";
 
-            var dataAccess = new DatabaseAccess();
-            var connectionSettings = new ExaminationConnectionSettings(new Uri(url), primaryKey, databaseId);
-            var service = new PatientDetailsRetrievalService(dataAccess, connectionSettings);
+            IDatabaseAccess dataAccess = new DatabaseAccess();
 
-            var result = service.Handle(new PatientDetailsByCaseIdQuery(mystring)).Result;
+            
 
-            var name = result.Surname;
+            //var connectionSettings = new ExaminationConnectionSettings(new Uri(url), primaryKey, databaseId);
+            //var service = new PatientDetailsRetrievalService(dataAccess, connectionSettings);
+
+            //var z = dataAccess
+            //    .GetItemsAsync<MedicalExaminer.Models.Examination>
+            //    (connectionSettings,
+            //        xxxx => xxxx.PatientDetails.GivenNames == mystring);
+
+            //var y = dataAccess.GetItemAsync<MedicalExaminer.Models.Examination>(connectionSettings, mystring);
+
+            //Expression<Func<MedicalExaminer.Models.Examination, bool>> t = (x) => x.PatientDetails.Surname == mystring;
+            
+            //var xx = dataAccess.GetItemsAsync<MedicalExaminer.Models.Examination,
+            //    MedicalExaminer.Models.PatientDetails>(connectionSettings, expression => expression.);
+
+            // //await dataAccess.GetItemPartAsync<MedicalExaminer.Models.Examination,<MedicalExaminer.Models.PatientDetails>(
+            // //   connectionSettings, 
+            // //   exam => exam.PatientDetails.Surname == "");
+
+            //var result = service.Handle(new PatientDetailsByCaseIdQuery(mystring)).Result;
+
+            //var name = result.Surname;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 throw new ArgumentNullException(nameof(param));
             }
             // can put whatever filters in the param, just empty for now
-            return _databaseAccess.QueryAsync<Models.Examination>(_connectionSettings, param.QueryString);
+            return _databaseAccess.GetItemsAsync<Models.Examination>(_connectionSettings, x=> true);
         }
     }
 }

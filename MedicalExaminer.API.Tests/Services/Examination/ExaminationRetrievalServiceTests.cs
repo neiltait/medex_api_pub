@@ -20,7 +20,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var query = new Mock<ExaminationRetrievalQuery>(examinationId);
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.QuerySingleAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object, query.Object.ExaminationId))
+            dbAccess.Setup(db => db.GetItemAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
+                    examination => examination.Id == query.Object.ExaminationId))
                 .Returns(Task.FromResult<MedicalExaminer.Models.Examination>(null)).Verifiable();
             var sut = new ExaminationRetrievalService(dbAccess.Object, connectionSettings.Object);
             var expected = default(MedicalExaminer.Models.Examination);
@@ -29,7 +30,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var result = sut.Handle(query.Object);
 
             // Assert
-            dbAccess.Verify(db => db.QuerySingleAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object, "a"), Times.Once);
+            dbAccess.Verify(db => db.GetItemAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
+                examination => examination.Id == query.Object.ExaminationId), Times.Once);
 
             Assert.Equal(expected, result.Result);
 
@@ -56,7 +58,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var query = new Mock<ExaminationRetrievalQuery>(examinationId);
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.QuerySingleAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object, query.Object.ExaminationId))
+            dbAccess.Setup(db => db.GetItemAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
+                    exam => exam.Id == query.Object.ExaminationId))
                 .Returns(Task.FromResult(examination)).Verifiable();
             var sut = new ExaminationRetrievalService(dbAccess.Object, connectionSettings.Object);
             var expected = examination;
@@ -65,7 +68,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var result = sut.Handle(query.Object);
 
             // Assert
-            dbAccess.Verify(db => db.QuerySingleAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object, query.Object.ExaminationId), Times.Once);
+            dbAccess.Verify(db => db.GetItemAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
+                exam => exam.Id == query.Object.ExaminationId), Times.Once);
             Assert.Equal(expected, result.Result);
         }
     }

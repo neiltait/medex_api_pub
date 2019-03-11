@@ -20,7 +20,8 @@ namespace MedicalExaminer.API.Tests.Services.Location
             var connectionSettings = new Mock<ILocationConnectionSettings>();
             var query = new Mock<LocationRetrievalByIdQuery>(locationId);
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.QuerySingleAsync<MedicalExaminer.Models.Location>(connectionSettings.Object, "a"))
+            dbAccess.Setup(db => db.GetItemAsync<MedicalExaminer.Models.Location>(connectionSettings.Object,
+                    location => location.LocationId == locationId))
                 .Returns(Task.FromResult<MedicalExaminer.Models.Location>(null)).Verifiable();
             var sut = new LocationIdService(dbAccess.Object, connectionSettings.Object);
             var expected = default(MedicalExaminer.Models.Location);
@@ -29,7 +30,8 @@ namespace MedicalExaminer.API.Tests.Services.Location
             var result = sut.Handle(query.Object);
             
             // Assert
-            dbAccess.Verify(db => db.QuerySingleAsync<MedicalExaminer.Models.Location>(connectionSettings.Object, "a"), Times.Once);
+            dbAccess.Verify(db => db.GetItemAsync<MedicalExaminer.Models.Location>(connectionSettings.Object,
+                location => location.LocationId == locationId), Times.Once);
             
             Assert.Equal(expected, result.Result);
 
@@ -58,7 +60,8 @@ namespace MedicalExaminer.API.Tests.Services.Location
             var connectionSettings = new Mock<ILocationConnectionSettings>();
             var query = new Mock<LocationRetrievalByIdQuery>(locationId);
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.QuerySingleAsync<MedicalExaminer.Models.Location>(connectionSettings.Object, "a"))
+            dbAccess.Setup(db => db.GetItemAsync<MedicalExaminer.Models.Location>(connectionSettings.Object,
+                    loc => loc.LocationId == locationId))
                 .Returns(Task.FromResult(location.Object)).Verifiable();
             var sut = new LocationIdService(dbAccess.Object, connectionSettings.Object);
             var expected = location;
@@ -67,7 +70,8 @@ namespace MedicalExaminer.API.Tests.Services.Location
             var result = sut.Handle(query.Object);
 
             // Assert
-            dbAccess.Verify(db => db.QuerySingleAsync<MedicalExaminer.Models.Location>(connectionSettings.Object, "a"), Times.Once);
+            dbAccess.Verify(db => db.GetItemAsync<MedicalExaminer.Models.Location>(connectionSettings.Object,
+                loc => loc.LocationId == locationId), Times.Once);
             Assert.Equal(location.Object, result.Result);
         }
     }

@@ -23,14 +23,15 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var query = new CreateExaminationQuery(examination);
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.Create(connectionSettings.Object, examination)).Returns(Task.FromResult("a")).Verifiable();
+            dbAccess.Setup((db)  => db.CreateItemAsync(connectionSettings.Object, 
+                examination, false)).Returns(Task.FromResult(examination)).Verifiable();
             var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object);
             
             // Act
             var result = sut.Handle(query);
 
             // Assert
-            dbAccess.Verify(db => db.Create(connectionSettings.Object, examination), Times.Once);
+            dbAccess.Verify(db => db.CreateItemAsync(connectionSettings.Object, examination, false), Times.Once);
             Assert.NotNull(result.Result);
         }
 
