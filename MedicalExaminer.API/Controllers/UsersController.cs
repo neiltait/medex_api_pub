@@ -19,7 +19,7 @@ namespace MedicalExaminer.API.Controllers
     /// </summary>
     [Route("users")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class UsersController : BaseController
     {
         /// <summary>

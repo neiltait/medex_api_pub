@@ -27,5 +27,25 @@ namespace MedicalExaminer.API.Controllers
             : base(logger, mapper)
         {
         }
+
+        [HttpPost("validate-session")]
+        [AllowAnonymous]
+        public dynamic ValidateSession()
+        {
+            return new
+            {
+                user_id = "user_id",
+                first_name = "first_name",
+                last_name = "last_name",
+                email_address = "email",
+            };
+        }
+
+        [HttpGet("get-session")]
+        [AllowAnonymous]
+        public bool GetSession()
+        {
+            return true;
+        }
     }
 }

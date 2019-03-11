@@ -13,7 +13,7 @@ namespace MedicalExaminer.API.Controllers
     /// </summary>
     /// <remarks>By default requires Authorization.</remarks>
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public abstract class BaseController : Controller
     {
         /// <summary>

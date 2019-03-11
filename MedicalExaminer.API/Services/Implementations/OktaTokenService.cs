@@ -18,13 +18,13 @@ namespace MedicalExaminer.API.Services.Implementations
         /// <summary>
         /// Okta Settings.
         /// </summary>
-        private readonly OktaSettings _oktaSettings;
+        private readonly IOptions<OktaSettings> _oktaSettings;
 
         /// <summary>
         /// Initialise a new instance of the Okta Token Service.
         /// </summary>
         /// <param name="oktaSettings">Okta settings.</param>
-        public OktaTokenService(OktaSettings oktaSettings)
+        public OktaTokenService(IOptions<OktaSettings> oktaSettings)
         {
             _oktaSettings = oktaSettings;
         }
@@ -37,14 +37,14 @@ namespace MedicalExaminer.API.Services.Implementations
         public async Task<IntrospectResponse> IntrospectToken(string token)
         {
             var client = new HttpClient();
-            var clientId = _oktaSettings.ClientId;
-            var clientSecret = _oktaSettings.ClientSecret;
+            var clientId = _oktaSettings.Value.ClientId;
+            var clientSecret = _oktaSettings.Value.ClientSecret;
             var clientCreds = System.Text.Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}");
 
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Basic", Convert.ToBase64String(clientCreds));
 
-            var request = new HttpRequestMessage(HttpMethod.Post, _oktaSettings.IntrospectUrl)
+            var request = new HttpRequestMessage(HttpMethod.Post, _oktaSettings.Value.IntrospectUrl)
             {
                 Content = new FormUrlEncodedContent(
                     new Dictionary<string, string> { { "token", token } })

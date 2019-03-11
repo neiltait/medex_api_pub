@@ -56,13 +56,13 @@ namespace MedicalExaminer.API
         {
             var response = _tokenService.IntrospectToken(securityToken).Result;
 
-            if (response.Active)
+            if (!response.Active)
             {
-                return _tokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
+                validatedToken = null;
+                throw new SecurityTokenValidationException();
             }
 
-            // TODO: find out what we do to indicate failure
-            return _tokenHandler.ValidateToken(string.Empty, validationParameters, out validatedToken);
+            return _tokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
         }
     }
 }

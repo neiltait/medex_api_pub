@@ -59,7 +59,14 @@ namespace MedicalExaminer.API
 
             services.AddSingleton<ITokenService, OktaTokenService>();
 
-            ConfigureAuthentication(services, okatSettings);
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
+
+            //ConfigureAuthentication(services, okatSettings);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -166,7 +173,7 @@ namespace MedicalExaminer.API
                 });
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
@@ -181,7 +188,9 @@ namespace MedicalExaminer.API
             }
 
             // Must be above UseMvc
-            app.UseAuthentication();
+            //app.UseAuthentication();
+
+            app.UseCors("MyPolicy");
 
             app.UseMvc();
         }
@@ -193,15 +202,18 @@ namespace MedicalExaminer.API
         /// <param name="oktaSettings">Okta Settings.</param>
         private void ConfigureAuthentication(IServiceCollection services, OktaSettings oktaSettings)
         {
+            var provider = services.BuildServiceProvider();
+            var tokenService = provider.GetRequiredService<ITokenService>();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     options.Authority = oktaSettings.Authority;
                     options.Audience = oktaSettings.Audience;
-                    options.SecurityTokenValidators.Clear();
+                    /*options.SecurityTokenValidators.Clear();
                     options.SecurityTokenValidators.Add(
                         new OktaJwtSecurityTokenHandler(
-                            new OktaTokenService(oktaSettings)));
+                            tokenService));*/
                 });
         }
     }
