@@ -88,5 +88,6 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// Free text details of any personal effects
         /// </summary>
         public string PersonalEffectDetails { get; set; }
+        public IEnumerable<Representative> Representatives { get; set; }
     }
 }

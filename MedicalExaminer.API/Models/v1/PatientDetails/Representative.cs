@@ -9,7 +9,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
     /// <summary>
     /// Object for creating and updating patients representative
     /// </summary>
-    public class PutRepresentativeRequest
+    public class Representative
     {
         /// <summary>
         /// Internal id for the patients representative

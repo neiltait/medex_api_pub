@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.Models.Enums;
 using Microsoft.Azure.Documents;
@@ -40,7 +41,7 @@ namespace MedicalExaminer.Models
         bool Completed { get; set; }
         CoronerStatus CoronerStatus { get; set; }
 
-        PatientDetails PatientDetails { get; set; }
+        IEnumerable<Representative> Representatives { get; set; }
     }
 
     public class Examination : Resource, IExamination
@@ -203,7 +204,8 @@ namespace MedicalExaminer.Models
         [Required]
      //   [JsonProperty(PropertyName = "coroner_status")]
         public CoronerStatus CoronerStatus { get; set; }
-        
+
+        public IEnumerable<Representative> Representatives { get; set; }
         public Examination()
         {
             Completed = false;

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.API.Attributes;
 using MedicalExaminer.Models.Enums;
 
@@ -84,5 +85,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// Free text details of any personal effects
         /// </summary>
         public string PersonalEffectDetails { get; set; }
+
+        public IEnumerable<Representative> Representatives { get; set; }
     }
 }
