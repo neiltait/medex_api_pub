@@ -120,11 +120,12 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutExaminationResponse.</returns>
         [HttpPost("/MedicalTeam/{examinationId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        //public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody]PostMedicalTeamRequest postMedicalTeamRequest)
-        public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody] dynamic postMedicalTeamRequest)
+        public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody]PostMedicalTeamRequest postMedicalTeamRequest)
+        //public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody] dynamic postMedicalTeamRequest)
         {
-            var djp = postMedicalTeamRequest.ToObject<PostMedicalTeamRequest>();
-
+            //var djp = postMedicalTeamRequest.ToObject<PostMedicalTeamRequest>();
+            var medicalTeamRequest = Mapper.Map<MedicalTeam>(postMedicalTeamRequest);
+            var test = postMedicalTeamRequest;
             if (!ModelState.IsValid)
             {
                 return BadRequest(new PutExaminationResponse());
@@ -136,7 +137,7 @@ namespace MedicalExaminer.API.Controllers
                 return NotFound();
             }
 
-            var medicalTeamRequest = Mapper.Map<MedicalTeam>(postMedicalTeamRequest);
+            
 
             var res = new PutExaminationResponse()
             {
