@@ -91,7 +91,7 @@ namespace MedicalExaminer.Models
         ///// <inheritdoc />
         //[Required]
         //[JsonProperty(PropertyName = "consultants_other")]
-        //public ClinicalProfessional[] ConsultantsOther { get; set; }
+        public ClinicalProfessional[] ConsultantsOther { get; set; }
 
         ///// <inheritdoc />
         //[Required]
