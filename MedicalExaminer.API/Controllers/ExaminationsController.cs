@@ -159,5 +159,25 @@ namespace MedicalExaminer.API.Controllers
 
             return Ok(res);
         }
+
+        [HttpGet("/MedicalTeam/{examinationId}")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<GetMedicalTeamResponse>> GetMedicalTeam(string examinationId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new GetMedicalTeamResponse());
+            }
+
+            Examination examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
+            if (examination == null || examination.MedicalTeam == null)
+            {
+                return NotFound(new GetMedicalTeamResponse());
+            }
+
+            var getMedicalTeamResponse = Mapper.Map<GetMedicalTeamResponse>(examination.MedicalTeam);
+         
+            return Ok(getMedicalTeamResponse);
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace MedicalExaminer.API.Extensions.Data
         public MedicalTeamProfile()
         {
             CreateMap<PostMedicalTeamRequest, MedicalTeam>();
+            CreateMap<MedicalTeam, GetMedicalTeamResponse>();
             //CreateMap<IExamination, GetExaminationResponse>();
         }
     }
