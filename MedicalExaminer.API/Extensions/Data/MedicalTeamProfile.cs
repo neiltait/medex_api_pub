@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Models.v1.Examinations;
+using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Models;
 
 namespace MedicalExaminer.API.Extensions.Data
@@ -14,6 +15,8 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<PostMedicalTeamRequest, MedicalTeam>();
             CreateMap<MedicalTeam, GetMedicalTeamResponse>();
+            CreateMap<MedicalTeam, MedicalTeamItem>();
+
             //CreateMap<IExamination, GetExaminationResponse>();
         }
     }

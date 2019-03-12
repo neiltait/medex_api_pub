@@ -31,7 +31,5 @@ namespace MedicalExaminer.Common.Database
             object param = null);
 
         Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item);
-
-
     }
 }

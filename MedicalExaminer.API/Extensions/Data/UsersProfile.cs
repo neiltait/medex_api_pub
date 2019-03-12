@@ -18,9 +18,9 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<MeUser, GetUserResponse>();
             CreateMap<MeUser, PutUserResponse>();
             CreateMap<MeUser, PostUserResponse>();
-
             CreateMap<PostUserRequest, MeUser>();
             CreateMap<PutUserRequest, MeUser>();
+            CreateMap<UserItem, MeUser>();
         }
     }
 }

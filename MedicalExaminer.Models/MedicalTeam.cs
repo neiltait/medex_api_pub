@@ -39,14 +39,14 @@ namespace MedicalExaminer.Models
         string NursingTeamInformation { get; set; }
 
         /// <summary>
-        /// Medical Examiner Id
+        /// Medical Examiner
         /// </summary>
-        string MedicalExaminer { get; set; }
+        MeUser MedicalExaminer { get; set; }
 
         /// <summary>
-        /// Medical Examiner Officer Id
+        /// Medical Examiner Officer
         /// </summary>
-        string MedicalExaminerOfficer { get; set; }
+        MeUser MedicalExaminerOfficer { get; set; }
     }
 
     /// <inheritdoc />
@@ -79,11 +79,11 @@ namespace MedicalExaminer.Models
         /// <inheritdoc />
         [Required]
         [JsonProperty(PropertyName = "medical_examiner")]
-        public string MedicalExaminer { get; set; }
+        public MeUser MedicalExaminer { get; set; }
 
         /// <inheritdoc />
         [Required]
         [JsonProperty(PropertyName = "medical_examiner_officer")]
-        public string MedicalExaminerOfficer { get; set; }
+        public MeUser MedicalExaminerOfficer { get; set; }
     }
 }

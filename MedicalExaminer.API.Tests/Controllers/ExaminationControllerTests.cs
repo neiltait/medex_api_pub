@@ -17,9 +17,6 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
 {
-    /// <summary>
-    /// DJP bring this back
-    /// </summary>
     public class ExaminationControllerTests : ControllerTestsBase<ExaminationsController>
     {
         [Fact]
