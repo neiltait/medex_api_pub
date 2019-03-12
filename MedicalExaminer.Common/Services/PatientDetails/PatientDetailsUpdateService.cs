@@ -23,10 +23,26 @@ namespace MedicalExaminer.Common.Services.PatientDetails
                 _databaseAccess
                     .GetItemAsync<Models.Examination>(_connectionSettings, examination => examination.Id == param.CaseId);
 
-            caseToReplace.GivenNames = param.PatientDetails.GivenNames;
-            caseToReplace.Surname = param.PatientDetails.Surname;
-            caseToReplace.Country = param.PatientDetails.Country;
-            //caseToReplace.
+            var patientDetails = param.PatientDetails;
+
+            caseToReplace.GivenNames = patientDetails.GivenNames;
+            caseToReplace.Surname = patientDetails.Surname;
+            caseToReplace.Country = patientDetails.Country;
+            caseToReplace.Postcode = patientDetails.PostCode;
+            caseToReplace.HouseNameNumber = patientDetails.HouseNameNumber;
+            caseToReplace.Street = patientDetails.Street;
+            caseToReplace.Town = patientDetails.Town;
+            caseToReplace.County = patientDetails.County;
+            caseToReplace.LastOccupation = patientDetails.LastOccupation;
+            caseToReplace.OrganisationCareBeforeDeathLocationId =
+                patientDetails.OrganisationResponsibleAtTimeOfDeath;
+            caseToReplace.FuneralDirectors = patientDetails.FuneralDirectors;
+            caseToReplace.PersonalAffectsCollected = patientDetails.AnyPersonalEffects;
+            caseToReplace.PersonalAffectsDetails = patientDetails.PersonalEffectDetails;
+            caseToReplace.AnyImplants = patientDetails.AnyImplants;
+            caseToReplace.ImplantDetails = patientDetails.ImplantDetails;
+            caseToReplace.Representatives = patientDetails.Representatives;
+
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, caseToReplace);
             return result;
         }

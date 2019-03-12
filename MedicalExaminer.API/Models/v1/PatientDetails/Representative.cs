@@ -12,10 +12,6 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
     public class Representative
     {
         /// <summary>
-        /// Internal id for the patients representative
-        /// </summary>
-        public Guid RepresentativeId { get; set; }
-        /// <summary>
         /// Representatives full name
         /// </summary>
         public string FullName { get; set; }
@@ -39,5 +35,6 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// Has the representative been informed?
         /// </summary>
         public Informed Informed { get; set; }
+        public DateTime? AppointmentDate { get; set; }
     }
 }

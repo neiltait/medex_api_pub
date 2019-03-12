@@ -40,16 +40,13 @@ namespace MedicalExaminer.Models
         string PriorityDetails { get; set; }
         bool Completed { get; set; }
         CoronerStatus CoronerStatus { get; set; }
-
+        bool AnyImplants { get; set; }
+        string ImplantDetails { get; set; }
         IEnumerable<Representative> Representatives { get; set; }
     }
 
     public class Examination : Resource, IExamination
     {
-        // Linked Fields 
-        [DataType(DataType.Custom)]
-     //   [JsonProperty(PropertyName = "patient_details")]
-        public PatientDetails PatientDetails { get; set; }
         [Required]
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "id")]
@@ -205,7 +202,10 @@ namespace MedicalExaminer.Models
      //   [JsonProperty(PropertyName = "coroner_status")]
         public CoronerStatus CoronerStatus { get; set; }
 
-        public IEnumerable<Representative> Representatives { get; set; }
+     public bool AnyImplants { get; set; }
+     public string ImplantDetails { get; set; }
+
+     public IEnumerable<Representative> Representatives { get; set; }
         public Examination()
         {
             Completed = false;

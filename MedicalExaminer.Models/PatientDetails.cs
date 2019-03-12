@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
 using MedicalExaminer.Models.Enums;
-using Newtonsoft.Json;
 
 namespace MedicalExaminer.Models
 {
@@ -20,18 +17,18 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// First line of patients addess
         /// </summary>
-        public string AddressLine1 { get; set; }
+        public string HouseNameNumber { get; set; }
 
         /// <summary>
         /// Second line of patients address
         /// </summary>
-        public string AddressLine2 { get; set; }
+        public string Street { get; set; }
 
         /// <summary>
         /// Patients town or city
         /// </summary>
         
-        public string AddressCity { get; set; }
+        public string Town { get; set; }
 
         /// <summary>
         /// Patients county
@@ -48,7 +45,7 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Free text for any relevant patient occupation details
         /// </summary>
-        public string RelevantOccupationDetails { get; set; }
+        public string LastOccupation { get; set; }
 
         /// <summary>
         /// Organisation responsible for patient at time of death
@@ -85,5 +82,6 @@ namespace MedicalExaminer.Models
         /// Free text details of any personal effects
         /// </summary>
         public string PersonalEffectDetails { get; set; }
+        public IEnumerable<Representative> Representatives { get; set; }
     }
 }

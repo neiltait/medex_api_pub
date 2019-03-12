@@ -19,18 +19,18 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// First line of patients addess
         /// </summary>
         [Required]
-        public string AddressLine1 { get; set; }
+        public string HouseNameNumber { get; set; }
 
         /// <summary>
         /// Second line of patients address
         /// </summary>
-        public string AddressLine2 { get; set; }
+        public string Street { get; set; }
 
         /// <summary>
         /// Patients town or city
         /// </summary>
         [Required]
-        public string AddressCity { get; set; }
+        public string Town { get; set; }
 
         /// <summary>
         /// Patients county
@@ -47,7 +47,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         /// Free text for any relevant patient occupation details
         /// </summary>
-        public string RelevantOccupationDetails { get; set; }
+        public string LastOccupation { get; set; }
 
         /// <summary>
         /// Organisation responsible for patient at time of death

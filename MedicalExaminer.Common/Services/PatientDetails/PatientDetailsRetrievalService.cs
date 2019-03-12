@@ -2,7 +2,6 @@
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.PatientDetails;
-using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.PatientDetails
 {
