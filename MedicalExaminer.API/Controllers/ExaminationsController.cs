@@ -29,7 +29,6 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<CreateExaminationQuery, string> _examinationCreationService;
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
-        //private readonly IValidator<ExaminationItem> _examinationValidator;
         /// <summary>
         /// Initialise a new instance of the Examiantions Controller.
         /// </summary>

@@ -8,48 +8,6 @@ using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace MedicalExaminer.Models
 {
-    public interface IExamination
-    {
-        string HospitalNumber_1 { get; set; }
-        string HospitalNumber_2 { get; set; }
-        string HospitalNumber_3 { get; set; }
-        string MedicalExaminerOfficeResponsible { get; set; }
-        string GenderDetails { get; set; }
-        string id { get; set; }
-        TimeSpan? TimeOfDeath { get; set; }
-        string GivenNames { get; set; }
-        string Surname { get; set; }
-        string NhsNumber { get; set; }
-        ExaminationGender Gender { get; set; }
-        string HouseNameNumber { get; set; }
-        string Street { get; set; }
-        string Town { get; set; }
-        string County { get; set; }
-        string Postcode { get; set; }
-        string Country { get; set; }
-        string LastOccupation { get; set; }
-        string OrganisationCareBeforeDeathLocationId { get; set; }
-        //string DeathOccuredLocationId { get; set; }
-        ModeOfDisposal ModeOfDisposal { get; set; }
-        string FuneralDirectors { get; set; }
-        bool AnyPersonalEffects { get; set; }
-        string PersonalEffectDetails { get; set; }
-        string PlaceDeathOccured { get; set; }
-        DateTime DateOfBirth { get; set; }
-        DateTimeOffset DateOfDeath { get; set; }
-        bool FaithPriority { get; set; }
-        bool ChildPriority { get; set; }
-        bool CoronerPriority { get; set; }
-        bool OtherPriority { get; set; }
-        string PriorityDetails { get; set; }
-        bool Completed { get; set; }
-        CoronerStatus CoronerStatus { get; set; }
-        bool AnyImplants { get; set; }
-        string ImplantDetails { get; set; }
-        IEnumerable<Representative> Representatives { get; set; }
-        bool OutOfHours { get; set; }
-    }
-
     public class Examination : Resource, IExamination
     {
         [JsonProperty(PropertyName = "out_of_hours")]
@@ -78,6 +36,7 @@ namespace MedicalExaminer.Models
         public string id { get; set; }
 
         [JsonProperty(PropertyName = "time_of_death")]
+        [Required]
         public TimeSpan? TimeOfDeath { get; set; }
 
         [Required]
@@ -151,12 +110,7 @@ namespace MedicalExaminer.Models
         [StringLength(100)]
         public string OrganisationCareBeforeDeathLocationId { get; set; }
 
-        // Initial thinking is that below is the location ID that is used for authorisation and permission queries 
-        //[Required]
-        //[JsonProperty(PropertyName = "location_id")]
-        //[DataType(DataType.Text)]
-        //[StringLength(100)]
-        //public string DeathOccuredLocationId { get; set; }
+        
 
         [Required]
         [JsonProperty(PropertyName = "mode_of_disposal")]
@@ -191,6 +145,9 @@ namespace MedicalExaminer.Models
         [DataType(DataType.DateTime)]
         [JsonProperty(PropertyName = "date_of_death")]
         public DateTimeOffset DateOfDeath { get; set; }
+        [Required]
+        [JsonProperty(PropertyName = "cultural_priority")]
+        public bool CulturalPriority { get; set; }
 
         // Flags that effect priority 
         [Required]
@@ -211,6 +168,7 @@ namespace MedicalExaminer.Models
 
         [Required]
         [JsonProperty(PropertyName = "priority_details")]
+        [DataType(DataType.Text)]
         public string PriorityDetails { get; set; }
 
         // Status Fields 
@@ -226,13 +184,16 @@ namespace MedicalExaminer.Models
         public bool AnyImplants { get; set; }
         
         [JsonProperty(PropertyName = "implant_details")]
+        [DataType(DataType.Text)]
         public string ImplantDetails { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "medical_examiner_office_responsible")]
+        [DataType(DataType.Text)]
         public string MedicalExaminerOfficeResponsible { get; set; }
 
         [JsonProperty(PropertyName = "gender_details")]
+        [DataType(DataType.Text)]
         public string GenderDetails { get; set; }
         public IEnumerable<Representative> Representatives { get; set; }
         public Examination()

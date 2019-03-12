@@ -11,6 +11,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
 {
     public class GetPatientDetailsResponse : ResponseBase
     {
+        public bool CulturalPriority { get; set; }
         public bool FaithPriority { get; set; }
         public bool ChildPriority { get; set; }
         public bool CoronerPriority { get; set; }

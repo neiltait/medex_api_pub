@@ -9,6 +9,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
 {
     public class PutPatientDetailsRequest
     {
+        public bool CulturalPriority { get; set; }
         public string GenderDetails { get; set; }
         public bool FaithPriority { get; set; }
         public bool ChildPriority { get; set; }

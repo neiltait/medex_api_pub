@@ -37,5 +37,10 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// The appointment date
         /// </summary>
         public DateTime? AppointmentDate { get; set; }
+
+        /// <summary>
+        /// the appointment time
+        /// </summary>
+        public TimeSpan? AppointmentTime { get; set; }
     }
 }

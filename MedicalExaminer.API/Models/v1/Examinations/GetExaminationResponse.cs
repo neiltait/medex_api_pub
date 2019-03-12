@@ -32,7 +32,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public string Country { get; set; }
         public string LastOccupation { get; set; }
         public string OrganisationCareBeforeDeathLocationId { get; set; }
-        //public string DeathOccuredLocationId { get; set; }
+        
         public ModeOfDisposal ModeOfDisposal { get; set; }
         public string FuneralDirectors { get; set; }
         public bool AnyPersonalEffects { get; set; }
