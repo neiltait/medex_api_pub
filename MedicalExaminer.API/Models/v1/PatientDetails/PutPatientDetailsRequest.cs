@@ -9,19 +9,71 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
 {
     public class PutPatientDetailsRequest
     {
+        /// <summary>
+        /// Is the case a cultural priority?
+        /// </summary>
         public bool CulturalPriority { get; set; }
+
+        /// <summary>
+        /// Further details regarding the patients gender
+        /// </summary>
         public string GenderDetails { get; set; }
+
+        /// <summary>
+        /// Is the case a faith priority?
+        /// </summary>
         public bool FaithPriority { get; set; }
+
+        /// <summary>
+        /// Is the case a child priority?
+        /// </summary>
         public bool ChildPriority { get; set; }
+
+        /// <summary>
+        /// Is the case a coroner priority?
+        /// </summary>
         public bool CoronerPriority { get; set; }
+
+        /// <summary>
+        /// Is the case a priority for some other reason?
+        /// </summary>
         public bool OtherPriority { get; set; }
+
+        /// <summary>
+        /// Further details as to why the case is a priority
+        /// </summary>
         public string PriorityDetails { get; set; }
+
+        /// <summary>
+        /// Is the case completed?
+        /// </summary>
         public bool Completed { get; set; }
+
+        /// <summary>
+        /// The cases coroner status
+        /// </summary>
         public CoronerStatus CoronerStatus { get; set; }
+
+        /// <summary>
+        /// Has out of hours scrutiny already taken place on this case
+        /// </summary>
         public bool OutOfHours { get; set; }
+
+        /// <summary>
+        /// Location where the death occured
+        /// </summary>
         public string PlaceDeathOccured { get; set; }
+
+        /// <summary>
+        /// The medical examiners office responsible for investigating the death
+        /// </summary>
         public string MedicalExaminerOfficeResponsible { get; set; }
+
+        /// <summary>
+        /// Gender of the patient
+        /// </summary>
         public ExaminationGender Gender { get; set; }
+
         /// <summary>
         /// Details of the patients date of birth
         /// </summary>
@@ -137,6 +189,9 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// </summary>
         public string PersonalEffectDetails { get; set; }
 
+        /// <summary>
+        /// An array of representatives for the patient
+        /// </summary>
         public IEnumerable<RepresentativeItem> Representatives { get; set; }
     }
 }

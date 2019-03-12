@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace MedicalExaminer.API.Models.v1.PatientDetails
+﻿namespace MedicalExaminer.API.Models.v1.PatientDetails
 {
+    /// <summary>
+    /// The response returned when a request to PUT the patients details
+    /// </summary>
     public class PutPatientDetailsResponse : ResponseBase
     {
         /// <summary>

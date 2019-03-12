@@ -1,27 +1,75 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using MedicalExaminer.API.Attributes;
 using MedicalExaminer.Models.Enums;
-using Newtonsoft.Json;
 
 namespace MedicalExaminer.API.Models.v1.PatientDetails
 {
+    /// <summary>
+    /// Response returned when requesting the patients details
+    /// for a given case
+    /// </summary>
     public class GetPatientDetailsResponse : ResponseBase
     {
+        /// <summary>
+        /// Is the case a cultural priority?
+        /// </summary>
         public bool CulturalPriority { get; set; }
+
+        /// <summary>
+        /// Is the case a faith priority?
+        /// </summary>
         public bool FaithPriority { get; set; }
+
+        /// <summary>
+        /// Is the case a child priority?
+        /// </summary>
         public bool ChildPriority { get; set; }
+
+        /// <summary>
+        /// Is the case a coroner priority?
+        /// </summary>
         public bool CoronerPriority { get; set; }
+
+        /// <summary>
+        /// Is the case a priority for some other reason?
+        /// </summary>
         public bool OtherPriority { get; set; }
+
+        /// <summary>
+        /// Further details as to why the case is a priority
+        /// </summary>
         public string PriorityDetails { get; set; }
+
+        /// <summary>
+        /// Is the case completed?
+        /// </summary>
         public bool Completed { get; set; }
+
+        /// <summary>
+        /// The cases coroner status
+        /// </summary>
         public CoronerStatus CoronerStatus { get; set; }
+
+        /// <summary>
+        /// Gender of the patient
+        /// </summary>
         public ExaminationGender Gender { get; set; }
+
+        /// <summary>
+        /// Further details regarding the patients gender
+        /// </summary>
         public string GenderDetails { get; set; }
+
+        /// <summary>
+        /// Location where the death occured
+        /// </summary>
         public string PlaceDeathOccured { get; set; }
+
+        /// <summary>
+        /// The medical examiners office responsible for investigating the death
+        /// </summary>
         public string MedicalExaminerOfficeResponsible { get; set; }
         /// <summary>
         /// Details of the patients date of birth
@@ -35,6 +83,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// Patients NHS Number
         /// </summary>
         public string NhsNumber { get; set; }
+
         /// <summary>
         /// Patients first hospital number
         /// </summary>
@@ -49,12 +98,27 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// Patients third hospital number
         /// </summary>
         public string HospitalNumber_3 { get; set; }
+
         /// <summary>
         /// Patients time of death
         /// </summary>
         public TimeSpan? TimeOfDeath { get; set; }
+
+        /// <summary>
+        /// Patients given names
+        /// </summary>
         public string GivenNames { get; set; }
+
+        /// <summary>
+        /// Patients surname/family name
+        /// </summary>
         public string Surname { get; set; }
+
+        /// <summary>
+        /// Has out of hours scrutiny already taken place on this case
+        /// </summary>
+        public bool OutOfHours { get; set; }
+
         /// <summary>
         /// Patients Postcode
         /// </summary>
@@ -131,6 +195,10 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// Free text details of any personal effects
         /// </summary>
         public string PersonalEffectDetails { get; set; }
+
+        /// <summary>
+        /// An array of representatives for the patient
+        /// </summary>
         public IEnumerable<RepresentativeItem> Representatives { get; set; }
     }
 }
