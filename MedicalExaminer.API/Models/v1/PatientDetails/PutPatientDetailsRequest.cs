@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.API.Attributes;
 using MedicalExaminer.Models.Enums;
-using Newtonsoft.Json;
 
 namespace MedicalExaminer.API.Models.v1.PatientDetails
 {

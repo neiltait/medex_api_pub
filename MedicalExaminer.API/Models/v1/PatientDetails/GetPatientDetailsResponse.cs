@@ -71,10 +71,12 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// The medical examiners office responsible for investigating the death
         /// </summary>
         public string MedicalExaminerOfficeResponsible { get; set; }
+
         /// <summary>
         /// Details of the patients date of birth
         /// </summary>
         public DateTime DateOfBirth { get; set; }
+
         /// <summary>
         /// Details of the patients date of death
         /// </summary>
@@ -126,7 +128,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         public string PostCode { get; set; }
 
         /// <summary>
-        /// First line of patients addess
+        /// First line of patients address
         /// </summary>
         [Required]
         public string HouseNameNumber { get; set; }
