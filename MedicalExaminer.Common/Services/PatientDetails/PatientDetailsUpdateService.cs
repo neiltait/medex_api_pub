@@ -35,7 +35,7 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             caseToReplace.County = patientDetails.County;
             caseToReplace.LastOccupation = patientDetails.LastOccupation;
             caseToReplace.OrganisationCareBeforeDeathLocationId =
-                patientDetails.OrganisationResponsibleAtTimeOfDeath;
+                patientDetails.OrganisationCareBeforeDeathLocationId;
             caseToReplace.FuneralDirectors = patientDetails.FuneralDirectors;
             caseToReplace.PersonalAffectsCollected = patientDetails.AnyPersonalEffects;
             caseToReplace.PersonalAffectsDetails = patientDetails.PersonalEffectDetails;

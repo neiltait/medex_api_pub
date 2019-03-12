@@ -50,7 +50,7 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Organisation responsible for patient at time of death
         /// </summary>
-        public string OrganisationResponsibleAtTimeOfDeath { get; set; }
+        public string OrganisationCareBeforeDeathLocationId { get; set; }
 
         /// <summary>
         /// Patients funeral arrangements
