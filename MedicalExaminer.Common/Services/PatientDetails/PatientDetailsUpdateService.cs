@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
@@ -19,6 +20,11 @@ namespace MedicalExaminer.Common.Services.PatientDetails
         }
         public async Task<Models.Examination> Handle(PatientDetailsUpdateQuery param)
         {
+            if (param == null)
+            {
+                throw new ArgumentNullException(nameof(param));
+            }
+
             var caseToReplace = await
                 _databaseAccess
                     .GetItemAsync<Models.Examination>(_connectionSettings, examination => examination.Id == param.CaseId);

@@ -6,8 +6,17 @@ namespace MedicalExaminer.Models
 {
     public class PatientDetails
     {
+        /// <summary>
+        /// Details of the patients date of birth
+        /// </summary>
         DateTime DateOfBirth { get; set; }
+        /// <summary>
+        /// Patients given names
+        /// </summary>
         public string GivenNames { get; set; }
+        /// <summary>
+        /// patients surname
+        /// </summary>
         public string Surname { get; set; }
         /// <summary>
         /// Patients Postcode
@@ -82,6 +91,9 @@ namespace MedicalExaminer.Models
         /// Free text details of any personal effects
         /// </summary>
         public string PersonalEffectDetails { get; set; }
+        /// <summary>
+        /// Details of any representatives
+        /// </summary>
         public IEnumerable<Representative> Representatives { get; set; }
     }
 }

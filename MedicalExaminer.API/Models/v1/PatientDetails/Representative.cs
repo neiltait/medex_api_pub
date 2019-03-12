@@ -35,6 +35,10 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// Has the representative been informed?
         /// </summary>
         public Informed Informed { get; set; }
+
+        /// <summary>
+        /// The appointment date
+        /// </summary>
         public DateTime? AppointmentDate { get; set; }
     }
 }

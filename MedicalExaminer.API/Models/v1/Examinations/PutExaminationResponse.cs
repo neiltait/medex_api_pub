@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MedicalExaminer.API.Models.v1.Examinations
+﻿namespace MedicalExaminer.API.Models.v1.Examinations
 {
     public class PutExaminationResponse : ResponseBase
     {
