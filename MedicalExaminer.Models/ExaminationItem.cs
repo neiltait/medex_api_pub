@@ -60,12 +60,6 @@ namespace MedicalExaminer.Models
         public string NhsNumber { get; set; }
 
         /// <summary>
-        /// Is the patients NHS Number known
-        /// </summary>
-        [JsonProperty(PropertyName = "nhs_number_known")]
-        public bool NhsNumberKnown { get; set; }
-
-        /// <summary>
         /// Patients first hospital number
         /// </summary>
         [JsonProperty(PropertyName = "hospital_number_1")]

@@ -48,7 +48,7 @@ namespace MedicalExaminer.API.Controllers
 
             if (await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(caseId)) == null)
             {
-                return NotFound("Case was not found");
+                return NotFound(new GetPatientDetailsResponse());
             }
 
             var result = await _patientDetailsByCaseIdService.Handle(new PatientDetailsByCaseIdQuery(caseId));

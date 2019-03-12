@@ -19,7 +19,14 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<Examination, ExaminationItem>();
             CreateMap<PostNewCaseRequest, Examination>();
             CreateMap<Examination, GetPatientDetailsResponse>();
-            
+
+            /*
+              ResourceId
+SelfLink
+AltLink
+Timestamp
+ETag
+            */
         }
     }
 }

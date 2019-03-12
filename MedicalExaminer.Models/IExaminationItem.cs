@@ -44,12 +44,7 @@ namespace MedicalExaminer.Models
         /// Patients NHS Number
         /// </summary>
         string NhsNumber { get; set; }
-
-        /// <summary>
-        /// Is the patients NHS Number known
-        /// </summary>
-        bool NhsNumberKnown { get; set; }
-
+        
         /// <summary>
         /// Patients first hospital number
         /// </summary>
