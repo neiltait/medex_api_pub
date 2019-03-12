@@ -11,7 +11,47 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
 {
     public class GetPatientDetailsResponse : ResponseBase
     {
-        [JsonProperty(PropertyName = "given_names")]
+        public bool FaithPriority { get; set; }
+        public bool ChildPriority { get; set; }
+        public bool CoronerPriority { get; set; }
+        public bool OtherPriority { get; set; }
+        public string PriorityDetails { get; set; }
+        public bool Completed { get; set; }
+        public CoronerStatus CoronerStatus { get; set; }
+        public ExaminationGender Gender { get; set; }
+        public string GenderDetails { get; set; }
+        public string PlaceDeathOccured { get; set; }
+        public string MedicalExaminerOfficeResponsible { get; set; }
+        /// <summary>
+        /// Details of the patients date of birth
+        /// </summary>
+        public DateTime DateOfBirth { get; set; }
+        /// <summary>
+        /// Details of the patients date of death
+        /// </summary>
+        public DateTime DateOfDeath { get; set; }
+        /// <summary>
+        /// Patients NHS Number
+        /// </summary>
+        public string NhsNumber { get; set; }
+        /// <summary>
+        /// Patients first hospital number
+        /// </summary>
+        public string HospitalNumber_1 { get; set; }
+
+        /// <summary>
+        /// Patients second hospital number
+        /// </summary>
+        public string HospitalNumber_2 { get; set; }
+
+        /// <summary>
+        /// Patients third hospital number
+        /// </summary>
+        public string HospitalNumber_3 { get; set; }
+        /// <summary>
+        /// Patients time of death
+        /// </summary>
+        public TimeSpan? TimeOfDeath { get; set; }
         public string GivenNames { get; set; }
         public string Surname { get; set; }
         /// <summary>
@@ -63,7 +103,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// Patients funeral arrangements
         /// </summary>
         [Required]
-        public ModeOfDisposal FuneralArrangements { get; set; }
+        public ModeOfDisposal ModeOfDisposal { get; set; }
 
         /// <summary>
         /// Does the patient have any implants that may impact on cremation
@@ -90,6 +130,6 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// Free text details of any personal effects
         /// </summary>
         public string PersonalEffectDetails { get; set; }
-        public IEnumerable<Representative> Representatives { get; set; }
+        public IEnumerable<RepresentativeItem> Representatives { get; set; }
     }
 }

@@ -7,10 +7,49 @@ namespace MedicalExaminer.Models
 {
     public class PatientDetails
     {
+        public bool FaithPriority { get; set; }
+        public bool ChildPriority { get; set; }
+        public bool CoronerPriority { get; set; }
+        public bool OtherPriority { get; set; }
+        public string PriorityDetails { get; set; }
+        public bool Completed { get; set; }
+        public CoronerStatus CoronerStatus { get; set; }
+        public bool OutOfHours { get; set; }
+        public string PlaceDeathOccured { get; set; }
+        public string GenderDetails { get; set; }
+        public string id { get; set; }
+        public string MedicalExaminerOfficeResponsible { get; set; }
+        public ExaminationGender Gender { get; set; }
         /// <summary>
         /// Details of the patients date of birth
         /// </summary>
-        DateTime DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        /// <summary>
+        /// Details of the patients date of death
+        /// </summary>
+        public DateTime DateOfDeath { get; set; }
+        /// <summary>
+        /// Patients NHS Number
+        /// </summary>
+        public string NhsNumber { get; set; }
+        /// <summary>
+        /// Patients first hospital number
+        /// </summary>
+        public string HospitalNumber_1 { get; set; }
+
+        /// <summary>
+        /// Patients second hospital number
+        /// </summary>
+        public string HospitalNumber_2 { get; set; }
+
+        /// <summary>
+        /// Patients third hospital number
+        /// </summary>
+        public string HospitalNumber_3 { get; set; }
+        /// <summary>
+        /// Patients time of death
+        /// </summary>
+        public TimeSpan? TimeOfDeath { get; set; }
         /// <summary>
         /// Patients given names
         /// </summary>
@@ -66,7 +105,7 @@ namespace MedicalExaminer.Models
         /// Patients funeral arrangements
         /// </summary>
         
-        public ModeOfDisposal FuneralArrangements { get; set; }
+        public ModeOfDisposal ModeOfDisposal { get; set; }
 
         /// <summary>
         /// Does the patient have any implants that may impact on cremation

@@ -13,6 +13,14 @@ namespace MedicalExaminer.API.Extensions.Data
         public PatientDetailsProfile()
         {
             CreateMap<PutPatientDetailsRequest, PatientDetails>();
+
+            CreateMap<PatientDetails, Examination>()
+                .ForMember(x => x.AltLink, opt => opt.Ignore())
+                .ForMember(x => x.ETag, opt => opt.Ignore())
+                .ForMember(x => x.Id, opt => opt.Ignore())
+                .ForMember(x => x.ResourceId, opt => opt.Ignore())
+                .ForMember(x => x.SelfLink, opt => opt.Ignore())
+                .ForMember(x => x.Timestamp, opt => opt.Ignore());
         }
     }
 }

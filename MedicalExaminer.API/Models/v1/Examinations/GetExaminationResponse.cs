@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
@@ -11,10 +12,14 @@ namespace MedicalExaminer.API.Models.v1.Examinations
     /// </summary>
     public class GetExaminationResponse : ResponseBase
     {
+        public IEnumerable<Representative> Representatives { get; set; }
         public string id { get; set ; }
-        [JsonProperty(PropertyName = "time_of_death")]
+        public string MedicalExaminerOfficeResponsible { get; set; }
+        public string GenderDetails { get; set; }
         public TimeSpan? TimeOfDeath { get; set; }
-        [JsonProperty(PropertyName = "given_names")]
+        public string HospitalNumber_1 { get; set; }
+        public string HospitalNumber_2 { get; set; }
+        public string HospitalNumber_3 { get; set; }
         public string GivenNames { get; set; }
         public string Surname { get; set; }
         public string NhsNumber { get; set; }
@@ -27,13 +32,11 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public string Country { get; set; }
         public string LastOccupation { get; set; }
         public string OrganisationCareBeforeDeathLocationId { get; set; }
-        public string DeathOccuredLocationId { get; set; }
+        //public string DeathOccuredLocationId { get; set; }
         public ModeOfDisposal ModeOfDisposal { get; set; }
         public string FuneralDirectors { get; set; }
-        public bool PersonalAffectsCollected { get; set; }
-        public string PersonalAffectsDetails { get; set; }
-        public bool JewelleryCollected { get; set; }
-        public string JewelleryDetails { get; set; }
+        public bool AnyPersonalEffects { get; set; }
+        public string PersonalEffectDetails { get; set; }
         public DateTime DateOfBirth { get; set; }
         public DateTimeOffset DateOfDeath { get; set; }
         public bool FaithPriority { get; set; }

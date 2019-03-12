@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models

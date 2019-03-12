@@ -6,7 +6,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
     /// <summary>
     /// Object for creating and updating patients representative
     /// </summary>
-    public class Representative
+    public class RepresentativeItem
     {
         /// <summary>
         /// Representatives full name

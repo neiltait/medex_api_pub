@@ -63,7 +63,7 @@ namespace MedicalExaminer.API.Controllers
             var ex = await _examinationsRetrievalService.Handle(new ExaminationsRetrievalQuery());
             return Ok(new GetExaminationsResponse()
             {
-                Examinations = ex.Select(e => Mapper.Map<ExaminationItem>(e)).ToList()
+                Examinations = ex.Select(e => Mapper.Map<Examination>(e)).ToList()
             });
         }
 
