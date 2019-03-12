@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
-using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.PatientDetails;
-using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.PatientDetails;
 using Moq;
 using Xunit;
@@ -64,7 +60,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var query = new Mock<PatientDetailsByCaseIdQuery>(examinationId);
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.GetItemAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
+            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
                     It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
             var sut = new PatientDetailsRetrievalService(dbAccess.Object, connectionSettings.Object);

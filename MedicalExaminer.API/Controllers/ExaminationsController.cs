@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
-using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
-using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Documents;
 
 namespace MedicalExaminer.API.Controllers
 {

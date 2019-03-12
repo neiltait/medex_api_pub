@@ -6,8 +6,8 @@ namespace MedicalExaminer.Common.Queries.Examination
     {
         public ExaminationsRetrievalQuery()
         {
-            QueryString = "SELECT* FROM Examinations";
+            
         }
-        public string QueryString { get; }
+        
     }
 }

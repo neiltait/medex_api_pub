@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
-using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.PatientDetails;
-using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.PatientDetails;
 using Moq;
 using Xunit;

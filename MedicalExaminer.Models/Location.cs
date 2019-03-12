@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using MedicalExaminer.Models.Enums;
+﻿using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
 
 

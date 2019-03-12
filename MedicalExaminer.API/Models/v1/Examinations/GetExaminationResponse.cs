@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using Newtonsoft.Json;
 
 namespace MedicalExaminer.API.Models.v1.Examinations
 {
