@@ -43,9 +43,8 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             };
             IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination> { examination1};
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var query = new Mock<ExaminationsRetrievalQuery>().Object;
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.Update(connectionSettings.Object, examination1)).Returns(Task.FromResult(examinationId));
+            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object, examination1)).Returns(Task.FromResult(examination1));
             var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object);
 
             // Act

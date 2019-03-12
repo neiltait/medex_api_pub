@@ -21,14 +21,16 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
             _connectionSettings = connectionSettings;
         }
 
-        public Task<string> Handle(Document examination)
+        public async Task<string> Handle(Models.Examination examination)
         {
             if (examination == null)
             {
                 throw new ArgumentNullException(nameof(examination));
             }
-            // can put whatever filters in the param, just empty for now
-            return _databaseAccess.Update(_connectionSettings, examination);
+
+            var returnedDocument = await _databaseAccess.UpdateItemAsync(_connectionSettings, examination);
+
+            return returnedDocument.Id;
         }
     }
 }

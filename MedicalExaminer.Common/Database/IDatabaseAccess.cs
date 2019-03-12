@@ -13,8 +13,6 @@ namespace MedicalExaminer.Common.Database
 
         Task<string> Create<T>(IConnectionSettings connectionSettings, T document);
 
-        Task<string> Update(IConnectionSettings connectionSettings, Document document);
-
         Task<T> QuerySingleAsync<T>(
             IConnectionSettings connectionSettings,
             string documentId);
@@ -31,6 +29,8 @@ namespace MedicalExaminer.Common.Database
             IConnectionSettings connectionSettings, 
             string queryString, 
             object param = null);
+
+        Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item);
 
 
     }
