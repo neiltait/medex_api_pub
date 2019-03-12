@@ -2,11 +2,13 @@
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.API.Attributes;
 using MedicalExaminer.Models.Enums;
+using Newtonsoft.Json;
 
 namespace MedicalExaminer.API.Models.v1.PatientDetails
 {
     public class PutPatientDetailsRequest
     {
+        [JsonProperty(PropertyName = "given_names")]
         public string GivenNames { get; set; }
         public string Surname { get; set; }
         /// <summary>

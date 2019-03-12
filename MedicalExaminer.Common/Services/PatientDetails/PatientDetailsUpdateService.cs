@@ -43,8 +43,8 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             caseToReplace.OrganisationCareBeforeDeathLocationId =
                 patientDetails.OrganisationCareBeforeDeathLocationId;
             caseToReplace.FuneralDirectors = patientDetails.FuneralDirectors;
-            caseToReplace.PersonalAffectsCollected = patientDetails.AnyPersonalEffects;
-            caseToReplace.PersonalAffectsDetails = patientDetails.PersonalEffectDetails;
+            caseToReplace.AnyPersonalEffects = patientDetails.AnyPersonalEffects;
+            caseToReplace.PersonalEffectDetails = patientDetails.PersonalEffectDetails;
             caseToReplace.AnyImplants = patientDetails.AnyImplants;
             caseToReplace.ImplantDetails = patientDetails.ImplantDetails;
             caseToReplace.Representatives = patientDetails.Representatives;
