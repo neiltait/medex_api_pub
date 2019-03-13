@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using MedicalExaminer.ReferenceDataLoader.Loaders;

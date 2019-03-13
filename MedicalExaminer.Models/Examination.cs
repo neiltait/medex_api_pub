@@ -1,55 +1,42 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.Models.Enums;
+using Microsoft.Azure.Documents;
 using Newtonsoft.Json;
+using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace MedicalExaminer.Models
 {
-    public interface IExamination
+    public class Examination : Resource, IExamination
     {
-        string Id { get; set; }
-        TimeSpan? TimeOfDeath { get; set; }
-        string GivenNames { get; set; }
-        string Surname { get; set; }
-        string NhsNumber { get; set; }
-        ExaminationGender Gender { get; set; }
-        string HouseNameNumber { get; set; }
-        string Street { get; set; }
-        string Town { get; set; }
-        string County { get; set; }
-        string Postcode { get; set; }
-        string Country { get; set; }
-        string LastOccupation { get; set; }
-        string OrganisationCareBeforeDeathLocationId { get; set; }
-        string DeathOccuredLocationId { get; set; }
-        ModeOfDisposal ModeOfDisposal { get; set; }
-        string FuneralDirectors { get; set; }
-        bool PersonalAffectsCollected { get; set; }
-        string PersonalAffectsDetails { get; set; }
-        bool JewelleryCollected { get; set; }
-        string JewelleryDetails { get; set; }
-        DateTime DateOfBirth { get; set; }
-        DateTimeOffset DateOfDeath { get; set; }
-        bool FaithPriority { get; set; }
-        bool ChildPriority { get; set; }
-        bool CoronerPriority { get; set; }
-        bool OtherPriority { get; set; }
-        string PriorityDetails { get; set; }
-        bool Completed { get; set; }
-        CoronerStatus CoronerStatus { get; set; }
-    }
+        [JsonProperty(PropertyName = "out_of_hours")]
+        public bool OutOfHours { get; set; }
+        /// <summary>
+        /// Patients first hospital number
+        /// </summary>
+        [JsonProperty(PropertyName = "hospital_number_1")]
+        public string HospitalNumber_1 { get; set; }
 
-    public class Examination : Record, IExamination
-    {
-        // Linked Fields 
+        /// <summary>
+        /// Patients second hospital number
+        /// </summary>
+        [JsonProperty(PropertyName = "hospital_number_2")]
+        public string HospitalNumber_2 { get; set; }
 
-
+        /// <summary>
+        /// Patients third hospital number
+        /// </summary>
+        [JsonProperty(PropertyName = "hospital_number_3")]
+        public string HospitalNumber_3 { get; set; }
+        
         [Required]
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
+        public string id { get; set; }
 
         [JsonProperty(PropertyName = "time_of_death")]
+        [Required]
         public TimeSpan? TimeOfDeath { get; set; }
 
         [Required]
@@ -65,7 +52,7 @@ namespace MedicalExaminer.Models
         public string Surname { get; set; }
 
 
-        //[Required]
+        [Required]
         [DataType(DataType.Text)]
         [StringLength(10)]
         [JsonProperty(PropertyName = "nhs_number")]
@@ -123,12 +110,7 @@ namespace MedicalExaminer.Models
         [StringLength(100)]
         public string OrganisationCareBeforeDeathLocationId { get; set; }
 
-        // Initial thinking is that below is the location ID that is used for authorisation and permission queries 
-        [Required]
-        [JsonProperty(PropertyName = "location_id")]
-        [DataType(DataType.Text)]
-        [StringLength(100)]
-        public string DeathOccuredLocationId { get; set; }
+        
 
         [Required]
         [JsonProperty(PropertyName = "mode_of_disposal")]
@@ -144,20 +126,15 @@ namespace MedicalExaminer.Models
 
         // Personal affects 
         [Required]
-        [JsonProperty(PropertyName = "personal_affects_collected")]
-        public bool PersonalAffectsCollected { get; set; }
+        [JsonProperty(PropertyName = "personal_effects_collected")]
+        public bool AnyPersonalEffects { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "personal_affects_details")]
-        public string PersonalAffectsDetails { get; set; }
-
+        [JsonProperty(PropertyName = "personal_effects_details")]
+        public string PersonalEffectDetails { get; set; }
         [Required]
-        [JsonProperty(PropertyName = "jewellery_collected")]
-        public bool JewelleryCollected { get; set; }
-
-        [Required]
-        [JsonProperty(PropertyName = "jewellery_details")]
-        public string JewelleryDetails { get; set; }
+        [JsonProperty(PropertyName = "place_death_occured")]
+        public string PlaceDeathOccured { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
@@ -168,6 +145,9 @@ namespace MedicalExaminer.Models
         [DataType(DataType.DateTime)]
         [JsonProperty(PropertyName = "date_of_death")]
         public DateTimeOffset DateOfDeath { get; set; }
+        [Required]
+        [JsonProperty(PropertyName = "cultural_priority")]
+        public bool CulturalPriority { get; set; }
 
         // Flags that effect priority 
         [Required]
@@ -188,6 +168,7 @@ namespace MedicalExaminer.Models
 
         [Required]
         [JsonProperty(PropertyName = "priority_details")]
+        [DataType(DataType.Text)]
         public string PriorityDetails { get; set; }
 
         // Status Fields 
@@ -198,7 +179,23 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "coroner_status")]
         public CoronerStatus CoronerStatus { get; set; }
+        [Required]
+        [JsonProperty(PropertyName = "any_implants")]
+        public bool AnyImplants { get; set; }
         
+        [JsonProperty(PropertyName = "implant_details")]
+        [DataType(DataType.Text)]
+        public string ImplantDetails { get; set; }
+
+        [Required]
+        [JsonProperty(PropertyName = "medical_examiner_office_responsible")]
+        [DataType(DataType.Text)]
+        public string MedicalExaminerOfficeResponsible { get; set; }
+
+        [JsonProperty(PropertyName = "gender_details")]
+        [DataType(DataType.Text)]
+        public string GenderDetails { get; set; }
+        public IEnumerable<Representative> Representatives { get; set; }
         public Examination()
         {
             Completed = false;
