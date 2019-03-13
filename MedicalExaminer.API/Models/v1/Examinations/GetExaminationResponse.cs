@@ -24,7 +24,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Case Id
         /// </summary>
-        public string id { get; set ; }
+        public string Id { get; set ; }
 
         /// <summary>
         /// The medical examiners office responsible for investigating the death

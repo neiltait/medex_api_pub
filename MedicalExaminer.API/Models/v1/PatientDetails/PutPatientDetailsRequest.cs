@@ -9,6 +9,11 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
     public class PutPatientDetailsRequest
     {
         /// <summary>
+        /// case id
+        /// </summary>
+        public string id { get; set; }
+
+        /// <summary>
         /// Is the case a cultural priority?
         /// </summary>
         public bool CulturalPriority { get; set; }

@@ -103,7 +103,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var response = _mapper.Map<GetExaminationResponse>(examination);
 
-            response.id.Should().Be(expectedExaminationId);
+            response.Id.Should().Be(expectedExaminationId);
         }
 
         [Fact]
