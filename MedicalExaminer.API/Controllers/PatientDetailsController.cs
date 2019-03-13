@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalExaminer.API.Controllers
 {
-    [Route("patientdetails")]
+    [Route("examinations")]
     [ApiController]
     [Authorize]
     public class PatientDetailsController : BaseController
@@ -37,7 +37,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpGet]
-        [Route("/{caseId}")]
+        [Route("{caseId}/patientdetails")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetPatientDetailsResponse>> GetPatientDetails(string caseId)
         {
@@ -59,7 +59,7 @@ namespace MedicalExaminer.API.Controllers
 
 
         [HttpPut]
-        [Route("/{caseId}")]
+        [Route("{caseId}/patientdetails")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutPatientDetailsResponse>> UpdatePatientDetails(string caseId, [FromBody]PutPatientDetailsRequest putPatientDetailsRequest)
         {
