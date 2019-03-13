@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -73,7 +74,7 @@ namespace MedicalExaminer.API.Tests
             var expectedClaims = new ClaimsPrincipal();
 
             _mockTokenService
-                .Setup(ts => ts.IntrospectToken(expectedToken))
+                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
                 .Returns(Task.FromResult(expectedIntrospectResponse));
 
             _mockSecurityTokenValidator.Setup(stv =>
@@ -100,7 +101,7 @@ namespace MedicalExaminer.API.Tests
             var expectedClaims = new ClaimsPrincipal();
 
             _mockTokenService
-                .Setup(ts => ts.IntrospectToken(expectedToken))
+                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
                 .Returns(Task.FromResult(expectedIntrospectResponse));
 
             _mockSecurityTokenValidator.Setup(stv =>

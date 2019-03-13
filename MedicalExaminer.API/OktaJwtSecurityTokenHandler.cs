@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Security.Claims;
 using MedicalExaminer.API.Services;
 using Microsoft.IdentityModel.Tokens;
@@ -54,7 +55,7 @@ namespace MedicalExaminer.API
             TokenValidationParameters validationParameters,
             out SecurityToken validatedToken)
         {
-            var response = _tokenService.IntrospectToken(securityToken).Result;
+            var response = _tokenService.IntrospectToken(securityToken, new HttpClient()).Result;
 
             if (!response.Active)
             {
