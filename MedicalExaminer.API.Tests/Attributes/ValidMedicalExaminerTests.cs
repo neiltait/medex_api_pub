@@ -125,5 +125,38 @@ namespace MedicalExaminer.API.Tests.Attributes
             // Assert
             Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
         }
+
+        [Fact]
+        public async void MedicalExaminerNotFound_ReturnsFail()
+        {
+            // Arrange
+            var userItem = new UserItem();
+            userItem.UserId = "1";
+            var userFound = new MeUser();
+            userFound.UserId = "1";
+            userFound.UserRole = UserRoles.MedicalExaminer;
+            var expectedResult = new ValidationResult("The medical examiner has not been found");
+            var userPersistence = new Mock<IUserPersistence>();
+            userPersistence.Setup(persistence =>
+                persistence.GetUserAsync("1")).Throws(new Exception());
+            var mapper = new Mock<IMapper>();
+            mapper.Setup(x => x.Map<MeUser>(It.IsAny<UserItem>()))
+                .Returns(userFound);
+
+            var serviceProvider = new Mock<IServiceProvider>();
+
+            serviceProvider.Setup(context => context.GetService(typeof(IUserPersistence)))
+                .Returns(userPersistence.Object);
+            serviceProvider.Setup(context => context.GetService(typeof(IMapper)))
+                .Returns(mapper.Object);
+
+            var sut = new ValidMedicalExaminer();
+
+            // Act
+            var result = sut.GetValidationResult(userItem, new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>()));
+            // Assert
+
+            Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
+        }
     }
 }
