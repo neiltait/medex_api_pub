@@ -6,6 +6,8 @@ using AutoMapper;
 using MedicalExaminer.API.Models.v1.Account;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +24,9 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
+        private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> _userCreationService;
+        private readonly IAsyncQueryHandler<UserRetrievalQuery, MeUser> _userRetrievalService;
+
         /// <summary>
         /// Okta Client.
         /// </summary>
@@ -39,11 +44,20 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="mapper">The Mapper.</param>
         /// <param name="oktaClient">Okta client.</param>
         /// <param name="userPersistence">User persistance.</param>
-        public AccountController(IMELogger logger, IMapper mapper, OktaClient oktaClient, IUserPersistence userPersistence)
+        /// <param name="userCreationService"></param>
+        /// <param name="userRetrievalService"></param>
+        public AccountController(IMELogger logger, 
+            IMapper mapper, 
+            OktaClient oktaClient, 
+            IUserPersistence userPersistence,
+            IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
+            IAsyncQueryHandler<UserRetrievalQuery, MeUser> userRetrievalService)
             : base(logger, mapper)
         {
             _oktaClient = oktaClient;
             _userPersistence = userPersistence;
+            _userCreationService = userCreationService;
+            _userRetrievalService = userRetrievalService;
         }
 
         /// <summary>
@@ -94,8 +108,8 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                // TODO: Waiting for 
-                MeUser user = null; //await _userPersistence.GetUserByEmailAddressAsync(emailAddress);
+                var user = await _userRetrievalService.Handle(new UserRetrievalQuery(emailAddress));
+
                 return user;
             }
             catch (ArgumentException)
@@ -108,7 +122,8 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var createdUser = await _userPersistence.CreateUserAsync(toCreate);
+                var createdUser = await _userCreationService.Handle(new CreateUserQuery(toCreate));
+
                 return createdUser;
             }
             catch (DocumentClientException)
