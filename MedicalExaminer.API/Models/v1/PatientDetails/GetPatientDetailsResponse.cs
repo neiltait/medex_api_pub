@@ -6,10 +6,14 @@ using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.PatientDetails
 {
-    public class PutPatientDetailsRequest
+    /// <summary>
+    /// Response returned when requesting the patients details
+    /// for a given case
+    /// </summary>
+    public class GetPatientDetailsResponse : ResponseBase
     {
         /// <summary>
-        /// case id
+        /// The case id?
         /// </summary>
         public string id { get; set; }
 
@@ -17,11 +21,6 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// Is the case a cultural priority?
         /// </summary>
         public bool CulturalPriority { get; set; }
-
-        /// <summary>
-        /// Further details regarding the patients gender
-        /// </summary>
-        public string GenderDetails { get; set; }
 
         /// <summary>
         /// Is the case a faith priority?
@@ -59,9 +58,14 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         public CoronerStatus CoronerStatus { get; set; }
 
         /// <summary>
-        /// Has out of hours scrutiny already taken place on this case
+        /// Gender of the patient
         /// </summary>
-        public bool OutOfHours { get; set; }
+        public ExaminationGender Gender { get; set; }
+
+        /// <summary>
+        /// Further details regarding the patients gender
+        /// </summary>
+        public string GenderDetails { get; set; }
 
         /// <summary>
         /// Location where the death occured
@@ -74,14 +78,10 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         public string MedicalExaminerOfficeResponsible { get; set; }
 
         /// <summary>
-        /// Gender of the patient
-        /// </summary>
-        public ExaminationGender Gender { get; set; }
-
-        /// <summary>
         /// Details of the patients date of birth
         /// </summary>
         public DateTime DateOfBirth { get; set; }
+
         /// <summary>
         /// Details of the patients date of death
         /// </summary>
@@ -90,6 +90,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// Patients NHS Number
         /// </summary>
         public string NhsNumber { get; set; }
+
         /// <summary>
         /// Patients first hospital number
         /// </summary>
@@ -104,18 +105,27 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// Patients third hospital number
         /// </summary>
         public string HospitalNumber_3 { get; set; }
+
         /// <summary>
         /// Patients time of death
         /// </summary>
         public TimeSpan? TimeOfDeath { get; set; }
+
         /// <summary>
-        /// patients given names
+        /// Patients given names
         /// </summary>
         public string GivenNames { get; set; }
+
         /// <summary>
-        /// patients surname
+        /// Patients surname/family name
         /// </summary>
         public string Surname { get; set; }
+
+        /// <summary>
+        /// Has out of hours scrutiny already taken place on this case
+        /// </summary>
+        public bool OutOfHours { get; set; }
+
         /// <summary>
         /// Patients Postcode
         /// </summary>
@@ -123,7 +133,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         public string PostCode { get; set; }
 
         /// <summary>
-        /// First line of patients addess
+        /// First line of patients address
         /// </summary>
         [Required]
         public string HouseNameNumber { get; set; }

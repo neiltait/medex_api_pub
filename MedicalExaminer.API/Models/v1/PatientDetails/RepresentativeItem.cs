@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.PatientDetails
@@ -9,12 +6,8 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
     /// <summary>
     /// Object for creating and updating patients representative
     /// </summary>
-    public class PutRepresentativeRequest
+    public class RepresentativeItem
     {
-        /// <summary>
-        /// Internal id for the patients representative
-        /// </summary>
-        public Guid RepresentativeId { get; set; }
         /// <summary>
         /// Representatives full name
         /// </summary>
@@ -39,5 +32,15 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// Has the representative been informed?
         /// </summary>
         public Informed Informed { get; set; }
+
+        /// <summary>
+        /// The appointment date
+        /// </summary>
+        public DateTime? AppointmentDate { get; set; }
+
+        /// <summary>
+        /// the appointment time
+        /// </summary>
+        public TimeSpan? AppointmentTime { get; set; }
     }
 }

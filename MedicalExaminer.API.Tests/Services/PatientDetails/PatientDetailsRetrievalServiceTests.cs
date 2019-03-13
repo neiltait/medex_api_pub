@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Common.Services.PatientDetails;
+using Moq;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Services.PatientDetails
@@ -12,21 +14,65 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
     public class PatientDetailsRetrievalServiceTests
     {
         [Fact]
-        public void XXX()
+        public void ExaminationIdNotFoundReturnsNull()
         {
-            var mystring = "bd58b2f3-6e37-4dae-946a-971ce7f58f0d";
+            // Arrange
+            var examinationId = "a";
+            var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            var query = new Mock<PatientDetailsByCaseIdQuery>(examinationId);
+            var dbAccess = new Mock<IDatabaseAccess>();
 
-            var url = "https://medical-examiners-sandbox.documents.azure.com:443/";
-            var primaryKey = "***REMOVED***";
-            var databaseId = "testing123-djp";
+            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
+                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+                .Returns(Task.FromResult<MedicalExaminer.Models.Examination>(null)).Verifiable();
+            var sut = new PatientDetailsRetrievalService(dbAccess.Object, connectionSettings.Object);
+            var expected = default(MedicalExaminer.Models.Examination);
 
-            var dataAccess = new DatabaseAccess();
-            var connectionSettings = new ExaminationConnectionSettings(new Uri(url), primaryKey, databaseId);
-            var service = new PatientDetailsRetrievalService(dataAccess, connectionSettings);
+            // Act
+            var result = sut.Handle(query.Object);
 
-            var result = service.Handle(new PatientDetailsByCaseIdQuery(mystring)).Result;
+            // Assert
+            dbAccess.Verify(db => db.GetItemAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
+                It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()), Times.Once);
 
-            var name = result.Surname;
+            Assert.Equal(expected, result.Result);
+
+        }
+
+        [Fact]
+        public void ExaminationIdIsNullThrowsException()
+        {
+            // Arrange
+            var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            PatientDetailsByCaseIdQuery query = null;
+            var dbAccess = new Mock<IDatabaseAccess>();
+            var sut = new PatientDetailsRetrievalService(dbAccess.Object, connectionSettings.Object);
+
+            Action act = () => sut.Handle(query).GetAwaiter().GetResult();
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ExaminationIdFoundReturnsResult()
+        {
+            var examinationId = "a";
+            var examination = new MedicalExaminer.Models.Examination();
+            var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            var query = new Mock<PatientDetailsByCaseIdQuery>(examinationId);
+            var dbAccess = new Mock<IDatabaseAccess>();
+            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
+                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+                .Returns(Task.FromResult(examination)).Verifiable();
+            var sut = new PatientDetailsRetrievalService(dbAccess.Object, connectionSettings.Object);
+            var expected = examination;
+
+            // Act
+            var result = sut.Handle(query.Object);
+
+            // Assert
+            dbAccess.Verify(db => db.GetItemAsync(connectionSettings.Object,
+                It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()), Times.Once);
+            Assert.Equal(expected, result.Result);
         }
     }
 }

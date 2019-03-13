@@ -12,6 +12,6 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// List of Examinations.
         /// </summary>
-        public IEnumerable<ExaminationItem> Examinations { get; set; }
+        public IEnumerable<Examination> Examinations { get; set; }
     }
 }

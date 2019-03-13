@@ -13,11 +13,12 @@ using MedicalExaminer.Common;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Loggers;
-using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.MedicalTeam;
+using MedicalExaminer.Common.Services.PatientDetails;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -123,9 +124,10 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
             services.AddScoped<IAsyncUpdateDocumentHandler,  MedicalTeamUpdateService>();
-
+            services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
+            services.AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService>();
             services.AddScoped<ControllerActionFilter>();
-            
+
             services.AddScoped<ILocationPersistence>(s => new LocationPersistence(
                  new Uri(Configuration["CosmosDB:URL"]),
                  Configuration["CosmosDB:PrimaryKey"],
@@ -145,8 +147,6 @@ namespace MedicalExaminer.API
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
-
-            
         }
 
         /// <summary>

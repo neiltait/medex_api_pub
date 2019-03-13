@@ -1,6 +1,6 @@
 ﻿namespace MedicalExaminer.Common.Queries.PatientDetails
 {
-    public class PatientDetailsByCaseIdQuery : IQuery<Models.PatientDetails>
+    public class PatientDetailsByCaseIdQuery : IQuery<Models.Examination>
     {
         public readonly string ExaminationId;
 

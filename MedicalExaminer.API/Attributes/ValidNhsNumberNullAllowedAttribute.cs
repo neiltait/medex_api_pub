@@ -20,13 +20,12 @@ namespace MedicalExaminer.API.Attributes
 
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
-            //TODO:
-            //return ValidationResult.Success;
+
             if (!(value is string nhsNumber))
             {
                 return ValidationResult.Success;
             }
-            
+
             nhsNumber = nhsNumber.Replace(" ", string.Empty);
             nhsNumber = nhsNumber.Replace("-", string.Empty);
             if (nhsNumber.Length != 10)

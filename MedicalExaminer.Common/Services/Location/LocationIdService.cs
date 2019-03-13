@@ -24,7 +24,8 @@ namespace MedicalExaminer.Common.Services.Location
 
             try
             {
-                return _databaseAccess.QuerySingleAsync<Models.Location>(_connectionSettings, param.Id);
+                return _databaseAccess.GetItemAsync<Models.Location>(_connectionSettings,
+                    location => location.LocationId == param.Id);
             }
             catch (Exception e)
             {
