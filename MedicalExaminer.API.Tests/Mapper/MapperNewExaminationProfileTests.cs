@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using FluentAssertions;
+using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
@@ -27,6 +28,16 @@ namespace MedicalExaminer.API.Tests.Mapper
         private const string Surname = "surname";
         private TimeSpan TimeOfDeath = new TimeSpan(11, 30, 00);
         private readonly IMapper _mapper;
+
+        public MapperNewExaminationProfileTests()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<NewExaminationProfile>();
+            });
+
+            _mapper = config.CreateMapper();
+        }
 
         /// <summary>
         /// Test Mapping Examination to ExaminationItem.

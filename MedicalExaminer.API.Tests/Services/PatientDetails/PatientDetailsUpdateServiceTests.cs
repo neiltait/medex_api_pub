@@ -42,7 +42,6 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
         [Fact]
         public void PatientDetailsUpdateQuerySuccessReturnsCorrectPropertyValues()
         {
-            //TODO
             // Arrange
             MedicalExaminer.Models.Examination examination = new MedicalExaminer.Models.Examination();
             var patientDetails = new Mock<MedicalExaminer.Models.PatientDetails>();

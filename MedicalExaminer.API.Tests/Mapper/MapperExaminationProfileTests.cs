@@ -183,7 +183,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.Postcode.Should().Be(Postcode);
             result.PersonalEffectDetails.Should().Be(PersonalEffectDetails);
             result.PriorityDetails.Should().Be(PriorityDetails);
-            // TODO  result.Representatives.Should().BeSameAs(Representatives);
             result.Street.Should().Be(Street);
             result.Surname.Should().Be(Surname);
             result.TimeOfDeath.Should().Be(TimeOfDeath);
@@ -229,95 +228,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.TimeOfDeath.Should().Be(TimeOfDeath);
         }
 
-        [Fact]
-        public void Examination_To_GetPatientDetailsResponse()
-        {
-            var getPatientDetailsResponse = new GetPatientDetailsResponse()
-            {
-                AnyImplants = AnyImplants,
-                AnyPersonalEffects = AnyPersonalEffects,
-                CoronerPriority = CoronerPriority,
-                County = County,
-                ChildPriority = ChildPriority,
-                CulturalPriority = CulturalPriority,
-                Completed = Completed,
-                Country = Country,
-                CoronerStatus = CoronerStatus,
-                DateOfBirth = DateOfBirth,
-                DateOfDeath = DateOfDeath,
-                FuneralDirectors = FuneralDirectors,
-                FaithPriority = FaithPriority,
-                GivenNames = GivenNames,
-                Gender = Gender,
-                GenderDetails = GenderDetails,
-                HospitalNumber_1 = HospitalNumber_1,
-                HouseNameNumber = HouseNameNumber,
-                HospitalNumber_2 = HospitalNumber_2,
-                HospitalNumber_3 = HospitalNumber_3,
-                ImplantDetails = ImplantDetails,
-                LastOccupation = LastOccupation,
-                MedicalExaminerOfficeResponsible = MedicalExaminerOfficeResponsible,
-                ModeOfDisposal = ModeOfDisposal,
-                NhsNumber = NhsNumber,
-                OutOfHours = OutOfHours,
-                OrganisationCareBeforeDeathLocationId = OrganisationCareBeforeDeathLocationId,
-                OtherPriority = OtherPriority,
-                PlaceDeathOccured = PlaceDeathOccured,
-                PriorityDetails = PriorityDetails,
-                PersonalEffectDetails = PersonalEffectDetails,
-                PostCode = Postcode,
-                //Representatives = Representatives,
-                Surname = Surname,
-                Street = Street,
-                TimeOfDeath = TimeOfDeath,
-                Town = Town
-            };
-
-
-            var result = _mapper.Map<GetPatientDetailsResponse>(getPatientDetailsResponse);
-
-            //result.AltLink.Should().Be(AltLink);
-            result.AnyImplants.Should().Be(AnyImplants);
-            result.AnyPersonalEffects.Should().Be(AnyPersonalEffects);
-            result.ChildPriority.Should().Be(ChildPriority);
-            result.Completed.Should().Be(Completed);
-            result.CoronerPriority.Should().Be(CoronerPriority);
-            result.CoronerStatus.Should().Be(CoronerStatus);
-            result.County.Should().Be(County);
-            result.Country.Should().Be(Country);
-            result.CulturalPriority.Should().Be(CulturalPriority);
-            result.DateOfBirth.Should().Be(DateOfBirth);
-            result.DateOfDeath.Should().Be(DateOfDeath);
-            result.FuneralDirectors.Should().Be(FuneralDirectors);
-            result.FaithPriority.Should().Be(FaithPriority);
-            result.GivenNames.Should().Be(GivenNames);
-            result.Gender.Should().Be(Gender);
-            result.GenderDetails.Should().Be(GenderDetails);
-            result.HospitalNumber_1.Should().Be(HospitalNumber_1);
-            result.HospitalNumber_2.Should().Be(HospitalNumber_2);
-            result.HospitalNumber_3.Should().Be(HospitalNumber_3);
-            result.HouseNameNumber.Should().Be(HouseNameNumber);
-            result.ImplantDetails.Should().Be(ImplantDetails);
-            result.LastOccupation.Should().Be(LastOccupation);
-            result.MedicalExaminerOfficeResponsible.Should().Be(MedicalExaminerOfficeResponsible);
-            result.ModeOfDisposal.Should().Be(ModeOfDisposal);
-            result.NhsNumber.Should().Be(NhsNumber);
-            result.OrganisationCareBeforeDeathLocationId.Should().Be(OrganisationCareBeforeDeathLocationId);
-            result.OtherPriority.Should().Be(OtherPriority);
-            result.OutOfHours.Should().Be(OutOfHours);
-            result.PersonalEffectDetails.Should().Be(PersonalEffectDetails);
-            //result.Postcode.Should().Be(Postcode);
-            result.PlaceDeathOccured.Should().Be(PlaceDeathOccured);
-            result.PriorityDetails.Should().Be(PriorityDetails);
-            //  TODO: result.Representatives.Should().Be(Representatives);
-            result.Surname.Should().Be(Surname);
-            result.Street.Should().Be(Street);
-            result.Town.Should().Be(Town);
-            result.TimeOfDeath.Should().Be(TimeOfDeath);
-        }
-
-
-
+       
 
 
         /// <summary>
