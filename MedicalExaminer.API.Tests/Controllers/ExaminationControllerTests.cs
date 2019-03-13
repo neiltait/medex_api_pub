@@ -138,7 +138,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
             var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
-            var examinationId = Guid.NewGuid();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             mapper.Setup(m => m.Map<Examination>(It.IsAny<PostNewCaseRequest>())).Returns(examination);

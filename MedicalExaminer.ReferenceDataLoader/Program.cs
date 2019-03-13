@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using MedicalExaminer.ReferenceDataLoader.Loaders;
 
 namespace MedicalExaminer.ReferenceDataLoader

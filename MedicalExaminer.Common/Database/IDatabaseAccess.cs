@@ -1,29 +1,22 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
-using Microsoft.Azure.Documents.Client;
 
 namespace MedicalExaminer.Common.Database
 {
     public interface IDatabaseAccess
     {
-        DocumentClient CreateClient(IConnectionSettings connectionSettings);
+        Task<T> CreateItemAsync<T>(IConnectionSettings connectionSettings, T item,
+            bool disableAutomaticIdGeneration = false);
 
-        Task<string> Create<T>(IConnectionSettings connectionSettings, T document);
+        Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item);
+        Task<T> GetItemAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate);
 
-        Task<T> QuerySingleAsync<T>(
-            IConnectionSettings connectionSettings,
-            string documentId);
+        Task<IEnumerable<T>> GetItemsAsync<T>(IConnectionSettings connectionSettings,
+            Expression<Func<T, bool>> predicate);
 
-        Task<T> QuerySingleOrDefaultAsync<T>(
-          IDbConnection cnn,
-          string sql);
-
-        Task<IEnumerable<T>> QueryAsync<T>(
-            IConnectionSettings connectionSettings,
-            string queryString);
-
-       
+        
     }
 }

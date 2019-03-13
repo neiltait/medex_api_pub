@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
-using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.Examination;
 
 namespace MedicalExaminer.Common.Services.Examination
@@ -17,7 +16,7 @@ namespace MedicalExaminer.Common.Services.Examination
             _connectionSettings = connectionSettings;
         }
 
-        public Task<string> Handle(CreateExaminationQuery param)
+        public async Task<string> Handle(CreateExaminationQuery param)
         {
             if (param == null)
             {
@@ -25,9 +24,9 @@ namespace MedicalExaminer.Common.Services.Examination
             }
                 try
                 {
-                    param.Examination.Id = Guid.NewGuid().ToString();
-                    var result = _databaseAccess.Create(_connectionSettings, param.Examination);
-                    return result;
+                    param.Examination.id = Guid.NewGuid().ToString();
+                    var result = await _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination, false);
+                    return result.id;
                 }
                 catch (Exception e)
                 {

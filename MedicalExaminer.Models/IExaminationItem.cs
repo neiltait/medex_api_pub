@@ -44,12 +44,7 @@ namespace MedicalExaminer.Models
         /// Patients NHS Number
         /// </summary>
         string NhsNumber { get; set; }
-
-        /// <summary>
-        /// Is the patients NHS Number known
-        /// </summary>
-        bool NhsNumberKnown { get; set; }
-
+        
         /// <summary>
         /// Patients first hospital number
         /// </summary>
@@ -70,31 +65,19 @@ namespace MedicalExaminer.Models
         /// </summary>
         DateTime? DateOfBirth { get; set; }
 
-        /// <summary>
-        /// Is the patients date of birth known
-        /// </summary>
-        bool DateOfBirthKnown { get; set; }
-
+        
         /// <summary>
         /// Patients date of death
         /// </summary>
         DateTime? DateOfDeath { get; set; }
 
-        /// <summary>
-        /// Is the patients date of death known
-        /// </summary>
-        bool DateOfDeathKnown { get; set; }
-
+        
         /// <summary>
         /// Patients time of death
         /// </summary>
         TimeSpan? TimeOfDeath { get; set; }
 
-        /// <summary>
-        /// Is the patients time of death known
-        /// </summary>
-        bool TimeOfDeathKnown { get; set; }
-
+        
         /// <summary>
         /// Out of hours/urgent scrutiny has taken place out of hours
         /// </summary>

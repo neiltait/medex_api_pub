@@ -18,6 +18,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
 
         /// <summary>
         /// Medical Examiner Office Responsible for dealing with the examination
+        /// 377e5b2d-f858-4398-a51c-1892973b6537
         /// </summary>
         [ValidMedicalExaminerOffice]
         public string MedicalExaminerOfficeResponsible { get; set; }
@@ -51,7 +52,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public string GenderDetails { get; set; }
 
         /// <summary>
-        /// Patients NHS Number
+        /// Patients NHS Number 943 476 5919
         /// </summary>
         [ValidNhsNumberNullAllowed]
         public string NhsNumber { get; set; }
