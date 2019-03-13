@@ -45,5 +45,76 @@ namespace MedicalExaminer.API.Controllers
             _oktaClient = oktaClient;
             _userPersistence = userPersistence;
         }
+
+        /// <summary>
+        /// Validate Session
+        /// </summary>
+        /// <returns>Details about the current user.</returns>
+        [HttpPost("validate-session")]
+        public async Task<PostValidateSessionResponse> ValidateSession()
+        {
+            // Look up their email in the claims
+            var emailAddress = User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
+
+            // Get everything that Okta knows about this user
+            var oktaUser = await _oktaClient.Users.GetUserAsync(emailAddress);
+
+            // Try and look them up in our database
+            MeUser meUser = await GetUser(emailAddress);
+
+            // Create the user if it doesn't already exist
+            if (meUser == null)
+            {
+                var createdMeUser = await CreateUser(new MeUser()
+                {
+                    FirstName = oktaUser.Profile.FirstName,
+                    LastName = oktaUser.Profile.LastName,
+                    Email = oktaUser.Profile.Email,
+                });
+                meUser = createdMeUser;
+            }
+
+            if (meUser == null)
+            {
+                // TODO: Decide on an appropriate way of responding to not valid
+                throw new Exception("Failed to create user");
+            }
+
+            return new PostValidateSessionResponse()
+            {
+                UserId = meUser.UserId,
+                EmailAddress = meUser.Email,
+                FirstName = meUser.FirstName,
+                LastName = meUser.LastName,
+            };
+        }
+
+        // TODO: Candidates for servicing / facading this functionality now
+        private async Task<MeUser> GetUser(string emailAddress)
+        {
+            try
+            {
+                // TODO: Waiting for 
+                MeUser user = null; //await _userPersistence.GetUserByEmailAddressAsync(emailAddress);
+                return user;
+            }
+            catch (ArgumentException)
+            {
+                return null;
+            }
+        }
+
+        private async Task<MeUser> CreateUser(MeUser toCreate)
+        {
+            try
+            {
+                var createdUser = await _userPersistence.CreateUserAsync(toCreate);
+                return createdUser;
+            }
+            catch (DocumentClientException)
+            {
+                return null;
+            }
+        }
     }
 }
