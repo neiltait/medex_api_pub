@@ -52,7 +52,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Medical Examiner Officer
         /// </summary>
-        [Required]
+        [ValidMedicalExaminerOfficer]
         public UserItem MedicalExaminerOfficer { get; set; }
     }
 }
