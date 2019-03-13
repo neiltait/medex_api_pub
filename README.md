@@ -13,9 +13,22 @@ The OKTA_URL is your okta domain.
     "ClientSecret": "...",
     "Authority": "{OKTA_URL}/oauth2/default",
     "Audience": "api://default",
-    "IntrospectUrl": "{OKTA_URL}/oauth2/default/v1/introspect"
+    "IntrospectUrl": "{OKTA_URL}/oauth2/default/v1/introspect",
   },
 ```
+
+## Okta SDK Integration
+
+This allows us to query the users within Okta and look up their details; we need to add 2 more fields to the Okta settings:
+
+```json
+  "Okta": {
+    "Domain": "https://dev-XOXOXO.oktapreview.com",
+    "SdkToken": "..."
+  },
+```
+
+The SdkToken is generated within OKTA.
 
 ##Loading locations data into a CosmosDB
 

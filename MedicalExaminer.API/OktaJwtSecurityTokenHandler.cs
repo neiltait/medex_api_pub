@@ -29,7 +29,6 @@ namespace MedicalExaminer.API
         public OktaJwtSecurityTokenHandler(ITokenService tokenService)
         {
             _tokenHandler = new JwtSecurityTokenHandler();
-
             _tokenService = tokenService;
         }
 
@@ -56,8 +55,6 @@ namespace MedicalExaminer.API
             out SecurityToken validatedToken)
         {
             var response = _tokenService.IntrospectToken(securityToken).Result;
-
-            Console.WriteLine("Hello from token thing!?");
 
             if (!response.Active)
             {

@@ -56,11 +56,9 @@ namespace MedicalExaminer.Common
 
             if (document == null) throw new ArgumentException("Invalid Argument");
 
-            return JsonConvert.DeserializeObject<MeUser>(document.Resource.ToString());
+            var user = document.Resource as MeUser;
 
-            //var user = (MeUser)((dynamic)document.Resource);
-
-            //return user;
+            return user;
         }
 
         /// <inheritdoc />
@@ -74,12 +72,6 @@ namespace MedicalExaminer.Common
             if (result.Document == null) throw new ArgumentException("Invalid Argument");
 
             return result.Document;
-        }
-
-        public Task<MeUser> GetUserByEmailAddressAsync(string emailAddress)
-        {
-            // TODO: Waiting for Mark to merge the changes to the user persistance
-            throw new NotImplementedException();
         }
 
         /// <inheritdoc />
