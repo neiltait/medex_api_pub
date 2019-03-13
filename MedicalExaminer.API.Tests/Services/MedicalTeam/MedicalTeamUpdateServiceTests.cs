@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -18,16 +19,17 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
         public void ExaminationIdNull_ThrowsException()
         {
             // Arrange
-            IEnumerable<MedicalExaminer.Models.Examination> examinations = null;
+           // IEnumerable<MedicalExaminer.Models.Examination> examinations = null;
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var query = new Mock<ExaminationsRetrievalQuery>().Object;
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db =>
-                    db.QueryAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object, query.QueryString))
-                .Returns(Task.FromResult(examinations)).Verifiable();
+                    db.GetItemAsync(connectionSettings.Object, It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+                .Returns(Task.FromResult<MedicalExaminer.Models.Examination>(null));
+
             var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object);
 
             // Act
+
             // Assert
             Assert.ThrowsAsync<ArgumentNullException>(() => sut.Handle(null));
         }
