@@ -49,7 +49,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             var getResponse = new GetExaminationResponse()
             {
-                id = "a"
+                Id = "a"
             };
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
@@ -68,7 +68,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<ActionResult<GetExaminationResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             okResult.Value.Should().BeAssignableTo<GetExaminationResponse>();
-            Assert.Equal("a", ((GetExaminationResponse)okResult.Value).id);
+            Assert.Equal("a", ((GetExaminationResponse)okResult.Value).Id);
         }
 
         [Fact]
