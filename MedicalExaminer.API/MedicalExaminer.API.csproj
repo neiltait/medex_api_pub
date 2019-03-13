@@ -42,6 +42,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="SwaggerIndex.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="SwaggerIndex.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MedicalExaminer.Common\MedicalExaminer.Common.csproj" />
     <ProjectReference Include="..\MedicalExaminer.Models\MedicalExaminer.Models.csproj" />
   </ItemGroup>

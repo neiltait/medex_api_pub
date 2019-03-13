@@ -28,6 +28,7 @@ using Microsoft.Extensions.Options;
 using Okta.Sdk;
 using Okta.Sdk.Configuration;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace MedicalExaminer.API
 {
@@ -103,6 +104,18 @@ namespace MedicalExaminer.API
                     { "Bearer", Array.Empty<string>() },
                 };
 
+                c.AddSecurityDefinition("Okta", new OAuth2Scheme
+                {
+                    Type = "oauth2",
+                    Flow = "implicit",
+                    AuthorizationUrl = "https://***REMOVED***.oktapreview.com/oauth2/default/v1/authorize",
+                    Scopes = new Dictionary<string, string>()
+                    {
+                        { "profile", "Profile" },
+                        { "openid", "OpenID" },
+                    },
+                });
+
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -110,6 +123,7 @@ namespace MedicalExaminer.API
                     In = "header",
                     Type = "apiKey"
                 });
+
                 c.AddSecurityRequirement(security);
             });
 
@@ -176,18 +190,32 @@ namespace MedicalExaminer.API
                 });
             }
 
+            // TODO: Not using HTTPS while we join front to back end
             //app.UseHttpsRedirection();
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
             if (env.IsDevelopment())
             {
-                // Enable middleware to serve generated Swagger as a JSON endpoint.
                 app.UseSwagger();
 
-                // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-                // specifying the Swagger JSON endpoint.
-                app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
+                app.UseSwaggerUI(c =>
+                {
+                    // Use a bespoke Index that has OpenID/CustomJS to handle OKTA
+                    c.IndexStream = () => GetType().GetTypeInfo().Assembly.GetManifestResourceStream("MedicalExaminer.API.SwaggerIndex.html");
+
+                    var oktaSettings = app.ApplicationServices.GetRequiredService<IOptions<OktaSettings>>();
+
+                    c.OAuthConfigObject = new OAuthConfigObject()
+                    {
+                        ClientId = oktaSettings.Value.ClientId,
+                        ClientSecret = oktaSettings.Value.ClientSecret,
+                    };
+                    c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { {"nonce",  Guid.NewGuid().ToString() } });
+
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                });
             }
 
             // Must be above UseMvc
