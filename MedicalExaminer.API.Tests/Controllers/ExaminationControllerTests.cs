@@ -49,7 +49,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             var getResponse = new GetExaminationResponse()
             {
-                Id = "a"
+                id = "a"
             };
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
@@ -68,7 +68,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<ActionResult<GetExaminationResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             okResult.Value.Should().BeAssignableTo<GetExaminationResponse>();
-            Assert.Equal("a", ((GetExaminationResponse)okResult.Value).Id);
+            Assert.Equal("a", ((GetExaminationResponse)okResult.Value).id);
         }
 
         [Fact]
@@ -138,7 +138,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
             var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
-            var examinationId = Guid.NewGuid();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             mapper.Setup(m => m.Map<Examination>(It.IsAny<PostNewCaseRequest>())).Returns(examination);

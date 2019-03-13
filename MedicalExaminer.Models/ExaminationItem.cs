@@ -60,12 +60,6 @@ namespace MedicalExaminer.Models
         public string NhsNumber { get; set; }
 
         /// <summary>
-        /// Is the patients NHS Number known
-        /// </summary>
-        [JsonProperty(PropertyName = "nhs_number_known")]
-        public bool NhsNumberKnown { get; set; }
-
-        /// <summary>
         /// Patients first hospital number
         /// </summary>
         [JsonProperty(PropertyName = "hospital_number_1")]
@@ -89,35 +83,19 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "date_of_birth")]
         public DateTime? DateOfBirth { get; set; }
 
-        /// <summary>
-        /// Is the patients date of birth known
-        /// </summary>
-        [JsonProperty(PropertyName = "date_of_birth_known")]
-        public bool DateOfBirthKnown { get; set; }
-
+        
         /// <summary>
         /// Patients date of death
         /// </summary>
         [JsonProperty(PropertyName = "date_of_death")]
         public DateTime? DateOfDeath { get; set; }
 
-        /// <summary>
-        /// Is the patients date of death known
-        /// </summary>
-        [JsonProperty(PropertyName = "date_of_death_known")]
-        public bool DateOfDeathKnown { get; set; }
-
+        
         /// <summary>
         /// Patients time of death
         /// </summary>
         [JsonProperty(PropertyName = "time_of_death")]
         public TimeSpan? TimeOfDeath { get; set; }
-
-        /// <summary>
-        /// Is the patients time of death known
-        /// </summary>
-        [JsonProperty(PropertyName = "time_of_death_known")]
-        public bool TimeOfDeathKnown { get; set; }
 
         /// <summary>
         /// Out of hours/urgent scrutiny has taken place out of hours
