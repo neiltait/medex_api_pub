@@ -46,7 +46,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Medical Examiner
         /// </summary>
-        [ValidateMedicalExaminer]
+        [ValidMedicalExaminer]
         public UserItem MedicalExaminer { get; set; }
 
         /// <summary>

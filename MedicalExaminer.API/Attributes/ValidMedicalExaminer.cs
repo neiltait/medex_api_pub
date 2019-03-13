@@ -9,7 +9,7 @@ namespace MedicalExaminer.API.Attributes
     /// <summary>
     /// Validates that a user exists and is in the role of medical examiner
     /// </summary>
-    public class ValidateMedicalExaminer : ValidateUserBase
+    public class ValidMedicalExaminer : ValidUserBase
     {
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {

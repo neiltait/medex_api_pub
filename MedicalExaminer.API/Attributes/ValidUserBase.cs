@@ -15,7 +15,7 @@ namespace MedicalExaminer.API.Attributes
     /// <summary>
     /// Base class for validators of UserItem objects
     /// </summary>
-    public abstract class ValidateUserBase : RequiredAttribute
+    public abstract class ValidUserBase : RequiredAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
