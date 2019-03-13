@@ -12,7 +12,7 @@ namespace MedicalExaminer.Common.ConnectionSettings
             EndPointUri = endPointUri;
             PrimaryKey = primaryKey;
             DatabaseId = databaseId;
-            Collection = "User";
+            Collection = "Users";
         }
 
         public Uri EndPointUri { get; }

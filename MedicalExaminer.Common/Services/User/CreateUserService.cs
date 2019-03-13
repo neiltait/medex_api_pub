@@ -28,6 +28,7 @@ namespace MedicalExaminer.Common.Services.User
             try
             {
                 param.MeUser.Id = Guid.NewGuid().ToString();
+                param.MeUser.UserId = Guid.NewGuid().ToString();
                 var result = await _databaseAccess.CreateItemAsync(_connectionSettings, param.MeUser, false);
                 return result;
             }

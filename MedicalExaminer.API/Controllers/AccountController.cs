@@ -9,6 +9,7 @@ using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
@@ -84,6 +85,10 @@ namespace MedicalExaminer.API.Controllers
                     FirstName = oktaUser.Profile.FirstName,
                     LastName = oktaUser.Profile.LastName,
                     Email = oktaUser.Profile.Email,
+                    UserRole = UserRoles.ServiceOwner,
+                    LastModifiedBy = "whodunit",
+                    ModifiedAt = DateTimeOffset.Now,
+                    CreatedAt = DateTimeOffset.Now,
                 });
                 meUser = createdMeUser;
             }
