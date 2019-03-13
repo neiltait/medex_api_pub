@@ -6,6 +6,9 @@ using ValidationContext = System.ComponentModel.DataAnnotations.ValidationContex
 
 namespace MedicalExaminer.API.Attributes
 {
+    /// <summary>
+    /// Validates that a user exists and is in the role of medical examiner officer
+    /// </summary>
     public class ValidMedicalExaminerOfficer : ValidUserBase
     {
         protected override ValidationResult IsValid(object value, ValidationContext context)
