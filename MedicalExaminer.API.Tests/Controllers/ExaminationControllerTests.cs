@@ -337,6 +337,33 @@ namespace MedicalExaminer.API.Tests.Controllers
             var notFoundResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
         }
 
+        [Fact]
+        public void GetMedicalTeam_ExaminationNotFound_Returns_Expected_Type()
+        {
+            // Arrange
+            var examinationId = Guid.NewGuid().ToString();
+            Examination examination = null;
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>())).Returns(Task.FromResult(examination));
+
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
+                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
+
+            // Act
+            var response = sut.GetMedicalTeam(examinationId).Result;
+
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
+            var notFound = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
+        }
+
         private PostNewCaseRequest CreateValidNewCaseRequest()
         {
             return new PostNewCaseRequest()
