@@ -29,14 +29,9 @@ namespace MedicalExaminer.API.Services.Implementations
             _oktaSettings = oktaSettings;
         }
 
-        /// <summary>
-        /// Introspect.
-        /// </summary>
-        /// <param name="token">The token.</param>
-        /// <returns>Introspect Response.</returns>
-        public async Task<IntrospectResponse> IntrospectToken(string token)
+        /// <inheritdoc/>
+        public async Task<IntrospectResponse> IntrospectToken(string token, HttpClient client)
         {
-            var client = new HttpClient();
             var clientId = _oktaSettings.Value.ClientId;
             var clientSecret = _oktaSettings.Value.ClientSecret;
             var clientCreds = System.Text.Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}");

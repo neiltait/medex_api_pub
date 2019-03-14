@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Reflection;
 using AutoMapper;
@@ -259,7 +260,8 @@ namespace MedicalExaminer.API
                     options.SecurityTokenValidators.Clear();
                     options.SecurityTokenValidators.Add(
                         new OktaJwtSecurityTokenHandler(
-                            tokenService));
+                            tokenService,
+                            new JwtSecurityTokenHandler()));
                 });
         }
 
