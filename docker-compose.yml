@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  MedicalExaminerAPI:
+    image: MedicalExaminerAPI
+    build:
+      context: .
+      dockerfile: MedicalExaminer.API/Dockerfile
