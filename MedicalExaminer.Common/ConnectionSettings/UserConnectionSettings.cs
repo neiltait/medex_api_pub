@@ -2,19 +2,25 @@
 
 namespace MedicalExaminer.Common.ConnectionSettings
 {
-    public class ExaminationConnectionSettings : IExaminationConnectionSettings
+    /// <summary>
+    /// User Connection Settings
+    /// </summary>
+    public class UserConnectionSettings : IUserConnectionSettings
     {
-        public ExaminationConnectionSettings(Uri endPointUri, string primaryKey, string databaseId)
+        public UserConnectionSettings(Uri endPointUri, string primaryKey, string databaseId)
         {
             EndPointUri = endPointUri;
             PrimaryKey = primaryKey;
             DatabaseId = databaseId;
-            Collection = "Examinations";
+            Collection = "Users";
         }
 
         public Uri EndPointUri { get; }
+
         public string PrimaryKey { get; }
+
         public string DatabaseId { get; }
-        public string Collection { get; } 
+
+        public string Collection { get; }
     }
 }

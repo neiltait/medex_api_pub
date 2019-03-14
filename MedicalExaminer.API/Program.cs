@@ -12,6 +12,8 @@ namespace MedicalExaminer.API
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
+            // Listen on any address so we can accept localhost and host.docker.internal from the python front end.
+            // Not using https for now until we resolve certificates.
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseUrls("http://0.0.0.0:80");
