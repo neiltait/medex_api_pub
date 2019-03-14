@@ -6,7 +6,7 @@
     <ProjectGuid>69f0e2a7-e0ad-4f6f-804c-180f76b29e31</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
-    <DockerServiceName>MedicalExaminerAPI</DockerServiceName>
+    <DockerServiceName>medicalexaminerapi</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">

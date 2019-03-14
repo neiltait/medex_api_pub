@@ -89,7 +89,7 @@ namespace MedicalExaminer.API
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
                 // Swagger to use those XML comments.
-                c.IncludeXmlComments(xmlPath);
+                //c.IncludeXmlComments(xmlPath);
 
                 // Make swagger do authentication
                 var security = new Dictionary<string, IEnumerable<string>>
@@ -173,7 +173,7 @@ namespace MedicalExaminer.API
                 });
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 

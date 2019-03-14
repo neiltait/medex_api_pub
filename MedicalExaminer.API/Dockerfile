@@ -1,11 +1,11 @@
 FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
 WORKDIR /app
-EXPOSE 57923
+#EXPOSE 57923
 EXPOSE 44371
 
 FROM microsoft/dotnet:2.1-sdk AS build
 WORKDIR /src
-COPY MedialExaminer.API/MedicalExaminer.API.csproj MedialExaminer.API/
+COPY MedicalExaminer.API/MedicalExaminer.API.csproj MedicalExaminer.API/
 RUN dotnet restore MedicalExaminer.API/MedicalExaminer.API.csproj
 COPY . .
 WORKDIR /src/MedicalExaminer.API
