@@ -18,6 +18,7 @@ using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.Examination;
+using MedicalExaminer.Common.Services.MedicalTeam;
 using MedicalExaminer.Common.Services.PatientDetails;
 using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Models;
@@ -152,6 +153,7 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, string>, CreateExaminationService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
+            services.AddScoped<IAsyncUpdateDocumentHandler,  MedicalTeamUpdateService>();
             services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
             services.AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService>();
 

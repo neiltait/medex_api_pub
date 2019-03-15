@@ -85,12 +85,12 @@ namespace MedicalExaminer.Common.Database
         
         public async Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item)
         {
-            var _client = CreateClient(connectionSettings);
-            var updateItemAsync = await _client.UpsertDocumentAsync(
-                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
-                    item);
+            var client = CreateClient(connectionSettings);
+            var updateItemAsync = await client.UpsertDocumentAsync(
+                UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
+                item);
 
-            return (T) (dynamic) updateItemAsync.Resource;
+            return (T)(dynamic)updateItemAsync.Resource;
         }
     }
 }
