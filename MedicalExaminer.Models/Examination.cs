@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Microsoft.Azure.Documents;
 using Newtonsoft.Json;
@@ -8,8 +9,14 @@ using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace MedicalExaminer.Models
 {
-    public class Examination : Resource, IExamination
+   
+    public class Examination : Record,  IExamination
     {
+        // Linked Fields 
+        [DataType(DataType.Custom)]
+        [JsonProperty(PropertyName = "patient_details")]
+        public PatientDetails PatientDetails { get; set; }
+
         [JsonProperty(PropertyName = "out_of_hours")]
         public bool OutOfHours { get; set; }
         /// <summary>
@@ -148,6 +155,11 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "cultural_priority")]
         public bool CulturalPriority { get; set; }
+
+        [Required]
+        [DataType(DataType.Custom)]
+        [JsonProperty(PropertyName = "medical_team")]
+        public MedicalTeam MedicalTeam { get; set; }
 
         // Flags that effect priority 
         [Required]
