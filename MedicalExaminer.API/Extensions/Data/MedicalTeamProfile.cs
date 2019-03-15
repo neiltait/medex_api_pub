@@ -16,8 +16,6 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<PostMedicalTeamRequest, MedicalTeam>();
             CreateMap<MedicalTeam, GetMedicalTeamResponse>();
             CreateMap<MedicalTeam, MedicalTeamItem>();
-
-            //CreateMap<IExamination, GetExaminationResponse>();
         }
     }
 }

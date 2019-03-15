@@ -30,7 +30,7 @@ namespace MedicalExaminer.API.Attributes
 
             if (userItem == null)
             {
-                return new ValidationResult($"Cannot get id for {userTypeName}");
+                return new ValidationResult($"Item not recognised as of type useritem for {userTypeName}");
             }
 
             var meUser = mapper.Map<MeUser>(userItem);
@@ -46,7 +46,7 @@ namespace MedicalExaminer.API.Attributes
             {
                 returnedDocument = userPersistence.GetUserAsync(meUser.UserId).Result;
             }
-            catch (Exception e)
+            catch (ArgumentException e)
             {
                 return new ValidationResult($"The {userTypeName} has not been found");
             }
