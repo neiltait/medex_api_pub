@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using Microsoft.Azure.Documents;
@@ -35,20 +36,33 @@ namespace MedicalExaminer.Common.Database
 
         public async Task<T> GetItemAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
         {
-            var _client = CreateClient(connectionSettings);
-            var query = _client.CreateDocumentQuery<T>(
-                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
-                    new FeedOptions { MaxItemCount = -1 })
-                .Where(predicate)
-                .AsDocumentQuery();
-
-            var results = new List<T>();
-            while (query.HasMoreResults)
+            try
             {
-                results.AddRange(await query.ExecuteNextAsync<T>());
-            }
+                var _client = CreateClient(connectionSettings);
+                var query = _client.CreateDocumentQuery<T>(
+                        UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
+                            connectionSettings.Collection),
+                        new FeedOptions {MaxItemCount = -1})
+                    .Where(predicate)
+                    .AsDocumentQuery();
 
-            return results.FirstOrDefault();
+                var results = new List<T>();
+                while (query.HasMoreResults)
+                {
+                    results.AddRange(await query.ExecuteNextAsync<T>());
+                }
+
+                return results.FirstOrDefault();
+            }
+            catch (DocumentClientException documentClientException)
+            {
+                if (documentClientException.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return default(T);
+                }
+
+                throw;
+            }
         }
 
         public async Task<IEnumerable<T>> GetItemsAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
