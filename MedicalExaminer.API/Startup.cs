@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using AutoMapper;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Filters;
-using MedicalExaminer.API.Helpers;
+using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
 using MedicalExaminer.Common;
@@ -28,8 +28,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options;
+using Okta.Sdk;
+using Okta.Sdk.Configuration;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace MedicalExaminer.API
 {
@@ -38,11 +41,6 @@ namespace MedicalExaminer.API
     /// </summary>
     public class Startup
     {
-        /// <summary>
-        /// Key for Authentication Section
-        /// </summary>
-        private const string AuthenticationSection = "Authentication";
-
         /// <summary>
         /// Initialise a new instance of the <see cref="Startup"/> class.
         /// </summary>
@@ -63,10 +61,22 @@ namespace MedicalExaminer.API
         /// <param name="services">Service Collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            // Basic authentication service
-            ConfigureAuthenticationSettings(services);
-            ConfigureAuthentication(services);
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            var oktaSettingsSection = Configuration.GetSection("Okta");
+            var okatSettings = oktaSettingsSection.Get<OktaSettings>();
+            services.Configure<OktaSettings>(oktaSettingsSection);
+
+            ConfigureOktaClient(services);
+
+            services.AddSingleton<ITokenService, OktaTokenService>();
+
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
+
+            ConfigureAuthentication(services, okatSettings);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -81,7 +91,7 @@ namespace MedicalExaminer.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Medical Examiner Data API", Version = "v1" });
-                
+
                 // Make all enums appear as strings
                 c.DescribeAllEnumsAsStrings();
 
@@ -95,8 +105,20 @@ namespace MedicalExaminer.API
                 // Make swagger do authentication
                 var security = new Dictionary<string, IEnumerable<string>>
                 {
-                    { "Bearer", System.Array.Empty<string>() },
+                    { "Bearer", Array.Empty<string>() },
                 };
+
+                c.AddSecurityDefinition("Okta", new OAuth2Scheme
+                {
+                    Type = "oauth2",
+                    Flow = "implicit",
+                    AuthorizationUrl = "https://***REMOVED***.oktapreview.com/oauth2/default/v1/authorize",
+                    Scopes = new Dictionary<string, string>()
+                    {
+                        { "profile", "Profile" },
+                        { "openid", "OpenID" },
+                    },
+                });
 
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
@@ -105,6 +127,7 @@ namespace MedicalExaminer.API
                     In = "header",
                     Type = "apiKey"
                 });
+
                 c.AddSecurityRequirement(security);
             });
 
@@ -173,63 +196,82 @@ namespace MedicalExaminer.API
                 });
             }
 
-            app.UseHttpsRedirection();
+            // TODO: Not using HTTPS while we join front to back end
+            //app.UseHttpsRedirection();
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
             if (env.IsDevelopment())
             {
-                // Enable middleware to serve generated Swagger as a JSON endpoint.
                 app.UseSwagger();
 
-                // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-                // specifying the Swagger JSON endpoint.
-                app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
+                app.UseSwaggerUI(c =>
+                {
+                    // Use a bespoke Index that has OpenID/CustomJS to handle OKTA
+                    c.IndexStream = () => GetType().GetTypeInfo().Assembly.GetManifestResourceStream("MedicalExaminer.API.SwaggerIndex.html");
+
+                    var oktaSettings = app.ApplicationServices.GetRequiredService<IOptions<OktaSettings>>();
+
+                    c.OAuthConfigObject = new OAuthConfigObject()
+                    {
+                        ClientId = oktaSettings.Value.ClientId,
+                        ClientSecret = oktaSettings.Value.ClientSecret,
+                    };
+                    c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { {"nonce",  Guid.NewGuid().ToString() } });
+
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                });
             }
 
-            // Must be above use mvc
+            // Must be above UseMvc
             app.UseAuthentication();
 
-            app.UseMvc();
-        }
+            app.UseCors("MyPolicy");
 
-        /// <summary>
-        /// Configure Authentication settings so we can use it elsewhere in the app using DI.
-        /// </summary>
-        /// <param name="services">Services.</param>
-        private void ConfigureAuthenticationSettings(IServiceCollection services)
-        {
-            var authenticationSection = Configuration.GetSection(AuthenticationSection);
-            services.Configure<AuthenticationSettings>(authenticationSection);
+            app.UseMvc();
         }
 
         /// <summary>
         /// Configure basic authentication so we can use tokens.
         /// </summary>
         /// <param name="services">Services.</param>
-        private void ConfigureAuthentication(IServiceCollection services)
+        /// <param name="oktaSettings">Okta Settings.</param>
+        private void ConfigureAuthentication(IServiceCollection services, OktaSettings oktaSettings)
         {
-            var authenticationSection = Configuration.GetSection(AuthenticationSection);
-            var authenticationSettings = authenticationSection.Get<AuthenticationSettings>();
+            var provider = services.BuildServiceProvider();
+            var tokenService = provider.GetRequiredService<ITokenService>();
 
-            var key = Encoding.ASCII.GetBytes(authenticationSettings.Secret);
-
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters()
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
+                    options.Authority = oktaSettings.Authority;
+                    options.Audience = oktaSettings.Audience;
+                    options.SecurityTokenValidators.Clear();
+                    options.SecurityTokenValidators.Add(
+                        new OktaJwtSecurityTokenHandler(
+                            tokenService,
+                            new JwtSecurityTokenHandler()));
+                });
+        }
+
+        /// <summary>
+        /// Configure Okta Client.
+        /// </summary>
+        /// <param name="services">Services.</param>
+        private void ConfigureOktaClient(IServiceCollection services)
+        {
+            // Configure okta client
+            services.AddScoped<OktaClientConfiguration>(context =>
+            {
+                var settings = context.GetRequiredService<IOptions<OktaSettings>>();
+                return new OktaClientConfiguration
+                {
+                    OktaDomain = settings.Value.Domain,
+                    Token = settings.Value.SdkToken,
                 };
             });
+            services.AddScoped<OktaClient, OktaClient>();
         }
     }
 }

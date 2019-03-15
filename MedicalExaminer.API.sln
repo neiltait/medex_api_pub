@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Analyzers\Analyzers.ruleset = Analyzers\Analyzers.ruleset
 		azure-pipelines.yml = azure-pipelines.yml
+		README.md = README.md
 		Analyzers\stylecop.json = Analyzers\stylecop.json
 	EndProjectSection
 EndProject
@@ -18,9 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.API", "Medi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.API.Tests", "MedicalExaminer.API.Tests\MedicalExaminer.API.Tests.csproj", "{2A14EDD9-B416-45EE-B6F0-46084CEC9F16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedicalExaminer.ReferenceDataLoader", "MedicalExaminer.ReferenceDataLoader\MedicalExaminer.ReferenceDataLoader.csproj", "{759CEDF6-1FC0-4055-970B-ED32AFC39669}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.ReferenceDataLoader", "MedicalExaminer.ReferenceDataLoader\MedicalExaminer.ReferenceDataLoader.csproj", "{759CEDF6-1FC0-4055-970B-ED32AFC39669}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedicalExaminers.ReferenceDataLoader.Tests", "MedicalExaminers.ReferenceDataLoader.Tests\MedicalExaminers.ReferenceDataLoader.Tests.csproj", "{5275B933-602B-4B71-B63B-B8505AF6F3E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminers.ReferenceDataLoader.Tests", "MedicalExaminers.ReferenceDataLoader.Tests\MedicalExaminers.ReferenceDataLoader.Tests.csproj", "{5275B933-602B-4B71-B63B-B8505AF6F3E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
