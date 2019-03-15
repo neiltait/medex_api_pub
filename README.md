@@ -1,6 +1,25 @@
 
 # Medical Examiner API
 
+## Running the API
+
+You now have 3 options for running the API depending on your requirements.
+
+### Running the API via Visual Studio using IIS Express (non docker)
+
+Make sure to select the startup project as `MedicalExaminer.API` and run as normal
+
+### Running the API via Visual Studio using Docker
+
+Make sure to select the startup project as `docker-compose` and run as normal.
+
+### Running the API via Docker Compose
+
+* Open a power shell terminal
+* Change directory to the root of the API; i.e. `.../MedicalExaminer.API/`
+* Run `docker-compose up --build`
+* If you change anything you need to rebuild and run again using the above command
+
 ## Okta Integration Configuration Requirements
 
 To get access to the API you need to configure Okta integration. Populate the Client Id and Secret with those specified in the application.
@@ -30,7 +49,7 @@ This allows us to query the users within Okta and look up their details; we need
 
 The SdkToken is generated within OKTA.
 
-##Loading locations data into a CosmosDB
+## Loading locations data into a CosmosDB
 
 Locations data needs to be loaded into a CosmosDB database.
 
