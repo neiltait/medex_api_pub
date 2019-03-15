@@ -95,6 +95,10 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// Patients county
         /// </summary>
         public string County { get; set; }
+
+        /// <summary>
+        /// Patient's postcode
+        /// </summary>
         public string Postcode { get; set; }
 
         /// <summary>
@@ -178,8 +182,19 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public bool Completed { get; set; }
 
         /// <summary>
-        /// The cases coroner status
+        /// The case's coroner status
         /// </summary>
         public CoronerStatus CoronerStatus { get; set; }
+
+        /// <summary>
+        /// Patient details
+        /// </summary>
+        public MedicalExaminer.Models.PatientDetails PatientDetails { get; set; }
+
+        /// <summary>
+        /// Medical team associated with the case
+        /// </summary>
+        public MedicalExaminer.Models.IMedicalTeam MedicalTeam { get; set; }
+
     }
 }

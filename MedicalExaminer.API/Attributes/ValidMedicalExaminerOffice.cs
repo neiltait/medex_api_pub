@@ -10,6 +10,7 @@ namespace MedicalExaminer.API.Attributes
     {
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
+
             var locationPersistence = (ILocationPersistence) context.GetService(typeof(ILocationPersistence));
             var locationString = value as string;
             if (string.IsNullOrEmpty(locationString))
