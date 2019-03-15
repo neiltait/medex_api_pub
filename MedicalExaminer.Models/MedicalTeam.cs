@@ -18,9 +18,9 @@ namespace MedicalExaminer.Models
         ClinicalProfessional ConsultantResponsible { get; set; }
 
 
-        // <summary>
-        // Other consultants involved in care of the patient
-        // </summary>
+        /// <summary>
+        /// Other consultants involved in care of the patient
+        /// </summary>
         ClinicalProfessional[] ConsultantsOther { get; set; }
 
         /// <summary>
