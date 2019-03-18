@@ -15,7 +15,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             return new Mock<Dictionary<object, object>>().Object;
         }
 
-    [Fact]
+        [Fact]
         public async void StartDateIsNullReturnsSuccess()
         {
             // Arrange

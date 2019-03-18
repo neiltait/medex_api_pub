@@ -46,7 +46,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             Examination examinationObj = new Examination()
             {
-                Id = "a"
+                ExaminationId = "a"
             };
             var getResponse = new GetExaminationResponse()
             {
@@ -171,7 +171,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationId = Guid.NewGuid().ToString();
             var examination = new Examination()
             {
-                id = examinationId
+                ExaminationId = examinationId
             };
 
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
@@ -210,7 +210,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationId = Guid.NewGuid().ToString();
             var examination = new Examination()
             {
-                id = examinationId
+                ExaminationId = examinationId
             };
 
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
@@ -280,7 +280,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationId = Guid.NewGuid().ToString();
             var examination = new Examination()
             {
-                id = examinationId
+                ExaminationId = examinationId
             };
 
             var medicalTeam = new MedicalTeam();
@@ -313,7 +313,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationId = Guid.NewGuid().ToString();
             var examination = new Examination()
             {
-                id = examinationId
+                ExaminationId = examinationId
             };
 
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();

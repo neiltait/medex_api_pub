@@ -44,7 +44,7 @@ namespace MedicalExaminer.Models
         /// Patients NHS Number
         /// </summary>
         string NhsNumber { get; set; }
-        
+
         /// <summary>
         /// Patients first hospital number
         /// </summary>
@@ -65,19 +65,16 @@ namespace MedicalExaminer.Models
         /// </summary>
         DateTime? DateOfBirth { get; set; }
 
-        
         /// <summary>
         /// Patients date of death
         /// </summary>
         DateTime? DateOfDeath { get; set; }
 
-        
         /// <summary>
         /// Patients time of death
         /// </summary>
         TimeSpan? TimeOfDeath { get; set; }
 
-        
         /// <summary>
         /// Out of hours/urgent scrutiny has taken place out of hours
         /// </summary>

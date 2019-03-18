@@ -41,7 +41,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var examinationId = "1";
             var examination1 = new MedicalExaminer.Models.Examination
             {
-                Id = examinationId
+                ExaminationId = examinationId
             };
             IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination> { examination1};
             var connectionSettings = new Mock<IExaminationConnectionSettings>();

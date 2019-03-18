@@ -98,7 +98,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = new Examination()
             {
-                id = expectedExaminationId,
+                ExaminationId = expectedExaminationId,
             };
 
             var response = _mapper.Map<GetExaminationResponse>(examination);
@@ -109,9 +109,9 @@ namespace MedicalExaminer.API.Tests.Mapper
         [Fact]
         public void Examination_To_GetExaminationResponse()
         {
-            var examination = new Examination()
+            var examination = new Examination
             {
-                id = id,
+                ExaminationId = id,
                 AltLink = AltLink,
                 AnyImplants = AnyImplants,
                 AnyPersonalEffects = AnyPersonalEffects,
@@ -239,9 +239,9 @@ namespace MedicalExaminer.API.Tests.Mapper
         {
             var expectedExaminationId = "expectedExaminationId";
 
-            var examination = new Examination()
+            var examination = new Examination
             {
-                id = id,
+                ExaminationId = id,
                 AltLink = AltLink,
                 AnyImplants = AnyImplants,
                 AnyPersonalEffects = AnyPersonalEffects,

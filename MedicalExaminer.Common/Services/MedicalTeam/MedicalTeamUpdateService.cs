@@ -30,7 +30,7 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
 
             var returnedDocument = await _databaseAccess.UpdateItemAsync(_connectionSettings, examination);
 
-            return returnedDocument.Id;
+            return returnedDocument.ExaminationId;
         }
     }
 }

@@ -28,7 +28,7 @@ namespace MedicalExaminer.Common.Services.PatientDetails
 
             var caseToReplace = await
                 _databaseAccess
-                    .GetItemAsync<Models.Examination>(_connectionSettings, examination => examination.Id == param.CaseId);
+                    .GetItemAsync<Models.Examination>(_connectionSettings, examination => examination.ExaminationId == param.CaseId);
 
             _mapper.Map(param.PatientDetails, caseToReplace);
 

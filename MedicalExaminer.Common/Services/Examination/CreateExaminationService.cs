@@ -24,9 +24,9 @@ namespace MedicalExaminer.Common.Services.Examination
             }
                 try
                 {
-                    param.Examination.id = Guid.NewGuid().ToString();
+                    param.Examination.ExaminationId = Guid.NewGuid().ToString();
                     var result = await _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination, false);
-                    return result.id;
+                    return result.ExaminationId;
                 }
                 catch (Exception e)
                 {

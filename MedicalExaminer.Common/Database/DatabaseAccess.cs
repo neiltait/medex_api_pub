@@ -13,22 +13,10 @@ namespace MedicalExaminer.Common.Database
 {
     public class DatabaseAccess : IDatabaseAccess
     {
-        private DocumentClient CreateClient(IConnectionSettings connectionSettings)
-        {
-            var Client = new DocumentClient(connectionSettings.EndPointUri, connectionSettings.PrimaryKey);
-
-            Client.CreateDatabaseIfNotExistsAsync(new Microsoft.Azure.Documents.Database { Id = connectionSettings.DatabaseId });
-            var databaseUri = UriFactory.CreateDatabaseUri(connectionSettings.DatabaseId);
-
-            Client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection { Id = connectionSettings.Collection });
-
-            return Client;
-        }
-
         public async Task<T> CreateItemAsync<T>(IConnectionSettings connectionSettings, T item, bool disableAutomaticIdGeneration = false)
         {
-            var _client = CreateClient(connectionSettings);
-            var resourceResponse = await _client.CreateDocumentAsync(
+            var client = CreateClient(connectionSettings);
+            var resourceResponse = await client.CreateDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, 
                     connectionSettings.Collection), item);
             return (T)(dynamic)resourceResponse.Resource;
@@ -82,7 +70,7 @@ namespace MedicalExaminer.Common.Database
 
             return results;
         }
-        
+
         public async Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item)
         {
             var client = CreateClient(connectionSettings);
@@ -91,6 +79,18 @@ namespace MedicalExaminer.Common.Database
                 item);
 
             return (T)(dynamic)updateItemAsync.Resource;
+        }
+
+        private DocumentClient CreateClient(IConnectionSettings connectionSettings)
+        {
+            var client = new DocumentClient(connectionSettings.EndPointUri, connectionSettings.PrimaryKey);
+
+            client.CreateDatabaseIfNotExistsAsync(new Microsoft.Azure.Documents.Database { Id = connectionSettings.DatabaseId });
+            var databaseUri = UriFactory.CreateDatabaseUri(connectionSettings.DatabaseId);
+
+            client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection { Id = connectionSettings.Collection });
+
+            return client;
         }
     }
 }
