@@ -9,16 +9,22 @@ using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace MedicalExaminer.Models
 {
-   
     public class Examination : Record,  IExamination
     {
-        // Linked Fields 
+        /// <inheritdoc />
+        public Examination()
+        {
+            Completed = false;
+        }
+
+        // Linked Fields
         [DataType(DataType.Custom)]
         [JsonProperty(PropertyName = "patient_details")]
         public PatientDetails PatientDetails { get; set; }
 
         [JsonProperty(PropertyName = "out_of_hours")]
         public bool OutOfHours { get; set; }
+
         /// <summary>
         /// Patients first hospital number
         /// </summary>
@@ -36,7 +42,7 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "hospital_number_3")]
         public string HospitalNumber_3 { get; set; }
-        
+
         [Required]
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "id")]
@@ -57,7 +63,6 @@ namespace MedicalExaminer.Models
         [StringLength(250)]
         [JsonProperty(PropertyName = "surname")]
         public string Surname { get; set; }
-
 
         [Required]
         [DataType(DataType.Text)]
@@ -117,8 +122,6 @@ namespace MedicalExaminer.Models
         [StringLength(100)]
         public string OrganisationCareBeforeDeathLocationId { get; set; }
 
-        
-
         [Required]
         [JsonProperty(PropertyName = "mode_of_disposal")]
         [DataType(DataType.Text)]
@@ -131,7 +134,7 @@ namespace MedicalExaminer.Models
         [StringLength(100)]
         public string FuneralDirectors { get; set; }
 
-        // Personal affects 
+        // Personal affects
         [Required]
         [JsonProperty(PropertyName = "personal_effects_collected")]
         public bool AnyPersonalEffects { get; set; }
@@ -139,6 +142,7 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "personal_effects_details")]
         public string PersonalEffectDetails { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "place_death_occured")]
         public string PlaceDeathOccured { get; set; }
@@ -152,6 +156,7 @@ namespace MedicalExaminer.Models
         [DataType(DataType.DateTime)]
         [JsonProperty(PropertyName = "date_of_death")]
         public DateTimeOffset DateOfDeath { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "cultural_priority")]
         public bool CulturalPriority { get; set; }
@@ -161,7 +166,7 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "medical_team")]
         public MedicalTeam MedicalTeam { get; set; }
 
-        // Flags that effect priority 
+        // Flags that effect priority
         [Required]
         [JsonProperty(PropertyName = "faith_priority")]
         public bool FaithPriority { get; set; }
@@ -183,7 +188,7 @@ namespace MedicalExaminer.Models
         [DataType(DataType.Text)]
         public string PriorityDetails { get; set; }
 
-        // Status Fields 
+        // Status Fields
         [Required]
         [JsonProperty(PropertyName = "completed")]
         public bool Completed { get; set; }
@@ -191,10 +196,11 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "coroner_status")]
         public CoronerStatus CoronerStatus { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "any_implants")]
         public bool AnyImplants { get; set; }
-        
+
         [JsonProperty(PropertyName = "implant_details")]
         [DataType(DataType.Text)]
         public string ImplantDetails { get; set; }
@@ -207,10 +213,7 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "gender_details")]
         [DataType(DataType.Text)]
         public string GenderDetails { get; set; }
+
         public IEnumerable<Representative> Representatives { get; set; }
-        public Examination()
-        {
-            Completed = false;
-        }
     }
 }
