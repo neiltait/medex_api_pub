@@ -209,7 +209,37 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "gender_details")]
         [DataType(DataType.Text)]
         public string GenderDetails { get; set; }
+
+        [JsonProperty(PropertyName = "representatives")]
         public IEnumerable<Representative> Representatives { get; set; }
+
+        [JsonProperty(PropertyName = "admission_notes_have_been_added")]
+        public bool AdmissionNotesHaveBeenAdded { get; set; }
+
+        [JsonProperty(PropertyName = "ready_for_me_scrutiny")]
+        public bool ReadyForMEScrutiny { get; set; }
+
+        [JsonProperty(PropertyName = "assigned")]
+        public bool Assigned { get; set; }
+
+        [JsonProperty(PropertyName = "have_been_scrutinised_by_me")]
+        public bool HaveBeenScrutinisedByME { get; set; }
+
+        [JsonProperty(PropertyName = "pending_admission_notes")]
+        public bool PendingAdmissionNotes { get; set; }
+
+        [JsonProperty(PropertyName = "pending_discussion_with_qap")]
+        public bool PendingDiscussionWithQAP { get; set; }
+
+        [JsonProperty(PropertyName = "pending_discussion_with_representative")]
+        public bool PendingDiscussionWithRepresentative { get; set; }
+
+        [JsonProperty(PropertyName = "have_final_case_outstanding_outcomes")]
+        public bool HaveFinalCaseOutstandingOutcomes { get; set; }
+
+        [JsonProperty(PropertyName = "case_officer")]
+        public string CaseOfficer { get; set; }
+
         public Examination()
         {
             Completed = false;

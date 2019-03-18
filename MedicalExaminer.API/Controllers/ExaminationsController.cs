@@ -53,12 +53,14 @@ namespace MedicalExaminer.API.Controllers
     /// <returns>A list of examinations.</returns>
     [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetExaminationsResponse>> GetExaminations()
+        public async Task<ActionResult<GetExaminationsResponse>> GetExaminations([FromBody]GetExaminationsRequest filter)
         {
-            var ex = await _examinationsRetrievalService.Handle(new ExaminationsRetrievalQuery());
-            return Ok(new GetExaminationsResponse()
+            var examinations = await _examinationsRetrievalService.Handle(
+                new ExaminationsRetrievalQuery(filter.CaseStatus, filter.LocationId, filter.OrderBy, filter.PageNumber, filter.PageSize, filter.UserId));
+
+            return Ok(new GetExaminationsResponse
             {
-                Examinations = ex.Select(e => Mapper.Map<Examination>(e)).ToList()
+                Examinations = examinations.Select(e => Mapper.Map<PatientCardItem>(e)).ToList()
             });
         }
 
@@ -100,7 +102,7 @@ namespace MedicalExaminer.API.Controllers
             var result =await _examinationCreationService.Handle(new CreateExaminationQuery(examination));
             var res = new PutExaminationResponse()
             {
-                ExaminationId = result.id
+                ExaminationId = result.Id
             };
 
             return Ok(res);

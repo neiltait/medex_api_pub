@@ -91,7 +91,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
                 examinationRetrievalQueryService.Object, examinationsRetrievalQueryService.Object);
             // Act
-            var response = sut.GetExaminations().Result;
+            var response = sut.GetExaminations(null).Result;
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<GetExaminationsResponse>>().Subject;
@@ -140,6 +140,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
+
+            createExaminationService.Setup(ecs => ecs.Handle(It.IsAny<CreateExaminationQuery>()))
+                .Returns(Task.FromResult(examination));
+
             mapper.Setup(m => m.Map<Examination>(It.IsAny<PostNewCaseRequest>())).Returns(examination);
             var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object, 
                 examinationRetrievalQuery.Object, examinationsRetrievalQuery.Object);
