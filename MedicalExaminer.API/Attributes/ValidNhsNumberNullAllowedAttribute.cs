@@ -20,23 +20,13 @@ namespace MedicalExaminer.API.Attributes
 
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
-
-            if (!(value is string nhsNumber))
-            {
-                return ValidationResult.Success;
-            }
+            if (!(value is string nhsNumber)) return ValidationResult.Success;
 
             nhsNumber = nhsNumber.Replace(" ", string.Empty);
             nhsNumber = nhsNumber.Replace("-", string.Empty);
-            if (nhsNumber.Length != 10)
-            {
-                return new ValidationResult("Invalid NHS Number");
-            }
+            if (nhsNumber.Length != 10) return new ValidationResult("Invalid NHS Number");
 
-            if (!ValidateNhsNumber(nhsNumber))
-            {
-                return new ValidationResult("Invalid NHS Number");
-            }
+            if (!ValidateNhsNumber(nhsNumber)) return new ValidationResult("Invalid NHS Number");
 
             return ValidationResult.Success;
         }
@@ -53,23 +43,20 @@ namespace MedicalExaminer.API.Attributes
                 return false;
             }
 
-            var sumNhsFactor = (numericNhsNumber[0] * _factors[0])
-                               + (numericNhsNumber[1] * _factors[1])
-                               + (numericNhsNumber[2] * _factors[2])
-                               + (numericNhsNumber[3] * _factors[3])
-                               + (numericNhsNumber[4] * _factors[4])
-                               + (numericNhsNumber[5] * _factors[5])
-                               + (numericNhsNumber[6] * _factors[6])
-                               + (numericNhsNumber[7] * _factors[7])
-                               + (numericNhsNumber[8] * _factors[8]);
+            var sumNhsFactor = numericNhsNumber[0] * _factors[0]
+                               + numericNhsNumber[1] * _factors[1]
+                               + numericNhsNumber[2] * _factors[2]
+                               + numericNhsNumber[3] * _factors[3]
+                               + numericNhsNumber[4] * _factors[4]
+                               + numericNhsNumber[5] * _factors[5]
+                               + numericNhsNumber[6] * _factors[6]
+                               + numericNhsNumber[7] * _factors[7]
+                               + numericNhsNumber[8] * _factors[8];
 
             var remainder = sumNhsFactor % 11;
             var check = 11 - remainder;
 
-            if (check == 11)
-            {
-                check = 0;
-            }
+            if (check == 11) check = 0;
 
             return check == numericNhsNumber[9];
         }

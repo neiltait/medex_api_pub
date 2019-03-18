@@ -4,12 +4,12 @@ using System.Collections.Generic;
 namespace MedicalExaminer.Common.Loggers
 {
     /// <summary>
-    /// Mocker for MELogger class to be used in unit tests
+    ///     Mocker for MELogger class to be used in unit tests
     /// </summary>
     public class MELoggerMocker : IMELogger
     {
         /// <summary>
-        /// LogEntry class, exposed so that it's contents can be examined externally
+        ///     LogEntry class, exposed so that it's contents can be examined externally
         /// </summary>
         public LogMessageActionDefault LogEntry { get; private set; }
 

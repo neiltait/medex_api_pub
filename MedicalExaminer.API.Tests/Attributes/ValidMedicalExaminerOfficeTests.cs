@@ -13,28 +13,6 @@ namespace MedicalExaminer.API.Tests.Attributes
     public class ValidMedicalExaminerOfficeTests
     {
         [Fact]
-        public void NoLocationIsFoundReturnsError()
-        {
-            // Arrange
-            var locationId = "bad location";
-            var locationPersistence = new Mock<ILocationPersistence>();
-            var expectedResult = "The location Id has not been found";
-            locationPersistence.Setup(persistence =>
-                persistence.GetLocationAsync("bad location")).Returns(Task.FromResult<Location>(null));
-
-            
-            var serviceProvider = new Mock<IServiceProvider>();
-            serviceProvider.Setup(context => context.GetService(It.IsAny<Type>()))
-                .Returns(locationPersistence.Object);
-            var sut = new ValidMedicalExaminerOffice();
-
-            // Act
-            var result = sut.GetValidationResult(locationId, new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>()));
-            
-            Assert.Equal(expectedResult, result.ErrorMessage);
-        }
-
-        [Fact]
         public async void NoLocationIdSuppliedReturnsError()
         {
             // Arrange
@@ -51,9 +29,33 @@ namespace MedicalExaminer.API.Tests.Attributes
             var sut = new ValidMedicalExaminerOffice();
 
             // Act
-            var result = sut.GetValidationResult(locationId, new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>()));
-            
+            var result = sut.GetValidationResult(locationId,
+                new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>()));
+
             // Assert
+            Assert.Equal(expectedResult, result.ErrorMessage);
+        }
+
+        [Fact]
+        public void NoLocationIsFoundReturnsError()
+        {
+            // Arrange
+            var locationId = "bad location";
+            var locationPersistence = new Mock<ILocationPersistence>();
+            var expectedResult = "The location Id has not been found";
+            locationPersistence.Setup(persistence =>
+                persistence.GetLocationAsync("bad location")).Returns(Task.FromResult<Location>(null));
+
+
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.Setup(context => context.GetService(It.IsAny<Type>()))
+                .Returns(locationPersistence.Object);
+            var sut = new ValidMedicalExaminerOffice();
+
+            // Act
+            var result = sut.GetValidationResult(locationId,
+                new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>()));
+
             Assert.Equal(expectedResult, result.ErrorMessage);
         }
 
@@ -74,7 +76,8 @@ namespace MedicalExaminer.API.Tests.Attributes
             var sut = new ValidMedicalExaminerOffice();
 
             // Act
-            var result = sut.GetValidationResult(locationId, new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>()));
+            var result = sut.GetValidationResult(locationId,
+                new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>()));
 
             // Assert
             Assert.Equal(expectedResult, result.ErrorMessage);
@@ -89,14 +92,15 @@ namespace MedicalExaminer.API.Tests.Attributes
             var locationId = "good location";
             var locationPersistence = new Mock<ILocationPersistence>();
             locationPersistence.Setup(persistence =>
-                persistence.GetLocationAsync("good location")).Returns(Task.FromResult<Location>(locationResult.Object));
+                persistence.GetLocationAsync("good location")).Returns(Task.FromResult(locationResult.Object));
 
             var serviceProvider = new Mock<IServiceProvider>();
             serviceProvider.Setup(context => context.GetService(It.IsAny<Type>()))
                 .Returns(locationPersistence.Object);
             var sut = new ValidMedicalExaminerOffice();
             // Act
-            var result = sut.GetValidationResult(locationId, new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>()));
+            var result = sut.GetValidationResult(locationId,
+                new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>()));
             // Assert
             Assert.Equal(expectedResult, result);
         }

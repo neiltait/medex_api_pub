@@ -133,10 +133,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 
     public class ControllerActionFilterTests
     {
-        private readonly MELoggerMocker _mockLogger;
-        private readonly UsersController _controller;
-        private readonly Mock<IMapper> _mapper;
-
         public ControllerActionFilterTests()
         {
             _mapper = new Mock<IMapper>();
@@ -145,11 +141,15 @@ namespace MedicalExaminer.API.Tests.Controllers
             _controller = new UsersController(userPersistence, _mockLogger, _mapper.Object);
         }
 
+        private readonly MELoggerMocker _mockLogger;
+        private readonly UsersController _controller;
+        private readonly Mock<IMapper> _mapper;
+
         [Fact]
         public void CheckCallToLogger()
         {
             var controllerActionFilter = new ControllerActionFilter();
-            var actionContext = new ActionContext { HttpContext = new MockHttpContext() };
+            var actionContext = new ActionContext {HttpContext = new MockHttpContext()};
             var identity = new ClaimsIdentity();
             actionContext.HttpContext.User.AddIdentity(identity);
             actionContext.RouteData = new RouteData();

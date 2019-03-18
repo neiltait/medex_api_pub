@@ -17,15 +17,16 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class PatientDetailsController : BaseController
     {
-        private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>
+        private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>
             _examinationRetrievalService;
 
-        private IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>
-            _patientDetailsUpdateService;
-        private IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>
+        private readonly IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>
             _patientDetailsByCaseIdService;
 
-        public PatientDetailsController(IMELogger logger, IMapper mapper, 
+        private readonly IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>
+            _patientDetailsUpdateService;
+
+        public PatientDetailsController(IMELogger logger, IMapper mapper,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination> patientDetailsUpdateService,
             IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination> patientDetailsByCaseIdService)
@@ -41,15 +42,10 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetPatientDetailsResponse>> GetPatientDetails(string caseId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new GetPatientDetailsResponse());
-            }
+            if (!ModelState.IsValid) return BadRequest(new GetPatientDetailsResponse());
 
             if (await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(caseId)) == null)
-            {
                 return NotFound(new GetPatientDetailsResponse());
-            }
 
             var result = await _patientDetailsByCaseIdService.Handle(new PatientDetailsByCaseIdQuery(caseId));
 
@@ -61,24 +57,20 @@ namespace MedicalExaminer.API.Controllers
         [HttpPut]
         [Route("{caseId}/patientdetails")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutPatientDetailsResponse>> UpdatePatientDetails(string caseId, [FromBody]PutPatientDetailsRequest putPatientDetailsRequest)
+        public async Task<ActionResult<PutPatientDetailsResponse>> UpdatePatientDetails(string caseId,
+            [FromBody] PutPatientDetailsRequest putPatientDetailsRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new PutPatientDetailsResponse());
-            }
+            if (!ModelState.IsValid) return BadRequest(new PutPatientDetailsResponse());
 
             if (_examinationRetrievalService.Handle(new ExaminationRetrievalQuery(caseId)) == null)
-            {
                 return NotFound("Case was not found");
-            }
 
             var patientDetails = Mapper.Map<PatientDetails>(putPatientDetailsRequest);
 
             var result = _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(caseId, patientDetails));
-            
 
-            return Ok(new PutPatientDetailsResponse()
+
+            return Ok(new PutPatientDetailsResponse
             {
                 ExaminationId = result.Result.ExaminationId
             });

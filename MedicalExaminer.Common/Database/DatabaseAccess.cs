@@ -13,24 +13,28 @@ namespace MedicalExaminer.Common.Database
 {
     public class DatabaseAccess : IDatabaseAccess
     {
-        public async Task<T> CreateItemAsync<T>(IConnectionSettings connectionSettings, T item, bool disableAutomaticIdGeneration = false)
+        public async Task<T> CreateItemAsync<T>(IConnectionSettings connectionSettings, T item,
+            bool disableAutomaticIdGeneration = false)
         {
             var client = CreateClient(connectionSettings);
             var resourceResponse = await client.CreateDocumentAsync(
-                UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, 
+                UriFactory.CreateDocumentCollectionUri(
+                    connectionSettings.DatabaseId,
                     connectionSettings.Collection), item);
             return (T)(dynamic)resourceResponse.Resource;
         }
 
-        public async Task<T> GetItemAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
+        public async Task<T> GetItemAsync<T>(IConnectionSettings connectionSettings,
+            Expression<Func<T, bool>> predicate)
         {
             try
             {
-                var _client = CreateClient(connectionSettings);
-                var query = _client.CreateDocumentQuery<T>(
-                        UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
+                var client = CreateClient(connectionSettings);
+                var query = client.CreateDocumentQuery<T>(
+                        UriFactory.CreateDocumentCollectionUri(
+                            connectionSettings.DatabaseId,
                             connectionSettings.Collection),
-                        new FeedOptions {MaxItemCount = -1})
+                        new FeedOptions { MaxItemCount = -1 })
                     .Where(predicate)
                     .AsDocumentQuery();
 
@@ -44,21 +48,20 @@ namespace MedicalExaminer.Common.Database
             }
             catch (DocumentClientException documentClientException)
             {
-                if (documentClientException.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return default(T);
-                }
+                if (documentClientException.StatusCode == HttpStatusCode.NotFound) return default(T);
 
                 throw;
             }
         }
 
-        public async Task<IEnumerable<T>> GetItemsAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
+        public async Task<IEnumerable<T>> GetItemsAsync<T>(IConnectionSettings connectionSettings,
+            Expression<Func<T, bool>> predicate)
         {
-            var _client = CreateClient(connectionSettings);
-            var query = _client.CreateDocumentQuery<T>(
-                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
-                    new FeedOptions { MaxItemCount = -1 })
+            var client = CreateClient(connectionSettings);
+            var query = client.CreateDocumentQuery<T>(
+                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
+                        connectionSettings.Collection),
+                    new FeedOptions {MaxItemCount = -1})
                 .Where(predicate)
                 .AsDocumentQuery();
 
@@ -85,10 +88,13 @@ namespace MedicalExaminer.Common.Database
         {
             var client = new DocumentClient(connectionSettings.EndPointUri, connectionSettings.PrimaryKey);
 
-            client.CreateDatabaseIfNotExistsAsync(new Microsoft.Azure.Documents.Database { Id = connectionSettings.DatabaseId });
+            client.CreateDatabaseIfNotExistsAsync(new Microsoft.Azure.Documents.Database
+                { Id = connectionSettings.DatabaseId });
             var databaseUri = UriFactory.CreateDatabaseUri(connectionSettings.DatabaseId);
 
-            client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection { Id = connectionSettings.Collection });
+            client.CreateDocumentCollectionIfNotExistsAsync(
+                databaseUri,
+                new DocumentCollection { Id = connectionSettings.Collection });
 
             return client;
         }

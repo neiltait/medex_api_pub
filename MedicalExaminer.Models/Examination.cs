@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using Microsoft.Azure.Documents;
 using Newtonsoft.Json;
-using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace MedicalExaminer.Models
 {
-  public class Examination : Record, IExamination
+    public class Examination : Record, IExamination
     {
         public Examination()
         {
@@ -21,31 +18,36 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "patient_details")]
         public PatientDetails PatientDetails { get; set; }
 
-        [JsonProperty(PropertyName = "out_of_hours")]
-        public bool OutOfHours { get; set; }
-
-        /// <summary>
-        /// Patients first hospital number
-        /// </summary>
-        [JsonProperty(PropertyName = "hospital_number_1")]
-        public string HospitalNumber_1 { get; set; }
-
-        /// <summary>
-        /// Patients second hospital number
-        /// </summary>
-        [JsonProperty(PropertyName = "hospital_number_2")]
-        public string HospitalNumber_2 { get; set; }
-
-        /// <summary>
-        /// Patients third hospital number
-        /// </summary>
-        [JsonProperty(PropertyName = "hospital_number_3")]
-        public string HospitalNumber_3 { get; set; }
+        [Required]
+        [DataType(DataType.Custom)]
+        [JsonProperty(PropertyName = "medical_team")]
+        public MedicalTeam MedicalTeam { get; set; }
 
         [Required]
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "id")]
         public string ExaminationId { get; set; }
+
+        [JsonProperty(PropertyName = "out_of_hours")]
+        public bool OutOfHours { get; set; }
+
+        /// <summary>
+        ///     Patients first hospital number
+        /// </summary>
+        [JsonProperty(PropertyName = "hospital_number_1")]
+        public string HospitalNumber_1 { get; set; }
+
+        /// <summary>
+        ///     Patients second hospital number
+        /// </summary>
+        [JsonProperty(PropertyName = "hospital_number_2")]
+        public string HospitalNumber_2 { get; set; }
+
+        /// <summary>
+        ///     Patients third hospital number
+        /// </summary>
+        [JsonProperty(PropertyName = "hospital_number_3")]
+        public string HospitalNumber_3 { get; set; }
 
         [JsonProperty(PropertyName = "time_of_death")]
         [Required]
@@ -159,11 +161,6 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "cultural_priority")]
         public bool CulturalPriority { get; set; }
-
-        [Required]
-        [DataType(DataType.Custom)]
-        [JsonProperty(PropertyName = "medical_team")]
-        public MedicalTeam MedicalTeam { get; set; }
 
         // Flags that effect priority
         [Required]

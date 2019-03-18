@@ -8,7 +8,6 @@ namespace MedicalExaminer.API.Extensions.Data
     {
         public PatientDetailsProfile()
         {
-            
             CreateMap<PutPatientDetailsRequest, PatientDetails>();
             CreateMap<Examination, GetPatientDetailsResponse>();
             CreateMap<PatientDetails, Examination>()

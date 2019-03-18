@@ -15,43 +15,33 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
     public class PatientDetailsUpdateServiceTests
     {
         [Fact]
-        public void PatientDetailsUpdateQuerySuccessReturnsExaminationId()
+        public void PatientDetailsUpdateQueryIsNullThrowsException()
         {
             // Arrange
-            MedicalExaminer.Models.Examination examination = new MedicalExaminer.Models.Examination();
-            var patientDetails = new Mock<MedicalExaminer.Models.PatientDetails>();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            PatientDetailsUpdateQuery query = null;
             var mapper = new Mock<IMapper>();
-            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object);
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup((db) => db.GetItemAsync(connectionSettings.Object,
-                It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>())).Returns(Task.FromResult(examination)).Verifiable();
-            dbAccess.Setup((db) => db.UpdateItemAsync(connectionSettings.Object,
-                It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
             var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object);
 
-            // Act
-            var result = sut.Handle(query);
-
-            // Assert
-            dbAccess.Verify(db => db.UpdateItemAsync(connectionSettings.Object, 
-                It.IsAny<MedicalExaminer.Models.Examination>()), Times.Once);
-            Assert.NotNull(result.Result);
+            Action act = () => sut.Handle(query).GetAwaiter().GetResult();
+            act.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void PatientDetailsUpdateQuerySuccessReturnsCorrectPropertyValues()
         {
             // Arrange
-            MedicalExaminer.Models.Examination examination = new MedicalExaminer.Models.Examination();
+            var examination = new MedicalExaminer.Models.Examination();
             var patientDetails = new Mock<MedicalExaminer.Models.PatientDetails>();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var mapper = new Mock<IMapper>();
             var query = new PatientDetailsUpdateQuery("a", patientDetails.Object);
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup((db) => db.GetItemAsync(connectionSettings.Object,
-                It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>())).Returns(Task.FromResult(examination)).Verifiable();
-            dbAccess.Setup((db) => db.UpdateItemAsync(connectionSettings.Object,
+            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
+                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+                .Returns(Task.FromResult(examination)).Verifiable();
+            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
             var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object);
 
@@ -65,17 +55,29 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
         }
 
         [Fact]
-        public void PatientDetailsUpdateQueryIsNullThrowsException()
+        public void PatientDetailsUpdateQuerySuccessReturnsExaminationId()
         {
             // Arrange
+            var examination = new MedicalExaminer.Models.Examination();
+            var patientDetails = new Mock<MedicalExaminer.Models.PatientDetails>();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            PatientDetailsUpdateQuery query = null;
             var mapper = new Mock<IMapper>();
+            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object);
             var dbAccess = new Mock<IDatabaseAccess>();
+            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
+                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+                .Returns(Task.FromResult(examination)).Verifiable();
+            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
+                It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
             var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object);
 
-            Action act = () => sut.Handle(query).GetAwaiter().GetResult();
-            act.Should().Throw<ArgumentNullException>();
+            // Act
+            var result = sut.Handle(query);
+
+            // Assert
+            dbAccess.Verify(db => db.UpdateItemAsync(connectionSettings.Object,
+                It.IsAny<MedicalExaminer.Models.Examination>()), Times.Once);
+            Assert.NotNull(result.Result);
         }
     }
 }

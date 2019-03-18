@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.Models.Enums;
-using ValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
 
 namespace MedicalExaminer.API.Attributes
 {
     /// <summary>
-    /// Validates that a user exists and is in the role of medical examiner officer
+    ///     Validates that a user exists and is in the role of medical examiner officer
     /// </summary>
     public class ValidMedicalExaminerOfficer : ValidUserBase
     {

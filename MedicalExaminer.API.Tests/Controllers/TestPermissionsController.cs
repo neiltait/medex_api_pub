@@ -15,18 +15,12 @@ using Xunit;
 namespace MedicalExaminer.API.Tests.Controllers
 {
     /// <summary>
-    /// Tests the Users Controller
+    ///     Tests the Users Controller
     /// </summary>
     public class TestPermissionsController : ControllerTestsBase<PermissionsController>
     {
         /// <summary>
-        /// The User Persistence and permission persistence mock.
-        /// </summary>
-        private readonly Mock<IUserPersistence> _userPersistence;
-        private readonly Mock<IPermissionPersistence> _permissionPersistence;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TestPermissionsController"/> class.
+        ///     Initializes a new instance of the <see cref="TestPermissionsController" /> class.
         /// </summary>
         public TestPermissionsController()
         {
@@ -35,11 +29,19 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
 
             Controller =
-                new PermissionsController(_userPersistence.Object, _permissionPersistence.Object, logger.Object, Mapper);
+                new PermissionsController(_userPersistence.Object, _permissionPersistence.Object, logger.Object,
+                    Mapper);
         }
 
         /// <summary>
-        /// Test returning an empty list
+        ///     The User Persistence and permission persistence mock.
+        /// </summary>
+        private readonly Mock<IUserPersistence> _userPersistence;
+
+        private readonly Mock<IPermissionPersistence> _permissionPersistence;
+
+        /// <summary>
+        ///     Test returning an empty list
         /// </summary>
         /// <returns>Async Task</returns>
         [Fact]
@@ -57,7 +59,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult)response.Result;
+            var result = (OkObjectResult) response.Result;
             result.Value.Should().BeAssignableTo<GetPermissionsResponse>();
             var model = (GetPermissionsResponse) result.Value;
             model.Errors.Count.Should().Be(0);
@@ -67,7 +69,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         /// <summary>
-        /// Test get a list of users
+        ///     Test get a list of users
         /// </summary>
         /// <returns>Async Task</returns>
         [Fact]
@@ -98,7 +100,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         /// <summary>
-        /// Test that a good response is returned in full
+        ///     Test that a good response is returned in full
         /// </summary>
         /// <returns>Async Task</returns>
         [Fact]
@@ -128,7 +130,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         /// <summary>
-        /// Test when no user is found
+        ///     Test when no user is found
         /// </summary>
         /// <returns>Async Task</returns>
         [Fact]
@@ -155,7 +157,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         /// <summary>
-        /// Test that model validation error causes validation failure
+        ///     Test that model validation error causes validation failure
         /// </summary>
         /// <returns>Async Task</returns>
         [Fact]

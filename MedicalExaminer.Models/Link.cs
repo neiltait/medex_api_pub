@@ -10,10 +10,8 @@ namespace MedicalExaminer.Models
             Url = href;
         }
 
-        [JsonProperty(PropertyName = "rel")]
-        public string Relationship { get; }
+        [JsonProperty(PropertyName = "rel")] public string Relationship { get; }
 
-        [JsonProperty(PropertyName = "href")]
-        public string Url { get; }
+        [JsonProperty(PropertyName = "href")] public string Url { get; }
     }
 }

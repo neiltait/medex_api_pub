@@ -5,12 +5,12 @@ using MedicalExaminer.Models;
 namespace MedicalExaminer.API.Extensions.Data
 {
     /// <summary>
-    /// Users Profile for AutoMapper
+    ///     Users Profile for AutoMapper
     /// </summary>
     public class UsersProfile : Profile
     {
         /// <summary>
-        /// Initialise a new instance of the Users AutoMapper Profile
+        ///     Initialise a new instance of the Users AutoMapper Profile
         /// </summary>
         public UsersProfile()
         {

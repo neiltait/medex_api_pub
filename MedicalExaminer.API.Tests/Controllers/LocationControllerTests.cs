@@ -75,20 +75,6 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public void GetLocationsByParentId_WithValidID_Returns_List()
-        {
-            // Act
-            var response = Controller.GetLocationsByParentId("1");
-
-            // Assert
-            var taskResult = response.Should().BeOfType<Task<ActionResult<GetLocationsResponse>>>().Subject;
-            var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            var locationResponse = okResult.Value.Should().BeAssignableTo<GetLocationsResponse>().Subject;
-            var locations = locationResponse.Locations;
-            Assert.True(locations.Count() > 0);
-        }
-
-        [Fact]
         public void GetLocationsByParentId_WithoutValidID_Returns_EmptyList()
         {
             // Act
@@ -100,6 +86,20 @@ namespace MedicalExaminer.API.Tests.Controllers
             var locationResponse = okResult.Value.Should().BeAssignableTo<GetLocationsResponse>().Subject;
             var locations = locationResponse.Locations;
             Assert.True(locations.Count() == 0);
+        }
+
+        [Fact]
+        public void GetLocationsByParentId_WithValidID_Returns_List()
+        {
+            // Act
+            var response = Controller.GetLocationsByParentId("1");
+
+            // Assert
+            var taskResult = response.Should().BeOfType<Task<ActionResult<GetLocationsResponse>>>().Subject;
+            var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var locationResponse = okResult.Value.Should().BeAssignableTo<GetLocationsResponse>().Subject;
+            var locations = locationResponse.Locations;
+            Assert.True(locations.Count() > 0);
         }
     }
 }

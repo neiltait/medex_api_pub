@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace MedicalExaminer.API.Filters
 {
     /// <summary>
-    /// Handles pre and post action handling
+    ///     Handles pre and post action handling
     /// </summary>
     public class ControllerActionFilter : IActionFilter
     {
         /// <summary>
-        /// Called after method executed
+        ///     Called after method executed
         /// </summary>
         /// <remarks>Required by interface. Not intended to be used</remarks>
         /// <param name="context">action context</param>
@@ -21,17 +21,14 @@ namespace MedicalExaminer.API.Filters
         }
 
         /// <summary>
-        /// Called before method executes
+        ///     Called before method executes
         /// </summary>
         /// <param name="context">action context</param>
         public void OnActionExecuting(ActionExecutingContext context)
         {
             var controller = context.Controller as BaseController;
 
-            if (controller == null)
-            {
-                return;
-            }
+            if (controller == null) return;
 
             var logger = controller.Logger;
 

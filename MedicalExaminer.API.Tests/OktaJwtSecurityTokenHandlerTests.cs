@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.API.Services;
@@ -13,16 +11,10 @@ using Xunit;
 namespace MedicalExaminer.API.Tests
 {
     /// <summary>
-    /// Okta Jwt Security Token Handler Tests
+    ///     Okta Jwt Security Token Handler Tests
     /// </summary>
     public class OktaJwtSecurityTokenHandlerTests
     {
-        private Mock<ITokenService> _mockTokenService;
-
-        private Mock<ISecurityTokenValidator> _mockSecurityTokenValidator;
-
-        private OktaJwtSecurityTokenHandler sut;
-
         public OktaJwtSecurityTokenHandlerTests()
         {
             _mockTokenService = new Mock<ITokenService>();
@@ -30,6 +22,22 @@ namespace MedicalExaminer.API.Tests
             _mockSecurityTokenValidator = new Mock<ISecurityTokenValidator>();
 
             sut = new OktaJwtSecurityTokenHandler(_mockTokenService.Object, _mockSecurityTokenValidator.Object);
+        }
+
+        private readonly Mock<ITokenService> _mockTokenService;
+
+        private readonly Mock<ISecurityTokenValidator> _mockSecurityTokenValidator;
+
+        private readonly OktaJwtSecurityTokenHandler sut;
+
+        [Fact]
+        public void CanReadToken_ShouldCallCanReadOnHandler()
+        {
+            _mockSecurityTokenValidator
+                .Setup(stv => stv.CanReadToken(It.IsAny<string>()))
+                .Returns(true);
+
+            sut.CanReadToken(It.IsAny<string>()).Should().BeTrue();
         }
 
         [Fact]
@@ -52,22 +60,12 @@ namespace MedicalExaminer.API.Tests
         }
 
         [Fact]
-        public void CanReadToken_ShouldCallCanReadOnHandler()
-        {
-            _mockSecurityTokenValidator
-                .Setup(stv => stv.CanReadToken(It.IsAny<string>()))
-                .Returns(true);
-
-            sut.CanReadToken(It.IsAny<string>()).Should().BeTrue();
-        }
-
-        [Fact]
         public void ValidateToken_ShouldReturnClaimsPrincipal_WhenValidTokenPassedAndIntrospectResponseIsActive()
         {
             var expectedToken = "expectedToken";
             var expectedValidatedToken = new Mock<SecurityToken>().Object;
             var expectedTokenValidationParameters = new TokenValidationParameters();
-            var expectedIntrospectResponse = new IntrospectResponse()
+            var expectedIntrospectResponse = new IntrospectResponse
             {
                 Active = true
             };
@@ -94,7 +92,7 @@ namespace MedicalExaminer.API.Tests
             var expectedToken = "expectedToken";
             var expectedValidatedToken = new Mock<SecurityToken>().Object;
             var expectedTokenValidationParameters = new TokenValidationParameters();
-            var expectedIntrospectResponse = new IntrospectResponse()
+            var expectedIntrospectResponse = new IntrospectResponse
             {
                 Active = false
             };
@@ -111,7 +109,8 @@ namespace MedicalExaminer.API.Tests
                         out expectedValidatedToken))
                 .Returns(expectedClaims);
 
-            Action action = () => sut.ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken)
+            Action action = () => sut
+                .ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken)
                 .Should().Be(expectedClaims);
 
             action.Should().Throw<SecurityTokenValidationException>();

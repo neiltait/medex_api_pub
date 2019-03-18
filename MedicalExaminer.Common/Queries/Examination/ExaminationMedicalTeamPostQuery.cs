@@ -1,14 +1,14 @@
-﻿
-namespace MedicalExaminer.Common.Queries.Examination 
-{
-    
-    public class ExaminationMedicalTeamPostQuery : IQuery<Models.IMedicalTeam>
-    {
-        public Models.IMedicalTeam MedicalTeam { get; }
+﻿using MedicalExaminer.Models;
 
-        public ExaminationMedicalTeamPostQuery(Models.IMedicalTeam medicalTeam)
+namespace MedicalExaminer.Common.Queries.Examination
+{
+    public class ExaminationMedicalTeamPostQuery : IQuery<IMedicalTeam>
+    {
+        public ExaminationMedicalTeamPostQuery(IMedicalTeam medicalTeam)
         {
             MedicalTeam = medicalTeam;
         }
+
+        private IMedicalTeam MedicalTeam { get; }
     }
 }

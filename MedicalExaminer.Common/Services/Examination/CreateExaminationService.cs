@@ -8,9 +8,12 @@ namespace MedicalExaminer.Common.Services.Examination
 {
     public class CreateExaminationService : IAsyncQueryHandler<CreateExaminationQuery, string>
     {
-        private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
-        public CreateExaminationService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
+        private readonly IDatabaseAccess _databaseAccess;
+
+        public CreateExaminationService(
+            IDatabaseAccess databaseAccess,
+            IExaminationConnectionSettings connectionSettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
@@ -22,17 +25,10 @@ namespace MedicalExaminer.Common.Services.Examination
             {
                 throw new ArgumentNullException(nameof(param));
             }
-                try
-                {
-                    param.Examination.ExaminationId = Guid.NewGuid().ToString();
-                    var result = await _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination, false);
-                    return result.ExaminationId;
-                }
-                catch (Exception e)
-                {
-                    //_logger.Log("Failed to retrieve examination data", e);
-                    throw;
-                }
+
+            param.Examination.ExaminationId = Guid.NewGuid().ToString();
+            var result = await _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination, false);
+            return result.ExaminationId;
         }
     }
 }

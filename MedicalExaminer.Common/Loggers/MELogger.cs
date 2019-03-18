@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 
-//using Microsoft.Azure.Documents;
-//using Microsoft.Azure.Documents.Client;
+// using Microsoft.Azure.Documents;
+// using Microsoft.Azure.Documents.Client;
 
 namespace MedicalExaminer.Common.Loggers
 {
     /// <summary>
-    /// Construct log objects and submit to logging destination
+    ///     Construct log objects and submit to logging destination
     /// </summary>
     public class MELogger : IMELogger
     {
-        private readonly IMeLoggerPersistence _mEloggerPersistence;
+        private readonly IMeLoggerPersistence mEloggerPersistence;
 
         /// <summary>
-        /// Constructor
+        ///     Initializes a new instance of the <see cref="MELogger" /> class.
         /// </summary>
         /// <param name="mEloggerPersistence">persistence object that writes to logging destination</param>
         public MELogger(IMeLoggerPersistence mEloggerPersistence)
         {
-            _mEloggerPersistence = mEloggerPersistence;
+            this.mEloggerPersistence = mEloggerPersistence;
         }
 
         /// <inheritdoc />
@@ -29,7 +29,7 @@ namespace MedicalExaminer.Common.Loggers
         {
             var logEntry = new LogMessageActionDefault(userName, userAuthenticationType, userIsAuthenticated,
                 controllerName, controllerMethod, parameters, remoteIP, timeStamp);
-            await _mEloggerPersistence.SaveLogEntryAsync(logEntry);
+            await mEloggerPersistence.SaveLogEntryAsync(logEntry);
         }
     }
 }

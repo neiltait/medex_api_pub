@@ -5,7 +5,6 @@ using MedicalExaminer.Common;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 
-
 namespace MedicalExaminer.API.Tests.Persistence
 {
     public class LocationPersistenceFake : ILocationPersistence
@@ -94,12 +93,8 @@ namespace MedicalExaminer.API.Tests.Persistence
         public async Task<Location> GetLocationAsync(string locationId)
         {
             foreach (var location in _locations)
-            {
                 if (location.LocationId == locationId)
-                {
                     return await Task.FromResult(location);
-                }
-            }
 
             throw new ArgumentException("Invalid Argument");
         }
@@ -116,7 +111,8 @@ namespace MedicalExaminer.API.Tests.Persistence
         }
 
         /// <summary>
-        /// Gets either a list of all locations minus national or empty list depending if parentID matches locationId of national location in test data
+        ///     Gets either a list of all locations minus national or empty list depending if parentID matches locationId of
+        ///     national location in test data
         /// </summary>
         /// <param name="parentId">LocationID of location whose children to return</param>
         /// <returns>Either full or empty list</returns>
@@ -126,9 +122,7 @@ namespace MedicalExaminer.API.Tests.Persistence
             var parentLocation = _locations.Find(l => l.LocationId == parentId);
 
             if (parentLocation != null && parentLocation.Type == LocationType.National)
-            {
                 results.AddRange(_locations.FindAll(l => l.Type != LocationType.National));
-            }
 
             return await Task.FromResult(results);
         }
