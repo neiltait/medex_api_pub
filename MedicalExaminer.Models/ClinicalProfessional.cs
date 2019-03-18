@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace MedicalExaminer.Models
 {
-    public class ClinicalProfessional 
+    public class ClinicalProfessional
     {
         [Required]
         [JsonProperty(PropertyName = "name")]

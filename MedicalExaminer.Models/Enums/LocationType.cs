@@ -1,6 +1,6 @@
 ﻿namespace MedicalExaminer.Models.Enums
 {
-    public enum  LocationType
+    public enum LocationType
     {
         Site = 0,
         Trust = 1,
