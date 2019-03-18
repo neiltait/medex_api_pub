@@ -107,6 +107,8 @@ namespace MedicalExaminer.API
                 c.AddSecurityRequirement(security);
             });
 
+            services.AddScoped<AppointmentDateResolver>(s => new AppointmentDateResolver(new AppointmentFinder()));
+            //services.AddScoped<AppointmentFinder>(s=> new AppointmentFinder());
             services.AddScoped<IMELogger, MELogger>();
             services.AddScoped<IDatabaseAccess, DatabaseAccess>();
             services.AddScoped<ILocationConnectionSettings>(s => new LocationConnectionSettings(
@@ -119,7 +121,8 @@ namespace MedicalExaminer.API
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
 
-            services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, string>, CreateExaminationService>();
+
+            services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, Examination>, CreateExaminationService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();

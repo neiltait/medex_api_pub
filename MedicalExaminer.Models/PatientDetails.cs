@@ -6,6 +6,7 @@ namespace MedicalExaminer.Models
 {
     public class PatientDetails
     {
+        public bool CulturalPriority { get; set; }
         public bool FaithPriority { get; set; }
         public bool ChildPriority { get; set; }
         public bool CoronerPriority { get; set; }

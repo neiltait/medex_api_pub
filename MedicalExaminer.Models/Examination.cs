@@ -10,6 +10,9 @@ namespace MedicalExaminer.Models
 {
     public class Examination : Resource, IExamination
     {
+        [JsonProperty(PropertyName = "urgency_score")]
+        public int UrgencyScore { get; set; }
+
         [JsonProperty(PropertyName = "out_of_hours")]
         public bool OutOfHours { get; set; }
         /// <summary>
@@ -143,8 +146,19 @@ namespace MedicalExaminer.Models
 
         [Required]
         [DataType(DataType.DateTime)]
+        [JsonProperty(PropertyName = "last_admission")]
+        public DateTime LastAdmission { get; set; }
+
+        [Required]
+        [DataType(DataType.DateTime)]
         [JsonProperty(PropertyName = "date_of_death")]
-        public DateTimeOffset DateOfDeath { get; set; }
+        public DateTime DateOfDeath { get; set; }
+
+        [Required]
+        [DataType(DataType.DateTime)]
+        [JsonProperty(PropertyName = "case_created")]
+        public DateTime CaseCreated { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "cultural_priority")]
         public bool CulturalPriority { get; set; }

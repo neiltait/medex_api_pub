@@ -22,7 +22,7 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class ExaminationsController : BaseController
     {
-        private readonly IAsyncQueryHandler<CreateExaminationQuery, string> _examinationCreationService;
+        private readonly IAsyncQueryHandler<CreateExaminationQuery, Examination> _examinationCreationService;
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
         /// <summary>
@@ -37,7 +37,7 @@ namespace MedicalExaminer.API.Controllers
         public ExaminationsController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<CreateExaminationQuery, string> examinationCreationService,
+            IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService)
             : base(logger, mapper)
@@ -100,7 +100,7 @@ namespace MedicalExaminer.API.Controllers
             var result =await _examinationCreationService.Handle(new CreateExaminationQuery(examination));
             var res = new PutExaminationResponse()
             {
-                ExaminationId = result
+                ExaminationId = result.id
             };
 
             return Ok(res);
