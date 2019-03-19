@@ -42,7 +42,7 @@ namespace MedicalExaminer.API.Controllers
         public ExaminationsController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<CreateExaminationQuery, string> examinationCreationService,
+            IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
             IAsyncUpdateDocumentHandler medicaTeamUpdateService,

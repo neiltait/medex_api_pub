@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MedicalExaminer.Common.Queries.UserQueries;
+using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
-using MedicalExaminer.Common.Services.UserService;
+using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Models;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace MedicalExaminer.API.Attributes
 {
@@ -14,8 +13,6 @@ namespace MedicalExaminer.API.Attributes
     {
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
-            //TODO
-            return ValidationResult.Success;
             var userService = (UserRetrievalService)context.GetService(typeof(IAsyncQueryHandler<UserRetrievalQuery, MeUser>));
             var userIdString = value as string;
             if (string.IsNullOrEmpty(userIdString))

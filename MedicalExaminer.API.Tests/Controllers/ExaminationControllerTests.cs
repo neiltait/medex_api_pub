@@ -193,8 +193,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 id = examinationId
             };
 
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
             var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            var examinationsDashboardService = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>>();
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
@@ -208,7 +209,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>()))
                 .Returns(Task.FromResult(examinationId.ToString()));
             var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
+                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object, examinationsDashboardService.Object);
 
             // Act
             var response = sut.PostMedicalTeam(examinationId, postMedicalTeamRequest).Result;
@@ -232,9 +233,10 @@ namespace MedicalExaminer.API.Tests.Controllers
                 id = examinationId
             };
 
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
             var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
+            var examinationsDashboardService = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var postMedicalTeamRequest = new PostMedicalTeamRequest();
@@ -248,7 +250,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>()))
                 .Returns(Task.FromResult(returnedMedicalTeamExaminationId));
             var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
+                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object, examinationsDashboardService.Object);
 
             // Act
             var response = sut.PostMedicalTeam(examinationId, postMedicalTeamRequest).Result;
@@ -267,9 +269,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationId = Guid.NewGuid().ToString();
             Examination examination = null;
 
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
             var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
+            var examinationsDashboardService = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>>();
+
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var postMedicalTeamRequest = new PostMedicalTeamRequest();
@@ -282,7 +286,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>()))
                 .Returns(Task.FromResult(examinationId.ToString()));
             var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
+                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object, examinationsDashboardService.Object);
 
             // Act
             var response = sut.PostMedicalTeam(examinationId, postMedicalTeamRequest).Result;
@@ -304,9 +308,10 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var medicalTeam = new MedicalTeam();
             examination.MedicalTeam = medicalTeam;
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
             var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
+            var examinationsDashboardService = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
 
@@ -314,7 +319,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>())).Returns(Task.FromResult(examination));
 
             var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
+                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object, examinationsDashboardService.Object);
 
             // Act
             var response = sut.GetMedicalTeam(examinationId).Result;
@@ -335,9 +340,10 @@ namespace MedicalExaminer.API.Tests.Controllers
                 id = examinationId
             };
 
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
             var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
+            var examinationsDashboardService = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
 
@@ -345,7 +351,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>())).Returns(Task.FromResult(examination));
 
             var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
+                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object, examinationsDashboardService.Object);
 
             // Act
             var response = sut.GetMedicalTeam(examinationId).Result;
@@ -362,9 +368,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examinationId = Guid.NewGuid().ToString();
             Examination examination = null;
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
             var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
+            var examinationsDashboardService = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
 
@@ -372,7 +379,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>())).Returns(Task.FromResult(examination));
 
             var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
+                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object, examinationsDashboardService.Object);
 
             // Act
             var response = sut.GetMedicalTeam(examinationId).Result;
