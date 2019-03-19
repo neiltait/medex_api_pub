@@ -46,6 +46,7 @@ steps:
   inputs:
     command: publish
     publishWebProjects: false
+    projects: 'MedicalExaminer.API/MedicalExaminer.API.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
       
 - task: PublishBuildArtifacts@1
