@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
@@ -13,10 +14,12 @@ namespace MedicalExaminer.Common.Services.Examination
     {
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
-        public ExaminationsRetrievalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
+        private readonly ExaminationQueryBuilder _examinationQueryBuilder;
+        public ExaminationsRetrievalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings, ExaminationQueryBuilder examinationQueryBuilder)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
+            _examinationQueryBuilder = examinationQueryBuilder;
         }
         public Task<IEnumerable<Models.Examination>> Handle(ExaminationsRetrievalQuery param)
         {
@@ -25,80 +28,21 @@ namespace MedicalExaminer.Common.Services.Examination
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var caseStatusFilter = GetCaseStatusPredicate(param.FilterCaseStatus);
-            var medicalExaminerOfficeFilter = GetCaseMEOfficePredicate(param.FilterLocationId);
-            var userIdFilter = GetUserIdPredicate(param.)
-
-            Func<Models.Examination, bool> query = examination =>
-                (caseStatusFilter(examination) && medicalExaminerOfficeFilter(examination));
-
-            var expression = FuncToExpression(query);
             
-            // can put whatever filters in the param, just empty for now
-            var results = _databaseAccess.GetItemsAsync<Models.Examination>(_connectionSettings, expression);
-
-            return results;
-        }
-
-        private Func<Models.Examination, bool> GetCaseStatusPredicate(CaseStatus? paramFilterCaseStatus)
-        {
-            switch (paramFilterCaseStatus)
+            var expression = _examinationQueryBuilder.GetPredicate(param);
+            switch (param.FilterOrderBy)
             {
-                case CaseStatus.AdmissionNotesHaveBeenAdded:
-                    return examination => examination.AdmissionNotesHaveBeenAdded = true;
-                    break;
-                case CaseStatus.ReadyForMEScrutiny:
-                    return examination => examination.ReadyForMEScrutiny = true;
-                    break;
-                case CaseStatus.Assigned:
-                    return examination => examination.Assigned = false;
-                    break;
-                case CaseStatus.HaveBeenScrutinisedByME:
-                    return examination => examination.HaveBeenScrutinisedByME = true;
-                    break;
-                case CaseStatus.PendingAdmissionNotes:
-                    return examination => examination.PendingAdmissionNotes = true;
-                    break;
-                case CaseStatus.PendingDiscussionWithQAP:
-                    return examination => examination.PendingDiscussionWithQAP = true;
-                    break;
-                case CaseStatus.PendingDiscussionWithRepresentative:
-                    return examination => examination.PendingDiscussionWithRepresentative = true;
-                    break;
-                case CaseStatus.HaveFinalCaseOutstandingOutcomes:
-                    return examination => examination.HaveFinalCaseOutstandingOutcomes = true;
-                    break;
+                case ExaminationsOrderBy.Urgency:
+                    return _databaseAccess.GetItemsAsync(_connectionSettings, expression, ex => ex.UrgencyScore);
+                case ExaminationsOrderBy.CaseCreated:
+                    return _databaseAccess.GetItemsAsync(_connectionSettings, expression, ex => ex.CaseCreated);
                 case null:
-                    return x => true;
-                    break;
+                    return _databaseAccess.GetItemsAsync(_connectionSettings, expression);
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(paramFilterCaseStatus), paramFilterCaseStatus, null);
+                    throw new ArgumentOutOfRangeException(nameof(param.FilterOrderBy));
             }
         }
-
-        private Func<Models.Examination, bool> GetCaseMEOfficePredicate(string meOffice)
-        {
-            if (string.IsNullOrEmpty(meOffice))
-            {
-                return examination => true;
-            }
-            return examination => examination.MedicalExaminerOfficeResponsible == meOffice;
-        }
-
-        private Func<Models.Examination, bool> GetUserIdPredicate(string userId)
-        {
-            if (string.IsNullOrEmpty(userId))
-            {
-                return examination => true;
-            }
-            return examination => examination. == meOffice;
-        }
-
-
-
-        private static Expression<Func<T, bool>> FuncToExpression<T>(Func<T, bool> f)
-        {
-            return x => f(x);
-        }
+        
+        
     }
 }

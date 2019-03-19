@@ -70,5 +70,24 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// </summary>
         public DateTime CaseCreatedDate { get; set; }
 
+
+        public bool AdmissionNotesHaveBeenAdded { get; set; }
+
+        public bool ReadyForMEScrutiny { get; set; }
+
+        public bool Assigned { get; set; }
+
+        public bool HaveBeenScrutinisedByME { get; set; }
+
+        public bool PendingAdmissionNotes { get; set; }
+
+        public bool PendingDiscussionWithQAP { get; set; }
+
+        public bool PendingDiscussionWithRepresentative { get; set; }
+
+        public bool HaveFinalCaseOutstandingOutcomes { get; set; }
+
+        public string CaseOfficer { get; set; }
+
     }
 }

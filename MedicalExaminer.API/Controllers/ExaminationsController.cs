@@ -22,9 +22,11 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class ExaminationsController : BaseController
     {
+        private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> _examinationsDashboardService;
         private readonly IAsyncQueryHandler<CreateExaminationQuery, Examination> _examinationCreationService;
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
+
         /// <summary>
         /// Initialise a new instance of the Examiantions Controller.
         /// </summary>
@@ -34,35 +36,49 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationCreationService"></param>
         /// <param name="examinationRetrievalService"></param>
         /// <param name="examinationsRetrievalService"></param>
+        /// <param name="examinationsDashboardService"></param>
         public ExaminationsController(
-            IMELogger logger,
-            IMapper mapper,
-            IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
-            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
-            IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService)
+        IMELogger logger,
+        IMapper mapper,
+        IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
+        IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
+        IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
+        IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> examinationsDashboardService)
             : base(logger, mapper)
         {
             _examinationCreationService = examinationCreationService;
             _examinationRetrievalService = examinationRetrievalService;
             _examinationsRetrievalService = examinationsRetrievalService;
+            _examinationsDashboardService = examinationsDashboardService;
         }
 
     /// <summary>
     /// Get All Examinations as a list of <see cref="ExaminationItem"/>.
     /// </summary>
     /// <returns>A list of examinations.</returns>
-    [HttpGet]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetExaminationsResponse>> GetExaminations([FromBody]GetExaminationsRequest filter)
-        {
-            var examinations = await _examinationsRetrievalService.Handle(
-                new ExaminationsRetrievalQuery(filter.CaseStatus, filter.LocationId, filter.OrderBy, filter.PageNumber, filter.PageSize, filter.UserId));
+    [HttpPost]
+    [ServiceFilter(typeof(ControllerActionFilter))]
+    public async Task<ActionResult<GetExaminationsResponse>> GetExaminations([FromBody]GetExaminationsRequest filter)
+    {
+        var examinationsQuery = new ExaminationsRetrievalQuery(filter.CaseStatus, filter.LocationId,
+        filter.OrderBy, filter.PageNumber, filter.PageSize, filter.UserId, filter.OpenCases);
+        var examinations = await _examinationsRetrievalService.Handle(examinationsQuery);
 
-            return Ok(new GetExaminationsResponse
-            {
-                Examinations = examinations.Select(e => Mapper.Map<PatientCardItem>(e)).ToList()
-            });
-        }
+        var dashboardOverview = _examinationsDashboardService.Handle(examinationsQuery);
+
+        return Ok(new GetExaminationsResponse
+        {
+            CountOfCasesAdmissionNotesHaveBeenAdded = dashboardOverview.Result.AdmissionNotesHaveBeenAdded,
+            CountOfCasesAssigned = dashboardOverview.Result.Assigned,
+            CountOfCasesHaveBeenScrutinisedByME = dashboardOverview.Result.HaveBeenScrutinisedByME,
+            CountOfCasesHaveFinalCaseOutstandingOutcomes = dashboardOverview.Result.HaveFinalCaseOutstandingOutcomes,
+            CountOfCasesPendingAdmissionNotes = dashboardOverview.Result.PendingAdmissionNotes,
+            CountOfCasesPendingDiscussionWithQAP = dashboardOverview.Result.PendingDiscussionWithQAP,
+            CountOfCasesPendingDiscussionWithRepresentative = dashboardOverview.Result.PendingDiscussionWithRepresentative,
+            CountOfCasesReadyForMEScrutiny = dashboardOverview.Result.ReadyForMEScrutiny,
+            Examinations = examinations.Select(e => Mapper.Map<PatientCardItem>(e)).ToList()
+        });
+    }
 
         /// <summary>
         /// Get Examination by ID
@@ -87,8 +103,8 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="postNewCaseRequest">The PostNewCaseRequest.</param>
         /// <returns>A PostNewCaseResponse.</returns>
-        // POST api/examinations
         [HttpPost]
+        [Route("new")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutExaminationResponse>> CreateNewCase([FromBody]PostNewCaseRequest postNewCaseRequest)
         {

@@ -95,6 +95,10 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// Patients county
         /// </summary>
         public string County { get; set; }
+
+        /// <summary>
+        /// Patients postcode
+        /// </summary>
         public string Postcode { get; set; }
 
         /// <summary>
@@ -181,5 +185,50 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// The cases coroner status
         /// </summary>
         public CoronerStatus CoronerStatus { get; set; }
+
+        /// <summary>
+        /// Case status bar: Have the admission notes been added and saved
+        /// </summary>
+        public bool AdmissionNotesHaveBeenAdded { get; set; }
+
+        /// <summary>
+        /// Case status bar: Is the case ready for ME Scrutiny
+        /// </summary>
+        public bool ReadyForMEScrutiny { get; set; }
+
+        /// <summary>
+        /// Case status bar: Is the case assigned to a user
+        /// </summary>
+        public bool Assigned { get; set; }
+
+        /// <summary>
+        /// Case status bar: Has the case been scrunitised
+        /// </summary>
+        public bool HaveBeenScrutinisedByME { get; set; }
+
+        /// <summary>
+        /// Case status bar: Is the case awaiting admission notes
+        /// </summary>
+        public bool PendingAdmissionNotes { get; set; }
+
+        /// <summary>
+        /// Case status bar: Is the case awaiting discussion with QAP
+        /// </summary>
+        public bool PendingDiscussionWithQAP { get; set; }
+
+        /// <summary>
+        /// Case status bar: Is the case awaiting discussion with representative
+        /// </summary>
+        public bool PendingDiscussionWithRepresentative { get; set; }
+
+        /// <summary>
+        /// Case status bar: Does the cas have final case outstanding outcomes
+        /// </summary>
+        public bool HaveFinalCaseOutstandingOutcomes { get; set; }
+
+        /// <summary>
+        /// Case officer - this will most likely change in the future to ME and MEO
+        /// </summary>
+        public string CaseOfficer { get; set; }
     }
 }

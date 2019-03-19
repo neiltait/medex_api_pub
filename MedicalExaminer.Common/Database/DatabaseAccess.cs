@@ -68,7 +68,40 @@ namespace MedicalExaminer.Common.Database
 
             return results;
         }
-        
+
+
+        public async Task<IEnumerable<T>> GetItemsAsync<T, TKey>(IConnectionSettings connectionSettings, 
+            Expression<Func<T, bool>> predicate, Expression<Func<T, TKey>> orderBy)
+        {
+            var _client = CreateClient(connectionSettings);
+            var query = _client.CreateDocumentQuery<T>(
+                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
+                    new FeedOptions { MaxItemCount = -1 })
+                .Where(predicate)
+                .OrderBy(orderBy)
+                .AsDocumentQuery();
+
+            var results = new List<T>();
+            while (query.HasMoreResults)
+            {
+                results.AddRange(await query.ExecuteNextAsync<T>());
+            }
+
+            return results;
+        }
+
+        public int GetCountAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
+        {
+            var _client = CreateClient(connectionSettings);
+            var query = _client.CreateDocumentQuery<T>(
+                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
+                        connectionSettings.Collection),
+                    new FeedOptions {MaxItemCount = -1})
+                .Count(predicate);
+            return query;
+        }
+
+
         public async Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item)
         {
             var _client = CreateClient(connectionSettings);

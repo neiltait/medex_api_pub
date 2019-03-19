@@ -17,6 +17,10 @@ namespace MedicalExaminer.Common.Database
         Task<IEnumerable<T>> GetItemsAsync<T>(IConnectionSettings connectionSettings,
             Expression<Func<T, bool>> predicate);
 
-        
+        Task<IEnumerable<T>> GetItemsAsync<T, TKey>(IConnectionSettings connectionSettings,
+            Expression<Func<T, bool>> predicate, Expression<Func<T, TKey>> orderBy);
+
+
+        int GetCountAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate);
     }
 }

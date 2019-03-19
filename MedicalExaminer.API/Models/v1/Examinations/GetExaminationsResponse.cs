@@ -9,6 +9,23 @@ namespace MedicalExaminer.API.Models.v1.Examinations
     /// </summary>
     public class GetExaminationsResponse : ResponseBase
     {
+
+        public int CountOfCasesAdmissionNotesHaveBeenAdded { get; set; }
+               
+        public int CountOfCasesReadyForMEScrutiny { get; set; }
+               
+        public int CountOfCasesAssigned { get; set; }
+               
+        public int CountOfCasesHaveBeenScrutinisedByME { get; set; }
+               
+        public int CountOfCasesPendingAdmissionNotes { get; set; }
+               
+        public int CountOfCasesPendingDiscussionWithQAP { get; set; }
+               
+        public int CountOfCasesPendingDiscussionWithRepresentative { get; set; }
+               
+        public int CountOfCasesHaveFinalCaseOutstandingOutcomes { get; set; }
+
         /// <summary>
         /// List of Examinations.
         /// </summary>

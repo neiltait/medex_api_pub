@@ -31,6 +31,11 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public ExaminationsOrderBy OrderBy { get; set; }
 
         /// <summary>
+        /// Return only open cases = true, else false for closed cases
+        /// </summary>
+        public bool OpenCases { get; set; }
+
+        /// <summary>
         /// What size page should be returned
         /// </summary>
         public int PageSize { get; set; }
