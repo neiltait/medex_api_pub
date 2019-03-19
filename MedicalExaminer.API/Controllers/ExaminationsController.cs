@@ -26,6 +26,8 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<CreateExaminationQuery, Examination> _examinationCreationService;
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
+		private readonly IAsyncUpdateDocumentHandler _medicaTeamUpdateService;
+        
 
         /// <summary>
         /// Initialise a new instance of the Examiantions Controller.
@@ -36,19 +38,21 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationCreationService"></param>
         /// <param name="examinationRetrievalService"></param>
         /// <param name="examinationsRetrievalService"></param>
-        /// <param name="examinationsDashboardService"></param>
+        /// <param name="medicalTeamUpdateService"></param>
         public ExaminationsController(
-        IMELogger logger,
-        IMapper mapper,
-        IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
-        IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
-        IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
-        IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> examinationsDashboardService)
+            IMELogger logger,
+            IMapper mapper,
+            IAsyncQueryHandler<CreateExaminationQuery, string> examinationCreationService,
+            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
+            IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
+            IAsyncUpdateDocumentHandler medicaTeamUpdateService,
+			IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> examinationsDashboardService)
             : base(logger, mapper)
         {
             _examinationCreationService = examinationCreationService;
             _examinationRetrievalService = examinationRetrievalService;
             _examinationsRetrievalService = examinationsRetrievalService;
+			_medicaTeamUpdateService = medicaTeamUpdateService;
             _examinationsDashboardService = examinationsDashboardService;
         }
 
@@ -67,6 +71,7 @@ namespace MedicalExaminer.API.Controllers
         var dashboardOverview = _examinationsDashboardService.Handle(examinationsQuery);
 
         return Ok(new GetExaminationsResponse
+            
         {
             CountOfCasesAdmissionNotesHaveBeenAdded = dashboardOverview.Result.AdmissionNotesHaveBeenAdded,
             CountOfCasesAssigned = dashboardOverview.Result.Assigned,
@@ -114,7 +119,6 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var examination = Mapper.Map<Examination>(postNewCaseRequest);
-            
             var result =await _examinationCreationService.Handle(new CreateExaminationQuery(examination));
             var res = new PutExaminationResponse()
             {
@@ -122,6 +126,71 @@ namespace MedicalExaminer.API.Controllers
             };
 
             return Ok(res);
+        }
+
+        /// <summary>
+        /// Post Medical Team
+        /// </summary>
+        /// /// <param name="examinationId">The ID of the examination that the medical team object is to be posted to.</param>
+        /// <param name="postMedicalTeamRequest">The PostMedicalTeamRequest.</param>
+        /// <returns>A PutExaminationResponse.</returns>
+        [HttpPost("/MedicalTeam/{examinationId}")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody]PostMedicalTeamRequest postMedicalTeamRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutExaminationResponse());
+            }
+
+            var medicalTeamRequest = Mapper.Map<MedicalTeam>(postMedicalTeamRequest);
+
+            if (medicalTeamRequest == null)
+            {
+                return BadRequest(new PutExaminationResponse());
+            }
+
+            Examination examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
+            if (examination == null)
+            {
+                return NotFound();
+            }
+
+            examination.MedicalTeam = medicalTeamRequest;
+
+            var returnedExaminationId = await _medicaTeamUpdateService.Handle(examination);
+
+            if (returnedExaminationId == null)
+            {
+                return BadRequest(new PutExaminationResponse());
+            }
+
+            var res = new PutExaminationResponse()
+            {
+                ExaminationId = examinationId
+            };
+
+            return Ok(res);
+        }
+
+        [HttpGet("/MedicalTeam/{examinationId}")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<GetMedicalTeamResponse>> GetMedicalTeam(string examinationId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new GetMedicalTeamResponse());
+            }
+
+            Examination examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
+            if (examination == null || examination.MedicalTeam == null)
+            {
+                return NotFound(new GetMedicalTeamResponse());
+            }
+
+            var getMedicalTeamResponse = Mapper.Map<GetMedicalTeamResponse>(examination.MedicalTeam);
+
+            return Ok(getMedicalTeamResponse);
         }
     }
 }

@@ -15,6 +15,6 @@ namespace MedicalExaminer.Common.ConnectionSettings
         public Uri EndPointUri { get; }
         public string PrimaryKey { get; }
         public string DatabaseId { get; }
-        public string Collection { get; }
+        public string Collection { get; } 
     }
 }

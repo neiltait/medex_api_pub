@@ -5,6 +5,7 @@ using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
+using Newtonsoft.Json;
 
 namespace MedicalExaminer.Common
 {

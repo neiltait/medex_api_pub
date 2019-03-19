@@ -97,7 +97,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public string County { get; set; }
 
         /// <summary>
-        /// Patients postcode
+        /// Patient's postcode
         /// </summary>
         public string Postcode { get; set; }
 
@@ -182,7 +182,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public bool Completed { get; set; }
 
         /// <summary>
-        /// The cases coroner status
+        /// The case's coroner status
         /// </summary>
         public CoronerStatus CoronerStatus { get; set; }
 
@@ -230,5 +230,12 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// Case officer - this will most likely change in the future to ME and MEO
         /// </summary>
         public string CaseOfficer { get; set; }
+
+        /// <summary>
+        /// Medical team associated with the case
+        /// </summary>
+        public MedicalExaminer.Models.IMedicalTeam MedicalTeam { get; set; }
+
+
     }
 }
