@@ -83,14 +83,12 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "date_of_birth")]
         public DateTime? DateOfBirth { get; set; }
 
-        
         /// <summary>
         /// Patients date of death
         /// </summary>
         [JsonProperty(PropertyName = "date_of_death")]
         public DateTime? DateOfDeath { get; set; }
 
-        
         /// <summary>
         /// Patients time of death
         /// </summary>
