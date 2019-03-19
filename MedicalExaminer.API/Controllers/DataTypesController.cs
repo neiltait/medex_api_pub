@@ -62,6 +62,16 @@ namespace MedicalExaminer.API.Controllers
             return Ok(GetDictionary(typeof(ExaminationGender)));
         }
 
+        /// <summary>
+        /// Returns all Examination Genders
+        /// </summary>
+        /// <returns>Dictionary of Examination Genders</returns>
+        [HttpGet("case_statuses")]
+        public ActionResult GetCaseStatuses()
+        {
+            return Ok(GetDictionary(typeof(CaseStatus)));
+        }
+
         private Dictionary<string, int> GetDictionary(Type enumeratorType)
         {
             var dic = new Dictionary<string, int>();
