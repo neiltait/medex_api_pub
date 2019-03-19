@@ -2,6 +2,9 @@
 
 namespace MedicalExaminer.API.Attributes
 {
+    /// <summary>
+    /// Custom Validation attribute - 
+    /// </summary>
     public class RequiredIfAttribute : RequiredAttribute
     {
         /// <summary>
@@ -23,14 +26,14 @@ namespace MedicalExaminer.API.Attributes
         {
             var instance = context.ObjectInstance;
             var type = instance.GetType();
-            var proprtyvalue = type.GetProperty(PropertyName).GetValue(instance, null);
-            if (proprtyvalue.ToString() == DesiredValue.ToString())
+            var propertyValue = type.GetProperty(PropertyName).GetValue(instance, null);
+            if (propertyValue.ToString() != DesiredValue.ToString())
             {
-                var result = base.IsValid(value, context);
-                return result;
+                return ValidationResult.Success;
             }
 
-            return ValidationResult.Success;
+            var result = base.IsValid(value, context);
+            return result;
         }
     }
 }
