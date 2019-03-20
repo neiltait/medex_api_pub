@@ -12,7 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalExaminer.API.Controllers
 {
-    [Route("examinations")]
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/examinations")]
     [ApiController]
     [Authorize]
     public class PatientDetailsController : BaseController

@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalExaminer.API.Controllers
 {
-    [Route("datatypes")]
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/datatypes")]
     [ApiController]
     public class DataTypesController : BaseController
     {

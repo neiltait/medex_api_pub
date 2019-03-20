@@ -17,7 +17,8 @@ namespace MedicalExaminer.API.Controllers
     /// <summary>
     /// Permissions Controller
     /// </summary>
-    [Route("users/{userId}/permissions")]
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/users/{userId}/permissions")]
     [ApiController]
     [Authorize]
     public class PermissionsController : BaseController

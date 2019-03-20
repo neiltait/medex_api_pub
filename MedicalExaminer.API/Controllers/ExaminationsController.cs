@@ -17,7 +17,8 @@ namespace MedicalExaminer.API.Controllers
     /// <summary>
     /// Examinations Controller
     /// </summary>
-    [Route("examinations")]
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/examinations")]
     [ApiController]
     [Authorize]
     public class ExaminationsController : BaseController

@@ -20,7 +20,8 @@ namespace MedicalExaminer.API.Controllers
     /// <summary>
     /// Accounts controller, handler for authentication and token verification
     /// </summary>
-    [Route("auth")]
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/auth")]
     [ApiController]
     [Authorize]
     public class AccountController : BaseController

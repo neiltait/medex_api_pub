@@ -14,7 +14,8 @@ namespace MedicalExaminer.API.Controllers
     /// <summary>
     /// Locations Controller
     /// </summary>
-    [Route("locations")]
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/locations")]
     [ApiController]
     public class LocationsController : BaseController
     {
