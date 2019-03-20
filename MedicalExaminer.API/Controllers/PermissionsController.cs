@@ -137,7 +137,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Create a new Permission.
+        /// Updates a Permission.
         /// </summary>
         /// <param name="putPermission">The PutPermissionRequest.</param>
         /// <returns>A PutPermissionResponse.</returns>
