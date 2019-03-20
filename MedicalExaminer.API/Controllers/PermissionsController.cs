@@ -82,7 +82,10 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetPermissionResponse>> GetPermission(string userId, string permissionId)
         {
-            if (!ModelState.IsValid) return BadRequest(new GetPermissionResponse());
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new GetPermissionResponse());
+            }
 
             try
             {
@@ -107,9 +110,13 @@ namespace MedicalExaminer.API.Controllers
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PostPermissionResponse>> CreatePermission(
-            [FromBody] PostPermissionRequest postPermission)
+            [FromBody]
+            PostPermissionRequest postPermission)
         {
-            if (!ModelState.IsValid) return BadRequest(new PostPermissionResponse());
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PostPermissionResponse());
+            }
 
             try
             {
@@ -138,11 +145,15 @@ namespace MedicalExaminer.API.Controllers
         [HttpPut("{Id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(
-            [FromBody] PutPermissionRequest putPermission)
+            [FromBody]
+            PutPermissionRequest putPermission)
         {
             try
             {
-                if (!ModelState.IsValid) return BadRequest(new PutPermissionResponse());
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new PutPermissionResponse());
+                }
 
                 var permission = Mapper.Map<Permission>(putPermission);
                 var updatedPermission = await permissionPersistence.UpdatePermissionAsync(permission);

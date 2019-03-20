@@ -149,7 +149,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public void CheckCallToLogger()
         {
             var controllerActionFilter = new ControllerActionFilter();
-            var actionContext = new ActionContext {HttpContext = new MockHttpContext()};
+            var actionContext = new ActionContext { HttpContext = new MockHttpContext() };
             var identity = new ClaimsIdentity();
             actionContext.HttpContext.User.AddIdentity(identity);
             actionContext.RouteData = new RouteData();

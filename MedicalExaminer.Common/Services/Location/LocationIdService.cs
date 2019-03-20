@@ -26,7 +26,7 @@ namespace MedicalExaminer.Common.Services.Location
 
             return databaseAccess.GetItemAsync<Models.Location>(
                 connectionSettings,
-                location => location.LocationId == param.Id);
+                location => location.LocationId == param.LocationId);
         }
     }
 }

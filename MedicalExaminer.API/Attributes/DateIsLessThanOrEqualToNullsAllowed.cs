@@ -3,10 +3,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MedicalExaminer.API.Attributes
 {
+    /// <summary>
+    ///     Validates a date is less or equal to another date or is null
+    /// </summary>
     public class DateIsLessThanOrEqualToNullsAllowed : ValidationAttribute
     {
         private readonly string endDateField;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="DateIsLessThanOrEqualToNullsAllowed" /> class.
+        /// </summary>
+        /// <param name="endDateField">The date to compare to</param>
         public DateIsLessThanOrEqualToNullsAllowed(string endDateField)
         {
             this.endDateField = endDateField;
@@ -40,7 +47,7 @@ namespace MedicalExaminer.API.Attributes
 
                 endDate = Convert.ToDateTime(temp);
             }
-            catch (NullReferenceException nre)
+            catch (NullReferenceException)
             {
                 return new ValidationResult($"Unable to find the end date field {endDateField} on the object");
             }
@@ -50,7 +57,9 @@ namespace MedicalExaminer.API.Attributes
                 return new ValidationResult($"Incorrect Format for {context.DisplayName}");
             }
 
-            return endDate < startDate ? new ValidationResult("The patient cannot have died before they were born") : ValidationResult.Success;
+            return endDate < startDate
+                ? new ValidationResult("The patient cannot have died before they were born")
+                : ValidationResult.Success;
         }
     }
 }

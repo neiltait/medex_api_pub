@@ -23,14 +23,18 @@ namespace MedicalExaminer.Common
 
         public async Task EnsureSetupAsync()
         {
-            if (client == null) client = new DocumentClient(endpointUri, primaryKey);
+            if (client == null)
+            {
+                client = new DocumentClient(endpointUri, primaryKey);
+            }
 
-            await client.CreateDatabaseIfNotExistsAsync(new Microsoft.Azure.Documents.Database {Id = databaseId});
+            await client.CreateDatabaseIfNotExistsAsync(new Microsoft.Azure.Documents.Database { Id = databaseId });
             var databaseUri = UriFactory.CreateDatabaseUri(databaseId);
 
             // Samples
-            await client.CreateDocumentCollectionIfNotExistsAsync(databaseUri,
-                new DocumentCollection {Id = collectionName});
+            await client.CreateDocumentCollectionIfNotExistsAsync(
+                databaseUri,
+                new DocumentCollection { Id = collectionName });
         }
     }
 }

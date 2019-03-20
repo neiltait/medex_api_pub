@@ -17,7 +17,9 @@ namespace MedicalExaminer.API.Extensions.Models
         {
             foreach (var item in modelState)
             foreach (var error in item.Value.Errors)
+            {
                 responseBase.AddError(item.Key, error.ErrorMessage);
+            }
         }
     }
 }

@@ -3,16 +3,16 @@
 namespace MedicalExaminer.API.Attributes
 {
     /// <summary>
-    /// Custom Validation attribute - 
+    ///     Custom Validation attribute.
     /// </summary>
-    public class RequiredIfAttribute : RequiredAttribute
+    public class RequiredIfAttributesMatch : RequiredAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RequiredIfAttribute"/> class.
+        ///     Initializes a new instance of the <see cref="RequiredIfAttributesMatch" /> class.
         /// </summary>
-        /// <param name="propertyName">The name of the property</param>
-        /// <param name="desiredValue">The desired valuer of the property</param>
-        public RequiredIfAttribute(string propertyName, object desiredValue)
+        /// <param name="propertyName">The name of the property.</param>
+        /// <param name="desiredValue">The desired valuer of the property.</param>
+        public RequiredIfAttributesMatch(string propertyName, object desiredValue)
         {
             PropertyName = propertyName;
             DesiredValue = desiredValue;
@@ -22,6 +22,12 @@ namespace MedicalExaminer.API.Attributes
 
         private object DesiredValue { get; }
 
+        /// <summary>
+        ///     Validates the attribute.
+        /// </summary>
+        /// <param name="value">The object the validation is performed on.</param>
+        /// <param name="context">the context of the validation.</param>
+        /// <returns>ValidationResult.</returns>
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
             var instance = context.ObjectInstance;

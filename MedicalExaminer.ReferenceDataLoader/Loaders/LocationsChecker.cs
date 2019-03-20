@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
-
-namespace MedicalExaminer.ReferenceDataLoader.Loaders
+﻿namespace MedicalExaminer.ReferenceDataLoader.Loaders
 {
+    using System;
+    using System.Collections.Generic;
+    using Models;
+    using Models.Enums;
+
     /// <summary>
     ///     Check that locations are in concsistent state
     /// </summary>
@@ -20,7 +20,7 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
         /// <summary>
         ///     Run all check methods
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Boolean representing all checks have passed</returns>
         public bool RunAllChecks()
         {
             return CheckLocationIdsNotNull() && CheckAllLocationIdsAreUnique() && CheckParentIdsValid();
@@ -34,17 +34,24 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
         public bool CheckParentIdsValid()
         {
             foreach (var location in _locations)
+            {
                 if (location.Type == LocationType.National)
                 {
-                    if (location.ParentId != null) throw new Exception("National location should not have parent id");
+                    if (location.ParentId != null)
+                    {
+                        throw new Exception("National location should not have parent id");
+                    }
                 }
                 else
                 {
                     var parentId = location.ParentId;
                     var parent = _locations.FindAll(l => l.LocationId == parentId);
-                    if (parent == null || parent.Count != 1)
+                    if (parent.Count != 1)
+                    {
                         throw new Exception($"Location {location.Code} does not have valid parent id");
+                    }
                 }
+            }
 
             return true;
         }
@@ -52,13 +59,16 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
         /// <summary>
         ///     Check LocationId is unique for each location
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Boolean Check all location IDs are unique</returns>
         public bool CheckAllLocationIdsAreUnique()
         {
             var locationIdsOnly = new HashSet<string>();
             _locations.ForEach(l => locationIdsOnly.Add(l.LocationId));
 
-            if (locationIdsOnly.Count != _locations.Count) throw new Exception("Duplicate locationIds detected");
+            if (locationIdsOnly.Count != _locations.Count)
+            {
+                throw new Exception("Duplicate locationIds detected");
+            }
 
             return true;
         }
@@ -66,11 +76,13 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
         /// <summary>
         ///     Check that no locationId value is null
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Boolean Location IDs are not null</returns>
         public bool CheckLocationIdsNotNull()
         {
             if (_locations.FindAll(l => l.LocationId == null).Count > 0)
+            {
                 throw new Exception("Locations exist with null for LocationId");
+            }
 
             return true;
         }

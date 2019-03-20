@@ -44,7 +44,7 @@ namespace MedicalExaminer.Models
 
         string OrganisationCareBeforeDeathLocationId { get; set; }
 
-        //string DeathOccuredLocationId { get; set; }
+        // string DeathOccuredLocationId { get; set; }
         ModeOfDisposal ModeOfDisposal { get; set; }
 
         string FuneralDirectors { get; set; }

@@ -90,7 +90,10 @@ namespace MedicalExaminer.Common.Loggers
             contents.Append(UserName + " " + UserAuthenticationType + " " + UserIsAuthenticated + " " + ControllerName +
                             " " + ControllerMethod + " ");
 
-            foreach (var p in Parameters) contents.Append(p + " ");
+            foreach (var p in Parameters)
+            {
+                contents.Append(p + " ");
+            }
 
             contents.Append(RemoteIP + " ");
             contents.Append(TimeStamp.ToLongDateString() + "_" + TimeStamp.ToLongTimeString());

@@ -6,6 +6,7 @@ using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Examinations;
+using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
@@ -96,7 +97,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<ActionResult<GetExaminationResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             okResult.Value.Should().BeAssignableTo<GetExaminationResponse>();
-            Assert.Equal("a", ((GetExaminationResponse) okResult.Value).ExaminationId);
+            Assert.Equal("a", ((GetExaminationResponse)okResult.Value).ExaminationId);
         }
 
         [Fact]
@@ -105,7 +106,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examination1 = new Examination();
             var examination2 = new Examination();
-            IEnumerable<Examination> examinationsResult = new List<Examination> {examination1, examination2};
+            IEnumerable<Examination> examinationsResult = new List<Examination> { examination1, examination2 };
             var er = new Mock<GetExaminationsResponse>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
@@ -340,7 +341,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<ActionResult<PutExaminationResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
 
-            var examinationIdReturned = ((PutExaminationResponse) okResult.Value).ExaminationId;
+            var examinationIdReturned = ((PutExaminationResponse)okResult.Value).ExaminationId;
             Assert.Equal(examinationId, examinationIdReturned);
         }
 
@@ -369,9 +370,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
-            var result = (BadRequestObjectResult) response.Result;
+            var result = (BadRequestObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<PutExaminationResponse>();
-            var model = (PutExaminationResponse) result.Value;
+            var model = (PutExaminationResponse)result.Value;
             model.Errors.Count.Should().Be(1);
             model.Success.Should().BeFalse();
         }
@@ -400,9 +401,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult) response.Result;
+            var result = (OkObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<PutExaminationResponse>();
-            var model = (PutExaminationResponse) result.Value;
+            var model = (PutExaminationResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
         }

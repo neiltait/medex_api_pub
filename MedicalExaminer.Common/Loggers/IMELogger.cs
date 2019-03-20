@@ -19,7 +19,14 @@ namespace MedicalExaminer.Common.Loggers
         /// <param name="parameters">list of parameters passed to method</param>
         /// <param name="remoteIP">IP address of client</param>
         /// <param name="timeStamp">timestamp when method called</param>
-        void Log(string userName, string userAuthenticationType, bool userIsAuthenticated, string controllerName,
-            string controllerMethod, IList<string> parameters, string remoteIP, DateTime timeStamp);
+        void Log(
+            string userName,
+            string userAuthenticationType,
+            bool userIsAuthenticated,
+            string controllerName,
+            string controllerMethod,
+            IList<string> parameters,
+            string remoteIP,
+            DateTime timeStamp);
     }
 }

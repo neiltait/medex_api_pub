@@ -28,7 +28,7 @@ namespace MedicalExaminer.API.Controllers
         private readonly IUserPersistence _userPersistence;
 
         /// <summary>
-        ///     Initialise a new instance of the Users controller.
+        /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
         /// <param name="userPersistence">The User Persistance.</param>
         /// <param name="logger">The Logger.</param>
@@ -75,7 +75,10 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetUserResponse>> GetUser(string meUserId)
         {
-            if (!ModelState.IsValid) return BadRequest(new GetUserResponse());
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new GetUserResponse());
+            }
 
             try
             {
@@ -154,11 +157,15 @@ namespace MedicalExaminer.API.Controllers
         // POST api/users
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PostUserResponse>> CreateUser([FromBody] PostUserRequest postUser)
+        public async Task<ActionResult<PostUserResponse>> CreateUser([FromBody]
+            PostUserRequest postUser)
         {
             try
             {
-                if (!ModelState.IsValid) return BadRequest(new PostUserResponse());
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new PostUserResponse());
+                }
 
                 var user = Mapper.Map<MeUser>(postUser);
                 var createdUser = await _userPersistence.CreateUserAsync(user);
@@ -182,11 +189,16 @@ namespace MedicalExaminer.API.Controllers
         // POST api/users
         [HttpPut("{Id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutUserResponse>> UpdateUser([FromBody] PutUserRequest putUser)
+        public async Task<ActionResult<PutUserResponse>> UpdateUser([FromBody]
+            PutUserRequest putUser)
         {
             try
             {
-                if (!ModelState.IsValid) return BadRequest(new PutUserResponse());
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new PutUserResponse());
+                }
+
                 var user = Mapper.Map<MeUser>(putUser);
                 var updatedUser = await _userPersistence.UpdateUserAsync(user);
                 return Ok(Mapper.Map<PutUserResponse>(updatedUser));

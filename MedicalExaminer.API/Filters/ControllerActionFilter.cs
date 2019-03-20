@@ -28,7 +28,10 @@ namespace MedicalExaminer.API.Filters
         {
             var controller = context.Controller as BaseController;
 
-            if (controller == null) return;
+            if (controller == null)
+            {
+                return;
+            }
 
             var logger = controller.Logger;
 

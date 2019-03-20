@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalExaminer.API.Controllers
 {
-    [Route("examinations")]
+    [Route("examinations/{caseId}")]
     [ApiController]
     [Authorize]
     public class PatientDetailsController : BaseController
@@ -38,14 +38,19 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpGet]
-        [Route("{caseId}/patientdetails")]
+        [Route("patientdetails")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetPatientDetailsResponse>> GetPatientDetails(string caseId)
         {
-            if (!ModelState.IsValid) return BadRequest(new GetPatientDetailsResponse());
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new GetPatientDetailsResponse());
+            }
 
             if (await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(caseId)) == null)
+            {
                 return NotFound(new GetPatientDetailsResponse());
+            }
 
             var result = await _patientDetailsByCaseIdService.Handle(new PatientDetailsByCaseIdQuery(caseId));
 
@@ -55,15 +60,21 @@ namespace MedicalExaminer.API.Controllers
 
 
         [HttpPut]
-        [Route("{caseId}/patientdetails")]
+        [Route("patientdetails")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutPatientDetailsResponse>> UpdatePatientDetails(string caseId,
-            [FromBody] PutPatientDetailsRequest putPatientDetailsRequest)
+            [FromBody]
+            PutPatientDetailsRequest putPatientDetailsRequest)
         {
-            if (!ModelState.IsValid) return BadRequest(new PutPatientDetailsResponse());
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutPatientDetailsResponse());
+            }
 
             if (_examinationRetrievalService.Handle(new ExaminationRetrievalQuery(caseId)) == null)
+            {
                 return NotFound("Case was not found");
+            }
 
             var patientDetails = Mapper.Map<PatientDetails>(putPatientDetailsRequest);
 

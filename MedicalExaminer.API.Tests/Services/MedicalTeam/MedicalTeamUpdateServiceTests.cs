@@ -22,7 +22,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                 ExaminationId = examinationId
             };
             IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>
-                {examination1};
+                { examination1 };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object, examination1))

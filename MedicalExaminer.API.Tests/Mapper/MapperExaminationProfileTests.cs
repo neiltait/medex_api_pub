@@ -86,7 +86,8 @@ namespace MedicalExaminer.API.Tests.Mapper
         private IEnumerable<Representative> GetRepresentatives(int numberToCreate)
         {
             var representatives = new List<Representative>(numberToCreate);
-            for (var counter = 0; counter < numberToCreate; counter++)
+            for (var counter = 0; counter < numberToCreate; counter ++)
+            {
                 representatives.Add(new Representative
                 {
                     AppointmentDate = new DateTime(2019, 2, 24),
@@ -97,6 +98,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     PresentAtDeath = PresentAtDeath.Yes,
                     Relationship = "relationship"
                 });
+            }
 
             return representatives;
         }

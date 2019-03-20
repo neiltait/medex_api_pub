@@ -59,9 +59,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult) response.Result;
+            var result = (OkObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetPermissionsResponse>();
-            var model = (GetPermissionsResponse) result.Value;
+            var model = (GetPermissionsResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
@@ -82,16 +82,16 @@ namespace MedicalExaminer.API.Tests.Controllers
             _permissionPersistence.Setup(pp => pp.GetPermissionsAsync("fake_id_01")).Returns(
                 Task.FromResult<IEnumerable<Permission>>(
                     new List<Permission>
-                        {new Permission {UserId = "fake_id_01", PermissionId = expectedPermissionId}}));
+                        { new Permission { UserId = "fake_id_01", PermissionId = expectedPermissionId } }));
 
             // Act
             var response = await Controller.GetPermissions(userId);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult) response.Result;
+            var result = (OkObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetPermissionsResponse>();
-            var model = (GetPermissionsResponse) result.Value;
+            var model = (GetPermissionsResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
@@ -110,7 +110,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             const string expectedPermissionId = "expectedPermissionId";
             const string expectedUserId = "expectedUserId";
 
-            var expectedPermission = new Permission {PermissionId = expectedPermissionId, UserId = expectedUserId};
+            var expectedPermission = new Permission { PermissionId = expectedPermissionId, UserId = expectedUserId };
 
             _permissionPersistence.Setup(pp => pp.GetPermissionAsync(expectedUserId, expectedPermissionId)).Returns(
                 Task.FromResult(expectedPermission));
@@ -120,9 +120,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult) response.Result;
+            var result = (OkObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetPermissionResponse>();
-            var model = (GetPermissionResponse) result.Value;
+            var model = (GetPermissionResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
             model.UserId.Should().Be(expectedUserId);
@@ -147,9 +147,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
-            var result = (NotFoundObjectResult) response.Result;
+            var result = (NotFoundObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetPermissionResponse>();
-            var model = (GetPermissionResponse) result.Value;
+            var model = (GetPermissionResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
@@ -171,9 +171,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
-            var result = (BadRequestObjectResult) response.Result;
+            var result = (BadRequestObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetPermissionResponse>();
-            var model = (GetPermissionResponse) result.Value;
+            var model = (GetPermissionResponse)result.Value;
             model.Errors.Count.Should().Be(1);
             model.Success.Should().BeFalse();
         }

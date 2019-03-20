@@ -9,6 +9,7 @@
         }
 
         public string CaseId { get; }
+
         public Models.PatientDetails PatientDetails { get; }
     }
 }

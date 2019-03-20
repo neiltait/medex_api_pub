@@ -11,7 +11,8 @@ namespace MedicalExaminer.Common.Services.PatientDetails
         private readonly IConnectionSettings _connectionSettings;
         private readonly IDatabaseAccess _databaseAccess;
 
-        public PatientDetailsRetrievalService(IDatabaseAccess databaseAccess,
+        public PatientDetailsRetrievalService(
+            IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings)
         {
             _databaseAccess = databaseAccess;
@@ -20,8 +21,13 @@ namespace MedicalExaminer.Common.Services.PatientDetails
 
         public async Task<Models.Examination> Handle(PatientDetailsByCaseIdQuery param)
         {
-            if (param == null) throw new ArgumentNullException(nameof(param));
-            var result = await _databaseAccess.GetItemAsync<Models.Examination>(_connectionSettings,
+            if (param == null)
+            {
+                throw new ArgumentNullException(nameof(param));
+            }
+
+            var result = await _databaseAccess.GetItemAsync<Models.Examination>(
+                _connectionSettings,
                 examination => examination.ExaminationId == param.ExaminationId);
 
             return result;

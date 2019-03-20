@@ -8,7 +8,9 @@ namespace MedicalExaminer.Common.Database
 {
     public interface IDatabaseAccess
     {
-        Task<T> CreateItemAsync<T>(IConnectionSettings connectionSettings, T item,
+        Task<T> CreateItemAsync<T>(
+            IConnectionSettings connectionSettings,
+            T item,
             bool disableAutomaticIdGeneration = false);
 
         Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item);

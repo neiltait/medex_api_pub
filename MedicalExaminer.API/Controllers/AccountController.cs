@@ -28,26 +28,26 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         ///     Okta Client.
         /// </summary>
-        private readonly OktaClient _oktaClient;
+        private readonly OktaClient oktaClient;
 
-        private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> _userCreationService;
+        private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService;
 
         /// <summary>
-        ///     The User Persistence Layer
+        ///     The User Persistence Layer.
         /// </summary>
-        private readonly IUserPersistence _userPersistence;
+        private readonly IUserPersistence userPersistence;
 
-        private readonly IAsyncQueryHandler<UserRetrievalQuery, MeUser> _userRetrievalService;
+        private readonly IAsyncQueryHandler<UserRetrievalQuery, MeUser> userRetrievalService;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="AccountController" /> class.
         /// </summary>
-        /// <param name="logger">Initialise with IMELogger instance</param>
+        /// <param name="logger">Initialise with IMELogger instance.</param>
         /// <param name="mapper">The Mapper.</param>
         /// <param name="oktaClient">Okta client.</param>
-        /// <param name="userPersistence">User persistance.</param>
-        /// <param name="userCreationService"></param>
-        /// <param name="userRetrievalService"></param>
+        /// <param name="userPersistence">User persistence.</param>
+        /// <param name="userCreationService">User Creation Service.</param>
+        /// <param name="userRetrievalService">User Retrieval Service.</param>
         public AccountController(IMELogger logger,
             IMapper mapper,
             OktaClient oktaClient,
@@ -56,14 +56,14 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<UserRetrievalQuery, MeUser> userRetrievalService)
             : base(logger, mapper)
         {
-            _oktaClient = oktaClient;
-            _userPersistence = userPersistence;
-            _userCreationService = userCreationService;
-            _userRetrievalService = userRetrievalService;
+            this.oktaClient = oktaClient;
+            this.userPersistence = userPersistence;
+            this.userCreationService = userCreationService;
+            this.userRetrievalService = userRetrievalService;
         }
 
         /// <summary>
-        ///     Validate Session
+        ///     Validate Session.
         /// </summary>
         /// <returns>Details about the current user.</returns>
         [HttpPost("validate-session")]
@@ -73,7 +73,7 @@ namespace MedicalExaminer.API.Controllers
             var emailAddress = User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
 
             // Get everything that Okta knows about this user
-            var oktaUser = await _oktaClient.Users.GetUserAsync(emailAddress);
+            var oktaUser = await oktaClient.Users.GetUserAsync(emailAddress);
 
             // Try and look them up in our database
             var meUser = await GetUser(emailAddress);
@@ -89,19 +89,22 @@ namespace MedicalExaminer.API.Controllers
                     UserRole = UserRoles.ServiceOwner,
                     LastModifiedBy = "whodunit",
                     ModifiedAt = DateTimeOffset.Now,
-                    CreatedAt = DateTimeOffset.Now
+                    CreatedAt = DateTimeOffset.Now,
                 });
                 meUser = createdMeUser;
             }
 
-            if (meUser == null) throw new Exception("Failed to create user");
+            if (meUser == null)
+            {
+                throw new Exception("Failed to create user");
+            }
 
             return new PostValidateSessionResponse
             {
                 UserId = meUser.UserId,
                 EmailAddress = meUser.Email,
                 FirstName = meUser.FirstName,
-                LastName = meUser.LastName
+                LastName = meUser.LastName,
             };
         }
 
@@ -110,7 +113,7 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var user = await _userRetrievalService.Handle(new UserRetrievalQuery(emailAddress));
+                var user = await userRetrievalService.Handle(new UserRetrievalQuery(emailAddress));
 
                 return user;
             }
@@ -124,7 +127,7 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var createdUser = await _userCreationService.Handle(new CreateUserQuery(toCreate));
+                var createdUser = await userCreationService.Handle(new CreateUserQuery(toCreate));
 
                 return createdUser;
             }

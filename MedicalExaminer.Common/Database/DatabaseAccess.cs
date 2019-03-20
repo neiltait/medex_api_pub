@@ -13,7 +13,9 @@ namespace MedicalExaminer.Common.Database
 {
     public class DatabaseAccess : IDatabaseAccess
     {
-        public async Task<T> CreateItemAsync<T>(IConnectionSettings connectionSettings, T item,
+        public async Task<T> CreateItemAsync<T>(
+            IConnectionSettings connectionSettings,
+            T item,
             bool disableAutomaticIdGeneration = false)
         {
             var client = CreateClient(connectionSettings);
@@ -24,7 +26,8 @@ namespace MedicalExaminer.Common.Database
             return (T)(dynamic)resourceResponse.Resource;
         }
 
-        public async Task<T> GetItemAsync<T>(IConnectionSettings connectionSettings,
+        public async Task<T> GetItemAsync<T>(
+            IConnectionSettings connectionSettings,
             Expression<Func<T, bool>> predicate)
         {
             try
@@ -34,7 +37,7 @@ namespace MedicalExaminer.Common.Database
                         UriFactory.CreateDocumentCollectionUri(
                             connectionSettings.DatabaseId,
                             connectionSettings.Collection),
-                        new FeedOptions { MaxItemCount = -1 })
+                        new FeedOptions { MaxItemCount = - 1 })
                     .Where(predicate)
                     .AsDocumentQuery();
 
@@ -48,20 +51,25 @@ namespace MedicalExaminer.Common.Database
             }
             catch (DocumentClientException documentClientException)
             {
-                if (documentClientException.StatusCode == HttpStatusCode.NotFound) return default(T);
+                if (documentClientException.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return default(T);
+                }
 
                 throw;
             }
         }
 
-        public async Task<IEnumerable<T>> GetItemsAsync<T>(IConnectionSettings connectionSettings,
+        public async Task<IEnumerable<T>> GetItemsAsync<T>(
+            IConnectionSettings connectionSettings,
             Expression<Func<T, bool>> predicate)
         {
             var client = CreateClient(connectionSettings);
             var query = client.CreateDocumentQuery<T>(
-                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
+                    UriFactory.CreateDocumentCollectionUri(
+                        connectionSettings.DatabaseId,
                         connectionSettings.Collection),
-                    new FeedOptions {MaxItemCount = -1})
+                    new FeedOptions { MaxItemCount = - 1 })
                 .Where(predicate)
                 .AsDocumentQuery();
 

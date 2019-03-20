@@ -33,7 +33,9 @@ namespace MedicalExaminer.Common
             catch (DocumentClientException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
                     return null; // whatever we want as the empty resultset as it were...
+                }
             }
 
             if (result.Document == null)
@@ -49,8 +51,10 @@ namespace MedicalExaminer.Common
         {
             await EnsureSetupAsync();
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, "Locations");
-            var feedOptions = new FeedOptions {MaxItemCount = -1};
-            var query = client.CreateDocumentQuery<Location>(documentCollectionUri, "SELECT * FROM Locations",
+            var feedOptions = new FeedOptions { MaxItemCount = - 1 };
+            var query = client.CreateDocumentQuery<Location>(
+                documentCollectionUri,
+                "SELECT * FROM Locations",
                 feedOptions);
             var queryAll = query.AsDocumentQuery();
             var results = new List<Location>();
@@ -67,8 +71,10 @@ namespace MedicalExaminer.Common
         {
             await EnsureSetupAsync();
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, "Locations");
-            var feedOptions = new FeedOptions {MaxItemCount = -1};
-            var query = client.CreateDocumentQuery<Location>(documentCollectionUri, "SELECT * FROM Locations",
+            var feedOptions = new FeedOptions { MaxItemCount = - 1 };
+            var query = client.CreateDocumentQuery<Location>(
+                documentCollectionUri,
+                "SELECT * FROM Locations",
                 feedOptions);
             var queryAll = query.AsDocumentQuery();
             var allLocations = new List<Location>();
@@ -87,7 +93,7 @@ namespace MedicalExaminer.Common
             await EnsureSetupAsync();
             var results = new List<Location>();
 
-            var feedOptions = new FeedOptions {MaxItemCount = -1};
+            var feedOptions = new FeedOptions { MaxItemCount = - 1 };
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, "Locations");
             var queryString = $"SELECT * FROM Locations WHERE Locations.parentId = \"{parentId}\"";
             var query = client.CreateDocumentQuery<Location>(documentCollectionUri, queryString, feedOptions);
@@ -101,7 +107,9 @@ namespace MedicalExaminer.Common
             results.AddRange(childLocations);
 
             if (childLocations.Count > 0)
+            {
                 await GetNextLevelOfDescendents(results, results, feedOptions, documentCollectionUri);
+            }
 
             return results;
         }
@@ -118,8 +126,11 @@ namespace MedicalExaminer.Common
         /// <param name="documentCollectionUri">DocumentCollection Uri</param>
         /// <returns>Task</returns>
         /// <remarks>Uses recursion to descend levels of descendents until lowest level reached</remarks>
-        private async Task GetNextLevelOfDescendents(List<Location> parents, List<Location> results,
-            FeedOptions feedOptions, Uri documentCollectionUri)
+        private async Task GetNextLevelOfDescendents(
+            List<Location> parents,
+            List<Location> results,
+            FeedOptions feedOptions,
+            Uri documentCollectionUri)
         {
             var childLocations = new List<Location>();
 
@@ -134,17 +145,23 @@ namespace MedicalExaminer.Common
                 var queryString = new StringBuilder();
                 queryString.Append("SELECT * FROM Locations WHERE Locations.parentId IN (");
 
-                for (var count = initialPosition; count < parents.Count && count < finalPosition; count++)
+                for (var count = initialPosition; count < parents.Count && count < finalPosition; count ++)
                 {
                     var lastItemInThisBatch = Math.Min(parents.Count - 1, finalPosition - 1);
                     queryString.Append($"\"{parents[count].LocationId}\"");
                     if (count < lastItemInThisBatch)
+                    {
                         queryString.Append(", ");
+                    }
                     else
+                    {
                         queryString.Append(")");
+                    }
                 }
 
-                var query = client.CreateDocumentQuery<Location>(documentCollectionUri, queryString.ToString(),
+                var query = client.CreateDocumentQuery<Location>(
+                    documentCollectionUri,
+                    queryString.ToString(),
                     feedOptions);
                 var queryAll = query.AsDocumentQuery();
 

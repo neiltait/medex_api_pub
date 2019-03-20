@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using MedicalExaminer.API.Models.v1;
 
-namespace MedicalExaminer.Models.V1.Locations
+namespace MedicalExaminer.API.Models.v1.Locations
 {
     /// <inheritdoc />
     /// <summary>

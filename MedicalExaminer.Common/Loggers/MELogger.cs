@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-// using Microsoft.Azure.Documents;
-// using Microsoft.Azure.Documents.Client;
-
 namespace MedicalExaminer.Common.Loggers
 {
     /// <summary>
@@ -23,12 +20,26 @@ namespace MedicalExaminer.Common.Loggers
         }
 
         /// <inheritdoc />
-        public async void Log(string userName, string userAuthenticationType, bool userIsAuthenticated,
-            string controllerName, string controllerMethod, IList<string> parameters, string remoteIP,
+        public async void Log(
+            string userName,
+            string userAuthenticationType,
+            bool userIsAuthenticated,
+            string controllerName,
+            string controllerMethod,
+            IList<string> parameters,
+            string remoteIP,
             DateTime timeStamp)
         {
-            var logEntry = new LogMessageActionDefault(userName, userAuthenticationType, userIsAuthenticated,
-                controllerName, controllerMethod, parameters, remoteIP, timeStamp);
+            var logEntry = new LogMessageActionDefault(
+                userName,
+                userAuthenticationType,
+                userIsAuthenticated,
+                controllerName,
+                controllerMethod,
+                parameters,
+                remoteIP,
+                timeStamp);
+
             await mEloggerPersistence.SaveLogEntryAsync(logEntry);
         }
     }

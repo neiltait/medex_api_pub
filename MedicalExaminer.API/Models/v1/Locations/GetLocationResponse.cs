@@ -1,6 +1,6 @@
 using MedicalExaminer.Models.Enums;
 
-namespace MedicalExaminer.Models.V1.Locations
+namespace MedicalExaminer.API.Models.v1.Locations
 {
     /// <summary>
     ///     Response object for a single location

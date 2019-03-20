@@ -43,7 +43,7 @@ namespace MedicalExaminer.API.Services.Implementations
             var request = new HttpRequestMessage(HttpMethod.Post, _oktaSettings.Value.IntrospectUrl)
             {
                 Content = new FormUrlEncodedContent(
-                    new Dictionary<string, string> {{"token", token}})
+                    new Dictionary<string, string> { { "token", token } })
             };
 
             var response = await client.SendAsync(request);

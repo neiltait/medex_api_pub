@@ -89,7 +89,7 @@ namespace MedicalExaminer.API
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info {Title = "Medical Examiner Data API", Version = "v1"});
+                c.SwaggerDoc("v1", new Info { Title = "Medical Examiner Data API", Version = "v1" });
 
                 // Make all enums appear as strings
                 c.DescribeAllEnumsAsStrings();
@@ -104,7 +104,7 @@ namespace MedicalExaminer.API
                 // Make swagger do authentication
                 var security = new Dictionary<string, IEnumerable<string>>
                 {
-                    {"Bearer", Array.Empty<string>()}
+                    { "Bearer", Array.Empty<string>() }
                 };
 
                 c.AddSecurityDefinition("Okta", new OAuth2Scheme
@@ -114,8 +114,8 @@ namespace MedicalExaminer.API
                     AuthorizationUrl = "https://***REMOVED***.oktapreview.com/oauth2/default/v1/authorize",
                     Scopes = new Dictionary<string, string>
                     {
-                        {"profile", "Profile"},
-                        {"openid", "OpenID"}
+                        { "profile", "Profile" },
+                        { "openid", "OpenID" }
                     }
                 });
 
@@ -197,8 +197,11 @@ namespace MedicalExaminer.API
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
             else
+            {
                 app.UseExceptionHandler(appBuilder =>
                 {
                     appBuilder.Run(async context =>
@@ -207,6 +210,7 @@ namespace MedicalExaminer.API
                         await context.Response.WriteAsync("An unexpected fault happened. Try again later.");
                     });
                 });
+            }
 
             // TODO: Not using HTTPS while we join front to back end
             //app.UseHttpsRedirection();
@@ -233,7 +237,7 @@ namespace MedicalExaminer.API
                         ClientSecret = oktaSettings.Value.ClientSecret
                     };
                     c.OAuthAdditionalQueryStringParams(new Dictionary<string, string>
-                        {{"nonce", Guid.NewGuid().ToString()}});
+                        { { "nonce", Guid.NewGuid().ToString() } });
 
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 });

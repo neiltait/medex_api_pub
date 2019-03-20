@@ -34,7 +34,9 @@ namespace MedicalExaminer.API.Tests
             var types = new List<Type>();
 
             foreach (var assembly in assemblies)
+            {
                 if (!assembly.FullName.StartsWith("Microsoft"))
+                {
                     try
                     {
                         var typesInAssembly = assembly.GetTypes()
@@ -47,6 +49,8 @@ namespace MedicalExaminer.API.Tests
                     {
                         _testOutputHelper.WriteLine("Unable to get types from: " + assembly.FullName);
                     }
+                }
+            }
 
             return types;
         }
@@ -73,6 +77,7 @@ namespace MedicalExaminer.API.Tests
                     var parameters = action.GetParameters();
 
                     foreach (var parameter in parameters)
+                    {
                         if (parameter.GetCustomAttributes(typeof(FromBodyAttribute), false).Length == 0)
                         {
                             var foundInAttribute = false;
@@ -83,12 +88,20 @@ namespace MedicalExaminer.API.Tests
                             var routeAttributes = actionRouteAttributes.Concat(controllerRouteAttributes);
 
                             foreach (HttpMethodAttribute httpAttribute in httpAttributes)
+                            {
                                 if (httpAttribute.Template?.Contains($"{{{parameter.Name}") == true)
+                                {
                                     foundInAttribute = true;
+                                }
+                            }
 
                             foreach (RouteAttribute routeAttribute in routeAttributes)
+                            {
                                 if (routeAttribute.Template?.Contains($"{{{parameter.Name}") == true)
+                                {
                                     foundInAttribute = true;
+                                }
+                            }
 
                             if (!foundInAttribute)
                             {
@@ -97,6 +110,7 @@ namespace MedicalExaminer.API.Tests
                                 allValid = false;
                             }
                         }
+                    }
                 }
             }
 

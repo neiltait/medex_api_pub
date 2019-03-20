@@ -9,15 +9,6 @@ using Microsoft.Azure.Documents.Linq;
 namespace MedicalExaminer.Common
 {
     /// <summary>
-    ///     Container for a UserRoles enum
-    /// </summary>
-    /// <remarks>Used to filter results by user role</remarks>
-    internal class UserRolesContainer
-    {
-        internal UserRoles Role { get; set; }
-    }
-
-    /// <summary>
     ///     Manages persistence of users
     /// </summary>
     public class UserPersistence : PersistenceBase, IUserPersistence
@@ -46,7 +37,7 @@ namespace MedicalExaminer.Common
                 throw new ArgumentException("Invalid Argument");
             }
 
-            return (MeUser) doc;
+            return (MeUser)doc;
         }
 
         /// <inheritdoc />
@@ -126,18 +117,26 @@ namespace MedicalExaminer.Common
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, "Users");
 
             // build the query
-            var feedOptions = new FeedOptions {MaxItemCount = -1};
-            var query = client.CreateDocumentQuery<MeUser>(documentCollectionUri,
-                "SELECT * FROM Users ORDER BY Users.last_name", feedOptions);
+            var feedOptions = new FeedOptions { MaxItemCount = - 1 };
+            var query = client.CreateDocumentQuery<MeUser>(
+                documentCollectionUri,
+                "SELECT * FROM Users ORDER BY Users.last_name",
+                feedOptions);
             var queryAll = query.AsDocumentQuery();
 
             // combine the results
             var results = new List<MeUser>();
-            while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<MeUser>());
+            while (queryAll.HasMoreResults)
+            {
+                results.AddRange(await queryAll.ExecuteNextAsync<MeUser>());
+            }
 
             // Filter results to required type if required
             // if no filtering required then return all results
-            if (userRoleContainer == null) return results;
+            if (userRoleContainer == null)
+            {
+                return results;
+            }
 
             var resultsFiltered = results.FindAll(r => r.UserRole == userRoleContainer.Role);
             return resultsFiltered;

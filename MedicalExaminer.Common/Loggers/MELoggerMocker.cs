@@ -14,11 +14,25 @@ namespace MedicalExaminer.Common.Loggers
         public LogMessageActionDefault LogEntry { get; private set; }
 
         /// <inheritdoc />
-        public void Log(string userName, string userAuthenticationType, bool userIsAuthenticated, string controllerName,
-            string controllerMethod, IList<string> parameters, string remoteIP, DateTime timeStamp)
+        public void Log(
+            string userName,
+            string userAuthenticationType,
+            bool userIsAuthenticated,
+            string controllerName,
+            string controllerMethod,
+            IList<string> parameters,
+            string remoteIP,
+            DateTime timeStamp)
         {
-            LogEntry = new LogMessageActionDefault(userName, userAuthenticationType, userIsAuthenticated,
-                controllerName, controllerMethod, parameters, remoteIP, timeStamp);
+            LogEntry = new LogMessageActionDefault(
+                userName,
+                userAuthenticationType,
+                userIsAuthenticated,
+                controllerName,
+                controllerMethod,
+                parameters,
+                remoteIP,
+                timeStamp);
         }
     }
 }

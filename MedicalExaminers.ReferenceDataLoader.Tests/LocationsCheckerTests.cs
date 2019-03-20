@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
-using MedicalExaminer.ReferenceDataLoader.Loaders;
-using Xunit;
-
-namespace MedicalExaminers.ReferenceDataLoader.Tests
+﻿namespace MedicalExaminers.ReferenceDataLoader.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using MedicalExaminer.Models;
+    using MedicalExaminer.Models.Enums;
+    using MedicalExaminer.ReferenceDataLoader.Loaders;
+    using Xunit;
+
     public class LocationsCheckerTests
     {
         [Fact]
         public void CheckAllLocationIdsAreUnique_AllAreUnique()
         {
-            ///Arrange
+            // Arrange
             var national = new Location();
             national.LocationId = "N1";
             national.ParentId = null;
@@ -42,17 +42,17 @@ namespace MedicalExaminers.ReferenceDataLoader.Tests
 
             var locationsChecker = new LocationsChecker(locations);
 
-            //Act
+            // Act
             var result = locationsChecker.CheckAllLocationIdsAreUnique();
 
-            //Assert
+            // Assert
             Assert.True(result);
         }
 
         [Fact]
         public void CheckAllLocationIdsAreUnique_DupolicateDetected()
         {
-            ///Arrange
+            // Arrange
             var national = new Location();
             national.LocationId = "N1";
             national.ParentId = null;
@@ -75,7 +75,7 @@ namespace MedicalExaminers.ReferenceDataLoader.Tests
             site1.Type = LocationType.Site;
 
             var site2 = new Location();
-            site2.LocationId = "S1"; //Duplicate!
+            site2.LocationId = "S1"; // Duplicate!
             site2.Code = "Site2";
             site2.ParentId = "T1";
             site2.Type = LocationType.Site;
@@ -89,17 +89,17 @@ namespace MedicalExaminers.ReferenceDataLoader.Tests
 
             var locationsChecker = new LocationsChecker(locations);
 
-            //Act
+            // Act
             var ex = Assert.Throws<Exception>(() => locationsChecker.CheckAllLocationIdsAreUnique());
 
-            //Assert
+            // Assert
             Assert.Equal("Duplicate locationIds detected", ex.Message);
         }
 
         [Fact]
         public void CheckLocationIdsNotNull_NoNulls()
         {
-            ///Arrange
+            // Arrange
             var national = new Location();
             national.LocationId = "N1";
             national.ParentId = null;
@@ -129,17 +129,17 @@ namespace MedicalExaminers.ReferenceDataLoader.Tests
 
             var locationsChecker = new LocationsChecker(locations);
 
-            //Act
+            // Act
             var result = locationsChecker.CheckAllLocationIdsAreUnique();
 
-            //Assert
+            // Assert
             Assert.True(result);
         }
 
         [Fact]
         public void CheckLocationIdsNotNull_Nulls()
         {
-            ///Arrange
+            // Arrange
             var national = new Location();
             national.LocationId = "N1";
             national.ParentId = null;
@@ -169,17 +169,17 @@ namespace MedicalExaminers.ReferenceDataLoader.Tests
 
             var locationsChecker = new LocationsChecker(locations);
 
-            //Act
+            // Act
             var ex = Assert.Throws<Exception>(() => locationsChecker.CheckLocationIdsNotNull());
 
-            //Assert
+            // Assert
             Assert.Equal("Locations exist with null for LocationId", ex.Message);
         }
 
         [Fact]
         public void CheckParentIdsValid_AllAreValid()
         {
-            ///Arrange
+            // Arrange
             var national = new Location();
             national.LocationId = "N1";
             national.ParentId = null;
@@ -208,11 +208,10 @@ namespace MedicalExaminers.ReferenceDataLoader.Tests
 
             var locationsChecker = new LocationsChecker(locations);
 
-
-            //Act
+            // Act
             var result = locationsChecker.CheckParentIdsValid();
 
-            //Assert
+            // Assert
             Assert.True(result);
         }
 
@@ -222,7 +221,7 @@ namespace MedicalExaminers.ReferenceDataLoader.Tests
             ///Arrange
             var national = new Location();
             national.LocationId = "N1";
-            national.ParentId = "X1"; //should be null!
+            national.ParentId = "X1"; // should be null!
             national.Type = LocationType.National;
 
             var region1 = new Location();
@@ -248,18 +247,17 @@ namespace MedicalExaminers.ReferenceDataLoader.Tests
 
             var locationsChecker = new LocationsChecker(locations);
 
-
-            //Act
+            // Act
             var ex = Assert.Throws<Exception>(() => locationsChecker.CheckParentIdsValid());
 
-            //Assert
+            // Assert
             Assert.Equal("National location should not have parent id", ex.Message);
         }
 
         [Fact]
         public void CheckParentIdsValid_ParentIdDoesNotExist()
         {
-            ///Arrange
+            // Arrange
             var national = new Location();
             national.LocationId = "N1";
             national.ParentId = null;
@@ -278,7 +276,7 @@ namespace MedicalExaminers.ReferenceDataLoader.Tests
             var site1 = new Location();
             site1.LocationId = "S1";
             site1.Code = "Site1";
-            site1.ParentId = "T2"; //does not exist!
+            site1.ParentId = "T2"; // does not exist!
             site1.Type = LocationType.Site;
 
             var locations = new List<Location>();
@@ -289,10 +287,10 @@ namespace MedicalExaminers.ReferenceDataLoader.Tests
 
             var locationsChecker = new LocationsChecker(locations);
 
-            //Act
+            // Act
             var ex = Assert.Throws<Exception>(() => locationsChecker.CheckParentIdsValid());
 
-            //Assert
+            // Assert
             Assert.Equal("Location Site1 does not have valid parent id", ex.Message);
         }
     }

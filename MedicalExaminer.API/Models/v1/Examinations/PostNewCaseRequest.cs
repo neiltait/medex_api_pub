@@ -47,7 +47,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         ///     Comments regarding the patients gender identification
         /// </summary>
-        [RequiredIf(nameof(Gender), ExaminationGender.Other)]
+        [RequiredIfAttributesMatch(nameof(Gender), ExaminationGender.Other)]
         public string GenderDetails { get; set; }
 
         /// <summary>

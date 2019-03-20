@@ -19,33 +19,44 @@ namespace MedicalExaminer.API.Attributes
             throw new NotImplementedException();
         }
 
-        protected ValidationResult IsValid(object value, ValidationContext context, UserRoles userRole,
+        protected ValidationResult IsValid(
+            object value,
+            ValidationContext context,
+            UserRoles userRole,
             string userTypeName)
         {
-            var userPersistence = (IUserPersistence) context.GetService(typeof(IUserPersistence));
-            var mapper = (IMapper) context.GetService(typeof(IMapper));
-            var userItem = value as UserItem;
+            var userPersistence = (IUserPersistence)context.GetService(typeof(IUserPersistence));
+            var mapper = (IMapper)context.GetService(typeof(IMapper));
 
-            if (userItem == null)
+            if (!(value is UserItem userItem))
+            {
                 return new ValidationResult($"Item not recognised as of type useritem for {userTypeName}");
+            }
 
             var meUser = mapper.Map<MeUser>(userItem);
 
-
             if (meUser == null || string.IsNullOrEmpty(meUser.UserId))
+            {
                 return new ValidationResult($"Cannot get id for {userTypeName}");
+            }
 
-            MeUser returnedDocument;
             try
             {
-                returnedDocument = userPersistence.GetUserAsync(meUser.UserId).Result;
+                if (userPersistence == null)
+                {
+                    throw new NullReferenceException("User Persistence is null");
+                }
+
+                var returnedDocument = userPersistence.GetUserAsync(meUser.UserId).Result;
+                if (returnedDocument.UserRole != userRole)
+                {
+                    return new ValidationResult($"The user is not a {userTypeName}");
+                }
             }
             catch (ArgumentException e)
             {
                 return new ValidationResult($"The {userTypeName} has not been found");
             }
-
-            if (returnedDocument.UserRole != userRole) return new ValidationResult($"The user is not a {userTypeName}");
 
             return ValidationResult.Success;
         }

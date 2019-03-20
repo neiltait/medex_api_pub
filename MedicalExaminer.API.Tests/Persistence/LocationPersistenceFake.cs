@@ -93,8 +93,12 @@ namespace MedicalExaminer.API.Tests.Persistence
         public async Task<Location> GetLocationAsync(string locationId)
         {
             foreach (var location in _locations)
+            {
                 if (location.LocationId == locationId)
+                {
                     return await Task.FromResult(location);
+                }
+            }
 
             throw new ArgumentException("Invalid Argument");
         }
@@ -122,7 +126,9 @@ namespace MedicalExaminer.API.Tests.Persistence
             var parentLocation = _locations.Find(l => l.LocationId == parentId);
 
             if (parentLocation != null && parentLocation.Type == LocationType.National)
+            {
                 results.AddRange(_locations.FindAll(l => l.Type != LocationType.National));
+            }
 
             return await Task.FromResult(results);
         }

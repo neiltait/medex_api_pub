@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
+using MedicalExaminer.API.Models.v1.Locations;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
-using MedicalExaminer.Models.V1.Locations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 
@@ -24,7 +24,7 @@ namespace MedicalExaminer.API.Controllers
         private readonly ILocationPersistence _locationPersistence;
 
         /// <summary>
-        ///     Initialise a new instance of the Loctions Controller.
+        /// Initializes a new instance of the <see cref="LocationsController"/> class.
         /// </summary>
         /// <param name="locationPersistence">The Location Persistance.</param>
         /// <param name="logger">The Logger.</param>
@@ -46,7 +46,7 @@ namespace MedicalExaminer.API.Controllers
             var locations = await _locationPersistence.GetLocationsAsync();
             return Ok(new GetLocationsResponse
             {
-                Locations = locations.Select(e => Mapper.Map<LocationItem>(e)).ToList()
+                Locations = locations.Select(e => Mapper.Map<LocationItem>(e)).ToList(),
             });
         }
 
@@ -83,7 +83,7 @@ namespace MedicalExaminer.API.Controllers
             var locations = await _locationPersistence.GetLocationsByNameAsync(locationName);
             return Ok(new GetLocationsResponse
             {
-                Locations = locations.Select(location => Mapper.Map<LocationItem>(location)).ToList()
+                Locations = locations.Select(location => Mapper.Map<LocationItem>(location)).ToList(),
             });
         }
 
@@ -100,7 +100,7 @@ namespace MedicalExaminer.API.Controllers
             var locations = await _locationPersistence.GetLocationsByParentIdAsync(parentId);
             return Ok(new GetLocationsResponse
             {
-                Locations = locations.Select(location => Mapper.Map<LocationItem>(location)).ToList()
+                Locations = locations.Select(location => Mapper.Map<LocationItem>(location)).ToList(),
             });
         }
     }

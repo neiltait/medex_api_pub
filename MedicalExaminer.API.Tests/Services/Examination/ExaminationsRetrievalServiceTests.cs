@@ -19,7 +19,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examination1 = new MedicalExaminer.Models.Examination();
             var examination2 = new MedicalExaminer.Models.Examination();
             IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>
-                {examination1, examination2};
+                { examination1, examination2 };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var query = new Mock<ExaminationsRetrievalQuery>().Object;
             var dbAccess = new Mock<IDatabaseAccess>();

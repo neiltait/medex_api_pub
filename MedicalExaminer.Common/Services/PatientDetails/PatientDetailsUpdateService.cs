@@ -16,7 +16,7 @@ namespace MedicalExaminer.Common.Services.PatientDetails
 
         public PatientDetailsUpdateService(
             IDatabaseAccess databaseAccess,
-            IExaminationConnectionSettings connectionSettings, 
+            IExaminationConnectionSettings connectionSettings,
             IMapper mapper)
         {
             this.databaseAccess = databaseAccess;
@@ -26,11 +26,15 @@ namespace MedicalExaminer.Common.Services.PatientDetails
 
         public async Task<Models.Examination> Handle(PatientDetailsUpdateQuery param)
         {
-            if (param == null) throw new ArgumentNullException(nameof(param));
+            if (param == null)
+            {
+                throw new ArgumentNullException(nameof(param));
+            }
 
             var caseToReplace = await
                 databaseAccess
-                    .GetItemAsync<Models.Examination>(connectionSettings,
+                    .GetItemAsync<Models.Examination>(
+                        connectionSettings,
                         examination => examination.ExaminationId == param.CaseId);
 
             mapper.Map(param.PatientDetails, caseToReplace);

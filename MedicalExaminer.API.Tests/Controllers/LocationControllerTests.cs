@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
+using MedicalExaminer.API.Models.v1.Locations;
 using MedicalExaminer.API.Tests.Persistence;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
-using MedicalExaminer.Models.V1.Locations;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 

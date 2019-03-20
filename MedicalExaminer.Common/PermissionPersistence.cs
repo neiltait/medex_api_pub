@@ -28,9 +28,12 @@ namespace MedicalExaminer.Common
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, collectionName);
             var doc = await client.UpsertDocumentAsync(documentCollectionUri, permission);
 
-            if (doc == null) throw new ArgumentException("Invalid Argument");
+            if (doc == null)
+            {
+                throw new ArgumentException("Invalid Argument");
+            }
 
-            return (Permission) doc;
+            return (Permission)doc;
         }
 
         /// <summary>
@@ -46,9 +49,12 @@ namespace MedicalExaminer.Common
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, collectionName);
             var document = await client.CreateDocumentAsync(documentCollectionUri, permission);
 
-            if (document == null) throw new ArgumentException("Invalid Argument");
+            if (document == null)
+            {
+                throw new ArgumentException("Invalid Argument");
+            }
 
-            return (Permission) document;
+            return (Permission)document;
         }
 
         /// <summary>
@@ -65,7 +71,10 @@ namespace MedicalExaminer.Common
             var documentUri = UriFactory.CreateDocumentUri(databaseId, collectionName, permissionId);
             var result = await client.ReadDocumentAsync<Permission>(documentUri);
 
-            if (result.Document == null) throw new ArgumentException("Invalid Argument");
+            if (result.Document == null)
+            {
+                throw new ArgumentException("Invalid Argument");
+            }
 
             return result.Document;
         }
@@ -82,14 +91,19 @@ namespace MedicalExaminer.Common
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, collectionName);
 
             // build the query
-            var feedOptions = new FeedOptions {MaxItemCount = -1};
-            var query = client.CreateDocumentQuery<MeUser>(documentCollectionUri,
-                $"SELECT * FROM {collectionName} WHERE user_id = {meUserId}", feedOptions);
+            var feedOptions = new FeedOptions { MaxItemCount = - 1 };
+            var query = client.CreateDocumentQuery<MeUser>(
+                documentCollectionUri,
+                $"SELECT * FROM {collectionName} WHERE user_id = {meUserId}",
+                feedOptions);
             var queryAll = query.AsDocumentQuery();
 
             // combine the results
             var results = new List<Permission>();
-            while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<Permission>());
+            while (queryAll.HasMoreResults)
+            {
+                results.AddRange(await queryAll.ExecuteNextAsync<Permission>());
+            }
 
             return results;
         }
