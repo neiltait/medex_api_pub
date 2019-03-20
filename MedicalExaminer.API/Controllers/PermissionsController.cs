@@ -81,7 +81,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A GetPermissionResponse.</returns>
         [HttpGet("{permissionId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetPermissionResponse>> GetPermission(string userId, string permissionId)
+        public async Task<ActionResult<GetPermissionResponse>> GetPermission(string meUserId, string permissionId)
         {
             if (!ModelState.IsValid)
             {
@@ -90,7 +90,7 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var permission = await _permissionPersistence.GetPermissionAsync(userId, permissionId);
+                var permission = await _permissionPersistence.GetPermissionAsync(meUserId, permissionId);
                 return Ok(Mapper.Map<GetPermissionResponse>(permission));
             }
             catch (ArgumentException)

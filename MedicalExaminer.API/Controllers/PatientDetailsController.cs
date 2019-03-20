@@ -38,21 +38,21 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpGet]
-        [Route("{caseId}/patientdetails")]
+        [Route("{examinationId}/patientdetails")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetPatientDetailsResponse>> GetPatientDetails(string caseId)
+        public async Task<ActionResult<GetPatientDetailsResponse>> GetPatientDetails(string examinationId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new GetPatientDetailsResponse());
             }
 
-            if (await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(caseId)) == null)
+            if (await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId)) == null)
             {
                 return NotFound(new GetPatientDetailsResponse());
             }
 
-            var result = await _patientDetailsByCaseIdService.Handle(new PatientDetailsByCaseIdQuery(caseId));
+            var result = await _patientDetailsByCaseIdService.Handle(new PatientDetailsByCaseIdQuery(examinationId));
 
 
             return Ok(Mapper.Map<GetPatientDetailsResponse>(result));
@@ -60,24 +60,23 @@ namespace MedicalExaminer.API.Controllers
 
 
         [HttpPut]
-        [Route("{caseId}/patientdetails")]
+        [Route("{examinationId}/patientdetails")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutPatientDetailsResponse>> UpdatePatientDetails(string caseId, [FromBody]PutPatientDetailsRequest putPatientDetailsRequest)
+        public async Task<ActionResult<PutPatientDetailsResponse>> UpdatePatientDetails(string examinationId, [FromBody]PutPatientDetailsRequest putPatientDetailsRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new PutPatientDetailsResponse());
             }
 
-            if (_examinationRetrievalService.Handle(new ExaminationRetrievalQuery(caseId)) == null)
+            if (_examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId)) == null)
             {
                 return NotFound("Case was not found");
             }
 
             var patientDetails = Mapper.Map<PatientDetails>(putPatientDetailsRequest);
 
-            var result = _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(caseId, patientDetails));
-            
+            var result = _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(examinationId, patientDetails));
 
             return Ok(new PutPatientDetailsResponse()
             {
