@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Microsoft.Azure.Documents;
 using Newtonsoft.Json;
@@ -9,17 +8,12 @@ using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace MedicalExaminer.Models
 {
-    public class Examination : Record,  IExamination
+    public class Examination : Resource,  IExamination
     {
         [JsonProperty(PropertyName = "urgency_score")]
         public int UrgencyScore { get; set; }
 
         
-        // Linked Fields
-        [DataType(DataType.Custom)]
-        [JsonProperty(PropertyName = "patient_details")]
-        public PatientDetails PatientDetails { get; set; }
-
         [JsonProperty(PropertyName = "out_of_hours")]
         public bool OutOfHours { get; set; }
 
