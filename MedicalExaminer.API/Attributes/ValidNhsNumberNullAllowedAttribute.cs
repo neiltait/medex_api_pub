@@ -5,18 +5,7 @@ namespace MedicalExaminer.API.Attributes
 {
     public class ValidNhsNumberNullAllowedAttribute : ValidationAttribute
     {
-        private readonly int[] factors =
-        {
-            10,
-            9,
-            8,
-            7,
-            6,
-            5,
-            4,
-            3,
-            2
-        };
+        private readonly int[] factors = { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
 
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
