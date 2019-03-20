@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MedicalExaminer.API.Controllers
 {
     [ApiVersion("1.0")]
-    [Route("/v{api-version:apiVersion}/datatypes")]
+    [Route("/v{api-version:apiVersion}/data_types")]
     [ApiController]
     public class DataTypesController : BaseController
     {
@@ -24,7 +24,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Returns all the data types and the values for mode of disposal 
+        /// Returns all the data types and the values for mode of disposal
         /// </summary>
         /// <returns>Dictionary of Modes of disposal</returns>
         [HttpGet("mode_of_disposal")]

@@ -66,7 +66,7 @@ namespace MedicalExaminer.API.Controllers
         /// Validate Session
         /// </summary>
         /// <returns>Details about the current user.</returns>
-        [HttpPost("validate-session")]
+        [HttpPost("validate_session")]
         public async Task<PostValidateSessionResponse> ValidateSession()
         {
             // Look up their email in the claims
