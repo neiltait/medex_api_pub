@@ -2,22 +2,23 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 
 namespace MedicalExaminer.API.Controllers
 {
-    /// <inheritdoc />
     /// <summary>
     /// Users Controller
     /// </summary>
-    [Route("users")]
+    /// <inheritdoc />
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/users")]
     [ApiController]
     [Authorize]
     public class UsersController : BaseController
@@ -70,12 +71,14 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="meUserId">The User Identifier.</param>
         /// <returns>A GetUserResponse.</returns>
-        // GET api/users/{user_id}
         [HttpGet("{meUserId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetUserResponse>> GetUser(string meUserId)
         {
-            if (!ModelState.IsValid) return BadRequest(new GetUserResponse());
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new GetUserResponse());
+            }
 
             try
             {
@@ -90,15 +93,13 @@ namespace MedicalExaminer.API.Controllers
             {
                 return NotFound(new GetUserResponse());
             }
-
-            return BadRequest(new GetUserResponse());
         }
 
         /// <summary>
         /// Get all Users that are in the role of Medical Examiner.
         /// </summary>
         /// <returns>A GetUsersResponse.</returns>
-        [HttpGet("/MedicalExaminers")]
+        [HttpGet("medical_examiners")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetUsersResponse>> GetMedicalExaminers()
         {
@@ -124,7 +125,7 @@ namespace MedicalExaminer.API.Controllers
         /// Get all Users that are in the role of Medical Examiner Officer.
         /// </summary>
         /// <returns>A GetUsersResponse.</returns>
-        [HttpGet("/MedicalExaminerOfficers")]
+        [HttpGet("medical_examiner_officers")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetUsersResponse>> GetMedicalExaminerOfficers()
         {
@@ -158,7 +159,10 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                if (!ModelState.IsValid) return BadRequest(new PostUserResponse());
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new PostUserResponse());
+                }
 
                 var user = Mapper.Map<MeUser>(postUser);
                 var createdUser = await _userPersistence.CreateUserAsync(user);
@@ -172,21 +176,24 @@ namespace MedicalExaminer.API.Controllers
             {
                 return NotFound(new PostUserResponse());
             }
-        }        
-        
+        }
+
         /// <summary>
-        /// Create a new User.
+        /// Update a new User.
         /// </summary>
         /// <param name="putUser">The PutUserRequest.</param>
         /// <returns>A PutUserResponse.</returns>
-        // POST api/users
-        [HttpPut("{Id}")]
+        [HttpPut("{meUserId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutUserResponse>> UpdateUser([FromBody] PutUserRequest putUser)
         {
             try
             {
-                if (!ModelState.IsValid) return BadRequest(new PutUserResponse());
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new PutUserResponse());
+                }
+
                 var user = Mapper.Map<MeUser>(putUser);
                 var updatedUser = await _userPersistence.UpdateUserAsync(user);
                 return Ok(Mapper.Map<PutUserResponse>(updatedUser));

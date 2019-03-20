@@ -117,7 +117,7 @@ namespace MedicalExaminer.API.Controllers
         /// /// <param name="examinationId">The ID of the examination that the medical team object is to be posted to.</param>
         /// <param name="postMedicalTeamRequest">The PostMedicalTeamRequest.</param>
         /// <returns>A PutExaminationResponse.</returns>
-        [HttpPost("/MedicalTeam/{examinationId}")]
+        [HttpPost("medical_team/")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody]PostMedicalTeamRequest postMedicalTeamRequest)
         {
@@ -156,7 +156,7 @@ namespace MedicalExaminer.API.Controllers
             return Ok(res);
         }
 
-        [HttpGet("/MedicalTeam/{examinationId}")]
+        [HttpGet("medical_team/")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetMedicalTeamResponse>> GetMedicalTeam(string examinationId)
         {

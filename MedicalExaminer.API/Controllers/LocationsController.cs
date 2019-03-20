@@ -43,7 +43,6 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationsResponse>> GetLocations()
         {
-            
             var locations = await _locationPersistence.GetLocationsAsync();
             return Ok(new GetLocationsResponse()
             {
@@ -56,7 +55,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="locationId">The Location Id.</param>
         /// <returns>A GetLocationsResponse.</returns>
-        [HttpGet("/{locationId}")]
+        [HttpGet("{locationId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationResponse>> GetLocation(string locationId)
         {
@@ -77,7 +76,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="locationName">The value to be used in the selection of matching names.</param>
         /// <returns>A list of locations whose names contain locationName.</returns>
-        [HttpGet("/name/{locationName}")]
+        [HttpGet("name/{locationName}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationsResponse>> GetLocationsByName(string locationName)
         {
@@ -93,7 +92,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="parentId">The locationId of the location whose children are to be returned as list</param>
         /// <returns>list of locations that are under the location whose location = parentId</returns>
-        [HttpGet("/parentId/{parentId}")]
+        [HttpGet("parentId/{parentId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationsResponse>> GetLocationsByParentId(string parentId)
         {
