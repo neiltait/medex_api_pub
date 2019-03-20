@@ -31,25 +31,19 @@ namespace MedicalExaminer.API.Attributes
 
         private bool ValidateNhsNumber(string nhsNumber)
         {
-            int[] numericNhsNumber;
+            int[] seq;
             try
             {
-                numericNhsNumber = nhsNumber.ToCharArray().Select(c => int.Parse(c.ToString())).ToArray();
+                seq = nhsNumber.ToCharArray().Select(c => int.Parse(c.ToString())).ToArray();
             }
             catch
             {
                 return false;
             }
 
-            var sumNhsFactor = numericNhsNumber[0] * factors[0]
-                               + numericNhsNumber[1] * factors[1]
-                               + numericNhsNumber[2] * factors[2]
-                               + numericNhsNumber[3] * factors[3]
-                               + numericNhsNumber[4] * factors[4]
-                               + numericNhsNumber[5] * factors[5]
-                               + numericNhsNumber[6] * factors[6]
-                               + numericNhsNumber[7] * factors[7]
-                               + numericNhsNumber[8] * factors[8];
+            var sumNhsFactor = seq[0] * factors[0] + seq[1] * factors[1] + seq[2] * factors[2] + seq[3] * factors[3]
+                               + seq[4] * factors[4] + seq[5] * factors[5] + seq[6] * factors[6] + seq[7] * factors[7]
+                               + seq[8] * factors[8];
 
             var remainder = sumNhsFactor % 11;
             var check = 11 - remainder;
@@ -59,7 +53,7 @@ namespace MedicalExaminer.API.Attributes
                 check = 0;
             }
 
-            return check == numericNhsNumber[9];
+            return check == seq[9];
         }
     }
 }
