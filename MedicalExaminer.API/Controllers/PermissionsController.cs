@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Permission = MedicalExaminer.Models.Permission;
@@ -18,7 +18,7 @@ namespace MedicalExaminer.API.Controllers
     /// Permissions Controller
     /// </summary>
     [ApiVersion("1.0")]
-    [Route("/v{api-version:apiVersion}/users/{userId}/permissions")]
+    [Route("/v{api-version:apiVersion}/users/{meUserId}/permissions")]
     [ApiController]
     [Authorize]
     public class PermissionsController : BaseController
@@ -26,7 +26,7 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// The Permission Persistence Layer
         /// </summary>
-        private readonly IPermissionPersistence permissionPersistence;
+        private readonly IPermissionPersistence _permissionPersistence;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PermissionsController"/> class.
@@ -42,7 +42,7 @@ namespace MedicalExaminer.API.Controllers
             IMapper mapper)
             : base(logger, mapper)
         {
-            this.permissionPersistence = permissionPersistence;
+            _permissionPersistence = permissionPersistence;
         }
 
         /// <summary>
@@ -52,11 +52,11 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A GetPermissionsResponse.</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetPermissionsResponse>> GetPermissions(string userId)
+        public async Task<ActionResult<GetPermissionsResponse>> GetPermissions(string meUserId)
         {
             try
             {
-                var permissions = await permissionPersistence.GetPermissionsAsync(userId);
+                var permissions = await _permissionPersistence.GetPermissionsAsync(meUserId);
 
                 return Ok(new GetPermissionsResponse
                 {
@@ -90,7 +90,7 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var permission = await permissionPersistence.GetPermissionAsync(userId, permissionId);
+                var permission = await _permissionPersistence.GetPermissionAsync(userId, permissionId);
                 return Ok(Mapper.Map<GetPermissionResponse>(permission));
             }
             catch (ArgumentException)
@@ -120,7 +120,7 @@ namespace MedicalExaminer.API.Controllers
             try
             {
                 var permission = Mapper.Map<Permission>(postPermission);
-                var createdPermission = await permissionPersistence.CreatePermissionAsync(permission);
+                var createdPermission = await _permissionPersistence.CreatePermissionAsync(permission);
 
                 // TODO: Is ID populated after saving?
                 // TODO : Question : Should this be the whole user object?
@@ -141,7 +141,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="putPermission">The PutPermissionRequest.</param>
         /// <returns>A PutPermissionResponse.</returns>
-        [HttpPut("{Id}")]
+        [HttpPut("{permissionId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutPermissionResponse>> UpdatePermission([FromBody] PutPermissionRequest putPermission)
         {
@@ -153,7 +153,7 @@ namespace MedicalExaminer.API.Controllers
                 }
 
                 var permission = Mapper.Map<Permission>(putPermission);
-                var updatedPermission = await permissionPersistence.UpdatePermissionAsync(permission);
+                var updatedPermission = await _permissionPersistence.UpdatePermissionAsync(permission);
                 return Ok(Mapper.Map<PutPermissionResponse>(updatedPermission));
             }
             catch (DocumentClientException)
