@@ -2,25 +2,23 @@
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
-using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
-using Microsoft.Azure.Documents;
 
 
 namespace MedicalExaminer.Common.Services.User
 {
-    public class UserRetrievalService : IAsyncQueryHandler<UserRetrievalQuery, Models.MeUser>
+    public class UserRetrievalByEmailService : IAsyncQueryHandler<UserRetrievalByEmailQuery, Models.MeUser>
     {
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IUserConnectionSettings _connectionSettings;
 
-        public UserRetrievalService(IDatabaseAccess databaseAccess, IUserConnectionSettings connectionSettings)
+        public UserRetrievalByEmailService(IDatabaseAccess databaseAccess, IUserConnectionSettings connectionSettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
         }
 
-        public Task<Models.MeUser> Handle(UserRetrievalQuery param)
+        public Task<Models.MeUser> Handle(UserRetrievalByEmailQuery param)
         {
             if (param == null)
             {

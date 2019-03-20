@@ -23,7 +23,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Case Status to filter on, mutually exclusive
         /// </summary>
-        public CaseStatus CaseStatus { get; set; }
+        public CaseStatus? CaseStatus { get; set; }
 
         /// <summary>
         /// What to order the results by

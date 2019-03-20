@@ -26,7 +26,7 @@ namespace MedicalExaminer.API.Controllers
     public class AccountController : BaseController
     {
         private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> _userCreationService;
-        private readonly IAsyncQueryHandler<UserRetrievalQuery, MeUser> _userRetrievalService;
+        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _userRetrievalService;
 
         /// <summary>
         /// Okta Client.
@@ -52,7 +52,7 @@ namespace MedicalExaminer.API.Controllers
             OktaClient oktaClient, 
             IUserPersistence userPersistence,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
-            IAsyncQueryHandler<UserRetrievalQuery, MeUser> userRetrievalService)
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalService)
             : base(logger, mapper)
         {
             _oktaClient = oktaClient;
@@ -113,7 +113,7 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var user = await _userRetrievalService.Handle(new UserRetrievalQuery(emailAddress));
+                var user = await _userRetrievalService.Handle(new UserRetrievalByEmailQuery(emailAddress));
 
                 return user;
             }

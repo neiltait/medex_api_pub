@@ -13,14 +13,14 @@ namespace MedicalExaminer.API.Attributes
     {
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
-            var userService = (UserRetrievalService)context.GetService(typeof(IAsyncQueryHandler<UserRetrievalQuery, MeUser>));
+            var userService = (UserRetrievalByIdService)context.GetService(typeof(IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>));
             var userIdString = value as string;
             if (string.IsNullOrEmpty(userIdString))
             {
-                return new ValidationResult("The users Id must be supplied");
+                return ValidationResult.Success;
             }
 
-            var validUser = userService.Handle(new UserRetrievalQuery(userIdString)).Result;
+            var validUser = userService.Handle(new UserRetrievalByIdQuery(userIdString)).Result;
 
             return validUser == null ? new ValidationResult("The user Id has not been found") : ValidationResult.Success;
         }

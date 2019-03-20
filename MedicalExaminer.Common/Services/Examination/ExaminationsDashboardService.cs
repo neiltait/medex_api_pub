@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
+using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
@@ -47,36 +48,34 @@ namespace MedicalExaminer.Common.Services.Examination
             return Task.FromResult(overView);
         }
 
-        private int GetCount(Func<Models.Examination, bool> baseQuery, CaseStatus caseStatus)
+        private int GetCount(Expression<Func<Models.Examination, bool>> baseQuery, CaseStatus caseStatus)
         {
             var caseStatusPredicate = GetCaseStatusPredicate(caseStatus);
-            Func<Models.Examination, bool> query = examination =>
-                (baseQuery(examination) && caseStatusPredicate(examination));
-            var expression = FuncToExpression(query);
-            var result = _databaseAccess.GetCountAsync(_connectionSettings, expression);
+            var query = baseQuery.And(caseStatusPredicate);
+            var result = _databaseAccess.GetCountAsync(_connectionSettings, query);
             return result;
         }
 
-        private Func<Models.Examination, bool> GetCaseStatusPredicate(CaseStatus? paramFilterCaseStatus)
+        private Expression<Func<Models.Examination, bool>> GetCaseStatusPredicate(CaseStatus? paramFilterCaseStatus)
         {
             switch (paramFilterCaseStatus)
             {
                 case CaseStatus.AdmissionNotesHaveBeenAdded:
-                    return examination => examination.AdmissionNotesHaveBeenAdded = true;
+                    return examination => examination.AdmissionNotesHaveBeenAdded;
                 case CaseStatus.ReadyForMEScrutiny:
-                    return examination => examination.ReadyForMEScrutiny = true;
+                    return examination => examination.ReadyForMEScrutiny;
                 case CaseStatus.Assigned:
-                    return examination => examination.Assigned = false;
+                    return examination => examination.Assigned == true;
                 case CaseStatus.HaveBeenScrutinisedByME:
-                    return examination => examination.HaveBeenScrutinisedByME = true;
+                    return examination => examination.HaveBeenScrutinisedByME;
                 case CaseStatus.PendingAdmissionNotes:
-                    return examination => examination.PendingAdmissionNotes = true;
+                    return examination => examination.PendingAdmissionNotes;
                 case CaseStatus.PendingDiscussionWithQAP:
-                    return examination => examination.PendingDiscussionWithQAP = true;
+                    return examination => examination.PendingDiscussionWithQAP;
                 case CaseStatus.PendingDiscussionWithRepresentative:
-                    return examination => examination.PendingDiscussionWithRepresentative = true;
+                    return examination => examination.PendingDiscussionWithRepresentative;
                 case CaseStatus.HaveFinalCaseOutstandingOutcomes:
-                    return examination => examination.HaveFinalCaseOutstandingOutcomes = true;
+                    return examination => examination.HaveFinalCaseOutstandingOutcomes;
                 case null:
                     return x => true;
                 default:
@@ -84,23 +83,25 @@ namespace MedicalExaminer.Common.Services.Examination
             }
         }
 
-        private Func<Models.Examination, bool> GetBaseQuery(ExaminationsRetrievalQuery param)
+        private Expression<Func<Models.Examination, bool>> GetBaseQuery(ExaminationsRetrievalQuery param)
         {
-            var openCasePredicate = GetOpenCasesPredicate(param.FilterOpenCases);
-            var meOfficePredicate = GetCaseMEOfficePredicate(param.FilterLocationId);
-            var userIdPredicate = GetUserIdPredicate(param.FilterUserId);
+            Expression<Func<Models.Examination, bool>> openCasePredicate = GetOpenCasesPredicate(param.FilterOpenCases);
+            Expression<Func<Models.Examination, bool>> meOfficePredicate = GetCaseMEOfficePredicate(param.FilterLocationId);
+            Expression<Func<Models.Examination, bool>> userIdPredicate = GetUserIdPredicate(param.FilterUserId);
 
-            return examination => (userIdPredicate(examination) && 
-                                   meOfficePredicate(examination) && 
-                                   openCasePredicate(examination));
+
+            var predicate = userIdPredicate.And(meOfficePredicate)
+                .And(openCasePredicate);
+
+            return predicate;
         }
 
-        private Func<Models.Examination, bool> GetOpenCasesPredicate(bool paramFilterOpenCases)
+        private Expression<Func<Models.Examination, bool>> GetOpenCasesPredicate(bool paramFilterOpenCases)
         {
             return examination => examination.Completed == paramFilterOpenCases;
         }
         
-        private Func<Models.Examination, bool> GetCaseMEOfficePredicate(string meOffice)
+        private Expression<Func<Models.Examination, bool>> GetCaseMEOfficePredicate(string meOffice)
         {
             if (string.IsNullOrEmpty(meOffice))
             {
@@ -109,7 +110,7 @@ namespace MedicalExaminer.Common.Services.Examination
             return examination => examination.MedicalExaminerOfficeResponsible == meOffice;
         }
 
-        private Func<Models.Examination, bool> GetUserIdPredicate(string userId)
+        private Expression<Func<Models.Examination, bool>> GetUserIdPredicate(string userId)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -118,9 +119,6 @@ namespace MedicalExaminer.Common.Services.Examination
             return examination => examination.CaseOfficer == userId;
         }
 
-        private static Expression<Func<T, bool>> FuncToExpression<T>(Func<T, bool> f)
-        {
-            return x => f(x);
-        }
+        
     }
 }

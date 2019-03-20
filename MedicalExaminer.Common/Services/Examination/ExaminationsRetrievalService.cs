@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace MedicalExaminer.Common.Services.Examination
             _connectionSettings = connectionSettings;
             _examinationQueryBuilder = examinationQueryBuilder;
         }
+        
         public Task<IEnumerable<Models.Examination>> Handle(ExaminationsRetrievalQuery param)
         {
             if (param == null)
@@ -28,21 +30,19 @@ namespace MedicalExaminer.Common.Services.Examination
                 throw new ArgumentNullException(nameof(param));
             }
 
-            
-            var expression = _examinationQueryBuilder.GetPredicate(param);
+            var predicate = _examinationQueryBuilder.GetPredicate(param);
+
             switch (param.FilterOrderBy)
             {
                 case ExaminationsOrderBy.Urgency:
-                    return _databaseAccess.GetItemsAsync(_connectionSettings, expression, ex => ex.UrgencyScore);
+                    return _databaseAccess.GetItemsAsync<Models.Examination>(_connectionSettings, predicate);
                 case ExaminationsOrderBy.CaseCreated:
-                    return _databaseAccess.GetItemsAsync(_connectionSettings, expression, ex => ex.CaseCreated);
+                    return _databaseAccess.GetItemsAsync<Models.Examination>(_connectionSettings, predicate);
                 case null:
-                    return _databaseAccess.GetItemsAsync(_connectionSettings, expression);
+                    return _databaseAccess.GetItemsAsync<Models.Examination>(_connectionSettings, predicate);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(param.FilterOrderBy));
             }
         }
-        
-        
     }
 }

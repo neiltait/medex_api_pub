@@ -256,6 +256,7 @@ namespace MedicalExaminer.Models
         public Examination()
         {
             Completed = false;
+            Assigned = true;
         }
 
     }
