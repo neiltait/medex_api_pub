@@ -48,8 +48,8 @@ namespace MedicalExaminer.API.Controllers
         ///     Get Medical Team
         /// </summary>
         /// ///
-        /// <param name="examinationId">The ID of the examination that the medical team object is to be posted to.</param>
-        /// <returns>A GetExaminationResponse.</returns>
+        /// <param name="examinationId">The ID of the examination.</param>
+        /// <returns>A GetMedicalTeamResponse.</returns>
         [HttpGet("medical_team/")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetMedicalTeamResponse>> GetMedicalTeam(string examinationId)
@@ -79,20 +79,20 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutExaminationResponse.</returns>
         [HttpPost("medical_team/")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId,
+        public async Task<ActionResult<PutMedicalTeamResponse>> PostMedicalTeam(string examinationId,
             [FromBody]
             PostMedicalTeamRequest postMedicalTeamRequest)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new PutExaminationResponse());
+                return BadRequest(new PutMedicalTeamResponse());
             }
 
             var medicalTeamRequest = Mapper.Map<MedicalTeam>(postMedicalTeamRequest);
 
             if (medicalTeamRequest == null)
             {
-                return BadRequest(new PutExaminationResponse());
+                return BadRequest(new PutMedicalTeamResponse());
             }
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
@@ -107,17 +107,15 @@ namespace MedicalExaminer.API.Controllers
 
             if (returnedExaminationId == null)
             {
-                return BadRequest(new PutExaminationResponse());
+                return BadRequest(new PutMedicalTeamResponse());
             }
 
-            var res = new PutExaminationResponse
+            var res = new PutMedicalTeamResponse()
             {
                 ExaminationId = examinationId
             };
 
             return Ok(res);
-        }
-
-        
+        }        
     }
 }
