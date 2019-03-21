@@ -37,7 +37,7 @@ namespace MedicalExaminer.Common
                 throw new ArgumentException("Invalid Argument");
             }
 
-            return (MeUser)doc;
+            return (MeUser)(dynamic)doc;
         }
 
         /// <inheritdoc />
@@ -54,7 +54,7 @@ namespace MedicalExaminer.Common
                 throw new ArgumentException("Invalid Argument");
             }
 
-            var user = document.Resource as MeUser;
+            var user = (MeUser) (dynamic) document;
 
             return user;
         }
