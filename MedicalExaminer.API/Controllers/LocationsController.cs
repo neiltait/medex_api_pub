@@ -12,7 +12,7 @@ namespace MedicalExaminer.API.Controllers
 {
     /// <inheritdoc />
     /// <summary>
-    ///     Locations Controller
+    ///     Locations Controller.
     /// </summary>
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/locations")]
@@ -52,7 +52,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        ///     Get Location by ID
+        ///     Get Location by ID.
         /// </summary>
         /// <param name="locationId">The Location Id.</param>
         /// <returns>A GetLocationsResponse.</returns>
@@ -90,10 +90,10 @@ namespace MedicalExaminer.API.Controllers
 
         /// <summary>
         ///     Get Locations as a list of <see cref="LocationItem" /> where locations are under the location whose locationId =
-        ///     parentId
+        ///     parentId.
         /// </summary>
-        /// <param name="parentId">The locationId of the location whose children are to be returned as list</param>
-        /// <returns>list of locations that are under the location whose location = parentId</returns>
+        /// <param name="parentId">The locationId of the location whose children are to be returned as list.</param>
+        /// <returns>list of locations that are under the location whose location = parentId.</returns>
         [HttpGet("parentId/{parentId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationsResponse>> GetLocationsByParentId(string parentId)
