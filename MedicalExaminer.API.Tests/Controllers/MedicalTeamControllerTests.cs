@@ -174,7 +174,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = sut.PostMedicalTeam(examinationId, postMedicalTeamRequest).Result;
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutExaminationResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutMedicalTeamResponse>>().Subject;
             var notFoundResult = taskResult.Result.Should().BeAssignableTo<NotFoundResult>().Subject;
         }
 
@@ -213,7 +213,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutExaminationResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutMedicalTeamResponse>>().Subject;
             var badResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
         }
 
@@ -251,10 +251,10 @@ namespace MedicalExaminer.API.Tests.Controllers
 
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutExaminationResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutMedicalTeamResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
 
-            var examinationIdReturned = ((PutExaminationResponse)okResult.Value).ExaminationId;
+            var examinationIdReturned = ((PutMedicalTeamResponse)okResult.Value).ExaminationId;
             Assert.Equal(examinationId, examinationIdReturned);
         }
     }
