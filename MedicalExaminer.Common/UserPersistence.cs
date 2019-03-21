@@ -117,7 +117,7 @@ namespace MedicalExaminer.Common
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, "Users");
 
             // build the query
-            var feedOptions = new FeedOptions { MaxItemCount = - 1 };
+            var feedOptions = new FeedOptions { MaxItemCount = -1 };
             var query = client.CreateDocumentQuery<MeUser>(
                 documentCollectionUri,
                 "SELECT * FROM Users ORDER BY Users.last_name",

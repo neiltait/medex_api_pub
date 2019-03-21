@@ -3,10 +3,20 @@ using System.Linq;
 
 namespace MedicalExaminer.API.Attributes
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// Validation attribute to validate NHS number - nulls allowed.
+    /// </summary>
     public class ValidNhsNumberNullAllowedAttribute : ValidationAttribute
     {
         private readonly int[] factors = { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
 
+        /// <summary>
+        /// Executes the validation.
+        /// </summary>
+        /// <param name="value">The Object to validate.</param>
+        /// <param name="context">The validationContext.</param>
+        /// <returns>ValidationResult.</returns>
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
             if (!(value is string nhsNumber))

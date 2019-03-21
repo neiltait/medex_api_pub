@@ -18,7 +18,7 @@ using Okta.Sdk;
 namespace MedicalExaminer.API.Controllers
 {
     /// <summary>
-    ///     Accounts controller, handler for authentication and token verification
+    ///     Accounts controller, handler for authentication and token verification.
     /// </summary>
     [Route("auth")]
     [ApiController]
@@ -48,7 +48,8 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="userPersistence">User persistence.</param>
         /// <param name="userCreationService">User Creation Service.</param>
         /// <param name="userRetrievalService">User Retrieval Service.</param>
-        public AccountController(IMELogger logger,
+        public AccountController(
+            IMELogger logger,
             IMapper mapper,
             OktaClient oktaClient,
             IUserPersistence userPersistence,

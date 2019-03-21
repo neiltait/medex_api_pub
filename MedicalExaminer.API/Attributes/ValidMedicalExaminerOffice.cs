@@ -5,7 +5,7 @@ using MedicalExaminer.Common;
 namespace MedicalExaminer.API.Attributes
 {
     /// <summary>
-    ///     Validates that a given nhs number has the correct format and passes the check sum
+    ///     Validates that a given nhs number has the correct format and passes the check sum.
     /// </summary>
     public class ValidMedicalExaminerOffice : RequiredAttribute
     {

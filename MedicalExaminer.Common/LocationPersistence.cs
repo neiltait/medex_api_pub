@@ -51,7 +51,7 @@ namespace MedicalExaminer.Common
         {
             await EnsureSetupAsync();
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, "Locations");
-            var feedOptions = new FeedOptions { MaxItemCount = - 1 };
+            var feedOptions = new FeedOptions { MaxItemCount = -1 };
             var query = client.CreateDocumentQuery<Location>(
                 documentCollectionUri,
                 "SELECT * FROM Locations",
@@ -71,7 +71,7 @@ namespace MedicalExaminer.Common
         {
             await EnsureSetupAsync();
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, "Locations");
-            var feedOptions = new FeedOptions { MaxItemCount = - 1 };
+            var feedOptions = new FeedOptions { MaxItemCount = -1 };
             var query = client.CreateDocumentQuery<Location>(
                 documentCollectionUri,
                 "SELECT * FROM Locations",
@@ -145,7 +145,7 @@ namespace MedicalExaminer.Common
                 var queryString = new StringBuilder();
                 queryString.Append("SELECT * FROM Locations WHERE Locations.parentId IN (");
 
-                for (var count = initialPosition; count < parents.Count && count < finalPosition; count ++)
+                for (var count = initialPosition; count < parents.Count && count < finalPosition; count++)
                 {
                     var lastItemInThisBatch = Math.Min(parents.Count - 1, finalPosition - 1);
                     queryString.Append($"\"{parents[count].LocationId}\"");

@@ -14,11 +14,27 @@ namespace MedicalExaminer.API.Attributes
     /// </summary>
     public abstract class ValidUserBase : RequiredAttribute
     {
+        /// <summary>
+        /// Validate User Base class. 
+        /// </summary>
+        /// <param name="value">object to be validated</param>
+        /// <param name="context">Validation Context</param>
+        /// <returns>VaidationResult</returns>
+        /// <exception cref="NotImplementedException">Its not implemented</exception>
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// runs the validation
+        /// </summary>
+        /// <param name="value">Object to validate</param>
+        /// <param name="context">Validation Context</param>
+        /// <param name="userRole">User Role</param>
+        /// <param name="userTypeName">User Type Name</param>
+        /// <returns>ValidationResult</returns>
+        /// <exception cref="NullReferenceException">Null reference error</exception>
         protected ValidationResult IsValid(
             object value,
             ValidationContext context,
@@ -53,7 +69,7 @@ namespace MedicalExaminer.API.Attributes
                     return new ValidationResult($"The user is not a {userTypeName}");
                 }
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
                 return new ValidationResult($"The {userTypeName} has not been found");
             }
