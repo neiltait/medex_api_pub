@@ -14,28 +14,27 @@ namespace MedicalExaminer.API.Tests.Services.Location
     public class LocationIdServiceTests
     {
         [Fact]
-        public void LocationIdNotFoundReturnsNull()
+        public void LocationIdFoundReturnsResult()
         {
             // Arrange
             var locationId = "a";
+            var location = new Mock<MedicalExaminer.Models.Location>();
             var connectionSettings = new Mock<ILocationConnectionSettings>();
             var query = new Mock<LocationRetrievalByIdQuery>(locationId);
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.GetItemAsync<MedicalExaminer.Models.Location>(connectionSettings.Object,
+            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
                     It.IsAny<Expression<Func<MedicalExaminer.Models.Location, bool>>>()))
-                .Returns(Task.FromResult<MedicalExaminer.Models.Location>(null)).Verifiable();
+                .Returns(Task.FromResult(location.Object)).Verifiable();
             var sut = new LocationIdService(dbAccess.Object, connectionSettings.Object);
-            var expected = default(MedicalExaminer.Models.Location);
+            var expected = location;
 
             // Act
             var result = sut.Handle(query.Object);
-            
-            // Assert
-            dbAccess.Verify(db => db.GetItemAsync<MedicalExaminer.Models.Location>(connectionSettings.Object,
-                It.IsAny<Expression<Func<MedicalExaminer.Models.Location, bool>>>()), Times.Once);
-            
-            Assert.Equal(expected, result.Result);
 
+            // Assert
+            dbAccess.Verify(db => db.GetItemAsync(connectionSettings.Object,
+                It.IsAny<Expression<Func<MedicalExaminer.Models.Location, bool>>>()), Times.Once);
+            Assert.Equal(location.Object, result.Result);
         }
 
         [Fact]
@@ -53,27 +52,27 @@ namespace MedicalExaminer.API.Tests.Services.Location
         }
 
         [Fact]
-        public void LocationIdFoundReturnsResult()
+        public void LocationIdNotFoundReturnsNull()
         {
             // Arrange
             var locationId = "a";
-            var location = new Mock<MedicalExaminer.Models.Location>();
             var connectionSettings = new Mock<ILocationConnectionSettings>();
             var query = new Mock<LocationRetrievalByIdQuery>(locationId);
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.GetItemAsync<MedicalExaminer.Models.Location>(connectionSettings.Object,
+            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
                     It.IsAny<Expression<Func<MedicalExaminer.Models.Location, bool>>>()))
-                .Returns(Task.FromResult(location.Object)).Verifiable();
+                .Returns(Task.FromResult<MedicalExaminer.Models.Location>(null)).Verifiable();
             var sut = new LocationIdService(dbAccess.Object, connectionSettings.Object);
-            var expected = location;
+            var expected = default(MedicalExaminer.Models.Location);
 
             // Act
             var result = sut.Handle(query.Object);
 
             // Assert
-            dbAccess.Verify(db => db.GetItemAsync<MedicalExaminer.Models.Location>(connectionSettings.Object,
+            dbAccess.Verify(db => db.GetItemAsync(connectionSettings.Object,
                 It.IsAny<Expression<Func<MedicalExaminer.Models.Location, bool>>>()), Times.Once);
-            Assert.Equal(location.Object, result.Result);
+
+            Assert.Equal(expected, result.Result);
         }
     }
 }

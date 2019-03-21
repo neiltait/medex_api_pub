@@ -1,56 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.API.Attributes;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
-using Newtonsoft.Json;
 
-namespace MedicalExaminer.API.Models.v1.Examinations
+namespace MedicalExaminer.API.Models.v1.MedicalTeams
 {
+    /// <summary>
+    ///     Post Medical Team Request Class.
+    /// </summary>
     public class PostMedicalTeamRequest
     {
         /// <summary>
-        /// Consultant primarily responsible for care of patient
+        ///     Consultant primarily responsible for care of patient.
         /// </summary>
         [Required]
         public ClinicalProfessional ConsultantResponsible { get; set; }
 
-
         /// <summary>
-        /// Other consultants involved in care of the patient
+        ///     Other consultants involved in care of the patient.
         /// </summary>
         [Required]
         public ClinicalProfessional[] ConsultantsOther { get; set; }
 
         /// <summary>
-        /// Consultant primarily responsible for care
+        ///     Consultant primarily responsible for care.
         /// </summary>
         [Required]
         public ClinicalProfessional GeneralPractitioner { get; set; }
 
         /// <summary>
-        /// Clinician responsible for certification
+        ///     Clinician responsible for certification.
         /// </summary>
         [Required]
         public ClinicalProfessional Qap { get; set; }
 
         /// <summary>
-        /// Nursing information
+        ///     Nursing information.
         /// </summary>
         public string NursingTeamInformation { get; set; }
 
         /// <summary>
-        /// Medical Examiner
+        ///     Medical Examiner.
         /// </summary>
         [ValidMedicalExaminer]
         public UserItem MedicalExaminer { get; set; }
 
         /// <summary>
-        /// Medical Examiner Officer
+        ///     Medical Examiner Officer.
         /// </summary>
         [ValidMedicalExaminerOfficer]
         public UserItem MedicalExaminerOfficer { get; set; }

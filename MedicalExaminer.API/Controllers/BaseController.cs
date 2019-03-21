@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using MedicalExaminer.API.Extensions.Models;
 using MedicalExaminer.API.Models.v1;
 using MedicalExaminer.Common.Loggers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalExaminer.API.Controllers
 {
     /// <inheritdoc />
     /// <summary>
-    /// Base Controller.
+    ///     Base Controller.
     /// </summary>
     /// <remarks>By default requires Authorization.</remarks>
     [ApiController]
@@ -17,7 +17,7 @@ namespace MedicalExaminer.API.Controllers
     public abstract class BaseController : Controller
     {
         /// <summary>
-        /// Initialise a new instance of the Base Controller
+        /// Initializes a new instance of the <see cref="BaseController"/> class.
         /// </summary>
         /// <param name="logger">The MELogger.</param>
         /// <param name="mapper">The Mapper.</param>
@@ -28,20 +28,20 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Logger.
+        ///     Logger.
         /// </summary>
         public IMELogger Logger { get; set; }
 
         /// <summary>
-        /// Mapper.
+        ///     Mapper.
         /// </summary>
         public IMapper Mapper { get; }
 
         /// <summary>
-        /// Bad Request Response
+        ///     Bad Request Response.
         /// </summary>
         /// <remarks>Adds model errors from the model state to the default error list in the base response.</remarks>
-        /// <typeparam name="TResponse">The response type, must be a subclass of <see cref="ResponseBase"/></typeparam>
+        /// <typeparam name="TResponse">The response type, must be a subclass of <see cref="ResponseBase" />.</typeparam>
         /// <param name="response">The response.</param>
         /// <returns>A bad request object result with the resposne set as the object.</returns>
         protected BadRequestObjectResult BadRequest<TResponse>(TResponse response)

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
-using MedicalExaminer.API.Attributes;
-using MedicalExaminer.Models.Enums;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MedicalExaminer.API.Models.v1.Examinations
 {

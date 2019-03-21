@@ -2,27 +2,27 @@
 {
     /// <inheritdoc />
     /// <summary>
-    /// Response for Post Permission.
+    ///     Response for Post Permission.
     /// </summary>
     public class PostPermissionResponse : ResponseBase
     {
         /// <summary>
-        /// Gets or sets the permission ID
+        ///     Gets or sets the permission ID.
         /// </summary>
         public string PermissionId { get; set; }
 
         /// <summary>
-        /// Gets or sets the User identifier.
+        ///     Gets or sets the User identifier.
         /// </summary>
         public string UserId { get; set; }
 
         /// <summary>
-        /// Gets or sets the location ID
+        ///     Gets or sets the location ID.
         /// </summary>
         public string LocationId { get; set; }
 
         /// <summary>
-        /// Gets or sets the User Role for the Permission
+        ///     Gets or sets the User Role for the Permission.
         /// </summary>
         public int UserRole { get; set; }
     }

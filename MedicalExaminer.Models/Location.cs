@@ -1,12 +1,10 @@
 ﻿using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
 
-
 namespace MedicalExaminer.Models
 {
     public class Location
     {
-
         [JsonProperty(PropertyName = "id")]
         public string LocationId { get; set; }
 

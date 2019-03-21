@@ -5,30 +5,22 @@ using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
-using Newtonsoft.Json;
 
 namespace MedicalExaminer.Common
 {
     /// <summary>
-    /// Container for a UserRoles enum
-    /// </summary>
-    /// <remarks>Used to filter results by user role</remarks>
-    internal class UserRolesContainer
-    {
-        internal UserRoles Role { get; set; }
-    }
-    /// <summary>
-    /// Manages persistence of users
+    ///     Manages persistence of users
     /// </summary>
     public class UserPersistence : PersistenceBase, IUserPersistence
     {
         /// <summary>
-        /// UserPersistence constructor
+        ///     Initializes a new instance of the <see cref="UserPersistence" /> class.
         /// </summary>
         /// <param name="endpointUri">COSMOS DB endpoint URI</param>
         /// <param name="primaryKey">Primary key for COSMOS DB instance</param>
         /// <param name="databaseId">DatabaseId</param>
-        public UserPersistence(Uri endpointUri, string primaryKey, string databaseId) : base(endpointUri, primaryKey, databaseId, "Users")
+        public UserPersistence(Uri endpointUri, string primaryKey, string databaseId)
+            : base(endpointUri, primaryKey, databaseId, "Users")
         {
         }
 
@@ -37,12 +29,15 @@ namespace MedicalExaminer.Common
         {
             await EnsureSetupAsync();
 
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionName);
-            var doc = await Client.UpsertDocumentAsync(documentCollectionUri, meUser);
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, collectionName);
+            var doc = await client.UpsertDocumentAsync(documentCollectionUri, meUser);
 
-            if (doc == null) throw new ArgumentException("Invalid Argument");
+            if (doc == null)
+            {
+                throw new ArgumentException("Invalid Argument");
+            }
 
-            return (MeUser) doc;
+            return (MeUser)doc;
         }
 
         /// <inheritdoc />
@@ -51,10 +46,13 @@ namespace MedicalExaminer.Common
             await EnsureSetupAsync();
 
             meUser.UserId = Guid.NewGuid().ToString();
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionName);
-            var document = await Client.CreateDocumentAsync(documentCollectionUri, meUser);
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, collectionName);
+            var document = await client.CreateDocumentAsync(documentCollectionUri, meUser);
 
-            if (document == null) throw new ArgumentException("Invalid Argument");
+            if (document == null)
+            {
+                throw new ArgumentException("Invalid Argument");
+            }
 
             var user = document.Resource as MeUser;
 
@@ -62,14 +60,17 @@ namespace MedicalExaminer.Common
         }
 
         /// <inheritdoc />
-        public async Task<MeUser> GetUserAsync(string UserId)
+        public async Task<MeUser> GetUserAsync(string userId)
         {
             await EnsureSetupAsync();
 
-            var documentUri = UriFactory.CreateDocumentUri(DatabaseId, CollectionName, UserId);
-            var result = await Client.ReadDocumentAsync<MeUser>(documentUri);
+            var documentUri = UriFactory.CreateDocumentUri(databaseId, collectionName, userId);
+            var result = await client.ReadDocumentAsync<MeUser>(documentUri);
 
-            if (result.Document == null) throw new ArgumentException("Invalid Argument");
+            if (result.Document == null)
+            {
+                throw new ArgumentException("Invalid Argument");
+            }
 
             return result.Document;
         }
@@ -104,7 +105,7 @@ namespace MedicalExaminer.Common
         }
 
         /// <summary>
-        /// Gets all users and filters bu UserRole as defined by userRoleContainer
+        ///     Gets all users and filters bu UserRole as defined by userRoleContainer
         /// </summary>
         /// <param name="userRoleContainer">Used to filter results</param>
         /// <returns>List of users</returns>
@@ -113,28 +114,32 @@ namespace MedicalExaminer.Common
         {
             await EnsureSetupAsync();
 
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, "Users");
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, "Users");
 
             // build the query
             var feedOptions = new FeedOptions { MaxItemCount = -1 };
-            var query = Client.CreateDocumentQuery<MeUser>(documentCollectionUri, "SELECT * FROM Users ORDER BY Users.last_name", feedOptions);
+            var query = client.CreateDocumentQuery<MeUser>(
+                documentCollectionUri,
+                "SELECT * FROM Users ORDER BY Users.last_name",
+                feedOptions);
             var queryAll = query.AsDocumentQuery();
 
             // combine the results
             var results = new List<MeUser>();
-            while (queryAll.HasMoreResults) results.AddRange(await queryAll.ExecuteNextAsync<MeUser>());
-
-            //Filter results to required type if required
-            //if no filtering required then return all results
-            if (userRoleContainer != null)
+            while (queryAll.HasMoreResults)
             {
-                var resultsFiltered = results.FindAll(r => r.UserRole == userRoleContainer.Role);
-                return resultsFiltered;
+                results.AddRange(await queryAll.ExecuteNextAsync<MeUser>());
             }
-            else
+
+            // Filter results to required type if required
+            // if no filtering required then return all results
+            if (userRoleContainer == null)
             {
                 return results;
             }
+
+            var resultsFiltered = results.FindAll(r => r.UserRole == userRoleContainer.Role);
+            return resultsFiltered;
         }
     }
 }
