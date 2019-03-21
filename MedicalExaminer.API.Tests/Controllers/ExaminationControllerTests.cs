@@ -6,6 +6,7 @@ using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Examinations;
+using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
@@ -19,6 +20,28 @@ namespace MedicalExaminer.API.Tests.Controllers
 {
     public class ExaminationControllerTests : ControllerTestsBase<ExaminationsController>
     {
+        private PostNewCaseRequest CreateValidNewCaseRequest()
+        {
+            return new PostNewCaseRequest
+            {
+                GivenNames = "A",
+                Surname = "Patient",
+                Gender = ExaminationGender.Male,
+                MedicalExaminerOfficeResponsible = "7"
+            };
+        }
+
+        private Examination CreateValidExamination()
+        {
+            var examination = new Examination
+            {
+                Gender = ExaminationGender.Male,
+                Surname = "Patient",
+                GivenNames = "Barry"
+            };
+            return examination;
+        }
+
         [Fact]
         public void GetExamination_When_Called_With_Invalid_Id_Returns_Expected_Type()
         {
@@ -27,7 +50,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
             var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            var examinationsRetrievalQuery =
+                new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var medicaTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
 
             var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
@@ -44,25 +68,28 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async void GetExamination_When_Called_With_Valid_Id_Returns_Expected_Type()
         {
             // Arrange
-            Examination examinationObj = new Examination()
+            var examinationObj = new Examination
             {
-                Id = "a"
+                ExaminationId = "a"
             };
-            var getResponse = new GetExaminationResponse()
+            var getResponse = new GetExaminationResponse
             {
-                Id = "a"
+                ExaminationId = "a"
             };
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             mapper.Setup(m => m.Map<GetExaminationResponse>(examinationObj)).Returns(getResponse);
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            var examinationsRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            var examinationRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var examinationsRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examinationObj));
             var medicaTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
             var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalQueryService.Object, examinationsRetrievalQueryService.Object, medicaTeamUpdateService.Object);
+                examinationRetrievalQueryService.Object, examinationsRetrievalQueryService.Object,
+                medicaTeamUpdateService.Object);
             // Act
             var response = sut.GetExamination("a").Result;
 
@@ -70,7 +97,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<ActionResult<GetExaminationResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             okResult.Value.Should().BeAssignableTo<GetExaminationResponse>();
-            Assert.Equal("a", ((GetExaminationResponse)okResult.Value).Id);
+            Assert.Equal("a", ((GetExaminationResponse)okResult.Value).ExaminationId);
         }
 
         [Fact]
@@ -79,20 +106,23 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examination1 = new Examination();
             var examination2 = new Examination();
-            IEnumerable<Examination> examinationsResult = new List<Examination>() { examination1, examination2 };
+            IEnumerable<Examination> examinationsResult = new List<Examination> { examination1, examination2 };
             var er = new Mock<GetExaminationsResponse>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             mapper.Setup(m => m.Map<GetExaminationsResponse>(It.IsAny<Examination>())).Returns(er.Object);
 
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            var examinationsRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            var examinationRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var examinationsRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             examinationsRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationsRetrievalQuery>()))
                 .Returns(Task.FromResult(examinationsResult));
             var medicaTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
             var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalQueryService.Object, examinationsRetrievalQueryService.Object, medicaTeamUpdateService.Object);
+                examinationRetrievalQueryService.Object, examinationsRetrievalQueryService.Object,
+                medicaTeamUpdateService.Object);
             // Act
             var response = sut.GetExaminations().Result;
 
@@ -105,20 +135,233 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
+        public void GetMedical_When_Called_With_No_MedicalTeam_InExamination_Returns_Expected_Type()
+        {
+            // Arrange
+            var examinationId = Guid.NewGuid().ToString();
+            var examination = new Examination
+            {
+                ExaminationId = examinationId
+            };
+
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var examinationsRetrievalQuery =
+                new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination));
+
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
+                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
+
+            // Act
+            var response = sut.GetMedicalTeam(examinationId).Result;
+
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
+            var notFoundResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
+        }
+
+        [Fact]
+        public void GetMedicalTeam_ExaminationNotFound_Returns_Expected_Type()
+        {
+            // Arrange
+            var examinationId = Guid.NewGuid().ToString();
+            Examination examination = null;
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var examinationsRetrievalQuery =
+                new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination));
+
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
+                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
+
+            // Act
+            var response = sut.GetMedicalTeam(examinationId).Result;
+
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
+            var notFound = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
+        }
+
+        [Fact]
+        public void GetMedicalTeam_Ok()
+        {
+            // Arrange
+            var examinationId = Guid.NewGuid().ToString();
+            var examination = new Examination
+            {
+                ExaminationId = examinationId
+            };
+
+            var medicalTeam = new MedicalTeam();
+            examination.MedicalTeam = medicalTeam;
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var examinationsRetrievalQuery =
+                new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination));
+
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
+                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
+
+            // Act
+            var response = sut.GetMedicalTeam(examinationId).Result;
+
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
+            var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+        }
+
+        [Fact]
+        public void PostMedicalTeam_Invalid_ExaminationId_Returns_Expected_Result()
+        {
+            // Arrange
+            var examinationId = Guid.NewGuid().ToString();
+            Examination examination = null;
+
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var examinationsRetrievalQuery =
+                new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            var postMedicalTeamRequest = new PostMedicalTeamRequest();
+            var medicalTeam = new MedicalTeam();
+
+
+            mapper.Setup(m => m.Map<MedicalTeam>(It.IsAny<PostMedicalTeamRequest>())).Returns(medicalTeam);
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination));
+            medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>()))
+                .Returns(Task.FromResult(examinationId));
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
+                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
+
+            // Act
+            var response = sut.PostMedicalTeam(examinationId, postMedicalTeamRequest).Result;
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutExaminationResponse>>().Subject;
+            var notFoundResult = taskResult.Result.Should().BeAssignableTo<NotFoundResult>().Subject;
+        }
+
+        [Fact]
+        public void PostMedicalTeam_MedicalteamUpdateServiceErrors_Returns_Expected_Type()
+        {
+            // Arrange
+            var examinationId = Guid.NewGuid().ToString();
+            var examination = new Examination
+            {
+                ExaminationId = examinationId
+            };
+
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var examinationsRetrievalQuery =
+                new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            var postMedicalTeamRequest = new PostMedicalTeamRequest();
+            var medicalTeam = new MedicalTeam();
+            string returnedMedicalTeamExaminationId = null;
+
+
+            mapper.Setup(m => m.Map<MedicalTeam>(It.IsAny<PostMedicalTeamRequest>())).Returns(medicalTeam);
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination));
+            medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>()))
+                .Returns(Task.FromResult(returnedMedicalTeamExaminationId));
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
+                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
+
+            // Act
+            var response = sut.PostMedicalTeam(examinationId, postMedicalTeamRequest).Result;
+
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutExaminationResponse>>().Subject;
+            var badResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
+        }
+
+        [Fact]
+        public void PostMedicalTeam_OK()
+        {
+            // Arrange
+            var examinationId = Guid.NewGuid().ToString();
+            var examination = new Examination
+            {
+                ExaminationId = examinationId
+            };
+
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var examinationsRetrievalQuery =
+                new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            var postMedicalTeamRequest = new PostMedicalTeamRequest();
+            var medicalTeam = new MedicalTeam();
+
+
+            mapper.Setup(m => m.Map<MedicalTeam>(It.IsAny<PostMedicalTeamRequest>())).Returns(medicalTeam);
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination));
+            medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>()))
+                .Returns(Task.FromResult(examinationId));
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
+                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
+
+            // Act
+            var response = sut.PostMedicalTeam(examinationId, postMedicalTeamRequest).Result;
+
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutExaminationResponse>>().Subject;
+            var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+
+            var examinationIdReturned = ((PutExaminationResponse)okResult.Value).ExaminationId;
+            Assert.Equal(examinationId, examinationIdReturned);
+        }
+
+        [Fact]
         public void TestCreateCaseValidationFailure()
         {
             // Arrange
             var examination = CreateValidExamination();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
             var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            var examinationsRetrievalQuery =
+                new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var medicaTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
             var examinationId = Guid.NewGuid();
 
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             mapper.Setup(m => m.Map<Examination>(It.IsAny<PostNewCaseRequest>())).Returns(examination);
-            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object, examinationRetrievalQuery.Object
+            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
+                examinationRetrievalQuery.Object
                 , examinationsRetrievalQuery.Object, medicaTeamUpdateService.Object);
             sut.ModelState.AddModelError("test", "test");
 
@@ -141,7 +384,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examination = CreateValidExamination();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
             var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            var examinationsRetrievalQuery =
+                new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var medicaTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
             var examinationId = Guid.NewGuid();
             var logger = new Mock<IMELogger>();
@@ -162,229 +406,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var model = (PutExaminationResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
-        }
-
-        [Fact]
-        public void PostMedicalTeam_OK()
-        {
-            // Arrange
-            var examinationId = Guid.NewGuid().ToString();
-            var examination = new Examination()
-            {
-                id = examinationId
-            };
-
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
-            var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
-            var logger = new Mock<IMELogger>();
-            var mapper = new Mock<IMapper>();
-            var postMedicalTeamRequest = new PostMedicalTeamRequest();
-            var medicalTeam = new MedicalTeam();
-
-
-            mapper.Setup(m => m.Map<MedicalTeam>(It.IsAny<PostMedicalTeamRequest>())).Returns(medicalTeam);
-            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>())).Returns(Task.FromResult(examination));
-            medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>()))
-                .Returns(Task.FromResult(examinationId.ToString()));
-            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
-
-            // Act
-            var response = sut.PostMedicalTeam(examinationId, postMedicalTeamRequest).Result;
-
-
-            // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutExaminationResponse>>().Subject;
-            var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-
-            var examinationIdReturned = ((PutExaminationResponse) okResult.Value).ExaminationId;
-            Assert.Equal(examinationId, examinationIdReturned); 
-        }
-
-        [Fact]
-        public void PostMedicalTeam_MedicalteamUpdateServiceErrors_Returns_Expected_Type()
-        {
-            // Arrange
-            var examinationId = Guid.NewGuid().ToString();
-            var examination = new Examination()
-            {
-                id = examinationId
-            };
-
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
-            var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
-            var logger = new Mock<IMELogger>();
-            var mapper = new Mock<IMapper>();
-            var postMedicalTeamRequest = new PostMedicalTeamRequest();
-            var medicalTeam = new MedicalTeam();
-            string returnedMedicalTeamExaminationId = null;
-
-
-            mapper.Setup(m => m.Map<MedicalTeam>(It.IsAny<PostMedicalTeamRequest>())).Returns(medicalTeam);
-            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>())).Returns(Task.FromResult(examination));
-            medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>()))
-                .Returns(Task.FromResult(returnedMedicalTeamExaminationId));
-            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
-
-            // Act
-            var response = sut.PostMedicalTeam(examinationId, postMedicalTeamRequest).Result;
-
-
-            // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutExaminationResponse>>().Subject;
-            var badResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-
-        }
-
-        [Fact]
-        public void PostMedicalTeam_Invalid_ExaminationId_Returns_Expected_Result()
-        {
-            // Arrange
-            var examinationId = Guid.NewGuid().ToString();
-            Examination examination = null;
-
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
-            var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
-            var logger = new Mock<IMELogger>();
-            var mapper = new Mock<IMapper>();
-            var postMedicalTeamRequest = new PostMedicalTeamRequest();
-            var medicalTeam = new MedicalTeam();
-
-
-            mapper.Setup(m => m.Map<MedicalTeam>(It.IsAny<PostMedicalTeamRequest>())).Returns(medicalTeam);
-            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>())).Returns(Task.FromResult(examination));
-            medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>()))
-                .Returns(Task.FromResult(examinationId.ToString()));
-            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
-
-            // Act
-            var response = sut.PostMedicalTeam(examinationId, postMedicalTeamRequest).Result;
-
-            // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutExaminationResponse>>().Subject;
-            var notFoundResult = taskResult.Result.Should().BeAssignableTo<NotFoundResult>().Subject;
-        }
-
-        [Fact]
-        public void GetMedicalTeam_Ok()
-        {
-            // Arrange
-            var examinationId = Guid.NewGuid().ToString();
-            var examination = new Examination()
-            {
-                id = examinationId
-            };
-
-            var medicalTeam = new MedicalTeam();
-            examination.MedicalTeam = medicalTeam;
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
-            var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
-            var logger = new Mock<IMELogger>();
-            var mapper = new Mock<IMapper>();
-
-            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>())).Returns(Task.FromResult(examination));
-
-            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
-
-            // Act
-            var response = sut.GetMedicalTeam(examinationId).Result;
-
-
-            // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
-            var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-        }
-
-        [Fact]
-        public void GetMedical_When_Called_With_No_MedicalTeam_InExamination_Returns_Expected_Type()
-        {
-            // Arrange
-            var examinationId = Guid.NewGuid().ToString();
-            var examination = new Examination()
-            {
-                id = examinationId
-            };
-
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
-            var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
-            var logger = new Mock<IMELogger>();
-            var mapper = new Mock<IMapper>();
-
-            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>())).Returns(Task.FromResult(examination));
-
-            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
-
-            // Act
-            var response = sut.GetMedicalTeam(examinationId).Result;
-
-
-            // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
-            var notFoundResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
-        }
-
-        [Fact]
-        public void GetMedicalTeam_ExaminationNotFound_Returns_Expected_Type()
-        {
-            // Arrange
-            var examinationId = Guid.NewGuid().ToString();
-            Examination examination = null;
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
-            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
-            var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
-            var logger = new Mock<IMELogger>();
-            var mapper = new Mock<IMapper>();
-
-            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>())).Returns(Task.FromResult(examination));
-
-            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
-
-            // Act
-            var response = sut.GetMedicalTeam(examinationId).Result;
-
-
-            // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
-            var notFound = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
-        }
-
-        private PostNewCaseRequest CreateValidNewCaseRequest()
-        {
-            return new PostNewCaseRequest()
-            {
-                GivenNames = "A",
-                Surname = "Patient",
-                Gender = ExaminationGender.Male,
-                MedicalExaminerOfficeResponsible = "7"
-            };
-        }
-
-        private Examination CreateValidExamination()
-        {
-            var examination = new Examination()
-            {
-                Gender = ExaminationGender.Male,
-                Surname = "Patient",
-                GivenNames = "Barry",
-
-            };
-            return examination;
         }
     }
 }

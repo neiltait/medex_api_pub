@@ -8,12 +8,15 @@ namespace MedicalExaminer.Common.Services.Examination
 {
     public class ExaminationRetrievalService : IAsyncQueryHandler<ExaminationRetrievalQuery, Models.Examination>
     {
-        private readonly IDatabaseAccess _databaseAccess;
-        private readonly IConnectionSettings _connectionSettings;
-        public ExaminationRetrievalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
+        private readonly IConnectionSettings connectionSettings;
+        private readonly IDatabaseAccess databaseAccess;
+
+        public ExaminationRetrievalService(
+            IDatabaseAccess databaseAccess,
+            IExaminationConnectionSettings connectionSettings)
         {
-            _databaseAccess = databaseAccess;
-            _connectionSettings = connectionSettings;
+            this.databaseAccess = databaseAccess;
+            this.connectionSettings = connectionSettings;
         }
 
         public Task<Models.Examination> Handle(ExaminationRetrievalQuery param)
@@ -22,17 +25,11 @@ namespace MedicalExaminer.Common.Services.Examination
             {
                 throw new ArgumentNullException(nameof(param));
             }
-                try
-                {
-                    var result =  _databaseAccess.GetItemAsync<Models.Examination>(_connectionSettings, 
-                        x=> x.Id == param.ExaminationId);
-                    return result;
-                }
-                catch (Exception e)
-                {
-                    //_logger.Log("Failed to retrieve examination data", e);
-                    throw;
-                }
+
+            var result = databaseAccess.GetItemAsync<Models.Examination>(
+                connectionSettings,
+                x => x.ExaminationId == param.ExaminationId);
+            return result;
         }
     }
 }

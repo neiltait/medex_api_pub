@@ -71,7 +71,7 @@
 <!-- Workaround for https://github.com/swagger-api/swagger-editor/issues/1371 -->
 <script>
     if (window.navigator.userAgent.indexOf("Edge") > -1) {
-        console.log("Removing native Edge fetch in favor of swagger-ui's polyfill")
+        console.log("Removing native Edge fetch in favor of swagger-ui's polyfill");
         window.fetch = undefined;
     }
 </script>
@@ -89,13 +89,13 @@
         } else {
             qp = location.search.substring(1);
         }
-        arr = qp.split("&")
-        arr.forEach(function (v, i, _arr) { _arr[i] = '"' + v.replace('=', '":"') + '"'; })
+        arr = qp.split("&");
+        arr.forEach(function (v, i, _arr) { _arr[i] = '"' + v.replace('=', '":"') + '"'; });
         qp = qp ? JSON.parse('{' + arr.join() + '}',
             function (key, value) {
                 return key === "" ? value : decodeURIComponent(value)
             }
-        ) : {}
+        ) : {};
         isValid = qp.state === sentState;
         if ((
             oauth2.auth.schema.get("flow") === "accessCode" ||
@@ -114,7 +114,7 @@
                 oauth2.auth.code = qp.code;
                 oauth2.callback({ auth: oauth2.auth, redirectUrl: redirectUrl });
             } else {
-                let oauthErrorMsg
+                let oauthErrorMsg;
                 if (qp.error) {
                     oauthErrorMsg = "[" + qp.error + "]: " +
                         (qp.error_description ? qp.error_description + ". " : "no accessCode received from the server. ") +

@@ -15,7 +15,7 @@ namespace MedicalExaminer.API.Controllers
 {
     /// <inheritdoc />
     /// <summary>
-    /// Permissions Controller
+    ///     Permissions Controller
     /// </summary>
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/users/{meUserId}/permissions")]
@@ -24,12 +24,12 @@ namespace MedicalExaminer.API.Controllers
     public class PermissionsController : BaseController
     {
         /// <summary>
-        /// The Permission Persistence Layer
+        ///     The Permission Persistence Layer
         /// </summary>
         private readonly IPermissionPersistence _permissionPersistence;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PermissionsController"/> class.
+        ///     Initializes a new instance of the <see cref="PermissionsController" /> class.
         /// </summary>
         /// <param name="userPersistence">The User Persistence.</param>
         /// <param name="permissionPersistence">The Permission Persistence</param>
@@ -46,7 +46,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Get all Permissions for a User ID.
+        ///     Get all Permissions for a User ID.
         /// </summary>
         /// <param name="meUserId">The User Identifier.</param>
         /// <returns>A GetPermissionsResponse.</returns>
@@ -60,7 +60,7 @@ namespace MedicalExaminer.API.Controllers
 
                 return Ok(new GetPermissionsResponse
                 {
-                    Permissions = permissions.Select(p => Mapper.Map<PermissionItem>(p)),
+                    Permissions = permissions.Select(p => Mapper.Map<PermissionItem>(p))
                 });
             }
             catch (DocumentClientException)
@@ -74,7 +74,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Get a Users permission by its Identifier.
+        ///     Get a Users permission by its Identifier.
         /// </summary>
         /// <param name="userId">The User Id.</param>
         /// <param name="permissionId">The Permission Id.</param>
@@ -104,13 +104,15 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Create a new Permission.
+        ///     Create a new Permission.
         /// </summary>
         /// <param name="postPermission">The PostPermissionRequest.</param>
         /// <returns>A PostPermissionResponse.</returns>
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PostPermissionResponse>> CreatePermission([FromBody]PostPermissionRequest postPermission)
+        public async Task<ActionResult<PostPermissionResponse>> CreatePermission(
+            [FromBody]
+            PostPermissionRequest postPermission)
         {
             if (!ModelState.IsValid)
             {
@@ -143,7 +145,9 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutPermissionResponse.</returns>
         [HttpPut("{permissionId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutPermissionResponse>> UpdatePermission([FromBody] PutPermissionRequest putPermission)
+        public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(
+            [FromBody]
+            PutPermissionRequest putPermission)
         {
             try
             {

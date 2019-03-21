@@ -18,15 +18,16 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class PatientDetailsController : BaseController
     {
-        private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>
+        private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>
             _examinationRetrievalService;
 
-        private IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>
-            _patientDetailsUpdateService;
-        private IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>
+        private readonly IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>
             _patientDetailsByCaseIdService;
 
-        public PatientDetailsController(IMELogger logger, IMapper mapper, 
+        private readonly IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>
+            _patientDetailsUpdateService;
+
+        public PatientDetailsController(IMELogger logger, IMapper mapper,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination> patientDetailsUpdateService,
             IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination> patientDetailsByCaseIdService)
@@ -75,9 +76,9 @@ namespace MedicalExaminer.API.Controllers
 
             var result = _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(examinationId, patientDetails));
 
-            return Ok(new PutPatientDetailsResponse()
+            return Ok(new PutPatientDetailsResponse
             {
-                ExaminationId = result.Result.id
+                ExaminationId = result.Result.ExaminationId
             });
         }
     }
