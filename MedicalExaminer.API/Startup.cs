@@ -39,12 +39,12 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 namespace MedicalExaminer.API
 {
     /// <summary>
-    /// Startup
+    ///     Startup
     /// </summary>
     public class Startup
     {
         /// <summary>
-        /// Initialise a new instance of the <see cref="Startup"/> class.
+        /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
         /// <param name="configuration">The Configuration.</param>
         public Startup(IConfiguration configuration)
@@ -53,12 +53,12 @@ namespace MedicalExaminer.API
         }
 
         /// <summary>
-        /// Gets configuration.
+        ///     Gets configuration.
         /// </summary>
         public IConfiguration Configuration { get; }
 
         /// <summary>
-        /// Add services to the container.
+        ///     Add services to the container.
         /// </summary>
         /// <param name="services">Service Collection.</param>
         public void ConfigureServices(IServiceCollection services)
@@ -82,10 +82,7 @@ namespace MedicalExaminer.API
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            Mapper.Initialize(config =>
-            {
-                config.AddMedicalExaminerProfiles();
-            });
+            Mapper.Initialize(config => { config.AddMedicalExaminerProfiles(); });
 
             services.AddAutoMapper();
 
@@ -107,7 +104,7 @@ namespace MedicalExaminer.API
                 // Make swagger do authentication
                 var security = new Dictionary<string, IEnumerable<string>>
                 {
-                    { "Bearer", Array.Empty<string>() },
+                    { "Bearer", Array.Empty<string>() }
                 };
 
                 c.AddSecurityDefinition("Okta", new OAuth2Scheme
@@ -115,16 +112,17 @@ namespace MedicalExaminer.API
                     Type = "oauth2",
                     Flow = "implicit",
                     AuthorizationUrl = "https://***REMOVED***.oktapreview.com/oauth2/default/v1/authorize",
-                    Scopes = new Dictionary<string, string>()
+                    Scopes = new Dictionary<string, string>
                     {
                         { "profile", "Profile" },
-                        { "openid", "OpenID" },
-                    },
+                        { "openid", "OpenID" }
+                    }
                 });
 
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
-                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Description =
+                        "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                     Name = "Authorization",
                     In = "header",
                     Type = "apiKey"
@@ -151,11 +149,17 @@ namespace MedicalExaminer.API
                 Configuration["CosmosDB:DatabaseId"]));
 
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, string>, CreateExaminationService>();
-            services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
-            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
-            services.AddScoped<IAsyncUpdateDocumentHandler,  MedicalTeamUpdateService>();
-            services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
-            services.AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService>();
+            services
+                .AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
+            services
+                .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
+                    ExaminationsRetrievalService>();
+            services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
+            services
+                .AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
+            services
+                .AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService
+                >();
 
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalQuery, MeUser>, UserRetrievalService>();
@@ -164,9 +168,9 @@ namespace MedicalExaminer.API
             services.AddScoped<ControllerActionFilter>();
 
             services.AddScoped<ILocationPersistence>(s => new LocationPersistence(
-                 new Uri(Configuration["CosmosDB:URL"]),
-                 Configuration["CosmosDB:PrimaryKey"],
-                 Configuration["CosmosDB:DatabaseId"]));
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]));
 
             services.AddScoped<IUserPersistence>(s => new UserPersistence(
                 new Uri(Configuration["CosmosDB:URL"]),
@@ -185,7 +189,7 @@ namespace MedicalExaminer.API
         }
 
         /// <summary>
-        /// Configure the HTTP request pipeline.
+        ///     Configure the HTTP request pipeline.
         /// </summary>
         /// <param name="app">The App.</param>
         /// <param name="env">The Environment.</param>
@@ -221,16 +225,19 @@ namespace MedicalExaminer.API
                 app.UseSwaggerUI(c =>
                 {
                     // Use a bespoke Index that has OpenID/CustomJS to handle OKTA
-                    c.IndexStream = () => GetType().GetTypeInfo().Assembly.GetManifestResourceStream("MedicalExaminer.API.SwaggerIndex.html");
+                    c.IndexStream = () =>
+                        GetType().GetTypeInfo().Assembly
+                            .GetManifestResourceStream("MedicalExaminer.API.SwaggerIndex.html");
 
                     var oktaSettings = app.ApplicationServices.GetRequiredService<IOptions<OktaSettings>>();
 
-                    c.OAuthConfigObject = new OAuthConfigObject()
+                    c.OAuthConfigObject = new OAuthConfigObject
                     {
                         ClientId = oktaSettings.Value.ClientId,
-                        ClientSecret = oktaSettings.Value.ClientSecret,
+                        ClientSecret = oktaSettings.Value.ClientSecret
                     };
-                    c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { {"nonce",  Guid.NewGuid().ToString() } });
+                    c.OAuthAdditionalQueryStringParams(new Dictionary<string, string>
+                        { { "nonce", Guid.NewGuid().ToString() } });
 
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 });
@@ -245,7 +252,7 @@ namespace MedicalExaminer.API
         }
 
         /// <summary>
-        /// Configure basic authentication so we can use tokens.
+        ///     Configure basic authentication so we can use tokens.
         /// </summary>
         /// <param name="services">Services.</param>
         /// <param name="oktaSettings">Okta Settings.</param>
@@ -268,19 +275,19 @@ namespace MedicalExaminer.API
         }
 
         /// <summary>
-        /// Configure Okta Client.
+        ///     Configure Okta Client.
         /// </summary>
         /// <param name="services">Services.</param>
         private void ConfigureOktaClient(IServiceCollection services)
         {
             // Configure okta client
-            services.AddScoped<OktaClientConfiguration>(context =>
+            services.AddScoped(context =>
             {
                 var settings = context.GetRequiredService<IOptions<OktaSettings>>();
                 return new OktaClientConfiguration
                 {
                     OktaDomain = settings.Value.Domain,
-                    Token = settings.Value.SdkToken,
+                    Token = settings.Value.SdkToken
                 };
             });
             services.AddScoped<OktaClient, OktaClient>();

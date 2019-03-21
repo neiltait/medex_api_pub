@@ -1,9 +1,9 @@
 ﻿namespace MedicalExaminer.Common.ConnectionSettings
 {
     /// <summary>
-    /// User Connection Settings Interface
+    ///     User Connection Settings Interface
     /// </summary>
-    /// <inheritdoc cref="IConnectionSettings"/>
+    /// <inheritdoc cref="IConnectionSettings" />
     public interface IUserConnectionSettings : IConnectionSettings
     {
     }

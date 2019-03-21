@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -18,13 +16,9 @@ namespace MedicalExaminer.API.Tests.Services.Implementations
 {
     public class OktaTokenServiceTests
     {
-        private readonly IOptions<OktaSettings> _oktaSettings;
-
-        private readonly OktaTokenService _sut;
-
         public OktaTokenServiceTests()
         {
-            _oktaSettings = Options.Create(new OktaSettings()
+            _oktaSettings = Options.Create(new OktaSettings
             {
                 Authority = "authority",
                 Audience = "audience",
@@ -32,11 +26,15 @@ namespace MedicalExaminer.API.Tests.Services.Implementations
                 ClientSecret = "clientSecret",
                 Domain = "domain",
                 IntrospectUrl = "http://www.example.com/",
-                SdkToken = "token",
+                SdkToken = "token"
             });
 
             _sut = new OktaTokenService(_oktaSettings);
         }
+
+        private readonly IOptions<OktaSettings> _oktaSettings;
+
+        private readonly OktaTokenService _sut;
 
         [Fact]
         public void IntrospectToken_ShouldReturnIntrospectResponse_WhenValidToken()
@@ -52,10 +50,10 @@ namespace MedicalExaminer.API.Tests.Services.Implementations
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>()
                 )
-                .ReturnsAsync(new HttpResponseMessage()
+                .ReturnsAsync(new HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent("{'active':false}"),
+                    Content = new StringContent("{'active':false}")
                 })
                 .Verifiable();
 
@@ -79,15 +77,14 @@ namespace MedicalExaminer.API.Tests.Services.Implementations
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>()
                 )
-                .ReturnsAsync(new HttpResponseMessage()
+                .ReturnsAsync(new HttpResponseMessage
                 {
-                    StatusCode = HttpStatusCode.BadRequest,
+                    StatusCode = HttpStatusCode.BadRequest
                 });
 
             await Assert.ThrowsAsync<ApplicationException>(async () =>
                 await _sut.IntrospectToken(token, httpClient)
             );
-
         }
     }
 }

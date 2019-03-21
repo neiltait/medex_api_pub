@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
+using MedicalExaminer.API.Models.v1.Locations;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
-using MedicalExaminer.Models.V1.Locations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 
@@ -12,19 +12,19 @@ namespace MedicalExaminer.API.Controllers
 {
     /// <inheritdoc />
     /// <summary>
-    /// Locations Controller
+    ///     Locations Controller
     /// </summary>
     [Route("locations")]
     [ApiController]
     public class LocationsController : BaseController
     {
         /// <summary>
-        /// The location persistance layer.
+        ///     The location persistance layer.
         /// </summary>
         private readonly ILocationPersistence _locationPersistence;
 
         /// <summary>
-        /// Initialise a new instance of the Loctions Controller.
+        /// Initializes a new instance of the <see cref="LocationsController"/> class.
         /// </summary>
         /// <param name="locationPersistence">The Location Persistance.</param>
         /// <param name="logger">The Logger.</param>
@@ -36,23 +36,22 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Get all Locations as a list of <see cref="LocationItem"/>.
+        ///     Get all Locations as a list of <see cref="LocationItem" />.
         /// </summary>
         /// <returns>A list of location.</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationsResponse>> GetLocations()
         {
-            
             var locations = await _locationPersistence.GetLocationsAsync();
-            return Ok(new GetLocationsResponse()
+            return Ok(new GetLocationsResponse
             {
                 Locations = locations.Select(e => Mapper.Map<LocationItem>(e)).ToList(),
             });
         }
 
         /// <summary>
-        /// Get Location by ID
+        ///     Get Location by ID
         /// </summary>
         /// <param name="locationId">The Location Id.</param>
         /// <returns>A GetLocationsResponse.</returns>
@@ -73,7 +72,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Get Locations as a list of <see cref="LocationItem"/> where location name contains locationName.
+        ///     Get Locations as a list of <see cref="LocationItem" /> where location name contains locationName.
         /// </summary>
         /// <param name="locationName">The value to be used in the selection of matching names.</param>
         /// <returns>A list of locations whose names contain locationName.</returns>
@@ -82,14 +81,15 @@ namespace MedicalExaminer.API.Controllers
         public async Task<ActionResult<GetLocationsResponse>> GetLocationsByName(string locationName)
         {
             var locations = await _locationPersistence.GetLocationsByNameAsync(locationName);
-            return Ok(new GetLocationsResponse()
+            return Ok(new GetLocationsResponse
             {
                 Locations = locations.Select(location => Mapper.Map<LocationItem>(location)).ToList(),
             });
         }
 
         /// <summary>
-        /// Get Locations as a list of <see cref="LocationItem"/> where locations are under the location whose locationId = parentId
+        ///     Get Locations as a list of <see cref="LocationItem" /> where locations are under the location whose locationId =
+        ///     parentId
         /// </summary>
         /// <param name="parentId">The locationId of the location whose children are to be returned as list</param>
         /// <returns>list of locations that are under the location whose location = parentId</returns>
@@ -98,7 +98,7 @@ namespace MedicalExaminer.API.Controllers
         public async Task<ActionResult<GetLocationsResponse>> GetLocationsByParentId(string parentId)
         {
             var locations = await _locationPersistence.GetLocationsByParentIdAsync(parentId);
-            return Ok(new GetLocationsResponse()
+            return Ok(new GetLocationsResponse
             {
                 Locations = locations.Select(location => Mapper.Map<LocationItem>(location)).ToList(),
             });

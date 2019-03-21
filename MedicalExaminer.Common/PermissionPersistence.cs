@@ -9,13 +9,14 @@ namespace MedicalExaminer.Common
 {
     public class PermissionPersistence : PersistenceBase, IPermissionPersistence
     {
+        /// <inheritdoc />
         public PermissionPersistence(Uri endpointUri, string primaryKey, string databaseId)
             : base(endpointUri, primaryKey, databaseId, "Permissions")
         {
         }
 
         /// <summary>
-        /// Update Permission
+        ///     Update Permission
         /// </summary>
         /// <param name="permission"></param>
         /// <returns></returns>
@@ -24,19 +25,19 @@ namespace MedicalExaminer.Common
         {
             await EnsureSetupAsync();
 
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionName);
-            var doc = await Client.UpsertDocumentAsync(documentCollectionUri, permission);
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, collectionName);
+            var doc = await client.UpsertDocumentAsync(documentCollectionUri, permission);
 
             if (doc == null)
             {
                 throw new ArgumentException("Invalid Argument");
             }
 
-            return (Permission) doc;
+            return (Permission)doc;
         }
 
         /// <summary>
-        /// Create Permission
+        ///     Create Permission
         /// </summary>
         /// <param name="permission"></param>
         /// <returns></returns>
@@ -45,30 +46,30 @@ namespace MedicalExaminer.Common
         {
             await EnsureSetupAsync();
 
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionName);
-            var document = await Client.CreateDocumentAsync(documentCollectionUri, permission);
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, collectionName);
+            var document = await client.CreateDocumentAsync(documentCollectionUri, permission);
 
             if (document == null)
             {
                 throw new ArgumentException("Invalid Argument");
             }
 
-            return (Permission) document;
+            return (Permission)document;
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="meUserId"></param>
         /// <param name="permissionId"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
+        /// <inheritdoc />
         public async Task<Permission> GetPermissionAsync(string meUserId, string permissionId)
         {
             await EnsureSetupAsync();
 
-            var documentUri = UriFactory.CreateDocumentUri(DatabaseId, CollectionName, permissionId);
-            var result = await Client.ReadDocumentAsync<Permission>(documentUri);
+            var documentUri = UriFactory.CreateDocumentUri(databaseId, collectionName, permissionId);
+            var result = await client.ReadDocumentAsync<Permission>(documentUri);
 
             if (result.Document == null)
             {
@@ -79,7 +80,6 @@ namespace MedicalExaminer.Common
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="meUserId"></param>
@@ -88,11 +88,14 @@ namespace MedicalExaminer.Common
         {
             await EnsureSetupAsync();
 
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionName);
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, collectionName);
 
             // build the query
-            var feedOptions = new FeedOptions { MaxItemCount = -1};
-            var query = Client.CreateDocumentQuery<MeUser>(documentCollectionUri, $"SELECT * FROM {CollectionName} WHERE user_id = {meUserId}", feedOptions);
+            var feedOptions = new FeedOptions { MaxItemCount = -1 };
+            var query = client.CreateDocumentQuery<MeUser>(
+                documentCollectionUri,
+                $"SELECT * FROM {collectionName} WHERE user_id = {meUserId}",
+                feedOptions);
             var queryAll = query.AsDocumentQuery();
 
             // combine the results

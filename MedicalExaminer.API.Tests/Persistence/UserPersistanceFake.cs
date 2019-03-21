@@ -16,7 +16,7 @@ namespace MedicalExaminer.API.Tests.Persistence
             // Populate the users fake vars 
             _users = new List<MeUser>();
 
-            for (var count = 0; count < 10; count++)
+            for (var count = 0; count < 10; count ++)
             {
                 var u = new MeUser
                 {
@@ -42,8 +42,12 @@ namespace MedicalExaminer.API.Tests.Persistence
         public async Task<MeUser> GetUserAsync(string UserId)
         {
             foreach (var user in _users)
+            {
                 if (user.UserId == UserId)
+                {
                     return await Task.FromResult(user);
+                }
+            }
 
             throw new ArgumentException("Invalid Argument");
         }

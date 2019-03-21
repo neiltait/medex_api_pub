@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 
@@ -15,7 +15,7 @@ namespace MedicalExaminer.API.Controllers
 {
     /// <inheritdoc />
     /// <summary>
-    /// Users Controller
+    ///     Users Controller
     /// </summary>
     [Route("users")]
     [ApiController]
@@ -23,12 +23,12 @@ namespace MedicalExaminer.API.Controllers
     public class UsersController : BaseController
     {
         /// <summary>
-        /// The User Persistence Layer
+        ///     The User Persistence Layer
         /// </summary>
         private readonly IUserPersistence _userPersistence;
 
         /// <summary>
-        /// Initialise a new instance of the Users controller.
+        /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
         /// <param name="userPersistence">The User Persistance.</param>
         /// <param name="logger">The Logger.</param>
@@ -40,7 +40,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Get all Users.
+        ///     Get all Users.
         /// </summary>
         /// <returns>A GetUsersResponse.</returns>
         [HttpGet]
@@ -52,7 +52,7 @@ namespace MedicalExaminer.API.Controllers
                 var users = await _userPersistence.GetUsersAsync();
                 return Ok(new GetUsersResponse
                 {
-                    Users = users.Select(u => Mapper.Map<UserItem>(u)),
+                    Users = users.Select(u => Mapper.Map<UserItem>(u))
                 });
             }
             catch (DocumentClientException)
@@ -66,7 +66,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Get a User by its Identifier.
+        ///     Get a User by its Identifier.
         /// </summary>
         /// <param name="meUserId">The User Identifier.</param>
         /// <returns>A GetUserResponse.</returns>
@@ -75,7 +75,10 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetUserResponse>> GetUser(string meUserId)
         {
-            if (!ModelState.IsValid) return BadRequest(new GetUserResponse());
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new GetUserResponse());
+            }
 
             try
             {
@@ -95,7 +98,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Get all Users that are in the role of Medical Examiner.
+        ///     Get all Users that are in the role of Medical Examiner.
         /// </summary>
         /// <returns>A GetUsersResponse.</returns>
         [HttpGet("/MedicalExaminers")]
@@ -107,7 +110,7 @@ namespace MedicalExaminer.API.Controllers
                 var users = await _userPersistence.GetMedicalExaminersAsync();
                 return Ok(new GetUsersResponse
                 {
-                    Users = users.Select(u => Mapper.Map<UserItem>(u)),
+                    Users = users.Select(u => Mapper.Map<UserItem>(u))
                 });
             }
             catch (DocumentClientException)
@@ -121,7 +124,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Get all Users that are in the role of Medical Examiner Officer.
+        ///     Get all Users that are in the role of Medical Examiner Officer.
         /// </summary>
         /// <returns>A GetUsersResponse.</returns>
         [HttpGet("/MedicalExaminerOfficers")]
@@ -133,7 +136,7 @@ namespace MedicalExaminer.API.Controllers
                 var users = await _userPersistence.GetMedicalExaminerOfficerAsync();
                 return Ok(new GetUsersResponse
                 {
-                    Users = users.Select(u => Mapper.Map<UserItem>(u)),
+                    Users = users.Select(u => Mapper.Map<UserItem>(u))
                 });
             }
             catch (DocumentClientException)
@@ -147,18 +150,22 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Create a new User.
+        ///     Create a new User.
         /// </summary>
         /// <param name="postUser">The PostUserRequest.</param>
         /// <returns>A PostUserResponse.</returns>
-       // POST api/users
+        // POST api/users
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PostUserResponse>> CreateUser([FromBody] PostUserRequest postUser)
+        public async Task<ActionResult<PostUserResponse>> CreateUser([FromBody]
+            PostUserRequest postUser)
         {
             try
             {
-                if (!ModelState.IsValid) return BadRequest(new PostUserResponse());
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new PostUserResponse());
+                }
 
                 var user = Mapper.Map<MeUser>(postUser);
                 var createdUser = await _userPersistence.CreateUserAsync(user);
@@ -172,21 +179,26 @@ namespace MedicalExaminer.API.Controllers
             {
                 return NotFound(new PostUserResponse());
             }
-        }        
-        
+        }
+
         /// <summary>
-        /// Create a new User.
+        ///     Create a new User.
         /// </summary>
         /// <param name="putUser">The PutUserRequest.</param>
         /// <returns>A PutUserResponse.</returns>
         // POST api/users
         [HttpPut("{Id}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutUserResponse>> UpdateUser([FromBody] PutUserRequest putUser)
+        public async Task<ActionResult<PutUserResponse>> UpdateUser([FromBody]
+            PutUserRequest putUser)
         {
             try
             {
-                if (!ModelState.IsValid) return BadRequest(new PutUserResponse());
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new PutUserResponse());
+                }
+
                 var user = Mapper.Map<MeUser>(putUser);
                 var updatedUser = await _userPersistence.UpdateUserAsync(user);
                 return Ok(Mapper.Map<PutUserResponse>(updatedUser));

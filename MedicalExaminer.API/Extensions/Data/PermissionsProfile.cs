@@ -6,12 +6,12 @@ namespace MedicalExaminer.API.Extensions.Data
 {
     /// <inheritdoc />
     /// <summary>
-    /// Permissions Profile for AutoMapper
+    ///     Permissions Profile for AutoMapper
     /// </summary>
     public class PermissionsProfile : Profile
     {
         /// <summary>
-        /// Initialise a new instance of the Permissions AutoMapper Profile.
+        ///     Initialise a new instance of the Permissions AutoMapper Profile.
         /// </summary>
         public PermissionsProfile()
         {

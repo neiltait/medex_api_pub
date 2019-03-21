@@ -3,7 +3,7 @@
 namespace MedicalExaminer.Common.ConnectionSettings
 {
     /// <summary>
-    /// Connection Settings Interface
+    ///     Connection Settings Interface
     /// </summary>
     public interface IConnectionSettings
     {

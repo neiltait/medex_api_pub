@@ -7,13 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalExaminer.API.Controllers
 {
+    /// <summary>
+    /// Data Type Controller required for providing lists of types.
+    /// </summary>
     [Route("datatypes")]
     [ApiController]
     public class DataTypesController : BaseController
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DataTypesController"/> class.
-        /// Data Types Controller initializer
         /// </summary>
         /// <param name="logger">Instance of ILogger</param>
         /// <param name="mapper">Instance of IMapper</param>
@@ -23,7 +25,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Returns all the data types and the values for mode of disposal 
+        /// Returns all the data types and the values for mode of disposal.
         /// </summary>
         /// <returns>Dictionary of Modes of disposal</returns>
         [HttpGet("mode_of_disposal")]

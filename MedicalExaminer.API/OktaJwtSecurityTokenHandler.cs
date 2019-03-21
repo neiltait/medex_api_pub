@@ -7,23 +7,23 @@ using Microsoft.IdentityModel.Tokens;
 namespace MedicalExaminer.API
 {
     /// <summary>
-    /// Okta JWT Security Token Handler
+    ///     Okta JWT Security Token Handler
     /// </summary>
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public class OktaJwtSecurityTokenHandler : ISecurityTokenValidator
     {
         /// <summary>
-        /// Standard handler.
+        ///     Standard handler.
         /// </summary>
         private readonly ISecurityTokenValidator _tokenHandler;
 
         /// <summary>
-        /// Token service.
+        ///     Token service.
         /// </summary>
         private readonly ITokenService _tokenService;
 
         /// <summary>
-        /// Initialise a new instance of the Okta JWT Security Token Handler
+        ///     Initialise a new instance of the Okta JWT Security Token Handler
         /// </summary>
         /// <param name="tokenService">The Token Service.</param>
         /// <param name="tokenValidator">Token validator.</param>
@@ -33,23 +33,23 @@ namespace MedicalExaminer.API
             _tokenService = tokenService;
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public bool CanValidateToken => true;
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public int MaximumTokenSizeInBytes
         {
             get => TokenValidationParameters.DefaultMaximumTokenSizeInBytes;
             set => throw new NotImplementedException();
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public bool CanReadToken(string securityToken)
         {
             return _tokenHandler.CanReadToken(securityToken);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public ClaimsPrincipal ValidateToken(
             string securityToken,
             TokenValidationParameters validationParameters,
