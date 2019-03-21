@@ -44,7 +44,7 @@ namespace MedicalExaminer.API
     public class Startup
     {
         /// <summary>
-        /// Initialise a new instance of the <see cref="Startup"/> class.
+        /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
         /// <param name="configuration">The Configuration.</param>
         public Startup(IConfiguration configuration)
