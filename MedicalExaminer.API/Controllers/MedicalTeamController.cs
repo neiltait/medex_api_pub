@@ -45,12 +45,12 @@ namespace MedicalExaminer.API.Controllers
         }
         
         /// <summary>
-        ///     Post Medical Team
+        ///     Get Medical Team
         /// </summary>
         /// ///
         /// <param name="examinationId">The ID of the examination that the medical team object is to be posted to.</param>
         /// <returns>A GetExaminationResponse.</returns>
-        [HttpGet("{examinationId}/medical_team/")]
+        [HttpGet("medical_team/")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetMedicalTeamResponse>> GetMedicalTeam(string examinationId)
         {
