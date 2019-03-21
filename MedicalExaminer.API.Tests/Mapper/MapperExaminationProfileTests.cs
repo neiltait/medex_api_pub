@@ -115,7 +115,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             var examination = new Examination
             {
                 ExaminationId = ExaminationId,
-                AltLink = AltLink,
                 AnyImplants = AnyImplants,
                 AnyPersonalEffects = AnyPersonalEffects,
                 ChildPriority = ChildPriority,
@@ -180,7 +179,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             var examination = new Examination
             {
                 ExaminationId = ExaminationId,
-                AltLink = AltLink,
                 AnyImplants = AnyImplants,
                 AnyPersonalEffects = AnyPersonalEffects,
                 ChildPriority = ChildPriority,
