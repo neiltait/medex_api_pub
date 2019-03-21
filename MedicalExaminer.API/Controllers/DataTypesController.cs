@@ -10,7 +10,8 @@ namespace MedicalExaminer.API.Controllers
     /// <summary>
     /// Data Type Controller required for providing lists of types.
     /// </summary>
-    [Route("datatypes")]
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/data_types")]
     [ApiController]
     public class DataTypesController : BaseController
     {

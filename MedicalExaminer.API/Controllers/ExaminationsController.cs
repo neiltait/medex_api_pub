@@ -18,7 +18,8 @@ namespace MedicalExaminer.API.Controllers
     /// <summary>
     ///     Examinations Controller
     /// </summary>
-    [Route("examinations")]
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/examinations")]
     [ApiController]
     [Authorize]
     public class ExaminationsController : BaseController
@@ -124,7 +125,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationId">The ID of the examination that the medical team object is to be posted to.</param>
         /// <param name="postMedicalTeamRequest">The PostMedicalTeamRequest.</param>
         /// <returns>A PutExaminationResponse.</returns>
-        [HttpPost("/MedicalTeam/{examinationId}")]
+        [HttpPost("{examinationId}/medical_team/")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId,
             [FromBody]
@@ -165,7 +166,7 @@ namespace MedicalExaminer.API.Controllers
             return Ok(res);
         }
 
-        [HttpGet("/MedicalTeam/{examinationId}")]
+        [HttpGet("{examinationId}/medical_team/")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetMedicalTeamResponse>> GetMedicalTeam(string examinationId)
         {

@@ -20,7 +20,8 @@ namespace MedicalExaminer.API.Controllers
     /// <summary>
     ///     Accounts controller, handler for authentication and token verification.
     /// </summary>
-    [Route("auth")]
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/auth")]
     [ApiController]
     [Authorize]
     public class AccountController : BaseController
@@ -67,7 +68,7 @@ namespace MedicalExaminer.API.Controllers
         ///     Validate Session.
         /// </summary>
         /// <returns>Details about the current user.</returns>
-        [HttpPost("validate-session")]
+        [HttpPost("validate_session")]
         public async Task<PostValidateSessionResponse> ValidateSession()
         {
             // Look up their email in the claims

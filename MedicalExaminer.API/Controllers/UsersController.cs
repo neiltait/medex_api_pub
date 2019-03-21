@@ -13,11 +13,12 @@ using Microsoft.Azure.Documents;
 
 namespace MedicalExaminer.API.Controllers
 {
-    /// <inheritdoc />
     /// <summary>
     ///     Users Controller
     /// </summary>
-    [Route("users")]
+    /// <inheritdoc />
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/users")]
     [ApiController]
     [Authorize]
     public class UsersController : BaseController
@@ -70,7 +71,6 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="meUserId">The User Identifier.</param>
         /// <returns>A GetUserResponse.</returns>
-        // GET api/users/{user_id}
         [HttpGet("{meUserId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetUserResponse>> GetUser(string meUserId)
@@ -93,15 +93,13 @@ namespace MedicalExaminer.API.Controllers
             {
                 return NotFound(new GetUserResponse());
             }
-
-            return BadRequest(new GetUserResponse());
         }
 
         /// <summary>
         ///     Get all Users that are in the role of Medical Examiner.
         /// </summary>
         /// <returns>A GetUsersResponse.</returns>
-        [HttpGet("/MedicalExaminers")]
+        [HttpGet("medical_examiners")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetUsersResponse>> GetMedicalExaminers()
         {
@@ -127,7 +125,7 @@ namespace MedicalExaminer.API.Controllers
         ///     Get all Users that are in the role of Medical Examiner Officer.
         /// </summary>
         /// <returns>A GetUsersResponse.</returns>
-        [HttpGet("/MedicalExaminerOfficers")]
+        [HttpGet("medical_examiner_officers")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetUsersResponse>> GetMedicalExaminerOfficers()
         {
@@ -182,12 +180,11 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        ///     Create a new User.
+        /// Update a new User.
         /// </summary>
         /// <param name="putUser">The PutUserRequest.</param>
         /// <returns>A PutUserResponse.</returns>
-        // POST api/users
-        [HttpPut("{Id}")]
+        [HttpPut("{meUserId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutUserResponse>> UpdateUser([FromBody]
             PutUserRequest putUser)

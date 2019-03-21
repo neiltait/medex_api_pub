@@ -12,9 +12,10 @@ namespace MedicalExaminer.API.Controllers
 {
     /// <inheritdoc />
     /// <summary>
-    ///     Locations Controller
+    ///     Locations Controller.
     /// </summary>
-    [Route("locations")]
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/locations")]
     [ApiController]
     public class LocationsController : BaseController
     {
@@ -51,11 +52,11 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        ///     Get Location by ID
+        ///     Get Location by ID.
         /// </summary>
         /// <param name="locationId">The Location Id.</param>
         /// <returns>A GetLocationsResponse.</returns>
-        [HttpGet("/{locationId}")]
+        [HttpGet("{locationId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationResponse>> GetLocation(string locationId)
         {
@@ -76,7 +77,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="locationName">The value to be used in the selection of matching names.</param>
         /// <returns>A list of locations whose names contain locationName.</returns>
-        [HttpGet("/name/{locationName}")]
+        [HttpGet("name/{locationName}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationsResponse>> GetLocationsByName(string locationName)
         {
@@ -89,11 +90,11 @@ namespace MedicalExaminer.API.Controllers
 
         /// <summary>
         ///     Get Locations as a list of <see cref="LocationItem" /> where locations are under the location whose locationId =
-        ///     parentId
+        ///     parentId.
         /// </summary>
-        /// <param name="parentId">The locationId of the location whose children are to be returned as list</param>
-        /// <returns>list of locations that are under the location whose location = parentId</returns>
-        [HttpGet("/parentId/{parentId}")]
+        /// <param name="parentId">The locationId of the location whose children are to be returned as list.</param>
+        /// <returns>list of locations that are under the location whose location = parentId.</returns>
+        [HttpGet("parentId/{parentId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationsResponse>> GetLocationsByParentId(string parentId)
         {
