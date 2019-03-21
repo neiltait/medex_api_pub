@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
-using MedicalExaminer.API.Models.v1.CaseBreakdownOther;
+using MedicalExaminer.API.Models.v1.CaseBreakdown;
+using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
@@ -14,7 +15,6 @@ using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -23,24 +23,45 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class OtherEventNoteController : BaseController
     {
-        private IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, CaseEvent> _otherCaseEventRetrievalService;
+        private IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, EventNote> _otherCaseEventRetrievalService;
 
-        private IAsyncQueryHandler<CreateOtherCaseEventQuery, CaseEvent> _otherCaseEventCreationService;
+        private IAsyncQueryHandler<CreateOtherEventQuery, string> _otherCaseEventCreationService;
 
 
         public OtherEventNoteController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, CaseEvent> otherCaseEventRetrievalService,
-            IAsyncQueryHandler<CreateOtherCaseEventQuery, CaseEvent> otherCaseEventCreationService)
+            IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, EventNote> otherCaseEventRetrievalService,
+            IAsyncQueryHandler<CreateOtherEventQuery, string> otherCaseEventCreationService)
             : base(logger, mapper)
         {
             _otherCaseEventRetrievalService = otherCaseEventRetrievalService;
             _otherCaseEventCreationService = otherCaseEventCreationService;
         }
 
+        [HttpPost]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutOtherEventResponse>> CreateNewOtherEventNote(
+            [FromBody]
+            PutOtherEventResponse postNewOtherEventNoteRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutOtherEventResponse());
+            }
+
+            var otherEventNote = Mapper.Map<EventNote>(postNewOtherEventNoteRequest);
+            var result = await _otherCaseEventCreationService.Handle(new CreateOtherEventQuery(otherEventNote));
+            var res = new PutOtherEventResponse
+            {
+                EventId = result
+            };
+
+            return Ok(res);
+        }
+
         [HttpGet]
-        [Route("{caseId}/casebreakdownother")]
+        [Route("{caseId}/otherevent")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetOtherEventResponse>> GetOtherEvent(string caseId)
         {

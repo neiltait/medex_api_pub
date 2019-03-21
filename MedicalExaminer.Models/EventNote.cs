@@ -2,7 +2,7 @@
 
 namespace MedicalExaminer.Models
 {
-    public class CaseEvent
+    public class EventNote
     {
         public string EventId { get; set; }
 

@@ -13,6 +13,7 @@ using MedicalExaminer.Common;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Common.Queries.User;
@@ -149,6 +150,7 @@ namespace MedicalExaminer.API
                 Configuration["CosmosDB:DatabaseId"]));
 
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, string>, CreateExaminationService>();
+            services.AddScoped<IAsyncQueryHandler<CreateOtherEventQuery, string>, CreateOtherEventService>();
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services
