@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
@@ -35,11 +32,11 @@ namespace MedicalExaminer.Common.Services.Examination
             switch (param.FilterOrderBy)
             {
                 case ExaminationsOrderBy.Urgency:
-                    return _databaseAccess.GetItemsAsync<Models.Examination>(_connectionSettings, predicate);
+                    return _databaseAccess.GetItemsAsync(_connectionSettings, predicate);
                 case ExaminationsOrderBy.CaseCreated:
-                    return _databaseAccess.GetItemsAsync<Models.Examination>(_connectionSettings, predicate);
+                    return _databaseAccess.GetItemsAsync(_connectionSettings, predicate);
                 case null:
-                    return _databaseAccess.GetItemsAsync<Models.Examination>(_connectionSettings, predicate);
+                    return _databaseAccess.GetItemsAsync(_connectionSettings, predicate);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(param.FilterOrderBy));
             }

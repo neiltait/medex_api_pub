@@ -104,7 +104,7 @@ namespace MedicalExaminer.Common.Database
             return results;
         }
 
-        public int GetCountAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
+        public async Task<int> GetCountAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
         {
             var _client = CreateClient(connectionSettings);
             var query = _client.CreateDocumentQuery<T>(

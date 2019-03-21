@@ -8,7 +8,7 @@ namespace MedicalExaminer.Models.Enums
     {
         AdmissionNotesHaveBeenAdded,
         ReadyForMEScrutiny,
-        Assigned,
+        Unassigned,
         HaveBeenScrutinisedByME,
         PendingAdmissionNotes,
         PendingDiscussionWithQAP,

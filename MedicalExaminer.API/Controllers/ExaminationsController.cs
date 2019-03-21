@@ -66,22 +66,23 @@ namespace MedicalExaminer.API.Controllers
     {
         var examinationsQuery = new ExaminationsRetrievalQuery(filter.CaseStatus, filter.LocationId,
         filter.OrderBy, filter.PageNumber, filter.PageSize, filter.UserId, filter.OpenCases);
-        var examinations = await _examinationsRetrievalService.Handle(examinationsQuery);
+        var examinations = _examinationsRetrievalService.Handle(examinationsQuery);
 
         var dashboardOverview = _examinationsDashboardService.Handle(examinationsQuery);
 
         return Ok(new GetExaminationsResponse
-            
         {
+            CountOfTotalCases = dashboardOverview.Result.TotalCases,
+            CountOfUrgentCases = dashboardOverview.Result.UrgentCases,
             CountOfCasesAdmissionNotesHaveBeenAdded = dashboardOverview.Result.AdmissionNotesHaveBeenAdded,
-            CountOfCasesAssigned = dashboardOverview.Result.Assigned,
+            CountOfCasesUnassigned = dashboardOverview.Result.Unassigned,
             CountOfCasesHaveBeenScrutinisedByME = dashboardOverview.Result.HaveBeenScrutinisedByME,
             CountOfCasesHaveFinalCaseOutstandingOutcomes = dashboardOverview.Result.HaveFinalCaseOutstandingOutcomes,
             CountOfCasesPendingAdmissionNotes = dashboardOverview.Result.PendingAdmissionNotes,
             CountOfCasesPendingDiscussionWithQAP = dashboardOverview.Result.PendingDiscussionWithQAP,
             CountOfCasesPendingDiscussionWithRepresentative = dashboardOverview.Result.PendingDiscussionWithRepresentative,
             CountOfCasesReadyForMEScrutiny = dashboardOverview.Result.ReadyForMEScrutiny,
-            Examinations = examinations.Select(e => Mapper.Map<PatientCardItem>(e)).ToList()
+            Examinations = examinations.Result.Select(e => Mapper.Map<PatientCardItem>(e)).ToList()
         });
     }
 

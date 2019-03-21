@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MedicalExaminer.Models
+﻿namespace MedicalExaminer.Models
 {
     public class ExaminationsOverview
     {
+        public int TotalCases { get; set; }
+        public int UrgentCases { get; set; }
         public int AdmissionNotesHaveBeenAdded { get; set; }
 
         public int ReadyForMEScrutiny { get; set; }
 
-        public int Assigned { get; set; }
+        public int Unassigned { get; set; }
 
         public int HaveBeenScrutinisedByME { get; set; }
 

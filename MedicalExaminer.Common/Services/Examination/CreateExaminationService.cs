@@ -26,6 +26,7 @@ namespace MedicalExaminer.Common.Services.Examination
             try
             {
                 param.Examination.id = Guid.NewGuid().ToString();
+                param.Examination.Assigned = true;
                 param.Examination.UrgencyScore = Calculator.CalculateUrgencyScore(param.Examination);
                 return await _databaseAccess.CreateItemAsync(_connectionSettings, 
                     param.Examination, false);

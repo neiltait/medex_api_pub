@@ -247,11 +247,11 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "case_officer")]
         public string CaseOfficer { get; set; }
 
-        public Examination()
-        {
-            Completed = false;
-            Assigned = true;
-        }
+        //public Examination()
+        //{
+        //    Completed = false;
+        //    Assigned = true;
+        //}
 
     }
 }

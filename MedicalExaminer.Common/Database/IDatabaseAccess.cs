@@ -24,7 +24,7 @@ namespace MedicalExaminer.Common.Database
             Expression<Func<T, bool>> predicate, Expression<Func<T, TKey>> orderBy);
 
 
-        int GetCountAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate);
+        Task<int> GetCountAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate);
 
     }
 }

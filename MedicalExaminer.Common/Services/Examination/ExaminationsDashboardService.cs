@@ -20,40 +20,50 @@ namespace MedicalExaminer.Common.Services.Examination
             _connectionSettings = connectionSettings;
         }
 
-        public Task<ExaminationsOverview> Handle(ExaminationsRetrievalQuery param)
+        public async Task<ExaminationsOverview> Handle(ExaminationsRetrievalQuery param)
         {
             var baseQuery = GetBaseQuery(param);
 
             var countOfAdmissionNotesHaveBeenAdded = GetCount(baseQuery, CaseStatus.AdmissionNotesHaveBeenAdded);
-            var countOfAssigned = GetCount(baseQuery, CaseStatus.Assigned);
+            var countOfAssigned = GetCount(baseQuery, CaseStatus.Unassigned);
             var countOfHaveBeenScrutinisedByME = GetCount(baseQuery, CaseStatus.HaveBeenScrutinisedByME);
             var countOfHaveFinalCaseOutstandingOutcomes = GetCount(baseQuery, CaseStatus.HaveFinalCaseOutstandingOutcomes);
             var countOfPendingAdmissionNotes = GetCount(baseQuery, CaseStatus.PendingAdmissionNotes);
             var countOfPendingDiscussionWithQAP = GetCount(baseQuery, CaseStatus.PendingDiscussionWithQAP);
             var countOfPendingDiscussionWithRepresentative = GetCount(baseQuery, CaseStatus.PendingDiscussionWithRepresentative);
             var countOfReadyForMEScrutiny = GetCount(baseQuery, CaseStatus.ReadyForMEScrutiny);
+            var countOfUrgentCases = GetCount(x => ((x.UrgencyScore > 0) && (x.Completed == false)));
+            var countOfTotalCases = GetCount(x => x.Completed == false);
 
             var overView = new ExaminationsOverview
             {
-                AdmissionNotesHaveBeenAdded = countOfAdmissionNotesHaveBeenAdded,
-                Assigned = countOfAssigned,
-                HaveBeenScrutinisedByME = countOfHaveBeenScrutinisedByME,
-                HaveFinalCaseOutstandingOutcomes = countOfHaveFinalCaseOutstandingOutcomes,
-                PendingAdmissionNotes = countOfPendingAdmissionNotes,
-                PendingDiscussionWithQAP = countOfPendingDiscussionWithQAP,
-                PendingDiscussionWithRepresentative = countOfPendingDiscussionWithRepresentative,
-                ReadyForMEScrutiny = countOfReadyForMEScrutiny
+                AdmissionNotesHaveBeenAdded = countOfAdmissionNotesHaveBeenAdded.Result,
+                Unassigned = countOfAssigned.Result,
+                HaveBeenScrutinisedByME = countOfHaveBeenScrutinisedByME.Result,
+                HaveFinalCaseOutstandingOutcomes = countOfHaveFinalCaseOutstandingOutcomes.Result,
+                PendingAdmissionNotes = countOfPendingAdmissionNotes.Result,
+                PendingDiscussionWithQAP = countOfPendingDiscussionWithQAP.Result,
+                PendingDiscussionWithRepresentative = countOfPendingDiscussionWithRepresentative.Result,
+                ReadyForMEScrutiny = countOfReadyForMEScrutiny.Result,
+                TotalCases = countOfTotalCases.Result,
+                UrgentCases = countOfUrgentCases.Result
             };
 
-            return Task.FromResult(overView);
+            return overView;
         }
 
-        private int GetCount(Expression<Func<Models.Examination, bool>> baseQuery, CaseStatus caseStatus)
+        private async Task<int> GetCount(Expression<Func<Models.Examination, bool>> baseQuery, CaseStatus caseStatus)
         {
             var caseStatusPredicate = GetCaseStatusPredicate(caseStatus);
             var query = baseQuery.And(caseStatusPredicate);
-            var result = _databaseAccess.GetCountAsync(_connectionSettings, query);
+
+            var result = await _databaseAccess.GetCountAsync(_connectionSettings,query);
             return result;
+        }
+
+        private async Task<int> GetCount(Expression<Func<Models.Examination, bool>> query)
+        {
+            return await _databaseAccess.GetCountAsync(_connectionSettings, query);
         }
 
         private Expression<Func<Models.Examination, bool>> GetCaseStatusPredicate(CaseStatus? paramFilterCaseStatus)
@@ -64,8 +74,8 @@ namespace MedicalExaminer.Common.Services.Examination
                     return examination => examination.AdmissionNotesHaveBeenAdded;
                 case CaseStatus.ReadyForMEScrutiny:
                     return examination => examination.ReadyForMEScrutiny;
-                case CaseStatus.Assigned:
-                    return examination => examination.Assigned == true;
+                case CaseStatus.Unassigned:
+                    return examination => examination.Assigned == false;
                 case CaseStatus.HaveBeenScrutinisedByME:
                     return examination => examination.HaveBeenScrutinisedByME;
                 case CaseStatus.PendingAdmissionNotes:
@@ -77,7 +87,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 case CaseStatus.HaveFinalCaseOutstandingOutcomes:
                     return examination => examination.HaveFinalCaseOutstandingOutcomes;
                 case null:
-                    return x => true;
+                    return null;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(paramFilterCaseStatus), paramFilterCaseStatus, null);
             }
@@ -89,23 +99,24 @@ namespace MedicalExaminer.Common.Services.Examination
             Expression<Func<Models.Examination, bool>> meOfficePredicate = GetCaseMEOfficePredicate(param.FilterLocationId);
             Expression<Func<Models.Examination, bool>> userIdPredicate = GetUserIdPredicate(param.FilterUserId);
 
-
-            var predicate = userIdPredicate.And(meOfficePredicate)
+            var predicate = meOfficePredicate
                 .And(openCasePredicate);
+
+            predicate.And(userIdPredicate);
 
             return predicate;
         }
 
         private Expression<Func<Models.Examination, bool>> GetOpenCasesPredicate(bool paramFilterOpenCases)
         {
-            return examination => examination.Completed == paramFilterOpenCases;
+            return examination => examination.Completed == !paramFilterOpenCases;
         }
         
         private Expression<Func<Models.Examination, bool>> GetCaseMEOfficePredicate(string meOffice)
         {
             if (string.IsNullOrEmpty(meOffice))
             {
-                return examination => true;
+                return null;
             }
             return examination => examination.MedicalExaminerOfficeResponsible == meOffice;
         }
@@ -114,7 +125,7 @@ namespace MedicalExaminer.Common.Services.Examination
         {
             if (string.IsNullOrEmpty(userId))
             {
-                return examination => true;
+                return null;
             }
             return examination => examination.CaseOfficer == userId;
         }

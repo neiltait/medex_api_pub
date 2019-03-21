@@ -9,12 +9,13 @@ namespace MedicalExaminer.API.Models.v1.Examinations
     /// </summary>
     public class GetExaminationsResponse : ResponseBase
     {
-
+        public int CountOfTotalCases { get; set; }
+        public int CountOfUrgentCases { get; set; }
         public int CountOfCasesAdmissionNotesHaveBeenAdded { get; set; }
                
         public int CountOfCasesReadyForMEScrutiny { get; set; }
                
-        public int CountOfCasesAssigned { get; set; }
+        public int CountOfCasesUnassigned { get; set; }
                
         public int CountOfCasesHaveBeenScrutinisedByME { get; set; }
                
