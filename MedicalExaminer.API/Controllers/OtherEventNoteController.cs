@@ -40,6 +40,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpPost]
+        [Route("{caseId}/otherevent")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PostOtherEventResponse>> CreateNewOtherEventNote(string caseId,
             [FromBody]
