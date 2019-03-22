@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
@@ -43,6 +44,23 @@ namespace MedicalExaminer.API.Controllers
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationsResponse>> GetLocations()
+        {
+            // TODO: Only return locations you have access to
+            var locations = await _locationPersistence.GetLocationsAsync();
+            return Ok(new GetLocationsResponse
+            {
+                Locations = locations.Select(e => Mapper.Map<LocationItem>(e)).ToList(),
+            });
+        }
+
+        /// <summary>
+        ///     Get all Locations as a list of <see cref="LocationItem" />.
+        /// </summary>
+        /// <returns>A list of location.</returns>
+        [HttpGet]
+        [Route("/v{api-version:apiVersion}/all_locations")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<GetLocationsResponse>> GetAllLocations()
         {
             var locations = await _locationPersistence.GetLocationsAsync();
             return Ok(new GetLocationsResponse
