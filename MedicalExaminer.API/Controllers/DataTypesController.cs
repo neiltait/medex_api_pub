@@ -26,16 +26,6 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Returns all the data types and the values for mode of disposal.
-        /// </summary>
-        /// <returns>Dictionary of Modes of disposal</returns>
-        [HttpGet("mode_of_disposal")]
-        public ActionResult GetModesOfDisposal()
-        {
-            return Ok(GetDictionary(typeof(ModeOfDisposal)));
-        }
-
-        /// <summary>
         /// Returns all Analysis Entry Type types
         /// </summary>
         /// <returns>Dictionary of Analysis Entry Type</returns>
@@ -54,15 +44,55 @@ namespace MedicalExaminer.API.Controllers
         {
             return Ok(GetDictionary(typeof(CoronerStatus)));
         }
-
+        
         /// <summary>
         /// Returns all Examination Genders
         /// </summary>
         /// <returns>Dictionary of Examination Genders</returns>
-        [HttpGet("examination_gender")]
+        [HttpGet("examination_genders")]
         public ActionResult GetExaminationGenders()
         {
             return Ok(GetDictionary(typeof(ExaminationGender)));
+        }
+        
+        /// <summary>
+        /// Returns all location types
+        /// </summary>
+        /// <returns>List of values for location types</returns>
+        [HttpGet("location_types")]
+        public ActionResult GetLocationTypes()
+        {
+            return Ok(GetDictionary(typeof(LocationType)));
+        }
+   
+        /// <summary>
+        /// Returns all options for the present at death value for a bereaved .
+        /// </summary>
+        /// <returns>List of values for present at death</returns>
+        [HttpGet("present_at_death")]
+        public ActionResult GetPresentAtDeath()
+        {
+            return Ok(GetDictionary(typeof(PresentAtDeath)));
+        }
+            
+        /// <summary>
+        /// Returns all the data types and the values for mode of disposal.
+        /// </summary>
+        /// <returns>Dictionary of Modes of disposal</returns>
+        [HttpGet("mode_of_disposal")]
+        public ActionResult GetModesOfDisposal()
+        {
+            return Ok(GetDictionary(typeof(ModeOfDisposal)));
+        }
+        
+        /// <summary>
+        /// List of user roles
+        /// </summary>
+        /// <returns>List of user roles</returns>
+        [HttpGet("user_roles")]
+        public ActionResult GetUserRoles()
+        {
+            return Ok(GetDictionary(typeof(UserRoles)));
         }
 
         private Dictionary<string, int> GetDictionary(Type enumeratorType)

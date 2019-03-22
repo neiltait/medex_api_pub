@@ -11,7 +11,6 @@ namespace MedicalExaminer.Common.Services.PatientDetails
     {
         private readonly IExaminationConnectionSettings connectionSettings;
         private readonly IDatabaseAccess databaseAccess;
-
         private readonly IMapper mapper;
 
         public PatientDetailsUpdateService(

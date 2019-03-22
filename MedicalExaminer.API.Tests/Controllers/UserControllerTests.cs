@@ -1,11 +1,17 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.API.Tests.Persistence;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
@@ -13,29 +19,35 @@ namespace MedicalExaminer.API.Tests.Controllers
     public class UserControllerTests : ControllerTestsBase<UsersController>
     {
         /// <summary>
-        ///     Initialise a new instance of the Users Controller Tests
+        /// Initializes a new instance of the <see cref="UserControllerTests"/> class.
         /// </summary>
         public UserControllerTests()
         {
-            var mockLogger = new MELoggerMocker();
-            var userPersistence = new UserPersistenceFake();
-            Controller = new UsersController(userPersistence, mockLogger, Mapper);
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
+            var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
+            var examinationsRetrievalQuery =
+                new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
+            
+            Controller = new UsersController(
+                logger.Object,
+                mapper.Object,
+                createExaminationService.Object,
+                examinationRetrievalQuery.Object,
+                examinationsRetrievalQuery.Object);
         }
 
         [Fact]
         public void CreateUser_When_Called_Returns_Expected_Type()
         {
             // Arrange
-            var expectedFirstName = "Bob";
             var expectedEmail = "aaa@bbb.com.co.gov.uk.com";
-            var expectedLastName = "Shmob";
             var expectedUserId = "1";
 
             var expectedRequest = new PostUserRequest
             {
-                FirstName = expectedFirstName,
                 Email = expectedEmail,
-                LastName = expectedLastName
             };
 
             // Act

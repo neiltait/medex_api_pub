@@ -1,16 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
+using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Documents;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -66,10 +69,10 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetExaminationsResponse>> GetExaminations()
         {
-            var ex = await _examinationsRetrievalService.Handle(new ExaminationsRetrievalQuery());
+            var examinations = await _examinationsRetrievalService.Handle(new ExaminationsRetrievalQuery());
             return Ok(new GetExaminationsResponse
             {
-                Examinations = ex.Select(e => Mapper.Map<Examination>(e)).ToList()
+                Examinations = examinations.Select(e => Mapper.Map<Examination>(e)).ToList(),
             });
         }
 
@@ -100,26 +103,36 @@ namespace MedicalExaminer.API.Controllers
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutExaminationResponse>> CreateNewCase(
-            [FromBody]
-            PostNewCaseRequest postNewCaseRequest)
+            [FromBody] PostNewCaseRequest postNewCaseRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new PutExaminationResponse());
             }
 
-            var examination = Mapper.Map<Examination>(postNewCaseRequest);
-            var result = await _examinationCreationService.Handle(new CreateExaminationQuery(examination));
-            var res = new PutExaminationResponse
+            try
             {
-                ExaminationId = result
-            };
+                var examination = Mapper.Map<Examination>(postNewCaseRequest);
+                var result = await _examinationCreationService.Handle(new CreateExaminationQuery(examination));
+                var res = new PutExaminationResponse
+                {
+                    ExaminationId = result
+                };
 
-            return Ok(res);
+                return Ok(res);
+            }
+            catch (DocumentClientException)
+            {
+                return NotFound(new PostUserResponse());
+            }
+            catch (ArgumentException)
+            {
+                return NotFound(new PostUserResponse());
+            }
         }
 
         /// <summary>
-        ///     Post Medical Team
+        ///     Post Medical Team.
         /// </summary>
         /// ///
         /// <param name="examinationId">The ID of the examination that the medical team object is to be posted to.</param>
@@ -127,9 +140,9 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutExaminationResponse.</returns>
         [HttpPost("{examinationId}/medical_team/")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId,
-            [FromBody]
-            PostMedicalTeamRequest postMedicalTeamRequest)
+        public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(
+            string examinationId,
+            [FromBody] PostMedicalTeamRequest postMedicalTeamRequest)
         {
             if (!ModelState.IsValid)
             {

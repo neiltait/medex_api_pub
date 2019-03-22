@@ -8,17 +8,16 @@ using Xunit;
 namespace MedicalExaminer.API.Tests.Mapper
 {
     /// <summary>
-    ///     Mapper Users Tests
+    /// Mapper Users Tests.
     /// </summary>
     public class MapperUsersProfileTests
     {
         /// <summary>
-        ///     Setup.
+        /// Initializes a new instance of the <see cref="MapperUsersProfileTests"/> class.
         /// </summary>
         public MapperUsersProfileTests()
         {
             var config = new MapperConfiguration(cfg => { cfg.AddProfile<UsersProfile>(); });
-
             _mapper = config.CreateMapper();
         }
 
@@ -51,16 +50,16 @@ namespace MedicalExaminer.API.Tests.Mapper
         [Fact]
         public void TestPostUserRequest()
         {
-            var expectedFirstName = "expectedFirstName";
+            var expectedEmail = "testing@methods.co.uk";
 
             var examination = new PostUserRequest
             {
-                FirstName = expectedFirstName
+                Email = expectedEmail
             };
 
             var response = _mapper.Map<MeUser>(examination);
 
-            response.FirstName.Should().Be(expectedFirstName);
+            response.Email.Should().Be(expectedEmail);
         }
 
         /// <summary>

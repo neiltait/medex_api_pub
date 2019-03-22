@@ -10,6 +10,9 @@ using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Tests.Persistence;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -135,10 +138,20 @@ namespace MedicalExaminer.API.Tests.Controllers
     {
         public ControllerActionFilterTests()
         {
-            _mapper = new Mock<IMapper>();
-            _mockLogger = new MELoggerMocker();
-            var userPersistence = new UserPersistenceFake();
-            _controller = new UsersController(userPersistence, _mockLogger, _mapper.Object);
+            
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
+            var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
+            var examinationsRetrievalQuery =
+                new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
+            
+            _controller = new UsersController(
+                logger.Object,
+                mapper.Object,
+                createExaminationService.Object,
+                examinationRetrievalQuery.Object,
+                examinationsRetrievalQuery.Object);
         }
 
         private readonly MELoggerMocker _mockLogger;
