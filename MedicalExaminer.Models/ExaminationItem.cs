@@ -15,6 +15,12 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "Id")]
         public string Id { get; set; }
 
+        [Required]
+        [DataType(DataType.Text)]
+        [JsonProperty(PropertyName = "urgency_score")]
+
+        public int UrgencyScore { get; set; }
+
         /// <summary>
         ///  Where the death occured
         /// </summary>

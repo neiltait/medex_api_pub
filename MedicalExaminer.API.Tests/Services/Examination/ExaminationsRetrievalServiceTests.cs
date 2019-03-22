@@ -65,11 +65,12 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             IEnumerable<MedicalExaminer.Models.Examination> examinations = null;
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
-            var query = new Mock<ExaminationsRetrievalQuery>().Object;
+
+            var query = GenerateExaminationsRetrievalQuery();
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.GetItemsAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
-                    x=>true))
-                .Returns(Task.FromResult(examinations)).Verifiable();
+            dbAccess.Setup(db => db.GetItemsAsync(connectionSettings.Object,
+                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+                .Returns(Task.FromResult(default(IEnumerable<MedicalExaminer.Models.Examination>))).Verifiable();
             var sut = new ExaminationsRetrievalService(dbAccess.Object, connectionSettings.Object, examinationQueryBuilder.Object);
             var expected = default(IEnumerable<MedicalExaminer.Models.Examination>);
 
@@ -77,8 +78,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var result = sut.Handle(query);
 
             // Assert
-            dbAccess.Verify(db => db.GetItemsAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object, 
-                x=> true), Times.Once);
+            dbAccess.Verify(db => db.GetItemsAsync(connectionSettings.Object,
+                It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()), Times.Once);
             Assert.Equal(expected, result.Result);
         }
 
@@ -103,15 +104,9 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
 
-            var query = new ExaminationsRetrievalQuery(CaseStatus.AdmissionNotesHaveBeenAdded,
-                null,
-                null,
-                1,
-                20,
-                null,
-                true);
+            var query = GenerateExaminationsRetrievalQuery();
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.GetItemsAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object, 
+            dbAccess.Setup(db => db.GetItemsAsync(connectionSettings.Object, 
                     It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
                 .Returns(Task.FromResult(examinations)).Verifiable();
             var sut = new ExaminationsRetrievalService(dbAccess.Object, connectionSettings.Object, examinationQueryBuilder.Object);
@@ -120,45 +115,51 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var result = sut.Handle(query);
 
             // Assert
-            dbAccess.Verify(db => db.GetItemsAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
+            dbAccess.Verify(db => db.GetItemsAsync(connectionSettings.Object,
                 It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()), Times.Once);
             
             Assert.Equal(1, result.Result.Count());
-            //Assert.Equal(expected, result.Result);
+
+        }
+
+        private ExaminationsRetrievalQuery GenerateExaminationsRetrievalQuery()
+        {
+            return new Mock<ExaminationsRetrievalQuery>(new object[]{ CaseStatus.Unassigned,
+                "filterLocationId", ExaminationsOrderBy.Urgency, 0, 0, "filterUserId", true }).Object;
         }
 
         private IEnumerable<MedicalExaminer.Models.Examination> GenerateExaminations()
         {
-            var examination1 = new MedicalExaminer.Models.Examination()
+            var examination1 = new MedicalExaminer.Models.Examination
             {
-                id = "a",
+                Id = "a",
                 TimeOfDeath = TimeOfDeath,
                 UrgencyScore = UrgencyScore,
                 CaseCreated = CaseCreated,
                 HaveBeenScrutinisedByME = false,
                 AdmissionNotesHaveBeenAdded = false,
                 ReadyForMEScrutiny = false,
-                Assigned = false,
+                Unassigned = false,
                 HaveFinalCaseOutstandingOutcomes = false,
                 PendingAdmissionNotes = false,
                 PendingDiscussionWithQAP = false,
-                PendingDiscussionWithRepresentative = false,
+                PendingDiscussionWithRepresentative = false
             };
 
-            var examination2 = new MedicalExaminer.Models.Examination()
+            var examination2 = new MedicalExaminer.Models.Examination
             {
-                id = "b",
+                Id = "b",
                 TimeOfDeath = TimeOfDeath,
                 UrgencyScore = UrgencyScore,
                 CaseCreated = CaseCreated,
                 HaveBeenScrutinisedByME = true,
                 AdmissionNotesHaveBeenAdded = true,
                 ReadyForMEScrutiny = true,
-                Assigned = true,
+                Unassigned = true,
                 HaveFinalCaseOutstandingOutcomes = true,
                 PendingAdmissionNotes = true,
                 PendingDiscussionWithQAP = true,
-                PendingDiscussionWithRepresentative = true,
+                PendingDiscussionWithRepresentative = true
             };
 
             return new []{ examination1, examination2};

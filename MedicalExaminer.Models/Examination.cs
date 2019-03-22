@@ -8,7 +8,7 @@ using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace MedicalExaminer.Models
 {
-    public class Examination : Resource,  IExamination
+    public class Examination : Record,  IExamination
     {
         [JsonProperty(PropertyName = "urgency_score")]
         public int UrgencyScore { get; set; }
@@ -38,7 +38,7 @@ namespace MedicalExaminer.Models
         [Required]
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "id")]
-        public string id { get; set; }
+        public string Id { get; set; }
 
         [JsonProperty(PropertyName = "time_of_death")]
         [Required]
@@ -226,8 +226,8 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "ready_for_me_scrutiny")]
         public bool ReadyForMEScrutiny { get; set; }
 
-        [JsonProperty(PropertyName = "assigned")]
-        public bool Assigned { get; set; }
+        [JsonProperty(PropertyName = "unassigned")]
+        public bool Unassigned { get; set; }
 
         [JsonProperty(PropertyName = "have_been_scrutinised_by_me")]
         public bool HaveBeenScrutinisedByME { get; set; }

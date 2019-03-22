@@ -11,7 +11,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// The location id to get the examinations for
         /// </summary>
-        [ValidMedicalExaminerOffice]
+        [ValidMedicalExaminerOfficeNullAllowed]
         public string LocationId { get; set; }
 
         /// <summary>

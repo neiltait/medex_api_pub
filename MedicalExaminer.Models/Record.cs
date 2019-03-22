@@ -5,7 +5,7 @@ using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace MedicalExaminer.Models
 {
-    public abstract class Record : Document
+    public abstract class Record
     {
         [Required]
         [Display(Name = "modified_by")]

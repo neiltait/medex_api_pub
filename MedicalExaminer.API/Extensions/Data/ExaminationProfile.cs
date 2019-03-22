@@ -16,17 +16,60 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public ExaminationProfile()
         {
-            CreateMap<Examination, GetExaminationResponse>();
+            CreateMap<Examination, GetExaminationResponse>()
+                .ForMember(getExaminationResponse => getExaminationResponse.Errors, opt => opt.Ignore());
             CreateMap<Examination, ExaminationItem>();
-            CreateMap<PostNewCaseRequest, Examination>();
-            CreateMap<Examination, GetPatientDetailsResponse>();
+            CreateMap<PostNewCaseRequest, Examination>()
+                .ForMember(examination => examination.UrgencyScore, opt => opt.Ignore())
+                .ForMember(examination => examination.Id, opt => opt.Ignore())
+                .ForMember(examination => examination.HouseNameNumber, opt => opt.Ignore())
+                .ForMember(examination => examination.Street, opt => opt.Ignore())
+                .ForMember(examination => examination.Town, opt => opt.Ignore())
+                .ForMember(examination => examination.County, opt => opt.Ignore())
+                .ForMember(examination => examination.Postcode, opt => opt.Ignore())
+                .ForMember(examination => examination.Country, opt => opt.Ignore())
+                .ForMember(examination => examination.LastOccupation, opt => opt.Ignore())
+                .ForMember(examination => examination.OrganisationCareBeforeDeathLocationId, opt => opt.Ignore())
+                .ForMember(examination => examination.ModeOfDisposal, opt => opt.Ignore())
+                .ForMember(examination => examination.FuneralDirectors, opt => opt.Ignore())
+                .ForMember(examination => examination.AnyPersonalEffects, opt => opt.Ignore())
+                .ForMember(examination => examination.PersonalEffectDetails, opt => opt.Ignore())
+                .ForMember(examination => examination.LastAdmission, opt => opt.Ignore())
+                .ForMember(examination => examination.CaseCreated, opt => opt.Ignore())
+                .ForMember(examination => examination.CulturalPriority, opt => opt.Ignore())
+                .ForMember(examination => examination.MedicalTeam, opt => opt.Ignore())
+                .ForMember(examination => examination.FaithPriority, opt => opt.Ignore())
+                .ForMember(examination => examination.ChildPriority, opt => opt.Ignore())
+                .ForMember(examination => examination.CoronerPriority, opt => opt.Ignore())
+                .ForMember(examination => examination.OtherPriority, opt => opt.Ignore())
+                .ForMember(examination => examination.PriorityDetails, opt => opt.Ignore())
+                .ForMember(examination => examination.Completed, opt => opt.Ignore())
+                .ForMember(examination => examination.CoronerStatus, opt => opt.Ignore())
+                .ForMember(examination => examination.AnyImplants, opt => opt.Ignore())
+                .ForMember(examination => examination.ImplantDetails, opt => opt.Ignore())
+                .ForMember(examination => examination.Representatives, opt => opt.Ignore())
+                .ForMember(examination => examination.AdmissionNotesHaveBeenAdded, opt => opt.Ignore())
+                .ForMember(examination => examination.ReadyForMEScrutiny, opt => opt.Ignore())
+                .ForMember(examination => examination.Unassigned, opt => opt.Ignore())
+                .ForMember(examination => examination.HaveBeenScrutinisedByME, opt => opt.Ignore())
+                .ForMember(examination => examination.PendingAdmissionNotes, opt => opt.Ignore())
+                .ForMember(examination => examination.PendingDiscussionWithQAP, opt => opt.Ignore())
+                .ForMember(examination => examination.PendingDiscussionWithRepresentative, opt => opt.Ignore())
+                .ForMember(examination => examination.HaveFinalCaseOutstandingOutcomes, opt => opt.Ignore())
+                .ForMember(examination => examination.CaseOfficer, opt => opt.Ignore())
+                .ForMember(examination => examination.Id, opt => opt.Ignore())
+                .ForMember(examination => examination.LastModifiedBy, opt => opt.Ignore())
+                .ForMember(examination => examination.ModifiedAt, opt => opt.Ignore())
+                .ForMember(examination => examination.CreatedAt, opt => opt.Ignore())
+                .ForMember(examination => examination.DeletedAt, opt => opt.Ignore());
+
+            CreateMap<Examination, GetPatientDetailsResponse>()
+                .ForMember(getPatientDetailsResponse => getPatientDetailsResponse.Errors, opt => opt.Ignore());
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(patientCard => patientCard.AppointmentDate,
                     examination => examination.MapFrom(new AppointmentDateResolver(new AppointmentFinder())))
                 .ForMember(patientCard => patientCard.AppointmentTime,
                     examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())));
-
-
         }
     }
 

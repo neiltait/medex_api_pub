@@ -13,21 +13,15 @@ namespace MedicalExaminer.Common.Database
 {
     public class DatabaseAccess : IDatabaseAccess
     {
-        private DocumentClient CreateClient(IConnectionSettings connectionSettings)
+        private readonly IDocumentClientFactory _documentClientFactory;
+        public DatabaseAccess(IDocumentClientFactory documentClientFactory)
         {
-            var Client = new DocumentClient(connectionSettings.EndPointUri, connectionSettings.PrimaryKey);
-
-            Client.CreateDatabaseIfNotExistsAsync(new Microsoft.Azure.Documents.Database { Id = connectionSettings.DatabaseId });
-            var databaseUri = UriFactory.CreateDatabaseUri(connectionSettings.DatabaseId);
-
-            Client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection { Id = connectionSettings.Collection });
-
-            return Client;
+            _documentClientFactory = documentClientFactory;
         }
 
         public async Task<T> CreateItemAsync<T>(IConnectionSettings connectionSettings, T item, bool disableAutomaticIdGeneration = false)
         {
-            var _client = CreateClient(connectionSettings);
+            var _client = _documentClientFactory.CreateClient(connectionSettings);
             var resourceResponse = await _client.CreateDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, 
                     connectionSettings.Collection), item);
@@ -38,13 +32,20 @@ namespace MedicalExaminer.Common.Database
         {
             try
             {
-                var _client = CreateClient(connectionSettings);
-                var query = _client.CreateDocumentQuery<T>(
-                        UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
-                            connectionSettings.Collection),
-                        new FeedOptions {MaxItemCount = -1})
-                    .Where(predicate)
-                    .AsDocumentQuery();
+                var _client = _documentClientFactory.CreateClient(connectionSettings);
+                var feedOptions = new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true };
+                var queryable = _client.CreateDocumentQuery<T>(connectionSettings.EndPointUri, feedOptions);
+                IQueryable<T> filter = queryable.Where(predicate);
+                var queriable = filter.AsQueryable();
+                IDocumentQuery<T> query = queriable.AsDocumentQuery();
+
+                //var _client = _documentClientFactory.CreateClient(connectionSettings);
+                //var query = _client.CreateDocumentQuery<T>(
+                //        UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
+                //            connectionSettings.Collection),
+                //        new FeedOptions {MaxItemCount = -1})
+                //    .Where(predicate)
+                //    .AsDocumentQuery();
 
                 var results = new List<T>();
                 while (query.HasMoreResults)
@@ -67,7 +68,7 @@ namespace MedicalExaminer.Common.Database
 
         public async Task<IEnumerable<T>> GetItemsAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
         {
-            var _client = CreateClient(connectionSettings);
+            var _client = _documentClientFactory.CreateClient(connectionSettings);
             var query = _client.CreateDocumentQuery<T>(
                     UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
                     new FeedOptions { MaxItemCount = -1 })
@@ -87,7 +88,7 @@ namespace MedicalExaminer.Common.Database
         public async Task<IEnumerable<T>> GetItemsAsync<T, TKey>(IConnectionSettings connectionSettings, 
             Expression<Func<T, bool>> predicate, Expression<Func<T, TKey>> orderBy)
         {
-            var _client = CreateClient(connectionSettings);
+            var _client = _documentClientFactory.CreateClient(connectionSettings);
             var query = _client.CreateDocumentQuery<T>(
                     UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
                     new FeedOptions { MaxItemCount = -1 })
@@ -106,7 +107,7 @@ namespace MedicalExaminer.Common.Database
 
         public async Task<int> GetCountAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
         {
-            var _client = CreateClient(connectionSettings);
+            var _client = _documentClientFactory.CreateClient(connectionSettings);
             var query = _client.CreateDocumentQuery<T>(
                     UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
                         connectionSettings.Collection),
@@ -118,7 +119,7 @@ namespace MedicalExaminer.Common.Database
 
         public async Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item)
         {
-            var client = CreateClient(connectionSettings);
+            var client = _documentClientFactory.CreateClient(connectionSettings);
             var updateItemAsync = await client.UpsertDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
                 item);

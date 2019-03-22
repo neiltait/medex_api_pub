@@ -123,7 +123,7 @@ namespace MedicalExaminer.API.Controllers
             var result =await _examinationCreationService.Handle(new CreateExaminationQuery(examination));
             var res = new PutExaminationResponse()
             {
-                ExaminationId = result.id
+                ExaminationId = result.Id
             };
 
             return Ok(res);

@@ -26,13 +26,10 @@ namespace MedicalExaminer.Common.Queries
 
 
 
-        public static Expression ReplaceParameters(Dictionary<ParameterExpression, ParameterExpression> map, Expression exp)
+        public static Expression ReplaceParameters(Dictionary<ParameterExpression, ParameterExpression> map,
+            Expression exp)
         {
-
-
             return new ParameterRebinder(map).Visit(exp);
-
-
         }
 
 

@@ -6,6 +6,21 @@ namespace MedicalExaminer.Common.ConnectionSettings
     {
         public ExaminationConnectionSettings(Uri endPointUri, string primaryKey, string databaseId)
         {
+            if(endPointUri == null)
+            {
+                throw new ArgumentNullException(nameof(endPointUri));
+            }
+
+            if (string.IsNullOrEmpty(primaryKey))
+            {
+                throw new ArgumentNullException(nameof(primaryKey));
+            }
+
+            if (string.IsNullOrEmpty(databaseId))
+            {
+                throw new ArgumentNullException(nameof(databaseId));
+            }
+
             EndPointUri = endPointUri;
             PrimaryKey = primaryKey;
             DatabaseId = databaseId;

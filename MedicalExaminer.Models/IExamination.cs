@@ -11,7 +11,7 @@ namespace MedicalExaminer.Models
         string HospitalNumber_3 { get; set; }
         string MedicalExaminerOfficeResponsible { get; set; }
         string GenderDetails { get; set; }
-        string id { get; set; }
+        string Id { get; set; }
         TimeSpan? TimeOfDeath { get; set; }
         string GivenNames { get; set; }
         string Surname { get; set; }

@@ -134,6 +134,7 @@ namespace MedicalExaminer.API
             });
 
             services.AddScoped<IMELogger, MELogger>();
+            services.AddScoped<IDocumentClientFactory, DocumentClientFactory>();
             services.AddScoped<IDatabaseAccess, DatabaseAccess>();
             services.AddScoped<ILocationConnectionSettings>(s => new LocationConnectionSettings(
                 new Uri(Configuration["CosmosDB:URL"]),

@@ -22,6 +22,11 @@ namespace MedicalExaminer.Common.Services.Examination
 
         public async Task<ExaminationsOverview> Handle(ExaminationsRetrievalQuery param)
         {
+            if (param == null)
+            {
+                throw new ArgumentNullException(nameof(param));
+            }
+
             var baseQuery = GetBaseQuery(param);
 
             var countOfAdmissionNotesHaveBeenAdded = GetCount(baseQuery, CaseStatus.AdmissionNotesHaveBeenAdded);
@@ -32,8 +37,8 @@ namespace MedicalExaminer.Common.Services.Examination
             var countOfPendingDiscussionWithQAP = GetCount(baseQuery, CaseStatus.PendingDiscussionWithQAP);
             var countOfPendingDiscussionWithRepresentative = GetCount(baseQuery, CaseStatus.PendingDiscussionWithRepresentative);
             var countOfReadyForMEScrutiny = GetCount(baseQuery, CaseStatus.ReadyForMEScrutiny);
-            var countOfUrgentCases = GetCount(x => ((x.UrgencyScore > 0) && (x.Completed == false)));
-            var countOfTotalCases = GetCount(x => x.Completed == false);
+            var countOfUrgentCases = GetCount(baseQuery, x => ((x.UrgencyScore > 0) && (x.Completed == false)));
+            var countOfTotalCases = GetCount(baseQuery);
 
             var overView = new ExaminationsOverview
             {
@@ -66,6 +71,12 @@ namespace MedicalExaminer.Common.Services.Examination
             return await _databaseAccess.GetCountAsync(_connectionSettings, query);
         }
 
+        private async Task<int> GetCount(Expression<Func<Models.Examination, bool>> baseQuery, Expression<Func<Models.Examination, bool>> query)
+        {
+            query.And(baseQuery);
+            return await _databaseAccess.GetCountAsync(_connectionSettings, query);
+        }
+
         private Expression<Func<Models.Examination, bool>> GetCaseStatusPredicate(CaseStatus? paramFilterCaseStatus)
         {
             switch (paramFilterCaseStatus)
@@ -75,7 +86,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 case CaseStatus.ReadyForMEScrutiny:
                     return examination => examination.ReadyForMEScrutiny;
                 case CaseStatus.Unassigned:
-                    return examination => examination.Assigned == false;
+                    return examination => examination.Unassigned == false;
                 case CaseStatus.HaveBeenScrutinisedByME:
                     return examination => examination.HaveBeenScrutinisedByME;
                 case CaseStatus.PendingAdmissionNotes:
@@ -101,9 +112,7 @@ namespace MedicalExaminer.Common.Services.Examination
 
             var predicate = meOfficePredicate
                 .And(openCasePredicate);
-
             predicate.And(userIdPredicate);
-
             return predicate;
         }
 
@@ -129,7 +138,5 @@ namespace MedicalExaminer.Common.Services.Examination
             }
             return examination => examination.CaseOfficer == userId;
         }
-
-        
     }
 }

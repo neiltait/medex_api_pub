@@ -12,6 +12,22 @@ namespace MedicalExaminer.API.Models.v1.Examinations
     public class GetExaminationResponse : ResponseBase
     {
         /// <summary>
+        /// Urgency score based on the priorities and length of time 
+        /// the case has been open
+        /// </summary>
+        public int UrgencyScore { get; set; }
+
+        public bool AnyImplants { get; set; }
+
+        public string ImplantDetails { get; set; }
+
+        public DateTime LastAdmission { get; set; }
+
+        public DateTime CaseCreated { get; set; }
+
+        public string PlaceDeathOccured { get; set; }
+
+        /// <summary>
         /// Has out of hours scrutiny already taken place on this case
         /// </summary>
         public bool OutOfHours { get; set; }
@@ -199,7 +215,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Case status bar: Is the case assigned to a user
         /// </summary>
-        public bool Assigned { get; set; }
+        public bool Unassigned { get; set; }
 
         /// <summary>
         /// Case status bar: Has the case been scrunitised

@@ -70,22 +70,46 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// </summary>
         public DateTime CaseCreatedDate { get; set; }
 
-
+        /// <summary>
+        /// Has the admission notes event been finalised
+        /// </summary>
         public bool AdmissionNotesHaveBeenAdded { get; set; }
 
+        /// <summary>
+        /// Is the case ready for ME Scrutiny
+        /// </summary>
         public bool ReadyForMEScrutiny { get; set; }
 
-        public bool Assigned { get; set; }
+        /// <summary>
+        /// The case does not have anyone assigned to it
+        /// </summary>
+        public bool Unassigned { get; set; }
 
+        /// <summary>
+        /// The case has been scrutinised by the ME
+        /// </summary>
         public bool HaveBeenScrutinisedByME { get; set; }
 
+        /// <summary>
+        /// Awaiting Admission Notes
+        /// </summary>
         public bool PendingAdmissionNotes { get; set; }
 
+        /// <summary>
+        /// Awaiting discussion with the QAP
+        /// </summary>
         public bool PendingDiscussionWithQAP { get; set; }
 
+        /// <summary>
+        /// The case is awaiting discussion with the representative
+        /// </summary>
         public bool PendingDiscussionWithRepresentative { get; set; }
 
+        /// <summary>
+        /// Awaiting the final outcome of the case
+        /// </summary>
         public bool HaveFinalCaseOutstandingOutcomes { get; set; }
+
 
         public string CaseOfficer { get; set; }
 
