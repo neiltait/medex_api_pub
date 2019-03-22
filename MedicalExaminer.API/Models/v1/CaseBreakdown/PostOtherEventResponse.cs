@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
-    public class PutOtherEventResponse : ResponseBase
+    public class PostOtherEventResponse : ResponseBase
     {
         /// <summary>
         ///     The id of the new case

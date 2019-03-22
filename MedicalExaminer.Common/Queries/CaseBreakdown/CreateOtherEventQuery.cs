@@ -7,11 +7,14 @@ namespace MedicalExaminer.Common.Queries.CaseBreakdown
 {
     public class CreateOtherEventQuery : IQuery<string>
     {
-        public Models.EventNote EventNote { get; }
+        public Models.EventOther OtherEvent { get; }
 
-        public CreateOtherEventQuery(Models.EventNote eventNote)
+        public string CaseId { get; }
+
+        public CreateOtherEventQuery(string caseId, EventOther otherEvent)
         {
-            EventNote = eventNote;
+            CaseId = caseId;
+            OtherEvent = otherEvent;
         }
     }
 }

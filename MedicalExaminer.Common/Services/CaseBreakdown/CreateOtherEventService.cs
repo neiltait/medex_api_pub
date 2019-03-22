@@ -27,9 +27,9 @@ namespace MedicalExaminer.Common.Services.Examination
                 throw new ArgumentNullException(nameof(param));
             }
 
-            param.Examination.ExaminationId = Guid.NewGuid().ToString();
-            var result = await _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination, false);
-            return result.ExaminationId;
+            param.OtherEvent.EventId = Guid.NewGuid().ToString();
+            var result = await _databaseAccess.CreateItemAsync(_connectionSettings, param.OtherEvent, false);
+            return result.EventId;
         }
     }
 }

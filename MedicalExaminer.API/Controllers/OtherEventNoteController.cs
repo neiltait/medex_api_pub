@@ -23,36 +23,36 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class OtherEventNoteController : BaseController
     {
-        private IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, EventNote> _otherCaseEventRetrievalService;
+        private IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, EventOther> _otherCaseEventRetrievalService;
 
-        private IAsyncQueryHandler<CreateOtherEventQuery, string> _otherCaseEventCreationService;
+        private IAsyncQueryHandler<CreateOtherEventQuery, string> _otherEventCreationService;
 
 
         public OtherEventNoteController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, EventNote> otherCaseEventRetrievalService,
-            IAsyncQueryHandler<CreateOtherEventQuery, string> otherCaseEventCreationService)
+            IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, EventOther> otherCaseEventRetrievalService,
+            IAsyncQueryHandler<CreateOtherEventQuery, string> otherEventCreationService)
             : base(logger, mapper)
         {
             _otherCaseEventRetrievalService = otherCaseEventRetrievalService;
-            _otherCaseEventCreationService = otherCaseEventCreationService;
+            _otherEventCreationService = otherEventCreationService;
         }
 
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutOtherEventResponse>> CreateNewOtherEventNote(
+        public async Task<ActionResult<PostOtherEventResponse>> CreateNewOtherEventNote(string caseId,
             [FromBody]
-            PutOtherEventResponse postNewOtherEventNoteRequest)
+            PostOtherEventRequest postNewOtherEventNoteRequest)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new PutOtherEventResponse());
+                return BadRequest(new PostOtherEventResponse());
             }
 
-            var otherEventNote = Mapper.Map<EventNote>(postNewOtherEventNoteRequest);
-            var result = await _otherCaseEventCreationService.Handle(new CreateOtherEventQuery(otherEventNote));
-            var res = new PutOtherEventResponse
+            var otherEventNote = Mapper.Map<EventOther>(postNewOtherEventNoteRequest);
+            var result = await _otherEventCreationService.Handle(new CreateOtherEventQuery(caseId, otherEventNote));
+            var res = new PostOtherEventResponse
             {
                 EventId = result
             };

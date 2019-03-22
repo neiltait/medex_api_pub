@@ -4,13 +4,13 @@ using System.Text;
 
 namespace MedicalExaminer.Common.Queries.CaseBreakdown
 {
-    public class OtherCaseEventByCaseIdQuery : IQuery<Models.EventNote>
+    public class OtherCaseEventByCaseIdQuery : IQuery<Models.EventOther>
     {
-        public readonly string EventId;
+        public readonly string CaseId;
 
-        public OtherCaseEventByCaseIdQuery(string eventId)
+        public OtherCaseEventByCaseIdQuery(string caseId)
         {
-            EventId = eventId;
+            CaseId = caseId;
         }
     }
 }
