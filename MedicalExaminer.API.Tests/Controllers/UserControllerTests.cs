@@ -43,7 +43,6 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             // Arrange
             var expectedEmail = "aaa@bbb.com.co.gov.uk.com";
-            var expectedUserId = "1";
 
             var expectedRequest = new PostUserRequest
             {
@@ -56,9 +55,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Assert
             var taskResult = response.Should().BeOfType<Task<ActionResult<PostUserResponse>>>().Subject;
             var okResult = taskResult.Result.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            var returnUser = okResult.Value.Should().BeAssignableTo<PostUserResponse>().Subject;
+            var returnUser = okResult.Should().BeAssignableTo<PostUserResponse>().Subject;
 
-            returnUser.UserId.Should().Be(expectedUserId);
+            returnUser.Email.Should().Be(expectedEmail);
         }
 
         [Fact]

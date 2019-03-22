@@ -6,13 +6,13 @@ namespace MedicalExaminer.Common.Queries.User
 {
     public class UserUpdateQuery : IQuery<MeUser>
     {
-        public UserUpdateQuery(string userId, string userEmail)
+        public UserUpdateQuery(MeUser user)
         {
-            UserId = userId;
-            UserEmail = userEmail;
+            UserId = user.UserId;
+            Email = user.Email;
         }
 
         public string UserId { get; }
-        public string UserEmail { get; }
+        public string Email { get; }
     }
 }

@@ -39,7 +39,7 @@ namespace MedicalExaminer.Common.Services.Examination
                         _connectionSettings,
                         meUser => meUser.UserId == userUpdate.UserId).Result;
 
-            userToUpdate.Email = userUpdate.UserEmail;
+            userToUpdate.Email = userUpdate.Email;
             
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, userToUpdate);
             return result;

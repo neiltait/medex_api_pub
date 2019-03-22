@@ -32,9 +32,9 @@ namespace MedicalExaminer.API.Controllers
         ///     The User Persistence Layer
         /// </summary>
         private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> _userCreationService;
-
         private readonly IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> _userRetrievalByIdService;
         private readonly IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> _usersRetrievalService;
+        private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _usersUpdateService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
@@ -67,7 +67,7 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery());
+                var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery(null));
                 return Ok(new GetUsersResponse
                 {
                     Users = users.Select(u => Mapper.Map<UserItem>(u)),
@@ -213,8 +213,7 @@ namespace MedicalExaminer.API.Controllers
             try
             {
                 var user = Mapper.Map<MeUser>(putUser);
-                var createdUser = await _userCreationService.Handle(new CreateUserQuery(user));
-                var updatedUser = await _userPersistence.UpdateUserAsync(user);
+                var updatedUser = await _usersUpdateService.Handle(new UserUpdateQuery(user));
                 return Ok(Mapper.Map<PutUserResponse>(updatedUser));
             }
             catch (DocumentClientException)

@@ -139,16 +139,16 @@ namespace MedicalExaminer.API.Tests.Controllers
         public ControllerActionFilterTests()
         {
             
-            var logger = new Mock<IMELogger>();
-            var mapper = new Mock<IMapper>();
+            _mockLogger = new MELoggerMocker();
+            _mapper = new Mock<IMapper>();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
             var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
             var examinationsRetrievalQuery =
                 new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
             
             _controller = new UsersController(
-                logger.Object,
-                mapper.Object,
+                _mockLogger,
+                _mapper.Object,
                 createExaminationService.Object,
                 examinationRetrievalQuery.Object,
                 examinationsRetrievalQuery.Object);
