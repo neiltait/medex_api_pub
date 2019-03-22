@@ -173,34 +173,18 @@
                 window.location.href.replace("index.html", "oauth2-redirect.html").split('#')[0];
         }*/
 
+        configObject.url = baseurl + configObject.urls[0].url;
+        configObject.onComplete = function() {
+            if (authToken) {
+                ui.preauthorizeApiKey("Bearer", "Bearer " + authToken);
+            }
+        };
+        configObject.plugins = [
+            SwaggerUIBundle.plugins.DownloadUrl
+        ];
+
         // Build a system
-        const ui = SwaggerUIBundle({
-            url: baseurl + configObject.urls[0].url,
-            dom_id: configObject.dom_id,
-            oauth2RedirectUrl: configObject.oauth2RedirectUrl,
-            /*configs: {
-                preFetch: function (req) {
-                    if (authToken) {
-                        req.headers["Authorization"] = "Bearer " + authToken;
-                    }
-                    return req;
-                }
-            },*/
-            onComplete: function() {
-                if (authToken) {
-                    ui.preauthorizeApiKey("Bearer", "Bearer " + authToken);
-                }
-            },
-            tagsSorter: configObject.tagsSorter,
-            docExpansion: configObject.docExpansion,
-            deepLinking: configObject.deepLinking,
-            validatorUrl: configObject.validatorUrl,
-            presets: configObject.presets,
-            plugins: [
-                SwaggerUIBundle.plugins.DownloadUrl
-            ],
-            layout: configObject.layout
-        });
+        const ui = SwaggerUIBundle(configObject);
 
         // Apply OAuth config
         ui.initOAuth(oauthConfigObject);
