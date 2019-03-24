@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
+using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Models.Enums;
@@ -16,75 +17,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 {
     public class ExaminationsRetrievalServiceTests
     {
-        private const string id = "expectedExaminationId";
-        private const string AltLink = "altLink";
-        private const bool AnyImplants = true;
-        private const bool AnyPersonalEffects = true;
-        private const bool ChildPriority = true;
-        private const bool Completed = true;
-        private const bool CoronerPriority = true;
-        private CoronerStatus CoronerStatus = CoronerStatus.SentAwaitingConfirm;
-        private const string County = "Cheshire";
-        private const string Country = "England";
-        private const bool CulturalPriority = true;
-        private DateTime DateOfBirth = new DateTime(1990, 2, 24);
-        private DateTime DateOfDeath = new DateTime(2019, 2, 24);
-        private const string FuneralDirectors = "funeralDirectors";
-        private const bool FaithPriority = true;
-        private const string GivenNames = "givenNames";
-        private ExaminationGender Gender = ExaminationGender.Male;
-        private const string GenderDetails = "genderDetails";
-        private const string HospitalNumber_1 = "hospitalNumber_1";
-        private const string HospitalNumber_2 = "hospitalNumber_2";
-        private const string HospitalNumber_3 = "hospitalNumber_3";
-        private const string HouseNameNumber = "houseNameNumber";
-        private const string ImplantDetails = "implantDetails";
-        private const string LastOccupation = "lastOccupation";
-        private const string MedicalExaminerOfficeResponsible = "medicalExaminerOfficeResponsible";
-        private ModeOfDisposal ModeOfDisposal = ModeOfDisposal.BuriedAtSea;
-        private const string NhsNumber = "123456789";
-        private const string OrganisationCareBeforeDeathLocationId = "organisationCareBeforeDeathLocationId";
-        private const bool OtherPriority = true;
-        private const bool OutOfHours = true;
-        private const string PersonalEffectDetails = "personalEffectDetails";
-        private const string Postcode = "postcode";
-        private const string PlaceDeathOccured = "placeDeathOccured";
-        private const string PriorityDetails = "priorityDetails";
-        private const string Surname = "surname";
-        private const string Street = "street";
-        private const string Town = "town";
-        private const int UrgencyScore = 4;
-        private DateTime CaseCreated = new DateTime(2019, 3, 15);
-        private DateTime LastAdmission = new DateTime(2019, 1, 15);
-        private TimeSpan TimeOfDeath = new TimeSpan(11, 30, 00);
-
-
         [Fact]
-        public void NoExaminationsFoundReturnsNull()
-        {
-            IEnumerable<MedicalExaminer.Models.Examination> examinations = null;
-            var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
-
-            var query = GenerateExaminationsRetrievalQuery();
-            var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.GetItemsAsync(connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
-                .Returns(Task.FromResult(default(IEnumerable<MedicalExaminer.Models.Examination>))).Verifiable();
-            var sut = new ExaminationsRetrievalService(dbAccess.Object, connectionSettings.Object, examinationQueryBuilder.Object);
-            var expected = default(IEnumerable<MedicalExaminer.Models.Examination>);
-
-            // Act
-            var result = sut.Handle(query);
-
-            // Assert
-            dbAccess.Verify(db => db.GetItemsAsync(connectionSettings.Object,
-                It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()), Times.Once);
-            Assert.Equal(expected, result.Result);
-        }
-
-        [Fact]
-        public void ExaminationsQueryIsNullThrowsException()
+        public void ExaminationDashboardQueryIsNullThrowsException()
         {
             // Arrange
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
@@ -93,76 +27,409 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
             var sut = new ExaminationsRetrievalService(dbAccess.Object, connectionSettings.Object, examinationQueryBuilder.Object);
 
-            Action act = () => sut.Handle(query);
+            Action act = () => sut.Handle(query).GetAwaiter().GetResult();
             act.Should().Throw<ArgumentNullException>();
         }
 
+
         [Fact]
-        public void Examinations_Filter_AdmissionNotesHaveBeenAdded_ReturnsCorrectResult()
+        public async virtual Task UnassignedCasesReturnsCorrectCount()
         {
-            var examinations = GenerateExaminations();
-            var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            //Arrange
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.Unassigned;
+            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
+            var clientFactory = CosmosMocker.CreateClientFactory(client);
+
+            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
+
+            var dataAccess = new DatabaseAccess(clientFactory.Object);
+
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(MedicalExaminer.Models.Enums.CaseStatus.Unassigned,
+                "", null, 0, 0, "", true);
             var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
-            var query = GenerateExaminationsRetrievalQuery();
-            var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.GetItemsAsync(connectionSettings.Object, 
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
-                .Returns(Task.FromResult(examinations)).Verifiable();
-            var sut = new ExaminationsRetrievalService(dbAccess.Object, connectionSettings.Object, examinationQueryBuilder.Object);
-            
-            // Act
-            var result = sut.Handle(query);
+            //Act
 
-            // Assert
-            dbAccess.Verify(db => db.GetItemsAsync(connectionSettings.Object,
-                It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()), Times.Once);
-            
-            Assert.Equal(1, result.Result.Count());
+            var results = await sut.Handle(examinationsDashboardQuery);
 
+            //Assert
+            results.Should().NotBeNull();
+            Assert.Single(results);
         }
 
-        private ExaminationsRetrievalQuery GenerateExaminationsRetrievalQuery()
+        [Fact]
+        public async virtual Task ReadyForMEScrutinyCasesReturnsCorrectCount()
         {
-            return new Mock<ExaminationsRetrievalQuery>(new object[]{ CaseStatus.Unassigned,
-                "filterLocationId", ExaminationsOrderBy.Urgency, 0, 0, "filterUserId", true }).Object;
+            //Arrange
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.ReadyForMEScrutiny;
+            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
+            var clientFactory = CosmosMocker.CreateClientFactory(client);
+
+            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
+
+            var dataAccess = new DatabaseAccess(clientFactory.Object);
+
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(MedicalExaminer.Models.Enums.CaseStatus.ReadyForMEScrutiny,
+                "", null, 0, 0, "", true);
+
+            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+
+            //Act
+
+            var results = await sut.Handle(examinationsDashboardQuery);
+
+            //Assert
+            results.Should().NotBeNull();
+            Assert.Equal(2, results.Count());
         }
 
-        private IEnumerable<MedicalExaminer.Models.Examination> GenerateExaminations()
+        [Fact]
+        public async virtual Task ReadyForMEScrutinyAndLocationCasesReturnsCorrectCount()
         {
-            var examination1 = new MedicalExaminer.Models.Examination
+            //Arrange
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> pred1 = t => t.ReadyForMEScrutiny;
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> pred2 = e => e.MedicalExaminerOfficeResponsible == "a";
+
+            var predicate = pred1.And(pred2);
+
+            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
+            var clientFactory = CosmosMocker.CreateClientFactory(client);
+
+            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
+
+            var dataAccess = new DatabaseAccess(clientFactory.Object);
+
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(MedicalExaminer.Models.Enums.CaseStatus.ReadyForMEScrutiny,
+                "a", null, 0, 0, "", true);
+
+            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+
+            //Act
+
+            var results = await sut.Handle(examinationsDashboardQuery);
+
+            //Assert
+            results.Should().NotBeNull();
+
+            Assert.Single(results);
+        }
+
+        [Fact]
+        public async virtual Task EmptyQueryReturnsAllOpenCases()
+        {
+            //Arrange
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.Completed == false;
+            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
+            var clientFactory = CosmosMocker.CreateClientFactory(client);
+
+            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
+
+            var dataAccess = new DatabaseAccess(clientFactory.Object);
+
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
+                "", null, 0, 0, "", true);
+
+            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+
+            //Act
+
+            var results = await sut.Handle(examinationsDashboardQuery);
+
+            //Assert
+            results.Should().NotBeNull();
+            Assert.Equal(10, results.Count());
+        }
+
+        [Fact]
+        public async virtual Task ClosedCasesQueryReturnsCorrectCount()
+        {
+            //Arrange
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.Completed;
+            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
+            var clientFactory = CosmosMocker.CreateClientFactory(client);
+
+            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
+
+            var dataAccess = new DatabaseAccess(clientFactory.Object);
+
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
+                "", null, 0, 0, "", true);
+
+            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+
+            //Act
+
+            var results = await sut.Handle(examinationsDashboardQuery);
+
+            //Assert
+            results.Should().NotBeNull();
+            Assert.Single(results);
+        }
+
+        [Fact]
+        public async virtual Task UrgentQueryReturnsCorrectCount()
+        {
+            //Arrange
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.UrgencyScore > 0;
+            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
+            var clientFactory = CosmosMocker.CreateClientFactory(client);
+
+            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
+
+            var dataAccess = new DatabaseAccess(clientFactory.Object);
+
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
+                "", null, 0, 0, "", true);
+
+            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+
+            //Act
+
+            var results = await sut.Handle(examinationsDashboardQuery);
+            //Assert
+            results.Should().NotBeNull();
+            Assert.Single(results);
+        }
+
+        [Fact]
+        public async virtual Task AdmissionNotesHaveBeenAddedQueryReturnsCorrectCount()
+        {
+            //Arrange
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.AdmissionNotesHaveBeenAdded;
+            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
+            var clientFactory = CosmosMocker.CreateClientFactory(client);
+
+            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
+
+            var dataAccess = new DatabaseAccess(clientFactory.Object);
+
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
+                "", null, 0, 0, "", true);
+
+            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+
+            //Act
+
+            var results = await sut.Handle(examinationsDashboardQuery);
+
+            //Assert
+            results.Should().NotBeNull();
+            Assert.Single(results);
+        }
+
+        [Fact]
+        public async virtual Task HaveBeenScrutinisedByMEQueryReturnsCorrectCount()
+        {
+            //Arrange
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.HaveBeenScrutinisedByME;
+            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
+            var clientFactory = CosmosMocker.CreateClientFactory(client);
+
+            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
+
+            var dataAccess = new DatabaseAccess(clientFactory.Object);
+
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
+                "", null, 0, 0, "", true);
+
+            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+
+            //Act
+
+            var results = await sut.Handle(examinationsDashboardQuery);
+
+            //Assert
+            results.Should().NotBeNull();
+            Assert.Single(results);
+        }
+
+        [Fact]
+        public async virtual Task PendingAdmissionNotesQueryReturnsCorrectCount()
+        {
+            //Arrange
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.PendingAdmissionNotes;
+            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
+            var clientFactory = CosmosMocker.CreateClientFactory(client);
+
+            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
+
+            var dataAccess = new DatabaseAccess(clientFactory.Object);
+
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
+                "", null, 0, 0, "", true);
+
+            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+
+            //Act
+
+            var results = await sut.Handle(examinationsDashboardQuery);
+            //Assert
+            results.Should().NotBeNull();
+            Assert.Single(results);
+        }
+
+        [Fact]
+        public async virtual Task PendingDiscussionWithQAPQueryReturnsCorrectCount()
+        {
+            //Arrange
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.PendingDiscussionWithQAP;
+            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
+            var clientFactory = CosmosMocker.CreateClientFactory(client);
+
+            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
+
+            var dataAccess = new DatabaseAccess(clientFactory.Object);
+
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
+                "", null, 0, 0, "", true);
+
+            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+
+            //Act
+
+            var results = await sut.Handle(examinationsDashboardQuery);
+            //Assert
+            results.Should().NotBeNull();
+            Assert.Single(results);
+        }
+
+        [Fact]
+        public async virtual Task PendingDiscussionWithRepresentativeQueryReturnsCorrectCount()
+        {
+            //Arrange
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.PendingDiscussionWithRepresentative;
+            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
+            var clientFactory = CosmosMocker.CreateClientFactory(client);
+
+            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
+
+            var dataAccess = new DatabaseAccess(clientFactory.Object);
+
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
+                "", null, 0, 0, "", true);
+
+            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+
+            //Act
+
+            var results = await sut.Handle(examinationsDashboardQuery);
+
+            //Assert
+            results.Should().NotBeNull();
+            Assert.Single(results);
+        }
+
+        [Fact]
+        public async virtual Task HaveFinalCaseOutstandingOutcomesQueryReturnsCorrectCount()
+        {
+            //Arrange
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.HaveFinalCaseOutstandingOutcomes;
+            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
+            var clientFactory = CosmosMocker.CreateClientFactory(client);
+
+            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
+
+            var dataAccess = new DatabaseAccess(clientFactory.Object);
+
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
+                "", null, 0, 0, "", true);
+
+            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+
+            //Act
+
+            var results = await sut.Handle(examinationsDashboardQuery);
+
+            //Assert
+            results.Should().NotBeNull();
+            Assert.Single(results);
+        }
+
+        private MedicalExaminer.Models.Examination[] GenerateExaminations()
+        {
+            var examination1 = new MedicalExaminer.Models.Examination()
             {
-                Id = "a",
-                TimeOfDeath = TimeOfDeath,
-                UrgencyScore = UrgencyScore,
-                CaseCreated = CaseCreated,
-                HaveBeenScrutinisedByME = false,
-                AdmissionNotesHaveBeenAdded = false,
-                ReadyForMEScrutiny = false,
-                Unassigned = false,
-                HaveFinalCaseOutstandingOutcomes = false,
-                PendingAdmissionNotes = false,
-                PendingDiscussionWithQAP = false,
-                PendingDiscussionWithRepresentative = false
+                Unassigned = true,
+                Completed = false
             };
 
-            var examination2 = new MedicalExaminer.Models.Examination
+            var examination2 = new MedicalExaminer.Models.Examination()
             {
-                Id = "b",
-                TimeOfDeath = TimeOfDeath,
-                UrgencyScore = UrgencyScore,
-                CaseCreated = CaseCreated,
-                HaveBeenScrutinisedByME = true,
-                AdmissionNotesHaveBeenAdded = true,
                 ReadyForMEScrutiny = true,
-                Unassigned = true,
-                HaveFinalCaseOutstandingOutcomes = true,
-                PendingAdmissionNotes = true,
-                PendingDiscussionWithQAP = true,
+                Completed = false
+            };
+
+            var examination3 = new MedicalExaminer.Models.Examination()
+            {
+                MedicalExaminerOfficeResponsible = "a",
+                ReadyForMEScrutiny = true,
+                Completed = false
+            };
+
+            var examination4 = new MedicalExaminer.Models.Examination()
+            {
+                Completed = true
+            };
+
+            var examination5 = new MedicalExaminer.Models.Examination()
+            {
+                Completed = false,
+                UrgencyScore = 3
+            };
+
+            var examination6 = new MedicalExaminer.Models.Examination()
+            {
+                Completed = false,
+                AdmissionNotesHaveBeenAdded = true
+            };
+
+            var examination7 = new MedicalExaminer.Models.Examination()
+            {
+                Completed = false,
+                PendingDiscussionWithQAP = true
+            };
+
+            var examination8 = new MedicalExaminer.Models.Examination()
+            {
+                Completed = false,
                 PendingDiscussionWithRepresentative = true
             };
 
-            return new []{ examination1, examination2};
+            var examination9 = new MedicalExaminer.Models.Examination()
+            {
+                Completed = false,
+                HaveFinalCaseOutstandingOutcomes = true
+            };
+
+            var examination10 = new MedicalExaminer.Models.Examination()
+            {
+                Completed = false,
+                HaveBeenScrutinisedByME = true
+            };
+
+            var examination11 = new MedicalExaminer.Models.Examination()
+            {
+                Completed = false,
+                PendingAdmissionNotes = true
+            };
+
+            return new[] { examination1, examination2, examination3, examination4, examination5,
+                           examination6, examination7, examination8, examination9, examination10,
+                           examination11};
         }
+
+
     }
 }
