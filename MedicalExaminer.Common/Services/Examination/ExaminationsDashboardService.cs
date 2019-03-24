@@ -28,7 +28,7 @@ namespace MedicalExaminer.Common.Services.Examination
             }
 
             var baseQuery = GetBaseQuery(param);
-
+            var countOfTotalCases = GetCount(baseQuery);
             var countOfAdmissionNotesHaveBeenAdded = GetCount(baseQuery, CaseStatus.AdmissionNotesHaveBeenAdded);
             var countOfAssigned = GetCount(baseQuery, CaseStatus.Unassigned);
             var countOfHaveBeenScrutinisedByME = GetCount(baseQuery, CaseStatus.HaveBeenScrutinisedByME);
@@ -38,7 +38,7 @@ namespace MedicalExaminer.Common.Services.Examination
             var countOfPendingDiscussionWithRepresentative = GetCount(baseQuery, CaseStatus.PendingDiscussionWithRepresentative);
             var countOfReadyForMEScrutiny = GetCount(baseQuery, CaseStatus.ReadyForMEScrutiny);
             var countOfUrgentCases = GetCount(baseQuery, x => ((x.UrgencyScore > 0) && (x.Completed == false)));
-            var countOfTotalCases = GetCount(baseQuery);
+            
 
             var overView = new ExaminationsOverview
             {

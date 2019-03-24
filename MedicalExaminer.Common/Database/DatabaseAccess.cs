@@ -36,23 +36,11 @@ namespace MedicalExaminer.Common.Database
                 var feedOptions = new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true };
                 var queryable = _client.CreateDocumentQuery<T>(connectionSettings.EndPointUri, feedOptions);
                 IQueryable<T> filter = queryable.Where(predicate);
-                var queriable = filter.AsQueryable();
-                IDocumentQuery<T> query = queriable.AsDocumentQuery();
-
-                //var _client = _documentClientFactory.CreateClient(connectionSettings);
-                //var query = _client.CreateDocumentQuery<T>(
-                //        UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
-                //            connectionSettings.Collection),
-                //        new FeedOptions {MaxItemCount = -1})
-                //    .Where(predicate)
-                //    .AsDocumentQuery();
-
+                IDocumentQuery<T> query = filter.AsDocumentQuery();
+                
                 var results = new List<T>();
-                while (query.HasMoreResults)
-                {
-                    results.AddRange(await query.ExecuteNextAsync<T>());
-                }
-
+                results.AddRange(await query.ExecuteNextAsync<T>());
+                
                 return results.FirstOrDefault();
             }
             catch (DocumentClientException documentClientException)
@@ -108,12 +96,15 @@ namespace MedicalExaminer.Common.Database
         public async Task<int> GetCountAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
         {
             var _client = _documentClientFactory.CreateClient(connectionSettings);
-            var query = _client.CreateDocumentQuery<T>(
-                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
-                        connectionSettings.Collection),
-                    new FeedOptions {MaxItemCount = -1})
-                .Count(predicate);
-            return query;
+            var feedOptions = new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true };
+            var queryable = _client.CreateDocumentQuery<T>(connectionSettings.EndPointUri, feedOptions);
+            IQueryable<T> filter = queryable.Where(predicate);
+            IDocumentQuery<T> query = filter.AsDocumentQuery();
+            var results = new List<T>();
+            
+                results.AddRange(await query.ExecuteNextAsync<T>());
+            
+            return results.Count;
         }
 
 

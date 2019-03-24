@@ -24,8 +24,8 @@ namespace MedicalExaminer.Common.Services.Examination
             }
                 try
                 {
-                    var result =  _databaseAccess.GetItemAsync<Models.Examination>(_connectionSettings, 
-                        x=> x.Id == param.ExaminationId);
+                    var result = _databaseAccess.GetItemAsync<Models.Examination>(_connectionSettings, 
+                        x => x.Id == param.ExaminationId);
                     return result;
                 }
                 catch (Exception e)
