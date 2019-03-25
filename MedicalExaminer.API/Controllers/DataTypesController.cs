@@ -76,6 +76,17 @@ namespace MedicalExaminer.API.Controllers
             return Ok(GetDictionary(typeof(ExaminationGender)));
         }
 
+        /// <summary>
+        /// Returns all Event Type
+        /// </summary>
+        /// <returns>Dictionary of Event Types</returns>
+        [HttpGet("event_type")]
+        public ActionResult GetEventTypes()
+        {
+            return Ok(GetDictionary(typeof(EventType)));
+        }
+
+
         private Dictionary<string, int> GetDictionary(Type enumeratorType)
         {
             var dic = new Dictionary<string, int>();

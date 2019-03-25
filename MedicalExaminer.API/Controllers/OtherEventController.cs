@@ -1,11 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
+using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,19 +22,20 @@ namespace MedicalExaminer.API.Controllers
     public class OtherEventController : BaseController
     {
         private IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent> _otherCaseEventRetrievalService;
-
         private IAsyncQueryHandler<CreateOtherEventQuery, string> _otherEventCreationService;
-
+        private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
 
         public OtherEventController(
             IMELogger logger,
             IMapper mapper,
             IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent> otherCaseEventRetrievalService,
-            IAsyncQueryHandler<CreateOtherEventQuery, string> otherEventCreationService)
+            IAsyncQueryHandler<CreateOtherEventQuery, string> otherEventCreationService,
+            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService)
             : base(logger, mapper)
         {
             _otherCaseEventRetrievalService = otherCaseEventRetrievalService;
             _otherEventCreationService = otherEventCreationService;
+            _examinationRetrievalService = examinationRetrievalService;
         }
 
         [HttpPost]
@@ -57,24 +61,32 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpGet]
-        [Route("{caseId}/otherevent")]
+        [Route("{caseId}/events/{eventType}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetOtherEventResponse>> GetOtherEvent(string caseId)
+        public async Task<ActionResult<GetOtherEventResponse>> GetOtherEvent(string examinationId, EventType? eventType)
         {
-            if (!ModelState.IsValid)
+            
+            if (string.IsNullOrEmpty(examinationId))
             {
                 return BadRequest(new GetOtherEventResponse());
             }
 
-            if (await _otherCaseEventRetrievalService.Handle(new OtherCaseEventByCaseIdQuery(caseId)) == null)
+            Guid examinationGuid;
+            if(!Guid.TryParse(examinationId, out examinationGuid))
             {
-                return NotFound(new GetOtherEventResponse());
+                return BadRequest(new GetOtherEventResponse());
             }
 
-            var result = await _otherCaseEventRetrievalService.Handle(new OtherCaseEventByCaseIdQuery(caseId));
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
 
+            if(examination == null)
+            {
+                return new NotFoundObjectResult(new GetOtherEventResponse());
+            }
 
-            return Ok(Mapper.Map<GetOtherEventResponse>(result));
+            var result = Mapper.Map<GetOtherEventResponse>(examination);
+
+            return Ok(result);
         }
     }
 }
