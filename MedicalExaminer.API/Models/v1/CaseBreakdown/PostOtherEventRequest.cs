@@ -12,23 +12,19 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
     public class PostOtherEventRequest
     {
         /// <summary>
-        ///     case id
+        /// Event Id
         /// </summary>
-        public string id { get; set; }
+        public string EventId { get; set; }
 
         /// <summary>
         /// Event Text (Length to be confirmed).
         /// </summary>
-        [RequiredIfAttributesMatch(nameof(Status), Status.Final)]
+        [RequiredIfAttributesMatch(nameof(EventStatus), EventStatus.Final)]
         public string EventText { get; set; }
 
         /// <summary>
         /// Enum for the status (Draft or Final).
         /// </summary>
-        public enum Status
-        {
-            Draft,
-            Final
-        }
+        public EventStatus EventStatus { get; set; }
     }
 }

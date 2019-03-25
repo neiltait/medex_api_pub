@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MedicalExaminer.Common.Queries.CaseBreakdown
 {
-    public class OtherCaseEventByCaseIdQuery : IQuery<Models.EventOther>
+    public class OtherCaseEventByCaseIdQuery : IQuery<Models.OtherEvent>
     {
         public readonly string CaseId;
 

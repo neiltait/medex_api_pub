@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace MedicalExaminer.Models
 {
-    public class EventOther
+    public class OtherEvent
     {
         /// <summary>
         /// Event ID.
