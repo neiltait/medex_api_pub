@@ -1,18 +1,22 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata;
-using MedicalExaminer.Models.Enums;
+﻿using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace MedicalExaminer.Models
 {
     public class OtherEvent
     {
         /// <summary>
-        /// Event ID.
+        /// Event Identication.
         /// </summary>
         [JsonProperty(PropertyName = "other_event_id")]
         public string EventId { get; set; }
+
+        /// <summary>
+        /// User Identifier.
+        /// </summary>
+        [JsonProperty(PropertyName = "user_id")]
+        public string UserId { get; set; }
 
         /// <summary>
         /// Event Text (Length to be confirmed).
@@ -26,7 +30,10 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "event_status")]
         public EventStatus EventStatus { get; set; }
 
-        // public MeUser User { get; set; }
-        // public DateTime DateTimeEntered { get; set; }
+        /// <summary>
+        /// list of ammendments for this item
+        /// </summary>
+        [JsonProperty(PropertyName ="amendments")]
+        public IEnumerable<OtherEvent> Amendments { get; set; }
     }
 }

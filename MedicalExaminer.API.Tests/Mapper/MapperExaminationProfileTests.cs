@@ -112,7 +112,8 @@ namespace MedicalExaminer.API.Tests.Mapper
             {
                 EventId = "a",
                 EventStatus = EventStatus.Final,
-                EventText = "Hello Earth"
+                EventText = "Hello Earth",
+                UserId = "123"
             };
             var caseBreakdown = new CaseBreakDown()
             {
@@ -130,6 +131,13 @@ namespace MedicalExaminer.API.Tests.Mapper
             Assert.Equal("a", ourEvent.EventId);
             Assert.Equal(EventStatus.Final, ourEvent.EventStatus);
             Assert.Equal("Hello Earth", ourEvent.EventText);
+            Assert.Equal("123", ourEvent.UserId);
+        }
+
+        [Fact]
+        public void Examination_To_GetOtherEventsResponse_Multiple_OtherEvents()
+        {
+            
         }
 
 

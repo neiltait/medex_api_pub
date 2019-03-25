@@ -77,8 +77,8 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetOtherEventResponse());
             }
 
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
-
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
+            
             if(examination == null)
             {
                 return new NotFoundObjectResult(new GetOtherEventResponse());

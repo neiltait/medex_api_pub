@@ -96,22 +96,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var examinationObj = new Mock<Examination>().Object;
             var examinationId = "7E5D50CE-05BF-4A1F-AA6E-25418A723A7F";
-            //var otherEvents = new[] {new OtherEvent() {
-            //    EventId = "a",
-            //    EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
-            //    EventText = "please work"
-            //}
-            //};
-            //var events = new CaseBreakDown()
-            //{
-            //    OtherEvents = otherEvents
-            //};
-            //var examinationObj = new Examination
-            //{
-            //    ExaminationId = examinationId,
-            //    Events = events
-            //};
-
             var getOtherResponse = new Mock<GetOtherEventResponse>().Object;
             
             var mapper = new Mock<IMapper>();
@@ -128,8 +112,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
-
-
 
             // Act
             var response = await sut.GetOtherEvent(examinationId, null);

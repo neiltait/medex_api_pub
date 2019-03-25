@@ -81,7 +81,7 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetExaminationResponse>> GetExamination(string examinationId)
         {
-            var result = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
+            var result = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
             if (result == null)
             {
                 return NotFound();
