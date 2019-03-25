@@ -11,19 +11,19 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Event ID.
         /// </summary>
-        [JsonProperty(PropertyName = "Other_Event_Id")]
+        [JsonProperty(PropertyName = "other_event_id")]
         public string EventId { get; set; }
 
         /// <summary>
         /// Event Text (Length to be confirmed).
         /// </summary>
-        [JsonProperty(PropertyName = "Other_Event_Text")]
+        [JsonProperty(PropertyName = "other_event_text")]
         public string EventText { get; set; }
 
         /// <summary>
         /// Enum for the status (Draft or Final).
         /// </summary>
-        [JsonProperty(PropertyName = "Event_Status")]
+        [JsonProperty(PropertyName = "event_status")]
         public EventStatus EventStatus { get; set; }
 
         // public MeUser User { get; set; }
