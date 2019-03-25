@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
+using MedicalExaminer.Models;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -25,6 +26,7 @@ namespace MedicalExaminer.Common.Database
             var resourceResponse = await _client.CreateDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, 
                     connectionSettings.Collection), item);
+            var other = GetItemAsync<MeUser>(connectionSettings, x => x.Email == "mark.sharkey@methods.co.uk");
             return (T)(dynamic)resourceResponse.Resource;
         }
 
@@ -36,10 +38,11 @@ namespace MedicalExaminer.Common.Database
             {
                 var _client = _documentClientFactory.CreateClient(connectionSettings);
                 var feedOptions = new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true };
-                var queryable = _client.CreateDocumentQuery<T>(connectionSettings.EndPointUri, feedOptions);
+                var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection);
+                var queryable = _client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions);
                 IQueryable<T> filter = queryable.Where(predicate);
                 IDocumentQuery<T> query = filter.AsDocumentQuery();
-                
+
                 var results = new List<T>();
                 results.AddRange(await query.ExecuteNextAsync<T>());
                 
@@ -101,12 +104,13 @@ namespace MedicalExaminer.Common.Database
         {
             var _client = _documentClientFactory.CreateClient(connectionSettings);
             var feedOptions = new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true };
-            var queryable = _client.CreateDocumentQuery<T>(connectionSettings.EndPointUri, feedOptions);
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection);
+            var queryable = _client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions);
             IQueryable<T> filter = queryable.Where(predicate);
             IDocumentQuery<T> query = filter.AsDocumentQuery();
             var results = new List<T>();
             
-                results.AddRange(await query.ExecuteNextAsync<T>());
+            results.AddRange(await query.ExecuteNextAsync<T>());
             
             return results.Count;
         }
@@ -120,21 +124,6 @@ namespace MedicalExaminer.Common.Database
                 item);
 
             return (T)(dynamic)updateItemAsync.Resource;
-        }
-
-        private DocumentClient CreateClient(IConnectionSettings connectionSettings)
-        {
-            var client = new DocumentClient(connectionSettings.EndPointUri, connectionSettings.PrimaryKey);
-
-            client.CreateDatabaseIfNotExistsAsync(new Microsoft.Azure.Documents.Database
-                { Id = connectionSettings.DatabaseId });
-            var databaseUri = UriFactory.CreateDatabaseUri(connectionSettings.DatabaseId);
-
-            client.CreateDocumentCollectionIfNotExistsAsync(
-                databaseUri,
-                new DocumentCollection { Id = connectionSettings.Collection });
-
-            return client;
         }
     }
 }
