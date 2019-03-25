@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Models;
@@ -19,6 +20,10 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<Examination, ExaminationItem>();
             CreateMap<PostNewCaseRequest, Examination>();
             CreateMap<Examination, GetPatientDetailsResponse>();
+            CreateMap<Examination, GetOtherEventResponse>()
+                .ForMember(dest => dest.Events, opt => opt.MapFrom(src => src.Events.OtherEvents));
         }
-    }
+
+}
+
 }

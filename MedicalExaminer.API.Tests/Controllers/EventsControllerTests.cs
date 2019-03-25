@@ -97,9 +97,20 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
 
             var examinationId = "7E5D50CE-05BF-4A1F-AA6E-25418A723A7F";
+            var otherEvents = new[] {new OtherEvent() {
+                EventId = "a",
+                EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
+                EventText = "please work"
+            }
+            };
+            var events = new CaseBreakDown()
+            {
+                OtherEvents = otherEvents
+            };
             var examinationObj = new Examination
             {
-                ExaminationId = examinationId
+                ExaminationId = examinationId,
+                Events = events
             };
             var otherEventByCaseIdService = new Mock<IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent>>();
             var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateOtherEventQuery, string>>();

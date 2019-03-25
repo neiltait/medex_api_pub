@@ -316,5 +316,12 @@ namespace MedicalExaminer.Models
         public string MedicalExaminerOfficeResponsible { get; set; }
 
         public IEnumerable<Representative> Representatives { get; set; }
+
+        /// <summary>
+        /// Case break down events
+        /// </summary>
+        [Required]
+        [JsonProperty(PropertyName = "case_break_down_events")]
+        public CaseBreakDown Events { get; set; }
     }
 }

@@ -311,5 +311,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             response.ExaminationId.Should().Be(expectedExaminationId);
         }
+
+        
     }
 }
