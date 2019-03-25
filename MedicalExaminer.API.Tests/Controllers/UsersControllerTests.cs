@@ -10,12 +10,12 @@ using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
-using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -26,28 +26,6 @@ namespace MedicalExaminer.API.Tests.Controllers
     /// </summary>
     public class UsersControllerTests : ControllerTestsBase<UsersController>
     {
-        /// <summary>
-        ///     Setup
-        /// </summary>
-        public UsersControllerTests()
-        {
-            _userPersistence = new Mock<IUserPersistence>();
-
-            var logger = new Mock<IMELogger>();
-            var mapper = new Mock<IMapper>();
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
-            var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
-            var examinationsRetrievalQuery =
-                new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
-                
-            Controller = new UsersController(
-                logger.Object,
-                mapper.Object,
-                createExaminationService.Object,
-                examinationRetrievalQuery.Object,
-                examinationsRetrievalQuery.Object);
-        }
-
         /// <summary>
         ///     The User Persistence mock.
         /// </summary>
@@ -94,12 +72,28 @@ namespace MedicalExaminer.API.Tests.Controllers
         [Fact]
         public async Task TestCreateUserArgumentException()
         {
+            
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
+            var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
+            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
+
+            Controller = new UsersController(
+                logger.Object,
+                mapper.Object,
+                createExaminationService.Object,
+                examinationRetrievalQuery.Object,
+                examinationsRetrievalQuery.Object);
+            
             // Arrange
             var expectedRequest = new PostUserRequest();
 
             _userPersistence.Setup(up => up.CreateUserAsync(It.IsAny<MeUser>()))
                 .Throws<ArgumentException>();
-
+            
+            Controller = new UsersController(_userPersistence.Object, logger.Object, Mapper);
+            
             // Act
             var response = await Controller.CreateUser(expectedRequest);
 
