@@ -31,7 +31,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// examination id
         /// </summary>
-        public string id { get; set; }
+        public string ExaminationId { get; set; }
 
         /// <summary>
         /// patients time of death

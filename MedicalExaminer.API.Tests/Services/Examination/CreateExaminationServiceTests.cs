@@ -28,12 +28,12 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         }
 
         [Fact]
-        public void CreateExaminationQuerySuccessReturnsExaminationId()
+        public void CreateExaminationQuerySuccessReturnsExamination()
         {
             // Arrange
             var examination = new MedicalExaminer.Models.Examination();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            CreateExaminationQuery query = null;
+            CreateExaminationQuery query = new CreateExaminationQuery(examination);
             
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,

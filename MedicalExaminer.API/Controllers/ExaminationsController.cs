@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
+using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
@@ -130,12 +131,75 @@ namespace MedicalExaminer.API.Controllers
             var result = await _examinationCreationService.Handle(new CreateExaminationQuery(examination));
             var res = new PutExaminationResponse
             {
-                ExaminationId = result.Id
+                ExaminationId = result.ExaminationId
             };
 
             return Ok(res);
         }
 
-        
+        /// <summary>
+        /// Post Medical Team
+        /// </summary>
+        /// /// <param name="examinationId">The ID of the examination that the medical team object is to be posted to.</param>
+        /// <param name="postMedicalTeamRequest">The PostMedicalTeamRequest.</param>
+        /// <returns>A PutExaminationResponse.</returns>
+        [HttpPost("/MedicalTeam/{examinationId}")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody]PostMedicalTeamRequest postMedicalTeamRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutExaminationResponse());
+            }
+
+            var medicalTeamRequest = Mapper.Map<MedicalTeam>(postMedicalTeamRequest);
+
+            if (medicalTeamRequest == null)
+            {
+                return BadRequest(new PutExaminationResponse());
+            }
+
+            Examination examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
+            if (examination == null)
+            {
+                return NotFound();
+            }
+
+            examination.MedicalTeam = medicalTeamRequest;
+
+            var returnedExaminationId = await _medicaTeamUpdateService.Handle(examination);
+
+            if (returnedExaminationId == null)
+            {
+                return BadRequest(new PutExaminationResponse());
+            }
+
+            var res = new PutExaminationResponse()
+            {
+                ExaminationId = examinationId
+            };
+
+            return Ok(res);
+        }
+
+        [HttpGet("/MedicalTeam/{examinationId}")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<GetMedicalTeamResponse>> GetMedicalTeam(string examinationId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new GetMedicalTeamResponse());
+            }
+
+            Examination examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
+            if (examination == null || examination.MedicalTeam == null)
+            {
+                return NotFound(new GetMedicalTeamResponse());
+            }
+
+            var getMedicalTeamResponse = Mapper.Map<GetMedicalTeamResponse>(examination.MedicalTeam);
+
+            return Ok(getMedicalTeamResponse);
+        }
     }
 }

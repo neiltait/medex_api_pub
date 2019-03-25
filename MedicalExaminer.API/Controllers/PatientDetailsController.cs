@@ -78,7 +78,7 @@ namespace MedicalExaminer.API.Controllers
 
             return Ok(new PutPatientDetailsResponse
             {
-                ExaminationId = result.Result.Id
+                ExaminationId = result.Result.ExaminationId
             });
         }
     }

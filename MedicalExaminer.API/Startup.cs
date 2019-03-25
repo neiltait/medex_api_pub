@@ -318,13 +318,13 @@ namespace MedicalExaminer.API
         private void ConfigureOktaClient(IServiceCollection services)
         {
             // Configure okta client
-            services.AddScoped(context =>
+            services.AddScoped<OktaClientConfiguration>(context =>
             {
                 var settings = context.GetRequiredService<IOptions<OktaSettings>>();
                 return new OktaClientConfiguration
                 {
                     OktaDomain = settings.Value.Domain,
-                    Token = settings.Value.SdkToken
+                    Token = settings.Value.SdkToken,
                 };
             });
             services.AddScoped<OktaClient, OktaClient>();

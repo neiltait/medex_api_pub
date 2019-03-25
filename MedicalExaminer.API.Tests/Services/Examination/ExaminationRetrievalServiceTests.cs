@@ -20,7 +20,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             //Arrange
             var id = "a";
-            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.Id == id;
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.ExaminationId == id;
             var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations().ToArray());
             var clientFactory = CosmosMocker.CreateClientFactory(client);
 
@@ -34,7 +34,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             result.Should().NotBeNull();
-            Assert.Equal("a", result.Id);
+            Assert.Equal("a", result.ExaminationId);
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             // Arrange
             var examinationId = "c";
-            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.Id == examinationId;
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.ExaminationId == examinationId;
             var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations().ToArray());
             var clientFactory = CosmosMocker.CreateClientFactory(client);
 
@@ -75,11 +75,11 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             var examination1 = new MedicalExaminer.Models.Examination()
             {
-                Id = "a"
+                ExaminationId = "a"
             };
             var examination2 = new MedicalExaminer.Models.Examination()
             {
-                Id = "b"
+                ExaminationId = "b"
             };
             return new []{ examination1, examination2};
         }

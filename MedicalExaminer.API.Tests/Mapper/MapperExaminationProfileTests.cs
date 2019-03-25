@@ -25,7 +25,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         {
             var config = new MapperConfiguration(cfg => { cfg.AddProfile<ExaminationProfile>(); });
 
-            mapper = config.CreateMapper();
+            _mapper = config.CreateMapper();
         }
 
         private const string ExaminationId = "expectedExaminationId";
@@ -88,20 +88,11 @@ namespace MedicalExaminer.API.Tests.Mapper
         /// <summary>
         ///     Mapper.
         /// </summary>
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
 
-        private IEnumerable<Representative> GetRepresentatives(int numberToCreate)
-        {
-            var representatives = new List<Representative>(numberToCreate);
-            for (var counter = 0; counter < numberToCreate; counter ++)
-            {
-                cfg.AddProfile<ExaminationProfile>();
-            });
-            config.AssertConfigurationIsValid();
-            _mapper = config.CreateMapper();
-        }
+        
 
-       
+
         [Fact]
         public void Examination_To_PatientCard_NullAppointments()
         {
@@ -112,7 +103,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.DateOfBirth.Should().Be(DateOfBirth);
             result.DateOfDeath.Should().Be(DateOfDeath);
             result.TimeOfDeath.Should().Be(TimeOfDeath);
-            result.id.Should().Be(id);
+            result.ExaminationId.Should().Be(ExaminationId);
             result.NhsNumber.Should().Be(NhsNumber);
             result.GivenNames.Should().Be(GivenNames);
             result.Surname.Should().Be(Surname);
@@ -149,13 +140,13 @@ namespace MedicalExaminer.API.Tests.Mapper
             var examination = GenerateExamination();
 
             examination.Representatives = new[] { representative };
-            
+
             var result = _mapper.Map<PatientCardItem>(examination);
 
             result.DateOfBirth.Should().Be(DateOfBirth);
             result.DateOfDeath.Should().Be(DateOfDeath);
             result.TimeOfDeath.Should().Be(TimeOfDeath);
-            result.id.Should().Be(id);
+            result.ExaminationId.Should().Be(ExaminationId);
             result.NhsNumber.Should().Be(NhsNumber);
             result.GivenNames.Should().Be(GivenNames);
             result.Surname.Should().Be(Surname);
@@ -198,7 +189,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.DateOfBirth.Should().Be(DateOfBirth);
             result.DateOfDeath.Should().Be(DateOfDeath);
             result.TimeOfDeath.Should().Be(TimeOfDeath);
-            result.id.Should().Be(id);
+            result.ExaminationId.Should().Be(ExaminationId);
             result.NhsNumber.Should().Be(NhsNumber);
             result.GivenNames.Should().Be(GivenNames);
             result.Surname.Should().Be(Surname);
@@ -254,7 +245,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.DateOfBirth.Should().Be(DateOfBirth);
             result.DateOfDeath.Should().Be(DateOfDeath);
             result.TimeOfDeath.Should().Be(TimeOfDeath);
-            result.id.Should().Be(id);
+            result.ExaminationId.Should().Be(ExaminationId);
             result.NhsNumber.Should().Be(NhsNumber);
             result.GivenNames.Should().Be(GivenNames);
             result.Surname.Should().Be(Surname);
@@ -305,13 +296,13 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = GenerateExamination();
             examination.Representatives = new[] { representativeTwo, representativeOne };
-                
+
             var result = _mapper.Map<PatientCardItem>(examination);
 
             result.DateOfBirth.Should().Be(DateOfBirth);
             result.DateOfDeath.Should().Be(DateOfDeath);
             result.TimeOfDeath.Should().Be(TimeOfDeath);
-            result.id.Should().Be(id);
+            result.ExaminationId.Should().Be(ExaminationId);
             result.NhsNumber.Should().Be(NhsNumber);
             result.GivenNames.Should().Be(GivenNames);
             result.Surname.Should().Be(Surname);
@@ -369,7 +360,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.DateOfBirth.Should().Be(DateOfBirth);
             result.DateOfDeath.Should().Be(DateOfDeath);
             result.TimeOfDeath.Should().Be(TimeOfDeath);
-            result.id.Should().Be(id);
+            result.ExaminationId.Should().Be(ExaminationId);
             result.NhsNumber.Should().Be(NhsNumber);
             result.GivenNames.Should().Be(GivenNames);
             result.Surname.Should().Be(Surname);
@@ -454,7 +445,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 TimeOfDeath = TimeOfDeath
             };
 
-            var result = mapper.Map<Examination>(postNewCaseRequest);
+            var result = _mapper.Map<Examination>(postNewCaseRequest);
 
             result.DateOfBirth.Should().Be(DateOfBirth);
             result.DateOfDeath.Should().Be(DateOfDeath);
@@ -472,13 +463,13 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.TimeOfDeath.Should().Be(TimeOfDeath);
         }
 
-       
+
 
         private Examination GenerateExamination()
         {
             var examination = new Examination()
             {
-                Id = id,
+                ExaminationId = ExaminationId,
                 AnyImplants = AnyImplants,
                 AnyPersonalEffects = AnyPersonalEffects,
                 ChildPriority = ChildPriority,
@@ -545,7 +536,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var response = _mapper.Map<ExaminationItem>(examination);
             response.GenderDetails.Should().Be(GenderDetails);
-            response.Id.Should().Be(expectedExaminationId);
+            response.ExaminationId.Should().Be(expectedExaminationId);
             response.GivenNames.Should().Be(GivenNames);
             response.DateOfBirth.Should().Be(DateOfBirth);
             response.DateOfDeath.Should().Be(DateOfDeath);
@@ -560,29 +551,11 @@ namespace MedicalExaminer.API.Tests.Mapper
             response.PlaceDeathOccured.Should().Be(PlaceDeathOccured);
             response.Surname.Should().Be(Surname);
             response.TimeOfDeath.Should().Be(TimeOfDeath);
-            
-            
+
+
         }
 
-        private IEnumerable<Representative> GetRepresentatives(int numberToCreate)
-        {
-            var representatives = new List<Representative>(numberToCreate);
-            for (var counter = 0; counter < numberToCreate; counter++)
-            {
-                representatives.Add(new Representative()
-                {
-                    AppointmentDate = new DateTime(2019, 2, 24),
-                    AppointmentTime = new TimeSpan(11, 30, 0),
-                    FullName = "fullName",
-                    Informed = Informed.Yes,
-                    PhoneNumber = "123456789",
-                    PresentAtDeath = PresentAtDeath.Yes,
-                    Relationship = "relationship"
-                });
-            }
-
-            response.ExaminationId.Should().Be(expectedExaminationId);
-        }
+       
 
 
 
@@ -593,37 +566,37 @@ namespace MedicalExaminer.API.Tests.Mapper
         public void TestGetExaminationResponse()
         {
             var expectedExaminationId = "expectedExaminationId";
-            
+
             var examination = new Examination()
             {
-                Id = expectedExaminationId,
+                ExaminationId = expectedExaminationId,
             };
 
             var response = _mapper.Map<GetExaminationResponse>(examination);
 
-            response.Id.Should().Be(expectedExaminationId);
+            response.ExaminationId.Should().Be(expectedExaminationId);
         }
 
         private void AssertAllSourcePropertiesMappedForMap(TypeMap map)
         {
-            
-                // Here is hack, because source member mappings are not exposed
-                Type t = typeof(TypeMap);
-                var configs = t.GetField("_sourceMemberConfigs", BindingFlags.Instance | BindingFlags.NonPublic);
-                var mappedSourceProperties = ((IEnumerable<SourceMemberConfig>)configs.GetValue(map)).Select(m => m.SourceMember);
 
-                var mappedProperties = map.PropertyMaps.Select(m => m.SourceMember)
-                    .Concat(mappedSourceProperties);
+            // Here is hack, because source member mappings are not exposed
+            Type t = typeof(TypeMap);
+            var configs = t.GetField("_sourceMemberConfigs", BindingFlags.Instance | BindingFlags.NonPublic);
+            var mappedSourceProperties = ((IEnumerable<SourceMemberConfig>)configs.GetValue(map)).Select(m => m.SourceMember);
 
-                var properties = map.SourceType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            var mappedProperties = map.PropertyMaps.Select(m => m.SourceMember)
+                .Concat(mappedSourceProperties);
 
-                foreach (var propertyInfo in properties)
-                {
-                    if (!mappedProperties.Contains(propertyInfo))
-                        throw new Exception(String.Format("Property '{0}' of type '{1}' is not mapped",
-                            propertyInfo, map.SourceType));
-                }
-            
+            var properties = map.SourceType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+            foreach (var propertyInfo in properties)
+            {
+                if (!mappedProperties.Contains(propertyInfo))
+                    throw new Exception(String.Format("Property '{0}' of type '{1}' is not mapped",
+                        propertyInfo, map.SourceType));
+            }
+
         }
 
         private void AssertAllSourcePropertiesMapped()

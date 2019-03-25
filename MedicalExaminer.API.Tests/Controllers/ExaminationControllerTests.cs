@@ -209,7 +209,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationId = Guid.NewGuid().ToString();
             var examination = new Examination()
             {
-                Id = examinationId
+                ExaminationId = examinationId
             };
 
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
@@ -249,7 +249,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationId = Guid.NewGuid().ToString();
             var examination = new Examination()
             {
-                Id = examinationId
+                ExaminationId = examinationId
             };
 
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
@@ -322,7 +322,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationId = Guid.NewGuid().ToString();
             var examination = new Examination()
             {
-                Id = examinationId
+                ExaminationId = examinationId
             };
 
             var medicalTeam = new MedicalTeam();
@@ -356,7 +356,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationId = Guid.NewGuid().ToString();
             var examination = new Examination()
             {
-                Id = examinationId
+                ExaminationId = examinationId
             };
 
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
@@ -409,27 +409,5 @@ namespace MedicalExaminer.API.Tests.Controllers
             var notFound = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
         }
 
-        private PostNewCaseRequest CreateValidNewCaseRequest()
-        {
-            return new PostNewCaseRequest()
-            {
-                GivenNames = "A",
-                Surname = "Patient",
-                Gender = ExaminationGender.Male,
-                MedicalExaminerOfficeResponsible = "7"
-            };
-        }
-
-        private Examination CreateValidExamination()
-        {
-            var examination = new Examination()
-            {
-                Gender = ExaminationGender.Male,
-                Surname = "Patient",
-                GivenNames = "Barry",
-
-            };
-            return examination;
-        }
     }
 }

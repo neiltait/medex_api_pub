@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.User;
-
+using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.User
 {

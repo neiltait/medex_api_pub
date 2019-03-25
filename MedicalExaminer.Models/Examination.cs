@@ -35,14 +35,7 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "hospital_number_3")]
         public string HospitalNumber_3 { get; set; }
 
-        /// <summary>
-        /// Examination ID, unique identifier.
-        /// </summary>
-        [Required]
-        [DataType(DataType.Text)]
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
-
+        
         /// <summary>
         /// time of death
         /// </summary>
@@ -319,10 +312,6 @@ namespace MedicalExaminer.Models
         [DataType(DataType.Text)]
         public string MedicalExaminerOfficeResponsible { get; set; }
 
-        [JsonProperty(PropertyName = "gender_details")]
-        [DataType(DataType.Text)]
-        public string GenderDetails { get; set; }
-
         [JsonProperty(PropertyName = "representatives")]
         public IEnumerable<Representative> Representatives { get; set; }
 
@@ -352,6 +341,9 @@ namespace MedicalExaminer.Models
 
         [JsonProperty(PropertyName = "case_officer")]
         public string CaseOfficer { get; set; }
+
+        [JsonProperty(PropertyName = "id")]
+        public string ExaminationId { get; set; }
 
         //public Examination()
         //{

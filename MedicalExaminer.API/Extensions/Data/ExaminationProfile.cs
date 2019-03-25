@@ -2,6 +2,7 @@
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Models;
+using System;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -20,7 +21,7 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<Examination, ExaminationItem>();
             CreateMap<PostNewCaseRequest, Examination>()
                 .ForMember(examination => examination.UrgencyScore, opt => opt.Ignore())
-                .ForMember(examination => examination.Id, opt => opt.Ignore())
+                .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
                 .ForMember(examination => examination.HouseNameNumber, opt => opt.Ignore())
                 .ForMember(examination => examination.Street, opt => opt.Ignore())
                 .ForMember(examination => examination.Town, opt => opt.Ignore())
@@ -56,7 +57,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.PendingDiscussionWithRepresentative, opt => opt.Ignore())
                 .ForMember(examination => examination.HaveFinalCaseOutstandingOutcomes, opt => opt.Ignore())
                 .ForMember(examination => examination.CaseOfficer, opt => opt.Ignore())
-                .ForMember(examination => examination.Id, opt => opt.Ignore())
+                .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
                 .ForMember(examination => examination.LastModifiedBy, opt => opt.Ignore())
                 .ForMember(examination => examination.ModifiedAt, opt => opt.Ignore())
                 .ForMember(examination => examination.CreatedAt, opt => opt.Ignore())

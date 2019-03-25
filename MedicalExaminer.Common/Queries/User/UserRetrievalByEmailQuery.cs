@@ -11,6 +11,5 @@ namespace MedicalExaminer.Common.Queries.User
             UserEmail = userEmail;
         }
 
-        public string UserEmail { get; }
     }
 }

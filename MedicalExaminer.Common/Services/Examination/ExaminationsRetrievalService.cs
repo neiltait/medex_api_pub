@@ -13,6 +13,7 @@ namespace MedicalExaminer.Common.Services.Examination
     {
         private readonly IConnectionSettings _connectionSettings;
         private readonly ExaminationQueryBuilder _examinationQueryBuilder;
+        private readonly IDatabaseAccess _databaseAccess;
         public ExaminationsRetrievalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings, ExaminationQueryBuilder examinationQueryBuilder)
         {
             _databaseAccess = databaseAccess;

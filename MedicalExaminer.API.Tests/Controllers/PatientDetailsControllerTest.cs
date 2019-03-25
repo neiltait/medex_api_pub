@@ -56,7 +56,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             var examination = new Examination()
             {
-                Id = "a"
+                ExaminationId = "a"
             };
             var getPatientDetailsResponse = new Mock<GetPatientDetailsResponse>();
             var patientDetails = new Mock<PatientDetails>();
@@ -87,7 +87,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             var examination = new Examination
             {
-                Id = "a"
+                ExaminationId = "a"
             };
 
             var patientDetailsByCaseIdQuery = new PatientDetailsByCaseIdQuery("a");
