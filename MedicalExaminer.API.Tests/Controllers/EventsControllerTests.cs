@@ -94,28 +94,34 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             // Arrange
             var logger = new Mock<IMELogger>();
-            var mapper = new Mock<IMapper>();
-
+            var examinationObj = new Mock<Examination>().Object;
             var examinationId = "7E5D50CE-05BF-4A1F-AA6E-25418A723A7F";
-            var otherEvents = new[] {new OtherEvent() {
-                EventId = "a",
-                EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
-                EventText = "please work"
-            }
-            };
-            var events = new CaseBreakDown()
-            {
-                OtherEvents = otherEvents
-            };
-            var examinationObj = new Examination
-            {
-                ExaminationId = examinationId,
-                Events = events
-            };
+            //var otherEvents = new[] {new OtherEvent() {
+            //    EventId = "a",
+            //    EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
+            //    EventText = "please work"
+            //}
+            //};
+            //var events = new CaseBreakDown()
+            //{
+            //    OtherEvents = otherEvents
+            //};
+            //var examinationObj = new Examination
+            //{
+            //    ExaminationId = examinationId,
+            //    Events = events
+            //};
+
+            var getOtherResponse = new Mock<GetOtherEventResponse>().Object;
+            
+            var mapper = new Mock<IMapper>();
+            mapper.Setup(m => m.Map<GetOtherEventResponse>(examinationObj)).Returns(getOtherResponse);
+
             var otherEventByCaseIdService = new Mock<IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent>>();
             var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateOtherEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examinationObj)).Verifiable();
