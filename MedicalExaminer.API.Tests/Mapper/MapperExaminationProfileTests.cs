@@ -183,51 +183,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                 Relationship = "milk man"
             };
 
-            var examination = new Examination()
-            {
-                Id = id,
-                AnyImplants = AnyImplants,
-                AnyPersonalEffects = AnyPersonalEffects,
-                ChildPriority = ChildPriority,
-                Completed = Completed,
-                CoronerPriority = CoronerPriority,
-                CoronerStatus = CoronerStatus,
-                County = County,
-                Country = Country,
-                CulturalPriority = CulturalPriority,
-                DateOfBirth = DateOfBirth,
-                DateOfDeath = DateOfDeath,
-                FuneralDirectors = FuneralDirectors,
-                FaithPriority = FaithPriority,
-                GivenNames = GivenNames,
-                Gender = Gender,
-                GenderDetails = GenderDetails,
-                HospitalNumber_1 = HospitalNumber_1,
-                HospitalNumber_2 = HospitalNumber_2,
-                HospitalNumber_3 = HospitalNumber_3,
-                HouseNameNumber = HouseNameNumber,
-                ImplantDetails = ImplantDetails,
-                LastOccupation = LastOccupation,
-                MedicalExaminerOfficeResponsible = MedicalExaminerOfficeResponsible,
-                ModeOfDisposal = ModeOfDisposal,
-                NhsNumber = NhsNumber,
-                OrganisationCareBeforeDeathLocationId = OrganisationCareBeforeDeathLocationId,
-                OtherPriority = OtherPriority,
-                OutOfHours = OutOfHours,
-                PersonalEffectDetails = PersonalEffectDetails,
-                Postcode = Postcode,
-                PlaceDeathOccured = PlaceDeathOccured,
-                PriorityDetails = PriorityDetails,
-                Representatives = new[] { representative },
-                Surname = Surname,
-                Street = Street,
-                Town = Town,
-                TimeOfDeath = TimeOfDeath,
-                UrgencyScore = UrgencyScore,
-                LastAdmission = LastAdmission,
-                CaseCreated = CaseCreated
-            };
-
+            var examination = GenerateExamination();
+            examination.Representatives = new[] { representative };
             var result = _mapper.Map<PatientCardItem>(examination);
 
             result.DateOfBirth.Should().Be(DateOfBirth);
@@ -429,7 +386,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         public void Examination_To_GetExaminationResponse()
         {
             var examination = GenerateExamination();
-
+            examination.Representatives = Representatives;
             var result = _mapper.Map<GetExaminationResponse>(examination);
 
             result.AnyPersonalEffects.Should().Be(AnyPersonalEffects);
@@ -567,14 +524,6 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             return examination;
         }
-
-        [Fact]
-        public void Examination_To_ExaminationItem_Ensure_Source_Is_Mapped()
-        {
-            var mapType = _mapper.ConfigurationProvider.FindTypeMapFor<Examination, ExaminationItem>();
-            AssertAllSourcePropertiesMappedForMap(mapType);
-        }
-
 
         /// <summary>
         /// Test Mapping Examination to ExaminationItem.
