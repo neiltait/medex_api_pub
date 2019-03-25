@@ -8,11 +8,10 @@ namespace MedicalExaminer.API.Extensions.Data
     {
         public PatientDetailsProfile()
         {
-            
             CreateMap<PutPatientDetailsRequest, PatientDetails>();
             CreateMap<Examination, GetPatientDetailsResponse>();
             CreateMap<PatientDetails, Examination>()
-                .ForMember(x => x.Id, opt => opt.Ignore());
+                .ForMember(x => x.ExaminationId, opt => opt.Ignore());
         }
     }
 }

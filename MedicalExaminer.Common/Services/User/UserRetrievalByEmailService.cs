@@ -9,13 +9,13 @@ namespace MedicalExaminer.Common.Services.User
 {
     public class UserRetrievalByEmailService : IAsyncQueryHandler<UserRetrievalByEmailQuery, Models.MeUser>
     {
-        private readonly IDatabaseAccess _databaseAccess;
-        private readonly IUserConnectionSettings _connectionSettings;
+        private readonly IUserConnectionSettings connectionSettings;
+        private readonly IDatabaseAccess databaseAccess;
 
         public UserRetrievalByEmailService(IDatabaseAccess databaseAccess, IUserConnectionSettings connectionSettings)
         {
-            _databaseAccess = databaseAccess;
-            _connectionSettings = connectionSettings;
+            this.databaseAccess = databaseAccess;
+            this.connectionSettings = connectionSettings;
         }
 
         public Task<Models.MeUser> Handle(UserRetrievalByEmailQuery param)
@@ -25,17 +25,10 @@ namespace MedicalExaminer.Common.Services.User
                 throw new ArgumentNullException(nameof(param));
             }
 
-            try
-            {
-                var result = _databaseAccess.GetItemAsync<Models.MeUser>(_connectionSettings,
-                    x => x.Email == param.UserEmail);
-                return result;
-            }
-            catch (Exception e)
-            {
-                //_logger.Log("Failed to retrieve examination data", e);
-                throw;
-            }
+            var result = databaseAccess.GetItemAsync<MeUser>(
+                connectionSettings,
+                x => x.Email == param.UserEmail);
+            return result;
         }
     }
 }

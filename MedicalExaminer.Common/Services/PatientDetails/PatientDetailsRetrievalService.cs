@@ -8,13 +8,17 @@ namespace MedicalExaminer.Common.Services.PatientDetails
 {
     public class PatientDetailsRetrievalService : IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Models.Examination>
     {
-        private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
-        public PatientDetailsRetrievalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
+        private readonly IDatabaseAccess _databaseAccess;
+
+        public PatientDetailsRetrievalService(
+            IDatabaseAccess databaseAccess,
+            IExaminationConnectionSettings connectionSettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
         }
+
         public async Task<Models.Examination> Handle(PatientDetailsByCaseIdQuery param)
         {
             if (param == null)

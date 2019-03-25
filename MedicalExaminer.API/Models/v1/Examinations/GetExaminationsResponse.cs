@@ -5,7 +5,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
 {
     /// <inheritdoc />
     /// <summary>
-    /// Response object for a list of examinations.
+    ///     Response object for a list of examinations.
     /// </summary>
     public class GetExaminationsResponse : ResponseBase
     {
@@ -28,7 +28,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public int CountOfCasesHaveFinalCaseOutstandingOutcomes { get; set; }
 
         /// <summary>
-        /// List of Examinations.
+        ///     List of Examinations.
         /// </summary>
         public IEnumerable<PatientCardItem> Examinations { get; set; }
     }

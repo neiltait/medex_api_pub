@@ -28,7 +28,9 @@ namespace MedicalExaminer.Common.Database
             return (T)(dynamic)resourceResponse.Resource;
         }
 
-        public async Task<T> GetItemAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
+        public async Task<T> GetItemAsync<T>(
+            IConnectionSettings connectionSettings,
+            Expression<Func<T, bool>> predicate)
         {
             try
             {
@@ -54,7 +56,9 @@ namespace MedicalExaminer.Common.Database
             }
         }
 
-        public async Task<IEnumerable<T>> GetItemsAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
+        public async Task<IEnumerable<T>> GetItemsAsync<T>(
+            IConnectionSettings connectionSettings,
+            Expression<Func<T, bool>> predicate)
         {
             var _client = _documentClientFactory.CreateClient(connectionSettings);
             var query = _client.CreateDocumentQuery<T>(
@@ -116,6 +120,21 @@ namespace MedicalExaminer.Common.Database
                 item);
 
             return (T)(dynamic)updateItemAsync.Resource;
+        }
+
+        private DocumentClient CreateClient(IConnectionSettings connectionSettings)
+        {
+            var client = new DocumentClient(connectionSettings.EndPointUri, connectionSettings.PrimaryKey);
+
+            client.CreateDatabaseIfNotExistsAsync(new Microsoft.Azure.Documents.Database
+                { Id = connectionSettings.DatabaseId });
+            var databaseUri = UriFactory.CreateDatabaseUri(connectionSettings.DatabaseId);
+
+            client.CreateDocumentCollectionIfNotExistsAsync(
+                databaseUri,
+                new DocumentCollection { Id = connectionSettings.Collection });
+
+            return client;
         }
     }
 }

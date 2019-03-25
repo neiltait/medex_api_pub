@@ -15,18 +15,12 @@ using Xunit;
 namespace MedicalExaminer.API.Tests.Controllers
 {
     /// <summary>
-    /// Tests the Users Controller
+    ///     Tests the Users Controller
     /// </summary>
     public class TestPermissionsController : ControllerTestsBase<PermissionsController>
     {
         /// <summary>
-        /// The User Persistence and permission persistence mock.
-        /// </summary>
-        private readonly Mock<IUserPersistence> _userPersistence;
-        private readonly Mock<IPermissionPersistence> _permissionPersistence;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TestPermissionsController"/> class.
+        ///     Initializes a new instance of the <see cref="TestPermissionsController" /> class.
         /// </summary>
         public TestPermissionsController()
         {
@@ -35,11 +29,19 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
 
             Controller =
-                new PermissionsController(_userPersistence.Object, _permissionPersistence.Object, logger.Object, Mapper);
+                new PermissionsController(_userPersistence.Object, _permissionPersistence.Object, logger.Object,
+                    Mapper);
         }
 
         /// <summary>
-        /// Test returning an empty list
+        ///     The User Persistence and permission persistence mock.
+        /// </summary>
+        private readonly Mock<IUserPersistence> _userPersistence;
+
+        private readonly Mock<IPermissionPersistence> _permissionPersistence;
+
+        /// <summary>
+        ///     Test returning an empty list
         /// </summary>
         /// <returns>Async Task</returns>
         [Fact]
@@ -59,7 +61,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             response.Result.Should().BeAssignableTo<OkObjectResult>();
             var result = (OkObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetPermissionsResponse>();
-            var model = (GetPermissionsResponse) result.Value;
+            var model = (GetPermissionsResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
@@ -67,7 +69,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         /// <summary>
-        /// Test get a list of users
+        ///     Test get a list of users
         /// </summary>
         /// <returns>Async Task</returns>
         [Fact]
@@ -80,16 +82,16 @@ namespace MedicalExaminer.API.Tests.Controllers
             _permissionPersistence.Setup(pp => pp.GetPermissionsAsync("fake_id_01")).Returns(
                 Task.FromResult<IEnumerable<Permission>>(
                     new List<Permission>
-                        {new Permission {UserId = "fake_id_01", PermissionId = expectedPermissionId}}));
+                        { new Permission { UserId = "fake_id_01", PermissionId = expectedPermissionId } }));
 
             // Act
             var response = await Controller.GetPermissions(userId);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult) response.Result;
+            var result = (OkObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetPermissionsResponse>();
-            var model = (GetPermissionsResponse) result.Value;
+            var model = (GetPermissionsResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
@@ -98,7 +100,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         /// <summary>
-        /// Test that a good response is returned in full
+        ///     Test that a good response is returned in full
         /// </summary>
         /// <returns>Async Task</returns>
         [Fact]
@@ -108,7 +110,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             const string expectedPermissionId = "expectedPermissionId";
             const string expectedUserId = "expectedUserId";
 
-            var expectedPermission = new Permission {PermissionId = expectedPermissionId, UserId = expectedUserId};
+            var expectedPermission = new Permission { PermissionId = expectedPermissionId, UserId = expectedUserId };
 
             _permissionPersistence.Setup(pp => pp.GetPermissionAsync(expectedUserId, expectedPermissionId)).Returns(
                 Task.FromResult(expectedPermission));
@@ -118,9 +120,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult) response.Result;
+            var result = (OkObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetPermissionResponse>();
-            var model = (GetPermissionResponse) result.Value;
+            var model = (GetPermissionResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
             model.UserId.Should().Be(expectedUserId);
@@ -128,7 +130,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         /// <summary>
-        /// Test when no user is found
+        ///     Test when no user is found
         /// </summary>
         /// <returns>Async Task</returns>
         [Fact]
@@ -145,9 +147,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
-            var result = (NotFoundObjectResult) response.Result;
+            var result = (NotFoundObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetPermissionResponse>();
-            var model = (GetPermissionResponse) result.Value;
+            var model = (GetPermissionResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
@@ -155,7 +157,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         /// <summary>
-        /// Test that model validation error causes validation failure
+        ///     Test that model validation error causes validation failure
         /// </summary>
         /// <returns>Async Task</returns>
         [Fact]
@@ -169,9 +171,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
-            var result = (BadRequestObjectResult) response.Result;
+            var result = (BadRequestObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetPermissionResponse>();
-            var model = (GetPermissionResponse) result.Value;
+            var model = (GetPermissionResponse)result.Value;
             model.Errors.Count.Should().Be(1);
             model.Success.Should().BeFalse();
         }

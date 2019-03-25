@@ -4,7 +4,7 @@
 namespace MedicalExaminer.Common.ConnectionSettings
 {
     /// <summary>
-    /// User Connection Settings
+    ///     User Connection Settings
     /// </summary>
     public class UserConnectionSettings : IUserConnectionSettings
     {

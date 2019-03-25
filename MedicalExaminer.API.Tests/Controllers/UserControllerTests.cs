@@ -13,7 +13,7 @@ namespace MedicalExaminer.API.Tests.Controllers
     public class UserControllerTests : ControllerTestsBase<UsersController>
     {
         /// <summary>
-        /// Initialise a new instance of the Users Controller Tests
+        ///     Initialise a new instance of the Users Controller Tests
         /// </summary>
         public UserControllerTests()
         {
@@ -31,11 +31,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedLastName = "Shmob";
             var expectedUserId = "1";
 
-            var expectedRequest = new PostUserRequest()
+            var expectedRequest = new PostUserRequest
             {
                 FirstName = expectedFirstName,
                 Email = expectedEmail,
-                LastName = expectedLastName,
+                LastName = expectedLastName
             };
 
             // Act

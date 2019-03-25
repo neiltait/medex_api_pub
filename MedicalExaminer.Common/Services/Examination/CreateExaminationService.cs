@@ -11,7 +11,10 @@ namespace MedicalExaminer.Common.Services.Examination
 
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
-        public CreateExaminationService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
+
+        public CreateExaminationService(
+            IDatabaseAccess databaseAccess,
+            IExaminationConnectionSettings connectionSettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;

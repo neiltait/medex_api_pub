@@ -2,11 +2,11 @@
 {
     public class LocationRetrievalByIdQuery : IQuery<Models.Location>
     {
-        public readonly string Id;
+        public readonly string LocationId;
 
-        public LocationRetrievalByIdQuery(string id)
+        public LocationRetrievalByIdQuery(string locationId)
         {
-            Id = id;
+            LocationId = locationId;
         }
     }
 }

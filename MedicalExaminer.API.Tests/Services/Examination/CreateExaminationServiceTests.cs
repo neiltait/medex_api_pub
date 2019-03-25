@@ -14,38 +14,38 @@ namespace MedicalExaminer.API.Tests.Services.Examination
     public class CreateExaminationServiceTests
     {
         [Fact]
-        public void CreateExaminationQuerySuccessReturnsExaminationId()
+        public void CreateExaminationQueryIsNullThrowsException()
         {
             // Arrange
             MedicalExaminer.Models.Examination examination = new MedicalExaminer.Models.Examination();
-            //var calculator = new Calculator();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var query = new CreateExaminationQuery(examination);
+            CreateExaminationQuery query = null;
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup((db)  => db.CreateItemAsync(connectionSettings.Object, 
+            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object);
+
+            Action act = () => sut.Handle(query).GetAwaiter().GetResult();
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreateExaminationQuerySuccessReturnsExaminationId()
+        {
+            // Arrange
+            var examination = new MedicalExaminer.Models.Examination();
+            var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            CreateExaminationQuery query = null;
+            
+            var dbAccess = new Mock<IDatabaseAccess>();
+            dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
                 examination, false)).Returns(Task.FromResult(examination)).Verifiable();
             var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object);
-            
+
             // Act
             var result = sut.Handle(query);
 
             // Assert
             dbAccess.Verify(db => db.CreateItemAsync(connectionSettings.Object, examination, false), Times.Once);
             Assert.NotNull(result.Result);
-        }
-
-        [Fact]
-        public void CreateExaminationQueryIsNullThrowsException()
-        {
-            // Arrange
-            var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            CreateExaminationQuery query = null;
-            
-            var dbAccess = new Mock<IDatabaseAccess>();
-            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object);
-
-            Action act = () => sut.Handle(query).GetAwaiter().GetResult();
-            act.Should().Throw<ArgumentNullException>();
         }
     }
 }

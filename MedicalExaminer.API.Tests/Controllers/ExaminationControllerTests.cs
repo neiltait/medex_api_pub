@@ -6,6 +6,7 @@ using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Examinations;
+using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
@@ -19,6 +20,28 @@ namespace MedicalExaminer.API.Tests.Controllers
 {
     public class ExaminationControllerTests : ControllerTestsBase<ExaminationsController>
     {
+        private PostNewCaseRequest CreateValidNewCaseRequest()
+        {
+            return new PostNewCaseRequest
+            {
+                GivenNames = "A",
+                Surname = "Patient",
+                Gender = ExaminationGender.Male,
+                MedicalExaminerOfficeResponsible = "7"
+            };
+        }
+
+        private Examination CreateValidExamination()
+        {
+            var examination = new Examination
+            {
+                Gender = ExaminationGender.Male,
+                Surname = "Patient",
+                GivenNames = "Barry"
+            };
+            return examination;
+        }
+
         [Fact]
         public void GetExamination_When_Called_With_Invalid_Id_Returns_Expected_Type()
         {
@@ -46,13 +69,13 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async void GetExamination_When_Called_With_Valid_Id_Returns_Expected_Type()
         {
             // Arrange
-            Examination examinationObj = new Examination()
+            var examinationObj = new Examination
             {
-                Id = "a"
+                ExaminationId = "a"
             };
-            var getResponse = new GetExaminationResponse()
+            var getResponse = new GetExaminationResponse
             {
-                Id = "a"
+                ExaminationId = "a"
             };
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
@@ -74,7 +97,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<ActionResult<GetExaminationResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             okResult.Value.Should().BeAssignableTo<GetExaminationResponse>();
-            Assert.Equal("a", ((GetExaminationResponse)okResult.Value).Id);
+            Assert.Equal("a", ((GetExaminationResponse)okResult.Value).ExaminationId);
         }
 
         [Fact]
@@ -83,7 +106,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examination1 = new Examination();
             var examination2 = new Examination();
-            IEnumerable<Examination> examinationsResult = new List<Examination>() { examination1, examination2 };
+            IEnumerable<Examination> examinationsResult = new List<Examination> { examination1, examination2 };
             var er = new Mock<GetExaminationsResponse>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();

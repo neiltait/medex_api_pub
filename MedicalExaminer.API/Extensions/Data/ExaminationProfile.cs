@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Models;
@@ -7,12 +6,12 @@ using MedicalExaminer.Models;
 namespace MedicalExaminer.API.Extensions.Data
 {
     /// <summary>
-    /// Examination Profile for AutoMapper
+    ///     Examination Profile for AutoMapper
     /// </summary>
     public class ExaminationProfile : Profile
     {
         /// <summary>
-        /// Initialise a new instance of the Examination AutoMapper Profile.
+        ///     Initialise a new instance of the Examination AutoMapper Profile.
         /// </summary>
         public ExaminationProfile()
         {

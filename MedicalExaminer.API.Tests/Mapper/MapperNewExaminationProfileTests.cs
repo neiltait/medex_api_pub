@@ -11,11 +11,18 @@ namespace MedicalExaminer.API.Tests.Mapper
 {
     public class MapperNewExaminationProfileTests
     {
+        public MapperNewExaminationProfileTests()
+        {
+            var config = new MapperConfiguration(cfg => { cfg.AddProfile<NewExaminationProfile>(); });
+
+            _mapper = config.CreateMapper();
+        }
+
         private CoronerStatus CoronerStatus = CoronerStatus.SentAwaitingConfirm;
-        private DateTime DateOfBirth = new DateTime(1990, 2, 24);
-        private DateTime DateOfDeath = new DateTime(2019, 2, 24);
+        private readonly DateTime DateOfBirth = new DateTime(1990, 2, 24);
+        private readonly DateTime DateOfDeath = new DateTime(2019, 2, 24);
         private const string GivenNames = "givenNames";
-        private ExaminationGender Gender = ExaminationGender.Male;
+        private readonly ExaminationGender Gender = ExaminationGender.Male;
         private const string GenderDetails = "genderDetails";
         private const string HospitalNumber_1 = "hospitalNumber_1";
         private const string HospitalNumber_2 = "hospitalNumber_2";
@@ -26,26 +33,16 @@ namespace MedicalExaminer.API.Tests.Mapper
         private const bool OutOfHours = true;
         private const string PlaceDeathOccured = "placeDeathOccured";
         private const string Surname = "surname";
-        private TimeSpan TimeOfDeath = new TimeSpan(11, 30, 00);
+        private readonly TimeSpan TimeOfDeath = new TimeSpan(11, 30, 00);
         private readonly IMapper _mapper;
 
-        public MapperNewExaminationProfileTests()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<NewExaminationProfile>();
-            });
-
-            _mapper = config.CreateMapper();
-        }
-
         /// <summary>
-        /// Test Mapping Examination to ExaminationItem.
+        ///     Test Mapping Examination to ExaminationItem.
         /// </summary>
         [Fact]
         public void PostNewCaseRequest_To_ExaminationItem()
         {
-            var postNewCaseRequest = new PostNewCaseRequest()
+            var postNewCaseRequest = new PostNewCaseRequest
             {
                 DateOfDeath = DateOfDeath,
                 DateOfBirth = DateOfBirth,
@@ -60,10 +57,10 @@ namespace MedicalExaminer.API.Tests.Mapper
                 OutOfHours = OutOfHours,
                 PlaceDeathOccured = PlaceDeathOccured,
                 Surname = Surname,
-                TimeOfDeath = TimeOfDeath,
+                TimeOfDeath = TimeOfDeath
             };
 
-            
+
             var response = _mapper.Map<ExaminationItem>(postNewCaseRequest);
             response.GenderDetails.Should().Be(GenderDetails);
             response.GivenNames.Should().Be(GivenNames);

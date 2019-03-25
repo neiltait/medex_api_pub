@@ -5,13 +5,13 @@ using Microsoft.Azure.Documents.Client;
 
 namespace MedicalExaminer.Common
 {
- /// <summary>
-    /// Class responsible for logging actions to database
+    /// <summary>
+    ///     Class responsible for logging actions to database
     /// </summary>
     public class MeLoggerPersistence : PersistenceBase, IMeLoggerPersistence
     {
         /// <summary>
-        /// Constructor
+        ///     Constructor
         /// </summary>
         /// <param name="endpointUri">Cosmos DB URI</param>
         /// <param name="primaryKey">Key required for connection</param>
@@ -22,15 +22,15 @@ namespace MedicalExaminer.Common
         }
 
         /// <summary>
-        /// Write one log entry
+        ///     Write one log entry
         /// </summary>
         /// <param name="logEntry">object to be logged</param>
         /// <returns>bool</returns>
         public async Task<bool> SaveLogEntryAsync(LogMessageActionDefault logEntry)
         {
             await EnsureSetupAsync();
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionName);
-            await Client.UpsertDocumentAsync(documentCollectionUri, logEntry);
+            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, collectionName);
+            await client.UpsertDocumentAsync(documentCollectionUri, logEntry);
             return true;
         }
     }

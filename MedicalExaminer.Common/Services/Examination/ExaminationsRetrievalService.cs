@@ -8,9 +8,9 @@ using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
-    public class ExaminationsRetrievalService : IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Models.Examination>>
+    public class
+        ExaminationsRetrievalService : IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Models.Examination>>
     {
-        private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
         private readonly ExaminationQueryBuilder _examinationQueryBuilder;
         public ExaminationsRetrievalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings, ExaminationQueryBuilder examinationQueryBuilder)

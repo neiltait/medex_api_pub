@@ -71,7 +71,7 @@
 <!-- Workaround for https://github.com/swagger-api/swagger-editor/issues/1371 -->
 <script>
     if (window.navigator.userAgent.indexOf("Edge") > -1) {
-        console.log("Removing native Edge fetch in favor of swagger-ui's polyfill")
+        console.log("Removing native Edge fetch in favor of swagger-ui's polyfill");
         window.fetch = undefined;
     }
 </script>
@@ -89,13 +89,13 @@
         } else {
             qp = location.search.substring(1);
         }
-        arr = qp.split("&")
-        arr.forEach(function (v, i, _arr) { _arr[i] = '"' + v.replace('=', '":"') + '"'; })
+        arr = qp.split("&");
+        arr.forEach(function (v, i, _arr) { _arr[i] = '"' + v.replace('=', '":"') + '"'; });
         qp = qp ? JSON.parse('{' + arr.join() + '}',
             function (key, value) {
                 return key === "" ? value : decodeURIComponent(value)
             }
-        ) : {}
+        ) : {};
         isValid = qp.state === sentState;
         if ((
             oauth2.auth.schema.get("flow") === "accessCode" ||
@@ -114,7 +114,7 @@
                 oauth2.auth.code = qp.code;
                 oauth2.callback({ auth: oauth2.auth, redirectUrl: redirectUrl });
             } else {
-                let oauthErrorMsg
+                let oauthErrorMsg;
                 if (qp.error) {
                     oauthErrorMsg = "[" + qp.error + "]: " +
                         (qp.error_description ? qp.error_description + ". " : "no accessCode received from the server. ") +
@@ -173,34 +173,18 @@
                 window.location.href.replace("index.html", "oauth2-redirect.html").split('#')[0];
         }*/
 
+        configObject.url = baseurl + configObject.urls[0].url;
+        configObject.onComplete = function() {
+            if (authToken) {
+                ui.preauthorizeApiKey("Bearer", "Bearer " + authToken);
+            }
+        };
+        configObject.plugins = [
+            SwaggerUIBundle.plugins.DownloadUrl
+        ];
+
         // Build a system
-        const ui = SwaggerUIBundle({
-            url: baseurl + configObject.urls[0].url,
-            dom_id: configObject.dom_id,
-            oauth2RedirectUrl: configObject.oauth2RedirectUrl,
-            /*configs: {
-                preFetch: function (req) {
-                    if (authToken) {
-                        req.headers["Authorization"] = "Bearer " + authToken;
-                    }
-                    return req;
-                }
-            },*/
-            onComplete: function() {
-                if (authToken) {
-                    ui.preauthorizeApiKey("Bearer", "Bearer " + authToken);
-                }
-            },
-            tagsSorter: configObject.tagsSorter,
-            docExpansion: configObject.docExpansion,
-            deepLinking: configObject.deepLinking,
-            validatorUrl: configObject.validatorUrl,
-            presets: configObject.presets,
-            plugins: [
-                SwaggerUIBundle.plugins.DownloadUrl
-            ],
-            layout: configObject.layout
-        });
+        const ui = SwaggerUIBundle(configObject);
 
         // Apply OAuth config
         ui.initOAuth(oauthConfigObject);

@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Permission = MedicalExaminer.Models.Permission;
@@ -15,20 +15,21 @@ namespace MedicalExaminer.API.Controllers
 {
     /// <inheritdoc />
     /// <summary>
-    /// Permissions Controller
+    ///     Permissions Controller
     /// </summary>
-    [Route("users/{userId}/permissions")]
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/users/{meUserId}/permissions")]
     [ApiController]
     [Authorize]
     public class PermissionsController : BaseController
     {
         /// <summary>
-        /// The Permission Persistence Layer
+        ///     The Permission Persistence Layer
         /// </summary>
-        private readonly IPermissionPersistence permissionPersistence;
+        private readonly IPermissionPersistence _permissionPersistence;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PermissionsController"/> class.
+        ///     Initializes a new instance of the <see cref="PermissionsController" /> class.
         /// </summary>
         /// <param name="userPersistence">The User Persistence.</param>
         /// <param name="permissionPersistence">The Permission Persistence</param>
@@ -41,25 +42,25 @@ namespace MedicalExaminer.API.Controllers
             IMapper mapper)
             : base(logger, mapper)
         {
-            this.permissionPersistence = permissionPersistence;
+            _permissionPersistence = permissionPersistence;
         }
 
         /// <summary>
-        /// Get all Permissions for a User ID.
+        ///     Get all Permissions for a User ID.
         /// </summary>
         /// <param name="meUserId">The User Identifier.</param>
         /// <returns>A GetPermissionsResponse.</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetPermissionsResponse>> GetPermissions(string userId)
+        public async Task<ActionResult<GetPermissionsResponse>> GetPermissions(string meUserId)
         {
             try
             {
-                var permissions = await permissionPersistence.GetPermissionsAsync(userId);
+                var permissions = await _permissionPersistence.GetPermissionsAsync(meUserId);
 
                 return Ok(new GetPermissionsResponse
                 {
-                    Permissions = permissions.Select(p => Mapper.Map<PermissionItem>(p)),
+                    Permissions = permissions.Select(p => Mapper.Map<PermissionItem>(p))
                 });
             }
             catch (DocumentClientException)
@@ -73,14 +74,14 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Get a Users permission by its Identifier.
+        ///     Get a Users permission by its Identifier.
         /// </summary>
         /// <param name="userId">The User Id.</param>
         /// <param name="permissionId">The Permission Id.</param>
         /// <returns>A GetPermissionResponse.</returns>
         [HttpGet("{permissionId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetPermissionResponse>> GetPermission(string userId, string permissionId)
+        public async Task<ActionResult<GetPermissionResponse>> GetPermission(string meUserId, string permissionId)
         {
             if (!ModelState.IsValid)
             {
@@ -89,7 +90,7 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var permission = await permissionPersistence.GetPermissionAsync(userId, permissionId);
+                var permission = await _permissionPersistence.GetPermissionAsync(meUserId, permissionId);
                 return Ok(Mapper.Map<GetPermissionResponse>(permission));
             }
             catch (ArgumentException)
@@ -103,13 +104,15 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Create a new Permission.
+        ///     Create a new Permission.
         /// </summary>
         /// <param name="postPermission">The PostPermissionRequest.</param>
         /// <returns>A PostPermissionResponse.</returns>
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PostPermissionResponse>> CreatePermission([FromBody]PostPermissionRequest postPermission)
+        public async Task<ActionResult<PostPermissionResponse>> CreatePermission(
+            [FromBody]
+            PostPermissionRequest postPermission)
         {
             if (!ModelState.IsValid)
             {
@@ -119,7 +122,7 @@ namespace MedicalExaminer.API.Controllers
             try
             {
                 var permission = Mapper.Map<Permission>(postPermission);
-                var createdPermission = await permissionPersistence.CreatePermissionAsync(permission);
+                var createdPermission = await _permissionPersistence.CreatePermissionAsync(permission);
 
                 // TODO: Is ID populated after saving?
                 // TODO : Question : Should this be the whole user object?
@@ -136,13 +139,15 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Create a new Permission.
+        /// Updates a Permission.
         /// </summary>
         /// <param name="putPermission">The PutPermissionRequest.</param>
         /// <returns>A PutPermissionResponse.</returns>
-        [HttpPut("{Id}")]
+        [HttpPut("{permissionId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutPermissionResponse>> UpdatePermission([FromBody] PutPermissionRequest putPermission)
+        public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(
+            [FromBody]
+            PutPermissionRequest putPermission)
         {
             try
             {
@@ -152,7 +157,7 @@ namespace MedicalExaminer.API.Controllers
                 }
 
                 var permission = Mapper.Map<Permission>(putPermission);
-                var updatedPermission = await permissionPersistence.UpdatePermissionAsync(permission);
+                var updatedPermission = await _permissionPersistence.UpdatePermissionAsync(permission);
                 return Ok(Mapper.Map<PutPermissionResponse>(updatedPermission));
             }
             catch (DocumentClientException)

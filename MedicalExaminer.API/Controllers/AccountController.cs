@@ -18,9 +18,10 @@ using Okta.Sdk;
 namespace MedicalExaminer.API.Controllers
 {
     /// <summary>
-    /// Accounts controller, handler for authentication and token verification
+    ///     Accounts controller, handler for authentication and token verification.
     /// </summary>
-    [Route("auth")]
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/auth")]
     [ApiController]
     [Authorize]
     public class AccountController : BaseController
@@ -29,58 +30,63 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _userRetrievalService;
 
         /// <summary>
-        /// Okta Client.
+        ///     Okta Client.
         /// </summary>
-        private readonly OktaClient _oktaClient;
+        private readonly OktaClient oktaClient;
+
+        private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService;
 
         /// <summary>
-        /// The User Persistence Layer
+        ///     The User Persistence Layer.
         /// </summary>
-        private readonly IUserPersistence _userPersistence;
+        private readonly IUserPersistence userPersistence;
+
+        private readonly IAsyncQueryHandler<UserRetrievalQuery, MeUser> userRetrievalService;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AccountController"/> class.
+        ///     Initializes a new instance of the <see cref="AccountController" /> class.
         /// </summary>
-        /// <param name="logger">Initialise with IMELogger instance</param>
+        /// <param name="logger">Initialise with IMELogger instance.</param>
         /// <param name="mapper">The Mapper.</param>
         /// <param name="oktaClient">Okta client.</param>
-        /// <param name="userPersistence">User persistance.</param>
-        /// <param name="userCreationService"></param>
-        /// <param name="userRetrievalService"></param>
-        public AccountController(IMELogger logger, 
-            IMapper mapper, 
-            OktaClient oktaClient, 
+        /// <param name="userPersistence">User persistence.</param>
+        /// <param name="userCreationService">User Creation Service.</param>
+        /// <param name="userRetrievalService">User Retrieval Service.</param>
+        public AccountController(
+            IMELogger logger,
+            IMapper mapper,
+            OktaClient oktaClient,
             IUserPersistence userPersistence,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalService)
             : base(logger, mapper)
         {
-            _oktaClient = oktaClient;
-            _userPersistence = userPersistence;
-            _userCreationService = userCreationService;
-            _userRetrievalService = userRetrievalService;
+            this.oktaClient = oktaClient;
+            this.userPersistence = userPersistence;
+            this.userCreationService = userCreationService;
+            this.userRetrievalService = userRetrievalService;
         }
 
         /// <summary>
-        /// Validate Session
+        ///     Validate Session.
         /// </summary>
         /// <returns>Details about the current user.</returns>
-        [HttpPost("validate-session")]
+        [HttpPost("validate_session")]
         public async Task<PostValidateSessionResponse> ValidateSession()
         {
             // Look up their email in the claims
             var emailAddress = User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
 
             // Get everything that Okta knows about this user
-            var oktaUser = await _oktaClient.Users.GetUserAsync(emailAddress);
+            var oktaUser = await oktaClient.Users.GetUserAsync(emailAddress);
 
             // Try and look them up in our database
-            MeUser meUser = await GetUser(emailAddress);
+            var meUser = await GetUser(emailAddress);
 
             // Create the user if it doesn't already exist
             if (meUser == null)
             {
-                var createdMeUser = await CreateUser(new MeUser()
+                var createdMeUser = await CreateUser(new MeUser
                 {
                     FirstName = oktaUser.Profile.FirstName,
                     LastName = oktaUser.Profile.LastName,
@@ -95,11 +101,10 @@ namespace MedicalExaminer.API.Controllers
 
             if (meUser == null)
             {
-                // TODO: Decide on an appropriate way of responding to not valid
                 throw new Exception("Failed to create user");
             }
 
-            return new PostValidateSessionResponse()
+            return new PostValidateSessionResponse
             {
                 UserId = meUser.UserId,
                 EmailAddress = meUser.Email,
@@ -127,7 +132,7 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var createdUser = await _userCreationService.Handle(new CreateUserQuery(toCreate));
+                var createdUser = await userCreationService.Handle(new CreateUserQuery(toCreate));
 
                 return createdUser;
             }

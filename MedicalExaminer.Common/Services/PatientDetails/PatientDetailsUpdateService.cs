@@ -9,16 +9,21 @@ namespace MedicalExaminer.Common.Services.PatientDetails
 {
     public class PatientDetailsUpdateService : IAsyncQueryHandler<PatientDetailsUpdateQuery, Models.Examination>
     {
-        private readonly IDatabaseAccess _databaseAccess;
-        private readonly IExaminationConnectionSettings _connectionSettings;
-        private readonly IMapper _mapper;
-        public PatientDetailsUpdateService(IDatabaseAccess databaseAccess,
-            IExaminationConnectionSettings connectionSettings, IMapper mapper)
+        private readonly IExaminationConnectionSettings connectionSettings;
+        private readonly IDatabaseAccess databaseAccess;
+
+        private readonly IMapper mapper;
+
+        public PatientDetailsUpdateService(
+            IDatabaseAccess databaseAccess,
+            IExaminationConnectionSettings connectionSettings,
+            IMapper mapper)
         {
-            _databaseAccess = databaseAccess;
-            _connectionSettings = connectionSettings;
-            _mapper = mapper;
+            this.databaseAccess = databaseAccess;
+            this.connectionSettings = connectionSettings;
+            this.mapper = mapper;
         }
+
         public async Task<Models.Examination> Handle(PatientDetailsUpdateQuery param)
         {
             if (param == null)
@@ -27,10 +32,12 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             }
 
             var caseToReplace = await
-                _databaseAccess
-                    .GetItemAsync<Models.Examination>(_connectionSettings, examination => examination.Id == param.CaseId);
+                databaseAccess
+                    .GetItemAsync<Models.Examination>(
+                        connectionSettings,
+                        examination => examination.ExaminationId == param.CaseId);
 
-            _mapper.Map(param.PatientDetails, caseToReplace);
+            mapper.Map(param.PatientDetails, caseToReplace);
 
             caseToReplace.UrgencyScore = Calculator.CalculateUrgencyScore(caseToReplace);
 

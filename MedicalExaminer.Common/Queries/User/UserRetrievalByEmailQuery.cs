@@ -1,4 +1,6 @@
-﻿namespace MedicalExaminer.Common.Queries.User
+﻿using MedicalExaminer.Models;
+
+namespace MedicalExaminer.Common.Queries.User
 {
     public class UserRetrievalByEmailQuery : IQuery<Models.MeUser>
     {
@@ -8,5 +10,7 @@
         {
             UserEmail = userEmail;
         }
+
+        public string UserEmail { get; }
     }
 }

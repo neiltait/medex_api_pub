@@ -1,14 +1,31 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+
 namespace MedicalExaminer.API.Attributes
 {
+    /// <summary>
+    ///     Validates a date is less or equal to another date or is null.
+    /// </summary>
     public class DateIsLessThanOrEqualToNullsAllowed : ValidationAttribute
     {
-        private readonly string _endDateField;
+        private readonly string endDateField;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="DateIsLessThanOrEqualToNullsAllowed" /> class.
+        /// </summary>
+        /// <param name="endDateField">The date to compare to.</param>
         public DateIsLessThanOrEqualToNullsAllowed(string endDateField)
         {
-            _endDateField = endDateField;
+            this.endDateField = endDateField;
         }
+
+        /// <inheritdoc />
+        /// <summary>
+        /// Execute the validation on an object.
+        /// </summary>
+        /// <param name="value">The object to validate.</param>
+        /// <param name="context">The Validation Context.</param>
+        /// <returns>ValidationResult</returns>
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
             DateTime startDate;
@@ -29,7 +46,7 @@ namespace MedicalExaminer.API.Attributes
 
             try
             {
-                var temp = context.ObjectInstance.GetType().GetProperty(_endDateField).GetValue(context.ObjectInstance);
+                var temp = context.ObjectInstance.GetType().GetProperty(endDateField).GetValue(context.ObjectInstance);
                 if (temp == null)
                 {
                     return ValidationResult.Success;
@@ -37,9 +54,9 @@ namespace MedicalExaminer.API.Attributes
 
                 endDate = Convert.ToDateTime(temp);
             }
-            catch(NullReferenceException nre)
+            catch (NullReferenceException)
             {
-                return new ValidationResult($"Unable to find the end date field {_endDateField} on the object");
+                return new ValidationResult($"Unable to find the end date field {endDateField} on the object");
             }
             catch (Exception ex)
             {
@@ -47,14 +64,9 @@ namespace MedicalExaminer.API.Attributes
                 return new ValidationResult($"Incorrect Format for {context.DisplayName}");
             }
 
-            if (endDate < startDate)
-            {
-                return new ValidationResult($"The patient cannot have died before they were born");
-            }
-
-            return ValidationResult.Success;
+            return endDate < startDate
+                ? new ValidationResult("The patient cannot have died before they were born")
+                : ValidationResult.Success;
         }
-
-        
     }
 }

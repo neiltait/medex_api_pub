@@ -14,7 +14,7 @@ namespace MedicalExaminer.Models
         public string FullName { get; set; }
 
         /// <summary>
-        /// Representatives relationship to the patient
+        ///     Representatives relationship to the patient
         /// </summary>
         [JsonProperty(PropertyName = "relationship")]
         [Required]
@@ -23,28 +23,30 @@ namespace MedicalExaminer.Models
         public string Relationship { get; set; }
 
         /// <summary>
-        /// Representatives phone number
+        ///     Representatives phone number
         /// </summary>
         [JsonProperty(PropertyName = "phone_number")]
         [Required]
         public string PhoneNumber { get; set; }
 
         /// <summary>
-        /// Was the representative present at the death?
+        ///     Was the representative present at the death?
         /// </summary>
         [JsonProperty(PropertyName = "present_at_death")]
         [Required]
         public PresentAtDeath PresentAtDeath { get; set; }
 
         /// <summary>
-        /// Has the representative been informed?
+        ///     Has the representative been informed?
         /// </summary>
         [JsonProperty(PropertyName = "informed")]
         [Required]
         public Informed Informed { get; set; }
+
         [JsonProperty(PropertyName = "appointment_date")]
         [Required]
         public DateTime? AppointmentDate { get; set; }
+
         [JsonProperty(PropertyName = "appointment_time")]
         [Required]
         public TimeSpan? AppointmentTime { get; set; }
