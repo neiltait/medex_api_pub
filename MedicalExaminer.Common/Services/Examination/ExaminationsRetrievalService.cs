@@ -32,9 +32,9 @@ namespace MedicalExaminer.Common.Services.Examination
             switch (param.FilterOrderBy)
             {
                 case ExaminationsOrderBy.Urgency:
-                    return _databaseAccess.GetItemsAsync(_connectionSettings, predicate);
+                    return _databaseAccess.GetItemsAsync(_connectionSettings, predicate, x => x.UrgencyScore);
                 case ExaminationsOrderBy.CaseCreated:
-                    return _databaseAccess.GetItemsAsync(_connectionSettings, predicate);
+                    return _databaseAccess.GetItemsAsync(_connectionSettings, predicate, x => x.CreatedAt);
                 case null:
                     return _databaseAccess.GetItemsAsync(_connectionSettings, predicate);
                 default:

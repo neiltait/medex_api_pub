@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -9,7 +8,6 @@ using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services.Examination;
-using MedicalExaminer.Models.Enums;
 using Moq;
 using Xunit;
 
@@ -122,6 +120,34 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             //Arrange
             Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.Completed == false;
+            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
+            var clientFactory = CosmosMocker.CreateClientFactory(client);
+
+            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
+
+            var dataAccess = new DatabaseAccess(clientFactory.Object);
+
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
+                "", null, 0, 0, "", true);
+
+            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+
+            //Act
+
+            var results = await sut.Handle(examinationsDashboardQuery);
+
+            //Assert
+            results.Should().NotBeNull();
+            Assert.Equal(10, results.Count());
+        }
+
+        [Fact]
+        public async virtual Task EmptyQueryWithOrderByReturnsAllOpenCasesInOrder()
+        {
+            //Arrange
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.Completed == false;
+         //   Expression<Func<MedicalExaminer.Models.Examination, bool>> order = t => t.UrgencyScore;
             var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
             var clientFactory = CosmosMocker.CreateClientFactory(client);
 

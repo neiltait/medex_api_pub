@@ -64,6 +64,10 @@ namespace MedicalExaminer.API.Controllers
     [ServiceFilter(typeof(ControllerActionFilter))]
     public async Task<ActionResult<GetExaminationsResponse>> GetExaminations([FromBody]GetExaminationsRequest filter)
     {
+        if(filter == null)
+            {
+                return BadRequest(new GetExaminationsResponse());
+            }
         var examinationsQuery = new ExaminationsRetrievalQuery(filter.CaseStatus, filter.LocationId,
         filter.OrderBy, filter.PageNumber, filter.PageSize, filter.UserId, filter.OpenCases);
         var examinations = _examinationsRetrievalService.Handle(examinationsQuery);
