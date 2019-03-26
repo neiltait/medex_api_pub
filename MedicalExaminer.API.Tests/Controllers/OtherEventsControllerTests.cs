@@ -224,7 +224,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public async void Put_Final_Other_Event_Valid_Request_Object_Finds_Examination_ThenWHAT()
+        public async void Put_Final_Other_Event_Valid_Request_Object_Finds_Examination_Then_Ok_Result()
         {
             // Arrange
             var logger = new Mock<IMELogger>();
