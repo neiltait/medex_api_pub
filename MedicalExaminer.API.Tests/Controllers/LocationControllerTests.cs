@@ -49,7 +49,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public void GetLocations_When_Called_Returns_Expected_Type()
         {
             // Act
-            var response = Controller.GetLocations();
+            var response = Controller.GetLocations(TODO);
 
             // Assert
             var taskResult = response.Should().BeOfType<Task<ActionResult<GetLocationsResponse>>>().Subject;

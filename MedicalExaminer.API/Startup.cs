@@ -14,10 +14,12 @@ using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.Examination;
+using MedicalExaminer.Common.Services.Location;
 using MedicalExaminer.Common.Services.MedicalTeam;
 using MedicalExaminer.Common.Services.PatientDetails;
 using MedicalExaminer.Common.Services.User;
@@ -163,39 +165,9 @@ namespace MedicalExaminer.API
 
             services.AddScoped<IMELogger, MELogger>();
             services.AddScoped<IDatabaseAccess, DatabaseAccess>();
-            services.AddScoped<ILocationConnectionSettings>(s => new LocationConnectionSettings(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]));
-
-            services.AddScoped<IExaminationConnectionSettings>(s => new ExaminationConnectionSettings(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]));
-
-            services.AddScoped<IUserConnectionSettings>(s => new UserConnectionSettings(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]));
-
-            services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, string>, CreateExaminationService>();
-            services
-                .AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
-            services
-                .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
-                    ExaminationsRetrievalService>();
-            services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
-            services
-                .AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
-            services
-                .AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService
-                >();
-
-            services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
-            services.AddScoped<IAsyncQueryHandler<UserRetrievalQuery, MeUser>, UserRetrievalService>();
-
-
             services.AddScoped<ControllerActionFilter>();
+
+            ConfigureQueries(services);
 
             services.AddScoped<ILocationPersistence>(s => new LocationPersistence(
                 new Uri(Configuration["CosmosDB:URL"]),
@@ -285,6 +257,43 @@ namespace MedicalExaminer.API
             app.UseCors("MyPolicy");
 
             app.UseMvc();
+        }
+
+        /// <summary>
+        /// Configure Queries.
+        /// </summary>
+        /// <param name="services">Services.</param>
+        private void ConfigureQueries(IServiceCollection services)
+        {
+            services.AddScoped<ILocationConnectionSettings>(s => new LocationConnectionSettings(
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]));
+
+            services.AddScoped<IExaminationConnectionSettings>(s => new ExaminationConnectionSettings(
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]));
+
+            services.AddScoped<IUserConnectionSettings>(s => new UserConnectionSettings(
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]));
+
+            // Examination
+            services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, string>, CreateExaminationService>();
+            services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
+            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
+            services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
+            services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
+            services.AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService>();
+
+            // User
+            services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
+            services.AddScoped<IAsyncQueryHandler<UserRetrievalQuery, MeUser>, UserRetrievalService>();
+
+            // Location
+            services.AddScoped<IAsyncQueryHandler<LocationRetrievalByQuery, Location>, LocationQueryService>();
         }
 
         /// <summary>
