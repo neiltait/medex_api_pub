@@ -38,8 +38,9 @@ namespace MedicalExaminer.API.Attributes
                 return ValidationResult.Success;
             }
 
-            //var result = base.IsValid(value, context);
-            return new ValidationResult("it went wrong");
+            var result = base.IsValid(value, context);
+            //return new ValidationResult("it went wrong");
+            return result;
         }
     }
 }

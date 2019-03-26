@@ -27,17 +27,20 @@ namespace MedicalExaminer.API.Tests.Attributes
                 predicateProperty = true,
                 testField = "bob"
             };
-            var serviceProvider = new Mock<IServiceProvider>();
-            serviceProvider.Setup(context => context.GetService(It.IsAny<Type>()))
-                .Returns(dto);
-            var validationContext = new ValidationContext(dto, new Dictionary<object, object>());
+            var serviceProvider = new Mock<IServiceProvider>().Object;
+            //serviceProvider.Setup(context => context.GetService(It.IsAny<Type>())).Returns(dto);
+            //serviceProvider.Setup(context => context.GetService(typeof(TestDto)));
+            serviceProvider.GetService(dto.GetType());
+            //var serviceProvider = new Mock<IServiceProvider>().Object;
+            var validationContext = new ValidationContext(dto, serviceProvider, new Dictionary<object, object>());
             var sut = new RequiredIfAttributesMatch("predicateProperty", true);
+            var expectedResult = ValidationResult.Success;
 
             // Act
             var result = sut.GetValidationResult(dto.testField, validationContext);
 
             //Assert
-            //Assert.True(result);
+            Assert.Equal(expectedResult, result);
         }
 
         [Fact]
