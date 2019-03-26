@@ -25,9 +25,7 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             {
                 throw new ArgumentNullException(nameof(param));
             }
-
-            var result = await _databaseAccess.GetItemAsync<Models.Examination>(
-                _connectionSettings,
+            var result = await _databaseAccess.GetItemAsync<Models.Examination>(_connectionSettings,
                 examination => examination.ExaminationId == param.ExaminationId);
 
             return result;

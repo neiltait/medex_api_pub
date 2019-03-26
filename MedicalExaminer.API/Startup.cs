@@ -162,13 +162,9 @@ namespace MedicalExaminer.API
             });
 
             services.AddScoped<IMELogger, MELogger>();
+            services.AddScoped<IDocumentClientFactory, DocumentClientFactory>();
             services.AddScoped<IDatabaseAccess, DatabaseAccess>();
             services.AddScoped<ILocationConnectionSettings>(s => new LocationConnectionSettings(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]));
-
-            services.AddScoped<IExaminationConnectionSettings>(s => new ExaminationConnectionSettings(
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
@@ -178,21 +174,26 @@ namespace MedicalExaminer.API
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
 
-            services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, string>, CreateExaminationService>();
+            services.AddScoped<IExaminationConnectionSettings>(s => new ExaminationConnectionSettings(
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]));
+
+            services.AddScoped<ExaminationsQueryExpressionBuilder>(s => new ExaminationsQueryExpressionBuilder());
             services
-                .AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
-            services
-                .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
-                    ExaminationsRetrievalService>();
-            services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
-            services
-                .AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
-            services
-                .AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService
-                >();
+                .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>,
+                    ExaminationsDashboardService>();
+            services.AddScoped<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>, UserRetrievalByIdService>();
+
+            services.AddScoped<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>, UserRetrievalByEmailService>();
+            services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, Examination>, CreateExaminationService>();
+            services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
+            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
+            services.AddScoped<IAsyncUpdateDocumentHandler,  MedicalTeamUpdateService>();
+            services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
+            services.AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService>();
 
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
-            services.AddScoped<IAsyncQueryHandler<UserRetrievalQuery, MeUser>, UserRetrievalService>();
 
 
             services.AddScoped<ControllerActionFilter>();
@@ -317,13 +318,13 @@ namespace MedicalExaminer.API
         private void ConfigureOktaClient(IServiceCollection services)
         {
             // Configure okta client
-            services.AddScoped(context =>
+            services.AddScoped<OktaClientConfiguration>(context =>
             {
                 var settings = context.GetRequiredService<IOptions<OktaSettings>>();
                 return new OktaClientConfiguration
                 {
                     OktaDomain = settings.Value.Domain,
-                    Token = settings.Value.SdkToken
+                    Token = settings.Value.SdkToken,
                 };
             });
             services.AddScoped<OktaClient, OktaClient>();

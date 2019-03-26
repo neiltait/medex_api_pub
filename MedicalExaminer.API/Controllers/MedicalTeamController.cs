@@ -22,7 +22,7 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class MedicalTeamController : BaseController
     {
-        private readonly IAsyncQueryHandler<CreateExaminationQuery, string> _examinationCreationService;
+        private readonly IAsyncQueryHandler<CreateExaminationQuery, Examination> _examinationCreationService;
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>
             _examinationsRetrievalService;
@@ -31,7 +31,7 @@ namespace MedicalExaminer.API.Controllers
         public MedicalTeamController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<CreateExaminationQuery, string> examinationCreationService,
+            IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
             IAsyncUpdateDocumentHandler medicaTeamUpdateService)
