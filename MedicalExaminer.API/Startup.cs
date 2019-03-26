@@ -30,7 +30,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -266,7 +265,6 @@ namespace MedicalExaminer.API
         /// <param name="services">Services.</param>
         private void ConfigureQueries(IServiceCollection services)
         {
-                        
             services.AddScoped<ILocationConnectionSettings>(s => new LocationConnectionSettings(
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],
