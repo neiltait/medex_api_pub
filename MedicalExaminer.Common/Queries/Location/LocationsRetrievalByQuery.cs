@@ -5,14 +5,14 @@ namespace MedicalExaminer.Common.Queries.Location
     /// <summary>
     /// Location Retrieval By Query.
     /// </summary>
-    public class LocationRetrievalByQuery : IQuery<IEnumerable<Models.Location>>
+    public class LocationsRetrievalByQuery : IQuery<IEnumerable<Models.Location>>
     {
         /// <summary>
-        /// Initialise a new instance of the <see cref="LocationRetrievalByQuery"/>.
+        /// Initialise a new instance of the <see cref="LocationsRetrievalByQuery"/>.
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="parentId">Parent Id.</param>
-        public LocationRetrievalByQuery(string name, string parentId)
+        public LocationsRetrievalByQuery(string name, string parentId)
         {
             Name = name;
             ParentId = parentId;

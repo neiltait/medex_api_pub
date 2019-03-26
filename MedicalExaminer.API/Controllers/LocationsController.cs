@@ -30,7 +30,7 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// Location Retrieval by Query.
         /// </summary>
-        private readonly IAsyncQueryHandler<LocationRetrievalByQuery, IEnumerable<Location>> _locationRetrievalByQueryHandler;
+        private readonly IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> _locationRetrievalByQueryHandler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocationsController"/> class.
@@ -41,7 +41,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="mapper">The Mapper.</param>
         public LocationsController(
             IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> locationRetrievalByIdQueryHandler,
-            IAsyncQueryHandler<LocationRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler,
+            IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler,
             IMELogger logger,
             IMapper mapper)
             : base(logger, mapper)
@@ -61,7 +61,7 @@ namespace MedicalExaminer.API.Controllers
         {
             var locations =
                 await _locationRetrievalByQueryHandler.Handle(
-                    new LocationRetrievalByQuery(request.Name, request.ParentId));
+                    new LocationsRetrievalByQuery(request.Name, request.ParentId));
 
             // TODO: Filter on whether you have access or not
             if (request.AccessOnly)
@@ -98,7 +98,7 @@ namespace MedicalExaminer.API.Controllers
             }
             catch (DocumentClientException)
             {
-                return NotFound();
+                return NotFound(new GetLocationResponse());
             }
         }
     }

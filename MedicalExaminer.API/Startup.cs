@@ -293,7 +293,7 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<UserRetrievalQuery, MeUser>, UserRetrievalService>();
 
             // Location
-            services.AddScoped<IAsyncQueryHandler<LocationRetrievalByQuery, Location>, LocationQueryService>();
+            services.AddScoped<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>, LocationsQueryService>();
         }
 
         /// <summary>
