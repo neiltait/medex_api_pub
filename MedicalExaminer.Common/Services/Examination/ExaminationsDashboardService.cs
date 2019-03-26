@@ -31,16 +31,16 @@ namespace MedicalExaminer.Common.Services.Examination
             
             var overView = new ExaminationsOverview
             {
-                AdmissionNotesHaveBeenAdded = GetCount(baseQuery, CaseStatus.AdmissionNotesHaveBeenAdded).Result,
-                Unassigned = GetCount(baseQuery, CaseStatus.Unassigned).Result,
-                HaveBeenScrutinisedByME = GetCount(baseQuery, CaseStatus.HaveBeenScrutinisedByME).Result,
-                HaveFinalCaseOutstandingOutcomes = GetCount(baseQuery, CaseStatus.HaveFinalCaseOutstandingOutcomes).Result,
-                PendingAdmissionNotes = GetCount(baseQuery, CaseStatus.PendingAdmissionNotes).Result,
-                PendingDiscussionWithQAP = GetCount(baseQuery, CaseStatus.PendingDiscussionWithQAP).Result,
-                PendingDiscussionWithRepresentative = GetCount(baseQuery, CaseStatus.PendingDiscussionWithRepresentative).Result,
-                ReadyForMEScrutiny = GetCount(baseQuery, CaseStatus.ReadyForMEScrutiny).Result,
+                CountOfAdmissionNotesHaveBeenAdded = GetCount(baseQuery, CaseStatus.AdmissionNotesHaveBeenAdded).Result,
+                CountOfUnassigned = GetCount(baseQuery, CaseStatus.Unassigned).Result,
+                CountOfHaveBeenScrutinisedByME = GetCount(baseQuery, CaseStatus.HaveBeenScrutinisedByME).Result,
+                CountOfHaveFinalCaseOutstandingOutcomes = GetCount(baseQuery, CaseStatus.HaveFinalCaseOutstandingOutcomes).Result,
+                CountOfPendingAdmissionNotes = GetCount(baseQuery, CaseStatus.PendingAdmissionNotes).Result,
+                CountOfPendingDiscussionWithQAP = GetCount(baseQuery, CaseStatus.PendingDiscussionWithQAP).Result,
+                CountOfPendingDiscussionWithRepresentative = GetCount(baseQuery, CaseStatus.PendingDiscussionWithRepresentative).Result,
+                CountOfReadyForMEScrutiny = GetCount(baseQuery, CaseStatus.ReadyForMEScrutiny).Result,
                 TotalCases = GetCount(baseQuery).Result,
-                UrgentCases = GetCount(baseQuery, x => ((x.UrgencyScore > 0) && (x.Completed == false))).Result
+                CountOfUrgentCases = GetCount(baseQuery, x => ((x.UrgencyScore > 0) && (x.Completed == false))).Result
             };
 
             return overView;

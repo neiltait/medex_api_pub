@@ -52,7 +52,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(1, results.UrgentCases);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(2, results.ReadyForMEScrutiny);
+            Assert.Equal(2, results.CountOfReadyForMEScrutiny);
         }
 
         [Fact]
@@ -111,7 +111,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             //Assert
             results.Should().NotBeNull();
 
-            Assert.Equal(1, results.ReadyForMEScrutiny);
+            Assert.Equal(1, results.CountOfReadyForMEScrutiny);
         }
 
         [Fact]
@@ -192,7 +192,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(1, results.UrgentCases);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         [Fact]
@@ -219,7 +219,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(1, results.UrgentCases);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         [Fact]
@@ -246,7 +246,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(1, results.UrgentCases);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         [Fact]
@@ -273,7 +273,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(1, results.UrgentCases);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         [Fact]
@@ -300,7 +300,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(1, results.UrgentCases);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         [Fact]
@@ -327,7 +327,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(1, results.UrgentCases);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         [Fact]
@@ -354,7 +354,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(1, results.UrgentCases);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         private MedicalExaminer.Models.Examination[] GenerateExaminations()

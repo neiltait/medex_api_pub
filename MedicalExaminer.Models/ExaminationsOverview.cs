@@ -3,21 +3,21 @@
     public class ExaminationsOverview
     {
         public int TotalCases { get; set; }
-        public int UrgentCases { get; set; }
-        public int AdmissionNotesHaveBeenAdded { get; set; }
+        public int CountOfUrgentCases { get; set; }
+        public int CountOfAdmissionNotesHaveBeenAdded { get; set; }
 
-        public int ReadyForMEScrutiny { get; set; }
+        public int CountOfReadyForMEScrutiny { get; set; }
 
-        public int Unassigned { get; set; }
+        public int CountOfUnassigned { get; set; }
 
-        public int HaveBeenScrutinisedByME { get; set; }
+        public int CountOfHaveBeenScrutinisedByME { get; set; }
 
-        public int PendingAdmissionNotes { get; set; }
+        public int CountOfPendingAdmissionNotes { get; set; }
 
-        public int PendingDiscussionWithQAP { get; set; }
+        public int CountOfPendingDiscussionWithQAP { get; set; }
 
-        public int PendingDiscussionWithRepresentative { get; set; }
+        public int CountOfPendingDiscussionWithRepresentative { get; set; }
 
-        public int HaveFinalCaseOutstandingOutcomes { get; set; }
+        public int CountOfHaveFinalCaseOutstandingOutcomes { get; set; }
     }
 }

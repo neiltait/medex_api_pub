@@ -79,15 +79,15 @@ namespace MedicalExaminer.API.Controllers
         return Ok(new GetExaminationsResponse
         {
             CountOfTotalCases = dashboardOverview.Result.TotalCases,
-            CountOfUrgentCases = dashboardOverview.Result.UrgentCases,
-            CountOfCasesAdmissionNotesHaveBeenAdded = dashboardOverview.Result.AdmissionNotesHaveBeenAdded,
-            CountOfCasesUnassigned = dashboardOverview.Result.Unassigned,
-            CountOfCasesHaveBeenScrutinisedByME = dashboardOverview.Result.HaveBeenScrutinisedByME,
-            CountOfCasesHaveFinalCaseOutstandingOutcomes = dashboardOverview.Result.HaveFinalCaseOutstandingOutcomes,
-            CountOfCasesPendingAdmissionNotes = dashboardOverview.Result.PendingAdmissionNotes,
-            CountOfCasesPendingDiscussionWithQAP = dashboardOverview.Result.PendingDiscussionWithQAP,
-            CountOfCasesPendingDiscussionWithRepresentative = dashboardOverview.Result.PendingDiscussionWithRepresentative,
-            CountOfCasesReadyForMEScrutiny = dashboardOverview.Result.ReadyForMEScrutiny,
+            CountOfUrgentCases = dashboardOverview.Result.CountOfUrgentCases,
+            CountOfCasesAdmissionNotesHaveBeenAdded = dashboardOverview.Result.CountOfAdmissionNotesHaveBeenAdded,
+            CountOfCasesUnassigned = dashboardOverview.Result.CountOfUnassigned,
+            CountOfCasesHaveBeenScrutinisedByME = dashboardOverview.Result.CountOfHaveBeenScrutinisedByME,
+            CountOfCasesHaveFinalCaseOutstandingOutcomes = dashboardOverview.Result.CountOfHaveFinalCaseOutstandingOutcomes,
+            CountOfCasesPendingAdmissionNotes = dashboardOverview.Result.CountOfPendingAdmissionNotes,
+            CountOfCasesPendingDiscussionWithQAP = dashboardOverview.Result.CountOfPendingDiscussionWithQAP,
+            CountOfCasesPendingDiscussionWithRepresentative = dashboardOverview.Result.CountOfPendingDiscussionWithRepresentative,
+            CountOfCasesReadyForMEScrutiny = dashboardOverview.Result.CountOfReadyForMEScrutiny,
             Examinations = examinations.Result.Select(e => Mapper.Map<PatientCardItem>(e)).ToList()
         });
     }
