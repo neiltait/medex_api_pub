@@ -179,6 +179,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
+            sut.ModelState.AddModelError("i", "broke it");
             // Act
             var response = await sut.UpsertNewOtherEvent("a", invalidRequest);
 
@@ -186,6 +187,78 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<ActionResult<PutOtherEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
             badRequestResult.Value.Should().BeAssignableTo<PutOtherEventResponse>();
+        }
+
+        [Fact]
+        public async void Put_Final_Other_Event_Valid_Request_Object_Cannot_Find_Examination()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+
+            var otherEventByCaseIdService = new Mock<IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateOtherEventQuery, string>>();
+            var examinationRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+
+            var validRequest = new PutOtherEventRequest
+            {
+                EventId = "1",
+                EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
+                EventText = "Hello Planet"
+            };
+
+            examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(default(Examination))).Verifiable();
+
+            var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
+               otherEventCreationService.Object, examinationRetrievalQueryService.Object);
+
+            // Act
+            var response = await sut.UpsertNewOtherEvent("a", validRequest);
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutOtherEventResponse>>().Subject;
+            var badRequestResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
+            badRequestResult.Value.Should().BeAssignableTo<PutOtherEventResponse>();
+        }
+
+        [Fact]
+        public async void Put_Final_Other_Event_Valid_Request_Object_Finds_Examination_ThenWHAT()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            var examination = new Mock<Examination>();
+            var otherEventByCaseIdService = new Mock<IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateOtherEventQuery, string>>();
+            var examinationRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+
+            var validRequest = new PutOtherEventRequest
+            {
+                EventId = "1",
+                EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
+                EventText = "Hello Planet"
+            };
+            otherEventCreationService.Setup(service => service.Handle(It.IsAny<CreateOtherEventQuery>()))
+                .Returns(Task.FromResult("hi mark")).Verifiable();
+
+            examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination.Object)).Verifiable();
+
+            var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
+               otherEventCreationService.Object, examinationRetrievalQueryService.Object);
+
+            // Act
+            var response = await sut.UpsertNewOtherEvent("a", validRequest);
+
+            otherEventCreationService.Verify(x => x.Handle(It.IsAny<CreateOtherEventQuery>()), Times.Once);
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutOtherEventResponse>>().Subject;
+            var goodRequestResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            goodRequestResult.Value.Should().BeAssignableTo<PutOtherEventResponse>();
         }
     }
 }

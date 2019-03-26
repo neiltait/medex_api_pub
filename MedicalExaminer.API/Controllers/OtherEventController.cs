@@ -57,6 +57,12 @@ namespace MedicalExaminer.API.Controllers
 
             var otherEventNote = Mapper.Map<OtherEvent>(putNewOtherEventNoteRequest);
             var result = await _otherEventCreationService.Handle(new CreateOtherEventQuery(caseId, otherEventNote));
+
+            if(result == null)
+            {
+                return NotFound(new PutOtherEventResponse());
+            }
+
             var res = new PutOtherEventResponse
             {
                 EventId = result
