@@ -186,7 +186,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 Events = caseBreakdown
             };
 
-            var result = mapper.Map<GetOtherEventResponse>(examination);
+            var result = _mapper.Map<GetOtherEventResponse>(examination);
 
             Assert.Single(result.Events);
             var ourEvent = result.Events.First();

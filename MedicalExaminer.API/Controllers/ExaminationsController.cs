@@ -159,7 +159,7 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutExaminationResponse());
             }
 
-            Examination examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
+            Examination examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
             if (examination == null)
             {
                 return NotFound();
@@ -191,7 +191,7 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetMedicalTeamResponse());
             }
 
-            Examination examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
+            Examination examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
             if (examination == null || examination.MedicalTeam == null)
             {
                 return NotFound(new GetMedicalTeamResponse());
