@@ -28,9 +28,9 @@ namespace MedicalExaminer.API.Tests.Attributes
                 testField = "bob"
             };
             var serviceProvider = new Mock<IServiceProvider>().Object;
+            serviceProvider.GetService(dto.GetType());
             //serviceProvider.Setup(context => context.GetService(It.IsAny<Type>())).Returns(dto);
             //serviceProvider.Setup(context => context.GetService(typeof(TestDto)));
-            serviceProvider.GetService(dto.GetType());
             //var serviceProvider = new Mock<IServiceProvider>().Object;
             var validationContext = new ValidationContext(dto, serviceProvider, new Dictionary<object, object>());
             var sut = new RequiredIfAttributesMatch("predicateProperty", true);
