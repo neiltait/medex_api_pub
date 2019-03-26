@@ -53,7 +53,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 ExaminationId = examinationId
             };
 
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
             var examinationsRetrievalQuery =
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
@@ -82,7 +82,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examinationId = Guid.NewGuid().ToString();
             Examination examination = null;
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
             var examinationsRetrievalQuery =
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
@@ -121,7 +121,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var medicalTeam = new MedicalTeam();
             examination.MedicalTeam = medicalTeam;
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
             var examinationsRetrievalQuery =
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
@@ -151,7 +151,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationId = Guid.NewGuid().ToString();
             Examination examination = null;
 
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
             var examinationsRetrievalQuery =
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
@@ -188,7 +188,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 ExaminationId = examinationId
             };
 
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
             var examinationsRetrievalQuery =
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
@@ -227,7 +227,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 ExaminationId = examinationId
             };
 
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, string>>();
+            var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
             var examinationsRetrievalQuery =
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();

@@ -2,9 +2,9 @@
 
 namespace MedicalExaminer.Common.Queries.User
 {
-    public class UserRetrievalQuery : IQuery<MeUser>
+    public class UserRetrievalByEmailQuery : IQuery<Models.MeUser>
     {
-        public UserRetrievalQuery(string userEmail)
+        public UserRetrievalByEmailQuery(string userEmail)
         {
             UserEmail = userEmail;
         }
