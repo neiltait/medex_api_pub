@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
@@ -14,7 +15,7 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
 {
-    public class EventsControllerTests
+    public class OtherEventsControllerTests
     {
         [Fact]
         public async void GetOtherEvent_When_Called_With_Null_Returns_Bad_Request()
@@ -29,7 +30,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
                 otherEventCreationService.Object, examinationRetrievalQueryService.Object);
             // Act
-            var response = await sut.GetOtherEvent(null, null);
+            var response = await sut.GetOtherEvent(null);
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<GetOtherEventResponse>>().Subject;
@@ -51,7 +52,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
                 otherEventCreationService.Object, examinationRetrievalQueryService.Object);
             // Act
-            var response = await sut.GetOtherEvent("aaaa", null);
+            var response = await sut.GetOtherEvent("aaaa");
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<GetOtherEventResponse>>().Subject;
@@ -80,7 +81,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
-            var response = await sut.GetOtherEvent(examinationId, null);
+            var response = await sut.GetOtherEvent(examinationId);
 
             // Assert
             examinationRetrievalQueryService.Verify(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()));
@@ -114,7 +115,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
-            var response = await sut.GetOtherEvent(examinationId, null);
+            var response = await sut.GetOtherEvent(examinationId);
 
             // Assert
             examinationRetrievalQueryService.Verify(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()));
@@ -123,6 +124,68 @@ namespace MedicalExaminer.API.Tests.Controllers
             var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             okResult.Value.Should().BeAssignableTo<GetOtherEventResponse>();
 
+        }
+
+        [Fact]
+        public async void Put_Final_Other_Event_Null_Request_Object_Returns_Invalid_Request()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            
+            var otherEventByCaseIdService = new Mock<IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateOtherEventQuery, string>>();
+            var examinationRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+
+
+            examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(default(Examination))).Verifiable();
+
+            var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
+               otherEventCreationService.Object, examinationRetrievalQueryService.Object);
+
+            // Act
+            var response = await sut.UpsertNewOtherEvent("a", null);
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutOtherEventResponse>>().Subject;
+            var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
+            badRequestResult.Value.Should().BeAssignableTo<PutOtherEventResponse>();
+        }
+
+        [Fact]
+        public async void Put_Final_Other_Event_Invalid_Request_Object_Returns_Invalid_Request()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+
+            var otherEventByCaseIdService = new Mock<IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateOtherEventQuery, string>>();
+            var examinationRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+
+            var invalidRequest = new PutOtherEventRequest
+            {
+             EventId = null,
+             EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
+             EventText = null
+            };
+
+            examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(default(Examination))).Verifiable();
+
+            var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
+               otherEventCreationService.Object, examinationRetrievalQueryService.Object);
+
+            // Act
+            var response = await sut.UpsertNewOtherEvent("a", invalidRequest);
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutOtherEventResponse>>().Subject;
+            var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
+            badRequestResult.Value.Should().BeAssignableTo<PutOtherEventResponse>();
         }
     }
 }

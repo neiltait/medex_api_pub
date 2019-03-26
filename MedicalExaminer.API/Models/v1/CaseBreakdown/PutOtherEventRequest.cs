@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using MedicalExaminer.API.Attributes;
+﻿using MedicalExaminer.API.Attributes;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
@@ -9,7 +6,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
     /// <summary>
     ///     Put Patient Details Request Object.
     /// </summary>
-    public class PostOtherEventRequest
+    public class PutOtherEventRequest
     {
         /// <summary>
         /// Event Id

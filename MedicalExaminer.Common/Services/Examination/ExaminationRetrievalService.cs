@@ -30,9 +30,10 @@ namespace MedicalExaminer.Common.Services.Examination
             var result = databaseAccess.GetItemAsync<Models.Examination>(
                 connectionSettings,
                 x => x.ExaminationId == param.ExaminationId);
-
-            var filteredExamination = result.Result.MyUsersView(param.User);
-
+            if (result.Result != null)
+            {
+                return Task.FromResult(result.Result.MyUsersView(param.User));
+            }
             return result;
         }
     }

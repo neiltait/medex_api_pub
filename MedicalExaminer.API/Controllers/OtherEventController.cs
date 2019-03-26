@@ -38,21 +38,26 @@ namespace MedicalExaminer.API.Controllers
             _examinationRetrievalService = examinationRetrievalService;
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("{caseId}/otherevent")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PostOtherEventResponse>> CreateNewOtherEventNote(string caseId,
+        public async Task<ActionResult<PutOtherEventResponse>> UpsertNewOtherEvent(string caseId,
             [FromBody]
-            PostOtherEventRequest postNewOtherEventNoteRequest)
+            PutOtherEventRequest putNewOtherEventNoteRequest)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new PostOtherEventResponse());
+                return BadRequest(new PutOtherEventResponse());
             }
 
-            var otherEventNote = Mapper.Map<OtherEvent>(postNewOtherEventNoteRequest);
+            if (putNewOtherEventNoteRequest == null)
+            {
+                return BadRequest(new PutOtherEventResponse());
+            }
+
+            var otherEventNote = Mapper.Map<OtherEvent>(putNewOtherEventNoteRequest);
             var result = await _otherEventCreationService.Handle(new CreateOtherEventQuery(caseId, otherEventNote));
-            var res = new PostOtherEventResponse
+            var res = new PutOtherEventResponse
             {
                 EventId = result
             };
@@ -63,7 +68,7 @@ namespace MedicalExaminer.API.Controllers
         [HttpGet]
         [Route("{caseId}/events/{eventType}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetOtherEventResponse>> GetOtherEvent(string examinationId, EventType? eventType)
+        public async Task<ActionResult<GetOtherEventResponse>> GetOtherEvent(string examinationId)
         {
             
             if (string.IsNullOrEmpty(examinationId))

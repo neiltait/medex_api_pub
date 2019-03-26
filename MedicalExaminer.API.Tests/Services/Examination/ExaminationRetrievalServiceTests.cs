@@ -6,6 +6,7 @@ using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services.Examination;
+using MedicalExaminer.Models;
 using Moq;
 using Xunit;
 
@@ -32,7 +33,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             // Arrange
             var examinationId = "a";
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var query = new Mock<ExaminationRetrievalQuery>(examinationId);
+            var mockUser = new Mock<MeUser>();
+            var query = new Mock<ExaminationRetrievalQuery>(examinationId, mockUser.Object);
             var dbAccess = new Mock<IDatabaseAccess>();
 
             dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
@@ -57,7 +59,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationId = "a";
             var examination = new MedicalExaminer.Models.Examination();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var query = new Mock<ExaminationRetrievalQuery>(examinationId);
+            var mockUser = new Mock<MeUser>();
+            var query = new Mock<ExaminationRetrievalQuery>(examinationId, mockUser.Object);
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
                     It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))

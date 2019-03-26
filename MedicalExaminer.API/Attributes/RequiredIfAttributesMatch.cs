@@ -5,7 +5,7 @@ namespace MedicalExaminer.API.Attributes
     /// <summary>
     ///     Custom Validation attribute.
     /// </summary>
-    public class RequiredIfAttributesMatch : RequiredAttribute
+    public class RequiredIfAttributesMatch : ValidationAttribute
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="RequiredIfAttributesMatch" /> class.
@@ -38,8 +38,8 @@ namespace MedicalExaminer.API.Attributes
                 return ValidationResult.Success;
             }
 
-            var result = base.IsValid(value, context);
-            return result;
+            //var result = base.IsValid(value, context);
+            return new ValidationResult("it went wrong");
         }
     }
 }

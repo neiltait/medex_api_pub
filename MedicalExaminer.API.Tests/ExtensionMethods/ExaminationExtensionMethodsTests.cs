@@ -21,7 +21,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             var amendmentUser2 = new OtherEvent()
             {
-                EventId = "1",
+                EventId = "2",
                 EventStatus = EventStatus.Draft,
                 EventText = "Hello Earth",
                 UserId = "123"
@@ -29,7 +29,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             var amendmentUser3 = new OtherEvent()
             {
-                EventId = "1",
+                EventId = "3",
                 EventStatus = EventStatus.Final,
                 EventText = "Hello Earth",
                 UserId = "123"
@@ -37,7 +37,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             var amendmentUser4 = new OtherEvent()
             {
-                EventId = "1",
+                EventId = "4",
                 EventStatus = EventStatus.Draft,
                 EventText = "Hello Earth",
                 UserId = "456"
@@ -45,7 +45,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             var otherEvent1 = new OtherEvent()
             {
-                EventId = "1",
+                EventId = "5",
                 EventStatus = EventStatus.Final,
                 EventText = "Hello Earth",
                 UserId = "123",
@@ -54,7 +54,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             var otherEvent2 = new OtherEvent()
             {
-                EventId = "1",
+                EventId = "6",
                 EventStatus = EventStatus.Final,
                 EventText = "Hello Earth",
                 UserId = "123",
@@ -78,9 +78,17 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             var result = examination.MyUsersView(myUser);
 
-            Assert.Single(result.Events.OtherEvents);
-            var myEvent = result.Events.OtherEvents.First();
-            Assert.Single(myEvent.Amendments);
+            Assert.Equal(2, result.Events.OtherEvents.Count());
+            var firstEvent = result.Events.OtherEvents.First();
+
+            Assert.Single(firstEvent.Amendments);
+            var firstTestAmendment = firstEvent.Amendments.First();
+            Assert.Equal("1", firstTestAmendment.EventId);
+            var lastEvent = result.Events.OtherEvents.Last();
+            var secondTestAmendment = lastEvent.Amendments.First();
+            Assert.Equal("3", secondTestAmendment.EventId);
+            var thirdTestAmendment = lastEvent.Amendments.Last();
+            Assert.Equal("4", thirdTestAmendment.EventId);
         }
     }
 }
