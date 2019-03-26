@@ -66,9 +66,9 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Returns all Examination Genders
+        /// Returns all Case Statuses
         /// </summary>
-        /// <returns>Dictionary of Examination Genders</returns>
+        /// <returns>Dictionary of Case Statuses</returns>
         [HttpGet("case_statuses")]
         public ActionResult GetCaseStatuses()
         {

@@ -344,12 +344,5 @@ namespace MedicalExaminer.Models
 
         [JsonProperty(PropertyName = "id")]
         public string ExaminationId { get; set; }
-
-        //public Examination()
-        //{
-        //    Completed = false;
-        //    Assigned = true;
-        //}
-
     }
 }

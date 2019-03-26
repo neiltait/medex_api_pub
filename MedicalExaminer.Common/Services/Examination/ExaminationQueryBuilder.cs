@@ -6,15 +6,14 @@ using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
-    public class ExaminationQueryBuilder
+    public class ExaminationsQueryExpressionBuilder
     {
-
         public Expression<Func<Models.Examination, bool>> GetPredicate(ExaminationsRetrievalQuery queryObject)
         {
-            Expression<Func<Models.Examination, bool>> caseStatusFilter = GetCaseStatusPredicate(queryObject.FilterCaseStatus);
-            Expression<Func<Models.Examination, bool>> medicalExaminerOfficeFilter = GetCaseMEOfficePredicate(queryObject.FilterLocationId);
-            Expression<Func<Models.Examination, bool>> userIdFilter = GetUserIdPredicate(queryObject.FilterUserId);
-            Expression<Func<Models.Examination, bool>> openCases = GetOpenCasesPredicate(queryObject.FilterOpenCases);
+            var caseStatusFilter = GetCaseStatusPredicate(queryObject.FilterCaseStatus);
+            var medicalExaminerOfficeFilter = GetCaseMEOfficePredicate(queryObject.FilterLocationId);
+            var userIdFilter = GetUserIdPredicate(queryObject.FilterUserId);
+            var openCases = GetOpenCasesPredicate(queryObject.FilterOpenCases);
 
             var predicate = caseStatusFilter.And(medicalExaminerOfficeFilter)
                 .And(userIdFilter).And(openCases);

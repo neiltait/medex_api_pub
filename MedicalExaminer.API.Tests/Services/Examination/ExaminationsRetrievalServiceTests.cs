@@ -22,7 +22,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             ExaminationsRetrievalQuery query = null;
             var dbAccess = new Mock<IDatabaseAccess>();
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
             var sut = new ExaminationsRetrievalService(dbAccess.Object, connectionSettings.Object, examinationQueryBuilder.Object);
 
             Action act = () => sut.Handle(query).GetAwaiter().GetResult();
@@ -44,7 +44,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(MedicalExaminer.Models.Enums.CaseStatus.Unassigned,
                 "", null, 0, 0, "", true);
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
             var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
             //Act
@@ -71,7 +71,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(MedicalExaminer.Models.Enums.CaseStatus.ReadyForMEScrutiny,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
             var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
             //Act
@@ -102,7 +102,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(MedicalExaminer.Models.Enums.CaseStatus.ReadyForMEScrutiny,
                 "a", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
             var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
             //Act
@@ -130,7 +130,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
             var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
             //Act
@@ -158,7 +158,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
             var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
             //Act
@@ -185,7 +185,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
             var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
             //Act
@@ -212,7 +212,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
             var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
             //Act
@@ -238,7 +238,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
             var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
             //Act
@@ -265,7 +265,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
             var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
             //Act
@@ -292,7 +292,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
             var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
             //Act
@@ -318,7 +318,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
             var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
             //Act
@@ -344,7 +344,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
             var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
             //Act
@@ -371,7 +371,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationQueryBuilder>();
+            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
             var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
             //Act

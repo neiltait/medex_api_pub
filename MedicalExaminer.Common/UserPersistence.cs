@@ -54,8 +54,7 @@ namespace MedicalExaminer.Common
                 throw new ArgumentException("Invalid Argument");
             }
 
-            var user = (dynamic)document.Resource as MeUser;
-
+            var user = (MeUser)(dynamic)document;
             return user;
         }
 

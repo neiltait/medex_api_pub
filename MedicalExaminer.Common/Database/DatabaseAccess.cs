@@ -26,7 +26,6 @@ namespace MedicalExaminer.Common.Database
             var resourceResponse = await _client.CreateDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, 
                     connectionSettings.Collection), item);
-            var other = GetItemAsync<MeUser>(connectionSettings, x => x.Email == "mark.sharkey@methods.co.uk");
             return (T)(dynamic)resourceResponse.Resource;
         }
 

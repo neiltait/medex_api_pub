@@ -179,7 +179,7 @@ namespace MedicalExaminer.API
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
 
-            services.AddScoped<ExaminationQueryBuilder>(s => new ExaminationQueryBuilder());
+            services.AddScoped<ExaminationsQueryExpressionBuilder>(s => new ExaminationsQueryExpressionBuilder());
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>,
                     ExaminationsDashboardService>();

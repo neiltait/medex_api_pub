@@ -21,7 +21,6 @@ namespace MedicalExaminer.Models
         [Required]
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "urgency_score")]
-
         public int UrgencyScore { get; set; }
 
         /// <summary>

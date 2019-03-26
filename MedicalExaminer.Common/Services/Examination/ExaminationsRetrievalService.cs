@@ -8,19 +8,19 @@ using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
-    public class
-        ExaminationsRetrievalService : IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Models.Examination>>
+    public class ExaminationsRetrievalService : IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Models.Examination>>
     {
         private readonly IConnectionSettings _connectionSettings;
-        private readonly ExaminationQueryBuilder _examinationQueryBuilder;
+        private readonly ExaminationsQueryExpressionBuilder _examinationQueryBuilder;
         private readonly IDatabaseAccess _databaseAccess;
-        public ExaminationsRetrievalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings, ExaminationQueryBuilder examinationQueryBuilder)
+
+        public ExaminationsRetrievalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings, ExaminationsQueryExpressionBuilder examinationQueryBuilder)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
             _examinationQueryBuilder = examinationQueryBuilder;
         }
-        
+
         public Task<IEnumerable<Models.Examination>> Handle(ExaminationsRetrievalQuery param)
         {
             if (param == null)

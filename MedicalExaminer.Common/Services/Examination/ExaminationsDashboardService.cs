@@ -28,30 +28,19 @@ namespace MedicalExaminer.Common.Services.Examination
             }
 
             var baseQuery = GetBaseQuery(param);
-            var countOfTotalCases = GetCount(baseQuery);
-            var countOfAdmissionNotesHaveBeenAdded = GetCount(baseQuery, CaseStatus.AdmissionNotesHaveBeenAdded);
-            var countOfAssigned = GetCount(baseQuery, CaseStatus.Unassigned);
-            var countOfHaveBeenScrutinisedByME = GetCount(baseQuery, CaseStatus.HaveBeenScrutinisedByME);
-            var countOfHaveFinalCaseOutstandingOutcomes = GetCount(baseQuery, CaseStatus.HaveFinalCaseOutstandingOutcomes);
-            var countOfPendingAdmissionNotes = GetCount(baseQuery, CaseStatus.PendingAdmissionNotes);
-            var countOfPendingDiscussionWithQAP = GetCount(baseQuery, CaseStatus.PendingDiscussionWithQAP);
-            var countOfPendingDiscussionWithRepresentative = GetCount(baseQuery, CaseStatus.PendingDiscussionWithRepresentative);
-            var countOfReadyForMEScrutiny = GetCount(baseQuery, CaseStatus.ReadyForMEScrutiny);
-            var countOfUrgentCases = GetCount(baseQuery, x => ((x.UrgencyScore > 0) && (x.Completed == false)));
             
-
             var overView = new ExaminationsOverview
             {
-                AdmissionNotesHaveBeenAdded = countOfAdmissionNotesHaveBeenAdded.Result,
-                Unassigned = countOfAssigned.Result,
-                HaveBeenScrutinisedByME = countOfHaveBeenScrutinisedByME.Result,
-                HaveFinalCaseOutstandingOutcomes = countOfHaveFinalCaseOutstandingOutcomes.Result,
-                PendingAdmissionNotes = countOfPendingAdmissionNotes.Result,
-                PendingDiscussionWithQAP = countOfPendingDiscussionWithQAP.Result,
-                PendingDiscussionWithRepresentative = countOfPendingDiscussionWithRepresentative.Result,
-                ReadyForMEScrutiny = countOfReadyForMEScrutiny.Result,
-                TotalCases = countOfTotalCases.Result,
-                UrgentCases = countOfUrgentCases.Result
+                AdmissionNotesHaveBeenAdded = GetCount(baseQuery, CaseStatus.AdmissionNotesHaveBeenAdded).Result,
+                Unassigned = GetCount(baseQuery, CaseStatus.Unassigned).Result,
+                HaveBeenScrutinisedByME = GetCount(baseQuery, CaseStatus.HaveBeenScrutinisedByME).Result,
+                HaveFinalCaseOutstandingOutcomes = GetCount(baseQuery, CaseStatus.HaveFinalCaseOutstandingOutcomes).Result,
+                PendingAdmissionNotes = GetCount(baseQuery, CaseStatus.PendingAdmissionNotes).Result,
+                PendingDiscussionWithQAP = GetCount(baseQuery, CaseStatus.PendingDiscussionWithQAP).Result,
+                PendingDiscussionWithRepresentative = GetCount(baseQuery, CaseStatus.PendingDiscussionWithRepresentative).Result,
+                ReadyForMEScrutiny = GetCount(baseQuery, CaseStatus.ReadyForMEScrutiny).Result,
+                TotalCases = GetCount(baseQuery).Result,
+                UrgentCases = GetCount(baseQuery, x => ((x.UrgencyScore > 0) && (x.Completed == false))).Result
             };
 
             return overView;
@@ -106,9 +95,9 @@ namespace MedicalExaminer.Common.Services.Examination
 
         private Expression<Func<Models.Examination, bool>> GetBaseQuery(ExaminationsRetrievalQuery param)
         {
-            Expression<Func<Models.Examination, bool>> openCasePredicate = GetOpenCasesPredicate(param.FilterOpenCases);
-            Expression<Func<Models.Examination, bool>> meOfficePredicate = GetCaseMEOfficePredicate(param.FilterLocationId);
-            Expression<Func<Models.Examination, bool>> userIdPredicate = GetUserIdPredicate(param.FilterUserId);
+            var openCasePredicate = GetOpenCasesPredicate(param.FilterOpenCases);
+            var meOfficePredicate = GetCaseMEOfficePredicate(param.FilterLocationId);
+            var userIdPredicate = GetUserIdPredicate(param.FilterUserId);
 
             var predicate = meOfficePredicate
                 .And(openCasePredicate);
