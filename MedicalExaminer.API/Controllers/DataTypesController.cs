@@ -87,6 +87,15 @@ namespace MedicalExaminer.API.Controllers
         }
 
 
+        /// Returns all Case Statuses
+        /// </summary>
+        /// <returns>Dictionary of Case Statuses</returns>
+        [HttpGet("case_statuses")]
+        public ActionResult GetCaseStatuses()
+        {
+            return Ok(GetDictionary(typeof(CaseStatus)));
+        }
+
         private Dictionary<string, int> GetDictionary(Type enumeratorType)
         {
             var dic = new Dictionary<string, int>();

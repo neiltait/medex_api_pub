@@ -12,6 +12,12 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
     /// </summary>
     public class GetPatientDetailsResponse : ResponseBase
     {
+
+        /// <summary>
+        /// The case urgency score
+        /// </summary>
+        public int UrgencyScore { get; set; }
+
         /// <summary>
         ///     The case id?.
         /// </summary>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -13,7 +12,7 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Services.Examination
 {
-    public class ExaminationsRetrievalServiceTests
+    public class ExaminationsDashboardServiceTests
     {
         [Fact]
         public void ExaminationDashboardQueryIsNullThrowsException()
@@ -22,8 +21,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             ExaminationsRetrievalQuery query = null;
             var dbAccess = new Mock<IDatabaseAccess>();
-            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
-            var sut = new ExaminationsRetrievalService(dbAccess.Object, connectionSettings.Object, examinationQueryBuilder.Object);
+            var sut = new ExaminationsDashboardService(dbAccess.Object, connectionSettings.Object);
 
             Action act = () => sut.Handle(query).GetAwaiter().GetResult();
             act.Should().Throw<ArgumentNullException>();
@@ -34,6 +32,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         public async virtual Task UnassignedCasesReturnsCorrectCount()
         {
             //Arrange
+            var id = "a";
             Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.Unassigned;
             var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
             var clientFactory = CosmosMocker.CreateClientFactory(client);
@@ -44,16 +43,16 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(MedicalExaminer.Models.Enums.CaseStatus.Unassigned,
                 "", null, 0, 0, "", true);
-            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
-            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
 
+            var sut = new ExaminationsDashboardService(dataAccess, connectionSettings.Object);
+                        
             //Act
 
             var results = await sut.Handle(examinationsDashboardQuery);
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         [Fact]
@@ -71,8 +70,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(MedicalExaminer.Models.Enums.CaseStatus.ReadyForMEScrutiny,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
-            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+            var sut = new ExaminationsDashboardService(dataAccess, connectionSettings.Object);
+
 
             //Act
 
@@ -80,7 +79,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(2, results.Count());
+            Assert.Equal(2, results.CountOfReadyForMEScrutiny);
         }
 
         [Fact]
@@ -102,8 +101,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(MedicalExaminer.Models.Enums.CaseStatus.ReadyForMEScrutiny,
                 "a", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
-            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+            var sut = new ExaminationsDashboardService(dataAccess, connectionSettings.Object);
+
 
             //Act
 
@@ -112,7 +111,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             //Assert
             results.Should().NotBeNull();
 
-            Assert.Single(results);
+            Assert.Equal(1, results.CountOfReadyForMEScrutiny);
         }
 
         [Fact]
@@ -130,8 +129,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
-            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+            var sut = new ExaminationsDashboardService(dataAccess, connectionSettings.Object);
+
 
             //Act
 
@@ -139,35 +138,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(10, results.Count());
-        }
-
-        [Fact]
-        public async virtual Task EmptyQueryWithOrderByReturnsAllOpenCasesInOrder()
-        {
-            //Arrange
-            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.Completed == false;
-         //   Expression<Func<MedicalExaminer.Models.Examination, bool>> order = t => t.UrgencyScore;
-            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
-            var clientFactory = CosmosMocker.CreateClientFactory(client);
-
-            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
-
-            var dataAccess = new DatabaseAccess(clientFactory.Object);
-
-            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
-                "", null, 0, 0, "", true);
-
-            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
-            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
-
-            //Act
-
-            var results = await sut.Handle(examinationsDashboardQuery);
-
-            //Assert
-            results.Should().NotBeNull();
-            Assert.Equal(10, results.Count());
+            Assert.Equal(10, results.TotalCases);
         }
 
         [Fact]
@@ -185,8 +156,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
-            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+            var sut = new ExaminationsDashboardService(dataAccess, connectionSettings.Object);
+
 
             //Act
 
@@ -194,14 +165,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(1, results.TotalCases);
         }
 
         [Fact]
         public async virtual Task UrgentQueryReturnsCorrectCount()
         {
             //Arrange
-            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.UrgencyScore > 0;
+            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.UrgencyScore>0;
             var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
             var clientFactory = CosmosMocker.CreateClientFactory(client);
 
@@ -212,15 +183,16 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
-            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+            var sut = new ExaminationsDashboardService(dataAccess, connectionSettings.Object);
+
 
             //Act
 
             var results = await sut.Handle(examinationsDashboardQuery);
+
             //Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         [Fact]
@@ -238,8 +210,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
-            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+            var sut = new ExaminationsDashboardService(dataAccess, connectionSettings.Object);
+
 
             //Act
 
@@ -247,7 +219,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         [Fact]
@@ -265,8 +237,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
-            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+            var sut = new ExaminationsDashboardService(dataAccess, connectionSettings.Object);
+
 
             //Act
 
@@ -274,7 +246,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         [Fact]
@@ -292,15 +264,16 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
-            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+            var sut = new ExaminationsDashboardService(dataAccess, connectionSettings.Object);
+
 
             //Act
 
             var results = await sut.Handle(examinationsDashboardQuery);
+
             //Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         [Fact]
@@ -318,15 +291,16 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
-            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+            var sut = new ExaminationsDashboardService(dataAccess, connectionSettings.Object);
+
 
             //Act
 
             var results = await sut.Handle(examinationsDashboardQuery);
+
             //Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         [Fact]
@@ -344,8 +318,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
-            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+            var sut = new ExaminationsDashboardService(dataAccess, connectionSettings.Object);
+
 
             //Act
 
@@ -353,7 +327,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         [Fact]
@@ -371,8 +345,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
                 "", null, 0, 0, "", true);
 
-            var examinationQueryBuilder = new Mock<ExaminationsQueryExpressionBuilder>();
-            var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder.Object);
+            var sut = new ExaminationsDashboardService(dataAccess, connectionSettings.Object);
+
 
             //Act
 
@@ -380,7 +354,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(1, results.CountOfUrgentCases);
         }
 
         private MedicalExaminer.Models.Examination[] GenerateExaminations()
@@ -456,6 +430,6 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                            examination11};
         }
 
-
+        
     }
 }

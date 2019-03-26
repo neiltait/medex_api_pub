@@ -4,6 +4,7 @@ using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.Examination;
 using Moq;
 using Xunit;
@@ -16,6 +17,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         public void CreateExaminationQueryIsNullThrowsException()
         {
             // Arrange
+            MedicalExaminer.Models.Examination examination = new MedicalExaminer.Models.Examination();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             CreateExaminationQuery query = null;
             var dbAccess = new Mock<IDatabaseAccess>();
@@ -26,12 +28,13 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         }
 
         [Fact]
-        public void CreateExaminationQuerySuccessReturnsExaminationId()
+        public void CreateExaminationQuerySuccessReturnsExamination()
         {
             // Arrange
             var examination = new MedicalExaminer.Models.Examination();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var query = new CreateExaminationQuery(examination);
+            CreateExaminationQuery query = new CreateExaminationQuery(examination);
+            
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
                 examination, false)).Returns(Task.FromResult(examination)).Verifiable();

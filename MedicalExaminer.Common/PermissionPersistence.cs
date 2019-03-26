@@ -33,7 +33,7 @@ namespace MedicalExaminer.Common
                 throw new ArgumentException("Invalid Argument");
             }
 
-            return (Permission)(dynamic)doc;
+            return (Permission)(dynamic) doc;
         }
 
         /// <summary>

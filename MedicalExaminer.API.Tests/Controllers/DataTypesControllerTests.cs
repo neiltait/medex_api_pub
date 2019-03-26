@@ -74,6 +74,16 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             // Act
             var response = _controller.GetEventStatuses();
+             // Assert
+            var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
+
+            Assert.Equal(2, dictionary.Keys.Count);
+        }
+        public void GetCaseStatuses_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var response = _controller.GetCaseStatuses();
 
             // Assert
             var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
@@ -93,6 +103,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
 
             Assert.Equal(1, dictionary.Keys.Count);
+            
+
         }
     }
 }

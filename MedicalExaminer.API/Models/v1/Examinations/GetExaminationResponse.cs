@@ -12,7 +12,23 @@ namespace MedicalExaminer.API.Models.v1.Examinations
     public class GetExaminationResponse : ResponseBase
     {
         /// <summary>
-        ///     Has out of hours scrutiny already taken place on this case
+        /// Urgency score based on the priorities and length of time 
+        /// the case has been open
+        /// </summary>
+        public int UrgencyScore { get; set; }
+
+        public bool AnyImplants { get; set; }
+
+        public string ImplantDetails { get; set; }
+
+        public DateTime LastAdmission { get; set; }
+
+        public DateTime CaseCreated { get; set; }
+
+        public string PlaceDeathOccured { get; set; }
+
+        /// <summary>
+        /// Has out of hours scrutiny already taken place on this case
         /// </summary>
         public bool OutOfHours { get; set; }
 
@@ -187,13 +203,55 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public CoronerStatus CoronerStatus { get; set; }
 
         /// <summary>
-        ///     Patient details
+        /// Case status bar: Have the admission notes been added and saved
         /// </summary>
-        public MedicalExaminer.Models.PatientDetails PatientDetails { get; set; }
+        public bool AdmissionNotesHaveBeenAdded { get; set; }
+
+        /// <summary>
+        /// Case status bar: Is the case ready for ME Scrutiny
+        /// </summary>
+        public bool ReadyForMEScrutiny { get; set; }
+
+        /// <summary>
+        /// Case status bar: Is the case assigned to a user
+        /// </summary>
+        public bool Unassigned { get; set; }
+
+        /// <summary>
+        /// Case status bar: Has the case been scrunitised
+        /// </summary>
+        public bool HaveBeenScrutinisedByME { get; set; }
+
+        /// <summary>
+        /// Case status bar: Is the case awaiting admission notes
+        /// </summary>
+        public bool PendingAdmissionNotes { get; set; }
+
+        /// <summary>
+        /// Case status bar: Is the case awaiting discussion with QAP
+        /// </summary>
+        public bool PendingDiscussionWithQAP { get; set; }
+
+        /// <summary>
+        /// Case status bar: Is the case awaiting discussion with representative
+        /// </summary>
+        public bool PendingDiscussionWithRepresentative { get; set; }
+
+        /// <summary>
+        /// Case status bar: Does the cas have final case outstanding outcomes
+        /// </summary>
+        public bool HaveFinalCaseOutstandingOutcomes { get; set; }
+
+        /// <summary>
+        /// Case officer - this will most likely change in the future to ME and MEO
+        /// </summary>
+        public string CaseOfficer { get; set; }
 
         /// <summary>
         ///     Medical team associated with the case
         /// </summary>
-        public IMedicalTeam MedicalTeam { get; set; }
+        public MedicalExaminer.Models.IMedicalTeam MedicalTeam { get; set; }
+
+
     }
 }

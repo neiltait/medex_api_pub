@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Threading;
-using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Microsoft.Azure.Documents;
 using Newtonsoft.Json;
@@ -12,15 +10,10 @@ namespace MedicalExaminer.Models
 {
     public class Examination : Record,  IExamination
     {
-        /// <inheritdoc />
-        public Examination()
-        {
-            Completed = false;
-        }
+        [JsonProperty(PropertyName = "urgency_score")]
+        public int UrgencyScore { get; set; }
 
-        /// <summary>
-        /// Examination done out of hours.
-        /// </summary>
+        
         [JsonProperty(PropertyName = "out_of_hours")]
         public bool OutOfHours { get; set; }
 
@@ -42,14 +35,7 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "hospital_number_3")]
         public string HospitalNumber_3 { get; set; }
 
-        /// <summary>
-        /// Examination ID, unique identifier.
-        /// </summary>
-        [Required]
-        [DataType(DataType.Text)]
-        [JsonProperty(PropertyName = "id")]
-        public string ExaminationId { get; set; }
-
+        
         /// <summary>
         /// time of death
         /// </summary>
@@ -223,8 +209,19 @@ namespace MedicalExaminer.Models
         /// </summary>
         [Required]
         [DataType(DataType.DateTime)]
+        [JsonProperty(PropertyName = "last_admission")]
+        public DateTime LastAdmission { get; set; }
+
+        [Required]
+        [DataType(DataType.DateTime)]
         [JsonProperty(PropertyName = "date_of_death")]
-        public DateTimeOffset DateOfDeath { get; set; }
+        public DateTime DateOfDeath { get; set; }
+
+        [Required]
+        [DataType(DataType.DateTime)]
+        [JsonProperty(PropertyName = "case_created")]
+        public DateTime CaseCreated { get; set; }
+
 
         /// <summary>
         /// The medical team associated with the patient
@@ -315,6 +312,7 @@ namespace MedicalExaminer.Models
         [DataType(DataType.Text)]
         public string MedicalExaminerOfficeResponsible { get; set; }
 
+        [JsonProperty(PropertyName = "representatives")]
         public IEnumerable<Representative> Representatives { get; set; }
 
         /// <summary>
@@ -323,5 +321,34 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "case_break_down_events")]
         public CaseBreakDown Events { get; set; }
+        [JsonProperty(PropertyName = "admission_notes_have_been_added")]
+        public bool AdmissionNotesHaveBeenAdded { get; set; }
+
+        [JsonProperty(PropertyName = "ready_for_me_scrutiny")]
+        public bool ReadyForMEScrutiny { get; set; }
+
+        [JsonProperty(PropertyName = "unassigned")]
+        public bool Unassigned { get; set; }
+
+        [JsonProperty(PropertyName = "have_been_scrutinised_by_me")]
+        public bool HaveBeenScrutinisedByME { get; set; }
+
+        [JsonProperty(PropertyName = "pending_admission_notes")]
+        public bool PendingAdmissionNotes { get; set; }
+
+        [JsonProperty(PropertyName = "pending_discussion_with_qap")]
+        public bool PendingDiscussionWithQAP { get; set; }
+
+        [JsonProperty(PropertyName = "pending_discussion_with_representative")]
+        public bool PendingDiscussionWithRepresentative { get; set; }
+
+        [JsonProperty(PropertyName = "have_final_case_outstanding_outcomes")]
+        public bool HaveFinalCaseOutstandingOutcomes { get; set; }
+
+        [JsonProperty(PropertyName = "case_officer")]
+        public string CaseOfficer { get; set; }
+
+        [JsonProperty(PropertyName = "id")]
+        public string ExaminationId { get; set; }
     }
 }
