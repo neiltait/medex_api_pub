@@ -1,0 +1,4 @@
+﻿namespace MedicalExaminer.Models
+{
+    
+}

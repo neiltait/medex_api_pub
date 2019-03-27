@@ -2,6 +2,7 @@
 {
     public enum EventType
     {
-        Other
+        Other,
+        Notes
     }
 }

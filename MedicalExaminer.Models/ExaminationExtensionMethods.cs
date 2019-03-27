@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models
 {
@@ -9,7 +8,22 @@ namespace MedicalExaminer.Models
         public static Examination MyUsersView(this Examination examination, MeUser myUser)
         {
             examination.Events = GetUserEvents(examination.Events, myUser);
-            
+            return examination;
+        }
+
+        public static Examination SaveEvent(this Examination examination, EventType eventType, IEvent theEvent)
+        {
+           switch (eventType)
+            {
+                case EventType.Other:
+                    var otherEventContainer = examination.Events.OtherEvents;
+                    otherEventContainer.Add((OtherEvent)theEvent);
+                    break;
+                case EventType.Notes:
+                    var notesContainer = examination.Events.NoteworthyEvents;
+                    notesContainer.Add((NoteEvent)theEvent);
+                    break;
+            }
             return examination;
         }
 
@@ -20,27 +34,18 @@ namespace MedicalExaminer.Models
                 return null;
             }
 
-            caseBreakDown.OtherEvents = (IEnumerable<OtherEvent>)GetEventsView(caseBreakDown.OtherEvents, myUser);
-
+            caseBreakDown.OtherEvents = GetEvents<OtherEvent>(caseBreakDown.OtherEvents, myUser);
             return caseBreakDown;
         }
 
-        private static IEnumerable<IEvent> GetEventsView(IEnumerable<IEvent> otherEvents, MeUser myUser)
+        private static BaseEventContainter<T> GetEvents<T>(IEventContainer<IEvent> otherEvents, MeUser myUser) where T : IEvent
         {
-            if(otherEvents == null)
-            {
-                return null;
-            }
-            foreach(var amendment in otherEvents)
-            {
-                if (amendment.Amendments != null)
-                {
-                    var finalsAtLevel = amendment.Amendments.Where(o => (o.EventStatus == Enums.EventStatus.Final)
-                || ((o.EventStatus == Enums.EventStatus.Draft) && (o.UserId == myUser.UserId)));
-                    amendment.Amendments = GetEventsView(finalsAtLevel, myUser);
-                }
-            }
-            return otherEvents;
+            var usersDrafts = otherEvents.Drafts.Where(draft => draft.UserId == myUser.UserId);
+            otherEvents.Drafts = usersDrafts.ToList();
+            return (BaseEventContainter<T>)otherEvents;
         }
+
+        
+
     }
 }
