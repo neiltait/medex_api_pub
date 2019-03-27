@@ -24,9 +24,11 @@
           <e p="RequiredIfAttributesMatch.cs" t="Include" />
           <e p="ValidMedicalExaminer.cs" t="Include" />
           <e p="ValidMedicalExaminerOffice.cs" t="Include" />
+          <e p="ValidMedicalExaminerOfficeNullAllowed.cs" t="Include" />
           <e p="ValidMedicalExaminerOfficer.cs" t="Include" />
           <e p="ValidNhsNumberNullAllowedAttribute.cs" t="Include" />
           <e p="ValidUserBase.cs" t="Include" />
+          <e p="ValidUserId.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
         <e p="Controllers" t="Include">
@@ -43,6 +45,7 @@
         <e p="Dockerfile" t="Include" />
         <e p="Extensions" t="Include">
           <e p="Data" t="Include">
+            <e p="AppointmentFinder.cs" t="Include" />
             <e p="ClinicalProfessionalProfile.cs" t="Include" />
             <e p="ExaminationProfile.cs" t="Include" />
             <e p="MedicalExaminerProfiles.cs" t="Include" />
@@ -71,9 +74,11 @@
             </e>
             <e p="Examinations" t="Include">
               <e p="GetExaminationResponse.cs" t="Include" />
+              <e p="GetExaminationsRequest.cs" t="Include" />
               <e p="GetExaminationsResponse.cs" t="Include" />
+              <e p="PatientCardItem.cs" t="Include" />
               <e p="PostClinicalProfessional.cs" t="Include" />
-              <e p="PostNewCaseRequest.cs" t="Include" />
+              <e p="PostExaminationRequest.cs" t="Include" />
               <e p="PutExaminationResponse.cs" t="Include" />
             </e>
             <e p="Locations" t="Include">
@@ -147,6 +152,9 @@
           <e p="ValidNhsNumberAttributeTest.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
+        <e p="ConnectionSettings" t="Include">
+          <e p="ExaminationConnectionSettingsTests.cs" t="Include" />
+        </e>
         <e p="Controllers" t="Include">
           <e p="ControllerActionFilterTests.cs" t="Include" />
           <e p="ControllerTestsBase.cs" t="Include" />
@@ -179,9 +187,12 @@
           <e p="UserPersistanceFake.cs" t="Include" />
         </e>
         <e p="Services" t="Include">
+          <e p="CalculatorTests.cs" t="Include" />
+          <e p="CosmosMocker.cs" t="Include" />
           <e p="Examination" t="Include">
             <e p="CreateExaminationServiceTests.cs" t="Include" />
             <e p="ExaminationRetrievalServiceTests.cs" t="Include" />
+            <e p="ExaminationsDashboardServiceTests.cs" t="Include" />
             <e p="ExaminationsRetrievalServiceTests.cs" t="Include" />
           </e>
           <e p="Implementations" t="Include">
@@ -213,7 +224,9 @@
         </e>
         <e p="Database" t="Include">
           <e p="DatabaseAccess.cs" t="Include" />
+          <e p="DocumentClientFactory.cs" t="Include" />
           <e p="IDatabaseAccess.cs" t="Include" />
+          <e p="IDocumentClientFactory.cs" t="Include" />
         </e>
         <e p="IInformantPersistence.cs" t="Include" />
         <e p="ILocationPersistence.cs" t="Include" />
@@ -249,6 +262,7 @@
           <e p="Location" t="Include">
             <e p="LocationRetrievalByIdQuery.cs" t="Include" />
           </e>
+          <e p="ParameterRebinder.cs" t="Include" />
           <e p="PatientDetails" t="Include">
             <e p="PatientDetailsByCaseIdQuery.cs" t="Include" />
             <e p="PatientDetailsUpdateQuery.cs" t="Include" />
@@ -261,11 +275,15 @@
             <e p="UsersRetrievalQuery.cs" t="Include" />
             <e p="UsersUpdateQuery.cs" t="Include" />
           </e>
+          <e p="Utility.cs" t="Include" />
         </e>
         <e p="Services" t="Include">
+          <e p="Calculator.cs" t="Include" />
           <e p="Examination" t="Include">
             <e p="CreateExaminationService.cs" t="Include" />
+            <e p="ExaminationQueryBuilder.cs" t="Include" />
             <e p="ExaminationRetrievalService.cs" t="Include" />
+            <e p="ExaminationsDashboardService.cs" t="Include" />
             <e p="ExaminationsRetrievalService.cs" t="Include" />
           </e>
           <e p="IAsyncQueryHandler.cs" t="Include" />
@@ -297,8 +315,10 @@
         <e p="ClinicalProfessional.cs" t="Include" />
         <e p="Enums" t="Include">
           <e p="AnalysisEntryType.cs" t="Include" />
+          <e p="CaseStatus.cs" t="Include" />
           <e p="CoronerStatus.cs" t="Include" />
           <e p="ExaminationGender.cs" t="Include" />
+          <e p="ExaminationsOrderBy.cs" t="Include" />
           <e p="Informed.cs" t="Include" />
           <e p="LocationType.cs" t="Include" />
           <e p="ModeOfDisposal.cs" t="Include" />
@@ -308,10 +328,10 @@
         <e p="Examination.cs" t="Include" />
         <e p="ExaminationItem.cs" t="Include" />
         <e p="ExaminationQuery.cs" t="Include" />
+        <e p="ExaminationsOverview.cs" t="Include" />
         <e p="IExamination.cs" t="Include" />
         <e p="IExaminationItem.cs" t="Include" />
         <e p="IMedicalTeam.cs" t="Include" />
-        <e p="Link.cs" t="Include" />
         <e p="Location.cs" t="Include" />
         <e p="MedicalExaminer.Models.csproj" t="IncludeRecursive" />
         <e p="MedicalTeam.cs" t="Include" />
@@ -325,6 +345,7 @@
         </e>
         <e p="PatientDetails.cs" t="Include" />
         <e p="Permission.cs" t="Include" />
+        <e p="PriorityCalculator.cs" t="Include" />
         <e p="Query.cs" t="Include" />
         <e p="Record.cs" t="Include" />
         <e p="Representative.cs" t="Include" />

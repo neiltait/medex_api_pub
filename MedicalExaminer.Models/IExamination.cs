@@ -56,9 +56,7 @@ namespace MedicalExaminer.Models
         string PlaceDeathOccured { get; set; }
 
         DateTime DateOfBirth { get; set; }
-
-        DateTimeOffset DateOfDeath { get; set; }
-
+        DateTime DateOfDeath { get; set; }
         bool CulturalPriority { get; set; }
 
         bool FaithPriority { get; set; }

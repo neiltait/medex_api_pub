@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -26,19 +27,21 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
+        private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> _userCreationService;
+        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _usersRetrievalByEmailService;
+
         /// <summary>
         ///     Okta Client.
         /// </summary>
-        private readonly OktaClient oktaClient;
+        private readonly OktaClient _oktaClient;
 
-        private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService;
 
         /// <summary>
         ///     The User Persistence Layer.
         /// </summary>
-        private readonly IUserPersistence userPersistence;
+        private readonly IUserPersistence _userPersistence;
 
-        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalService;
+        
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="AccountController" /> class.
@@ -48,20 +51,20 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="oktaClient">Okta client.</param>
         /// <param name="userPersistence">User persistence.</param>
         /// <param name="userCreationService">User Creation Service.</param>
-        /// <param name="userRetrievalService">User Retrieval Service.</param>
+        /// <param name="userRetrievalByEmailService">User Retrieval Service by email address.</param>
         public AccountController(
             IMELogger logger,
             IMapper mapper,
             OktaClient oktaClient,
             IUserPersistence userPersistence,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalService)
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService)
             : base(logger, mapper)
         {
-            this.oktaClient = oktaClient;
-            this.userPersistence = userPersistence;
-            this.userCreationService = userCreationService;
-            this.userRetrievalService = userRetrievalService;
+            _oktaClient = oktaClient;
+            _userPersistence = userPersistence;
+            _userCreationService = userCreationService;
+            _usersRetrievalByEmailService = userRetrievalByEmailService;
         }
 
         /// <summary>
@@ -75,7 +78,7 @@ namespace MedicalExaminer.API.Controllers
             var emailAddress = User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
 
             // Get everything that Okta knows about this user
-            var oktaUser = await oktaClient.Users.GetUserAsync(emailAddress);
+            var oktaUser = await _oktaClient.Users.GetUserAsync(emailAddress);
 
             // Try and look them up in our database
             var meUser = await GetUser(emailAddress);
@@ -114,7 +117,7 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var user = await userRetrievalService.Handle(new UserRetrievalByEmailQuery(emailAddress));
+                var user = await _usersRetrievalByEmailService.Handle(new UserRetrievalByEmailQuery(emailAddress));
 
                 return user;
             }
@@ -128,7 +131,7 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var createdUser = await userCreationService.Handle(new CreateUserQuery(toCreate));
+                var createdUser = await _userCreationService.Handle(new CreateUserQuery(toCreate));
 
                 return createdUser;
             }

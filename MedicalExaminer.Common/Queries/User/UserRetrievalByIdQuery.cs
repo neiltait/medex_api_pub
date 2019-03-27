@@ -1,4 +1,4 @@
-﻿using MedicalExaminer.Models;
+using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Queries.User
 {
@@ -6,7 +6,7 @@ namespace MedicalExaminer.Common.Queries.User
     {
         public UserRetrievalByIdQuery(string userId)
         {
-            userId = userId;
+            UserId = userId;
         }
 
         public string UserId { get; }

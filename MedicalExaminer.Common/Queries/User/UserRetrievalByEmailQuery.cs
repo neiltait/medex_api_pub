@@ -1,12 +1,12 @@
-﻿using MedicalExaminer.Models;
+using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Queries.User
 {
     public class UserRetrievalByEmailQuery : IQuery<MeUser>
     {
-        public UserRetrievalByEmailQuery(string EmailAddress)
+        public UserRetrievalByEmailQuery(string email)
         {
-            Email = EmailAddress;
+            Email = email;
         }
 
         public string Email { get; }

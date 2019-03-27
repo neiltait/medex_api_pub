@@ -9,18 +9,19 @@ namespace MedicalExaminer.Common.Services.PatientDetails
 {
     public class PatientDetailsUpdateService : IAsyncQueryHandler<PatientDetailsUpdateQuery, Models.Examination>
     {
-        private readonly IExaminationConnectionSettings connectionSettings;
-        private readonly IDatabaseAccess databaseAccess;
-        private readonly IMapper mapper;
+        private readonly IExaminationConnectionSettings _connectionSettings;
+        private readonly IDatabaseAccess _databaseAccess;
+
+        private readonly IMapper _mapper;
 
         public PatientDetailsUpdateService(
             IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings,
             IMapper mapper)
         {
-            this.databaseAccess = databaseAccess;
-            this.connectionSettings = connectionSettings;
-            this.mapper = mapper;
+            _databaseAccess = databaseAccess;
+            _connectionSettings = connectionSettings;
+            _mapper = mapper;
         }
 
         public async Task<Models.Examination> Handle(PatientDetailsUpdateQuery param)
@@ -31,14 +32,16 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             }
 
             var caseToReplace = await
-                databaseAccess
+                _databaseAccess
                     .GetItemAsync<Models.Examination>(
-                        connectionSettings,
+                        _connectionSettings,
                         examination => examination.ExaminationId == param.CaseId);
 
-            mapper.Map(param.PatientDetails, caseToReplace);
+            _mapper.Map(param.PatientDetails, caseToReplace);
 
-            var result = await databaseAccess.UpdateItemAsync(connectionSettings, caseToReplace);
+            caseToReplace.UrgencyScore = Calculator.CalculateUrgencyScore(caseToReplace);
+
+            var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, caseToReplace);
             return result;
         }
     }
