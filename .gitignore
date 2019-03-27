@@ -40,6 +40,5 @@ Thumbs.db
 # dotCover
 *.dotCover
 
-.idea/.idea.MedicalExaminer.API/*
 MedicalExaminer.API/appsettings.Development.json
 MedicalExaminer.API/appsettings.Development.backup.json
