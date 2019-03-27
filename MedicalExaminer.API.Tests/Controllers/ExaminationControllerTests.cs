@@ -189,7 +189,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object, 
                 examinationRetrievalQuery.Object, examinationsRetrievalQuery.Object, medicaTeamUpdateService.Object, examinationsDashboardService.Object);
 
-
             // Act
             var response = sut.CreateExamination(CreateValidNewCaseRequest()).Result;
 
