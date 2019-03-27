@@ -30,7 +30,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var sut = new ExaminationRetrievalService(dataAccess, connectionSettings.Object);
             //Act
             
-            var result = await sut.Handle(new ExaminationRetrievalQuery(id));
+            var result = await sut.Handle(new ExaminationRetrievalQuery(id, null));
 
             //Assert
             result.Should().NotBeNull();
@@ -52,7 +52,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var sut = new ExaminationRetrievalService(dataAccess, connectionSettings.Object);
             
             //Act
-            var results = await sut.Handle(new ExaminationRetrievalQuery(examinationId));
+            var results = await sut.Handle(new ExaminationRetrievalQuery(examinationId, null));
             
             //Assert
             results.Should().BeNull();
