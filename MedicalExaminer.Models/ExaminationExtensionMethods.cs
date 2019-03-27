@@ -11,9 +11,9 @@ namespace MedicalExaminer.Models
             return examination;
         }
 
-        public static Examination SaveEvent(this Examination examination, EventType eventType, IEvent theEvent)
+        public static Examination SaveEvent(this Examination examination, IEvent theEvent)
         {
-           switch (eventType)
+           switch (theEvent.EventType)
             {
                 case EventType.Other:
                     var otherEventContainer = examination.Events.OtherEvents;

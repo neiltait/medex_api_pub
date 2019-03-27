@@ -136,12 +136,12 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             examination.Events = caseBreakdown;
 
-            examination.SaveEvent(EventType.Other, markOne);
-            examination.SaveEvent(EventType.Other, markOneOne);
+            examination.SaveEvent(markOne);
+            examination.SaveEvent(markOneOne);
             markOne.EventStatus = EventStatus.Final;
-            examination.SaveEvent(EventType.Other, markOne);
-            examination.SaveEvent(EventType.Notes, markOneOne);
-            examination.SaveEvent(EventType.Notes, markOne);
+            examination.SaveEvent(markOne);
+            examination.SaveEvent(markOneOne);
+            examination.SaveEvent(markOne);
         }
     }
 }

@@ -19,5 +19,7 @@ namespace MedicalExaminer.Models
 
     public IEnumerable<IEvent> Amendments { get; set; }
         public string SomethingDifferent { get; set; }
+
+        public EventType EventType => EventType.Notes;
     }
 }

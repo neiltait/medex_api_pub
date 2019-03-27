@@ -3,20 +3,24 @@ using System.Linq;
 
 namespace MedicalExaminer.Models
 {
-    public interface IEventContainer<out TEvent> where TEvent : IEvent
+    public interface IEventContainer<out TEvent>
+        where TEvent : IEvent
     {
-        IEvent Latest { get; set; }
+        IEvent Latest { get; }
+
         IList<IEvent> Drafts { get; set; }
+
         IList<IEvent> History { get; }
     }
 
-    public abstract class BaseEventContainter<TEvent> : IEventContainer<TEvent> where TEvent : IEvent
+    public abstract class BaseEventContainter<TEvent> : IEventContainer<TEvent>
+        where TEvent : IEvent
     {
         public abstract IEvent Latest { get; set; }
 
         public abstract IList<IEvent> Drafts { get; set; }
 
-        public abstract IList<IEvent> History { get; set; }
+        public abstract IList<IEvent> History { get; }
 
 
         public virtual void Add(TEvent theEvent)

@@ -35,5 +35,11 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName ="amendments")]
         public IEnumerable<IEvent> Amendments { get; set; }
+
+        /// <summary>
+        /// the type of event this is
+        /// </summary>
+        [JsonProperty(PropertyName = "event_type")]
+        public EventType EventType => EventType.Other;
     }
 }
