@@ -34,27 +34,30 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> _userCreationService;
         private readonly IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> _userRetrievalByIdService;
         private readonly IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> _usersRetrievalService;
-        private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _usersUpdateService;
+        private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
+        /// <param name="logger">The Logger.</param>
+        /// <param name="mapper">The Mapper.</param>
         /// <param name="userCreationService">User creation service.</param>
         /// <param name="userRetrievalByIdService">User retrieval service.</param>
         /// <param name="usersRetrievalService">Users retrieval service.</param>
-        /// <param name="logger">The Logger.</param>
-        /// <param name="mapper">The Mapper.</param>
+        /// <param name="userUpdateService">The user update service</param>
         public UsersController(
             IMELogger logger,
             IMapper mapper,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
-            IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService)
+            IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
+            IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService)
             : base(logger, mapper)
         {
             _userCreationService = userCreationService;
             _userRetrievalByIdService = userRetrievalByIdService;
             _usersRetrievalService = usersRetrievalService;
+            _userUpdateService = userUpdateService;
         }
 
         /// <summary>
@@ -213,7 +216,7 @@ namespace MedicalExaminer.API.Controllers
             try
             {
                 var user = Mapper.Map<MeUser>(putUser);
-                var updatedUser = await _usersUpdateService.Handle(new UserUpdateQuery(user));
+                var updatedUser = await _userUpdateService.Handle(new UserUpdateQuery(user));
                 return Ok(Mapper.Map<PutUserResponse>(updatedUser));
             }
             catch (DocumentClientException)

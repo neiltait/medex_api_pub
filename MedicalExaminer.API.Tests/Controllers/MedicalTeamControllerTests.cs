@@ -42,7 +42,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             return examination;
         }
 
-
         [Fact]
         public void GetMedical_When_Called_With_No_MedicalTeam_InExamination_Returns_Expected_Type()
         {

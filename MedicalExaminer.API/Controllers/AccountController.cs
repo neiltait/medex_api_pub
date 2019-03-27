@@ -88,7 +88,6 @@ namespace MedicalExaminer.API.Controllers
                     FirstName = oktaUser.Profile.FirstName,
                     LastName = oktaUser.Profile.LastName,
                     Email = oktaUser.Profile.Email,
-                    UserRole = UserRoles.ServiceOwner,
                     LastModifiedBy = "whodunit",
                     ModifiedAt = DateTimeOffset.Now,
                     CreatedAt = DateTimeOffset.Now,

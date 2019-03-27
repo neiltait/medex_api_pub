@@ -28,6 +28,12 @@ namespace MedicalExaminer.Common.Services.User
             var result = databaseAccess.GetItemAsync<MeUser>(
                 connectionSettings,
                 x => x.UserId == param.UserId);
+
+            if (result == null)
+            {
+                throw new ArgumentNullException(nameof(param));
+            }
+
             return result;
         }
     }

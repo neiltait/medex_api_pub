@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
@@ -12,6 +13,8 @@ using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
+using MedicalExaminer.Common.Services.Examination;
+using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
@@ -26,10 +29,28 @@ namespace MedicalExaminer.API.Tests.Controllers
     /// </summary>
     public class UsersControllerTests : ControllerTestsBase<UsersController>
     {
-        /// <summary>
-        ///     The User Persistence mock.
-        /// </summary>
-        private readonly Mock<IUserPersistence> _userPersistence;
+        public Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>> createUserService;
+        public Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>> userRetrievalService;
+        public Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>> usersRetrievalService;
+        public Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>> userUpdateService;
+
+        public UsersControllerTests() : base()
+        {
+            var logger = new Mock<IMELogger>();
+
+            createUserService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
+            userRetrievalService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
+            usersRetrievalService = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
+            userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
+
+            Controller = new UsersController(
+                logger.Object,
+                Mapper,
+                createUserService.Object,
+                userRetrievalService.Object,
+                usersRetrievalService.Object,
+                userUpdateService.Object);
+        }
 
         private static DocumentClientException CreateDocumentClientExceptionForTesting()
         {
@@ -72,28 +93,10 @@ namespace MedicalExaminer.API.Tests.Controllers
         [Fact]
         public async Task TestCreateUserArgumentException()
         {
-            
-            var logger = new Mock<IMELogger>();
-            var mapper = new Mock<IMapper>();
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
-            var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
-            var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
-
-            Controller = new UsersController(
-                logger.Object,
-                mapper.Object,
-                createExaminationService.Object,
-                examinationRetrievalQuery.Object,
-                examinationsRetrievalQuery.Object);
-            
-            // Arrange
+            // Arrange 
+            createUserService.Setup(cus => cus.Handle(It.IsAny<CreateUserQuery>())).Throws<ArgumentException>();
             var expectedRequest = new PostUserRequest();
 
-            _userPersistence.Setup(up => up.CreateUserAsync(It.IsAny<MeUser>()))
-                .Throws<ArgumentException>();
-            
-            Controller = new UsersController(_userPersistence.Object, logger.Object, Mapper);
-            
             // Act
             var response = await Controller.CreateUser(expectedRequest);
 
@@ -117,8 +120,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             // Arrange
             var expectedRequest = new PostUserRequest();
-
-            _userPersistence.Setup(up => up.CreateUserAsync(It.IsAny<MeUser>()))
+            createUserService.Setup(cus => cus.Handle(It.IsAny<CreateUserQuery>()))
                 .Throws(CreateDocumentClientExceptionForTesting());
 
             // Act
@@ -157,7 +159,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 Email = expectedEmail,
             };
 
-            _userPersistence.Setup(up => up.CreateUserAsync(It.IsAny<MeUser>()))
+            createUserService.Setup(cus => cus.Handle(It.IsAny<CreateUserQuery>()))
                 .Returns(Task.FromResult(expectedUser));
 
             // Act
@@ -197,213 +199,6 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         /// <summary>
-        /// Test an <see cref="ArgumentException" /> being thrown when getting Medical Examiner Officers.
-        /// </summary>
-        /// <returns>Async Task</returns>
-        [Fact]
-        public async Task TestGetMedicalExaminerOfficerArgumentException()
-        {
-            // Arrange
-            _userPersistence.Setup(up => up.GetMedicalExaminerOfficerAsync())
-                .Throws<ArgumentException>();
-
-            // Act
-            var response = await Controller.GetMedicalExaminerOfficers();
-
-            // Assert
-            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
-            var result = (NotFoundObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUsersResponse>();
-            var model = (GetUsersResponse) result.Value;
-            model.Errors.Count.Should().Be(0);
-            model.Success.Should().BeTrue();
-
-            model.Users.Should().BeNull();
-        }
-
-        /// <summary>
-        ///     Test a document client exception being thrown when getting Medical Examiner Officers.
-        /// </summary>
-        /// <returns>Async Task</returns>
-        [Fact]
-        public async Task TestGetMedicalExaminerOfficerDocumentClientException()
-        {
-            // Arrange
-            _userPersistence.Setup(up => up.GetMedicalExaminerOfficerAsync())
-                .Throws(CreateDocumentClientExceptionForTesting());
-
-            // Act
-            var response = await Controller.GetMedicalExaminerOfficers();
-
-            // Assert
-            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
-            var result = (NotFoundObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUsersResponse>();
-            var model = (GetUsersResponse) result.Value;
-            model.Errors.Count.Should().Be(0);
-            model.Success.Should().BeTrue();
-
-            model.Users.Should().BeNull();
-        }
-
-        /// <summary>
-        ///     Test returning an empty list of Medical Examiner Officers
-        /// </summary>
-        /// <returns>Async Task</returns>
-        [Fact]
-        public async Task TestGetMedicalExaminerOfficerEmptyResponse()
-        {
-            // Arrange
-            _userPersistence.Setup(up => up.GetMedicalExaminerOfficerAsync())
-                .Returns(Task.FromResult<IEnumerable<MeUser>>(new List<MeUser>()));
-
-            // Act
-            var response = await Controller.GetMedicalExaminerOfficers();
-
-            // Assert
-            response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUsersResponse>();
-            var model = (GetUsersResponse) result.Value;
-            model.Errors.Count.Should().Be(0);
-            model.Success.Should().BeTrue();
-
-            model.Users.Count().Should().Be(0);
-        }
-
-        /// <summary>
-        ///     Test get a list of Medical Examiner Officers
-        /// </summary>
-        /// <returns>Async Task</returns>
-        [Fact]
-        public async Task TestGetMedicalExaminerOfficersOkResponse()
-        {
-            // Arrange
-            const string expectedUserId = "expectedUserId";
-
-            _userPersistence.Setup(up => up.GetMedicalExaminerOfficerAsync()).Returns(
-                Task.FromResult<IEnumerable<MeUser>>(
-                    new List<MeUser> { new MeUser { UserId = expectedUserId } }));
-
-            // Act
-            var response = await Controller.GetMedicalExaminerOfficers();
-
-            // Assert
-            response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUsersResponse>();
-            var model = (GetUsersResponse) result.Value;
-            model.Errors.Count.Should().Be(0);
-            model.Success.Should().BeTrue();
-
-            model.Users.Count().Should().Be(1);
-            model.Users.First().UserId.Should().Be(expectedUserId);
-        }
-
-        /// <summary>
-        ///     Test an <see cref="ArgumentException" /> being thrown when getting Medical Examiners
-        /// </summary>
-        /// <returns>Async Task</returns>
-        [Fact]
-        public async Task TestGetMedicalExaminersArgumentException()
-        {
-            // Arrange
-            _userPersistence.Setup(up => up.GetMedicalExaminersAsync())
-                .Throws<ArgumentException>();
-
-            // Act
-            var response = await Controller.GetMedicalExaminers();
-
-            // Assert
-            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
-            var result = (NotFoundObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUsersResponse>();
-            var model = (GetUsersResponse) result.Value;
-            model.Errors.Count.Should().Be(0);
-            model.Success.Should().BeTrue();
-
-            model.Users.Should().BeNull();
-        }
-
-        /// <summary>
-        ///     Test a document client exception being thrown when getting Medical Examiners.
-        /// </summary>
-        /// <returns>Async Task</returns>
-        [Fact]
-        public async Task TestGetMedicalExaminersDocumentClientException()
-        {
-            // Arrange
-            _userPersistence.Setup(up => up.GetMedicalExaminersAsync())
-                .Throws(CreateDocumentClientExceptionForTesting());
-
-            // Act
-            var response = await Controller.GetMedicalExaminers();
-
-            // Assert
-            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
-            var result = (NotFoundObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUsersResponse>();
-            var model = (GetUsersResponse) result.Value;
-            model.Errors.Count.Should().Be(0);
-            model.Success.Should().BeTrue();
-
-            model.Users.Should().BeNull();
-        }
-
-        /// <summary>
-        ///     Test returning an empty list of Medical Examiners
-        /// </summary>
-        /// <returns>Async Task</returns>
-        [Fact]
-        public async Task TestGetMedicalExaminersEmptyResponse()
-        {
-            // Arrange
-            _userPersistence.Setup(up => up.GetMedicalExaminersAsync())
-                .Returns(Task.FromResult<IEnumerable<MeUser>>(new List<MeUser>()));
-
-            // Act
-            var response = await Controller.GetMedicalExaminers();
-
-            // Assert
-            response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUsersResponse>();
-            var model = (GetUsersResponse) result.Value;
-            model.Errors.Count.Should().Be(0);
-            model.Success.Should().BeTrue();
-
-            model.Users.Count().Should().Be(0);
-        }
-
-        /// <summary>
-        ///     Test get a list of Medical Examiner Officers
-        /// </summary>
-        /// <returns>Async Task</returns>
-        [Fact]
-        public async Task TestGetMedicalExaminersOkResponse()
-        {
-            // Arrange
-            const string expectedUserId = "expectedUserId";
-
-            _userPersistence.Setup(up => up.GetMedicalExaminersAsync()).Returns(Task.FromResult<IEnumerable<MeUser>>(
-                new List<MeUser> { new MeUser { UserId = expectedUserId } }));
-
-            // Act
-            var response = await Controller.GetMedicalExaminers();
-
-            // Assert
-            response.Result.Should().BeAssignableTo<OkObjectResult>();
-            var result = (OkObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUsersResponse>();
-            var model = (GetUsersResponse) result.Value;
-            model.Errors.Count.Should().Be(0);
-            model.Success.Should().BeTrue();
-
-            model.Users.Count().Should().Be(1);
-            model.Users.First().UserId.Should().Be(expectedUserId);
-        }
-
-        /// <summary>
         ///     Test when no user is found
         /// </summary>
         /// <returns>Async Task</returns>
@@ -413,7 +208,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             const string expectedUserId = "expectedUserId";
 
-            _userPersistence.Setup(up => up.GetUserAsync(It.IsAny<string>()))
+            userRetrievalService.Setup(up => up.Handle(It.IsAny<UserRetrievalByIdQuery>()))
                 .Throws<NullReferenceException>();
 
             // Act
@@ -442,7 +237,8 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var expectedUser = new MeUser { UserId = expectedUserId };
 
-            _userPersistence.Setup(up => up.GetUserAsync(It.IsAny<string>())).Returns(Task.FromResult(expectedUser));
+            userRetrievalService.Setup(up => up.Handle(It.IsAny<UserRetrievalByIdQuery>()))
+                .Returns(Task.FromResult(expectedUser));
 
             // Act
             var response = await Controller.GetUser(expectedUserId);
@@ -465,33 +261,10 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task TestGetUsersArgumentException()
         {
             // Arrange
-            _userPersistence.Setup(up => up.GetUsersAsync())
+            usersRetrievalService.Setup(up => up.Handle(It.IsAny<UsersRetrievalQuery>()))
                 .Throws<ArgumentException>();
 
-            // Act
-            var response = await Controller.GetUsers();
-
-            // Assert
-            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
-            var result = (NotFoundObjectResult) response.Result;
-            result.Value.Should().BeAssignableTo<GetUsersResponse>();
-            var model = (GetUsersResponse) result.Value;
-            model.Errors.Count.Should().Be(0);
-            model.Success.Should().BeTrue();
-
-            model.Users.Should().BeNull();
-        }
-
-        /// <summary>
-        ///     Test a document client exception being thrown when getting users.
-        /// </summary>
-        /// <returns>Async Task</returns>
-        [Fact]
-        public async Task TestGetUsersDocumentClientException()
-        {
-            // Arrange
-            _userPersistence.Setup(up => up.GetUsersAsync())
-                .Throws(CreateDocumentClientExceptionForTesting());
+            var expectedUser = new MeUser { UserId = "aabbcc" };
 
             // Act
             var response = await Controller.GetUsers();
@@ -515,7 +288,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task TestGetUsersEmptyResponse()
         {
             // Arrange
-            _userPersistence.Setup(up => up.GetUsersAsync())
+            usersRetrievalService.Setup(up => up.Handle(It.IsAny<UsersRetrievalQuery>()))
                 .Returns(Task.FromResult<IEnumerable<MeUser>>(new List<MeUser>()));
 
             // Act
@@ -542,8 +315,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             const string expectedUserId = "expectedUserId";
 
-            _userPersistence.Setup(up => up.GetUsersAsync()).Returns(Task.FromResult<IEnumerable<MeUser>>(
-                new List<MeUser> { new MeUser { UserId = expectedUserId } }));
+            usersRetrievalService.Setup(up => up.Handle(It.IsAny<UsersRetrievalQuery>())).Returns(
+                Task.FromResult<IEnumerable<MeUser>>(
+                    new List<MeUser> { new MeUser { UserId = expectedUserId } }));
 
             // Act
             var response = await Controller.GetUsers();
@@ -592,7 +366,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var expectedRequest = new PutUserRequest();
 
-            _userPersistence.Setup(up => up.UpdateUserAsync(It.IsAny<MeUser>()))
+            userUpdateService.Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
                 .Throws<ArgumentException>();
 
             // Act
@@ -619,7 +393,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var expectedRequest = new PutUserRequest();
 
-            _userPersistence.Setup(up => up.UpdateUserAsync(It.IsAny<MeUser>()))
+            userUpdateService.Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
                 .Throws(CreateDocumentClientExceptionForTesting());
 
             // Act
@@ -645,21 +419,20 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             // Arrange
             const string expectedUserId = "expectedUserId";
-            const string expectedFirstName = "expectedFirstName";
 
             var expectedRequest = new PutUserRequest
             {
                 UserId = expectedUserId,
-                FirstName = expectedFirstName
+                Email = "testing@methods.co.uk"
             };
 
             var expectedUser = new MeUser
             {
                 UserId = expectedUserId,
-                FirstName = expectedFirstName
+                Email = "testing@methods.co.uk"
             };
-
-            _userPersistence.Setup(up => up.UpdateUserAsync(It.IsAny<MeUser>()))
+            
+            userUpdateService.Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
                 .Returns(Task.FromResult(expectedUser));
 
             // Act

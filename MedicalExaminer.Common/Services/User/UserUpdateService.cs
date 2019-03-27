@@ -7,16 +7,17 @@ using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Models;
+using Microsoft.Azure.Documents.SystemFunctions;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
-    public class UsersUpdateService : IAsyncQueryHandler<UserUpdateQuery, Models.MeUser>
+    public class UserUpdateService : IAsyncQueryHandler<UserUpdateQuery, Models.MeUser>
     {
         private readonly IConnectionSettings _connectionSettings;
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IMapper _mapper;
 
-        public UsersUpdateService(
+        public UserUpdateService(
             IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings,
             IMapper mapper)
@@ -38,6 +39,11 @@ namespace MedicalExaminer.Common.Services.Examination
                     .GetItemAsync<Models.MeUser>(
                         _connectionSettings,
                         meUser => meUser.UserId == userUpdate.UserId).Result;
+
+            if (userUpdate.IsNull())
+            {
+                throw new ArgumentNullException(nameof(userUpdate));
+            }
 
             userToUpdate.Email = userUpdate.Email;
             

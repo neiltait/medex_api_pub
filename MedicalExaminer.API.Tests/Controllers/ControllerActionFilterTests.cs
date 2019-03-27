@@ -141,17 +141,19 @@ namespace MedicalExaminer.API.Tests.Controllers
             
             _mockLogger = new MELoggerMocker();
             _mapper = new Mock<IMapper>();
-            var createExaminationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
-            var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
-            var examinationsRetrievalQuery =
+            var createUserService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
+            var userRetrievalService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
+            var usersRetrievalService =
                 new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
+            var userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
             
             _controller = new UsersController(
                 _mockLogger,
                 _mapper.Object,
-                createExaminationService.Object,
-                examinationRetrievalQuery.Object,
-                examinationsRetrievalQuery.Object);
+                createUserService.Object,
+                userRetrievalService.Object,
+                usersRetrievalService.Object,
+                userUpdateService.Object);
         }
 
         private readonly MELoggerMocker _mockLogger;
