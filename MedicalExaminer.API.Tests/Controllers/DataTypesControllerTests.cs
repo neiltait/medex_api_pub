@@ -81,5 +81,20 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             Assert.Equal(8, dictionary.Keys.Count);
         }
+
+        [Fact]
+        public void GetOverallCircumstancesOfDeath_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var response = _controller.GetOverallCircumstancesOfDeath();
+
+            // Assert
+            var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
+
+            Assert.Equal(4, dictionary.Keys.Count);
+
+
+        }
     }
 }

@@ -46,6 +46,16 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Returns all Overall Circumstances Of Death.
+        /// </summary>
+        /// <returns>Dictionary of Overall Circumstances Of Death.</returns>
+        [HttpGet("Overall_Circumstances_Of_Death")]
+        public ActionResult GetOverallCircumstancesOfDeath()
+        {
+            return Ok(GetDictionary(typeof(OverallCircumstancesOfDeath)));
+        }
+
+        /// <summary>
         /// Returns all Coroner Statuses
         /// </summary>
         /// <returns>Dictionary of Coroner Statuses</returns>
