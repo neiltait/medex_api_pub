@@ -66,6 +66,16 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Returns all Clinical Governance Review.
+        /// </summary>
+        /// <returns>Dictionary of Clinical Governance Review.</returns>
+        [HttpGet("Clinical_Governance_Review")]
+        public ActionResult GetClinicalGovernanceReview()
+        {
+            return Ok(GetDictionary(typeof(ClinicalGovernanceReview)));
+        }
+
+        /// <summary>
         /// Returns all Coroner Statuses
         /// </summary>
         /// <returns>Dictionary of Coroner Statuses</returns>
