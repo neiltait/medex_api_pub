@@ -56,6 +56,16 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Returns all Overall Outcome Of Pre-Scrutiny.
+        /// </summary>
+        /// <returns>Dictionary of Overall Outcome Of Pre-Scrutiny.</returns>
+        [HttpGet("Overall_Outcome_Of_Pre_Scrutiny")]
+        public ActionResult GetOverallOutcomeOfPreScrutiny()
+        {
+            return Ok(GetDictionary(typeof(OverallOutcomeOfPreScrutiny)));
+        }
+
+        /// <summary>
         /// Returns all Coroner Statuses
         /// </summary>
         /// <returns>Dictionary of Coroner Statuses</returns>
