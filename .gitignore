@@ -39,25 +39,7 @@ Thumbs.db
 
 # dotCover
 *.dotCover
-Medical_Examiner_API/appsettings.Development.json
-MedicalExaminer.API/appsettings.Development.json
-Medical_Examiner_APIMElogging.txt
 
-.idea/.idea.Medical_Examiner_API/riderModule.iml
-.idea/.idea.Medical_Examiner_API/.idea/contentModel.xml
-.idea/.idea.Medical_Examiner_API/.idea/encodings.xml
-.idea/.idea.Medical_Examiner_API/.idea/indexLayout.xml
-.idea/.idea.Medical_Examiner_API/.idea/modules.xml
-.idea/.idea.Medical_Examiner_API/.idea/vcs.xml
-.idea/.idea.Medical_Examiner_API/.idea/workspace.xml
-.idea/.idea.MedicalExaminer.API/.idea/.name
-.idea/.idea.MedicalExaminer.API/.idea/contentModel.xml
-.idea/.idea.MedicalExaminer.API/.idea/encodings.xml
-.idea/.idea.MedicalExaminer.API/.idea/indexLayout.xml
-.idea/.idea.MedicalExaminer.API/.idea/modules.xml
-.idea/.idea.MedicalExaminer.API/.idea/vcs.xml
-.idea/.idea.MedicalExaminer.API/.idea/workspace.xml
-.idea/.idea.MedicalExaminer.API/riderModule.iml
+.idea/.idea.MedicalExaminer.API/*
 MedicalExaminer.API/appsettings.Development.json
 MedicalExaminer.API/appsettings.Development.backup.json
-.idea/.idea.MedicalExaminer.API/.idea/misc.xml
