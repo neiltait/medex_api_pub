@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
 
@@ -19,11 +20,12 @@ namespace MedicalExaminer.Models
         public string UserId { get; set; }
 
         /// <summary>
-        /// Event Text (Length to be confirmed).
+        /// Event Text.
         /// </summary>
         [JsonProperty(PropertyName = "pre_scrutiny_event_text")]
         public string EventText { get; set; }
 
+        //***************** uncomment after the generic event classes approved *********************
         ///// <summary>
         ///// Dictionary for the status (Draft or Final).
         ///// </summary>
@@ -50,6 +52,12 @@ namespace MedicalExaminer.Models
         public OverallCircumstancesOfDeath CircumstancesOfDeath { get; set; }
 
         /// <summary>
+        /// Cause Of Death. (Data type to be confirmed).
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death")]
+        public IEnumerable<string> CauseOfDeath { get; set; }
+
+        /// <summary>
         /// Dictionary for Outcome Of Pre-Scrutiny radio button.
         /// </summary>
         [Required]
@@ -62,5 +70,11 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "clinical_governance_review")]
         public ClinicalGovernanceReview ClinicalGovernanceReview { get; set; }
+
+        /// <summary>
+        /// Details of Clinical Governance Review if said yes for Clinical Governance Review radio button.
+        /// </summary>
+        [JsonProperty(PropertyName = "clinical_governance_review_text")]
+        public ClinicalGovernanceReview ClinicalGovernanceReviewText { get; set; }
     }
 }
