@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common;
+using MedicalExaminer.Common.Enums;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using ValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
@@ -10,50 +11,32 @@ using ValidationContext = System.ComponentModel.DataAnnotations.ValidationContex
 namespace MedicalExaminer.API.Attributes
 {
     /// <summary>
-    ///     Base class for validators of UserItem objects
+    ///     Base class for validators of UserItem objects.
     /// </summary>
     public abstract class ValidUserBase : RequiredAttribute
     {
         /// <summary>
-        /// Validate User Base class. 
+        /// Instantiate a new instance of <see cref="ValidUserBase"/>.
         /// </summary>
-        /// <param name="value">object to be validated</param>
-        /// <param name="context">Validation Context</param>
-        /// <returns>VaidationResult</returns>
-        /// <exception cref="NotImplementedException">Its not implemented</exception>
-        protected override ValidationResult IsValid(object value, ValidationContext context)
+        /// <param name="userRole">User Role.</param>
+        protected ValidUserBase(UserRoles userRole)
         {
-            throw new NotImplementedException();
+            UserRole = userRole;
         }
 
         /// <summary>
-        /// runs the validation
+        /// Role required.
         /// </summary>
-        /// <param name="value">Object to validate</param>
-        /// <param name="context">Validation Context</param>
-        /// <param name="userRole">User Role</param>
-        /// <param name="userTypeName">User Type Name</param>
-        /// <returns>ValidationResult</returns>
-        /// <exception cref="NullReferenceException">Null reference error</exception>
-        protected ValidationResult IsValid(
-            object value,
-            ValidationContext context,
-            UserRoles userRole,
-            string userTypeName)
+        public UserRoles UserRole { get; }
+
+        /// <inheritdoc/>
+        protected override ValidationResult IsValid(object value, ValidationContext context)
         {
             var userPersistence = (IUserPersistence)context.GetService(typeof(IUserPersistence));
-            var mapper = (IMapper)context.GetService(typeof(IMapper));
 
-            if (!(value is UserItem userItem))
+            if (!(value is string userId))
             {
-                return new ValidationResult($"Item not recognised as of type useritem for {userTypeName}");
-            }
-
-            var meUser = mapper.Map<MeUser>(userItem);
-
-            if (meUser == null || string.IsNullOrEmpty(meUser.UserId))
-            {
-                return new ValidationResult($"Cannot get id for {userTypeName}");
+                return new ValidationResult($"Item not recognised as of type useritem for {UserRole.GetDescription()}");
             }
 
             try
@@ -63,15 +46,15 @@ namespace MedicalExaminer.API.Attributes
                     throw new NullReferenceException("User Persistence is null");
                 }
 
-                var returnedDocument = userPersistence.GetUserAsync(meUser.UserId).Result;
-                if (returnedDocument.UserRole != userRole)
+                var returnedDocument = userPersistence.GetUserAsync(userId).Result;
+                if (returnedDocument.UserRole != UserRole)
                 {
-                    return new ValidationResult($"The user is not a {userTypeName}");
+                    return new ValidationResult($"The user is not a {UserRole.GetDescription()}");
                 }
             }
             catch (ArgumentException)
             {
-                return new ValidationResult($"The {userTypeName} has not been found");
+                return new ValidationResult($"The {UserRole.GetDescription()} has not been found");
             }
 
             return ValidationResult.Success;

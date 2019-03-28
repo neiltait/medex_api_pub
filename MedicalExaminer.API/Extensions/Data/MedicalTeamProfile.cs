@@ -8,7 +8,7 @@ namespace MedicalExaminer.API.Extensions.Data
     {
         public MedicalTeamProfile()
         {
-            CreateMap<PostMedicalTeamRequest, MedicalTeam>();
+            CreateMap<PutMedicalTeamRequest, MedicalTeam>();
             CreateMap<MedicalTeam, GetMedicalTeamResponse>();
             CreateMap<MedicalTeam, MedicalTeamItem>();
         }

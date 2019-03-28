@@ -141,18 +141,18 @@ namespace MedicalExaminer.API.Controllers
         /// Post Medical Team
         /// </summary>
         /// /// <param name="examinationId">The ID of the examination that the medical team object is to be posted to.</param>
-        /// <param name="postMedicalTeamRequest">The PostMedicalTeamRequest.</param>
+        /// <param name="putMedicalTeamRequest">The PutMedicalTeamRequest.</param>
         /// <returns>A PutExaminationResponse.</returns>
         [HttpPost("/MedicalTeam/{examinationId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody]PostMedicalTeamRequest postMedicalTeamRequest)
+        public async Task<ActionResult<PutExaminationResponse>> PostMedicalTeam(string examinationId, [FromBody]PutMedicalTeamRequest putMedicalTeamRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new PutExaminationResponse());
             }
 
-            var medicalTeamRequest = Mapper.Map<MedicalTeam>(postMedicalTeamRequest);
+            var medicalTeamRequest = Mapper.Map<MedicalTeam>(putMedicalTeamRequest);
 
             if (medicalTeamRequest == null)
             {

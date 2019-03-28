@@ -157,11 +157,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var postMedicalTeamRequest = new PostMedicalTeamRequest();
+            var postMedicalTeamRequest = new PutMedicalTeamRequest();
             var medicalTeam = new MedicalTeam();
 
 
-            mapper.Setup(m => m.Map<MedicalTeam>(It.IsAny<PostMedicalTeamRequest>())).Returns(medicalTeam);
+            mapper.Setup(m => m.Map<MedicalTeam>(It.IsAny<PutMedicalTeamRequest>())).Returns(medicalTeam);
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
@@ -171,7 +171,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
 
             // Act
-            var response = sut.PostMedicalTeam(examinationId, postMedicalTeamRequest).Result;
+            var response = sut.PutMedicalTeam(examinationId, postMedicalTeamRequest).Result;
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<PutMedicalTeamResponse>>().Subject;
@@ -194,12 +194,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var postMedicalTeamRequest = new PostMedicalTeamRequest();
+            var postMedicalTeamRequest = new PutMedicalTeamRequest();
             var medicalTeam = new MedicalTeam();
             string returnedMedicalTeamExaminationId = null;
 
 
-            mapper.Setup(m => m.Map<MedicalTeam>(It.IsAny<PostMedicalTeamRequest>())).Returns(medicalTeam);
+            mapper.Setup(m => m.Map<MedicalTeam>(It.IsAny<PutMedicalTeamRequest>())).Returns(medicalTeam);
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
@@ -209,7 +209,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
 
             // Act
-            var response = sut.PostMedicalTeam(examinationId, postMedicalTeamRequest).Result;
+            var response = sut.PutMedicalTeam(examinationId, postMedicalTeamRequest).Result;
 
 
             // Assert
@@ -233,11 +233,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var postMedicalTeamRequest = new PostMedicalTeamRequest();
+            var postMedicalTeamRequest = new PutMedicalTeamRequest();
             var medicalTeam = new MedicalTeam();
 
 
-            mapper.Setup(m => m.Map<MedicalTeam>(It.IsAny<PostMedicalTeamRequest>())).Returns(medicalTeam);
+            mapper.Setup(m => m.Map<MedicalTeam>(It.IsAny<PutMedicalTeamRequest>())).Returns(medicalTeam);
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
@@ -247,7 +247,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object, examinationsRetrievalQuery.Object, medicalTeamUpdateService.Object);
 
             // Act
-            var response = sut.PostMedicalTeam(examinationId, postMedicalTeamRequest).Result;
+            var response = sut.PutMedicalTeam(examinationId, postMedicalTeamRequest).Result;
 
 
             // Assert
