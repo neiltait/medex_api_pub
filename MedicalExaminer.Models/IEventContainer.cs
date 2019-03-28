@@ -10,7 +10,7 @@ namespace MedicalExaminer.Models
 
         IList<IEvent> Drafts { get; set; }
 
-        IList<IEvent> History { get; }
+        IList<IEvent> History { get; set; }
     }
 
     public abstract class BaseEventContainter<TEvent> : IEventContainer<TEvent>
@@ -20,7 +20,7 @@ namespace MedicalExaminer.Models
 
         public abstract IList<IEvent> Drafts { get; set; }
 
-        public abstract IList<IEvent> History { get; }
+        public abstract IList<IEvent> History { get; set; }
 
 
         public virtual void Add(TEvent theEvent)
