@@ -57,7 +57,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="filter">Filter.</param>
         /// <returns>A list of examinations.</returns>
-        [HttpPost]
+        [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetExaminationsResponse>> GetExaminations([FromBody] GetExaminationsRequest filter)
         {
@@ -118,7 +118,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="postNewCaseRequest">The PostNewCaseRequest.</param>
         /// <returns>A PostNewCaseResponse.</returns>
         [HttpPost]
-        [Route("new")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutExaminationResponse>> CreateNewCase(
             [FromBody]
