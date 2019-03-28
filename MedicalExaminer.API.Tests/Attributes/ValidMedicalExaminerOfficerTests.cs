@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Attributes;
-using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
@@ -19,25 +17,40 @@ namespace MedicalExaminer.API.Tests.Attributes
     {
         private readonly Mock<IUserPersistence> _userPersistence;
 
-        private readonly Mock<IServiceProvider> _serviceProvider;
-
         private readonly ValidationContext _context;
 
         public ValidMedicalExaminerOfficerTests()
         {
             _userPersistence = new Mock<IUserPersistence>();
 
-            _serviceProvider = new Mock<IServiceProvider>();
+            var serviceProvider = new Mock<IServiceProvider>();
 
-            _serviceProvider
+            serviceProvider
                 .Setup(context => context.GetService(typeof(IUserPersistence)))
                 .Returns(_userPersistence.Object);
 
-            _context = new ValidationContext(new object(), _serviceProvider.Object, new Dictionary<object, object>());
+            _context = new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>());
         }
 
         [Fact]
-        public async void MedicalExaminerOfficerFound_ReturnsSuccess()
+        public void GetValidationResult_ShouldThrowNullReferenceException_WhenPersistanceNotSetupOnContext()
+        {
+            // Arrange
+            var expectedUserId = "expectedUserId";
+            var serviceProvider = new Mock<IServiceProvider>();
+            var context = new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>());
+
+            var sut = new ValidMedicalExaminer();
+
+            // Act
+            Action act = () => sut.GetValidationResult(expectedUserId, context);
+
+            // Assert
+            act.Should().Throw<NullReferenceException>();
+        }
+
+        [Fact]
+        public void MedicalExaminerOfficerFound_ReturnsSuccess()
         {
             // Arrange
             var userId = "1";
@@ -62,7 +75,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         }
 
         [Fact]
-        public async void MedicalExaminerOfficerNotFound_ReturnsFail()
+        public void MedicalExaminerOfficerNotFound_ReturnsFail()
         {
             // Arrange
             var userId = "1";
@@ -77,36 +90,35 @@ namespace MedicalExaminer.API.Tests.Attributes
             var result = sut.GetValidationResult(userId, _context);
 
             // Assert
-            Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
+            Assert.NotNull(result);
+            if (result != null)
+            {
+                Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
+            }
         }
 
         [Fact]
-        public async void MedicalExaminerOfficerUserItemIsNull_ReturnsFail()
+        public void MedicalExaminerOfficerUserItemIsNull_ReturnsFail()
         {
             // Arrange
-            var userId = "1";
-            var userFound = new MeUser
-            {
-                UserId = userId,
-                UserRole = UserRoles.MedicalExaminerOfficer
-            };
             var expectedResult =
                 new ValidationResult("Item not recognised as of type useritem for Medical Examiner Officer");
-
-            _userPersistence.Setup(persistence =>
-                persistence.GetUserAsync(userId)).Returns(Task.FromResult(userFound));
 
             var sut = new ValidMedicalExaminerOfficer();
 
             // Act
-            var result = sut.GetValidationResult(userId, _context);
+            var result = sut.GetValidationResult(null, _context);
 
             // Assert
-            Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
+            Assert.NotNull(result);
+            if (result != null)
+            {
+                Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
+            }
         }
 
         [Fact]
-        public async void MedicalExaminerOfficerWrongUserType_ReturnsFail()
+        public void MedicalExaminerOfficerWrongUserType_ReturnsFail()
         {
             // Arrange
             var userId = "1";
@@ -126,8 +138,11 @@ namespace MedicalExaminer.API.Tests.Attributes
             var result = sut.GetValidationResult(userId, _context);
 
             // Assert
-            result.Should().NotBeNull();
-            Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
+            Assert.NotNull(result);
+            if (result != null)
+            {
+                Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
+            }
         }
     }
 }
