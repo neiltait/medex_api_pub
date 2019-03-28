@@ -97,7 +97,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         }
 
         [Fact]
-        public void MedicalExaminerUserItemIsNull_ReturnsFail()
+        public void MedicalExaminerUserItemIsNotString_ReturnsFail()
         {
             // Arrange
             var expectedResult =
@@ -106,7 +106,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var sut = new ValidMedicalExaminer();
 
             // Act
-            var result = sut.GetValidationResult(null, _context);
+            var result = sut.GetValidationResult(new object(), _context);
 
             // Assert
             Assert.NotNull(result);

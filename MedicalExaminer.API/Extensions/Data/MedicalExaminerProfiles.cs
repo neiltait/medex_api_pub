@@ -16,6 +16,9 @@ namespace MedicalExaminer.API.Extensions.Data
             config.AddProfile<ExaminationProfile>();
             config.AddProfile<UsersProfile>();
             config.AddProfile<PermissionsProfile>();
+            config.AddProfile<MedicalTeamProfile>();
+            config.AddProfile<ClinicalProfessionalProfile>();
+            config.AddProfile<PatientDetailsProfile>();
         }
     }
 }

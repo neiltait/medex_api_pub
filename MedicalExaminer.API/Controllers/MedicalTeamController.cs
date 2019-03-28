@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
+using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
@@ -22,9 +22,7 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class MedicalTeamController : BaseController
     {
-        private readonly IAsyncQueryHandler<CreateExaminationQuery, Examination> _examinationCreationService;
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
-        private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
         private readonly IAsyncUpdateDocumentHandler _medicalTeamUpdateService;
 
         /// <summary>
@@ -32,22 +30,16 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="mapper">Mapper.</param>
-        /// <param name="examinationCreationService">Examination Creation Service.</param>
         /// <param name="examinationRetrievalService">Examination Retrieval Service.</param>
-        /// <param name="examinationsRetrievalService">Examinations Retrieval Service.</param>
         /// <param name="medicalTeamUpdateService">Medical Team Update Service.</param>
         public MedicalTeamController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
-            IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
             IAsyncUpdateDocumentHandler medicalTeamUpdateService)
             : base(logger, mapper)
         {
-            _examinationCreationService = examinationCreationService;
             _examinationRetrievalService = examinationRetrievalService;
-            _examinationsRetrievalService = examinationsRetrievalService;
             _medicalTeamUpdateService = medicalTeamUpdateService;
         }
 
@@ -67,18 +59,22 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
-            if (examination?.MedicalTeam == null)
-            {
-                return NotFound(new GetMedicalTeamResponse());
-            }
 
-            var getMedicalTeamResponse = Mapper.Map<GetMedicalTeamResponse>(examination.MedicalTeam);
+            var getMedicalTeamResponse = examination?.MedicalTeam != null
+                ? Mapper.Map<GetMedicalTeamResponse>(examination.MedicalTeam)
+                : new GetMedicalTeamResponse
+                {
+                    ConsultantsOther = new ClinicalProfessional[] { },
+                    NursingTeamInformation = string.Empty,
+                    MedicalExaminerOfficer = new UserItem(),
+                    MedicalExaminer = new UserItem(),
+                };
 
             return Ok(getMedicalTeamResponse);
         }
 
         /// <summary>
-        ///     Put Medical Team
+        ///     Put Medical Team.
         /// </summary>
         /// ///
         /// <param name="examinationId">The ID of the examination on which the medical team is being updated.</param>
@@ -115,12 +111,9 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutMedicalTeamResponse());
             }
 
-            var res = new PutMedicalTeamResponse()
-            {
-                ExaminationId = examinationId
-            };
+            var response = Mapper.Map<PutMedicalTeamResponse>(examination.MedicalTeam);
 
-            return Ok(res);
+            return Ok(response);
         }
     }
 }

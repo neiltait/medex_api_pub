@@ -6,6 +6,7 @@ using MedicalExaminer.Common;
 using MedicalExaminer.Common.Enums;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
+using Microsoft.Azure.Documents;
 using ValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
 
 namespace MedicalExaminer.API.Attributes
@@ -34,25 +35,37 @@ namespace MedicalExaminer.API.Attributes
         {
             var userPersistence = (IUserPersistence)context.GetService(typeof(IUserPersistence));
 
+            if (userPersistence == null)
+            {
+                throw new NullReferenceException("User Persistence is null");
+            }
+
+            // Null is acceptable
+            if (value == null)
+            {
+                return ValidationResult.Success;
+            }
+
             if (!(value is string userId))
             {
                 return new ValidationResult($"Item not recognised as of type useritem for {UserRole.GetDescription()}");
             }
 
+            // If its empty, and we already proved it to be a string.
+            if (string.IsNullOrEmpty(userId))
+            {
+                return ValidationResult.Success;
+            }
+
             try
             {
-                if (userPersistence == null)
-                {
-                    throw new NullReferenceException("User Persistence is null");
-                }
-
                 var returnedDocument = userPersistence.GetUserAsync(userId).Result;
                 if (returnedDocument.UserRole != UserRole)
                 {
                     return new ValidationResult($"The user is not a {UserRole.GetDescription()}");
                 }
             }
-            catch (ArgumentException)
+            catch
             {
                 return new ValidationResult($"The {UserRole.GetDescription()} has not been found");
             }
