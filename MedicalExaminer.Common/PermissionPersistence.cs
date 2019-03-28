@@ -94,7 +94,7 @@ namespace MedicalExaminer.Common
             var feedOptions = new FeedOptions { MaxItemCount = -1 };
             var query = client.CreateDocumentQuery<MeUser>(
                 documentCollectionUri,
-                $"SELECT * FROM {collectionName} WHERE user_id = {meUserId}",
+                $"SELECT * FROM {collectionName} WHERE Permissions.user_id = \"{meUserId}\"",
                 feedOptions);
             var queryAll = query.AsDocumentQuery();
 
