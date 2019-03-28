@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
 
@@ -10,7 +7,7 @@ namespace MedicalExaminer.Models
     public class PreScrutinyEvent
     {
         /// <summary>
-        /// Event Identication.
+        /// Event Identification.
         /// </summary>
         [JsonProperty(PropertyName = "event_id")]
         public string EventId { get; set; }
