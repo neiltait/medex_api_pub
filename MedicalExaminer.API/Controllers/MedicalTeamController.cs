@@ -66,8 +66,6 @@ namespace MedicalExaminer.API.Controllers
                 {
                     ConsultantsOther = new ClinicalProfessional[] { },
                     NursingTeamInformation = string.Empty,
-                    MedicalExaminerOfficer = new UserItem(),
-                    MedicalExaminer = new UserItem(),
                 };
 
             return Ok(getMedicalTeamResponse);
@@ -104,14 +102,15 @@ namespace MedicalExaminer.API.Controllers
 
             examination.MedicalTeam = medicalTeamRequest;
 
-            var returnedExaminationId = await _medicalTeamUpdateService.Handle(examination);
+            var returnedExamination = await _medicalTeamUpdateService.Handle(examination);
 
-            if (returnedExaminationId == null)
+            if (returnedExamination == null)
             {
                 return BadRequest(new PutMedicalTeamResponse());
             }
 
-            var response = Mapper.Map<PutMedicalTeamResponse>(examination.MedicalTeam);
+            //var response = new GetMedicalTeamResponse();
+            var response = Mapper.Map<PutMedicalTeamResponse>(returnedExamination.MedicalTeam);
 
             return Ok(response);
         }

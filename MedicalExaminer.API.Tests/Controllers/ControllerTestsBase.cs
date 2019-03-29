@@ -18,6 +18,9 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             var mapperConfiguration = new MapperConfiguration(config => { config.AddMedicalExaminerProfiles(); });
 
+            // TODO: We should do this at some point but for now it fails with exceptions
+            //mapperConfiguration.AssertConfigurationIsValid();
+
             Mapper = mapperConfiguration.CreateMapper();
         }
 
