@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalExaminer.API.Controllers
 {
-    public class PreScrutinyEventController : Controller
+    public class PreScrutinyEventController : BaseController
     {
         private IAsyncQueryHandler<CreatePreScrutinyEventQuery, string> _preScrutinyEventCreationService;
         private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
