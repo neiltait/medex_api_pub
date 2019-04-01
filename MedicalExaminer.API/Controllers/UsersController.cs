@@ -115,14 +115,16 @@ namespace MedicalExaminer.API.Controllers
             }
         }
 
+        // TODO: Merge this and the one belwo into a single queyr.
         /// <summary>
-        ///     Get all Users that are in the role of Medical Examiner.
+        ///     Get all Users that are in the role of Medical Examiner on this case.
         /// </summary>
         /// <returns>A GetUsersResponse.</returns>
-        [HttpGet("medical_examiners")]
+        [HttpGet("/v{api-version:apiVersion}/examination/{examinationId}/users/role/medical_examiner")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetUsersResponse>> GetMedicalExaminers()
         {
+            // TODO: Filter users not only by role but that they have access to this case
             try
             {
                 var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery(null));
@@ -143,13 +145,14 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        ///     Get all Users that are in the role of Medical Examiner Officer.
+        ///     Get all Users that are in the role of Medical Examiner Officer on this case.
         /// </summary>
         /// <returns>A GetUsersResponse.</returns>
-        [HttpGet("medical_examiner_officers")]
+        [HttpGet("/v{api-version:apiVersion}/examination/{examinationId}/users/role/medical_examiner_officer")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetUsersResponse>> GetMedicalExaminerOfficers()
         {
+            // TODO: Filter users not only by role but that they have access to this case
             try
             {
                 var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery(null));
