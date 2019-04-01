@@ -27,6 +27,7 @@ namespace MedicalExaminer.API.Models.v1.Users
         /// <summary>
         ///     The User's role.
         /// </summary>
-        public UserRoles UserRole { get; set; }
+        /// <remarks>TODO: Not required for now, needs to be removed.</remarks>
+        public UserRoles? UserRole { get; set; }
     }
 }
