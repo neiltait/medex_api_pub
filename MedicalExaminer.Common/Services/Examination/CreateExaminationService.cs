@@ -6,10 +6,11 @@ using MedicalExaminer.Common.Queries.Examination;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
-    public class CreateExaminationService : IAsyncQueryHandler<CreateExaminationQuery, string>
+    public class CreateExaminationService : IAsyncQueryHandler<CreateExaminationQuery, Models.Examination>
     {
-        private readonly IConnectionSettings _connectionSettings;
+
         private readonly IDatabaseAccess _databaseAccess;
+        private readonly IConnectionSettings _connectionSettings;
 
         public CreateExaminationService(
             IDatabaseAccess databaseAccess,
@@ -18,17 +19,28 @@ namespace MedicalExaminer.Common.Services.Examination
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
         }
-
-        public async Task<string> Handle(CreateExaminationQuery param)
+        
+        public async Task<Models.Examination> Handle(CreateExaminationQuery param)
         {
             if (param == null)
             {
                 throw new ArgumentNullException(nameof(param));
             }
+            try
+            {
+                param.Examination.ExaminationId = Guid.NewGuid().ToString();
+                param.Examination.Unassigned = true;
+                param.Examination.UrgencyScore = Calculator.CalculateUrgencyScore(param.Examination);
+                return await _databaseAccess.CreateItemAsync(_connectionSettings, 
+                    param.Examination, false);
+            }
+            catch (Exception e)
+            {
+                //_logger.Log("Failed to retrieve examination data", e);
+                throw;
+            }
+            
 
-            param.Examination.ExaminationId = Guid.NewGuid().ToString();
-            var result = await _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination, false);
-            return result.ExaminationId;
         }
     }
 }

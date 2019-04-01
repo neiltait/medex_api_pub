@@ -14,7 +14,7 @@ namespace MedicalExaminer.API.Controllers
 {
     /// <inheritdoc />
     /// <summary>
-    ///     Examinations Controller
+    ///     Medical Team Controller.
     /// </summary>
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/examinations/{examinationId}")]
@@ -22,29 +22,37 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class MedicalTeamController : BaseController
     {
-        private readonly IAsyncQueryHandler<CreateExaminationQuery, string> _examinationCreationService;
+        private readonly IAsyncQueryHandler<CreateExaminationQuery, Examination> _examinationCreationService;
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
-        private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>
-            _examinationsRetrievalService;
-        private readonly IAsyncUpdateDocumentHandler _medicaTeamUpdateService;
-        
+        private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
+        private readonly IAsyncUpdateDocumentHandler _medicalTeamUpdateService;
+
+        /// <summary>
+        /// Initialise a new instance of the <see cref="MedicalTeamController"/>.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="mapper">Mapper.</param>
+        /// <param name="examinationCreationService">Examination Creation Service.</param>
+        /// <param name="examinationRetrievalService">Examination Retrieval Service.</param>
+        /// <param name="examinationsRetrievalService">Examinations Retrieval Service.</param>
+        /// <param name="medicalTeamUpdateService">Medical Team Update Service.</param>
         public MedicalTeamController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<CreateExaminationQuery, string> examinationCreationService,
+            IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
-            IAsyncUpdateDocumentHandler medicaTeamUpdateService)
+            IAsyncUpdateDocumentHandler medicalTeamUpdateService)
             : base(logger, mapper)
         {
             _examinationCreationService = examinationCreationService;
             _examinationRetrievalService = examinationRetrievalService;
             _examinationsRetrievalService = examinationsRetrievalService;
-            _medicaTeamUpdateService = medicaTeamUpdateService;
+            _medicalTeamUpdateService = medicalTeamUpdateService;
         }
-        
+
         /// <summary>
-        ///     Get Medical Team
+        ///     Get Medical Team.
         /// </summary>
         /// ///
         /// <param name="examinationId">The ID of the examination.</param>
@@ -59,7 +67,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
-            if (examination == null || examination.MedicalTeam == null)
+            if (examination?.MedicalTeam == null)
             {
                 return NotFound(new GetMedicalTeamResponse());
             }
@@ -68,9 +76,9 @@ namespace MedicalExaminer.API.Controllers
 
             return Ok(getMedicalTeamResponse);
         }
-        
+
         /// <summary>
-        ///     Post Medical Team
+        ///     Post Medical Team.
         /// </summary>
         /// ///
         /// <param name="examinationId">The ID of the examination that the medical team object is to be posted to.</param>
@@ -78,9 +86,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutExaminationResponse.</returns>
         [HttpPost("medical_team/")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutMedicalTeamResponse>> PostMedicalTeam(string examinationId,
-            [FromBody]
-            PostMedicalTeamRequest postMedicalTeamRequest)
+        public async Task<ActionResult<PutMedicalTeamResponse>> PostMedicalTeam(string examinationId, [FromBody] PostMedicalTeamRequest postMedicalTeamRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -102,7 +108,7 @@ namespace MedicalExaminer.API.Controllers
 
             examination.MedicalTeam = medicalTeamRequest;
 
-            var returnedExaminationId = await _medicaTeamUpdateService.Handle(examination);
+            var returnedExaminationId = await _medicalTeamUpdateService.Handle(examination);
 
             if (returnedExaminationId == null)
             {
@@ -115,6 +121,6 @@ namespace MedicalExaminer.API.Controllers
             };
 
             return Ok(res);
-        }        
+        }
     }
 }

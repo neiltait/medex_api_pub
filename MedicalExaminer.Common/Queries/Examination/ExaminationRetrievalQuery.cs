@@ -1,4 +1,5 @@
-﻿namespace MedicalExaminer.Common.Queries.Examination
+﻿using MedicalExaminer.Models;
+namespace MedicalExaminer.Common.Queries.Examination
 {
     public class ExaminationRetrievalQuery : IQuery<Models.Examination>
     {
