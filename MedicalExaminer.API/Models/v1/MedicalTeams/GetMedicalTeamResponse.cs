@@ -36,11 +36,11 @@ namespace MedicalExaminer.API.Models.v1.MedicalTeams
         /// <summary>
         ///     Medical Examiner.
         /// </summary>
-        public UserItem MedicalExaminer { get; set; }
+        public string MedicalExaminerUserId { get; set; }
 
         /// <summary>
         ///     Medical Examiner Officer.
         /// </summary>
-        public UserItem MedicalExaminerOfficer { get; set; }
+        public string MedicalExaminerOfficerUserId { get; set; }
     }
 }

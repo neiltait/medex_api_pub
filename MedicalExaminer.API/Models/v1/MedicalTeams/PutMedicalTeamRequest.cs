@@ -6,9 +6,9 @@ using MedicalExaminer.Models;
 namespace MedicalExaminer.API.Models.v1.MedicalTeams
 {
     /// <summary>
-    ///     Post Medical Team Request Class.
+    ///     Put Medical Team Request.
     /// </summary>
-    public class PostMedicalTeamRequest
+    public class PutMedicalTeamRequest
     {
         /// <summary>
         ///     Consultant primarily responsible for care of patient.
@@ -43,12 +43,12 @@ namespace MedicalExaminer.API.Models.v1.MedicalTeams
         ///     Medical Examiner.
         /// </summary>
         [ValidMedicalExaminer]
-        public UserItem MedicalExaminer { get; set; }
+        public string MedicalExaminerUserId { get; set; }
 
         /// <summary>
         ///     Medical Examiner Officer.
         /// </summary>
         [ValidMedicalExaminerOfficer]
-        public UserItem MedicalExaminerOfficer { get; set; }
+        public string MedicalExaminerOfficerUserId { get; set; }
     }
 }

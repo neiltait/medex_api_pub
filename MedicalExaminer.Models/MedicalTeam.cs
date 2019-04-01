@@ -33,11 +33,11 @@ namespace MedicalExaminer.Models
         /// <inheritdoc />
         [Required]
         [JsonProperty(PropertyName = "medical_examiner")]
-        public MeUser MedicalExaminer { get; set; }
+        public string MedicalExaminerUserId { get; set; }
 
         /// <inheritdoc />
         [Required]
         [JsonProperty(PropertyName = "medical_examiner_officer")]
-        public MeUser MedicalExaminerOfficer { get; set; }
+        public string MedicalExaminerOfficerUserId { get; set; }
     }
 }

@@ -33,11 +33,11 @@ namespace MedicalExaminer.Models
         /// <summary>
         ///     Medical Examiner
         /// </summary>
-        MeUser MedicalExaminer { get; set; }
+        string MedicalExaminerUserId { get; set; }
 
         /// <summary>
         ///     Medical Examiner Officer
         /// </summary>
-        MeUser MedicalExaminerOfficer { get; set; }
+        string MedicalExaminerOfficerUserId { get; set; }
     }
 }
