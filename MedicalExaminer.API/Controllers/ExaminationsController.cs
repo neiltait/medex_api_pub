@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -10,6 +11,7 @@ using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Documents;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -115,28 +117,38 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         ///     Create a new case.
         /// </summary>
-        /// <param name="postNewCaseRequest">The PostNewCaseRequest.</param>
-        /// <returns>A PostNewCaseResponse.</returns>
+        /// <param name="postExaminationRequest">The PostExaminationRequest.</param>
+        /// <returns>A PostExaminationResponse.</returns>
         [HttpPost]
         [Route("new")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutExaminationResponse>> CreateNewCase(
-            [FromBody]
-            PostNewCaseRequest postNewCaseRequest)
+        public async Task<ActionResult<PutExaminationResponse>> CreateExamination(
+            [FromBody] PostExaminationRequest postExaminationRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new PutExaminationResponse());
             }
 
-            var examination = Mapper.Map<Examination>(postNewCaseRequest);
-            var result = await _examinationCreationService.Handle(new CreateExaminationQuery(examination));
-            var res = new PutExaminationResponse
+            try
             {
-                ExaminationId = result.ExaminationId
-            };
+                var examination = Mapper.Map<Examination>(postExaminationRequest);
+                var result = await _examinationCreationService.Handle(new CreateExaminationQuery(examination));
+                var res = new PutExaminationResponse
+                {
+                    ExaminationId = result.ExaminationId
+                };
 
-            return Ok(res);
+                return Ok(res);
+            }
+            catch (DocumentClientException)
+            {
+                return NotFound(new PostExaminationRequest());
+            }
+            catch (ArgumentException)
+            {
+                return NotFound(new PostExaminationRequest());
+            }
         }
     }
 }

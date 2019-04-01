@@ -19,7 +19,7 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<Examination, GetExaminationResponse>()
                 .ForMember(getExaminationResponse => getExaminationResponse.Errors, opt => opt.Ignore());
             CreateMap<Examination, ExaminationItem>();
-            CreateMap<PostNewCaseRequest, Examination>()
+            CreateMap<PostExaminationRequest, Examination>()
                 .ForMember(examination => examination.UrgencyScore, opt => opt.Ignore())
                 .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
                 .ForMember(examination => examination.HouseNameNumber, opt => opt.Ignore())

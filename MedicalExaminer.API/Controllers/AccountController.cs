@@ -9,7 +9,6 @@ using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
@@ -41,15 +40,15 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="oktaClient">Okta client.</param>
         /// <param name="userPersistence">User persistence.</param>
         /// <param name="userCreationService">User Creation Service.</param>
-        /// <param name="userRetrievalService">User Retrieval Service.</param>
+        /// <param name="usersRetrievalByEmailService">User Retrieval By Email Service.</param>
         public AccountController(
             IMELogger logger,
             IMapper mapper,
             OktaClient oktaClient,
             IUserPersistence userPersistence,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalService)
-            : base(logger, mapper, userRetrievalService)
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
+            : base(logger, mapper, usersRetrievalByEmailService)
         {
             _oktaClient = oktaClient;
             _userCreationService = userCreationService;
@@ -79,7 +78,7 @@ namespace MedicalExaminer.API.Controllers
                     FirstName = oktaUser.Profile.FirstName,
                     LastName = oktaUser.Profile.LastName,
                     Email = oktaUser.Profile.Email,
-                    UserRole = UserRoles.MedicalExaminerOfficer,
+                    // TODO: Default to null?
                     LastModifiedBy = "whodunit",
                     ModifiedAt = DateTimeOffset.Now,
                     CreatedAt = DateTimeOffset.Now,

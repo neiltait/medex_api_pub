@@ -20,9 +20,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 {
     public class MedicalTeamControllerTests : ControllerTestsBase<ExaminationsController>
     {
-        private PostNewCaseRequest CreateValidNewCaseRequest()
+        private PostExaminationRequest CreateValidNewCaseRequest()
         {
-            return new PostNewCaseRequest
+            return new PostExaminationRequest
             {
                 GivenNames = "A",
                 Surname = "Patient",
@@ -41,7 +41,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             return examination;
         }
-
 
         [Fact]
         public void GetMedical_When_Called_With_No_MedicalTeam_InExamination_Returns_Expected_Type()
