@@ -25,10 +25,5 @@ namespace MedicalExaminer.Models
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "email")]
         public string Email { get; set; }
-
-        [Required]
-        [DataType(DataType.Text)]
-        [JsonProperty(PropertyName = "UserRole")]
-        public UserRoles UserRole { get; set; }
     }
 }

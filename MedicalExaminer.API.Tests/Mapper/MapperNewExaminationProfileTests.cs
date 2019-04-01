@@ -42,7 +42,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         [Fact]
         public void PostNewCaseRequest_To_ExaminationItem()
         {
-            var postNewCaseRequest = new PostNewCaseRequest
+            var postNewCaseRequest = new PostExaminationRequest
             {
                 DateOfDeath = DateOfDeath,
                 DateOfBirth = DateOfBirth,
