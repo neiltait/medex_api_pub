@@ -284,7 +284,7 @@ namespace MedicalExaminer.API
             services.AddScoped<ExaminationsQueryExpressionBuilder>(s => new ExaminationsQueryExpressionBuilder());
 
             // Examination
-            services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, string>, CreateExaminationService>();
+            services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, Examination>, CreateExaminationService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>, ExaminationsDashboardService>();
 
@@ -297,12 +297,11 @@ namespace MedicalExaminer.API
 
             // User
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
-            services.AddScoped<IAsyncQueryHandler<UserRetrievalQuery, MeUser>, UserRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>, UserRetrievalByIdService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>, UserRetrievalByEmailService>();
 
             // Location
-            services.AddScoped<IAsyncQueryHandler<LocationRetrievalByQuery, Location>, LocationQueryService>();
+            services.AddScoped<IAsyncQueryHandler<LocationRetrievalByQuery, IEnumerable<Location>>, LocationQueryService>();
         }
 
         /// <summary>
