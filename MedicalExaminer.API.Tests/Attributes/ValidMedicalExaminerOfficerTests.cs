@@ -54,11 +54,10 @@ namespace MedicalExaminer.API.Tests.Attributes
         {
             // Arrange
             var userId = "1";
-            var userFound = new MeUser
-            {
-                UserId = userId,
-                UserRole = UserRoles.MedicalExaminerOfficer
-            };
+            var userItem = new UserItem();
+            userItem.UserId = userId;
+            var userFound = new MeUser();
+            userFound.UserId = userId;
             var expectedResult = ValidationResult.Success;
 
             _userPersistence

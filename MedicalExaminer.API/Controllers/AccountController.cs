@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace MedicalExaminer.API.Controllers
     public class AccountController : BaseController
     {
         private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> _userCreationService;
-        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _userRetrievalService;
+        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _usersRetrievalByEmailService;
 
         /// <summary>
         ///     Okta Client.
@@ -40,6 +41,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         private readonly IUserPersistence _userPersistence;
 
+        
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="AccountController" /> class.
@@ -49,20 +51,20 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="oktaClient">Okta client.</param>
         /// <param name="userPersistence">User persistence.</param>
         /// <param name="userCreationService">User Creation Service.</param>
-        /// <param name="userRetrievalService">User Retrieval Service.</param>
+        /// <param name="userRetrievalByEmailService">User Retrieval Service by email address.</param>
         public AccountController(
             IMELogger logger,
             IMapper mapper,
             OktaClient oktaClient,
             IUserPersistence userPersistence,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalService)
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService)
             : base(logger, mapper)
         {
             _oktaClient = oktaClient;
             _userPersistence = userPersistence;
             _userCreationService = userCreationService;
-            _userRetrievalService = userRetrievalService;
+            _usersRetrievalByEmailService = userRetrievalByEmailService;
         }
 
         /// <summary>
@@ -89,7 +91,6 @@ namespace MedicalExaminer.API.Controllers
                     FirstName = oktaUser.Profile.FirstName,
                     LastName = oktaUser.Profile.LastName,
                     Email = oktaUser.Profile.Email,
-                    UserRole = UserRoles.ServiceOwner,
                     LastModifiedBy = "whodunit",
                     ModifiedAt = DateTimeOffset.Now,
                     CreatedAt = DateTimeOffset.Now,
@@ -116,7 +117,7 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var user = await _userRetrievalService.Handle(new UserRetrievalByEmailQuery(emailAddress));
+                var user = await _usersRetrievalByEmailService.Handle(new UserRetrievalByEmailQuery(emailAddress));
 
                 return user;
             }

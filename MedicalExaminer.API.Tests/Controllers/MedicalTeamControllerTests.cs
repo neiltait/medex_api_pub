@@ -20,6 +20,17 @@ namespace MedicalExaminer.API.Tests.Controllers
     /// </summary>
     public class MedicalTeamControllerTests : ControllerTestsBase<MedicalTeamController>
     {
+        private PostExaminationRequest CreateValidNewCaseRequest()
+        {
+            return new PostExaminationRequest
+            {
+                GivenNames = "A",
+                Surname = "Patient",
+                Gender = ExaminationGender.Male,
+                MedicalExaminerOfficeResponsible = "7"
+            };
+        }
+        
         [Fact]
         public async Task GetMedicalTeam_ShouldReturnBadRequest_WhenModelStateInvalid()
         {
