@@ -59,7 +59,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A list of examinations.</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetExaminationsResponse>> GetExaminations([FromBody] GetExaminationsRequest filter)
+        public async Task<ActionResult<GetExaminationsResponse>> GetExaminations([FromQuery]GetExaminationsRequest filter)
         {
             if (filter == null)
             {
