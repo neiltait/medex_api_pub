@@ -74,7 +74,27 @@ namespace MedicalExaminer.API.Controllers
         {
             return Ok(GetDictionary(typeof(PresentAtDeath)));
         }
-            
+
+        /// <summary>
+        /// Returns all options for the informed at death value for a bereaved .
+        /// </summary>
+        /// <returns>List of values for informed at death</returns>
+        [HttpGet("informed_at_death")]
+        public ActionResult GetInformedAtDeath()
+        {
+            return Ok(GetDictionary(typeof(InformedAtDeath)));
+        }
+
+        /// <summary>
+        /// Returns all options for the Bereaved Discussion Outcome value.
+        /// </summary>
+        /// <returns>List of values for Bereaved Discussion Outcome</returns>
+        [HttpGet("bereaved_discussion_outcome")]
+        public ActionResult GetBereavedDiscussionOutcome()
+        {
+            return Ok(GetDictionary(typeof(BereavedDiscussionOutcome)));
+        }
+
         /// <summary>
         /// Returns all the data types and the values for mode of disposal.
         /// </summary>
