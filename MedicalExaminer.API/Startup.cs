@@ -58,12 +58,12 @@ namespace MedicalExaminer.API
         }
 
         /// <summary>
-        ///     Gets configuration.
+        /// Gets configuration.
         /// </summary>
         public IConfiguration Configuration { get; }
 
         /// <summary>
-        ///     Add services to the container.
+        /// Add services to the container.
         /// </summary>
         /// <param name="services">Service Collection.</param>
         public void ConfigureServices(IServiceCollection services)
@@ -106,7 +106,7 @@ namespace MedicalExaminer.API
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(options =>
             {
-                //c.SwaggerDoc("v1", new Info { Title = "Medical Examiner Data API", Version = "v1" });
+                // c.SwaggerDoc("v1", new Info { Title = "Medical Examiner Data API", Version = "v1" });
 
                 // note: need a temporary service provider here because one has not been created yet
                 var provider = services.BuildServiceProvider()
@@ -134,7 +134,7 @@ namespace MedicalExaminer.API
                 // Make swagger do authentication
                 var security = new Dictionary<string, IEnumerable<string>>
                 {
-                    { "Bearer", Array.Empty<string>() }
+                    { "Bearer", Array.Empty<string>() },
                 };
 
                 options.AddSecurityDefinition("Okta", new OAuth2Scheme
@@ -145,8 +145,8 @@ namespace MedicalExaminer.API
                     Scopes = new Dictionary<string, string>
                     {
                         { "profile", "Profile" },
-                        { "openid", "OpenID" }
-                    }
+                        { "openid", "OpenID" },
+                    },
                 });
 
                 options.AddSecurityDefinition("Bearer", new ApiKeyScheme
@@ -161,15 +161,13 @@ namespace MedicalExaminer.API
                 options.AddSecurityRequirement(security);
             });
 
+            // Logger 
             services.AddScoped<IMELogger, MELogger>();
+            
+            // Database connections  
             services.AddScoped<IDocumentClientFactory, DocumentClientFactory>();
             services.AddScoped<IDatabaseAccess, DatabaseAccess>();
             services.AddScoped<ILocationConnectionSettings>(s => new LocationConnectionSettings(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]));
-
-            services.AddScoped<IUserConnectionSettings>(s => new UserConnectionSettings(
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
@@ -179,22 +177,33 @@ namespace MedicalExaminer.API
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
 
-            services.AddScoped<ExaminationsQueryExpressionBuilder>(s => new ExaminationsQueryExpressionBuilder());
-            services
-                .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>,
-                    ExaminationsDashboardService>();
-            services.AddScoped<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>, UserRetrievalByIdService>();
+            services.AddScoped<IUserConnectionSettings>(s => new UserConnectionSettings(
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]));
 
-            services.AddScoped<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>, UserRetrievalByEmailService>();
+            
+            // Examination services 
+            services.AddScoped<ExaminationsQueryExpressionBuilder>(s => new ExaminationsQueryExpressionBuilder());
+            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>,ExaminationsDashboardService>();
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, Examination>, CreateExaminationService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
-            services.AddScoped<IAsyncUpdateDocumentHandler,  MedicalTeamUpdateService>();
+            services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
+            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,ExaminationsRetrievalService>();
+            
+            // Medical team services
+            services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
+            
+            // Patient details services 
             services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
             services.AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService>();
-
+            
+            // User servicves 
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
-
+            services.AddScoped<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>, UserRetrievalByEmailService>();
+            services.AddScoped<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>, UserRetrievalByIdService>();
+            services.AddScoped<IAsyncQueryHandler<UserUpdateQuery, MeUser>, UserUpdateService>();
 
             services.AddScoped<ControllerActionFilter>();
 
@@ -276,7 +285,7 @@ namespace MedicalExaminer.API
                         c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
                     }
 
-                    //c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                    // c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 });
             }
 
@@ -289,7 +298,7 @@ namespace MedicalExaminer.API
         }
 
         /// <summary>
-        ///     Configure basic authentication so we can use tokens.
+        /// Configure basic authentication so we can use tokens.
         /// </summary>
         /// <param name="services">Services.</param>
         /// <param name="oktaSettings">Okta Settings.</param>
@@ -312,7 +321,7 @@ namespace MedicalExaminer.API
         }
 
         /// <summary>
-        ///     Configure Okta Client.
+        /// Configure Okta Client.
         /// </summary>
         /// <param name="services">Services.</param>
         private void ConfigureOktaClient(IServiceCollection services)

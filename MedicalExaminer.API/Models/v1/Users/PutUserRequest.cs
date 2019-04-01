@@ -28,10 +28,5 @@ namespace MedicalExaminer.API.Models.v1.Users
         /// </summary>
         [EmailAddress]
         public string Email { get; set; }
-
-        /// <summary>
-        ///     The User's role.
-        /// </summary>
-        public UserRoles UserRole { get; set; }
     }
 }

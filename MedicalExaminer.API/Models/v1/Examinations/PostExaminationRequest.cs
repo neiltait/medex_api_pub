@@ -7,7 +7,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
 {
     /// <summary>
     /// </summary>
-    public class PostNewCaseRequest
+    public class PostExaminationRequest
     {
         /// <summary>
         ///     Where the death occured

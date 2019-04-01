@@ -62,12 +62,6 @@ namespace MedicalExaminer.API.Attributes
                 {
                     throw new NullReferenceException("User Persistence is null");
                 }
-
-                var returnedDocument = userPersistence.GetUserAsync(meUser.UserId).Result;
-                if (returnedDocument.UserRole != userRole)
-                {
-                    return new ValidationResult($"The user is not a {userTypeName}");
-                }
             }
             catch (ArgumentException)
             {
