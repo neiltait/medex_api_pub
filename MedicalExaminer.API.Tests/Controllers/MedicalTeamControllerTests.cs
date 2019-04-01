@@ -3,12 +3,14 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
+using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -19,18 +21,7 @@ namespace MedicalExaminer.API.Tests.Controllers
     /// Medical Team Controller Tests.
     /// </summary>
     public class MedicalTeamControllerTests : ControllerTestsBase<MedicalTeamController>
-    {
-        private PostExaminationRequest CreateValidNewCaseRequest()
-        {
-            return new PostExaminationRequest
-            {
-                GivenNames = "A",
-                Surname = "Patient",
-                Gender = ExaminationGender.Male,
-                MedicalExaminerOfficeResponsible = "7"
-            };
-        }
-        
+    {       
         [Fact]
         public async Task GetMedicalTeam_ShouldReturnBadRequest_WhenModelStateInvalid()
         {

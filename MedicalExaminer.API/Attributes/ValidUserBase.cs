@@ -57,6 +57,9 @@ namespace MedicalExaminer.API.Attributes
                 return ValidationResult.Success;
             }
 
+            // TODO: Removed for now while UserRole on user has been removed. Will need to be a context sensetive check anyway
+            // as we need to make sure it returns a user that has the role in the location we wont; no good accepting any user with that role
+            /*
             try
             {
                 var returnedDocument = userPersistence.GetUserAsync(userId).Result;
@@ -69,7 +72,7 @@ namespace MedicalExaminer.API.Attributes
             {
                 return new ValidationResult($"The {UserRole.GetDescription()} has not been found");
             }
-
+            */
             return ValidationResult.Success;
         }
     }
