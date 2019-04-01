@@ -32,11 +32,5 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "permissions")]
         public IEnumerable<MEUserPermission> Permissions { get; set; }
-
-        // TODO: Remove.
-        [Required]
-        [DataType(DataType.Text)]
-        [JsonProperty(PropertyName = "UserRole")]
-        public UserRoles UserRole { get; set; }
     }
 }

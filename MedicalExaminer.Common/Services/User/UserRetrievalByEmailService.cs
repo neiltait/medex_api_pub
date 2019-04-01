@@ -7,7 +7,7 @@ using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.User
 {
-    public class UserRetrievalByEmailService : IAsyncQueryHandler<UserRetrievalByEmailQuery, Models.MeUser>
+    public class UserRetrievalByEmailService : IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>
     {
         private readonly IUserConnectionSettings connectionSettings;
         private readonly IDatabaseAccess databaseAccess;
@@ -18,7 +18,7 @@ namespace MedicalExaminer.Common.Services.User
             this.connectionSettings = connectionSettings;
         }
 
-        public Task<Models.MeUser> Handle(UserRetrievalByEmailQuery param)
+        public Task<MeUser> Handle(UserRetrievalByEmailQuery param)
         {
             if (param == null)
             {
@@ -27,7 +27,7 @@ namespace MedicalExaminer.Common.Services.User
 
             var result = databaseAccess.GetItemAsync<MeUser>(
                 connectionSettings,
-                x => x.Email == param.UserEmail);
+                x => x.Email == param.Email);
             return result;
         }
     }

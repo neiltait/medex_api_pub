@@ -18,7 +18,7 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
             _connectionSettings = connectionSettings;
         }
 
-        public async Task<string> Handle(Models.Examination examination)
+        public async Task<Models.Examination> Handle(Models.Examination examination)
         {
             if (examination == null)
             {
@@ -27,7 +27,7 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
 
             var returnedDocument = await _databaseAccess.UpdateItemAsync(_connectionSettings, examination);
 
-            return returnedDocument.ExaminationId;
+            return returnedDocument;
         }
     }
 }

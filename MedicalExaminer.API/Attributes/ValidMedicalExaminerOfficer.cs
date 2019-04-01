@@ -9,14 +9,12 @@ namespace MedicalExaminer.API.Attributes
     public class ValidMedicalExaminerOfficer : ValidUserBase
     {
         /// <summary>
-        /// ValidMedicalExaminerOfficer validator.
+        /// Instantiate a new instance of <see cref="ValidMedicalExaminerOfficer"/>.
         /// </summary>
-        /// <param name="value">Object being validated.</param>
-        /// <param name="context">Validation Context.</param>
-        /// <returns>ValidationResult.</returns>
-        protected override ValidationResult IsValid(object value, ValidationContext context)
+        public ValidMedicalExaminerOfficer()
+            : base(UserRoles.MedicalExaminerOfficer)
         {
-            return IsValid(value, context, UserRoles.MedicalExaminerOfficer, "medical examiner officer");
+
         }
     }
 }

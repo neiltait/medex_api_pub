@@ -39,7 +39,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var startDate = new DateTime(2019, 01, 02);
             var endDateField = "DateOfDeath";
             var serviceProvider = new Mock<IServiceProvider>().Object;
-            var postRequest = new Mock<PostNewCaseRequest>();
+            var postRequest = new Mock<PostExaminationRequest>();
             var validationContext = new ValidationContext(postRequest.Object, serviceProvider, GetItemsDictionary());
             var expectedResult = ValidationResult.Success;
             var sut = new DateIsLessThanOrEqualToNullsAllowed(endDateField);
@@ -56,7 +56,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var startDate = new DateTime(2019, 01, 02);
             var endDateField = "DateOfDeath";
             var serviceProvider = new Mock<IServiceProvider>().Object;
-            var postRequest = new PostNewCaseRequest
+            var postRequest = new PostExaminationRequest
             {
                 DateOfDeath = startDate
             };
@@ -77,7 +77,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var endDate = new DateTime(2019, 01, 01);
             var endDateField = "DateOfDeath";
             var serviceProvider = new Mock<IServiceProvider>().Object;
-            var postRequest = new PostNewCaseRequest
+            var postRequest = new PostExaminationRequest
             {
                 DateOfDeath = endDate
             };
@@ -114,7 +114,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var endDate = new DateTime(2019, 01, 03);
             var endDateField = "DateOfDeath";
             var serviceProvider = new Mock<IServiceProvider>().Object;
-            var postRequest = new PostNewCaseRequest
+            var postRequest = new PostExaminationRequest
             {
                 DateOfDeath = endDate
             };

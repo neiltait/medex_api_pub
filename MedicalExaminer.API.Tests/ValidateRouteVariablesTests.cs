@@ -78,7 +78,8 @@ namespace MedicalExaminer.API.Tests
 
                     foreach (var parameter in parameters)
                     {
-                        if (parameter.GetCustomAttributes(typeof(FromBodyAttribute), false).Length == 0)
+                        if (parameter.GetCustomAttributes(typeof(FromBodyAttribute), false).Length == 0
+                            && parameter.GetCustomAttributes(typeof(FromQueryAttribute), false).Length == 0)
                         {
                             var foundInAttribute = false;
                             var actionHttpAttributes = action.GetCustomAttributes(typeof(HttpMethodAttribute), true);
