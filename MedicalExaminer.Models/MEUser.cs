@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
 
@@ -26,6 +27,13 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "email")]
         public string Email { get; set; }
 
+        /// <summary>
+        /// Permissions.
+        /// </summary>
+        [JsonProperty(PropertyName = "permissions")]
+        public IEnumerable<MEUserPermission> Permissions { get; set; }
+
+        // TODO: Remove.
         [Required]
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "UserRole")]
