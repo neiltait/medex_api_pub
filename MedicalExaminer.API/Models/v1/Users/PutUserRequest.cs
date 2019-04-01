@@ -32,6 +32,6 @@ namespace MedicalExaminer.API.Models.v1.Users
         /// <summary>
         ///     The User's role.
         /// </summary>
-        public UserRoles UserRole { get; set; }
+        public UserRoles? UserRole { get; set; }
     }
 }
