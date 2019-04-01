@@ -24,22 +24,14 @@ namespace MedicalExaminer.API.Controllers
     [Route("/v{api-version:apiVersion}/auth")]
     [ApiController]
     [Authorize]
-    public class AccountController : BaseController
+    public class AccountController : AuthenticatedBaseController
     {
         private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> _userCreationService;
-        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _userRetrievalService;
 
         /// <summary>
         ///     Okta Client.
         /// </summary>
         private readonly OktaClient _oktaClient;
-
-
-        /// <summary>
-        ///     The User Persistence Layer.
-        /// </summary>
-        private readonly IUserPersistence _userPersistence;
-
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="AccountController" /> class.
@@ -57,12 +49,10 @@ namespace MedicalExaminer.API.Controllers
             IUserPersistence userPersistence,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalService)
-            : base(logger, mapper)
+            : base(logger, mapper, userRetrievalService)
         {
             _oktaClient = oktaClient;
-            _userPersistence = userPersistence;
             _userCreationService = userCreationService;
-            _userRetrievalService = userRetrievalService;
         }
 
         /// <summary>
@@ -79,7 +69,7 @@ namespace MedicalExaminer.API.Controllers
             var oktaUser = await _oktaClient.Users.GetUserAsync(emailAddress);
 
             // Try and look them up in our database
-            var meUser = await GetUser(emailAddress);
+            var meUser = await CurrentUser();
 
             // Create the user if it doesn't already exist
             if (meUser == null)
@@ -89,7 +79,7 @@ namespace MedicalExaminer.API.Controllers
                     FirstName = oktaUser.Profile.FirstName,
                     LastName = oktaUser.Profile.LastName,
                     Email = oktaUser.Profile.Email,
-                    UserRole = UserRoles.ServiceOwner,
+                    UserRole = UserRoles.MedicalExaminerOfficer,
                     LastModifiedBy = "whodunit",
                     ModifiedAt = DateTimeOffset.Now,
                     CreatedAt = DateTimeOffset.Now,
@@ -109,21 +99,6 @@ namespace MedicalExaminer.API.Controllers
                 FirstName = meUser.FirstName,
                 LastName = meUser.LastName,
             };
-        }
-
-        // TODO: Candidates for servicing / facading this functionality now
-        private async Task<MeUser> GetUser(string emailAddress)
-        {
-            try
-            {
-                var user = await _userRetrievalService.Handle(new UserRetrievalByEmailQuery(emailAddress));
-
-                return user;
-            }
-            catch (ArgumentException)
-            {
-                return null;
-            }
         }
 
         private async Task<MeUser> CreateUser(MeUser toCreate)
