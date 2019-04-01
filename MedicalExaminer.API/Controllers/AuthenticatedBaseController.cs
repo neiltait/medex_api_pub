@@ -16,21 +16,20 @@ namespace MedicalExaminer.API.Controllers
     /// <remarks>Provides access to the Current User record.</remarks>
     public abstract class AuthenticatedBaseController : BaseController
     {
-        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _userRetrievalService;
-
+        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _usersRetrievalByEmailService;
         /// <summary>
         /// Initialise a new instance of <see cref="AuthenticatedBaseController"/>.
         /// </summary>
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
-        /// <param name="userRetrievalService">User Retrieval Service.</param>
+        /// <param name="usersRetrievalByEmailService">User Retrieval By Email Service.</param>
         protected AuthenticatedBaseController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalService)
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
             : base(logger, mapper)
         {
-            _userRetrievalService = userRetrievalService;
+            _usersRetrievalByEmailService = usersRetrievalByEmailService;
         }
 
         /// <summary>
@@ -43,7 +42,7 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var user = await _userRetrievalService.Handle(new UserRetrievalByEmailQuery(emailAddress));
+                var user = await _usersRetrievalByEmailService.Handle(new UserRetrievalByEmailQuery(emailAddress));
 
                 return user;
             }
