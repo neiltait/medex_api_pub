@@ -64,8 +64,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             return testException;
         }
 
-        private static DocumentClientException CreateDocumentClientExceptionForTesting(
-            Error error, HttpStatusCode httpStatusCode)
+        protected static DocumentClientException CreateDocumentClientExceptionForTesting(
+            Error error,
+            HttpStatusCode httpStatusCode)
         {
             var type = typeof(DocumentClientException);
 
