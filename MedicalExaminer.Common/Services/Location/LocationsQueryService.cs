@@ -12,20 +12,20 @@ namespace MedicalExaminer.Common.Services.Location
     /// Location Query Service.
     /// </summary>
     /// <inheritdoc/>
-    public class LocationQueryService : QueryHandler<LocationRetrievalByQuery, IEnumerable<Models.Location>>
+    public class LocationsQueryService : QueryHandler<LocationsRetrievalByQuery, IEnumerable<Models.Location>>
     {
         /// <summary>
         /// Initialise a new instance of the Location Id Service.
         /// </summary>
         /// <param name="databaseAccess">Database Access.</param>
         /// <param name="connectionSettings">Connection Settings.</param>
-        public LocationQueryService(IDatabaseAccess databaseAccess, ILocationConnectionSettings connectionSettings)
+        public LocationsQueryService(IDatabaseAccess databaseAccess, ILocationConnectionSettings connectionSettings)
             : base(databaseAccess, connectionSettings)
         {
         }
 
         /// <inheritdoc/>
-        public override Task<IEnumerable<Models.Location>> Handle(LocationRetrievalByQuery param)
+        public override Task<IEnumerable<Models.Location>> Handle(LocationsRetrievalByQuery param)
         {
             if (param == null)
             {
@@ -42,7 +42,7 @@ namespace MedicalExaminer.Common.Services.Location
         /// </summary>
         /// <param name="param">Params.</param>
         /// <returns>The Predicate.</returns>
-        private Expression<Func<Models.Location, bool>> GetPredicate(LocationRetrievalByQuery param)
+        private Expression<Func<Models.Location, bool>> GetPredicate(LocationsRetrievalByQuery param)
         {
             Expression<Func<Models.Location, bool>> predicate;
 
