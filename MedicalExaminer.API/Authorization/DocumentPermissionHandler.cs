@@ -14,8 +14,8 @@ namespace MedicalExaminer.API.Authorization
     /// Permission Handler.
     /// </summary>
     /// <inheritdoc/>
-    /// <see cref="AuthorizationHandler{PermissionRequirement}"/>
-    public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
+    /// <see cref="AuthorizationHandler{PermissionRequirement, ILocationBasedDocument}"/>
+    public class DocumentPermissionHandler : AuthorizationHandler<PermissionRequirement, ILocationBasedDocument>
     {
         /// <summary>
         /// User Retrieval Service.
@@ -32,7 +32,7 @@ namespace MedicalExaminer.API.Authorization
         /// </summary>
         /// <param name="rolePermissions">Role Permissions.</param>
         /// <param name="userRetrievalService">User Retrieval Service.</param>
-        public PermissionHandler(
+        public DocumentPermissionHandler(
             IRolePermissions rolePermissions,
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalService)
         {
@@ -44,22 +44,21 @@ namespace MedicalExaminer.API.Authorization
         /// <inheritdoc/>
         protected override async Task HandleRequirementAsync(
             AuthorizationHandlerContext context,
-            PermissionRequirement requirement)
+            PermissionRequirement requirement,
+            ILocationBasedDocument document)
         {
             // get the user
             var emailAddress = context.User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
 
             var meUser = await _userRetrievalService.Handle(new UserRetrievalByEmailQuery(emailAddress));
 
-            if (meUser.Permissions != null)
-            {
-                var hasPermission = meUser.Permissions.Any(
-                    p => _rolePermissions.Can((UserRoles) p.UserRole, requirement.Permission));
+            var hasPermission = meUser.Permissions.Any(
+                p => _rolePermissions.Can((UserRoles)p.UserRole, requirement.Permission)
+                     && document.LocationIds().Any(l => l == p.LocationId));
 
-                if (hasPermission)
-                {
-                    context.Succeed(requirement);
-                }
+            if (hasPermission)
+            {
+                context.Succeed(requirement);
             }
         }
     }

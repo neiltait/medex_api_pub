@@ -14,7 +14,7 @@ namespace MedicalExaminer.Common.Authorization.Roles
         /// Initialise a new instance of <see cref="MedicalExaminerOfficerRole"/>.
         /// </summary>
         public MedicalExaminerOfficerRole()
-            : base(UserRoles.ServiceOwner)
+            : base(UserRoles.MedicalExaminerOfficer)
         {
             Grant(Permission.GetLocations);
             Grant(Permission.GetLocation);

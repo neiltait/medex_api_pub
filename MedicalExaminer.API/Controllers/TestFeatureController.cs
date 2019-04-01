@@ -5,16 +5,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
-using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
 {
     /// <summary>
     /// Test Feature Controller.
     /// </summary>
+    [ApiVersion("1.0")]
+    [Route("/v{api-version:apiVersion}/test")]
+    [ApiController]
+    [Authorize]
     public class TestFeatureController : AuthorizationBasedController
     {
         /// <summary>
@@ -28,10 +33,29 @@ namespace MedicalExaminer.API.Controllers
         {
         }
 
+        [HttpGet("action")]
         [AuthorizePermission(Permission.GetLocation)]
         public bool Action()
         {
             return true;
+        }
+
+        [HttpGet("actionInside")]
+        public async Task<bool> ActionInside()
+        {
+            var document = new Examination()
+            {
+
+            };
+
+            var authorizationResult = await AuthorizationService.AuthorizeAsync(User, document, new PermissionRequirement(Permission.GetLocation));
+
+            if (authorizationResult.Succeeded)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

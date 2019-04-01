@@ -6,6 +6,9 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
@@ -23,6 +26,9 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class PermissionsController : BaseController
     {
+        private readonly IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> _userRetrievalByIdService;
+        private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
+
         /// <summary>
         ///     The Permission Persistence Layer
         /// </summary>
@@ -124,6 +130,8 @@ namespace MedicalExaminer.API.Controllers
                 var permission = Mapper.Map<Permission>(postPermission);
                 var createdPermission = await _permissionPersistence.CreatePermissionAsync(permission);
 
+                DuplicateOnUser(permission);
+
                 // TODO: Is ID populated after saving?
                 // TODO : Question : Should this be the whole user object?
                 return Ok(Mapper.Map<PostPermissionResponse>(createdPermission));
@@ -158,6 +166,9 @@ namespace MedicalExaminer.API.Controllers
 
                 var permission = Mapper.Map<Permission>(putPermission);
                 var updatedPermission = await _permissionPersistence.UpdatePermissionAsync(permission);
+
+                DuplicateOnUser(permission);
+
                 return Ok(Mapper.Map<PutPermissionResponse>(updatedPermission));
             }
             catch (DocumentClientException)
@@ -168,6 +179,28 @@ namespace MedicalExaminer.API.Controllers
             {
                 return NotFound(new PutPermissionResponse());
             }
+        }
+
+        /// <summary>
+        /// Replace whatever permissiona are on the user object with the current permissions
+        /// in the collection.
+        /// </summary>
+        /// <remarks>Updates the user specified in this permission.</remarks>
+        /// <param name="permission">A permission.</param>
+        private async void DuplicateOnUser(Permission permission)
+        {
+            var meUser = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(permission.UserId));
+
+            var permissions = await _permissionPersistence.GetPermissionsAsync(permission.UserId);
+
+            meUser.Permissions = permissions.Select(p => new MEUserPermission()
+            {
+                LocationId = p.LocationId,
+                PermissionId = p.PermissionId,
+                UserRole = p.UserRole,
+            });
+
+            await _userUpdateService.Handle(new UserUpdateQuery(meUser));
         }
     }
 }

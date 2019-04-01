@@ -392,7 +392,7 @@ namespace MedicalExaminer.API
 
             services.AddAuthorization(options =>
             {
-                foreach (var permission in (Common.Authorization.Permission[])Enum.GetValues(typeof(Permission)))
+                foreach (var permission in (Common.Authorization.Permission[])Enum.GetValues(typeof(Common.Authorization.Permission)))
                 {
                     options.AddPolicy($"HasPermission={permission}", policy =>
                     {
@@ -401,7 +401,9 @@ namespace MedicalExaminer.API
                 }
             });
 
-            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+            // Needs to be scoped since it takes scoped parameters.
+            services.AddScoped<IAuthorizationHandler, PermissionHandler>();
+            services.AddScoped<IAuthorizationHandler, DocumentPermissionHandler>();
         }
     }
 }

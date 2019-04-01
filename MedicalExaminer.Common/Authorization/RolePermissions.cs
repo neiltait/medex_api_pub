@@ -28,6 +28,7 @@ namespace MedicalExaminer.Common.Authorization
                 new ServiceOwnerRole(),
             };
 
+            // Ensures only a single role handler can be registered againt the enum type.
             _roles = roles.ToDictionary(r => r.UserRole, r => r);
         }
 

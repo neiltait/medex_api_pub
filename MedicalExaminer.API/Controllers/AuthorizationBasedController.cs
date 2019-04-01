@@ -16,7 +16,7 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// Authorization Service.
         /// </summary>
-        private readonly IAuthorizationService _authorizationService;
+        protected IAuthorizationService AuthorizationService { get; }
 
         /// <summary>
         /// Authorization Based Controller.
@@ -24,13 +24,13 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="logger"></param>
         /// <param name="mapper"></param>
         /// <param name="authorizationService"></param>
-        public AuthorizationBasedController(
+        protected AuthorizationBasedController(
             IMELogger logger,
             IMapper mapper,
             IAuthorizationService authorizationService)
         :base(logger, mapper)
         {
-            _authorizationService = authorizationService;
+            AuthorizationService = authorizationService;
         }
     }
 }
