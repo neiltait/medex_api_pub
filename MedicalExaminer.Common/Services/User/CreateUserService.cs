@@ -9,13 +9,15 @@ namespace MedicalExaminer.Common.Services.User
 {
     public class CreateUserService : IAsyncQueryHandler<CreateUserQuery, MeUser>
     {
-        private readonly IConnectionSettings connectionSettings;
-        private readonly IDatabaseAccess databaseAccess;
+        private readonly IConnectionSettings _connectionSettings;
+        private readonly IDatabaseAccess _databaseAccess;
 
-        public CreateUserService(IDatabaseAccess databaseAccess, IUserConnectionSettings connectionSettings)
+        public CreateUserService(
+            IDatabaseAccess databaseAccess, 
+            IUserConnectionSettings connectionSettings)
         {
-            this.databaseAccess = databaseAccess;
-            this.connectionSettings = connectionSettings;
+            _databaseAccess = databaseAccess;
+            _connectionSettings = connectionSettings;
         }
 
         public async Task<MeUser> Handle(CreateUserQuery param)
@@ -26,7 +28,7 @@ namespace MedicalExaminer.Common.Services.User
             }
 
             param.MeUser.UserId = Guid.NewGuid().ToString();
-            var result = await databaseAccess.CreateItemAsync(connectionSettings, param.MeUser, false);
+            var result = await _databaseAccess.CreateItemAsync(_connectionSettings, param.MeUser, false);
             return result;
         }
     }

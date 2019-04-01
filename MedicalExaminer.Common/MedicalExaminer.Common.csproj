@@ -9,7 +9,6 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.0.0" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.2.2" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.1-rc.114" />
   </ItemGroup>
 
   <ItemGroup>
