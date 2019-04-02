@@ -61,6 +61,11 @@ namespace MedicalExaminer.API.Controllers
         [HttpPost("validate_session")]
         public async Task<PostValidateSessionResponse> ValidateSession()
         {
+            var djp1 = User;
+
+            var djp2 = Request.Headers["Authorization"].ToString();
+
+
             // Look up their email in the claims
             var emailAddress = User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
 
