@@ -11,12 +11,14 @@ namespace MedicalExaminer.Common.Queries.User
         {
             UserId = user.UserId;
             Email = user.Email;
-            Permissions = user.Permissions.Select(up => new MEUserPermission()
-            {
-                PermissionId = up.PermissionId,
-                LocationId = up.LocationId,
-                UserRole = up.UserRole,
-            });
+            Permissions = user.Permissions != null
+                ? user.Permissions.Select(up => new MEUserPermission()
+                {
+                    PermissionId = up.PermissionId,
+                    LocationId = up.LocationId,
+                    UserRole = up.UserRole,
+                })
+                : Enumerable.Empty<MEUserPermission>();
         }
 
         public string UserId { get; }
