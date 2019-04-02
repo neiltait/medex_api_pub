@@ -30,10 +30,22 @@ namespace MedicalExaminer.Common.Authorization
         /// <summary>
         /// Grant the role a permission.
         /// </summary>
-        /// <param name="feature"></param>
-        public void Grant(Permission feature)
+        /// <param name="permission"></param>
+        public void Grant(Permission permission)
         {
-            _granted.Add(feature);
+            _granted.Add(permission);
+        }
+
+        /// <summary>
+        /// Grant the role a number of permissions.
+        /// </summary>
+        /// <param name="permissions">Permissions.</param>
+        public void Grant(params Permission[] permissions)
+        {
+            foreach (var permission in permissions)
+            {
+                Grant(permission);
+            }
         }
 
         /// <summary>
