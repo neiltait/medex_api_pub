@@ -15,9 +15,14 @@ namespace MedicalExaminer.API.Helpers
             
             var httpRequestPrefix = "Bearer ";
 
-            if (httpRequestAuthorization is null || httpRequestAuthorization.Length < httpRequestPrefix.Length)
+            if (httpRequestAuthorization == null)
             {
-                throw new Exception("Cannot parse httpRequestAuthorization");
+                throw new ArgumentNullException();
+            }
+
+            if (httpRequestAuthorization.Length < httpRequestPrefix.Length)
+            {
+                throw new ArgumentException("httpRequestAuthorization insufficient length");
             }
 
             return httpRequestAuthorization.Substring(httpRequestPrefix.Length);

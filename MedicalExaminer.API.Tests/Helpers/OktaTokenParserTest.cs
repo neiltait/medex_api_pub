@@ -31,7 +31,7 @@ namespace MedicalExaminer.API.Tests.Helpers
             Action act = () => OktaTokenParser.ParseHttpRequestAuthorisation(null);
 
             // Assert
-            act.Should().Throw<Exception>();
+            act.Should().Throw<ArgumentNullException>();
 
         }
 
@@ -44,7 +44,7 @@ namespace MedicalExaminer.API.Tests.Helpers
             Action act = () => OktaTokenParser.ParseHttpRequestAuthorisation("1");
 
             // Assert
-            act.Should().Throw<Exception>();
+            act.Should().Throw<ArgumentException>();
 
         }
     }
