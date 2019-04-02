@@ -29,7 +29,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
 
             Controller =
-                new PermissionsController(_userPersistence.Object, _permissionPersistence.Object, logger.Object,
+                new PermissionsController(_permissionPersistence.Object, logger.Object,
                     Mapper);
         }
 
