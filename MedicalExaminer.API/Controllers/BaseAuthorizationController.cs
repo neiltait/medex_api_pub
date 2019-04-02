@@ -1,6 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Threading.Tasks;
+using AutoMapper;
+using MedicalExaminer.API.Authorization;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
+using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -27,6 +31,20 @@ namespace MedicalExaminer.API.Controllers
             : base(logger, mapper)
         {
             AuthorizationService = authorizationService;
+        }
+
+        /// <summary>
+        /// Can do Permission to Document
+        /// </summary>
+        /// <param name="permission">The Permission.</param>
+        /// <param name="document">The Document.</param>
+        /// <returns>True if can.</returns>
+        protected bool CanAsync(Permission permission, ILocationBasedDocument document)
+        {
+            var authorizationResult = AuthorizationService
+                .AuthorizeAsync(User, document, new PermissionRequirement(permission)).Result;
+
+            return authorizationResult.Succeeded;
         }
     }
 }
