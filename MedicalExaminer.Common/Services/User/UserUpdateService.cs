@@ -1,30 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
-using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
-using MedicalExaminer.Models;
-using Microsoft.Azure.Documents.SystemFunctions;
 
-namespace MedicalExaminer.Common.Services.Examination
+namespace MedicalExaminer.Common.Services.User
 {
     public class UserUpdateService : IAsyncQueryHandler<UserUpdateQuery, Models.MeUser>
     {
         private readonly IConnectionSettings _connectionSettings;
         private readonly IDatabaseAccess _databaseAccess;
-        private readonly IMapper _mapper;
 
         public UserUpdateService(
             IDatabaseAccess databaseAccess,
-            IUserConnectionSettings connectionSettings,
-            IMapper mapper)
+            IUserConnectionSettings connectionSettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
-            _mapper = mapper;
         }
 
         public async Task<Models.MeUser> Handle(UserUpdateQuery userUpdate)
@@ -40,10 +32,10 @@ namespace MedicalExaminer.Common.Services.Examination
                         _connectionSettings,
                         meUser => meUser.UserId == userUpdate.UserId);
 
-            /*if (userUpdate.IsNull())
+            if (userUpdate == null)
             {
                 throw new ArgumentNullException(nameof(userUpdate));
-            }*/
+            }
 
             userToUpdate.Email = userUpdate.Email;
             userToUpdate.Permissions = userUpdate.Permissions;
