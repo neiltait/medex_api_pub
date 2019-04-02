@@ -48,7 +48,7 @@ namespace MedicalExaminer.API.Controllers
 
             };
 
-            if(CanAsync(Permission.GetLocation, document))
+            if(CanAsync(Permission.GetLocation))
             {
                 return true;
             }

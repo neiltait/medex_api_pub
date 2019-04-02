@@ -34,6 +34,19 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Can do Permission somewhere against something.
+        /// </summary>
+        /// <param name="permission">The Permission.</param>
+        /// <returns>True if can.</returns>
+        protected bool CanAsync(Permission permission)
+        {
+            var authorizationResult = AuthorizationService
+                .AuthorizeAsync(User, null, new PermissionRequirement(permission)).Result;
+
+            return authorizationResult.Succeeded;
+        }
+
+        /// <summary>
         /// Can do Permission to Document
         /// </summary>
         /// <param name="permission">The Permission.</param>
