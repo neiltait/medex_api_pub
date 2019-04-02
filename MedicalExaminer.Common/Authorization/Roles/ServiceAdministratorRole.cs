@@ -16,8 +16,24 @@ namespace MedicalExaminer.Common.Authorization.Roles
         public ServiceAdministratorRole()
             : base(UserRoles.ServiceAdministrator)
         {
-            Grant(Permission.GetLocations);
-            Grant(Permission.GetLocation);
+            Grant(
+                Permission.GetUsers,
+                Permission.GetUser,
+                Permission.InviteUser,
+                Permission.SuspendUser,
+                Permission.EnableUser,
+                Permission.DeleteUser,
+                Permission.GetUserPermissions,
+                Permission.GetUserPermission,
+                Permission.CreateUserPermission,
+                Permission.UpdateUserPermission,
+                Permission.DeleteUserPermission,
+
+                Permission.GetLocations,
+                Permission.GetLocation,
+
+                Permission.GetProfile,
+                Permission.UpdateProfile);
         }
     }
 }

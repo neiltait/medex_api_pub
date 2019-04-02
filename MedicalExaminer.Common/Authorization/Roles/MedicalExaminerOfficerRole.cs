@@ -16,8 +16,24 @@ namespace MedicalExaminer.Common.Authorization.Roles
         public MedicalExaminerOfficerRole()
             : base(UserRoles.MedicalExaminerOfficer)
         {
-            Grant(Permission.GetLocations);
-            Grant(Permission.GetLocation);
+            Grant(
+                Permission.GetLocations,
+                Permission.GetLocation,
+
+                Permission.GetExaminations,
+                Permission.GetExamination,
+                Permission.CreateExamination,
+                Permission.AssignExaminationToMedicalExaminer,
+                Permission.UpdateExamination,
+                Permission.UpdateExaminationState,
+
+                Permission.AddEventToExamination,
+                Permission.GetExaminationEvents,
+                Permission.GetExaminationEvent,
+
+                Permission.GetProfile,
+                Permission.UpdateProfile,
+                Permission.GetProfilePermissions);
         }
     }
 }
