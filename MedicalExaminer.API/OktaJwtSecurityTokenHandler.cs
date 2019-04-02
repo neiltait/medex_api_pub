@@ -63,6 +63,8 @@ namespace MedicalExaminer.API
                 throw new SecurityTokenValidationException();
             }
 
+            var djp = _tokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
+
             return _tokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
         }
     }
