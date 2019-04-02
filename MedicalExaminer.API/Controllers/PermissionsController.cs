@@ -6,6 +6,9 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
@@ -36,7 +39,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
         public PermissionsController(
-            IUserPersistence userPersistence,
             IPermissionPersistence permissionPersistence,
             IMELogger logger,
             IMapper mapper)
@@ -158,6 +160,7 @@ namespace MedicalExaminer.API.Controllers
 
                 var permission = Mapper.Map<Permission>(putPermission);
                 var updatedPermission = await _permissionPersistence.UpdatePermissionAsync(permission);
+
                 return Ok(Mapper.Map<PutPermissionResponse>(updatedPermission));
             }
             catch (DocumentClientException)

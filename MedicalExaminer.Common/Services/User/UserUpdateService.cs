@@ -19,7 +19,7 @@ namespace MedicalExaminer.Common.Services.Examination
 
         public UserUpdateService(
             IDatabaseAccess databaseAccess,
-            IExaminationConnectionSettings connectionSettings,
+            IUserConnectionSettings connectionSettings,
             IMapper mapper)
         {
             _databaseAccess = databaseAccess;
@@ -34,16 +34,11 @@ namespace MedicalExaminer.Common.Services.Examination
                 throw new ArgumentNullException(nameof(userUpdate));
             }
             
-            var userToUpdate = 
+            var userToUpdate = await
                 _databaseAccess
                     .GetItemAsync<Models.MeUser>(
                         _connectionSettings,
-                        meUser => meUser.UserId == userUpdate.UserId).Result;
-
-            if (userUpdate.IsNull())
-            {
-                throw new ArgumentNullException(nameof(userUpdate));
-            }
+                        meUser => meUser.UserId == userUpdate.UserId);
 
             userToUpdate.Email = userUpdate.Email;
             
