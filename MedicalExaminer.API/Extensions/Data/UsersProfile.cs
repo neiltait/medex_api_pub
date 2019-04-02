@@ -21,6 +21,8 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<PostUserRequest, MeUser>();
             CreateMap<PutUserRequest, MeUser>();
             CreateMap<UserItem, MeUser>();
+
+            CreateMap<MEUserPermission, UserPermission>();
         }
     }
 }

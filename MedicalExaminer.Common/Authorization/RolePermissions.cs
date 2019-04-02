@@ -13,6 +13,9 @@ namespace MedicalExaminer.Common.Authorization
     /// <inheritdoc cref="IRolePermissions"/>
     public class RolePermissions : IRolePermissions
     {
+        /// <summary>
+        /// Roles.
+        /// </summary>
         private readonly IDictionary<UserRoles, Role> _roles;
 
         /// <summary>

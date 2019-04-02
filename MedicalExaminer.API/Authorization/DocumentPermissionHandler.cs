@@ -37,7 +37,6 @@ namespace MedicalExaminer.API.Authorization
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalService)
         {
             _rolePermissions = rolePermissions;
-
             _userRetrievalService = userRetrievalService;
         }
 
@@ -47,7 +46,6 @@ namespace MedicalExaminer.API.Authorization
             PermissionRequirement requirement,
             ILocationBasedDocument document)
         {
-            // get the user
             var emailAddress = context.User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
 
             var meUser = await _userRetrievalService.Handle(new UserRetrievalByEmailQuery(emailAddress));

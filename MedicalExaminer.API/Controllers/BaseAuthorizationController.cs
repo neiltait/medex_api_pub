@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MedicalExaminer.Common.Loggers;
 using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalExaminer.API.Controllers
 {
     /// <summary>
-    /// Authorization Based Controller.
+    /// Base Authorization Controller.
     /// </summary>
-    public abstract class AuthorizationBasedController : BaseController
+    public abstract class BaseAuthorizationController : BaseController
     {
         /// <summary>
         /// Authorization Service.
@@ -24,11 +20,11 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="logger"></param>
         /// <param name="mapper"></param>
         /// <param name="authorizationService"></param>
-        protected AuthorizationBasedController(
+        protected BaseAuthorizationController(
             IMELogger logger,
             IMapper mapper,
             IAuthorizationService authorizationService)
-        :base(logger, mapper)
+            : base(logger, mapper)
         {
             AuthorizationService = authorizationService;
         }

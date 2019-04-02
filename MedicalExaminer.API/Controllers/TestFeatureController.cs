@@ -20,7 +20,7 @@ namespace MedicalExaminer.API.Controllers
     [Route("/v{api-version:apiVersion}/test")]
     [ApiController]
     [Authorize]
-    public class TestFeatureController : AuthorizationBasedController
+    public class TestFeatureController : BaseAuthorizationController
     {
         /// <summary>
         /// Initialise a new instance of the <see cref="TestFeatureController"/>.

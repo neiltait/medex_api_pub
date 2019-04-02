@@ -6,7 +6,7 @@ using MedicalExaminer.Models.Enums;
 namespace MedicalExaminer.Common.Authorization
 {
     /// <summary>
-    /// Role Permissions Interface
+    /// Role Permissions Interface.
     /// </summary>
     public interface IRolePermissions
     {

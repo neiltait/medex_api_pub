@@ -26,7 +26,14 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class PermissionsController : BaseController
     {
+        /// <summary>
+        /// User Retrieval By Id Service.
+        /// </summary>
         private readonly IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> _userRetrievalByIdService;
+
+        /// <summary>
+        /// User Update Service.
+        /// </summary>
         private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
 
         /// <summary>
@@ -37,8 +44,9 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         ///     Initializes a new instance of the <see cref="PermissionsController" /> class.
         /// </summary>
-        /// <param name="userPersistence">The User Persistence.</param>
         /// <param name="permissionPersistence">The Permission Persistence</param>
+        /// <param name="userRetrievalByIdService">User retrieval by id service.</param>
+        /// <param name="userUpdateService">User update service.</param>
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
         public PermissionsController(
@@ -85,7 +93,7 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         ///     Get a Users permission by its Identifier.
         /// </summary>
-        /// <param name="userId">The User Id.</param>
+        /// <param name="meUserId">The User Id.</param>
         /// <param name="permissionId">The Permission Id.</param>
         /// <returns>A GetPermissionResponse.</returns>
         [HttpGet("{permissionId}")]
@@ -135,8 +143,6 @@ namespace MedicalExaminer.API.Controllers
 
                 await DuplicateOnUser(permission);
 
-                // TODO: Is ID populated after saving?
-                // TODO : Question : Should this be the whole user object?
                 return Ok(Mapper.Map<PostPermissionResponse>(createdPermission));
             }
             catch (DocumentClientException)
@@ -194,7 +200,7 @@ namespace MedicalExaminer.API.Controllers
         {
             var meUser = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(permission.UserId));
 
-            var permissions = await _permissionPersistence.GetPermissionsAsync(permission.UserId);
+            var permissions = (await _permissionPersistence.GetPermissionsAsync(permission.UserId)).ToList();
 
             meUser.Permissions = permissions.Select(p => new MEUserPermission()
             {
@@ -205,7 +211,7 @@ namespace MedicalExaminer.API.Controllers
 
             var updatedUser = await _userUpdateService.Handle(new UserUpdateQuery(meUser));
 
-            return updatedUser.Permissions.Count() == permissions.Count();
+            return updatedUser.Permissions.Count() == permissions.Count;
         }
     }
 }
