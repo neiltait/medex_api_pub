@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MedicalExaminer.Common.Authorization
+﻿namespace MedicalExaminer.Common.Authorization
 {
     /// <summary>
     /// Permission.
