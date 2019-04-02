@@ -14,16 +14,13 @@ namespace MedicalExaminer.Common.Services.User
     {
         private readonly IConnectionSettings _connectionSettings;
         private readonly IDatabaseAccess _databaseAccess;
-        private readonly IMapper _mapper;
 
         public UserUpdateOktaTokenService(
             IDatabaseAccess databaseAccess,
-            IUserConnectionSettings connectionSettings,
-            IMapper mapper)
+            IUserConnectionSettings connectionSettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
-            _mapper = mapper;
         }
 
         public async Task<Models.MeUser> Handle(UsersUpdateOktaTokenQuery userUpdate)

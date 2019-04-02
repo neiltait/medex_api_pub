@@ -320,6 +320,11 @@ namespace MedicalExaminer.API
             var provider = services.BuildServiceProvider();
             var tokenService = provider.GetRequiredService<ITokenService>();
 
+            var userConnectionSetting = new UserConnectionSettings(
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]);
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -329,7 +334,9 @@ namespace MedicalExaminer.API
                     options.SecurityTokenValidators.Add(
                         new OktaJwtSecurityTokenHandler(
                             tokenService,
-                            new JwtSecurityTokenHandler()));
+                            new JwtSecurityTokenHandler(),
+                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
+                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting))); 
                 });
         }
 

@@ -21,7 +21,7 @@ namespace MedicalExaminer.API.Tests
 
             _mockSecurityTokenValidator = new Mock<ISecurityTokenValidator>();
 
-            sut = new OktaJwtSecurityTokenHandler(_mockTokenService.Object, _mockSecurityTokenValidator.Object);
+            sut = new OktaJwtSecurityTokenHandler(_mockTokenService.Object, _mockSecurityTokenValidator.Object, null, null); //DJP sort out extra mocker
         }
 
         private readonly Mock<ITokenService> _mockTokenService;
