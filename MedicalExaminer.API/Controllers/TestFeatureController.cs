@@ -57,5 +57,23 @@ namespace MedicalExaminer.API.Controllers
 
             return false;
         }
+
+        [HttpGet("actionInside2")]
+        public async Task<bool> ActionInside2()
+        {
+            var document = new Examination()
+            {
+
+            };
+
+            var authorizationResult = await AuthorizationService.AuthorizeAsync(User, document, new PermissionRequirement(Permission.CreateExamination));
+
+            if (authorizationResult.Succeeded)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
