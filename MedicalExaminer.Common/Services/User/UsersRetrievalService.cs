@@ -15,7 +15,7 @@ namespace MedicalExaminer.Common.Services.Examination
 
         public UsersRetrievalService(
             IDatabaseAccess databaseAccess,
-            IExaminationConnectionSettings connectionSettings)
+            IUserConnectionSettings connectionSettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
