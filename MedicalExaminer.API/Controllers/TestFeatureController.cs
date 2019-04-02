@@ -41,16 +41,14 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpGet("actionInside")]
-        public async Task<bool> ActionInside()
+        public bool ActionInside()
         {
             var document = new Examination()
             {
 
             };
 
-            var authorizationResult = await AuthorizationService.AuthorizeAsync(User, document, new PermissionRequirement(Permission.GetLocation));
-
-            if (authorizationResult.Succeeded)
+            if(CanAsync(Permission.GetLocation, document))
             {
                 return true;
             }
@@ -59,16 +57,14 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpGet("actionInside2")]
-        public async Task<bool> ActionInside2()
+        public bool ActionInside2()
         {
             var document = new Examination()
             {
 
             };
 
-            var authorizationResult = await AuthorizationService.AuthorizeAsync(User, document, new PermissionRequirement(Permission.CreateExamination));
-
-            if (authorizationResult.Succeeded)
+            if (CanAsync(Permission.CreateExamination, document))
             {
                 return true;
             }
