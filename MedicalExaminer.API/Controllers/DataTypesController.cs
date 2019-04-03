@@ -74,7 +74,17 @@ namespace MedicalExaminer.API.Controllers
         {
             return Ok(GetDictionary(typeof(PresentAtDeath)));
         }
-            
+
+        /// <summary>
+        /// Returns all options for the QAP Discussion Outcome value.
+        /// </summary>
+        /// <returns>List of values for QAP Discussion Outcome</returns>
+        [HttpGet("qap_discussion_outcome")]
+        public ActionResult GetQapDiscussionOutcome()
+        {
+            return Ok(GetDictionary(typeof(QapDiscussionOutcome)));
+        }
+
         /// <summary>
         /// Returns all the data types and the values for mode of disposal.
         /// </summary>
