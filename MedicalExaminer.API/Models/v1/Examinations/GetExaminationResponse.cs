@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 
@@ -35,7 +36,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         ///     An array of representatives for the patient
         /// </summary>
-        public IEnumerable<Representative> Representatives { get; set; }
+        public IEnumerable<RepresentativeItem> Representatives { get; set; }
 
         /// <summary>
         ///     Case Id
