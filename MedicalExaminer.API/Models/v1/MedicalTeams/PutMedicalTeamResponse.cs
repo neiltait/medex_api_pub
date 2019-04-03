@@ -8,22 +8,22 @@
         /// <summary>
         ///     Consultant primarily responsible for care of patient.
         /// </summary>
-        public ClinicalProfessional ConsultantResponsible { get; set; }
+        public ClinicalProfessionalItem ConsultantResponsible { get; set; }
 
         /// <summary>
         ///     Other consultants involved in care of the patient.
         /// </summary>
-        public ClinicalProfessional[] ConsultantsOther { get; set; }
+        public ClinicalProfessionalItem[] ConsultantsOther { get; set; }
 
         /// <summary>
         ///     Consultant primarily responsible for care.
         /// </summary>
-        public ClinicalProfessional GeneralPractitioner { get; set; }
+        public ClinicalProfessionalItem GeneralPractitioner { get; set; }
 
         /// <summary>
         ///     Clinician responsible for certification.
         /// </summary>
-        public ClinicalProfessional Qap { get; set; }
+        public ClinicalProfessionalItem Qap { get; set; }
 
         /// <summary>
         ///     Nursing information.

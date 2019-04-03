@@ -3,9 +3,9 @@
 namespace MedicalExaminer.API.Models.v1.MedicalTeams
 {
     /// <summary>
-    /// Clinical Professional
+    /// Clinical Professional Item.
     /// </summary>
-    public class ClinicalProfessional
+    public class ClinicalProfessionalItem
     {
         /// <summary>
         /// Name.
