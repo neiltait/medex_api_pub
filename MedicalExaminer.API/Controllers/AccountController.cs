@@ -9,10 +9,12 @@ using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.API.Helpers;
+using MedicalExaminer.API.Models;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
+using Microsoft.Extensions.Options;
 using Okta.Sdk;
 
 namespace MedicalExaminer.API.Controllers
@@ -38,7 +40,7 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// Number of minutes an okta token is cached for before refer back to Okta
         /// </summary>
-        private const int _oktaTokenExpiryMinutes = 30;
+        private readonly int _oktaTokenExpiryMinutes;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="AccountController" /> class.
@@ -50,6 +52,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="userCreationService">User Creation Service.</param>
         /// <param name="usersRetrievalByEmailService">User Retrieval By Email Service.</param>
         /// <param name="userUpdateOktaTokenService">User Update Okta Token Service</param>
+        /// <param name="oktaSettings">Okta Settings</param>
         public AccountController(
             IMELogger logger,
             IMapper mapper,
@@ -57,12 +60,14 @@ namespace MedicalExaminer.API.Controllers
             IUserPersistence userPersistence,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
-            IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService)
+            IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService,
+            IOptions<OktaSettings> oktaSettings)
             : base(logger, mapper, usersRetrievalByEmailService)
         {
             _oktaClient = oktaClient;
             _userCreationService = userCreationService;
             _userUpdateOktaTokenService = userUpdateOktaTokenService;
+            _oktaTokenExpiryMinutes = Int32.Parse(oktaSettings.Value.LocalTokenExpiryTimeMinutes);
         }
 
         /// <summary>
@@ -76,7 +81,9 @@ namespace MedicalExaminer.API.Controllers
             // Look up their email in the claims
             var emailAddress = User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
 
-            
+            var oktaToken =
+                OktaTokenParser.ParseHttpRequestAuthorisation(Request.Headers["Authorization"].ToString());
+
             // Try and look them up in our database
             var meUser = await CurrentUser();
 
@@ -85,9 +92,6 @@ namespace MedicalExaminer.API.Controllers
             {
                 // Get everything that Okta knows about this user
                 var oktaUser = await _oktaClient.Users.GetUserAsync(emailAddress);
-
-                var oktaToken =
-                    OktaTokenParser.ParseHttpRequestAuthorisation(Request.Headers["Authorization"].ToString());
 
                 var expiryTime = DateTime.Now.AddMinutes(_oktaTokenExpiryMinutes);
 
@@ -111,11 +115,9 @@ namespace MedicalExaminer.API.Controllers
                 throw new Exception("Failed to create user");
             }
 
-            if (meUser.OktaTokenExpiry < DateTime.Now)
+            //Reset token if it has changed
+            if (meUser.OktaToken == null || meUser.OktaToken != oktaToken)
             {
-                var oktaToken =
-                    OktaTokenParser.ParseHttpRequestAuthorisation(Request.Headers["Authorization"].ToString());
-
                 var expiryTime = DateTime.Now.AddMinutes(_oktaTokenExpiryMinutes);
 
                 meUser.OktaToken = oktaToken;

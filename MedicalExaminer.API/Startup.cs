@@ -317,6 +317,7 @@ namespace MedicalExaminer.API
         /// <param name="oktaSettings">Okta Settings.</param>
         private void ConfigureAuthentication(IServiceCollection services, OktaSettings oktaSettings)
         {
+            var oktaTokenExpiry = Int32.Parse(oktaSettings.LocalTokenExpiryTimeMinutes);
             var provider = services.BuildServiceProvider();
             var tokenService = provider.GetRequiredService<ITokenService>();
 
@@ -336,7 +337,8 @@ namespace MedicalExaminer.API
                             tokenService,
                             new JwtSecurityTokenHandler(),
                             new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
-                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting))); 
+                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
+                            oktaTokenExpiry)); 
                 });
         }
 

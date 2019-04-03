@@ -2,11 +2,13 @@
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
+using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Models;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace MedicalExaminer.API
@@ -38,16 +40,22 @@ namespace MedicalExaminer.API
         private readonly IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser> _userRetrieveOktaTokenService;
 
         /// <summary>
+        /// Time in miutes before Okta token expires and has to be resubmitted to Okta
+        /// </summary>
+        private readonly int _oktaTokenExpiryTime;
+
+        /// <summary>
         ///     Initialise a new instance of the Okta JWT Security Token Handler
         /// </summary>
         /// <param name="tokenService">The Token Service.</param>
         /// <param name="tokenValidator">Token validator.</param>
-        public OktaJwtSecurityTokenHandler(ITokenService tokenService, ISecurityTokenValidator tokenValidator, IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService, IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser> userRetrieveOktaTokenService)
+        public OktaJwtSecurityTokenHandler(ITokenService tokenService, ISecurityTokenValidator tokenValidator, IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService, IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser> userRetrieveOktaTokenService, int oktaTokenExpiryTime)
         {
             _tokenHandler = tokenValidator;
             _tokenService = tokenService;
             _userUpdateOktaTokenService = userUpdateOktaTokenService;
             _userRetrieveOktaTokenService = userRetrieveOktaTokenService;
+            _oktaTokenExpiryTime = oktaTokenExpiryTime;
         }
 
         /// <inheritdoc />
@@ -77,10 +85,13 @@ namespace MedicalExaminer.API
                 OktaToken = securityToken
             };
 
-            //Attempt to retrieve user based on token. If it can be retrieved then can by pass call to Okta
+            //Attempt to retrieve user based on token. If it can be retrieved then can bypass call to Okta
             var result = _userRetrieveOktaTokenService.Handle(new UserRetrievalByOktaTokenQuery(meUserWithToken));
 
-            var meUserReturned = result.Result;
+            MeUser meUserReturned = null;
+
+            if (result != null && result.Result != null)
+                meUserReturned = result.Result;
 
             //Cannot find user by token or token has expired so go to Okta
             if (meUserReturned == null || meUserReturned.OktaTokenExpiry < DateTimeOffset.Now)
@@ -93,10 +104,10 @@ namespace MedicalExaminer.API
                     throw new SecurityTokenValidationException();
                 }
 
-                //If user was there but token expired then update with new token
+                //If user was there but token expired then reset expiry
                 if (meUserReturned != null)
                 {
-                    var expiryTime = DateTime.Now.AddMinutes(60); //DJP ToDo: make this configurable
+                    var expiryTime = DateTime.Now.AddMinutes(_oktaTokenExpiryTime);
                     meUserReturned.OktaToken = securityToken;
                     meUserReturned.OktaTokenExpiry = expiryTime;
                     _userUpdateOktaTokenService.Handle(new UsersUpdateOktaTokenQuery(meUserReturned));

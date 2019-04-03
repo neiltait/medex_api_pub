@@ -33,6 +33,7 @@ The OKTA_URL is your okta domain.
     "Authority": "{OKTA_URL}/oauth2/default",
     "Audience": "api://default",
     "IntrospectUrl": "{OKTA_URL}/oauth2/default/v1/introspect",
+	"LocalTokenExpiryTimeMinutes":  "30" 
   },
 ```
 
