@@ -48,7 +48,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="logger">Initialise with IMELogger instance.</param>
         /// <param name="mapper">The Mapper.</param>
         /// <param name="oktaClient">Okta client.</param>
-        /// <param name="userPersistence">User persistence.</param>
         /// <param name="userCreationService">User Creation Service.</param>
         /// <param name="usersRetrievalByEmailService">User Retrieval By Email Service.</param>
         /// <param name="userUpdateOktaTokenService">User Update Okta Token Service</param>
@@ -57,7 +56,6 @@ namespace MedicalExaminer.API.Controllers
             IMELogger logger,
             IMapper mapper,
             OktaClient oktaClient,
-            IUserPersistence userPersistence,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
             IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService,
