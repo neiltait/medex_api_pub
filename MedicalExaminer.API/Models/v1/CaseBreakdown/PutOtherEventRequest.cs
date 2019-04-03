@@ -4,7 +4,7 @@ using MedicalExaminer.Models.Enums;
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
     /// <summary>
-    ///     Put Patient Details Request Object.
+    ///     Put Other Event Request Object.
     /// </summary>
     public class PutOtherEventRequest
     {
@@ -17,7 +17,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// Event Text (Length to be confirmed).
         /// </summary>
         [RequiredIfAttributesMatch(nameof(EventStatus), EventStatus.Final)]
-        public string EventText { get; set; }
+        public string Text { get; set; }
 
         /// <summary>
         /// Enum for the status (Draft or Final).

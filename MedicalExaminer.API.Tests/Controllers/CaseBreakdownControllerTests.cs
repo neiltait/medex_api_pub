@@ -163,7 +163,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             {
              EventId = null,
              EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
-             EventText = null
+             Text = null
             };
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
@@ -197,7 +197,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             {
                 EventId = "1",
                 EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
-                EventText = "Hello Planet"
+                Text = "Hello Planet"
             };
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
@@ -230,7 +230,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             {
                 EventId = "1",
                 EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
-                EventText = "Hello Planet"
+                Text = "Hello Planet"
             };
             otherEventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
                 .Returns(Task.FromResult("hi mark")).Verifiable();

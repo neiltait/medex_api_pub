@@ -22,7 +22,7 @@ namespace MedicalExaminer.Models
         /// Event Text (Length to be confirmed).
         /// </summary>
         [JsonProperty(PropertyName = "other_event_text")]
-        public string EventText { get; set; }
+        public string Text { get; set; }
 
         /// <summary>
         /// Enum for the status (Draft or Final).

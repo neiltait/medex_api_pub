@@ -25,7 +25,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var newDraft = new OtherEvent()
             {
                 EventStatus = EventStatus.Draft,
-                EventText = "other event one",
+                Text = "other event one",
                 UserId = "userOne"
             };
 
@@ -53,7 +53,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var newDraft = new OtherEvent()
             {
                 EventStatus = EventStatus.Draft,
-                EventText = "other event one",
+                Text = "other event one",
                 UserId = "userOne"
             };
 
@@ -65,7 +65,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             {
                 EventId = newDraft.EventId,
                 EventStatus = EventStatus.Draft,
-                EventText = "updated event",
+                Text = "updated event",
                 UserId = "userOne"
             };
             examination.AddEvent(updateDraft);
@@ -89,7 +89,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var newDraft = new OtherEvent()
             {
                 EventStatus = EventStatus.Draft,
-                EventText = "other event one",
+                Text = "other event one",
                 UserId = "userOne"
             };
 
@@ -101,7 +101,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             {
                 EventId = "bad id",
                 EventStatus = EventStatus.Draft,
-                EventText = "updated event",
+                Text = "updated event",
                 UserId = "userOne"
             };
             
@@ -129,14 +129,14 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var newDraft = new OtherEvent()
             {
                 EventStatus = EventStatus.Draft,
-                EventText = "other event one",
+                Text = "other event one",
                 UserId = "userOne"
             };
 
             var newDraftTwo = new OtherEvent()
             {
                 EventStatus = EventStatus.Draft,
-                EventText = "other event one",
+                Text = "other event one",
                 UserId = "userTwo"
             };
 
@@ -149,7 +149,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             {
                 EventId = newDraft.EventId,
                 EventStatus = EventStatus.Final,
-                EventText = "updated event",
+                Text = "updated event",
                 UserId = "userOne"
             };
             examination.AddEvent(updateDraft);
