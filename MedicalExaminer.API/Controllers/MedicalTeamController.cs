@@ -64,7 +64,7 @@ namespace MedicalExaminer.API.Controllers
                 ? Mapper.Map<GetMedicalTeamResponse>(examination.MedicalTeam)
                 : new GetMedicalTeamResponse
                 {
-                    ConsultantsOther = new ClinicalProfessional[] { },
+                    ConsultantsOther = new Models.v1.MedicalTeams.ClinicalProfessional[] { },
                     NursingTeamInformation = string.Empty,
                 };
 

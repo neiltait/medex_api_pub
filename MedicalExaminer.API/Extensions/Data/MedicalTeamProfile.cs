@@ -19,6 +19,8 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<MedicalTeam, MedicalTeamItem>();
 
             CreateMap<MedicalTeam, PutMedicalTeamResponse>();
+
+            CreateMap<MedicalExaminer.Models.ClinicalProfessional, API.Models.v1.MedicalTeams.ClinicalProfessional>();
         }
     }
 }

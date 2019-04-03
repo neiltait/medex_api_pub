@@ -1,7 +1,4 @@
-﻿using MedicalExaminer.API.Models.v1.Users;
-using MedicalExaminer.Models;
-
-namespace MedicalExaminer.API.Models.v1.MedicalTeams
+﻿namespace MedicalExaminer.API.Models.v1.MedicalTeams
 {
     /// <summary>
     ///     The response object when a new case is added.
