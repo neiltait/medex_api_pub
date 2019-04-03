@@ -69,10 +69,9 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 UserId = "userOne"
             };
             examination.AddEvent(updateDraft);
-            var myUsersView = examination.MyUsersView(myUser);
 
-            Assert.Single(myUsersView.CaseBreakdown.OtherEvents.Drafts);
-            Assert.Equal(updateDraft, myUsersView.CaseBreakdown.OtherEvents.Drafts.First());
+            Assert.Single(examination.CaseBreakdown.OtherEvents.Drafts);
+            Assert.Equal(updateDraft, examination.CaseBreakdown.OtherEvents.Drafts.First());
         }
 
         [Fact]

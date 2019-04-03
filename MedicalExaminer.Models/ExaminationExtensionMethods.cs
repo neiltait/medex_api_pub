@@ -5,12 +5,6 @@ namespace MedicalExaminer.Models
 {
     public static class ExaminationExtensionMethods
     {
-        public static Examination MyUsersView(this Examination examination, MeUser myUser)
-        {
-            examination.CaseBreakdown = GetUserEvents(examination.CaseBreakdown, myUser);
-            return examination;
-        }
-
         public static Examination AddEvent(this Examination examination, IEvent theEvent)
         {
            switch (theEvent.EventType)

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
@@ -15,7 +14,7 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
 {
-    public class OtherEventsControllerTests
+    public class CaseBreakdownControllerTests
     {
         [Fact]
         public async void GetOtherEvent_When_Called_With_Null_Returns_Bad_Request()

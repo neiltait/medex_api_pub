@@ -32,7 +32,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 x => x.ExaminationId == param.ExaminationId);
             if (result.Result != null)
             {
-                return Task.FromResult(result.Result.MyUsersView(param.User));
+                return Task.FromResult(result.Result);
             }
             return result;
         }
