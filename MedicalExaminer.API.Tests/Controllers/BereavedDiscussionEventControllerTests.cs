@@ -22,11 +22,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var BereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
+            var bereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var sut = new BereavedDiscussionEventController(logger.Object, mapper.Object, 
-                BereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
+                bereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
             // Act
             var response = await sut.GetBereavedDiscussionEvent(null);
 
@@ -42,12 +42,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var BereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
+            var bereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
             var sut = new BereavedDiscussionEventController(logger.Object, mapper.Object, 
-                BereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
+                bereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
             // Act
             var response = await sut.GetBereavedDiscussionEvent("aaaa");
 
@@ -65,7 +65,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
 
             var examinationId = "7E5D50CE-05BF-4A1F-AA6E-25418A723A7F";
-            var BereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
+            var bereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -73,7 +73,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new BereavedDiscussionEventController(logger.Object, mapper.Object, 
-               BereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
+               bereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
             var response = await sut.GetBereavedDiscussionEvent(examinationId);
@@ -97,7 +97,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             mapper.Setup(m => m.Map<GetBereavedDiscussionEventResponse>(examinationObj)).Returns(getBereavedDiscussionResponse);
 
-            var BereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
+            var bereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -106,7 +106,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(examinationObj)).Verifiable();
 
             var sut = new BereavedDiscussionEventController(logger.Object, mapper.Object, 
-               BereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
+               bereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
             var response = await sut.GetBereavedDiscussionEvent(examinationId);
@@ -127,7 +127,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
 
-            var BereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
+            var bereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -136,7 +136,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new BereavedDiscussionEventController(logger.Object, mapper.Object, 
-               BereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
+               bereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
             var response = await sut.UpsertNewBereavedDiscussionEvent("a", null);
@@ -154,7 +154,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
 
-            var BereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
+            var bereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -169,7 +169,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new BereavedDiscussionEventController(logger.Object, mapper.Object, 
-               BereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
+               bereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             sut.ModelState.AddModelError("i", "broke it");
             // Act
@@ -188,7 +188,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
 
-            var BereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
+            var bereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -203,7 +203,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new BereavedDiscussionEventController(logger.Object, mapper.Object, 
-               BereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
+               bereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
             var response = await sut.UpsertNewBereavedDiscussionEvent("a", validRequest);
@@ -221,7 +221,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var examination = new Mock<Examination>();
-            var BereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
+            var bereavedDiscussionEventCreationService = new Mock<IAsyncQueryHandler<CreateBereavedDiscussionEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -231,19 +231,19 @@ namespace MedicalExaminer.API.Tests.Controllers
                 //EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
                 DiscussionDetails = "Hello Planet"
             };
-            BereavedDiscussionEventCreationService.Setup(service => service.Handle(It.IsAny<CreateBereavedDiscussionEventQuery>()))
+            bereavedDiscussionEventCreationService.Setup(service => service.Handle(It.IsAny<CreateBereavedDiscussionEventQuery>()))
                 .Returns(Task.FromResult("hi mark")).Verifiable();
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
 
             var sut = new BereavedDiscussionEventController(logger.Object, mapper.Object, 
-               BereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
+               bereavedDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
             var response = await sut.UpsertNewBereavedDiscussionEvent("a", validRequest);
 
-            BereavedDiscussionEventCreationService.Verify(x => x.Handle(It.IsAny<CreateBereavedDiscussionEventQuery>()), Times.Once);
+            bereavedDiscussionEventCreationService.Verify(x => x.Handle(It.IsAny<CreateBereavedDiscussionEventQuery>()), Times.Once);
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<PutBereavedDiscussionEventResponse>>().Subject;
