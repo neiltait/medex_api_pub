@@ -91,9 +91,12 @@ namespace MedicalExaminer.API.Controllers
                 return new NotFoundObjectResult(new GetCaseBreakdownResponse());
             }
 
-            var result = Mapper.Map<GetCaseBreakdownResponse>(examination);
+            var result = Mapper.Map<CaseBreakDownItem>(examination);
 
-            return Ok(result);
+            return Ok(new GetCaseBreakdownResponse
+            {
+                CaseBreakdown = result
+            });
         }
     }
 }

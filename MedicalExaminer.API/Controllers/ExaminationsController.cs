@@ -27,7 +27,6 @@ namespace MedicalExaminer.API.Controllers
     {
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> _examinationsDashboardService;
         private readonly IAsyncQueryHandler<CreateExaminationQuery, Examination> _examinationCreationService;
-        private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
 
         /// <summary>
@@ -36,20 +35,17 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
         /// <param name="examinationCreationService">examinationCreationService.</param>
-        /// <param name="examinationRetrievalService">examinationRetrievalService.</param>
         /// <param name="examinationsRetrievalService">examinationsRetrievalService.</param>
         /// <param name="examinationsDashboardService">Examination Dashboard Service.</param>
         public ExaminationsController(
             IMELogger logger,
             IMapper mapper,
             IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
-            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> examinationsDashboardService)
             : base(logger, mapper)
         {
             _examinationCreationService = examinationCreationService;
-            _examinationRetrievalService = examinationRetrievalService;
             _examinationsRetrievalService = examinationsRetrievalService;
             _examinationsDashboardService = examinationsDashboardService;
         }
@@ -94,24 +90,6 @@ namespace MedicalExaminer.API.Controllers
                 CountOfCasesReadyForMEScrutiny = dashboardOverview.CountOfReadyForMEScrutiny,
                 Examinations = examinations.Result.Select(e => Mapper.Map<PatientCardItem>(e)).ToList()
             });
-        }
-
-        /// <summary>
-        ///     Get Examination by ID.
-        /// </summary>
-        /// <param name="examinationId">Examination Id.</param>
-        /// <returns>A GetExaminationResponse.</returns>
-        [HttpGet("{examinationId}")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetExaminationResponse>> GetExamination(string examinationId)
-        {
-            var result = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
-            if (result == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(Mapper.Map<GetExaminationResponse>(result));
         }
 
         /// <summary>

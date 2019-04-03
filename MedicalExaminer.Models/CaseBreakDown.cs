@@ -2,6 +2,6 @@
 {
     public class CaseBreakDown
     {
-        public BaseEventContainter<OtherEvent> OtherEvents { get; set; }
+        public BaseEventContainter<OtherEvent> OtherEvents { get; set; } = new OtherEventContainer();
     }
 }

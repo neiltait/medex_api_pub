@@ -110,7 +110,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void DraftEventSetToFinalRemovesAllDrafts()
+        public void DraftEventSetToFinalRemovesUsersDrafts()
         {
             var examination = new Examination();
 

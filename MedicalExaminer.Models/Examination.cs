@@ -229,7 +229,7 @@ namespace MedicalExaminer.Models
         [Required]
         [DataType(DataType.Custom)]
         [JsonProperty(PropertyName = "medical_team")]
-        public MedicalTeam MedicalTeam { get; set; }
+        public MedicalTeam MedicalTeam { get; set; } = new MedicalTeam();
 
         /// <summary>
         /// Cultural priority flag
@@ -320,7 +320,7 @@ namespace MedicalExaminer.Models
         /// </summary>
         [Required]
         [JsonProperty(PropertyName = "case_break_down")]
-        public CaseBreakDown CaseBreakdown { get; set; }
+        public CaseBreakDown CaseBreakdown { get; set; } = new CaseBreakDown();
         [JsonProperty(PropertyName = "admission_notes_have_been_added")]
         public bool AdmissionNotesHaveBeenAdded { get; set; }
 
