@@ -37,7 +37,7 @@ namespace MedicalExaminer.Common
                 throw new ArgumentException("Invalid Argument");
             }
 
-            return (MeUser)(dynamic)doc;
+            return (MeUser)(dynamic)doc.Resource;
         }
 
         /// <inheritdoc />
@@ -54,7 +54,7 @@ namespace MedicalExaminer.Common
                 throw new ArgumentException("Invalid Argument");
             }
 
-            var user = (MeUser)(dynamic)document;
+            var user = (MeUser)(dynamic)document.Resource;
             return user;
         }
 
@@ -119,7 +119,7 @@ namespace MedicalExaminer.Common
             var feedOptions = new FeedOptions { MaxItemCount = -1 };
             var query = client.CreateDocumentQuery<MeUser>(
                 documentCollectionUri,
-                "SELECT * FROM Users ORDER BY Users.last_name",
+                "SELECT * FROM Permissions ORDER BY Users.last_name",
                 feedOptions);
             var queryAll = query.AsDocumentQuery();
 
@@ -137,7 +137,8 @@ namespace MedicalExaminer.Common
                 return results;
             }
 
-            var resultsFiltered = results.FindAll(r => r.UserRole == userRoleContainer.Role);
+            // Todo : Integrate permissions query
+            var resultsFiltered = results;
             return resultsFiltered;
         }
     }

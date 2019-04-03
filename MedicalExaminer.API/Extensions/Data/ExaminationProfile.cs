@@ -20,7 +20,7 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<Examination, GetExaminationResponse>()
                 .ForMember(getExaminationResponse => getExaminationResponse.Errors, opt => opt.Ignore());
             CreateMap<Examination, ExaminationItem>();
-            CreateMap<PostNewCaseRequest, Examination>()
+            CreateMap<PostExaminationRequest, Examination>()
                 .ForMember(examination => examination.UrgencyScore, opt => opt.Ignore())
                 .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
                 .ForMember(examination => examination.HouseNameNumber, opt => opt.Ignore())
@@ -67,6 +67,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(dest => dest.Events, opt => opt.MapFrom(src => src.CaseBreakdown.OtherEvents));
             CreateMap<Examination, GetPatientDetailsResponse>()
                 .ForMember(getPatientDetailsResponse => getPatientDetailsResponse.Errors, opt => opt.Ignore());
+
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(patientCard => patientCard.AppointmentDate,
                     examination => examination.MapFrom(new AppointmentDateResolver(new AppointmentFinder())))

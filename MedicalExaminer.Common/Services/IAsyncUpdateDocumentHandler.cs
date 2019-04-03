@@ -4,6 +4,6 @@ namespace MedicalExaminer.Common.Services
 {
     public interface IAsyncUpdateDocumentHandler
     {
-        Task<string> Handle(Models.Examination document);
+        Task<Models.Examination> Handle(Models.Examination document);
     }
 }

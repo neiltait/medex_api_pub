@@ -54,7 +54,7 @@ namespace MedicalExaminer.Common
                 throw new ArgumentException("Invalid Argument");
             }
 
-            return (Permission)(dynamic)document;
+            return (Permission)(dynamic)document.Resource;
         }
 
         /// <summary>

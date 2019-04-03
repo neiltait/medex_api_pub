@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Locations;
-using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 
@@ -20,31 +23,56 @@ namespace MedicalExaminer.API.Controllers
     public class LocationsController : BaseController
     {
         /// <summary>
-        ///     The location persistance layer.
+        /// Location Retrieval by Id Query.
         /// </summary>
-        private readonly ILocationPersistence _locationPersistence;
+        private readonly IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> _locationRetrievalByIdQueryHandler;
+
+        /// <summary>
+        /// Location Retrieval by Query.
+        /// </summary>
+        private readonly IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> _locationRetrievalByQueryHandler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocationsController"/> class.
         /// </summary>
-        /// <param name="locationPersistence">The Location Persistance.</param>
+        /// <param name="locationRetrievalByIdQueryHandler">Location Retrieval By Id Query Handler.</param>
+        /// <param name="locationRetrievalByQueryHandler">Location Retrieval By Query Handler.</param>
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
-        public LocationsController(ILocationPersistence locationPersistence, IMELogger logger, IMapper mapper)
+        public LocationsController(
+            IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> locationRetrievalByIdQueryHandler,
+            IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler,
+            IMELogger logger,
+            IMapper mapper)
             : base(logger, mapper)
         {
-            _locationPersistence = locationPersistence;
+            _locationRetrievalByIdQueryHandler = locationRetrievalByIdQueryHandler;
+            _locationRetrievalByQueryHandler = locationRetrievalByQueryHandler;
         }
 
         /// <summary>
         ///     Get all Locations as a list of <see cref="LocationItem" />.
         /// </summary>
-        /// <returns>A list of location.</returns>
+        /// <param name="request">The request.</param>
+        /// <returns>A list of locations.</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetLocationsResponse>> GetLocations()
+        public async Task<ActionResult<GetLocationsResponse>> GetLocations([FromBody] GetLocationsRequest request)
         {
-            var locations = await _locationPersistence.GetLocationsAsync();
+            var locations =
+                await _locationRetrievalByQueryHandler.Handle(
+                    new LocationsRetrievalByQuery(request.Name, request.ParentId));
+
+            // TODO: Filter on whether you have access or not
+            if (request.AccessOnly)
+            {
+                // get current user
+                // does user have access to this location directly or by having access
+                // to its parent
+                // if so include it in the list;
+                // otherwise ignore it.
+            }
+
             return Ok(new GetLocationsResponse
             {
                 Locations = locations.Select(e => Mapper.Map<LocationItem>(e)).ToList(),
@@ -62,47 +90,16 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var location = await _locationPersistence.GetLocationAsync(locationId);
+                var location =
+                    await _locationRetrievalByIdQueryHandler.Handle(new LocationRetrievalByIdQuery(locationId));
+
                 var response = Mapper.Map<GetLocationResponse>(location);
                 return Ok(response);
             }
             catch (DocumentClientException)
             {
-                return NotFound();
+                return NotFound(new GetLocationResponse());
             }
-        }
-
-        /// <summary>
-        ///     Get Locations as a list of <see cref="LocationItem" /> where location name contains locationName.
-        /// </summary>
-        /// <param name="locationName">The value to be used in the selection of matching names.</param>
-        /// <returns>A list of locations whose names contain locationName.</returns>
-        [HttpGet("name/{locationName}")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetLocationsResponse>> GetLocationsByName(string locationName)
-        {
-            var locations = await _locationPersistence.GetLocationsByNameAsync(locationName);
-            return Ok(new GetLocationsResponse
-            {
-                Locations = locations.Select(location => Mapper.Map<LocationItem>(location)).ToList(),
-            });
-        }
-
-        /// <summary>
-        ///     Get Locations as a list of <see cref="LocationItem" /> where locations are under the location whose locationId =
-        ///     parentId.
-        /// </summary>
-        /// <param name="parentId">The locationId of the location whose children are to be returned as list.</param>
-        /// <returns>list of locations that are under the location whose location = parentId.</returns>
-        [HttpGet("parentId/{parentId}")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetLocationsResponse>> GetLocationsByParentId(string parentId)
-        {
-            var locations = await _locationPersistence.GetLocationsByParentIdAsync(parentId);
-            return Ok(new GetLocationsResponse
-            {
-                Locations = locations.Select(location => Mapper.Map<LocationItem>(location)).ToList(),
-            });
         }
     }
 }
