@@ -50,13 +50,16 @@ namespace MedicalExaminer.API.Authorization
 
             var meUser = await _userRetrievalService.Handle(new UserRetrievalByEmailQuery(emailAddress));
 
-            var hasPermission = meUser.Permissions.Any(
-                p => _rolePermissions.Can((UserRoles)p.UserRole, requirement.Permission)
-                     && document.LocationIds().Any(l => l == p.LocationId));
-
-            if (hasPermission)
+            if (meUser.Permissions != null)
             {
-                context.Succeed(requirement);
+                var hasPermission = meUser.Permissions.Any(
+                    p => _rolePermissions.Can((UserRoles) p.UserRole, requirement.Permission)
+                         && document.LocationIds().Any(l => l == p.LocationId));
+
+                if (hasPermission)
+                {
+                    context.Succeed(requirement);
+                }
             }
         }
     }
