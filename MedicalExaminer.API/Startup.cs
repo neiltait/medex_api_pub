@@ -336,9 +336,13 @@ namespace MedicalExaminer.API
                         new OktaJwtSecurityTokenHandler(
                             tokenService,
                             new JwtSecurityTokenHandler(),
-                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
-                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
-                            oktaTokenExpiry)); 
+                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
+                                userConnectionSetting),
+                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
+                                userConnectionSetting),
+                            new UserRetrievalByEmailService(new DatabaseAccess(new DocumentClientFactory()),
+                                userConnectionSetting),
+                            oktaTokenExpiry));
                 });
         }
 

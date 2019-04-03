@@ -4,8 +4,12 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.API.Services;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
+using Okta.Sdk;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests
@@ -21,14 +25,27 @@ namespace MedicalExaminer.API.Tests
 
             _mockSecurityTokenValidator = new Mock<ISecurityTokenValidator>();
 
-            var tokenEpiryTime = 60;
+            _mockUserUpdateOktaTokenService = new Mock<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>>();
 
-            sut = new OktaJwtSecurityTokenHandler(_mockTokenService.Object, _mockSecurityTokenValidator.Object, null, null, tokenEpiryTime); //DJP sort out extra mocker
+            _mockUserRetrieveOktaTokenService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>>();
+
+            _mockUsersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+
+            var tokenExpiryTime = 30;
+
+            sut = new OktaJwtSecurityTokenHandler(_mockTokenService.Object, _mockSecurityTokenValidator.Object, _mockUserUpdateOktaTokenService.Object, _mockUserRetrieveOktaTokenService.Object, _mockUsersRetrievalByEmailService.Object, tokenExpiryTime);
         }
 
         private readonly Mock<ITokenService> _mockTokenService;
 
         private readonly Mock<ISecurityTokenValidator> _mockSecurityTokenValidator;
+
+        private readonly Mock<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>> _mockUserUpdateOktaTokenService;
+
+        private readonly Mock<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>>
+            _mockUserRetrieveOktaTokenService;
+
+        private readonly Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>> _mockUsersRetrievalByEmailService;
 
         private readonly OktaJwtSecurityTokenHandler sut;
 
