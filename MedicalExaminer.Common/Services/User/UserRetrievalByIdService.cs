@@ -30,7 +30,7 @@ namespace MedicalExaminer.Common.Services.User
                     x => x.UserId == param.UserId);
                 return result;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //_logger.Log("Failed to retrieve examination data", e);
                 throw;

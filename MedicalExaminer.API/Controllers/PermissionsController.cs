@@ -76,7 +76,7 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         ///     Get a Users permission by its Identifier.
         /// </summary>
-        /// <param name="userId">The User Id.</param>
+        /// <param name="meUserId">The User Id.</param>
         /// <param name="permissionId">The Permission Id.</param>
         /// <returns>A GetPermissionResponse.</returns>
         [HttpGet("{permissionId}")]

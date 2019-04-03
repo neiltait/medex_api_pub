@@ -66,7 +66,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public async void GetExamination_When_Called_With_Valid_Id_Returns_Expected_Type()
+        public void GetExamination_When_Called_With_Valid_Id_Returns_Expected_Type()
         {
             // Arrange
             var examinationObj = new Examination

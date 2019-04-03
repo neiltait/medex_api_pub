@@ -53,11 +53,6 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         /// <summary>
-        ///     The User Persistence mock.
-        /// </summary>
-        private readonly Mock<IUserPersistence> _userPersistence;
-
-        /// <summary>
         ///     Test when a ArgumentException is thrown.
         /// </summary>
         /// <returns>Async Task</returns>
