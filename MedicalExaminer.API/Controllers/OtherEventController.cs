@@ -21,19 +21,19 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class OtherEventController : BaseController
     {
-        private IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent> _otherCaseEventRetrievalService;
-        private IAsyncQueryHandler<CreateOtherEventQuery, string> _otherEventCreationService;
+        //private IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent> _otherCaseEventRetrievalService;
+        private IAsyncQueryHandler<CreateEventQuery, string> _otherEventCreationService;
         private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
 
         public OtherEventController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent> otherCaseEventRetrievalService,
-            IAsyncQueryHandler<CreateOtherEventQuery, string> otherEventCreationService,
+            //IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent> otherCaseEventRetrievalService,
+            IAsyncQueryHandler<CreateEventQuery, string> otherEventCreationService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService)
             : base(logger, mapper)
         {
-            _otherCaseEventRetrievalService = otherCaseEventRetrievalService;
+            //_otherCaseEventRetrievalService = otherCaseEventRetrievalService;
             _otherEventCreationService = otherEventCreationService;
             _examinationRetrievalService = examinationRetrievalService;
         }
@@ -56,7 +56,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var otherEventNote = Mapper.Map<OtherEvent>(putNewOtherEventNoteRequest);
-            var result = await _otherEventCreationService.Handle(new CreateOtherEventQuery(caseId, otherEventNote));
+            var result = await _otherEventCreationService.Handle(new CreateEventQuery(caseId, otherEventNote));
 
             if(result == null)
             {

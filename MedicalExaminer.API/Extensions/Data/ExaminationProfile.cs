@@ -4,6 +4,8 @@ using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -64,7 +66,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.CreatedAt, opt => opt.Ignore())
                 .ForMember(examination => examination.DeletedAt, opt => opt.Ignore());
             CreateMap<Examination, GetOtherEventResponse>()
-                .ForMember(dest => dest.Events, opt => opt.MapFrom(src => src.Events.OtherEvents));
+                .ForMember(dest => dest.Events, opt => opt.MapFrom(src => src.CaseBreakdown.OtherEvents));
             CreateMap<Examination, GetPatientDetailsResponse>()
                 .ForMember(getPatientDetailsResponse => getPatientDetailsResponse.Errors, opt => opt.Ignore());
             CreateMap<Examination, PatientCardItem>()
@@ -75,7 +77,34 @@ namespace MedicalExaminer.API.Extensions.Data
         }
     }
 
-    
+
+    public class CaseBreakDownResolver : IValueResolver<Examination, GetExaminationResponse, CaseBreakDown>
+    {
+        
+        public CaseBreakDown Resolve(Examination source, GetExaminationResponse destination, CaseBreakDown destMember, ResolutionContext context)
+        {
+            if (source.CaseBreakdown == null)
+            {
+                return null;
+            }
+
+            destMember = new CaseBreakDown();
+            var myUser = (MeUser)context.Items["myUser"];
+
+            destMember.OtherEvents = source.CaseBreakdown.OtherEvents;
+            destMember.OtherEvents.Drafts = source.CaseBreakdown.OtherEvents.Drafts.Where(draft => draft.UserId == myUser.UserId).ToList();
+            return destMember;
+        }
+
+        
+        private BaseEventContainter<T> GetEvents<T>(IEventContainer<IEvent> otherEvents, MeUser myUser) where T : IEvent
+        {
+            var usersDrafts = otherEvents.Drafts.Where(draft => draft.UserId == myUser.UserId);
+            otherEvents.Drafts = usersDrafts.ToList();
+            return (BaseEventContainter<T>)otherEvents;
+        }
+    }
+
     public class AppointmentDateResolver : IValueResolver<Examination, PatientCardItem, DateTime?>
     {
         private AppointmentFinder _appointmentFinder;

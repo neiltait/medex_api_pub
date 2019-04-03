@@ -181,7 +181,7 @@ namespace MedicalExaminer.API
                 Configuration["CosmosDB:DatabaseId"]));
 
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, Examination>, CreateExaminationService>();
-            services.AddScoped<IAsyncQueryHandler<CreateOtherEventQuery, string>, CreateOtherEventService>();
+            services.AddScoped<IAsyncQueryHandler<CreateEventQuery, string>, CreateOtherEventService>();
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services

@@ -319,8 +319,8 @@ namespace MedicalExaminer.Models
         /// Case break down events
         /// </summary>
         [Required]
-        [JsonProperty(PropertyName = "case_break_down_events")]
-        public CaseBreakDown Events { get; set; }
+        [JsonProperty(PropertyName = "case_break_down")]
+        public CaseBreakDown CaseBreakdown { get; set; }
         [JsonProperty(PropertyName = "admission_notes_have_been_added")]
         public bool AdmissionNotesHaveBeenAdded { get; set; }
 

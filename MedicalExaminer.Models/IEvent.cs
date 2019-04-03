@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-using MedicalExaminer.Models.Enums;
+﻿using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models
 {
     public interface IEvent
     {
         EventType EventType { get; }
-        string EventId { get; }
+        string EventId { get; set; }
         EventStatus EventStatus { get; }
         string UserId { get; }
-        IEnumerable<IEvent> Amendments { get; set; }
     }
 }

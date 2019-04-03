@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using FluentAssertions;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Xunit;
@@ -7,141 +9,155 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 {
     public class ExaminationExtensionMethodsTests
     {
-        //[Fact]
-        //public void MyUsersView_OtherEvents_Filtered()
-        //{
-        //    var myUserId = "456";
-        //    var amendmentUser1 = new OtherEvent()
-        //    {
-        //        EventId = "1",
-        //        EventStatus = EventStatus.Draft,
-        //        EventText = "Hello Earth",
-        //        UserId = "456"
-        //    };
-
-        //    var amendmentUser2 = new OtherEvent()
-        //    {
-        //        EventId = "2",
-        //        EventStatus = EventStatus.Draft,
-        //        EventText = "Hello Earth",
-        //        UserId = "123"
-        //    };
-
-        //    var amendmentUser3 = new OtherEvent()
-        //    {
-        //        EventId = "3",
-        //        EventStatus = EventStatus.Final,
-        //        EventText = "Hello Earth",
-        //        UserId = "123"
-        //    };
-
-        //    var amendmentUser4 = new OtherEvent()
-        //    {
-        //        EventId = "4",
-        //        EventStatus = EventStatus.Draft,
-        //        EventText = "Hello Earth",
-        //        UserId = "456"
-        //    };
-
-        //    var otherEvent1 = new OtherEvent()
-        //    {
-        //        EventId = "5",
-        //        EventStatus = EventStatus.Final,
-        //        EventText = "Hello Earth",
-        //        UserId = "123",
-        //        Amendments = new[] { amendmentUser1, amendmentUser2 }
-        //    };
-
-        //    var otherEvent2 = new OtherEvent()
-        //    {
-        //        EventId = "6",
-        //        EventStatus = EventStatus.Final,
-        //        EventText = "Hello Earth",
-        //        UserId = "123",
-        //        Amendments = new[] { amendmentUser3, amendmentUser4 }
-        //    };
-
-
-
-        //    var caseBreakdown = new CaseBreakDown()
-        //    {
-        //        OtherEvents = new OtherEventContainer() //new[] { otherEvent1, otherEvent2 }
-        //    };
-        //    var examination = new Examination()
-        //    {
-        //        Events = caseBreakdown
-        //    };
-
-        //    var myUser = new MeUser()
-        //    {
-        //        UserId = "456"
-        //    };
-
-        //    var result = examination.MyUsersView(myUser);
-
-        //    Assert.Equal(2, result.Events.OtherEvents.Count());
-        //    var firstEvent = result.Events.OtherEvents.First();
-
-        //    Assert.Single(firstEvent.Amendments);
-        //    var firstTestAmendment = firstEvent.Amendments.First();
-        //    Assert.Equal("1", firstTestAmendment.EventId);
-        //    var lastEvent = result.Events.OtherEvents.Last();
-        //    var secondTestAmendment = lastEvent.Amendments.First();
-        //    Assert.Equal("3", secondTestAmendment.EventId);
-        //    var thirdTestAmendment = lastEvent.Amendments.Last();
-        //    Assert.Equal("4", thirdTestAmendment.EventId);
-        //}
 
         [Fact]
-        public void DoSomethingGoodForOnce____Please()
+        public void CreateDraftEventForUserReturnsDraft()
         {
             var examination = new Examination();
 
             var caseBreakdown = new CaseBreakDown();
             caseBreakdown.OtherEvents = new OtherEventContainer();
-            caseBreakdown.NoteworthyEvents = new NoteEventContainer();
-
-            var markOne = new OtherEvent()
+            var myUser = new MeUser()
             {
-                EventId = "ONE",
-                EventStatus = EventStatus.Draft,
-                EventText = "please work....please....pretty prety please",
-                UserId = "markOne"
+                UserId = "userOne"
             };
 
-            var markTwo = new OtherEvent()
+            var newDraft = new OtherEvent()
             {
-                EventId = "TWO",
                 EventStatus = EventStatus.Draft,
-                EventText = "pretty please",
-                UserId = "notBad"
+                EventText = "other event one",
+                UserId = "userOne"
             };
 
-            var markOneOne = new NoteEvent()
+            examination.CaseBreakdown = caseBreakdown;
+
+            examination.AddEvent(newDraft);
+
+
+            Assert.Single(examination.CaseBreakdown.OtherEvents.Drafts);
+            Assert.Equal(newDraft, examination.CaseBreakdown.OtherEvents.Drafts.First());
+        }
+
+        [Fact]
+        public void UpdateDraftEventForUserReturnsDraft()
+        {
+            var examination = new Examination();
+
+            var caseBreakdown = new CaseBreakDown();
+            caseBreakdown.OtherEvents = new OtherEventContainer();
+            var myUser = new MeUser()
             {
-                EventId = "ONEONE",
-                EventStatus = EventStatus.Draft,
-                SomethingDifferent = "did something weird",
-                UserId = "markOne"
+                UserId = "userOne"
             };
 
-            var markTwoTwo = new NoteEvent()
+            var newDraft = new OtherEvent()
             {
-                EventId = "TWOONE",
+                EventStatus = EventStatus.Draft,
+                EventText = "other event one",
+                UserId = "userOne"
+            };
+
+            examination.CaseBreakdown = caseBreakdown;
+
+            examination.AddEvent(newDraft);
+
+            var updateDraft = new OtherEvent()
+            {
+                EventId = newDraft.EventId,
+                EventStatus = EventStatus.Draft,
+                EventText = "updated event",
+                UserId = "userOne"
+            };
+            examination.AddEvent(updateDraft);
+            var myUsersView = examination.MyUsersView(myUser);
+
+            Assert.Single(myUsersView.CaseBreakdown.OtherEvents.Drafts);
+            Assert.Equal(updateDraft, myUsersView.CaseBreakdown.OtherEvents.Drafts.First());
+        }
+
+        [Fact]
+        public void UpdateDraftEventForUserWithDifferentEventIdThrowsException()
+        {
+            var examination = new Examination();
+
+            var caseBreakdown = new CaseBreakDown();
+            caseBreakdown.OtherEvents = new OtherEventContainer();
+            var myUser = new MeUser()
+            {
+                UserId = "userOne"
+            };
+
+            var newDraft = new OtherEvent()
+            {
+                EventStatus = EventStatus.Draft,
+                EventText = "other event one",
+                UserId = "userOne"
+            };
+
+            examination.CaseBreakdown = caseBreakdown;
+
+            examination.AddEvent(newDraft);
+
+            var updateDraft = new OtherEvent()
+            {
+                EventId = "bad id",
+                EventStatus = EventStatus.Draft,
+                EventText = "updated event",
+                UserId = "userOne"
+            };
+            
+            Action act = () => examination.AddEvent(updateDraft);
+            act.Should().Throw<Exception>();
+        }
+
+        [Fact]
+        public void DraftEventSetToFinalRemovesAllDrafts()
+        {
+            var examination = new Examination();
+
+            var caseBreakdown = new CaseBreakDown();
+            caseBreakdown.OtherEvents = new OtherEventContainer();
+            var userOne = new MeUser()
+            {
+                UserId = "userOne"
+            };
+
+            var userTwo = new MeUser()
+            {
+                UserId = "userTwo"
+            };
+
+            var newDraft = new OtherEvent()
+            {
+                EventStatus = EventStatus.Draft,
+                EventText = "other event one",
+                UserId = "userOne"
+            };
+
+            var newDraftTwo = new OtherEvent()
+            {
+                EventStatus = EventStatus.Draft,
+                EventText = "other event one",
+                UserId = "userTwo"
+            };
+
+            examination.CaseBreakdown = caseBreakdown;
+
+            examination.AddEvent(newDraft);
+            examination.AddEvent(newDraftTwo);
+
+            var updateDraft = new OtherEvent()
+            {
+                EventId = newDraft.EventId,
                 EventStatus = EventStatus.Final,
-                SomethingDifferent = "felt bad afterwards",
-                UserId = "notBad"
+                EventText = "updated event",
+                UserId = "userOne"
             };
+            examination.AddEvent(updateDraft);
 
-
-            examination.Events = caseBreakdown;
-
-            examination.SaveEvent(markOne);
-            examination.SaveEvent(markOneOne);
-            markOne.EventStatus = EventStatus.Final;
-            examination.SaveEvent(markOne);
-            examination.SaveEvent(markOneOne);
-            examination.SaveEvent(markOne);
+            Assert.Single(examination.CaseBreakdown.OtherEvents.Drafts);
+            Assert.Equal(newDraftTwo, examination.CaseBreakdown.OtherEvents.Drafts.First());
+            Assert.Equal(updateDraft, examination.CaseBreakdown.OtherEvents.Latest);
         }
     }
 }

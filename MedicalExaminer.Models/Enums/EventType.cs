@@ -3,6 +3,5 @@
     public enum EventType
     {
         Other,
-        Notes
     }
 }

@@ -29,13 +29,7 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "event_status")]
         public EventStatus EventStatus { get; set; }
-
-        /// <summary>
-        /// list of ammendments for this item
-        /// </summary>
-        [JsonProperty(PropertyName ="amendments")]
-        public IEnumerable<IEvent> Amendments { get; set; }
-
+                
         /// <summary>
         /// the type of event this is
         /// </summary>

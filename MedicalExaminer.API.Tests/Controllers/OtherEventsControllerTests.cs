@@ -23,11 +23,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var otherEventByCaseIdService = new Mock<IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent>>();
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateOtherEventQuery, string>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
+            var sut = new OtherEventController(logger.Object, mapper.Object, 
                 otherEventCreationService.Object, examinationRetrievalQueryService.Object);
             // Act
             var response = await sut.GetOtherEvent(null);
@@ -44,12 +43,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var otherEventByCaseIdService = new Mock<IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent>>();
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateOtherEventQuery, string>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
-            var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
+            var sut = new OtherEventController(logger.Object, mapper.Object, 
                 otherEventCreationService.Object, examinationRetrievalQueryService.Object);
             // Act
             var response = await sut.GetOtherEvent("aaaa");
@@ -69,15 +67,14 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var examinationId = "7E5D50CE-05BF-4A1F-AA6E-25418A723A7F";
             
-            var otherEventByCaseIdService = new Mock<IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent>>();
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateOtherEventQuery, string>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
                        
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
+            var sut = new OtherEventController(logger.Object, mapper.Object,
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
@@ -102,8 +99,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             mapper.Setup(m => m.Map<GetOtherEventResponse>(examinationObj)).Returns(getOtherResponse);
 
-            var otherEventByCaseIdService = new Mock<IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent>>();
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateOtherEventQuery, string>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -111,7 +107,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examinationObj)).Verifiable();
 
-            var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
+            var sut = new OtherEventController(logger.Object, mapper.Object,
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
@@ -133,8 +129,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             
-            var otherEventByCaseIdService = new Mock<IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent>>();
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateOtherEventQuery, string>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -142,7 +137,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
+            var sut = new OtherEventController(logger.Object, mapper.Object,
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
@@ -161,8 +156,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
 
-            var otherEventByCaseIdService = new Mock<IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent>>();
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateOtherEventQuery, string>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -176,7 +170,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
+            var sut = new OtherEventController(logger.Object, mapper.Object,
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             sut.ModelState.AddModelError("i", "broke it");
@@ -196,8 +190,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
 
-            var otherEventByCaseIdService = new Mock<IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent>>();
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateOtherEventQuery, string>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -211,7 +204,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
+            var sut = new OtherEventController(logger.Object, mapper.Object,
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
@@ -230,8 +223,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var examination = new Mock<Examination>();
-            var otherEventByCaseIdService = new Mock<IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent>>();
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateOtherEventQuery, string>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -241,19 +233,19 @@ namespace MedicalExaminer.API.Tests.Controllers
                 EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
                 EventText = "Hello Planet"
             };
-            otherEventCreationService.Setup(service => service.Handle(It.IsAny<CreateOtherEventQuery>()))
+            otherEventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
                 .Returns(Task.FromResult("hi mark")).Verifiable();
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
 
-            var sut = new OtherEventController(logger.Object, mapper.Object, otherEventByCaseIdService.Object,
+            var sut = new OtherEventController(logger.Object, mapper.Object,
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
             var response = await sut.UpsertNewOtherEvent("a", validRequest);
 
-            otherEventCreationService.Verify(x => x.Handle(It.IsAny<CreateOtherEventQuery>()), Times.Once);
+            otherEventCreationService.Verify(x => x.Handle(It.IsAny<CreateEventQuery>()), Times.Once);
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<PutOtherEventResponse>>().Subject;

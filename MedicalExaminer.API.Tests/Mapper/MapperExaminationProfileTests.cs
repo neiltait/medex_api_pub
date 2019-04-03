@@ -6,7 +6,6 @@ using AutoMapper;
 using AutoMapper.Configuration;
 using FluentAssertions;
 using MedicalExaminer.API.Extensions.Data;
-using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
@@ -91,9 +90,6 @@ namespace MedicalExaminer.API.Tests.Mapper
         /// </summary>
         private readonly IMapper _mapper;
 
-        
-
-
         [Fact]
         public void Examination_To_PatientCard_NullAppointments()
         {
@@ -166,35 +162,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
         }
-
-        //[Fact]
-        //public void Examination_To_GetOtherEventsResponse()
-        //{
-        //    var otherEvent = new OtherEvent()
-        //    {
-        //        EventId = "a",
-        //        EventStatus = EventStatus.Final,
-        //        EventText = "Hello Earth",
-        //        UserId = "123"
-        //    };
-        //    var caseBreakdown = new CaseBreakDown()
-        //    {
-        //        OtherEvents = new[] { otherEvent }
-        //    };
-        //    var examination = new Examination()
-        //    {
-        //        Events = caseBreakdown
-        //    };
-
-        //    var result = _mapper.Map<GetOtherEventResponse>(examination);
-
-        //    Assert.Single(result.Events);
-        //    var ourEvent = result.Events.First();
-        //    Assert.Equal("a", ourEvent.EventId);
-        //    Assert.Equal(EventStatus.Final, ourEvent.EventStatus);
-        //    Assert.Equal("Hello Earth", ourEvent.EventText);
-        //    Assert.Equal("123", ourEvent.UserId);
-        //}
 
         [Fact]
         public void Examination_To_GetOtherEventsResponse_Multiple_OtherEvents()

@@ -7,23 +7,32 @@ namespace MedicalExaminer.Models
     {
         public static Examination MyUsersView(this Examination examination, MeUser myUser)
         {
-            examination.Events = GetUserEvents(examination.Events, myUser);
+            examination.CaseBreakdown = GetUserEvents(examination.CaseBreakdown, myUser);
             return examination;
         }
 
-        public static Examination SaveEvent(this Examination examination, IEvent theEvent)
+        public static Examination AddEvent(this Examination examination, IEvent theEvent)
         {
            switch (theEvent.EventType)
-            {
+           {
                 case EventType.Other:
-                    var otherEventContainer = examination.Events.OtherEvents;
+                    var otherEventContainer = examination.CaseBreakdown.OtherEvents;
+
+                    if (otherEventContainer == null)
+                    {
+                        otherEventContainer = new OtherEventContainer();
+                    }
+
                     otherEventContainer.Add((OtherEvent)theEvent);
                     break;
-                case EventType.Notes:
-                    var notesContainer = examination.Events.NoteworthyEvents;
-                    notesContainer.Add((NoteEvent)theEvent);
-                    break;
-            }
+           }
+
+            examination = UpdateCaseStatus(examination);
+            return examination;
+        }
+
+        private static Examination UpdateCaseStatus(Examination examination)
+        {
             return examination;
         }
 
@@ -44,8 +53,5 @@ namespace MedicalExaminer.Models
             otherEvents.Drafts = usersDrafts.ToList();
             return (BaseEventContainter<T>)otherEvents;
         }
-
-        
-
     }
 }

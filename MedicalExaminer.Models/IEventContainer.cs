@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MedicalExaminer.Models
@@ -25,25 +26,38 @@ namespace MedicalExaminer.Models
 
         public virtual void Add(TEvent theEvent)
         {
+            if (string.IsNullOrEmpty(theEvent.EventId))
+            {
+                theEvent.EventId = Guid.NewGuid().ToString();
+            }
+
             if (theEvent.EventStatus == Enums.EventStatus.Final)
             {
                 Latest = theEvent;
                 History.Add(theEvent);
-                Drafts.Remove(theEvent);
+                var draft = Drafts.SingleOrDefault(d => d.EventId == theEvent.EventId);
+                if (draft != null)
+                {
+                    Drafts.Remove(draft);
+                }
+
                 return;
             }
 
             if (theEvent.EventStatus == Enums.EventStatus.Draft)
             {
-                var usersDraft = Drafts.SingleOrDefault(draft => draft.UserId == theEvent.UserId
-                && draft.EventId == theEvent.EventId);
-                if (usersDraft != null)
+                var userHasDraft = Drafts.Any(draft => draft.UserId == theEvent.UserId);
+                if (userHasDraft)
                 {
-                    usersDraft = theEvent;
+                    var usersDraft = Drafts.Single(draft => draft.EventId == theEvent.EventId);
+                    Drafts.Remove(usersDraft);
+                    Drafts.Add(theEvent);
+                    return;
                 }
 
                 Drafts.Add(theEvent);
             }
         }
+
     }
 }
