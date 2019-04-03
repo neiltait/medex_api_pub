@@ -8,7 +8,6 @@ using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,21 +18,18 @@ namespace MedicalExaminer.API.Controllers
     [Route("/v{api-version:apiVersion}/examinations")]
     [ApiController]
     [Authorize]
-    public class OtherEventController : BaseController
+    public class CaseBreakdownController : BaseController
     {
-        //private IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent> _otherCaseEventRetrievalService;
         private IAsyncQueryHandler<CreateEventQuery, string> _otherEventCreationService;
         private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
 
-        public OtherEventController(
+        public CaseBreakdownController(
             IMELogger logger,
             IMapper mapper,
-            //IAsyncQueryHandler<OtherCaseEventByCaseIdQuery, OtherEvent> otherCaseEventRetrievalService,
             IAsyncQueryHandler<CreateEventQuery, string> otherEventCreationService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService)
             : base(logger, mapper)
         {
-            //_otherCaseEventRetrievalService = otherCaseEventRetrievalService;
             _otherEventCreationService = otherEventCreationService;
             _examinationRetrievalService = examinationRetrievalService;
         }
@@ -72,30 +68,30 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpGet]
-        [Route("{caseId}/events/{eventType}")]
+        [Route("{caseId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetOtherEventResponse>> GetOtherEvent(string examinationId)
+        public async Task<ActionResult<GetCaseBreakdownResponse>> GetCaseBreakdown(string examinationId)
         {
             
             if (string.IsNullOrEmpty(examinationId))
             {
-                return BadRequest(new GetOtherEventResponse());
+                return BadRequest(new GetCaseBreakdownResponse());
             }
 
             Guid examinationGuid;
             if(!Guid.TryParse(examinationId, out examinationGuid))
             {
-                return BadRequest(new GetOtherEventResponse());
+                return BadRequest(new GetCaseBreakdownResponse());
             }
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
             
             if(examination == null)
             {
-                return new NotFoundObjectResult(new GetOtherEventResponse());
+                return new NotFoundObjectResult(new GetCaseBreakdownResponse());
             }
 
-            var result = Mapper.Map<GetOtherEventResponse>(examination);
+            var result = Mapper.Map<GetCaseBreakdownResponse>(examination);
 
             return Ok(result);
         }

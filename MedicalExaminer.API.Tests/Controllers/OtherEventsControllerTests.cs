@@ -26,15 +26,15 @@ namespace MedicalExaminer.API.Tests.Controllers
             var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            var sut = new OtherEventController(logger.Object, mapper.Object, 
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object, 
                 otherEventCreationService.Object, examinationRetrievalQueryService.Object);
             // Act
-            var response = await sut.GetOtherEvent(null);
+            var response = await sut.GetCaseBreakdown(null);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<GetOtherEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<GetCaseBreakdownResponse>>().Subject;
             var notFoundResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-            notFoundResult.Value.Should().BeAssignableTo<GetOtherEventResponse>();
+            notFoundResult.Value.Should().BeAssignableTo<GetCaseBreakdownResponse>();
         }
 
         [Fact]
@@ -47,15 +47,15 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
-            var sut = new OtherEventController(logger.Object, mapper.Object, 
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object, 
                 otherEventCreationService.Object, examinationRetrievalQueryService.Object);
             // Act
-            var response = await sut.GetOtherEvent("aaaa");
+            var response = await sut.GetCaseBreakdown("aaaa");
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<GetOtherEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<GetCaseBreakdownResponse>>().Subject;
             var notFoundResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-            notFoundResult.Value.Should().BeAssignableTo<GetOtherEventResponse>();
+            notFoundResult.Value.Should().BeAssignableTo<GetCaseBreakdownResponse>();
         }
 
         [Fact]
@@ -74,17 +74,17 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new OtherEventController(logger.Object, mapper.Object,
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
-            var response = await sut.GetOtherEvent(examinationId);
+            var response = await sut.GetCaseBreakdown(examinationId);
 
             // Assert
             examinationRetrievalQueryService.Verify(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()));
-            var taskResult = response.Should().BeOfType<ActionResult<GetOtherEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<GetCaseBreakdownResponse>>().Subject;
             var notFoundResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
-            notFoundResult.Value.Should().BeAssignableTo<GetOtherEventResponse>();
+            notFoundResult.Value.Should().BeAssignableTo<GetCaseBreakdownResponse>();
         }
 
         [Fact]
@@ -94,10 +94,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var examinationObj = new Mock<Examination>().Object;
             var examinationId = "7E5D50CE-05BF-4A1F-AA6E-25418A723A7F";
-            var getOtherResponse = new Mock<GetOtherEventResponse>().Object;
+            var getOtherResponse = new Mock<GetCaseBreakdownResponse>().Object;
             
             var mapper = new Mock<IMapper>();
-            mapper.Setup(m => m.Map<GetOtherEventResponse>(examinationObj)).Returns(getOtherResponse);
+            mapper.Setup(m => m.Map<GetCaseBreakdownResponse>(examinationObj)).Returns(getOtherResponse);
 
             var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
@@ -107,18 +107,18 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examinationObj)).Verifiable();
 
-            var sut = new OtherEventController(logger.Object, mapper.Object,
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
-            var response = await sut.GetOtherEvent(examinationId);
+            var response = await sut.GetCaseBreakdown(examinationId);
 
             // Assert
             examinationRetrievalQueryService.Verify(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()));
 
-            var taskResult = response.Should().BeOfType<ActionResult<GetOtherEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<GetCaseBreakdownResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            okResult.Value.Should().BeAssignableTo<GetOtherEventResponse>();
+            okResult.Value.Should().BeAssignableTo<GetCaseBreakdownResponse>();
 
         }
 
@@ -137,7 +137,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new OtherEventController(logger.Object, mapper.Object,
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
@@ -170,7 +170,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new OtherEventController(logger.Object, mapper.Object,
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             sut.ModelState.AddModelError("i", "broke it");
@@ -204,7 +204,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new OtherEventController(logger.Object, mapper.Object,
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
@@ -239,7 +239,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
 
-            var sut = new OtherEventController(logger.Object, mapper.Object,
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
