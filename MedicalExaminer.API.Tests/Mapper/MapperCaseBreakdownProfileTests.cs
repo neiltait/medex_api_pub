@@ -18,7 +18,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
-        public void Mapper()
+        public void UserDraftsReturned()
         {
             var myUser = new MeUser()
             {
@@ -45,7 +45,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                 Text = "draft user other",
                 UserId = "456"
             };
-
 
             var latest = new OtherEvent()
             {
