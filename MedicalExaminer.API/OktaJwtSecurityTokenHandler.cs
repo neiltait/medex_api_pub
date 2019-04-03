@@ -82,7 +82,7 @@ namespace MedicalExaminer.API
 
             var meUserReturned = result.Result;
 
-            //Cannot find user by token or token has expired
+            //Cannot find user by token or token has expired so go to Okta
             if (meUserReturned == null || meUserReturned.OktaTokenExpiry < DateTimeOffset.Now)
             {
                 var response = _tokenService.IntrospectToken(securityToken, new HttpClient()).Result;
