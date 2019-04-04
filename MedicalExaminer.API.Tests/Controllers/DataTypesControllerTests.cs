@@ -69,17 +69,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Assert.Equal(6, dictionary.Keys.Count);
         }
 
-        [Fact]
-        public void GetEventStatusTypes_When_Called_Returns_Expected_Type()
-        {
-            // Act
-            var response = _controller.GetEventStatuses();
-             // Assert
-            var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
-            var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
-
-            Assert.Equal(2, dictionary.Keys.Count);
-        }
+        
         public void GetCaseStatuses_When_Called_Returns_Expected_Type()
         {
             // Act

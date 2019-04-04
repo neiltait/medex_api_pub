@@ -1,5 +1,4 @@
 ﻿using MedicalExaminer.API.Attributes;
-using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
@@ -16,12 +15,12 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Event Text (Length to be confirmed).
         /// </summary>
-        [RequiredIfAttributesMatch(nameof(EventStatus), EventStatus.Final)]
+        [RequiredIfAttributesMatch(nameof(IsFinal), true)]
         public string Text { get; set; }
 
         /// <summary>
-        /// Enum for the status (Draft or Final).
+        /// Draft is false, final true
         /// </summary>
-        public EventStatus EventStatus { get; set; }
+        public bool IsFinal { get; set; }
     }
 }

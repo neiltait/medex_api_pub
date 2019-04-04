@@ -6,7 +6,7 @@ namespace MedicalExaminer.Models
     {
         EventType EventType { get; }
         string EventId { get; set; }
-        EventStatus EventStatus { get; }
+        bool IsFinal { get; }
         string UserId { get; }
     }
 }

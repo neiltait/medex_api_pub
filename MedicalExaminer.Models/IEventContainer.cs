@@ -31,7 +31,7 @@ namespace MedicalExaminer.Models
                 theEvent.EventId = Guid.NewGuid().ToString();
             }
 
-            if (theEvent.EventStatus == Enums.EventStatus.Final)
+            if (theEvent.IsFinal)
             {
                 Latest = theEvent;
                 History.Add(theEvent);
@@ -42,9 +42,7 @@ namespace MedicalExaminer.Models
                 }
 
                 return;
-            }
-
-            if (theEvent.EventStatus == Enums.EventStatus.Draft)
+            } else
             {
                 var userHasDraft = Drafts.Any(draft => draft.UserId == theEvent.UserId);
                 if (userHasDraft)

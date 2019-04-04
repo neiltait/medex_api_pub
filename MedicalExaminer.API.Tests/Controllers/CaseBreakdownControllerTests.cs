@@ -162,7 +162,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var invalidRequest = new PutOtherEventRequest
             {
              EventId = null,
-             EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
+             IsFinal = true,
              Text = null
             };
 
@@ -196,7 +196,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var validRequest = new PutOtherEventRequest
             {
                 EventId = "1",
-                EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
+                IsFinal = true,
                 Text = "Hello Planet"
             };
 
@@ -229,7 +229,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var validRequest = new PutOtherEventRequest
             {
                 EventId = "1",
-                EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
+                IsFinal = true,
                 Text = "Hello Planet"
             };
             otherEventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))

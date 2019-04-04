@@ -27,8 +27,8 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Enum for the status (Draft or Final).
         /// </summary>
-        [JsonProperty(PropertyName = "event_status")]
-        public EventStatus EventStatus { get; set; }
+        [JsonProperty(PropertyName = "is_final")]
+        public bool IsFinal { get; set; }
                 
         /// <summary>
         /// the type of event this is

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.API.Attributes;
-using MedicalExaminer.Models.Enums;
 using Moq;
 using Xunit;
 
@@ -20,9 +19,9 @@ namespace MedicalExaminer.API.Tests.Attributes
 
         public class TestDtoTdo
         {
-            public EventStatus status { get; set; }
+            public bool status { get; set; }
 
-            [RequiredIfAttributesMatch(nameof(status), EventStatus.Final)]
+            [RequiredIfAttributesMatch(nameof(status), true)]
             public string testField { get; set; }
         }
 
@@ -33,13 +32,13 @@ namespace MedicalExaminer.API.Tests.Attributes
             // Arrange
             var dto = new TestDtoTdo
             {
-                status = EventStatus.Final,
+                status = true,
                 testField = null
             };
             var serviceProvider = new Mock<IServiceProvider>().Object;
             serviceProvider.GetService(dto.GetType());
             var validationContext = new ValidationContext(dto, serviceProvider, new Dictionary<object, object>());
-            var sut = new RequiredIfAttributesMatch("status", EventStatus.Final);
+            var sut = new RequiredIfAttributesMatch("status", true);
             var expectedResult = ValidationResult.Success;
 
             // Act

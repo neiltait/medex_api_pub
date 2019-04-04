@@ -35,7 +35,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             var myUserDraft = new OtherEvent()
             {
                 EventId = "2",
-                EventStatus = MedicalExaminer.Models.Enums.EventStatus.Draft,
+                IsFinal = false,
                 Text = "draft user one",
                 UserId = "123"
             };
@@ -43,7 +43,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             var otherUserDraft = new OtherEvent()
             {
                 EventId = "3",
-                EventStatus = MedicalExaminer.Models.Enums.EventStatus.Draft,
+                IsFinal = false,
                 Text = "draft user other",
                 UserId = "456"
             };
@@ -51,7 +51,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             var latest = new OtherEvent()
             {
                 EventId = "1",
-                EventStatus = MedicalExaminer.Models.Enums.EventStatus.Final,
+                IsFinal = true,
                 Text = "The others",
                 UserId = "123"
             };
