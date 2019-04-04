@@ -6,27 +6,32 @@ using MedicalExaminer.Common.Queries.Location;
 
 namespace MedicalExaminer.Common.Services.Location
 {
-    public class LocationIdService : IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location>
+    /// <summary>
+    /// Location Id Service.
+    /// </summary>
+    /// <inheritdoc/>
+    public class LocationIdService : QueryHandler<LocationRetrievalByIdQuery, Models.Location>
     {
-        private readonly IConnectionSettings connectionSettings;
-        private readonly IDatabaseAccess databaseAccess;
-
+        /// <summary>
+        /// Initialise a new instance of the Location Id Service.
+        /// </summary>
+        /// <param name="databaseAccess">Database Access.</param>
+        /// <param name="connectionSettings">Connection Settings.</param>
         public LocationIdService(IDatabaseAccess databaseAccess, ILocationConnectionSettings connectionSettings)
+            : base(databaseAccess, connectionSettings)
         {
-            this.databaseAccess = databaseAccess;
-            this.connectionSettings = connectionSettings;
+
         }
 
-        public Task<Models.Location> Handle(LocationRetrievalByIdQuery param)
+        /// <inheritdoc/>
+        public override Task<Models.Location> Handle(LocationRetrievalByIdQuery param)
         {
             if (param == null)
             {
                 throw new ArgumentNullException(nameof(param));
             }
 
-            return databaseAccess.GetItemAsync<Models.Location>(
-                connectionSettings,
-                location => location.LocationId == param.LocationId);
+            return GetItemAsync(location => location.LocationId == param.LocationId);
         }
     }
 }

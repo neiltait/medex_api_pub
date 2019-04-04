@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using MedicalExaminer.API.Models.v1.CaseBreakdown;
+using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 
@@ -35,7 +37,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         ///     An array of representatives for the patient
         /// </summary>
-        public IEnumerable<Representative> Representatives { get; set; }
+        public IEnumerable<RepresentativeItem> Representatives { get; set; }
 
         /// <summary>
         ///     Case Id
@@ -250,8 +252,8 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         ///     Medical team associated with the case
         /// </summary>
-        public MedicalExaminer.Models.IMedicalTeam MedicalTeam { get; set; }
+        public IMedicalTeam MedicalTeam { get; set; }
 
-
+        public CaseBreakDownItem CaseBreakdown { get; set; }
     }
 }

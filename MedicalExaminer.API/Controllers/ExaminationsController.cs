@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -10,6 +11,7 @@ using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Documents;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -25,7 +27,6 @@ namespace MedicalExaminer.API.Controllers
     {
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> _examinationsDashboardService;
         private readonly IAsyncQueryHandler<CreateExaminationQuery, Examination> _examinationCreationService;
-        private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
 
         /// <summary>
@@ -34,20 +35,17 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
         /// <param name="examinationCreationService">examinationCreationService.</param>
-        /// <param name="examinationRetrievalService">examinationRetrievalService.</param>
         /// <param name="examinationsRetrievalService">examinationsRetrievalService.</param>
         /// <param name="examinationsDashboardService">Examination Dashboard Service.</param>
         public ExaminationsController(
             IMELogger logger,
             IMapper mapper,
             IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
-            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> examinationsDashboardService)
             : base(logger, mapper)
         {
             _examinationCreationService = examinationCreationService;
-            _examinationRetrievalService = examinationRetrievalService;
             _examinationsRetrievalService = examinationsRetrievalService;
             _examinationsDashboardService = examinationsDashboardService;
         }
@@ -57,9 +55,9 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="filter">Filter.</param>
         /// <returns>A list of examinations.</returns>
-        [HttpPost]
+        [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetExaminationsResponse>> GetExaminations([FromBody] GetExaminationsRequest filter)
+        public async Task<ActionResult<GetExaminationsResponse>> GetExaminations([FromQuery]GetExaminationsRequest filter)
         {
             if (filter == null)
             {
@@ -95,48 +93,39 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        ///     Get Examination by ID.
-        /// </summary>
-        /// <param name="examinationId">Examination Id.</param>
-        /// <returns>A GetExaminationResponse.</returns>
-        [HttpGet("{examinationId}")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetExaminationResponse>> GetExamination(string examinationId)
-        {
-            var result = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
-            if (result == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(Mapper.Map<GetExaminationResponse>(result));
-        }
-
-        /// <summary>
         ///     Create a new case.
         /// </summary>
-        /// <param name="postNewCaseRequest">The PostNewCaseRequest.</param>
-        /// <returns>A PostNewCaseResponse.</returns>
+        /// <param name="postExaminationRequest">The PostExaminationRequest.</param>
+        /// <returns>A PostExaminationResponse.</returns>
         [HttpPost]
-        [Route("new")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutExaminationResponse>> CreateNewCase(
-            [FromBody]
-            PostNewCaseRequest postNewCaseRequest)
+        public async Task<ActionResult<PutExaminationResponse>> CreateExamination(
+            [FromBody] PostExaminationRequest postExaminationRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new PutExaminationResponse());
             }
 
-            var examination = Mapper.Map<Examination>(postNewCaseRequest);
-            var result = await _examinationCreationService.Handle(new CreateExaminationQuery(examination));
-            var res = new PutExaminationResponse
+            try
             {
-                ExaminationId = result.ExaminationId
-            };
+                var examination = Mapper.Map<Examination>(postExaminationRequest);
+                var result = await _examinationCreationService.Handle(new CreateExaminationQuery(examination));
+                var res = new PutExaminationResponse
+                {
+                    ExaminationId = result.ExaminationId
+                };
 
-            return Ok(res);
+                return Ok(res);
+            }
+            catch (DocumentClientException)
+            {
+                return NotFound(new PostExaminationRequest());
+            }
+            catch (ArgumentException)
+            {
+                return NotFound(new PostExaminationRequest());
+            }
         }
     }
 }

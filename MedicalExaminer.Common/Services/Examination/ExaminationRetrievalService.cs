@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
@@ -29,6 +30,10 @@ namespace MedicalExaminer.Common.Services.Examination
             var result = databaseAccess.GetItemAsync<Models.Examination>(
                 connectionSettings,
                 x => x.ExaminationId == param.ExaminationId);
+            if (result.Result != null)
+            {
+                return Task.FromResult(result.Result);
+            }
             return result;
         }
     }

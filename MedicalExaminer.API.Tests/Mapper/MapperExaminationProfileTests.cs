@@ -90,9 +90,6 @@ namespace MedicalExaminer.API.Tests.Mapper
         /// </summary>
         private readonly IMapper _mapper;
 
-        
-
-
         [Fact]
         public void Examination_To_PatientCard_NullAppointments()
         {
@@ -166,7 +163,8 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.Unassigned.Should().Be(true);
         }
 
-        [Fact]
+       
+
         public void Examination_To_PatientCard_One_Representative_Appointment_Details()
         {
             var appointmentDate = DateTime.Now.AddDays(1);
@@ -381,53 +379,12 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
 
-        [Fact]
-        public void Examination_To_GetExaminationResponse()
-        {
-            var examination = GenerateExamination();
-            examination.Representatives = Representatives;
-            var result = _mapper.Map<GetExaminationResponse>(examination);
-
-            result.AnyPersonalEffects.Should().Be(AnyPersonalEffects);
-            result.CoronerPriority.Should().Be(CoronerPriority);
-            result.ChildPriority.Should().Be(ChildPriority);
-            result.Completed.Should().Be(Completed);
-            result.CoronerStatus.Should().Be(CoronerStatus);
-            result.Country.Should().Be(Country);
-            result.County.Should().Be(County);
-            result.CulturalPriority.Should().Be(CulturalPriority);
-            result.DateOfBirth.Should().Be(DateOfBirth);
-            result.DateOfDeath.Should().Be(DateOfDeath);
-            result.FaithPriority.Should().Be(FaithPriority);
-            result.FuneralDirectors.Should().Be(FuneralDirectors);
-            result.GivenNames.Should().Be(GivenNames);
-            result.Gender.Should().Be(Gender);
-            result.GenderDetails.Should().Be(GenderDetails);
-            result.HospitalNumber_1.Should().Be(HospitalNumber_1);
-            result.HospitalNumber_2.Should().Be(HospitalNumber_2);
-            result.HospitalNumber_3.Should().Be(HospitalNumber_3);
-            result.HouseNameNumber.Should().Be(HouseNameNumber);
-            result.LastOccupation.Should().Be(LastOccupation);
-            result.MedicalExaminerOfficeResponsible.Should().Be(MedicalExaminerOfficeResponsible);
-            result.ModeOfDisposal.Should().Be(ModeOfDisposal);
-            result.NhsNumber.Should().Be(NhsNumber);
-            result.OutOfHours.Should().Be(OutOfHours);
-            result.OrganisationCareBeforeDeathLocationId.Should().Be(OrganisationCareBeforeDeathLocationId);
-            result.OtherPriority.Should().Be(OtherPriority);
-            result.Postcode.Should().Be(Postcode);
-            result.PersonalEffectDetails.Should().Be(PersonalEffectDetails);
-            result.PriorityDetails.Should().Be(PriorityDetails);
-            result.Street.Should().Be(Street);
-            result.Surname.Should().Be(Surname);
-            result.TimeOfDeath.Should().Be(TimeOfDeath);
-            result.Town.Should().Be(Town);
-            Assert.True(result.Representatives.SequenceEqual(Representatives));
-        }
+        
 
         [Fact]
         public void PostNewCaseRequest_To_Examination()
         {
-            var postNewCaseRequest = new PostNewCaseRequest
+            var postNewCaseRequest = new PostExaminationRequest
             {
                 DateOfDeath = DateOfDeath,
                 DateOfBirth = DateOfBirth,
@@ -555,28 +512,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
         }
 
-       
-
-
-
-        /// <summary>
-        /// Test Mapping Examination to GetExaminationResponse.
-        /// </summary>
-        [Fact]
-        public void TestGetExaminationResponse()
-        {
-            var expectedExaminationId = "expectedExaminationId";
-
-            var examination = new Examination()
-            {
-                ExaminationId = expectedExaminationId,
-            };
-
-            var response = _mapper.Map<GetExaminationResponse>(examination);
-
-            response.ExaminationId.Should().Be(expectedExaminationId);
-        }
-
+        
         private void AssertAllSourcePropertiesMappedForMap(TypeMap map)
         {
 

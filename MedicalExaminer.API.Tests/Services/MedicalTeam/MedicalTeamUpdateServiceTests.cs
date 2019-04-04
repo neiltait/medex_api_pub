@@ -13,7 +13,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
     public class MedicalTeamUpdateServiceTests
     {
         [Fact]
-        public void ExaminationFound_ReturnsExaminationId()
+        public async void ExaminationFound_ReturnsExaminationId()
         {
             // Arrange
             var examinationId = "1";
@@ -30,9 +30,9 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object);
 
             // Act
-            var result = sut.Handle(examination1);
+            var result = await sut.Handle(examination1);
 
-            Assert.Equal(examinationId, result.Result);
+            Assert.Equal(examinationId, result.ExaminationId);
         }
 
         [Fact]

@@ -8,6 +8,7 @@ using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services.Examination;
+using MedicalExaminer.Models;
 using Moq;
 using Xunit;
 
@@ -30,7 +31,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var sut = new ExaminationRetrievalService(dataAccess, connectionSettings.Object);
             //Act
             
-            var result = await sut.Handle(new ExaminationRetrievalQuery(id, null));
+            var result = await sut.Handle(new ExaminationRetrievalQuery(id, new Mock<MeUser>().Object));
 
             //Assert
             result.Should().NotBeNull();
@@ -45,19 +46,17 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.ExaminationId == examinationId;
             var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations().ToArray());
             var clientFactory = CosmosMocker.CreateClientFactory(client);
-
             var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
-
             var dataAccess = new DatabaseAccess(clientFactory.Object);
             var sut = new ExaminationRetrievalService(dataAccess, connectionSettings.Object);
-            
+
             //Act
             var results = await sut.Handle(new ExaminationRetrievalQuery(examinationId, null));
             
+
             //Assert
             results.Should().BeNull();
         }
-
         [Fact]
         public void ExaminationQueryIsNullThrowsException()
         {

@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
+using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Models;
@@ -17,10 +19,8 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public ExaminationProfile()
         {
-            CreateMap<Examination, GetExaminationResponse>()
-                .ForMember(getExaminationResponse => getExaminationResponse.Errors, opt => opt.Ignore());
             CreateMap<Examination, ExaminationItem>();
-            CreateMap<PostNewCaseRequest, Examination>()
+            CreateMap<PostExaminationRequest, Examination>()
                 .ForMember(examination => examination.UrgencyScore, opt => opt.Ignore())
                 .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
                 .ForMember(examination => examination.HouseNameNumber, opt => opt.Ignore())
@@ -66,17 +66,22 @@ namespace MedicalExaminer.API.Extensions.Data
 
             //CreateMap<Examination, GetPreScrutinyEventResponse>()
             //    .ForMember(dest => dest.PreScrutinyEvents, opt => opt.MapFrom(src => src.Events.PreScrutinyEvents));
+            CreateMap<Examination, GetOtherEventResponse>()
+                .ForMember(dest => dest.Events, opt => opt.MapFrom(src => src.CaseBreakdown.OtherEvents));
             CreateMap<Examination, GetPatientDetailsResponse>()
                 .ForMember(getPatientDetailsResponse => getPatientDetailsResponse.Errors, opt => opt.Ignore());
+
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(patientCard => patientCard.AppointmentDate,
                     examination => examination.MapFrom(new AppointmentDateResolver(new AppointmentFinder())))
                 .ForMember(patientCard => patientCard.AppointmentTime,
                     examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())));
+
+            CreateMap<Representative, RepresentativeItem>();
         }
     }
 
-    
+
     public class AppointmentDateResolver : IValueResolver<Examination, PatientCardItem, DateTime?>
     {
         private AppointmentFinder _appointmentFinder;
@@ -103,5 +108,6 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             return _appointmentFinder.FindAppointment(source.Representatives)?.AppointmentTime;
         }
-    }
+}
+
 }
