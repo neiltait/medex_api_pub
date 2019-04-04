@@ -2,6 +2,7 @@
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Models;
 using System;
+using MedicalExaminer.API.Models.v1.PatientDetails;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
