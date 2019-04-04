@@ -68,7 +68,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpGet]
-        [Route("{caseId}")]
+        [Route("{examinationId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetCaseBreakdownResponse>> GetCaseBreakdown(string examinationId)
         {
