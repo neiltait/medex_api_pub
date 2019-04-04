@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-
+    <CodeAnalysisRuleSet>..\Analyzers\Analyzers.ruleset</CodeAnalysisRuleSet>
+    <!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -19,7 +20,11 @@
   <ItemGroup>
     <Folder Include="Loaders\" />
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <AdditionalFiles Include="..\Analyzers\stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\MedicalExaminer.Models\MedicalExaminer.Models.csproj" />
     <ProjectReference Include="..\MedicalExaminer.ReferenceDataLoader\MedicalExaminer.ReferenceDataLoader.csproj" />

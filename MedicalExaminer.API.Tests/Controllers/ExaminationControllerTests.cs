@@ -40,8 +40,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             return examination;
         }
 
-        
-
         [Fact]
         public void GetExaminations_When_Called_Returns_Expected_Type()
         {

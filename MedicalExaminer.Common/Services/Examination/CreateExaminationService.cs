@@ -34,7 +34,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 return await _databaseAccess.CreateItemAsync(_connectionSettings, 
                     param.Examination, false);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //_logger.Log("Failed to retrieve examination data", e);
                 throw;

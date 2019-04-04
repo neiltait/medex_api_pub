@@ -4,8 +4,14 @@ using MedicalExaminer.Models;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
+    /// <summary>
+    /// Patient Details Profile.
+    /// </summary>
     public class PatientDetailsProfile : Profile
     {
+        /// <summary>
+        /// Initialise a new instance of <see cref="PatientDetailsProfile"/>.
+        /// </summary>
         public PatientDetailsProfile()
         {
             CreateMap<PutPatientDetailsRequest, PatientDetails>();

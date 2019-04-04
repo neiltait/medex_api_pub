@@ -3,11 +3,14 @@ using MedicalExaminer.Common;
 
 namespace MedicalExaminer.API.Attributes
 {
+    /// <summary>
+    /// Validate Medical Examiner Office Null Allowed
+    /// </summary>
     public class ValidMedicalExaminerOfficeNullAllowed : ValidationAttribute
     {
+        /// <inheritdoc/>
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
-
             var locationPersistence = (ILocationPersistence)context.GetService(typeof(ILocationPersistence));
             var locationString = value as string;
             if (string.IsNullOrEmpty(locationString))
@@ -19,6 +22,5 @@ namespace MedicalExaminer.API.Attributes
 
             return validatedLocation == null ? new ValidationResult("The location Id has not been found") : ValidationResult.Success;
         }
-
     }
 }

@@ -9,7 +9,7 @@ namespace MedicalExaminer.API.Tests.Attributes
     public class ValidNhsNumberNullAllowedAttributeTest
     {
         [Fact]
-        public async void AlphanumericDigitsInNumberReturnsErrors()
+        public void AlphanumericDigitsInNumberReturnsErrors()
         {
             // Arrange
             var nhsNumberString = "123ac 45678";
@@ -25,7 +25,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         }
 
         [Fact]
-        public async void CorrectNhsNumberReturnsNoErrors()
+        public void CorrectNhsNumberReturnsNoErrors()
         {
             // Arrange
             var nhsNumberString = "943 476 5919";
@@ -42,7 +42,7 @@ namespace MedicalExaminer.API.Tests.Attributes
 
 
         [Fact]
-        public async void ExcessDigitsInNumberReturnsErrors()
+        public void ExcessDigitsInNumberReturnsErrors()
         {
             // Arrange
             var nhsNumberString = "012345678910";
@@ -58,7 +58,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         }
 
         [Fact]
-        public async void IncorrectNhsNumberReturnsErrors()
+        public void IncorrectNhsNumberReturnsErrors()
         {
             // Arrange
             var nhsNumberString = "987 654 4321";
@@ -74,7 +74,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         }
 
         [Fact]
-        public async void InsufficientDigitsInNumberReturnsErrors()
+        public void InsufficientDigitsInNumberReturnsErrors()
         {
             // Arrange
             var nhsNumberString = "12345";
@@ -91,7 +91,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         }
 
         [Fact]
-        public async void NullNhsNumberReturnsSuccess()
+        public void NullNhsNumberReturnsSuccess()
         {
             // Arrange
             string nhsNumberString = null;

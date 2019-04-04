@@ -17,7 +17,7 @@ namespace MedicalExaminer.API.Tests.Controllers
     public class PatientDetailsControllerTest : ControllerTestsBase<PatientDetailsController>
     {
         [Fact]
-        public async void GetPatientDetails_When_Called_With_Id_Not_Found_Returns_NotFound()
+        public void GetPatientDetails_When_Called_With_Id_Not_Found_Returns_NotFound()
         {
             // Arrange
 
@@ -80,7 +80,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public async void GetPatientDetails_When_Called_With_Valid_Id_Returns_Expected_Type()
+        public void GetPatientDetails_When_Called_With_Valid_Id_Returns_Expected_Type()
         {
             // Arrange
             var logger = new Mock<IMELogger>();

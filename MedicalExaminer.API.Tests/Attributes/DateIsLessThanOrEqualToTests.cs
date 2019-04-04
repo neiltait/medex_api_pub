@@ -16,7 +16,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         }
 
         [Fact]
-        public async void EndDateFieldIsNotFoundOnObjectReturnsError()
+        public void EndDateFieldIsNotFoundOnObjectReturnsError()
         {
             // Arrange
             var startDate = new DateTime(2019, 01, 02);
@@ -33,7 +33,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         }
 
         [Fact]
-        public async void EndDateIsNullReturnsSuccess()
+        public void EndDateIsNullReturnsSuccess()
         {
             // Arrange
             var startDate = new DateTime(2019, 01, 02);
@@ -50,7 +50,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         }
 
         [Fact]
-        public async void StartDateAndEndDateTheSameReturnsSuccess()
+        public void StartDateAndEndDateTheSameReturnsSuccess()
         {
             // Arrange
             var startDate = new DateTime(2019, 01, 02);
@@ -70,7 +70,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         }
 
         [Fact]
-        public async void StartDateGreaterThanEndDateTheSameReturnsSuccess()
+        public void StartDateGreaterThanEndDateTheSameReturnsSuccess()
         {
             // Arrange
             var startDate = new DateTime(2019, 01, 02);
@@ -91,10 +91,10 @@ namespace MedicalExaminer.API.Tests.Attributes
         }
 
         [Fact]
-        public async void StartDateIsNullReturnsSuccess()
+        public void StartDateIsNullReturnsSuccess()
         {
             // Arrange
-            string startDate = null;
+            const string startDate = null;
             var endDateField = "";
             var serviceProvider = new Mock<IServiceProvider>().Object;
 
@@ -107,7 +107,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         }
 
         [Fact]
-        public async void StartDateLessThanEndDateTheSameReturnsSuccess()
+        public void StartDateLessThanEndDateTheSameReturnsSuccess()
         {
             // Arrange
             var startDate = new DateTime(2019, 01, 02);
