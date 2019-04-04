@@ -2,7 +2,6 @@
 using System.Linq;
 using FluentAssertions;
 using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.ExtensionMethods
@@ -13,6 +12,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         public void CreateDraftEventForUserReturnsDraft()
         {
+            // Arrange
             var examination = new Examination();
 
             var caseBreakdown = new CaseBreakDown();
@@ -31,9 +31,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             examination.CaseBreakdown = caseBreakdown;
 
+            // Act
             examination.AddEvent(newDraft);
 
-
+            // Assert
             Assert.Single(examination.CaseBreakdown.OtherEvents.Drafts);
             Assert.Equal(newDraft, examination.CaseBreakdown.OtherEvents.Drafts.First());
         }
@@ -41,6 +42,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         public void UpdateDraftEventForUserReturnsDraft()
         {
+            // Arrange
             var examination = new Examination();
 
             var caseBreakdown = new CaseBreakDown();
@@ -59,6 +61,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             examination.CaseBreakdown = caseBreakdown;
 
+            // Act
             examination.AddEvent(newDraft);
 
             var updateDraft = new OtherEvent()
@@ -70,6 +73,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
             examination.AddEvent(updateDraft);
 
+            // Assert
             Assert.Single(examination.CaseBreakdown.OtherEvents.Drafts);
             Assert.Equal(updateDraft, examination.CaseBreakdown.OtherEvents.Drafts.First());
         }
@@ -77,6 +81,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         public void UpdateDraftEventForUserWithDifferentEventIdThrowsException()
         {
+            // Arrange
             var examination = new Examination();
 
             var caseBreakdown = new CaseBreakDown();
@@ -105,13 +110,17 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 UserId = "userOne"
             };
             
+            // Act
             Action act = () => examination.AddEvent(updateDraft);
+
+            // Assert
             act.Should().Throw<Exception>();
         }
 
         [Fact]
         public void DraftEventSetToFinalRemovesUsersDrafts()
         {
+            // Arrange
             var examination = new Examination();
 
             var caseBreakdown = new CaseBreakDown();
@@ -142,6 +151,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             examination.CaseBreakdown = caseBreakdown;
 
+            // Act
             examination.AddEvent(newDraft);
             examination.AddEvent(newDraftTwo);
 
@@ -154,6 +164,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
             examination.AddEvent(updateDraft);
 
+            // Assert
             Assert.Single(examination.CaseBreakdown.OtherEvents.Drafts);
             Assert.Equal(newDraftTwo, examination.CaseBreakdown.OtherEvents.Drafts.First());
             Assert.Equal(updateDraft, examination.CaseBreakdown.OtherEvents.Latest);

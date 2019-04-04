@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models
@@ -19,6 +20,8 @@ namespace MedicalExaminer.Models
 
                     otherEventContainer.Add((OtherEvent)theEvent);
                     break;
+                default:
+                    throw new NotImplementedException();
            }
 
             examination = UpdateCaseStatus(examination);
