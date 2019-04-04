@@ -92,7 +92,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
             var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
 
-            Assert.Equal(2, dictionary.Keys.Count);
+            Assert.Equal(3, dictionary.Keys.Count);
         }
 
         [Fact]
@@ -139,6 +139,26 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             // Act
             var response = _controller.GetQapDiscussionOutcome();
+        }
+        
+        [Fact]
+        public void GeInformedAtDeath_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var response = _controller.GetInformedAtDeath();
+            // Assert
+            var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
+
+            Assert.Equal(3, dictionary.Keys.Count);
+        }
+
+        [Fact]
+        public void GetBereavedDiscussionOutcome_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var response = _controller.GetBereavedDiscussionOutcome();
+
             // Assert
             var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
             var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
