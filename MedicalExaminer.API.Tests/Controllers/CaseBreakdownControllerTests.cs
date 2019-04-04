@@ -222,7 +222,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var examination = new Mock<Examination>();
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -232,19 +232,19 @@ namespace MedicalExaminer.API.Tests.Controllers
                 IsFinal = true,
                 Text = "Hello Planet"
             };
-            otherEventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
+            eventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
                 .Returns(Task.FromResult("hi mark")).Verifiable();
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               otherEventCreationService.Object, examinationRetrievalQueryService.Object);
+               eventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
             var response = await sut.UpsertNewOtherEvent("a", validRequest);
 
-            otherEventCreationService.Verify(x => x.Handle(It.IsAny<CreateEventQuery>()), Times.Once);
+            eventCreationService.Verify(x => x.Handle(It.IsAny<CreateEventQuery>()), Times.Once);
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<PutOtherEventResponse>>().Subject;
@@ -258,13 +258,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var preScrutinyCreationService = new Mock<IAsyncQueryHandler<CreatePreScrutinyEventQuery, string>>();
             var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new PreScrutinyEventController(logger.Object, mapper.Object, preScrutinyCreationService.Object, examinationRetrievalQueryService.Object);
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
             var response = await sut.UpsertNewPreScrutinyEvent("a", null);
@@ -281,7 +280,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var preScrutinyCreationService = new Mock<IAsyncQueryHandler<CreatePreScrutinyEventQuery, string>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
             var invalidRequest = new PutPreScrutinyEventRequest
@@ -294,7 +293,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new PreScrutinyEventController(logger.Object, mapper.Object, preScrutinyCreationService.Object, examinationRetrievalQueryService.Object);
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, examinationRetrievalQueryService.Object);
 
             sut.ModelState.AddModelError("i", "broke it");
             // Act
@@ -312,7 +311,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var preScrutinyCreationService = new Mock<IAsyncQueryHandler<CreatePreScrutinyEventQuery, string>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -326,7 +325,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new PreScrutinyEventController(logger.Object, mapper.Object, preScrutinyCreationService.Object, examinationRetrievalQueryService.Object);
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
             var response = await sut.UpsertNewPreScrutinyEvent("a", validRequest);
@@ -344,7 +343,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var examination = new Mock<Examination>();
-            var preScrutinyCreationService = new Mock<IAsyncQueryHandler<CreatePreScrutinyEventQuery, string>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -354,18 +353,18 @@ namespace MedicalExaminer.API.Tests.Controllers
                 IsFinal = true,
                 MedicalExaminerThoughts = "Hello Planet"
             };
-            preScrutinyCreationService.Setup(service => service.Handle(It.IsAny<CreatePreScrutinyEventQuery>()))
+            eventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
                 .Returns(Task.FromResult("hi mark")).Verifiable();
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
 
-            var sut = new PreScrutinyEventController(logger.Object, mapper.Object, preScrutinyCreationService.Object, examinationRetrievalQueryService.Object);
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, examinationRetrievalQueryService.Object);
 
             // Act
             var response = await sut.UpsertNewPreScrutinyEvent("a", validRequest);
 
-            preScrutinyCreationService.Verify(x => x.Handle(It.IsAny<CreatePreScrutinyEventQuery>()), Times.Once);
+            eventCreationService.Verify(x => x.Handle(It.IsAny<CreateEventQuery>()), Times.Once);
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<PutPreScrutinyEventResponse>>().Subject;
