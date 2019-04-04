@@ -379,58 +379,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
 
-        [Fact]
-        public void Examination_To_GetExaminationResponse()
-        {
-            var examination = GenerateExamination();
-            examination.Representatives = Representatives;
-            var result = _mapper.Map<GetExaminationResponse>(examination);
-
-            result.AnyPersonalEffects.Should().Be(AnyPersonalEffects);
-            result.CoronerPriority.Should().Be(CoronerPriority);
-            result.ChildPriority.Should().Be(ChildPriority);
-            result.Completed.Should().Be(Completed);
-            result.CoronerStatus.Should().Be(CoronerStatus);
-            result.Country.Should().Be(Country);
-            result.County.Should().Be(County);
-            result.CulturalPriority.Should().Be(CulturalPriority);
-            result.DateOfBirth.Should().Be(DateOfBirth);
-            result.DateOfDeath.Should().Be(DateOfDeath);
-            result.FaithPriority.Should().Be(FaithPriority);
-            result.FuneralDirectors.Should().Be(FuneralDirectors);
-            result.GivenNames.Should().Be(GivenNames);
-            result.Gender.Should().Be(Gender);
-            result.GenderDetails.Should().Be(GenderDetails);
-            result.HospitalNumber_1.Should().Be(HospitalNumber_1);
-            result.HospitalNumber_2.Should().Be(HospitalNumber_2);
-            result.HospitalNumber_3.Should().Be(HospitalNumber_3);
-            result.HouseNameNumber.Should().Be(HouseNameNumber);
-            result.LastOccupation.Should().Be(LastOccupation);
-            result.MedicalExaminerOfficeResponsible.Should().Be(MedicalExaminerOfficeResponsible);
-            result.ModeOfDisposal.Should().Be(ModeOfDisposal);
-            result.NhsNumber.Should().Be(NhsNumber);
-            result.OutOfHours.Should().Be(OutOfHours);
-            result.OrganisationCareBeforeDeathLocationId.Should().Be(OrganisationCareBeforeDeathLocationId);
-            result.OtherPriority.Should().Be(OtherPriority);
-            result.Postcode.Should().Be(Postcode);
-            result.PersonalEffectDetails.Should().Be(PersonalEffectDetails);
-            result.PriorityDetails.Should().Be(PriorityDetails);
-            result.Street.Should().Be(Street);
-            result.Surname.Should().Be(Surname);
-            result.TimeOfDeath.Should().Be(TimeOfDeath);
-            result.Town.Should().Be(Town);
-
-            foreach (var representative in result.Representatives.Zip(Representatives, Tuple.Create))
-            {
-                representative.Item1.FullName.Should().Be(representative.Item2.FullName);
-                representative.Item1.Relationship.Should().Be(representative.Item2.Relationship);
-                representative.Item1.PhoneNumber.Should().Be(representative.Item2.PhoneNumber);
-                representative.Item1.PresentAtDeath.Should().Be(representative.Item2.PresentAtDeath);
-                representative.Item1.Informed.Should().Be(representative.Item2.Informed);
-                representative.Item1.AppointmentDate.Should().Be(representative.Item2.AppointmentDate);
-                representative.Item1.AppointmentTime.Should().Be(representative.Item2.AppointmentTime);
-            }
-        }
+        
 
         [Fact]
         public void PostNewCaseRequest_To_Examination()
