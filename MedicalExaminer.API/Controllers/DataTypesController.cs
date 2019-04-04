@@ -39,7 +39,7 @@ namespace MedicalExaminer.API.Controllers
         /// Returns all Overall Circumstances Of Death.
         /// </summary>
         /// <returns>Dictionary of Overall Circumstances Of Death.</returns>
-        [HttpGet("Overall_Circumstances_Of_Death")]
+        [HttpGet("overall_circumstances_of_death")]
         public ActionResult GetOverallCircumstancesOfDeath()
         {
             return Ok(GetDictionary(typeof(OverallCircumstancesOfDeath)));
@@ -49,7 +49,7 @@ namespace MedicalExaminer.API.Controllers
         /// Returns all Overall Outcome Of Pre-Scrutiny.
         /// </summary>
         /// <returns>Dictionary of Overall Outcome Of Pre-Scrutiny.</returns>
-        [HttpGet("Overall_Outcome_Of_Pre_Scrutiny")]
+        [HttpGet("overall_outcome_of_prescrutiny")]
         public ActionResult GetOverallOutcomeOfPreScrutiny()
         {
             return Ok(GetDictionary(typeof(OverallOutcomeOfPreScrutiny)));
@@ -59,7 +59,7 @@ namespace MedicalExaminer.API.Controllers
         /// Returns all Clinical Governance Review.
         /// </summary>
         /// <returns>Dictionary of Clinical Governance Review.</returns>
-        [HttpGet("Clinical_Governance_Review")]
+        [HttpGet("clinical_governance_review")]
         public ActionResult GetClinicalGovernanceReview()
         {
             return Ok(GetDictionary(typeof(ClinicalGovernanceReview)));
@@ -105,7 +105,27 @@ namespace MedicalExaminer.API.Controllers
         {
             return Ok(GetDictionary(typeof(PresentAtDeath)));
         }
-            
+
+        /// <summary>
+        /// Returns all options for the informed at death value for a bereaved .
+        /// </summary>
+        /// <returns>List of values for informed at death</returns>
+        [HttpGet("informed_at_death")]
+        public ActionResult GetInformedAtDeath()
+        {
+            return Ok(GetDictionary(typeof(InformedAtDeath)));
+        }
+
+        /// <summary>
+        /// Returns all options for the Bereaved Discussion Outcome value.
+        /// </summary>
+        /// <returns>List of values for Bereaved Discussion Outcome</returns>
+        [HttpGet("bereaved_discussion_outcome")]
+        public ActionResult GetBereavedDiscussionOutcome()
+        {
+            return Ok(GetDictionary(typeof(BereavedDiscussionOutcome)));
+        }
+
         /// <summary>
         /// Returns all the data types and the values for mode of disposal.
         /// </summary>
