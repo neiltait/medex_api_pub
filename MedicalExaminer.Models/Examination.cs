@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.Models.Enums;
-using Microsoft.Azure.Documents;
 using Newtonsoft.Json;
 using DataType = System.ComponentModel.DataAnnotations.DataType;
 
