@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using MedicalExaminer.API.Attributes;
-using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown

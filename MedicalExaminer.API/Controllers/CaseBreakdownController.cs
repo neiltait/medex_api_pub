@@ -35,9 +35,9 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpPut]
-        [Route("{caseId}/bereaved_discussion")]
+        [Route("{examinationId}/bereaved_discussion")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutBereavedDiscussionEventResponse>> UpsertNewBereavedDiscussionEvent(string caseId,
+        public async Task<ActionResult<PutBereavedDiscussionEventResponse>> UpsertNewBereavedDiscussionEvent(string examinationId,
             [FromBody]
             PutBereavedDiscussionEventRequest putNewBereavedDiscussionEventNoteRequest)
         {
@@ -52,7 +52,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var BereavedDiscussionEventNote = Mapper.Map<BereavedDiscussionEvent>(putNewBereavedDiscussionEventNoteRequest);
-            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, BereavedDiscussionEventNote));
+            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, BereavedDiscussionEventNote));
 
             if (result == null)
             {
@@ -69,9 +69,9 @@ namespace MedicalExaminer.API.Controllers
 
 
         [HttpPut]
-        [Route("{caseId}/prescrutiny")]
+        [Route("{examinationId}/prescrutiny")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutPreScrutinyEventResponse>> UpsertNewPreScrutinyEvent(string caseId,
+        public async Task<ActionResult<PutPreScrutinyEventResponse>> UpsertNewPreScrutinyEvent(string examinationId,
             [FromBody]
             PutPreScrutinyEventRequest putNewPreScrutinyEventNoteRequest)
         {
@@ -86,7 +86,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var PreScrutinyEventNote = Mapper.Map<PreScrutinyEvent>(putNewPreScrutinyEventNoteRequest);
-            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, PreScrutinyEventNote));
+            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, PreScrutinyEventNote));
 
             if (result == null)
             {
@@ -103,9 +103,9 @@ namespace MedicalExaminer.API.Controllers
 
 
         [HttpPut]
-        [Route("{caseId}/other")]
+        [Route("{examinationId}/other")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutOtherEventResponse>> UpsertNewOtherEvent(string caseId,
+        public async Task<ActionResult<PutOtherEventResponse>> UpsertNewOtherEvent(string examinationId,
             [FromBody]
             PutOtherEventRequest putNewOtherEventNoteRequest)
         {
@@ -120,7 +120,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var otherEventNote = Mapper.Map<OtherEvent>(putNewOtherEventNoteRequest);
-            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, otherEventNote));
+            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, otherEventNote));
 
             if(result == null)
             {
@@ -165,6 +165,39 @@ namespace MedicalExaminer.API.Controllers
             {
                 CaseBreakdown = result
             });
+        }
+
+        [HttpPut]
+        [Route("{caseId}/QapDiscussionevent")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutQapDiscussionEventResponse>> UpsertNewQapDiscussionEvent(string caseId,
+            [FromBody]
+            PutQapDiscussionEventRequest putNewQapDiscussionEventNoteRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutQapDiscussionEventResponse());
+            }
+
+            if (putNewQapDiscussionEventNoteRequest == null)
+            {
+                return BadRequest(new PutQapDiscussionEventResponse());
+            }
+
+            var qapDiscussionEventNote = Mapper.Map<QapDiscussionEvent>(putNewQapDiscussionEventNoteRequest);
+            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, qapDiscussionEventNote));
+
+            if (result == null)
+            {
+                return NotFound(new PutQapDiscussionEventResponse());
+            }
+
+            var res = new PutQapDiscussionEventResponse
+            {
+                EventId = result
+            };
+
+            return Ok(res);
         }
     }
 }

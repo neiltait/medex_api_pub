@@ -299,7 +299,7 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,ExaminationsRetrievalService>();
-            services.AddScoped<IAsyncQueryHandler<CreateEventQuery, string>, CreateOtherEventService>();
+            services.AddScoped<IAsyncQueryHandler<CreateEventQuery, string>, CreateEventService>();
             // Medical team services
             services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
             

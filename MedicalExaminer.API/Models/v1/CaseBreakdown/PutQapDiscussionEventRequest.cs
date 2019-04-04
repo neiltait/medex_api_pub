@@ -15,21 +15,15 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// </summary>
         public string UserId { get; set; }
 
-        //***************** uncomment after the generic event classes approved *********************
         ///// <summary>
-        ///// Dictionary for the status (Draft or Final).
+        ///// IsFinal true for final, false for draft
         ///// </summary>
-        //public EventStatus EventStatus { get; set; }
-
-        ///// <summary>
-        ///// list of ammendments for this item
-        ///// </summary>
-        //public IEnumerable<IEvent> Amendments { get; set; }
+        public bool IsFinal { get; set; }
 
         ///// <summary>
         ///// the type of event this is
         ///// </summary>
-        //public EventType EventType => EventType.BereavedDiscussion;
+        public EventType EventType => EventType.BereavedDiscussion;
 
         /// <summary>
         /// Participant's roll.
