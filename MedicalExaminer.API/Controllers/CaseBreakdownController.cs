@@ -101,6 +101,38 @@ namespace MedicalExaminer.API.Controllers
             return Ok(res);
         }
 
+        [HttpPut]
+        [Route("{examinationId}/admission")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutAdmissionEventResponse>> UpsertNewAdmissionEvent(string examinationId,
+            [FromBody]
+            PutAdmissionEventRequest putNewAdmissionEventNoteRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutAdmissionEventResponse());
+            }
+
+            if (putNewAdmissionEventNoteRequest == null)
+            {
+                return BadRequest(new PutAdmissionEventResponse());
+            }
+
+            var admissionEventNote = Mapper.Map<AdmissionEvent>(putNewAdmissionEventNoteRequest);
+            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, admissionEventNote));
+
+            if (result == null)
+            {
+                return NotFound(new PutAdmissionEventResponse());
+            }
+
+            var res = new PutAdmissionEventResponse
+            {
+                EventId = result
+            };
+
+            return Ok(res);
+        }
 
         [HttpPut]
         [Route("{examinationId}/other")]
@@ -122,7 +154,7 @@ namespace MedicalExaminer.API.Controllers
             var otherEventNote = Mapper.Map<OtherEvent>(putNewOtherEventNoteRequest);
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, otherEventNote));
 
-            if(result == null)
+            if (result == null)
             {
                 return NotFound(new PutOtherEventResponse());
             }
