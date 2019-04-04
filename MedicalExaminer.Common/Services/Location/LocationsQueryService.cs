@@ -46,7 +46,11 @@ namespace MedicalExaminer.Common.Services.Location
         {
             Expression<Func<Models.Location, bool>> predicate;
 
-            if (param.Name == null)
+            if (param.Name == null && param.ParentId == null)
+            {
+                predicate = location => true;
+            }
+            else if (param.Name == null)
             {
                 predicate = location => location.ParentId == param.ParentId;
             }

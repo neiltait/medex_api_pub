@@ -1,4 +1,4 @@
-﻿using System;
+
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
@@ -26,7 +26,7 @@ namespace MedicalExaminer.Models
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "email")]
         public string Email { get; set; }
-
+        
         [Required]
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "okta_token")]
@@ -36,5 +36,12 @@ namespace MedicalExaminer.Models
         [Display(Name = "okta_token_expiry")]
         [DataType(DataType.DateTime)]
         public DateTimeOffset OktaTokenExpiry { get; set; }
+
+        /// <summary>
+        /// Permissions.
+        /// </summary>
+        [JsonProperty(PropertyName = "permissions")]
+        public IEnumerable<MEUserPermission> Permissions { get; set; }
+
     }
 }

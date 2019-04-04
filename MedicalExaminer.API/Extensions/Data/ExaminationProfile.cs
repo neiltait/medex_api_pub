@@ -1,8 +1,10 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
+using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.API.Models.v1.Examinations;
-using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Models;
 using System;
+using MedicalExaminer.API.Models.v1.PatientDetails;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -16,8 +18,6 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public ExaminationProfile()
         {
-            CreateMap<Examination, GetExaminationResponse>()
-                .ForMember(getExaminationResponse => getExaminationResponse.Errors, opt => opt.Ignore());
             CreateMap<Examination, ExaminationItem>();
             CreateMap<PostExaminationRequest, Examination>()
                 .ForMember(examination => examination.UrgencyScore, opt => opt.Ignore())
@@ -63,40 +63,67 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.CreatedAt, opt => opt.Ignore())
                 .ForMember(examination => examination.DeletedAt, opt => opt.Ignore());
 
+            //CreateMap<Examination, GetPreScrutinyEventResponse>()
+            //    .ForMember(dest => dest.PreScrutinyEvents, opt => opt.MapFrom(src => src.Events.PreScrutinyEvents));
+            CreateMap<Examination, GetOtherEventResponse>()
+                .ForMember(dest => dest.Events, opt => opt.MapFrom(src => src.CaseBreakdown.OtherEvents));
+            CreateMap<Examination, GetPatientDetailsResponse>()
+                .ForMember(getPatientDetailsResponse => getPatientDetailsResponse.Errors, opt => opt.Ignore());
+
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(patientCard => patientCard.AppointmentDate,
                     examination => examination.MapFrom(new AppointmentDateResolver(new AppointmentFinder())))
                 .ForMember(patientCard => patientCard.AppointmentTime,
                     examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())));
+
+            CreateMap<Representative, RepresentativeItem>();
         }
     }
 
-    
+    /// <summary>
+    /// Appointment Date Resolver.
+    /// </summary>
     public class AppointmentDateResolver : IValueResolver<Examination, PatientCardItem, DateTime?>
     {
-        private AppointmentFinder _appointmentFinder;
+        private readonly AppointmentFinder _appointmentFinder;
+
+        /// <summary>
+        /// Initialise a new instance of <see cref="AppointmentDateResolver"/>.
+        /// </summary>
+        /// <param name="appointmentFinder">Appointment Finder.</param>
         public AppointmentDateResolver(AppointmentFinder appointmentFinder)
         {
             _appointmentFinder = appointmentFinder;
         }
+
+        /// <inheritdoc/>
         public DateTime? Resolve(Examination source, PatientCardItem destination, DateTime? destMember, ResolutionContext context)
         {
             return _appointmentFinder.FindAppointment(source.Representatives)?.AppointmentDate;
         }
     }
 
+    /// <summary>
+    /// Appointment Time Resolver.
+    /// </summary>
     public class AppointmentTimeResolver : IValueResolver<Examination, PatientCardItem, TimeSpan?>
     {
         private AppointmentFinder _appointmentFinder;
 
+        /// <summary>
+        /// Initialise a new instance of <see cref="AppointmentTimeResolver"/>.
+        /// </summary>
+        /// <param name="appointmentFinder">Appointment Filder.</param>
         public AppointmentTimeResolver(AppointmentFinder appointmentFinder)
         {
             _appointmentFinder = appointmentFinder;
         }
 
+        /// <inheritdoc/>
         public TimeSpan? Resolve(Examination source, PatientCardItem destination, TimeSpan? destMember, ResolutionContext context)
         {
             return _appointmentFinder.FindAppointment(source.Representatives)?.AppointmentTime;
         }
-    }
+}
+
 }
