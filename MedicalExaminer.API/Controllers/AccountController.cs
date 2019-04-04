@@ -88,25 +88,6 @@ namespace MedicalExaminer.API.Controllers
             // Create the user if it doesn't already exist
             if (meUser == null)
             {
-                //// Get everything that Okta knows about this user
-                //var oktaUser = await _oktaClient.Users.GetUserAsync(emailAddress);
-
-                //var expiryTime = DateTime.Now.AddMinutes(_oktaTokenExpiryMinutes);
-
-                //var createdMeUser = await CreateUser(new MeUser
-                //{
-                //    FirstName = oktaUser.Profile.FirstName,
-                //    LastName = oktaUser.Profile.LastName,
-                //    Email = oktaUser.Profile.Email,
-                //    // TODO: Default to null?
-                //    LastModifiedBy = "whodunit",
-                //    ModifiedAt = DateTimeOffset.Now,
-                //    CreatedAt = DateTimeOffset.Now,
-                //    OktaToken = oktaToken,
-                //    OktaTokenExpiry = expiryTime
-                //});
-                //meUser = createdMeUser;
-
                 meUser = await CreateNewUser(emailAddress, oktaToken);
             }
 
@@ -142,6 +123,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="emailAddress">email address of user</param>
         /// <param name="oktaToken">Okta token</param>
         /// <returns>MeUser</returns>
+        /// <remarks>virtual so that it can be unit tested via proxy class</remarks>
         protected virtual async  Task<MeUser> CreateNewUser(string emailAddress, string oktaToken)
         {
             // Get everything that Okta knows about this user
