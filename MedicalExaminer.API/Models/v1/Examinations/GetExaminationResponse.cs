@@ -19,14 +19,29 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// </summary>
         public int UrgencyScore { get; set; }
 
+        /// <summary>
+        /// Any Implants.
+        /// </summary>
         public bool AnyImplants { get; set; }
 
+        /// <summary>
+        /// Implant Details.
+        /// </summary>
         public string ImplantDetails { get; set; }
 
+        /// <summary>
+        /// Last Admission.
+        /// </summary>
         public DateTime LastAdmission { get; set; }
 
+        /// <summary>
+        /// Case Created.
+        /// </summary>
         public DateTime CaseCreated { get; set; }
 
+        /// <summary>
+        /// Place Death Occured.
+        /// </summary>
         public string PlaceDeathOccured { get; set; }
 
         /// <summary>
@@ -252,8 +267,11 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         ///     Medical team associated with the case
         /// </summary>
-        public IMedicalTeam MedicalTeam { get; set; }
+        public MedicalExaminer.Models.IMedicalTeam MedicalTeam { get; set; }
 
+        /// <summary>
+        ///     Case breakdown container
+        /// </summary>
         public CaseBreakDownItem CaseBreakdown { get; set; }
     }
 }

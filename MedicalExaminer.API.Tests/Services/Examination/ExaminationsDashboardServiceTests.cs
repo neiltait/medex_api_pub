@@ -32,7 +32,6 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         public async virtual Task UnassignedCasesReturnsCorrectCount()
         {
             //Arrange
-            var id = "a";
             Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.Unassigned;
             var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations());
             var clientFactory = CosmosMocker.CreateClientFactory(client);

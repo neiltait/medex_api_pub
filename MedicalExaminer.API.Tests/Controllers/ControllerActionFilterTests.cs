@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Filters;
-using MedicalExaminer.API.Tests.Persistence;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
