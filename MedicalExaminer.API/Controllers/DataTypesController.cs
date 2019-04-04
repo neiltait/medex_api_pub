@@ -36,6 +36,36 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Returns all Overall Circumstances Of Death.
+        /// </summary>
+        /// <returns>Dictionary of Overall Circumstances Of Death.</returns>
+        [HttpGet("Overall_Circumstances_Of_Death")]
+        public ActionResult GetOverallCircumstancesOfDeath()
+        {
+            return Ok(GetDictionary(typeof(OverallCircumstancesOfDeath)));
+        }
+
+        /// <summary>
+        /// Returns all Overall Outcome Of Pre-Scrutiny.
+        /// </summary>
+        /// <returns>Dictionary of Overall Outcome Of Pre-Scrutiny.</returns>
+        [HttpGet("Overall_Outcome_Of_Pre_Scrutiny")]
+        public ActionResult GetOverallOutcomeOfPreScrutiny()
+        {
+            return Ok(GetDictionary(typeof(OverallOutcomeOfPreScrutiny)));
+        }
+
+        /// <summary>
+        /// Returns all Clinical Governance Review.
+        /// </summary>
+        /// <returns>Dictionary of Clinical Governance Review.</returns>
+        [HttpGet("Clinical_Governance_Review")]
+        public ActionResult GetClinicalGovernanceReview()
+        {
+            return Ok(GetDictionary(typeof(ClinicalGovernanceReview)));
+        }
+
+        /// <summary>
         /// Returns all Coroner Statuses
         /// </summary>
         /// <returns>Dictionary of Coroner Statuses</returns>

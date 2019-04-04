@@ -25,7 +25,7 @@ namespace MedicalExaminer.Models
         public string Text { get; set; }
 
         /// <summary>
-        /// Enum for the status (Draft or Final).
+        /// IsFinal, final = true, draft = false
         /// </summary>
         [JsonProperty(PropertyName = "is_final")]
         public bool IsFinal { get; set; }

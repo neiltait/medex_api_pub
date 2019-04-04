@@ -52,6 +52,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Act
             var results = await sut.Handle(new ExaminationRetrievalQuery(examinationId, null));
+            
 
             //Assert
             results.Should().BeNull();

@@ -20,19 +20,53 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class CaseBreakdownController : BaseController
     {
-        private IAsyncQueryHandler<CreateEventQuery, string> _otherEventCreationService;
+        private IAsyncQueryHandler<CreateEventQuery, string> _eventCreationService;
         private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
 
         public CaseBreakdownController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<CreateEventQuery, string> otherEventCreationService,
+            IAsyncQueryHandler<CreateEventQuery, string> eventCreationService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService)
             : base(logger, mapper)
         {
-            _otherEventCreationService = otherEventCreationService;
+            _eventCreationService = eventCreationService;
             _examinationRetrievalService = examinationRetrievalService;
         }
+
+        [HttpPut]
+        [Route("{caseId}/prescrutiny")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutPreScrutinyEventResponse>> UpsertNewPreScrutinyEvent(string caseId,
+            [FromBody]
+            PutPreScrutinyEventRequest putNewPreScrutinyEventNoteRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutPreScrutinyEventResponse());
+            }
+
+            if (putNewPreScrutinyEventNoteRequest == null)
+            {
+                return BadRequest(new PutPreScrutinyEventResponse());
+            }
+
+            var PreScrutinyEventNote = Mapper.Map<PreScrutinyEvent>(putNewPreScrutinyEventNoteRequest);
+            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, PreScrutinyEventNote));
+
+            if (result == null)
+            {
+                return NotFound(new PutPreScrutinyEventResponse());
+            }
+
+            var res = new PutPreScrutinyEventResponse
+            {
+                EventId = result
+            };
+
+            return Ok(res);
+        }
+
 
         [HttpPut]
         [Route("{caseId}/other")]
@@ -52,7 +86,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var otherEventNote = Mapper.Map<OtherEvent>(putNewOtherEventNoteRequest);
-            var result = await _otherEventCreationService.Handle(new CreateEventQuery(caseId, otherEventNote));
+            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, otherEventNote));
 
             if(result == null)
             {

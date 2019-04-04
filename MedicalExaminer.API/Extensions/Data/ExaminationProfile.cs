@@ -62,6 +62,9 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.ModifiedAt, opt => opt.Ignore())
                 .ForMember(examination => examination.CreatedAt, opt => opt.Ignore())
                 .ForMember(examination => examination.DeletedAt, opt => opt.Ignore());
+
+            //CreateMap<Examination, GetPreScrutinyEventResponse>()
+            //    .ForMember(dest => dest.PreScrutinyEvents, opt => opt.MapFrom(src => src.Events.PreScrutinyEvents));
             CreateMap<Examination, GetOtherEventResponse>()
                 .ForMember(dest => dest.Events, opt => opt.MapFrom(src => src.CaseBreakdown.OtherEvents));
             CreateMap<Examination, GetPatientDetailsResponse>()
