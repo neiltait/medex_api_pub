@@ -28,7 +28,7 @@ namespace MedicalExaminer.Models
         /// the type of event this is
         /// </summary>
         [JsonProperty(PropertyName = "event_type")]
-        public EventType EventType => EventType.BereavedDiscussion;
+        public EventType EventType => EventType.QapDiscussion;
 
         /// <summary>
         /// Participant's roll.

@@ -5,5 +5,7 @@
         Other,
         PreScrutiny,
         BereavedDiscussion,
+        MeoSummary,
+        QapDiscussion
     }
 }

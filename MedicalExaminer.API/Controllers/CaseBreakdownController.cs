@@ -168,9 +168,9 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpPut]
-        [Route("{caseId}/qap_discussion")]
+        [Route("{examinationId}/qap_discussion")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutQapDiscussionEventResponse>> UpsertNewQapDiscussionEvent(string caseId,
+        public async Task<ActionResult<PutQapDiscussionEventResponse>> UpsertNewQapDiscussionEvent(string examinationId,
             [FromBody]
             PutQapDiscussionEventRequest putNewQapDiscussionEventNoteRequest)
         {
@@ -185,7 +185,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var qapDiscussionEventNote = Mapper.Map<QapDiscussionEvent>(putNewQapDiscussionEventNoteRequest);
-            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, qapDiscussionEventNote));
+            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, qapDiscussionEventNote));
 
             if (result == null)
             {
@@ -193,6 +193,39 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var res = new PutQapDiscussionEventResponse
+            {
+                EventId = result
+            };
+
+            return Ok(res);
+        }
+
+        [HttpPut]
+        [Route("{examinationId}/meo_summary")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutMeoSummaryEventResponse>> UpsertNewMeoSummaryEvent(string examinationId,
+            [FromBody]
+            PutMeoSummaryEventRequest putNewMeoSummaryEventNoteRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutMeoSummaryEventResponse());
+            }
+
+            if (putNewMeoSummaryEventNoteRequest == null)
+            {
+                return BadRequest(new PutMeoSummaryEventResponse());
+            }
+
+            var meoSummaryEvent = Mapper.Map<MeoSummaryEvent>(putNewMeoSummaryEventNoteRequest);
+            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, meoSummaryEvent));
+
+            if (result == null)
+            {
+                return NotFound(new PutMeoSummaryEventResponse());
+            }
+
+            var res = new PutMeoSummaryEventResponse
             {
                 EventId = result
             };
