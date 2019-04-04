@@ -18,24 +18,16 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// </summary>
         public string UserId { get; set; }
 
-        //***************** uncomment after the generic event classes approved *********************
-        ///// <summary>
-        ///// Dictionary for the status (Draft or Final).
-        ///// </summary>
-        //[JsonProperty(PropertyName = "event_status")]
-        //public EventStatus EventStatus { get; set; }
+        /// <summary>
+        /// Dictionary for the status (Draft or Final).
+        /// </summary>
+        public bool IsFinal { get; set; }
 
-        ///// <summary>
-        ///// list of ammendments for this item
-        ///// </summary>
-        //[JsonProperty(PropertyName = "amendments")]
-        //public IEnumerable<IEvent> Amendments { get; set; }
-
-        ///// <summary>
-        ///// the type of event this is
-        ///// </summary>
-        //[JsonProperty(PropertyName = "event_type")]
-        //public EventType EventType => EventType.BereavedDiscussion;
+        
+        /// <summary>
+        /// the type of event this is
+        /// </summary>
+        public EventType EventType => EventType.BereavedDiscussion;
 
         /// <summary>
         /// Participant's full name.

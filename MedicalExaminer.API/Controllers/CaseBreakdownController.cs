@@ -35,6 +35,40 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpPut]
+        [Route("{caseId}/bereaved_discussion")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutBereavedDiscussionEventResponse>> UpsertNewBereavedDiscussionEvent(string caseId,
+            [FromBody]
+            PutBereavedDiscussionEventRequest putNewBereavedDiscussionEventNoteRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutBereavedDiscussionEventResponse());
+            }
+
+            if (putNewBereavedDiscussionEventNoteRequest == null)
+            {
+                return BadRequest(new PutBereavedDiscussionEventResponse());
+            }
+
+            var BereavedDiscussionEventNote = Mapper.Map<BereavedDiscussionEvent>(putNewBereavedDiscussionEventNoteRequest);
+            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, BereavedDiscussionEventNote));
+
+            if (result == null)
+            {
+                return NotFound(new PutBereavedDiscussionEventResponse());
+            }
+
+            var res = new PutBereavedDiscussionEventResponse
+            {
+                EventId = result
+            };
+
+            return Ok(res);
+        }
+
+
+        [HttpPut]
         [Route("{caseId}/prescrutiny")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutPreScrutinyEventResponse>> UpsertNewPreScrutinyEvent(string caseId,

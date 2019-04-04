@@ -92,7 +92,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
             var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
 
-            Assert.Equal(2, dictionary.Keys.Count);
+            Assert.Equal(3, dictionary.Keys.Count);
         }
 
         [Fact]
