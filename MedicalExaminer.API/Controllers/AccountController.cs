@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -10,7 +9,6 @@ using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
@@ -25,23 +23,14 @@ namespace MedicalExaminer.API.Controllers
     [Route("/v{api-version:apiVersion}/auth")]
     [ApiController]
     [Authorize]
-    public class AccountController : BaseController
+    public class AccountController : AuthenticatedBaseController
     {
         private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> _userCreationService;
-        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _usersRetrievalByEmailService;
 
         /// <summary>
         ///     Okta Client.
         /// </summary>
         private readonly OktaClient _oktaClient;
-
-
-        /// <summary>
-        ///     The User Persistence Layer.
-        /// </summary>
-        private readonly IUserPersistence _userPersistence;
-
-        
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="AccountController" /> class.
@@ -51,20 +40,18 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="oktaClient">Okta client.</param>
         /// <param name="userPersistence">User persistence.</param>
         /// <param name="userCreationService">User Creation Service.</param>
-        /// <param name="userRetrievalByEmailService">User Retrieval Service by email address.</param>
+        /// <param name="usersRetrievalByEmailService">User Retrieval By Email Service.</param>
         public AccountController(
             IMELogger logger,
             IMapper mapper,
             OktaClient oktaClient,
             IUserPersistence userPersistence,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService)
-            : base(logger, mapper)
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
+            : base(logger, mapper, usersRetrievalByEmailService)
         {
             _oktaClient = oktaClient;
-            _userPersistence = userPersistence;
             _userCreationService = userCreationService;
-            _usersRetrievalByEmailService = userRetrievalByEmailService;
         }
 
         /// <summary>
@@ -81,7 +68,7 @@ namespace MedicalExaminer.API.Controllers
             var oktaUser = await _oktaClient.Users.GetUserAsync(emailAddress);
 
             // Try and look them up in our database
-            var meUser = await GetUser(emailAddress);
+            var meUser = await CurrentUser();
 
             // Create the user if it doesn't already exist
             if (meUser == null)
@@ -91,6 +78,7 @@ namespace MedicalExaminer.API.Controllers
                     FirstName = oktaUser.Profile.FirstName,
                     LastName = oktaUser.Profile.LastName,
                     Email = oktaUser.Profile.Email,
+                    // TODO: Default to null?
                     LastModifiedBy = "whodunit",
                     ModifiedAt = DateTimeOffset.Now,
                     CreatedAt = DateTimeOffset.Now,
@@ -110,21 +98,6 @@ namespace MedicalExaminer.API.Controllers
                 FirstName = meUser.FirstName,
                 LastName = meUser.LastName,
             };
-        }
-
-        // TODO: Candidates for servicing / facading this functionality now
-        private async Task<MeUser> GetUser(string emailAddress)
-        {
-            try
-            {
-                var user = await _usersRetrievalByEmailService.Handle(new UserRetrievalByEmailQuery(emailAddress));
-
-                return user;
-            }
-            catch (ArgumentException)
-            {
-                return null;
-            }
         }
 
         private async Task<MeUser> CreateUser(MeUser toCreate)

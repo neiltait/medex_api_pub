@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using AutoMapper;
+using FluentAssertions;
 using MedicalExaminer.API.Attributes;
-using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
@@ -16,143 +15,136 @@ namespace MedicalExaminer.API.Tests.Attributes
 {
     public class ValidMedicalExaminerOfficerTests
     {
-        [Fact]
-        public async void MedicalExaminerOfficerFound_ReturnsSuccess()
+        private readonly Mock<IUserPersistence> _userPersistence;
+
+        private readonly ValidationContext _context;
+
+        public ValidMedicalExaminerOfficerTests()
         {
-            // Arrange
-            var userId = "1";
-            var userItem = new UserItem();
-            userItem.UserId = userId;
-            var userFound = new MeUser();
-            userFound.UserId = userId;
-            var expectedResult = ValidationResult.Success;
-            var userPersistence = new Mock<IUserPersistence>();
-            userPersistence.Setup(persistence =>
-                persistence.GetUserAsync(userId)).Returns(Task.FromResult(userFound));
-            var mapper = new Mock<IMapper>();
-            mapper.Setup(x => x.Map<MeUser>(It.IsAny<UserItem>()))
-                .Returns(userFound);
+            _userPersistence = new Mock<IUserPersistence>();
 
             var serviceProvider = new Mock<IServiceProvider>();
 
-            serviceProvider.Setup(context => context.GetService(typeof(IUserPersistence)))
-                .Returns(userPersistence.Object);
-            serviceProvider.Setup(context => context.GetService(typeof(IMapper)))
-                .Returns(mapper.Object);
+            serviceProvider
+                .Setup(context => context.GetService(typeof(IUserPersistence)))
+                .Returns(_userPersistence.Object);
+
+            _context = new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>());
+        }
+
+        [Fact]
+        public void GetValidationResult_ShouldThrowNullReferenceException_WhenPersistanceNotSetupOnContext()
+        {
+            // Arrange
+            var expectedUserId = "expectedUserId";
+            var serviceProvider = new Mock<IServiceProvider>();
+            var context = new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>());
+
+            var sut = new ValidMedicalExaminer();
+
+            // Act
+            Action act = () => sut.GetValidationResult(expectedUserId, context);
+
+            // Assert
+            act.Should().Throw<NullReferenceException>();
+        }
+
+        // TODO: Re-enable once we have permissions and roles integrated again
+        //[Fact]
+        //public void MedicalExaminerOfficerFound_ReturnsSuccess()
+        //{
+        //    // Arrange
+        //    var userId = "1";
+        //    var userItem = new UserItem();
+        //    userItem.UserId = userId;
+        //    var userFound = new MeUser();
+        //    userFound.UserId = userId;
+        //    var expectedResult = ValidationResult.Success;
+
+        //    _userPersistence
+        //        .Setup(persistence => persistence.GetUserAsync(userId))
+        //        .Returns(Task.FromResult(userFound));
+
+        //    var sut = new ValidMedicalExaminerOfficer();
+
+        //    // Act
+        //    var result = sut.GetValidationResult(userId, _context);
+
+        //    // Assert
+        //    Assert.Equal(expectedResult, result);
+        //}
+
+        // TODO: Re-enable once we have permissions and roles integrated again
+        //[Fact]
+        //public void MedicalExaminerOfficerNotFound_ReturnsFail()
+        //{
+        //    // Arrange
+        //    var userId = "1";
+        //    var expectedResult = new ValidationResult("The Medical Examiner Officer has not been found");
+
+        //    _userPersistence.Setup(persistence =>
+        //        persistence.GetUserAsync(userId)).Throws(new ArgumentException());
+
+        //    var sut = new ValidMedicalExaminerOfficer();
+
+        //    // Act
+        //    var result = sut.GetValidationResult(userId, _context);
+
+        //    // Assert
+        //    Assert.NotNull(result);
+        //    if (result != null)
+        //    {
+        //        Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
+        //    }
+        //}
+
+        [Fact]
+        public void MedicalExaminerOfficerUserItemIsNotString_ReturnsFail()
+        {
+            // Arrange
+            var expectedResult =
+                new ValidationResult("Item not recognised as of type useritem for Medical Examiner Officer");
 
             var sut = new ValidMedicalExaminerOfficer();
 
             // Act
-            var result = sut.GetValidationResult(userItem,
-                new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>()));
+            var result = sut.GetValidationResult(new object(), _context);
 
             // Assert
-            Assert.Equal(expectedResult, result);
+            Assert.NotNull(result);
+            if (result != null)
+            {
+                Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
+            }
         }
-// todo : fix query for user roles 
-//        [Fact]
-//        public async void MedicalExaminerOfficerNotFound_ReturnsFail()
-//        {
-//            // Arrange
-//            var userId = "1";
-//            var userItem = new UserItem();
-//            userItem.UserId = userId;
-//            var userFound = new MeUser();
-//            userFound.UserId = userId;
-//            var expectedResult = new ValidationResult("The medical examiner officer has not been found");
-//            var userPersistence = new Mock<IUserPersistence>();
-//
-//            userPersistence.Setup(persistence =>
-//                persistence.GetUserAsync(userId)).Throws(new ArgumentException());
-//
-//            var mapper = new Mock<IMapper>();
-//            mapper.Setup(x => x.Map<MeUser>(It.IsAny<UserItem>()))
-//                .Returns(userFound);
-//
-//            var serviceProvider = new Mock<IServiceProvider>();
-//
-//            serviceProvider.Setup(context => context.GetService(typeof(IUserPersistence)))
-//                .Returns(userPersistence.Object);
-//            
-//            serviceProvider.Setup(context => context.GetService(typeof(IMapper)))
-//                .Returns(mapper.Object);
-//
-//            var sut = new ValidMedicalExaminerOfficer();
-//
-//            // Act
-//            var result = sut.GetValidationResult(userItem,
-//                new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>()));
-//
-//            // Assert
-//            Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
-//        }
-//
-//        [Fact]
-//        public async void MedicalExaminerOfficerUserItemIsNull_ReturnsFail()
-//        {
-//            // Arrange
-//            var userId = "1";
-//            UserItem userItem = null; //null
-//            var userFound = new MeUser();
-//            userFound.UserId = userId;
-//            var expectedResult =
-//                new ValidationResult("Item not recognised as of type useritem for medical examiner officer");
-//            var userPersistence = new Mock<IUserPersistence>();
-//            userPersistence.Setup(persistence =>
-//                persistence.GetUserAsync(userId)).Returns(Task.FromResult(userFound));
-//            var mapper = new Mock<IMapper>();
-//            mapper.Setup(x => x.Map<MeUser>(It.IsAny<UserItem>()))
-//                .Returns(userFound);
-//
-//            var serviceProvider = new Mock<IServiceProvider>();
-//
-//            serviceProvider.Setup(context => context.GetService(typeof(IUserPersistence)))
-//                .Returns(userPersistence.Object);
-//            serviceProvider.Setup(context => context.GetService(typeof(IMapper)))
-//                .Returns(mapper.Object);
-//
-//            var sut = new ValidMedicalExaminerOfficer();
-//
-//            // Act
-//            var result = sut.GetValidationResult(userItem,
-//                new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>()));
-//
-//            // Assert
-//            Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
-//        }
-//
-//        [Fact]
-//        public async void MedicalExaminerOfficerWrongUserType_ReturnsFail()
-//        {
-//            // Arrange
-//            var userId = "1";
-//            var userItem = new UserItem();
-//            userItem.UserId = userId;
-//            var userFound = new MeUser();
-//            userFound.UserId = userId;
-//            var expectedResult = new ValidationResult("The user is not a medical examiner officer");
-//            var userPersistence = new Mock<IUserPersistence>();
-//            userPersistence.Setup(persistence =>
-//                persistence.GetUserAsync(userId)).Returns(Task.FromResult(userFound));
-//            var mapper = new Mock<IMapper>();
-//            mapper.Setup(x => x.Map<MeUser>(It.IsAny<UserItem>()))
-//                .Returns(userFound);
-//
-//            var serviceProvider = new Mock<IServiceProvider>();
-//
-//            serviceProvider.Setup(context => context.GetService(typeof(IUserPersistence)))
-//                .Returns(userPersistence.Object);
-//            serviceProvider.Setup(context => context.GetService(typeof(IMapper)))
-//                .Returns(mapper.Object);
-//
-//            var sut = new ValidMedicalExaminerOfficer();
-//
-//            // Act
-//            var result = sut.GetValidationResult(userItem,
-//                new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>()));
-//
-//            // Assert
-//            Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
-//        }
+
+        // TODO: Re-enable once we have permissions and roles integrated again
+        //[Fact]
+        //public void MedicalExaminerOfficerWrongUserType_ReturnsFail()
+        //{
+        //    // Arrange
+        //    var userId = "1";
+        //    var userFound = new MeUser
+        //    {
+        //        UserId = userId,
+        //        UserRole = UserRoles.ServiceAdministrator
+        //    };
+        //    var expectedResult = new ValidationResult("The user is not a Medical Examiner Officer");
+
+        //    _userPersistence.Setup(persistence =>
+        //        persistence.GetUserAsync(userId)).Returns(Task.FromResult(userFound));
+
+        //    var sut = new ValidMedicalExaminerOfficer();
+
+        //    // Act
+        //    var result = sut.GetValidationResult(userId, _context);
+
+        //    // Assert
+        //    Assert.NotNull(result);
+        //    if (result != null)
+        //    {
+        //        Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
+        //    }
+        //}
     }
 }

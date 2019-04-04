@@ -7,10 +7,12 @@ using MedicalExaminer.Models;
 namespace MedicalExaminer.API.Attributes
 {
     /// <summary>
-    /// ensures that the value for supplied for the user id is valid
+    /// Valid User Id.
+    /// Ensures that the value for supplied for the user id is valid
     /// </summary>
     public class ValidUserId : ValidationAttribute
     {
+        /// <inheritdoc/>
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
             var userService = (UserRetrievalByIdService)context.GetService(typeof(IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>));

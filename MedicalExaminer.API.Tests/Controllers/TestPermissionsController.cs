@@ -7,6 +7,8 @@ using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -19,26 +21,26 @@ namespace MedicalExaminer.API.Tests.Controllers
     /// </summary>
     public class TestPermissionsController : ControllerTestsBase<PermissionsController>
     {
+        private readonly Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>> _userRetrievalByIdService;
+        private readonly Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>> _userUpdateService;
+        private readonly Mock<IPermissionPersistence> _permissionPersistence;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="TestPermissionsController" /> class.
         /// </summary>
         public TestPermissionsController()
         {
             _permissionPersistence = new Mock<IPermissionPersistence>();
-            _userPersistence = new Mock<IUserPersistence>();
+            _userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
+            _userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
             var logger = new Mock<IMELogger>();
 
-            Controller =
-                new PermissionsController(_userPersistence.Object, _permissionPersistence.Object, logger.Object,
-                    Mapper);
+            Controller = new PermissionsController(_permissionPersistence.Object,
+                _userRetrievalByIdService.Object,
+                _userUpdateService.Object,
+                logger.Object,
+                Mapper);
         }
-
-        /// <summary>
-        ///     The User Persistence and permission persistence mock.
-        /// </summary>
-        private readonly Mock<IUserPersistence> _userPersistence;
-
-        private readonly Mock<IPermissionPersistence> _permissionPersistence;
 
         /// <summary>
         ///     Test returning an empty list

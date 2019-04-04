@@ -52,40 +52,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 userUpdateService.Object);
         }
 
-        private static DocumentClientException CreateDocumentClientExceptionForTesting()
-        {
-            var error = new Error
-            {
-                Id = Guid.NewGuid().ToString(),
-                Code = "some_code",
-                Message = "some_message"
-            };
-
-            var testException = CreateDocumentClientExceptionForTesting(
-                error,
-                HttpStatusCode.InternalServerError);
-
-            return testException;
-        }
-
-        private static DocumentClientException CreateDocumentClientExceptionForTesting(
-            Error error,
-            HttpStatusCode httpStatusCode)
-        {
-            var type = typeof(DocumentClientException);
-
-            var documentClientExceptionInstance = type.Assembly.CreateInstance(
-                type.FullName,
-                false,
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[] { error, null, httpStatusCode },
-                null,
-                null);
-
-            return(DocumentClientException) documentClientExceptionInstance;
-        }
-
         /// <summary>
         ///     Test when a ArgumentException is thrown.
         /// </summary>

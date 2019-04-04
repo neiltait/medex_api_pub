@@ -4,12 +4,12 @@ using System.Linq;
 namespace MedicalExaminer.API.Models.v1
 {
     /// <summary>
-    ///     Base View Model that supports passing errors to the view
+    ///     Base View Model that supports passing errors to the view.
     /// </summary>
     public class ResponseBase
     {
         /// <summary>
-        ///     Get the Errors
+        ///     Get the Errors.
         /// </summary>
         public IDictionary<string, ICollection<string>> Errors { get; } = new Dictionary<string, ICollection<string>>();
 

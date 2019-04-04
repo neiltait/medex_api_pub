@@ -3,71 +3,76 @@ using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common;
+using MedicalExaminer.Common.Enums;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
+using Microsoft.Azure.Documents;
 using ValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
 
 namespace MedicalExaminer.API.Attributes
 {
     /// <summary>
-    ///     Base class for validators of UserItem objects
+    ///     Base class for validators of UserItem objects.
     /// </summary>
     public abstract class ValidUserBase : RequiredAttribute
     {
         /// <summary>
-        /// Validate User Base class. 
+        /// Instantiate a new instance of <see cref="ValidUserBase"/>.
         /// </summary>
-        /// <param name="value">object to be validated</param>
-        /// <param name="context">Validation Context</param>
-        /// <returns>VaidationResult</returns>
-        /// <exception cref="NotImplementedException">Its not implemented</exception>
-        protected override ValidationResult IsValid(object value, ValidationContext context)
+        /// <param name="userRole">User Role.</param>
+        protected ValidUserBase(UserRoles userRole)
         {
-            throw new NotImplementedException();
+            UserRole = userRole;
         }
 
         /// <summary>
-        /// runs the validation
+        /// Role required.
         /// </summary>
-        /// <param name="value">Object to validate</param>
-        /// <param name="context">Validation Context</param>
-        /// <param name="userRole">User Role</param>
-        /// <param name="userTypeName">User Type Name</param>
-        /// <returns>ValidationResult</returns>
-        /// <exception cref="NullReferenceException">Null reference error</exception>
-        protected ValidationResult IsValid(
-            object value,
-            ValidationContext context,
-            UserRoles userRole,
-            string userTypeName)
+        public UserRoles UserRole { get; }
+
+        /// <inheritdoc/>
+        protected override ValidationResult IsValid(object value, ValidationContext context)
         {
             var userPersistence = (IUserPersistence)context.GetService(typeof(IUserPersistence));
-            var mapper = (IMapper)context.GetService(typeof(IMapper));
 
-            if (!(value is UserItem userItem))
+            if (userPersistence == null)
             {
-                return new ValidationResult($"Item not recognised as of type useritem for {userTypeName}");
+                throw new NullReferenceException("User Persistence is null");
             }
 
-            var meUser = mapper.Map<MeUser>(userItem);
-
-            if (meUser == null || string.IsNullOrEmpty(meUser.UserId))
+            // Null is acceptable
+            if (value == null)
             {
-                return new ValidationResult($"Cannot get id for {userTypeName}");
+                return ValidationResult.Success;
             }
 
+            if (!(value is string userId))
+            {
+                return new ValidationResult($"Item not recognised as of type useritem for {UserRole.GetDescription()}");
+            }
+
+            // If its empty, and we already proved it to be a string.
+            if (string.IsNullOrEmpty(userId))
+            {
+                return ValidationResult.Success;
+            }
+
+            // TODO: Removed for now while UserRole on user has been removed. Will need to be a context sensetive check anyway
+            // as we need to make sure it returns a user that has the role in the location we wont; no good accepting any user with that role
+            /*
             try
             {
-                if (userPersistence == null)
+                var returnedDocument = userPersistence.GetUserAsync(userId).Result;
+                if (returnedDocument.UserRole != UserRole)
                 {
-                    throw new NullReferenceException("User Persistence is null");
+                    return new ValidationResult($"The user is not a {UserRole.GetDescription()}");
                 }
             }
-            catch (ArgumentException)
+            catch
             {
-                return new ValidationResult($"The {userTypeName} has not been found");
+                return new ValidationResult($"The {UserRole.GetDescription()} has not been found");
             }
-
+            */
             return ValidationResult.Success;
         }
     }

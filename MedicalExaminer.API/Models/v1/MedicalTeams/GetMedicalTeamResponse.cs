@@ -1,7 +1,4 @@
-﻿using MedicalExaminer.API.Models.v1.Users;
-using MedicalExaminer.Models;
-
-namespace MedicalExaminer.API.Models.v1.MedicalTeams
+﻿namespace MedicalExaminer.API.Models.v1.MedicalTeams
 {
     /// <summary>
     ///     GetMedicalTeamResponse class.
@@ -11,22 +8,22 @@ namespace MedicalExaminer.API.Models.v1.MedicalTeams
         /// <summary>
         ///     Consultant primarily responsible for care of patient.
         /// </summary>
-        public ClinicalProfessional ConsultantResponsible { get; set; }
+        public ClinicalProfessionalItem ConsultantResponsible { get; set; }
 
         /// <summary>
         ///     Other consultants involved in care of the patient.
         /// </summary>
-        public ClinicalProfessional[] ConsultantsOther { get; set; }
+        public ClinicalProfessionalItem[] ConsultantsOther { get; set; }
 
         /// <summary>
         ///     Consultant primarily responsible for care.
         /// </summary>
-        public ClinicalProfessional GeneralPractitioner { get; set; }
+        public ClinicalProfessionalItem GeneralPractitioner { get; set; }
 
         /// <summary>
         ///     Clinician responsible for certification.
         /// </summary>
-        public ClinicalProfessional Qap { get; set; }
+        public ClinicalProfessionalItem Qap { get; set; }
 
         /// <summary>
         ///     Nursing information.
@@ -36,11 +33,11 @@ namespace MedicalExaminer.API.Models.v1.MedicalTeams
         /// <summary>
         ///     Medical Examiner.
         /// </summary>
-        public UserItem MedicalExaminer { get; set; }
+        public string MedicalExaminerUserId { get; set; }
 
         /// <summary>
         ///     Medical Examiner Officer.
         /// </summary>
-        public UserItem MedicalExaminerOfficer { get; set; }
+        public string MedicalExaminerOfficerUserId { get; set; }
     }
 }

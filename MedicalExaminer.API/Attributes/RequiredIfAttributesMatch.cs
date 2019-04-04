@@ -30,6 +30,7 @@ namespace MedicalExaminer.API.Attributes
         /// <returns>ValidationResult.</returns>
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
+            
             var instance = context.ObjectInstance;
             var type = instance.GetType();
             var propertyValue = type.GetProperty(PropertyName).GetValue(instance, null);
@@ -37,9 +38,10 @@ namespace MedicalExaminer.API.Attributes
             {
                 return ValidationResult.Success;
             }
-
-            var result = base.IsValid(value, context);
-            return result;
+            else
+            {
+                return base.IsValid(value, context);
+            }
         }
     }
 }
