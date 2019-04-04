@@ -7,7 +7,7 @@ using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace MedicalExaminer.Models
 {
-    public class Examination : Record,  IExamination
+    public class Examination : Record,  IExamination, ILocationBasedDocument
     {
         [JsonProperty(PropertyName = "urgency_score")]
         public int UrgencyScore { get; set; }
@@ -349,5 +349,17 @@ namespace MedicalExaminer.Models
 
         [JsonProperty(PropertyName = "id")]
         public string ExaminationId { get; set; }
+
+        [JsonProperty(PropertyName = "national_location_id")]
+        public string NationalLocationId { get; }
+
+        [JsonProperty(PropertyName = "region_location_id")]
+        public string RegionLocationId { get; }
+
+        [JsonProperty(PropertyName = "trust_location_id")]
+        public string TrustLocationId { get; }
+
+        [JsonProperty(PropertyName = "site_location_id")]
+        public string SiteLocationId { get; }
     }
 }
