@@ -90,7 +90,11 @@ namespace MedicalExaminer.API.Tests
             {
                 Active = true
             };
-            var expectedClaims = new ClaimsPrincipal();
+            var mockExpectedClaims = new Mock<ClaimsPrincipal>();
+            var claims = new List<Claim>();
+            var claim = new Claim(ClaimTypes.Email, "joe.doe@nhs.co.uk");
+            claims.Add(claim);
+            mockExpectedClaims.Setup(cp => cp.Claims).Returns(claims);
 
             _mockTokenService
                 .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
@@ -101,10 +105,10 @@ namespace MedicalExaminer.API.Tests
                         expectedToken,
                         expectedTokenValidationParameters,
                         out expectedValidatedToken))
-                .Returns(expectedClaims);
+                .Returns(mockExpectedClaims.Object);
 
             sut.ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken)
-                .Should().Be(expectedClaims);
+                .Should().Be(mockExpectedClaims.Object);
         }
 
         [Fact]
