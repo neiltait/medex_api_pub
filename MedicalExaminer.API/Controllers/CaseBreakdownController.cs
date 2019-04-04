@@ -35,7 +35,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpPut]
-        [Route("{caseId}/otherevent")]
+        [Route("{caseId}/other")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutOtherEventResponse>> UpsertNewOtherEvent(string caseId,
             [FromBody]
@@ -68,7 +68,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpGet]
-        [Route("{examinationId}")]
+        [Route("{examinationId}/casebreakdown")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetCaseBreakdownResponse>> GetCaseBreakdown(string examinationId)
         {
