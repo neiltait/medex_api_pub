@@ -51,8 +51,8 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutBereavedDiscussionEventResponse());
             }
 
-            var BereavedDiscussionEventNote = Mapper.Map<BereavedDiscussionEvent>(putNewBereavedDiscussionEventNoteRequest);
-            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, BereavedDiscussionEventNote));
+            var bereavedDiscussionEventNote = Mapper.Map<BereavedDiscussionEvent>(putNewBereavedDiscussionEventNoteRequest);
+            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, bereavedDiscussionEventNote));
 
             if (result == null)
             {
@@ -66,7 +66,6 @@ namespace MedicalExaminer.API.Controllers
 
             return Ok(res);
         }
-
 
         [HttpPut]
         [Route("{caseId}/prescrutiny")]
@@ -85,8 +84,8 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutPreScrutinyEventResponse());
             }
 
-            var PreScrutinyEventNote = Mapper.Map<PreScrutinyEvent>(putNewPreScrutinyEventNoteRequest);
-            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, PreScrutinyEventNote));
+            var preScrutinyEventNote = Mapper.Map<PreScrutinyEvent>(putNewPreScrutinyEventNoteRequest);
+            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, preScrutinyEventNote));
 
             if (result == null)
             {
@@ -101,6 +100,38 @@ namespace MedicalExaminer.API.Controllers
             return Ok(res);
         }
 
+        [HttpPut]
+        [Route("{caseId}/medical_history")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutMedicalHistoryEventResponse>> UpsertNewMedicalHistoryEvent(string caseId,
+            [FromBody]
+            PutMedicalHistoryEventRequest putMedicalHistoryEventRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutMedicalHistoryEventResponse());
+            }
+
+            if (putMedicalHistoryEventRequest == null)
+            {
+                return BadRequest(new PutMedicalHistoryEventResponse());
+            }
+
+            var preScrutinyEventNote = Mapper.Map<MedicalHistoryEvent>(putMedicalHistoryEventRequest);
+            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, preScrutinyEventNote));
+
+            if (result == null)
+            {
+                return NotFound(new PutMedicalHistoryEventResponse());
+            }
+
+            var res = new PutMedicalHistoryEventResponse
+            {
+                EventId = result
+            };
+
+            return Ok(res);
+        }
 
         [HttpPut]
         [Route("{caseId}/other")]
