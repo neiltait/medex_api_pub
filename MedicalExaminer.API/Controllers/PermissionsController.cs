@@ -27,6 +27,16 @@ namespace MedicalExaminer.API.Controllers
     public class PermissionsController : BaseController
     {
         /// <summary>
+        /// User Retrieval By Id Service.
+        /// </summary>
+        private readonly IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> _userRetrievalByIdService;
+
+        /// <summary>
+        /// User Update Service.
+        /// </summary>
+        private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
+
+        /// <summary>
         ///     The Permission Persistence Layer
         /// </summary>
         private readonly IPermissionPersistence _permissionPersistence;
@@ -34,17 +44,22 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         ///     Initializes a new instance of the <see cref="PermissionsController" /> class.
         /// </summary>
-        /// <param name="userPersistence">The User Persistence.</param>
         /// <param name="permissionPersistence">The Permission Persistence</param>
+        /// <param name="userRetrievalByIdService">User retrieval by id service.</param>
+        /// <param name="userUpdateService">User update service.</param>
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
         public PermissionsController(
             IPermissionPersistence permissionPersistence,
+            IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
+            IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
             IMELogger logger,
             IMapper mapper)
             : base(logger, mapper)
         {
             _permissionPersistence = permissionPersistence;
+            _userRetrievalByIdService = userRetrievalByIdService;
+            _userUpdateService = userUpdateService;
         }
 
         /// <summary>
@@ -78,7 +93,7 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         ///     Get a Users permission by its Identifier.
         /// </summary>
-        /// <param name="userId">The User Id.</param>
+        /// <param name="meUserId">The User Id.</param>
         /// <param name="permissionId">The Permission Id.</param>
         /// <returns>A GetPermissionResponse.</returns>
         [HttpGet("{permissionId}")]
@@ -126,8 +141,8 @@ namespace MedicalExaminer.API.Controllers
                 var permission = Mapper.Map<Permission>(postPermission);
                 var createdPermission = await _permissionPersistence.CreatePermissionAsync(permission);
 
-                // TODO: Is ID populated after saving?
-                // TODO : Question : Should this be the whole user object?
+                await DuplicateOnUser(permission);
+
                 return Ok(Mapper.Map<PostPermissionResponse>(createdPermission));
             }
             catch (DocumentClientException)
@@ -161,6 +176,8 @@ namespace MedicalExaminer.API.Controllers
                 var permission = Mapper.Map<Permission>(putPermission);
                 var updatedPermission = await _permissionPersistence.UpdatePermissionAsync(permission);
 
+                await DuplicateOnUser(permission);
+
                 return Ok(Mapper.Map<PutPermissionResponse>(updatedPermission));
             }
             catch (DocumentClientException)
@@ -171,6 +188,30 @@ namespace MedicalExaminer.API.Controllers
             {
                 return NotFound(new PutPermissionResponse());
             }
+        }
+
+        /// <summary>
+        /// Replace whatever permissiona are on the user object with the current permissions
+        /// in the collection.
+        /// </summary>
+        /// <remarks>Updates the user specified in this permission.</remarks>
+        /// <param name="permission">A permission.</param>
+        private async Task<bool> DuplicateOnUser(Permission permission)
+        {
+            var meUser = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(permission.UserId));
+
+            var permissions = (await _permissionPersistence.GetPermissionsAsync(permission.UserId)).ToList();
+
+            meUser.Permissions = permissions.Select(p => new MEUserPermission()
+            {
+                LocationId = p.LocationId,
+                PermissionId = p.PermissionId,
+                UserRole = p.UserRole,
+            }).ToList();
+
+            var updatedUser = await _userUpdateService.Handle(new UserUpdateQuery(meUser));
+
+            return updatedUser.Permissions.Count() == permissions.Count;
         }
     }
 }

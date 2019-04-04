@@ -421,7 +421,17 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.Surname.Should().Be(Surname);
             result.TimeOfDeath.Should().Be(TimeOfDeath);
             result.Town.Should().Be(Town);
-            Assert.True(result.Representatives.SequenceEqual(Representatives));
+
+            foreach (var representative in result.Representatives.Zip(Representatives, Tuple.Create))
+            {
+                representative.Item1.FullName.Should().Be(representative.Item2.FullName);
+                representative.Item1.Relationship.Should().Be(representative.Item2.Relationship);
+                representative.Item1.PhoneNumber.Should().Be(representative.Item2.PhoneNumber);
+                representative.Item1.PresentAtDeath.Should().Be(representative.Item2.PresentAtDeath);
+                representative.Item1.Informed.Should().Be(representative.Item2.Informed);
+                representative.Item1.AppointmentDate.Should().Be(representative.Item2.AppointmentDate);
+                representative.Item1.AppointmentTime.Should().Be(representative.Item2.AppointmentTime);
+            }
         }
 
         [Fact]

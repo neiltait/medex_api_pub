@@ -1,16 +1,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Reflection;
 using AutoMapper;
+using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
 using MedicalExaminer.Common;
+using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Loggers;
@@ -26,6 +29,7 @@ using MedicalExaminer.Common.Services.PatientDetails;
 using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -39,6 +43,7 @@ using Okta.Sdk;
 using Okta.Sdk.Configuration;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using Permission = MedicalExaminer.Models.Permission;
 
 namespace MedicalExaminer.API
 {
@@ -86,6 +91,8 @@ namespace MedicalExaminer.API
             }));
 
             ConfigureAuthentication(services, okatSettings);
+
+            ConfigureAuthorization(services);
 
             services.AddMvcCore()
                 .AddVersionedApiExplorer(options =>
@@ -382,6 +389,30 @@ namespace MedicalExaminer.API
             }
 
             return info;
+        }
+
+        /// <summary>
+        /// Configure Authorization.
+        /// </summary>
+        /// <param name="services">Services.</param>
+        private void ConfigureAuthorization(IServiceCollection services)
+        {
+            services.AddSingleton<IRolePermissions, RolePermissions>();
+
+            services.AddAuthorization(options =>
+            {
+                foreach (var permission in (Common.Authorization.Permission[])Enum.GetValues(typeof(Common.Authorization.Permission)))
+                {
+                    options.AddPolicy($"HasPermission={permission}", policy =>
+                    {
+                        policy.Requirements.Add(new PermissionRequirement(permission));
+                    });
+                }
+            });
+
+            // Needs to be scoped since it takes scoped parameters.
+            services.AddScoped<IAuthorizationHandler, PermissionHandler>();
+            services.AddScoped<IAuthorizationHandler, DocumentPermissionHandler>();
         }
     }
 }

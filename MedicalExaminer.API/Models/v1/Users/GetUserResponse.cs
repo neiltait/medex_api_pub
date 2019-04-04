@@ -28,5 +28,10 @@ namespace MedicalExaminer.API.Models.v1.Users
         ///     The User's email address.
         /// </summary>
         public string Email { get; set; }
+
+        /// <summary>
+        /// Permissions
+        /// </summary>
+        public IEnumerable<UserPermission> Permissions { get; set; }
     }
 }
