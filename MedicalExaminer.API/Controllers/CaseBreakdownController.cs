@@ -168,7 +168,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpPut]
-        [Route("{caseId}/QapDiscussionevent")]
+        [Route("{caseId}/qap_discussion")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutQapDiscussionEventResponse>> UpsertNewQapDiscussionEvent(string caseId,
             [FromBody]
