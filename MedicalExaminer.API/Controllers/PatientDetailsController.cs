@@ -63,7 +63,7 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetPatientDetailsResponse());
             }
 
-            if (await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId)) == null)
+            if (await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null)) == null)
             {
                 return NotFound(new GetPatientDetailsResponse());
             }
@@ -89,7 +89,7 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutPatientDetailsResponse());
             }
 
-            if (_examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId)) == null)
+            if (_examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null)) == null)
             {
                 return NotFound("Case was not found");
             }

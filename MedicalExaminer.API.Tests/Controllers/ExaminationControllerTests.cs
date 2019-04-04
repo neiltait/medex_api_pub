@@ -115,8 +115,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             mapper.Setup(m => m.Map<GetExaminationsResponse>(It.IsAny<Examination>())).Returns(er.Object);
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
-            var examinationRetrievalQueryService =
-                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var examinationsRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var examinationsDashboardService =
@@ -125,7 +123,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationsRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationsRetrievalQuery>()))
                 .Returns(Task.FromResult(examinationsResult));
             var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
-                examinationRetrievalQueryService.Object, examinationsRetrievalQueryService.Object,
+                examinationsRetrievalQueryService.Object,
                 examinationsDashboardService.Object);
 
             // Act
@@ -145,7 +143,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examination = CreateValidExamination();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
-            var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var examinationsRetrievalQuery =
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var examinationsDashboardService =
@@ -159,7 +156,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 logger.Object,
                 mapper.Object,
                 createExaminationService.Object,
-                examinationRetrievalQuery.Object,
                 examinationsRetrievalQuery.Object,
                 examinationsDashboardService.Object);
 
@@ -183,7 +179,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examination = CreateValidExamination();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
-            var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var examinationsRetrievalQuery =
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
 
@@ -202,7 +197,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 logger.Object,
                 mapper.Object,
                 createExaminationService.Object,
-                examinationRetrievalQuery.Object,
                 examinationsRetrievalQuery.Object,
                 examinationsDashboardService.Object);
 

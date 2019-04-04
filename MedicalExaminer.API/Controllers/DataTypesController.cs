@@ -45,6 +45,7 @@ namespace MedicalExaminer.API.Controllers
             return Ok(GetDictionary(typeof(CoronerStatus)));
         }
         
+        
         /// <summary>
         /// Returns all Examination Genders
         /// </summary>
@@ -96,6 +97,16 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Returns all Event Type
+        /// </summary>
+        /// <returns>Dictionary of Event Types</returns>
+        [HttpGet("event_type")]
+        public ActionResult GetEventTypes()
+        {
+            return Ok(GetDictionary(typeof(EventType)));
+        }
+
+
         /// Returns all Case Statuses
         /// </summary>
         /// <returns>Dictionary of Case Statuses</returns>
