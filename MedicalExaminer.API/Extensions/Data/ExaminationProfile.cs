@@ -1,8 +1,9 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
+using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Models;
-using System;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -16,8 +17,6 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public ExaminationProfile()
         {
-            CreateMap<Examination, GetExaminationResponse>()
-                .ForMember(getExaminationResponse => getExaminationResponse.Errors, opt => opt.Ignore());
             CreateMap<Examination, ExaminationItem>();
             CreateMap<PostExaminationRequest, Examination>()
                 .ForMember(examination => examination.UrgencyScore, opt => opt.Ignore())
@@ -62,6 +61,10 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.ModifiedAt, opt => opt.Ignore())
                 .ForMember(examination => examination.CreatedAt, opt => opt.Ignore())
                 .ForMember(examination => examination.DeletedAt, opt => opt.Ignore());
+            CreateMap<Examination, GetOtherEventResponse>()
+                .ForMember(dest => dest.Events, opt => opt.MapFrom(src => src.CaseBreakdown.OtherEvents));
+            CreateMap<Examination, GetPatientDetailsResponse>()
+                .ForMember(getPatientDetailsResponse => getPatientDetailsResponse.Errors, opt => opt.Ignore());
 
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(patientCard => patientCard.AppointmentDate,
@@ -73,7 +76,7 @@ namespace MedicalExaminer.API.Extensions.Data
         }
     }
 
-    
+
     public class AppointmentDateResolver : IValueResolver<Examination, PatientCardItem, DateTime?>
     {
         private AppointmentFinder _appointmentFinder;
@@ -100,5 +103,6 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             return _appointmentFinder.FindAppointment(source.Representatives)?.AppointmentTime;
         }
-    }
+}
+
 }

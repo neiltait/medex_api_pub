@@ -17,6 +17,7 @@ using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.PatientDetails;
@@ -301,7 +302,7 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,ExaminationsRetrievalService>();
-            
+            services.AddScoped<IAsyncQueryHandler<CreateEventQuery, string>, CreateOtherEventService>();
             // Medical team services
             services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
             
