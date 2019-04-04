@@ -20,7 +20,7 @@ namespace MedicalExaminer.Common.Services.Examination
             _connectionSettings = connectionSettings;
         }
 
-        public async Task<ExaminationsOverview> Handle(ExaminationsRetrievalQuery param)
+        public Task<ExaminationsOverview> Handle(ExaminationsRetrievalQuery param)
         {
             if (param == null)
             {
@@ -43,7 +43,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 CountOfUrgentCases = GetCount(baseQuery, x => ((x.UrgencyScore > 0) && (x.Completed == false))).Result
             };
 
-            return overView;
+            return Task.FromResult(overView);
         }
 
         private async Task<int> GetCount(Expression<Func<Models.Examination, bool>> baseQuery, CaseStatus caseStatus)

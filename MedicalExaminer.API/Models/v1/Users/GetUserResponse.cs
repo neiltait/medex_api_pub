@@ -1,4 +1,5 @@
-﻿using MedicalExaminer.Models.Enums;
+﻿using System.Collections.Generic;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.Users
 {
@@ -29,8 +30,8 @@ namespace MedicalExaminer.API.Models.v1.Users
         public string Email { get; set; }
 
         /// <summary>
-        ///     The User's role.
+        /// Permissions
         /// </summary>
-        public UserRoles UserRole { get; set; }
+        public IEnumerable<UserPermission> Permissions { get; set; }
     }
 }

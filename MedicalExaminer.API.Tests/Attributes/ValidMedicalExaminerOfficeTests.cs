@@ -13,7 +13,7 @@ namespace MedicalExaminer.API.Tests.Attributes
     public class ValidMedicalExaminerOfficeTests
     {
         [Fact]
-        public async void NoLocationIdSuppliedReturnsError()
+        public void NoLocationIdSuppliedReturnsError()
         {
             // Arrange
             var locationId = string.Empty;
@@ -61,7 +61,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         }
 
         [Fact]
-        public async void NullLocationIdSuppliedReturnsError()
+        public void NullLocationIdSuppliedReturnsError()
         {
             // Arrange
             object locationId = null;
@@ -85,7 +85,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         }
 
         [Fact]
-        public async void OneLocationIsFoundReturnsNoError()
+        public void OneLocationIsFoundReturnsNoError()
         {
             // Arrange
             var locationResult = new Mock<Location>();
