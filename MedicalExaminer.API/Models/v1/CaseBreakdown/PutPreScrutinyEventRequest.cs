@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using MedicalExaminer.API.Attributes;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using Newtonsoft.Json;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
@@ -24,23 +20,19 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Event Text.
         /// </summary>
-        public string EventText { get; set; }
-
-        //***************** uncomment after the generic event classes approved *********************
-        ///// <summary>
-        ///// Dictionary for the status (Draft or Final).
-        ///// </summary>
-        //public EventStatus EventStatus { get; set; }
+        public string MedicalExaminerThoughts { get; set; }
 
         ///// <summary>
-        ///// list of ammendments for this item
+        ///// IsFinal true for final, false for draft
         ///// </summary>
-        //public IEnumerable<IEvent> Amendments { get; set; }
+        public bool IsFinal { get; set; }
 
-        ///// <summary>
-        ///// the type of event this is
-        ///// </summary>
-        //public EventType EventType => EventType.PreScrutiny;
+
+
+        /// <summary>
+        /// the type of event this is
+        /// </summary>
+        public EventType EventType => EventType.PreScrutiny;
 
         /// <summary>
         /// Dictionary for circumstances of death radio button.

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.CaseBreakdown;
@@ -61,34 +58,6 @@ namespace MedicalExaminer.API.Controllers
             };
 
             return Ok(res);
-        }
-
-        [HttpGet]
-        [Route("{caseId}/events/{eventType}")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetPreScrutinyEventResponse>> GetPreScrutinyEvent(string examinationId)
-        {
-
-            if (string.IsNullOrEmpty(examinationId))
-            {
-                return BadRequest(new GetPreScrutinyEventResponse());
-            }
-
-            if (!Guid.TryParse(examinationId, out Guid examinationGuid))
-            {
-                return BadRequest(new GetPreScrutinyEventResponse());
-            }
-
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
-
-            if (examination == null)
-            {
-                return new NotFoundObjectResult(new GetPreScrutinyEventResponse());
-            }
-
-            var result = Mapper.Map<GetPreScrutinyEventResponse>(examination);
-
-            return Ok(result);
         }
     }
 }
