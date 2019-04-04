@@ -24,9 +24,13 @@ namespace MedicalExaminer.API.Tests.Services
             return clientFactory;
         }
 
-        public static Mock<ExaminationConnectionSettings> CreateExaminationConnectionSettings()
+        public static Mock<ExaminationConnectionSettings> CreateExaminationConnectionSettings() =>
+            CreateConnectionSettings<ExaminationConnectionSettings>();
+
+        public static Mock<T> CreateConnectionSettings<T>()
+            where T : class, IConnectionSettings
         {
-            return new Mock<ExaminationConnectionSettings>(
+            return new Mock<T>(
                 new Mock<Uri>("https://anything.co.uk").Object, "a", "c");
         }
 
