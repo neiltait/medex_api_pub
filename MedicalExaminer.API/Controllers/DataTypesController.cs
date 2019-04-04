@@ -107,6 +107,15 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Returns all options for the QAP Discussion Outcome value.
+        /// </summary>
+        /// <returns>List of values for QAP Discussion Outcome</returns>
+        [HttpGet("qap_discussion_outcome")]
+        public ActionResult GetQapDiscussionOutcome()
+        {
+            return Ok(GetDictionary(typeof(QapDiscussionOutcome)));
+        }
+        
         /// Returns all options for the informed at death value for a bereaved .
         /// </summary>
         /// <returns>List of values for informed at death</returns>
