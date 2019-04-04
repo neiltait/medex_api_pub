@@ -14,7 +14,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Moq;
 using Okta.Sdk;
+using Okta.Sdk.Configuration;
 using Xunit;
+
 
 namespace MedicalExaminer.API.Tests.Controllers
 {
@@ -23,8 +25,6 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly Mock<IMELogger> _mockLogger;
 
         private readonly Mock<IMapper> _mockMapper;
-
-        private readonly Mock<OktaClient> _mockOktaClient;
 
         private readonly Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>> _mockUserCreationService;
 
@@ -40,28 +40,52 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             _mockLogger = new Mock<IMELogger>();
             _mockMapper = new Mock<IMapper>();
-            _mockOktaClient = new Mock<OktaClient>();
+            var oktaSettings = Options.Create(new OktaSettings());
+            oktaSettings.Value.LocalTokenExpiryTimeMinutes = "30";
+
+            var oktaClientConfiguration = new OktaClientConfiguration
+            {
+                OktaDomain = "https://xxx-123456.test.com",
+                Token = "Token",
+            };
             _mockUserCreationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
             _mockUsersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             _mockUserUpdateOktaTokenService = new Mock<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>>();
-            _mockOktaSettings = new Mock<IOptions<OktaSettings>>();
-            _accountController = new AccountController(_mockLogger.Object, _mockMapper.Object, _mockOktaClient.Object, _mockUserCreationService.Object, _mockUsersRetrievalByEmailService.Object, _mockUserUpdateOktaTokenService.Object, _mockOktaSettings.Object);
+
+
+            var claims = new List<Claim>();
+            var claim = new Claim(ClaimTypes.Email, "joe.doe@nhs.co.uk");
+            claims.Add(claim);
+            var mockClaimsPrincipal = new Mock<ClaimsPrincipal>();
+            mockClaimsPrincipal.Setup(cp => cp.Claims).Returns(claims);
+
+            var context = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = mockClaimsPrincipal.Object
+                }
+            };
+
+            context.HttpContext.Request.Headers.Add("Authorization", "bearer Token1");
+
+            var oktaClient = new OktaClient(oktaClientConfiguration);
+   
+
+            _accountController = new AccountController(_mockLogger.Object, _mockMapper.Object, oktaClient, _mockUserCreationService.Object, _mockUsersRetrievalByEmailService.Object, _mockUserUpdateOktaTokenService.Object, oktaSettings)
+            {
+                ControllerContext = context
+
+
+            };
+           
         }
 
         [Fact]
         public void ValidateSession_UserFoundNoNeedToRetrieveDetailsFromOkta()
         {
-            //Arrange
-            var claimsPrincipal = new ClaimsPrincipal();
-            var context = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = claimsPrincipal
-                }
-            };
-
-            //var accountController = new AccountController();
+            //Act
+            _accountController.ValidateSession();
         }
     }
 }
