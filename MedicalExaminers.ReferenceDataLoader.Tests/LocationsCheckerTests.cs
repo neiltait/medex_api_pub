@@ -1,12 +1,12 @@
-﻿namespace MedicalExaminers.ReferenceDataLoader.Tests
-{
-    using System;
-    using System.Collections.Generic;
-    using MedicalExaminer.Models;
-    using MedicalExaminer.Models.Enums;
-    using MedicalExaminer.ReferenceDataLoader.Loaders;
-    using Xunit;
+﻿using System;
+using System.Collections.Generic;
+using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
+using MedicalExaminer.ReferenceDataLoader.Loaders;
+using Xunit;
 
+namespace MedicalExaminers.ReferenceDataLoader.Tests
+{
     public class LocationsCheckerTests
     {
         [Fact]

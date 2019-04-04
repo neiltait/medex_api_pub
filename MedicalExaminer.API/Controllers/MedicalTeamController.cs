@@ -58,13 +58,13 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetMedicalTeamResponse());
             }
 
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
 
             var getMedicalTeamResponse = examination?.MedicalTeam != null
                 ? Mapper.Map<GetMedicalTeamResponse>(examination.MedicalTeam)
                 : new GetMedicalTeamResponse
                 {
-                    ConsultantsOther = new ClinicalProfessional[] { },
+                    ConsultantsOther = new Models.v1.MedicalTeams.ClinicalProfessionalItem[] { },
                     NursingTeamInformation = string.Empty,
                 };
 
@@ -94,7 +94,7 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutMedicalTeamResponse());
             }
 
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId));
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
             if (examination == null)
             {
                 return NotFound();
