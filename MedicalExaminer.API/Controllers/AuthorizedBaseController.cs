@@ -2,6 +2,8 @@
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Permission = MedicalExaminer.Common.Authorization.Permission;
@@ -11,7 +13,7 @@ namespace MedicalExaminer.API.Controllers
     /// <summary>
     /// Base Authorization Controller.
     /// </summary>
-    public abstract class BaseAuthorizationController : BaseController
+    public abstract class AuthorizedBaseController : AuthenticatedBaseController
     {
         /// <summary>
         /// Authorization Service.
@@ -21,14 +23,16 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// Authorization Based Controller.
         /// </summary>
-        /// <param name="logger"></param>
-        /// <param name="mapper"></param>
-        /// <param name="authorizationService"></param>
-        protected BaseAuthorizationController(
+        /// <param name="logger">Logger.</param>
+        /// <param name="mapper">Mapper.</param>
+        /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
+        /// <param name="authorizationService">Authorization Service.</param>
+        protected AuthorizedBaseController(
             IMELogger logger,
             IMapper mapper,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
             IAuthorizationService authorizationService)
-            : base(logger, mapper)
+            : base(logger, mapper, usersRetrievalByEmailService)
         {
             AuthorizationService = authorizationService;
         }
