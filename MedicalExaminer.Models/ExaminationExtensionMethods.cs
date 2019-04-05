@@ -8,8 +8,8 @@ namespace MedicalExaminer.Models
     {
         public static Examination AddEvent(this Examination examination, IEvent theEvent)
         {
-           switch (theEvent.EventType)
-           {
+            switch (theEvent.EventType)
+            {
                 case EventType.Other:
                     var otherEventContainer = examination.CaseBreakdown.OtherEvents;
 
@@ -20,9 +20,49 @@ namespace MedicalExaminer.Models
 
                     otherEventContainer.Add((OtherEvent)theEvent);
                     break;
+                case EventType.PreScrutiny:
+                    var preScrutinyEventContainer = examination.CaseBreakdown.PreScrutiny;
+
+                    if (preScrutinyEventContainer == null)
+                    {
+                        preScrutinyEventContainer = new PreScrutinyEventContainer();
+                    }
+
+                    preScrutinyEventContainer.Add((PreScrutinyEvent)theEvent);
+                    break;
+                case EventType.BereavedDiscussion:
+                    var bereavedDiscussionEventContainer = examination.CaseBreakdown.BereavedDiscussion;
+
+                    if (bereavedDiscussionEventContainer == null)
+                    {
+                        bereavedDiscussionEventContainer = new BereavedDiscussionEventContainer();
+                    }
+
+                    bereavedDiscussionEventContainer.Add((BereavedDiscussionEvent)theEvent);
+                    break;
+                case EventType.MeoSummary:
+                    var meoSummaryEventContainer = examination.CaseBreakdown.MeoSummary;
+
+                    if (meoSummaryEventContainer == null)
+                    {
+                        meoSummaryEventContainer = new MeoSummaryEventContainer();
+                    }
+
+                    meoSummaryEventContainer.Add((MeoSummaryEvent)theEvent);
+                    break;
+                case EventType.QapDiscussion:
+                    var qapDiscussionEventContainer = examination.CaseBreakdown.QapDiscussion;
+
+                    if (qapDiscussionEventContainer == null)
+                    {
+                        qapDiscussionEventContainer = new QapDiscussionEventContainer();
+                    }
+
+                    qapDiscussionEventContainer.Add((QapDiscussionEvent)theEvent);
+                    break;
                 default:
                     throw new NotImplementedException();
-           }
+            }
 
             examination = UpdateCaseStatus(examination);
             return examination;
@@ -31,24 +71,6 @@ namespace MedicalExaminer.Models
         private static Examination UpdateCaseStatus(Examination examination)
         {
             return examination;
-        }
-
-        private static CaseBreakDown GetUserEvents(CaseBreakDown caseBreakDown, MeUser myUser)
-        {
-            if(caseBreakDown == null)
-            {
-                return null;
-            }
-
-            caseBreakDown.OtherEvents = GetEvents<OtherEvent>(caseBreakDown.OtherEvents, myUser);
-            return caseBreakDown;
-        }
-
-        private static BaseEventContainter<T> GetEvents<T>(IEventContainer<IEvent> otherEvents, MeUser myUser) where T : IEvent
-        {
-            var usersDrafts = otherEvents.Drafts.Where(draft => draft.UserId == myUser.UserId);
-            otherEvents.Drafts = usersDrafts.ToList();
-            return (BaseEventContainter<T>)otherEvents;
         }
     }
 }
