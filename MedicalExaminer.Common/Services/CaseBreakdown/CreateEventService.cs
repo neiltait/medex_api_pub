@@ -7,12 +7,12 @@ using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
-    public class CreateOtherEventService : IAsyncQueryHandler<CreateEventQuery, string>
+    public class CreateEventService : IAsyncQueryHandler<CreateEventQuery, string>
     {
         private readonly IConnectionSettings _connectionSettings;
         private readonly IDatabaseAccess _databaseAccess;
 
-        public CreateOtherEventService(
+        public CreateEventService(
             IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings)
         {

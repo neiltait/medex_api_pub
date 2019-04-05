@@ -6,5 +6,7 @@
         PreScrutiny,
         BereavedDiscussion,
         MedicalHistory
+        MeoSummary,
+        QapDiscussion
     }
 }

@@ -35,9 +35,9 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpPut]
-        [Route("{caseId}/bereaved_discussion")]
+        [Route("{examinationId}/bereaved_discussion")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutBereavedDiscussionEventResponse>> UpsertNewBereavedDiscussionEvent(string caseId,
+        public async Task<ActionResult<PutBereavedDiscussionEventResponse>> UpsertNewBereavedDiscussionEvent(string examinationId,
             [FromBody]
             PutBereavedDiscussionEventRequest putNewBereavedDiscussionEventNoteRequest)
         {
@@ -52,7 +52,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var bereavedDiscussionEventNote = Mapper.Map<BereavedDiscussionEvent>(putNewBereavedDiscussionEventNoteRequest);
-            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, bereavedDiscussionEventNote));
+            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, bereavedDiscussionEventNote));
 
             if (result == null)
             {
@@ -68,9 +68,9 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpPut]
-        [Route("{caseId}/prescrutiny")]
+        [Route("{examinationId}/prescrutiny")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutPreScrutinyEventResponse>> UpsertNewPreScrutinyEvent(string caseId,
+        public async Task<ActionResult<PutPreScrutinyEventResponse>> UpsertNewPreScrutinyEvent(string examinationId,
             [FromBody]
             PutPreScrutinyEventRequest putNewPreScrutinyEventNoteRequest)
         {
@@ -85,7 +85,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var preScrutinyEventNote = Mapper.Map<PreScrutinyEvent>(putNewPreScrutinyEventNoteRequest);
-            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, preScrutinyEventNote));
+            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, preScrutinyEventNote));
 
             if (result == null)
             {
@@ -134,9 +134,9 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpPut]
-        [Route("{caseId}/other")]
+        [Route("{examinationId}/other")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutOtherEventResponse>> UpsertNewOtherEvent(string caseId,
+        public async Task<ActionResult<PutOtherEventResponse>> UpsertNewOtherEvent(string examinationId,
             [FromBody]
             PutOtherEventRequest putNewOtherEventNoteRequest)
         {
@@ -151,7 +151,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var otherEventNote = Mapper.Map<OtherEvent>(putNewOtherEventNoteRequest);
-            var result = await _eventCreationService.Handle(new CreateEventQuery(caseId, otherEventNote));
+            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, otherEventNote));
 
             if(result == null)
             {
@@ -196,6 +196,72 @@ namespace MedicalExaminer.API.Controllers
             {
                 CaseBreakdown = result
             });
+        }
+
+        [HttpPut]
+        [Route("{examinationId}/qap_discussion")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutQapDiscussionEventResponse>> UpsertNewQapDiscussionEvent(string examinationId,
+            [FromBody]
+            PutQapDiscussionEventRequest putNewQapDiscussionEventNoteRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutQapDiscussionEventResponse());
+            }
+
+            if (putNewQapDiscussionEventNoteRequest == null)
+            {
+                return BadRequest(new PutQapDiscussionEventResponse());
+            }
+
+            var qapDiscussionEventNote = Mapper.Map<QapDiscussionEvent>(putNewQapDiscussionEventNoteRequest);
+            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, qapDiscussionEventNote));
+
+            if (result == null)
+            {
+                return NotFound(new PutQapDiscussionEventResponse());
+            }
+
+            var res = new PutQapDiscussionEventResponse
+            {
+                EventId = result
+            };
+
+            return Ok(res);
+        }
+
+        [HttpPut]
+        [Route("{examinationId}/meo_summary")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutMeoSummaryEventResponse>> UpsertNewMeoSummaryEvent(string examinationId,
+            [FromBody]
+            PutMeoSummaryEventRequest putNewMeoSummaryEventNoteRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutMeoSummaryEventResponse());
+            }
+
+            if (putNewMeoSummaryEventNoteRequest == null)
+            {
+                return BadRequest(new PutMeoSummaryEventResponse());
+            }
+
+            var meoSummaryEvent = Mapper.Map<MeoSummaryEvent>(putNewMeoSummaryEventNoteRequest);
+            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, meoSummaryEvent));
+
+            if (result == null)
+            {
+                return NotFound(new PutMeoSummaryEventResponse());
+            }
+
+            var res = new PutMeoSummaryEventResponse
+            {
+                EventId = result
+            };
+
+            return Ok(res);
         }
     }
 }
