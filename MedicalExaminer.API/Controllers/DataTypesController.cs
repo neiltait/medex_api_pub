@@ -36,6 +36,36 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Returns all Overall Circumstances Of Death.
+        /// </summary>
+        /// <returns>Dictionary of Overall Circumstances Of Death.</returns>
+        [HttpGet("overall_circumstances_of_death")]
+        public ActionResult GetOverallCircumstancesOfDeath()
+        {
+            return Ok(GetDictionary(typeof(OverallCircumstancesOfDeath)));
+        }
+
+        /// <summary>
+        /// Returns all Overall Outcome Of Pre-Scrutiny.
+        /// </summary>
+        /// <returns>Dictionary of Overall Outcome Of Pre-Scrutiny.</returns>
+        [HttpGet("overall_outcome_of_prescrutiny")]
+        public ActionResult GetOverallOutcomeOfPreScrutiny()
+        {
+            return Ok(GetDictionary(typeof(OverallOutcomeOfPreScrutiny)));
+        }
+
+        /// <summary>
+        /// Returns all Clinical Governance Review.
+        /// </summary>
+        /// <returns>Dictionary of Clinical Governance Review.</returns>
+        [HttpGet("clinical_governance_review")]
+        public ActionResult GetClinicalGovernanceReview()
+        {
+            return Ok(GetDictionary(typeof(ClinicalGovernanceReview)));
+        }
+
+        /// <summary>
         /// Returns all Coroner Statuses
         /// </summary>
         /// <returns>Dictionary of Coroner Statuses</returns>
@@ -44,6 +74,7 @@ namespace MedicalExaminer.API.Controllers
         {
             return Ok(GetDictionary(typeof(CoronerStatus)));
         }
+        
         
         /// <summary>
         /// Returns all Examination Genders
@@ -74,7 +105,36 @@ namespace MedicalExaminer.API.Controllers
         {
             return Ok(GetDictionary(typeof(PresentAtDeath)));
         }
-            
+
+        /// <summary>
+        /// Returns all options for the QAP Discussion Outcome value.
+        /// </summary>
+        /// <returns>List of values for QAP Discussion Outcome</returns>
+        [HttpGet("qap_discussion_outcome")]
+        public ActionResult GetQapDiscussionOutcome()
+        {
+            return Ok(GetDictionary(typeof(QapDiscussionOutcome)));
+        }
+        
+        /// Returns all options for the informed at death value for a bereaved .
+        /// </summary>
+        /// <returns>List of values for informed at death</returns>
+        [HttpGet("informed_at_death")]
+        public ActionResult GetInformedAtDeath()
+        {
+            return Ok(GetDictionary(typeof(InformedAtDeath)));
+        }
+
+        /// <summary>
+        /// Returns all options for the Bereaved Discussion Outcome value.
+        /// </summary>
+        /// <returns>List of values for Bereaved Discussion Outcome</returns>
+        [HttpGet("bereaved_discussion_outcome")]
+        public ActionResult GetBereavedDiscussionOutcome()
+        {
+            return Ok(GetDictionary(typeof(BereavedDiscussionOutcome)));
+        }
+
         /// <summary>
         /// Returns all the data types and the values for mode of disposal.
         /// </summary>
@@ -96,6 +156,16 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Returns all Event Type
+        /// </summary>
+        /// <returns>Dictionary of Event Types</returns>
+        [HttpGet("event_type")]
+        public ActionResult GetEventTypes()
+        {
+            return Ok(GetDictionary(typeof(EventType)));
+        }
+
+
         /// Returns all Case Statuses
         /// </summary>
         /// <returns>Dictionary of Case Statuses</returns>

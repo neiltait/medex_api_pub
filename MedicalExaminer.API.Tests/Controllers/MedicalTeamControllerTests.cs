@@ -74,7 +74,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationIdReturned = (GetMedicalTeamResponse)emptyResult.Value;
             examinationIdReturned.MedicalExaminerUserId.Should().BeNull();
             examinationIdReturned.MedicalExaminerOfficerUserId.Should().BeNull();
-            examinationIdReturned.NursingTeamInformation.Should().BeEmpty();
+            examinationIdReturned.NursingTeamInformation.Should().BeNull();
         }
 
         [Fact]

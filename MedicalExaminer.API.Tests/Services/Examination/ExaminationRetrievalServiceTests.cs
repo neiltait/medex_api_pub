@@ -5,6 +5,7 @@ using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services.Examination;
+using MedicalExaminer.Models;
 using Moq;
 using Xunit;
 
@@ -24,7 +25,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             const string id = "a";
 
             //Act
-            var result = await Service.Handle(new ExaminationRetrievalQuery(id));
+            var result = await Service.Handle(new ExaminationRetrievalQuery(id, new Mock<MeUser>().Object));
 
             //Assert
             result.Should().NotBeNull();
@@ -38,12 +39,11 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             const string examinationId = "c";
 
             //Act
-            var results = await Service.Handle(new ExaminationRetrievalQuery(examinationId));
+            var results = await Service.Handle(new ExaminationRetrievalQuery(examinationId, null));
 
             //Assert
             results.Should().BeNull();
         }
-
         [Fact]
         public void ExaminationQueryIsNullThrowsException()
         {

@@ -69,7 +69,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Assert.Equal(6, dictionary.Keys.Count);
         }
 
-        [Fact]
+        
         public void GetCaseStatuses_When_Called_Returns_Expected_Type()
         {
             // Act
@@ -79,7 +79,91 @@ namespace MedicalExaminer.API.Tests.Controllers
             var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
             var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
 
-            Assert.Equal(8, dictionary.Keys.Count);
+            Assert.Equal(2, dictionary.Keys.Count);
+        }
+
+        [Fact]
+        public void GetEventTypeTypes_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var response = _controller.GetEventTypes();
+
+            // Assert
+            var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
+
+            Assert.Equal(7, dictionary.Keys.Count);
+        }
+
+        [Fact]
+        public void GetOverallCircumstancesOfDeath_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var response = _controller.GetOverallCircumstancesOfDeath();
+
+            // Assert
+            var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
+
+            Assert.Equal(4, dictionary.Keys.Count);
+        }
+
+        [Fact]
+        public void GetOverallOutcomeOfPreScrutiny_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var response = _controller.GetOverallOutcomeOfPreScrutiny();
+
+            // Assert
+            var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
+
+            Assert.Equal(2, dictionary.Keys.Count);
+        }
+
+        [Fact]
+        public void GetClinicalGovernanceReview_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var response = _controller.GetClinicalGovernanceReview();
+
+            // Assert
+            var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
+
+            Assert.Equal(3, dictionary.Keys.Count);
+        }
+
+        [Fact]
+        public void GetQapDiscussionOutcome_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var response = _controller.GetQapDiscussionOutcome();
+        }
+        
+        [Fact]
+        public void GeInformedAtDeath_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var response = _controller.GetInformedAtDeath();
+            // Assert
+            var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
+
+            Assert.Equal(3, dictionary.Keys.Count);
+        }
+
+        [Fact]
+        public void GetBereavedDiscussionOutcome_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var response = _controller.GetBereavedDiscussionOutcome();
+
+            // Assert
+            var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
+
+            Assert.Equal(2, dictionary.Keys.Count);
         }
     }
 }
