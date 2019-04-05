@@ -7,6 +7,7 @@
         BereavedDiscussion,
         MedicalHistory,
         MeoSummary,
-        QapDiscussion
+        QapDiscussion,
+        Admission
     }
 }
