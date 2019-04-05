@@ -60,6 +60,26 @@ namespace MedicalExaminer.Models
 
                     qapDiscussionEventContainer.Add((QapDiscussionEvent)theEvent);
                     break;
+                case EventType.MedicalHistory:
+                    var medicalHistoryEventContainer = examination.CaseBreakdown.MedicalHistory;
+
+                    if (medicalHistoryEventContainer == null)
+                    {
+                        medicalHistoryEventContainer = new MedicalHistoryEventContainer();
+                    }
+
+                    medicalHistoryEventContainer.Add((MedicalHistoryEvent)theEvent);
+                    break;
+                case EventType.Admission:
+                    var admissionEventContainer = examination.CaseBreakdown.AdmissionNotes;
+
+                    if (admissionEventContainer == null)
+                    {
+                        admissionEventContainer = new AdmissionNotesEventContainer();
+                    }
+
+                    admissionEventContainer.Add((AdmissionEvent)theEvent);
+                    break;
                 default:
                     throw new NotImplementedException();
             }

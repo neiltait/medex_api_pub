@@ -7,6 +7,6 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
     {
         public IEnumerable<IEvent> History { get; set; }
         public IEvent Latest { get; set; }
-        public IEvent UsersDraft { get; set; }
+       // public IEvent UsersDraft { get; set; }
     }
 }

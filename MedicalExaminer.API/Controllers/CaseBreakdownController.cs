@@ -232,7 +232,7 @@ namespace MedicalExaminer.API.Controllers
                 return new NotFoundObjectResult(new GetCaseBreakdownResponse());
             }
 
-            var result = Mapper.Map<CaseBreakDownItem>(examination, opt => opt.Items["myUser"] = myUser);
+            var result = Mapper.Map<CaseBreakDownItem>(examination.CaseBreakdown, opt => opt.Items["myUser"] = myUser);
 
             return Ok(new GetCaseBreakdownResponse
             {

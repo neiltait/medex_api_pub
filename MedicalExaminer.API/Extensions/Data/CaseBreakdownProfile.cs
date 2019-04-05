@@ -9,26 +9,29 @@ namespace MedicalExaminer.API.Extensions.Data
     {
         public CaseBreakdownProfile()
         {
-            CreateMap<CaseBreakDown, CaseBreakDownItem>()
-                .ForMember(x=>x.OtherEvents, examination => examination.MapFrom(new UserDraftResolver()));
+            CreateMap<CaseBreakDown, CaseBreakDownItem>().
+                ForMember(x=>x.AdmissionNotes, opt => opt.MapFrom(s => Mapper.Map<IEventContainer<IEvent>, EventContainerItem>((IEventContainer<IEvent>)s.OtherEvents)));
         }
     }
 
-    public class UserDraftResolver : IValueResolver<CaseBreakDown, CaseBreakDownItem, EventContainerItem>
+    public class EventContainerProfile : Profile
     {
-        public EventContainerItem Resolve(CaseBreakDown source, CaseBreakDownItem destination, EventContainerItem destMember, ResolutionContext context)
+        public EventContainerProfile()
         {
-            var myUser = (MeUser)context.Items["myUser"];
-            var usersDraft = source.OtherEvents.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
+            CreateMap<IEventContainer<IEvent>, EventContainerItem>();
+               // .ForMember(eci => eci.UsersDraft, x => x.MapFrom(new UserDraftResolver()));
+        }
+    }
 
-            var eventContainer = new EventContainerItem()
-            {
-                History = source.OtherEvents.History,
-                Latest = source.OtherEvents.Latest,
-                UsersDraft = usersDraft
-            };
+    public class UserDraftResolver : IValueResolver<IEventContainer<IEvent>, EventContainerItem, IEvent>
+    {
+        public IEvent Resolve(IEventContainer<IEvent> source, EventContainerItem destination, IEvent destMember, ResolutionContext context)
+        {
             
-            return eventContainer;
+            var myUser = (MeUser)context.Items["myUser"];
+            var usersDraft = source.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
+
+            return usersDraft;
         }
     }
 }
