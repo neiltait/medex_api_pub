@@ -62,7 +62,7 @@ namespace MedicalExaminer.Common.Services
         /// Update Item Async.
         /// </summary>
         /// <param name="item">Item to update.</param>
-        /// <returns>The <see cref="TResult"/></returns>
+        /// <returns>The <see cref="Task{TResult}"/></returns>
         protected Task<TResult> UpdateItemAsync(TResult item)
         {
             return DatabaseAccess.UpdateItemAsync(ConnectionSettings, item);
@@ -72,7 +72,7 @@ namespace MedicalExaminer.Common.Services
         /// Get Item Async.
         /// </summary>
         /// <param name="predicate">Predicate.</param>
-        /// <returns>A <see cref="TResult"/>.</returns>
+        /// <returns>A <see cref="Task{TResult}"/>.</returns>
         protected Task<TResult> GetItemAsync(Expression<Func<TResult, bool>> predicate)
         {
             return DatabaseAccess.GetItemAsync(ConnectionSettings, predicate);
@@ -83,10 +83,25 @@ namespace MedicalExaminer.Common.Services
         /// </summary>
         /// <typeparam name="T">Query Reqyest.</typeparam>
         /// <param name="predicate">Predicate.</param>
-        /// <returns>A list of <see cref="TResult"/>.</returns>
+        /// <returns>A list of <see cref="IEnumerable{T}"/>.</returns>
         protected Task<IEnumerable<T>> GetItemsAsync<T>(Expression<Func<T, bool>> predicate)
         {
             return DatabaseAccess.GetItemsAsync(ConnectionSettings, predicate);
+        }
+
+        /// <summary>
+        /// Get Items Async.
+        /// </summary>
+        /// <typeparam name="T">Query Reqyest.</typeparam>
+        /// <typeparam name="TKey">Type for Order By.</typeparam>
+        /// <param name="predicate">Predicate.</param>
+        /// <param name="orderBy">Order By.</param>
+        /// <returns>A list of <see cref="IEnumerable{T}"/>.</returns>
+        protected Task<IEnumerable<T>> GetItemsAsync<T, TKey>(
+            Expression<Func<T, bool>> predicate,
+            Expression<Func<T, TKey>> orderBy)
+        {
+            return DatabaseAccess.GetItemsAsync(ConnectionSettings, predicate, orderBy);
         }
     }
 }
