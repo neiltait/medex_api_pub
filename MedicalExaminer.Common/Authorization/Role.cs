@@ -9,11 +9,6 @@ namespace MedicalExaminer.Common.Authorization
     public abstract class Role
     {
         /// <summary>
-        /// The User Role this Role is representing.
-        /// </summary>
-        public UserRoles UserRole { get; }
-
-        /// <summary>
         /// Permissions this role has been granted.
         /// </summary>
         private readonly HashSet<Permission> _granted = new HashSet<Permission>();
@@ -28,9 +23,14 @@ namespace MedicalExaminer.Common.Authorization
         }
 
         /// <summary>
+        /// The User Role this Role is representing.
+        /// </summary>
+        public UserRoles UserRole { get; }
+
+        /// <summary>
         /// Grant the role a permission.
         /// </summary>
-        /// <param name="permission"></param>
+        /// <param name="permission">Permission.</param>
         public void Grant(Permission permission)
         {
             _granted.Add(permission);
@@ -52,11 +52,11 @@ namespace MedicalExaminer.Common.Authorization
         /// Can role do Permission.
         /// </summary>
         /// <remarks>Is this role granted with this permission.</remarks>
-        /// <param name="feature"></param>
+        /// <param name="permission">Permission.</param>
         /// <returns>Boolean indicating whether it can.</returns>
-        public bool Can(Permission feature)
+        public bool Can(Permission permission)
         {
-            return _granted.Contains(feature);
+            return _granted.Contains(permission);
         }
     }
 }
