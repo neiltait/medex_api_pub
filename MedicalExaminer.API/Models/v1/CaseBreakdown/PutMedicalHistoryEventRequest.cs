@@ -1,8 +1,12 @@
-﻿using MedicalExaminer.Models.Enums;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
-    public class PutMeoSummaryEventRequest
+    public class PutMedicalHistoryEventRequest
     {
         /// <summary>
         /// Event Identification.
@@ -14,14 +18,14 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// </summary>
         public string UserId { get; set; }
 
-        ///// <summary>
-        ///// bool for the status (Draft or Final).
-        ///// </summary>
+        /// <summary>
+        /// Dictionary for the status (Draft or Final).
+        /// </summary>
         public bool IsFinal { get; set; }
 
         /// <summary>
-        /// Details of the MEO Summary.
+        /// Event Text
         /// </summary>
-        public string SummaryDetails { get; set; }
+        public string Text { get; set; }
     }
 }

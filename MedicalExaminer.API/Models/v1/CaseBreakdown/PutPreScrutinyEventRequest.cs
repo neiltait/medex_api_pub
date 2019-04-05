@@ -27,12 +27,6 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         public bool IsFinal { get; set; }
 
 
-
-        /// <summary>
-        /// the type of event this is
-        /// </summary>
-        public EventType EventType => EventType.PreScrutiny;
-
         /// <summary>
         /// Dictionary for circumstances of death radio button.
         /// </summary>

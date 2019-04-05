@@ -1,9 +1,9 @@
 ﻿namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
-    public class PutBereavedDiscussionEventResponse : ResponseBase
+    public class PutCaseBreakdownEventResponse : ResponseBase
     {
         /// <summary>
-        ///     The id of the new case
+        ///     The id of the event
         /// </summary>
         public string EventId { get; set; }
     }

@@ -118,7 +118,137 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<ActionResult<GetCaseBreakdownResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             okResult.Value.Should().BeAssignableTo<GetCaseBreakdownResponse>();
+        }
 
+        [Fact]
+        public async void Put_Final_MedicalHistory_Event_Null_Request_Object_Returns_Invalid_Request()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+
+            var medicalHistoryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
+            var examinationRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+
+
+            examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(default(Examination))).Verifiable();
+
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
+               medicalHistoryEventCreationService.Object, examinationRetrievalQueryService.Object);
+
+            // Act
+            var response = await sut.UpsertNewMedicalHistoryEvent("a", null);
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
+            var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
+        }
+
+        [Fact]
+        public async void Put_Final_MedicalHistory_Event_Invalid_Request_Object_Returns_Invalid_Request()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+
+            var medicalHistoryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
+            var examinationRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+
+            var invalidRequest = new PutMedicalHistoryEventRequest
+            {
+                EventId = null,
+                IsFinal = true,
+                Text = null
+            };
+
+            examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(default(Examination))).Verifiable();
+
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
+               medicalHistoryEventCreationService.Object, examinationRetrievalQueryService.Object);
+
+            sut.ModelState.AddModelError("i", "broke it");
+            // Act
+            var response = await sut.UpsertNewMedicalHistoryEvent("a", invalidRequest);
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
+            var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
+        }
+
+        [Fact]
+        public async void Put_Final_MedicalHistory_Event_Valid_Request_Object_Cannot_Find_Examination()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+
+            var medicalHistoryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
+            var examinationRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+
+            var validRequest = new PutMedicalHistoryEventRequest
+            {
+                EventId = "1",
+                IsFinal = true,
+                Text = "Hello Planet"
+            };
+
+            examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(default(Examination))).Verifiable();
+
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
+               medicalHistoryEventCreationService.Object, examinationRetrievalQueryService.Object);
+
+            // Act
+            var response = await sut.UpsertNewMedicalHistoryEvent("a", validRequest);
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
+            var badRequestResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
+        }
+
+        [Fact]
+        public async void Put_Final_MedicalHistory_Event_Valid_Request_Object_Finds_Examination_Then_Ok_Result()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            var examination = new Mock<Examination>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
+            var examinationRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+
+            var validRequest = new PutMedicalHistoryEventRequest
+            {
+                EventId = "1",
+                IsFinal = true,
+                Text = "Hello Planet"
+            };
+            eventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
+                .Returns(Task.FromResult("hi mark")).Verifiable();
+
+            examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination.Object)).Verifiable();
+
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
+               eventCreationService.Object, examinationRetrievalQueryService.Object);
+
+            // Act
+            var response = await sut.UpsertNewMedicalHistoryEvent("a", validRequest);
+
+            eventCreationService.Verify(x => x.Handle(It.IsAny<CreateEventQuery>()), Times.Once);
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
+            var goodRequestResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            goodRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -143,9 +273,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewOtherEvent("a", null);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutOtherEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutOtherEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -177,9 +307,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewOtherEvent("a", invalidRequest);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutOtherEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutOtherEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -210,9 +340,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewOtherEvent("a", validRequest);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutOtherEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutOtherEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -247,9 +377,140 @@ namespace MedicalExaminer.API.Tests.Controllers
             eventCreationService.Verify(x => x.Handle(It.IsAny<CreateEventQuery>()), Times.Once);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutOtherEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var goodRequestResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            goodRequestResult.Value.Should().BeAssignableTo<PutOtherEventResponse>();
+            goodRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
+        }
+
+        [Fact]
+        public async void Put_Final_Admission_Event_Null_Request_Object_Returns_Invalid_Request()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+
+            var admissionEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
+            var examinationRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+
+
+            examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(default(Examination))).Verifiable();
+
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
+               admissionEventCreationService.Object, examinationRetrievalQueryService.Object);
+
+            // Act
+            var response = await sut.UpsertNewAdmissionEvent("a", null);
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
+            var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
+        }
+
+        [Fact]
+        public async void Put_Final_Admission_Event_Invalid_Request_Object_Returns_Invalid_Request()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+
+            var admissionEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
+            var examinationRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+
+            var invalidRequest = new PutAdmissionEventRequest
+            {
+                EventId = null,
+                IsFinal = true,
+                Text = null
+            };
+
+            examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(default(Examination))).Verifiable();
+
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
+               admissionEventCreationService.Object, examinationRetrievalQueryService.Object);
+
+            sut.ModelState.AddModelError("i", "broke it");
+            // Act
+            var response = await sut.UpsertNewAdmissionEvent("a", invalidRequest);
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
+            var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
+        }
+
+        [Fact]
+        public async void Put_Final_Admission_Event_Valid_Request_Object_Cannot_Find_Examination()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+
+            var admissionEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
+            var examinationRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+
+            var validRequest = new PutAdmissionEventRequest
+            {
+                EventId = "1",
+                IsFinal = true,
+                Text = "Hello Planet"
+            };
+
+            examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(default(Examination))).Verifiable();
+
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
+               admissionEventCreationService.Object, examinationRetrievalQueryService.Object);
+
+            // Act
+            var response = await sut.UpsertNewAdmissionEvent("a", validRequest);
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
+            var badRequestResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
+        }
+
+        [Fact]
+        public async void Put_Final_Admission_Event_Valid_Request_Object_Finds_Examination_Then_Ok_Result()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            var examination = new Mock<Examination>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
+            var examinationRetrievalQueryService =
+                new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+
+            var validRequest = new PutAdmissionEventRequest
+            {
+                EventId = "1",
+                IsFinal = true,
+                Text = "Hello Planet"
+            };
+            eventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
+                .Returns(Task.FromResult("hi mark")).Verifiable();
+
+            examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination.Object)).Verifiable();
+
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
+               eventCreationService.Object, examinationRetrievalQueryService.Object);
+
+            // Act
+            var response = await sut.UpsertNewAdmissionEvent("a", validRequest);
+
+            eventCreationService.Verify(x => x.Handle(It.IsAny<CreateEventQuery>()), Times.Once);
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
+            var goodRequestResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            goodRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -269,9 +530,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewPreScrutinyEvent("a", null);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutPreScrutinyEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutPreScrutinyEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -300,9 +561,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewPreScrutinyEvent("a", invalidRequest);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutPreScrutinyEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutPreScrutinyEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -331,9 +592,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewPreScrutinyEvent("a", validRequest);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutPreScrutinyEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutPreScrutinyEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -367,9 +628,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             eventCreationService.Verify(x => x.Handle(It.IsAny<CreateEventQuery>()), Times.Once);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutPreScrutinyEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var goodRequestResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            goodRequestResult.Value.Should().BeAssignableTo<PutPreScrutinyEventResponse>();
+            goodRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -394,9 +655,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewBereavedDiscussionEvent("a", null);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutBereavedDiscussionEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutBereavedDiscussionEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -428,9 +689,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewBereavedDiscussionEvent("a", invalidRequest);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutBereavedDiscussionEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutBereavedDiscussionEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -461,9 +722,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewBereavedDiscussionEvent("a", validRequest);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutBereavedDiscussionEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutBereavedDiscussionEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -498,9 +759,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             eventCreationService.Verify(x => x.Handle(It.IsAny<CreateEventQuery>()), Times.Once);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutBereavedDiscussionEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var goodRequestResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            goodRequestResult.Value.Should().BeAssignableTo<PutBereavedDiscussionEventResponse>();
+            goodRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -526,9 +787,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewQapDiscussionEvent("a", null);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutQapDiscussionEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutQapDiscussionEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -561,9 +822,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewQapDiscussionEvent("a", invalidRequest);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutQapDiscussionEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutQapDiscussionEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -595,9 +856,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewQapDiscussionEvent("a", validRequest);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutQapDiscussionEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutQapDiscussionEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -635,9 +896,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 Times.Once);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutQapDiscussionEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var goodRequestResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            goodRequestResult.Value.Should().BeAssignableTo<PutQapDiscussionEventResponse>();
+            goodRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -661,9 +922,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewMeoSummaryEvent("a", null);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutMeoSummaryEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutMeoSummaryEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -694,9 +955,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewMeoSummaryEvent("a", invalidRequest);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutMeoSummaryEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutMeoSummaryEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -726,9 +987,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.UpsertNewMeoSummaryEvent("a", validRequest);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutMeoSummaryEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var badRequestResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
-            badRequestResult.Value.Should().BeAssignableTo<PutMeoSummaryEventResponse>();
+            badRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
 
         [Fact]
@@ -765,9 +1026,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                Times.Once);
 
             // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<PutMeoSummaryEventResponse>>().Subject;
+            var taskResult = response.Should().BeOfType<ActionResult<PutCaseBreakdownEventResponse>>().Subject;
             var goodRequestResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            goodRequestResult.Value.Should().BeAssignableTo<PutMeoSummaryEventResponse>();
+            goodRequestResult.Value.Should().BeAssignableTo<PutCaseBreakdownEventResponse>();
         }
     }
 }
