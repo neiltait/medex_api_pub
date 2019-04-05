@@ -2,7 +2,7 @@
 {
     public class CaseBreakDown
     {
-        public OtherEventContainer OtherEvents { get; set; } = new OtherEventContainer();
+        public BaseEventContainter<OtherEvent> OtherEvents { get; set; } = new OtherEventContainer();
         public BaseEventContainter<PreScrutinyEvent> PreScrutiny { get; set; } = new PreScrutinyEventContainer();
 
         public BaseEventContainter<BereavedDiscussionEvent> BereavedDiscussion { get; set; } = new BereavedDiscussionEventContainer();

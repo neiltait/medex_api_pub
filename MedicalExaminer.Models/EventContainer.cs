@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace MedicalExaminer.Models
 {
-    public class OtherEventContainer : IEventContainer<OtherEvent>// BaseEventContainter<OtherEvent>
+    public class OtherEventContainer : BaseEventContainter<OtherEvent>
     {
 
-        public OtherEvent Latest { get; set; }
-        public IList<OtherEvent> Drafts { get; set; } = new List<OtherEvent>();
-        public IList<OtherEvent> History { get; set; } = new List<OtherEvent>();
+        public override OtherEvent Latest { get; set; }
+        public override IList<OtherEvent> Drafts { get; set; } = new List<OtherEvent>();
+        public override IList<OtherEvent> History { get; set; } = new List<OtherEvent>();
 
-        public void Add(OtherEvent theEvent)
+        public override void Add(OtherEvent theEvent)
         {
             if (string.IsNullOrEmpty(theEvent.EventId))
             {

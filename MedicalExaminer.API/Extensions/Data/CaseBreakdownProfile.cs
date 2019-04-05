@@ -10,7 +10,7 @@ namespace MedicalExaminer.API.Extensions.Data
         public CaseBreakdownProfile()
         {
             CreateMap<CaseBreakDown, CaseBreakDownItem>().
-                ForMember(x=>x.AdmissionNotes, opt => opt.MapFrom(s => Mapper.Map<IEventContainer<IEvent>, EventContainerItem>((IEventContainer<IEvent>)s.OtherEvents)));
+                ForMember(x=>x.AdmissionNotes, opt => opt.MapFrom(s => Mapper.Map<IEventContainer<OtherEvent>, EventContainerItem>(s.OtherEvents)));
         }
     }
 
@@ -18,14 +18,14 @@ namespace MedicalExaminer.API.Extensions.Data
     {
         public EventContainerProfile()
         {
-            CreateMap<IEventContainer<IEvent>, EventContainerItem>();
-               // .ForMember(eci => eci.UsersDraft, x => x.MapFrom(new UserDraftResolver()));
+           // CreateMap<IEventContainer<OtherEvent>, EventContainerItem>();
+           // CreateMap<IEventContainer<AdmissionEvent>, EventContainerItem>();
         }
     }
 
-    public class UserDraftResolver : IValueResolver<IEventContainer<IEvent>, EventContainerItem, IEvent>
+    public class UserDraftResolver : IValueResolver<BaseEventContainter<IEvent>, EventContainerItem, IEvent>
     {
-        public IEvent Resolve(IEventContainer<IEvent> source, EventContainerItem destination, IEvent destMember, ResolutionContext context)
+        public IEvent Resolve(BaseEventContainter<IEvent> source, EventContainerItem destination, IEvent destMember, ResolutionContext context)
         {
             
             var myUser = (MeUser)context.Items["myUser"];
