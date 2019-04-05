@@ -37,18 +37,18 @@ namespace MedicalExaminer.API.Controllers
         [HttpPut]
         [Route("{examinationId}/bereaved_discussion")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutBereavedDiscussionEventResponse>> UpsertNewBereavedDiscussionEvent(string examinationId,
+        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewBereavedDiscussionEvent(string examinationId,
             [FromBody]
             PutBereavedDiscussionEventRequest putNewBereavedDiscussionEventNoteRequest)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new PutBereavedDiscussionEventResponse());
+                return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             if (putNewBereavedDiscussionEventNoteRequest == null)
             {
-                return BadRequest(new PutBereavedDiscussionEventResponse());
+                return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             var bereavedDiscussionEventNote = Mapper.Map<BereavedDiscussionEvent>(putNewBereavedDiscussionEventNoteRequest);
@@ -56,10 +56,10 @@ namespace MedicalExaminer.API.Controllers
 
             if (result == null)
             {
-                return NotFound(new PutBereavedDiscussionEventResponse());
+                return NotFound(new PutCaseBreakdownEventResponse());
             }
 
-            var res = new PutBereavedDiscussionEventResponse
+            var res = new PutCaseBreakdownEventResponse
             {
                 EventId = result
             };
@@ -70,18 +70,18 @@ namespace MedicalExaminer.API.Controllers
         [HttpPut]
         [Route("{examinationId}/prescrutiny")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutPreScrutinyEventResponse>> UpsertNewPreScrutinyEvent(string examinationId,
+        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewPreScrutinyEvent(string examinationId,
             [FromBody]
             PutPreScrutinyEventRequest putNewPreScrutinyEventNoteRequest)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new PutPreScrutinyEventResponse());
+                return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             if (putNewPreScrutinyEventNoteRequest == null)
             {
-                return BadRequest(new PutPreScrutinyEventResponse());
+                return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             var preScrutinyEventNote = Mapper.Map<PreScrutinyEvent>(putNewPreScrutinyEventNoteRequest);
@@ -89,10 +89,10 @@ namespace MedicalExaminer.API.Controllers
 
             if (result == null)
             {
-                return NotFound(new PutPreScrutinyEventResponse());
+                return NotFound(new PutCaseBreakdownEventResponse());
             }
 
-            var res = new PutPreScrutinyEventResponse
+            var res = new PutCaseBreakdownEventResponse
             {
                 EventId = result
             };
@@ -103,18 +103,18 @@ namespace MedicalExaminer.API.Controllers
         [HttpPut]
         [Route("{caseId}/medical_history")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutMedicalHistoryEventResponse>> UpsertNewMedicalHistoryEvent(string caseId,
+        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewMedicalHistoryEvent(string caseId,
             [FromBody]
             PutMedicalHistoryEventRequest putMedicalHistoryEventRequest)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new PutMedicalHistoryEventResponse());
+                return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             if (putMedicalHistoryEventRequest == null)
             {
-                return BadRequest(new PutMedicalHistoryEventResponse());
+                return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             var preScrutinyEventNote = Mapper.Map<MedicalHistoryEvent>(putMedicalHistoryEventRequest);
@@ -122,10 +122,11 @@ namespace MedicalExaminer.API.Controllers
 
             if (result == null)
             {
-                return NotFound(new PutMedicalHistoryEventResponse());
+                return NotFound(new PutCaseBreakdownEventResponse());
             }
 
-            var res = new PutMedicalHistoryEventResponse{
+            var res = new PutCaseBreakdownEventResponse
+            {
                 EventId = result
             };
 
@@ -135,18 +136,18 @@ namespace MedicalExaminer.API.Controllers
 
         [Route("{examinationId}/admission")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutAdmissionEventResponse>> UpsertNewAdmissionEvent(string examinationId,
+        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewAdmissionEvent(string examinationId,
             [FromBody]
             PutAdmissionEventRequest putNewAdmissionEventNoteRequest)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new PutAdmissionEventResponse());
+                return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             if (putNewAdmissionEventNoteRequest == null)
             {
-                return BadRequest(new PutAdmissionEventResponse());
+                return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             var admissionEventNote = Mapper.Map<AdmissionEvent>(putNewAdmissionEventNoteRequest);
@@ -154,10 +155,10 @@ namespace MedicalExaminer.API.Controllers
 
             if (result == null)
             {
-                return NotFound(new PutAdmissionEventResponse());
+                return NotFound(new PutCaseBreakdownEventResponse());
             }
 
-            var res = new PutAdmissionEventResponse
+            var res = new PutCaseBreakdownEventResponse
             {
                 EventId = result
             };
@@ -168,18 +169,18 @@ namespace MedicalExaminer.API.Controllers
         [HttpPut]
         [Route("{examinationId}/other")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutOtherEventResponse>> UpsertNewOtherEvent(string examinationId,
+        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewOtherEvent(string examinationId,
             [FromBody]
             PutOtherEventRequest putNewOtherEventNoteRequest)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new PutOtherEventResponse());
+                return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             if (putNewOtherEventNoteRequest == null)
             {
-                return BadRequest(new PutOtherEventResponse());
+                return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             var otherEventNote = Mapper.Map<OtherEvent>(putNewOtherEventNoteRequest);
@@ -187,10 +188,10 @@ namespace MedicalExaminer.API.Controllers
 
             if (result == null)
             {
-                return NotFound(new PutOtherEventResponse());
+                return NotFound(new PutCaseBreakdownEventResponse());
             }
 
-            var res = new PutOtherEventResponse
+            var res = new PutCaseBreakdownEventResponse
             {
                 EventId = result
             };
@@ -233,18 +234,18 @@ namespace MedicalExaminer.API.Controllers
         [HttpPut]
         [Route("{examinationId}/qap_discussion")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutQapDiscussionEventResponse>> UpsertNewQapDiscussionEvent(string examinationId,
+        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewQapDiscussionEvent(string examinationId,
             [FromBody]
             PutQapDiscussionEventRequest putNewQapDiscussionEventNoteRequest)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new PutQapDiscussionEventResponse());
+                return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             if (putNewQapDiscussionEventNoteRequest == null)
             {
-                return BadRequest(new PutQapDiscussionEventResponse());
+                return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             var qapDiscussionEventNote = Mapper.Map<QapDiscussionEvent>(putNewQapDiscussionEventNoteRequest);
@@ -252,10 +253,10 @@ namespace MedicalExaminer.API.Controllers
 
             if (result == null)
             {
-                return NotFound(new PutQapDiscussionEventResponse());
+                return NotFound(new PutCaseBreakdownEventResponse());
             }
 
-            var res = new PutQapDiscussionEventResponse
+            var res = new PutCaseBreakdownEventResponse
             {
                 EventId = result
             };
@@ -266,18 +267,18 @@ namespace MedicalExaminer.API.Controllers
         [HttpPut]
         [Route("{examinationId}/meo_summary")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutMeoSummaryEventResponse>> UpsertNewMeoSummaryEvent(string examinationId,
+        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewMeoSummaryEvent(string examinationId,
             [FromBody]
             PutMeoSummaryEventRequest putNewMeoSummaryEventNoteRequest)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new PutMeoSummaryEventResponse());
+                return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             if (putNewMeoSummaryEventNoteRequest == null)
             {
-                return BadRequest(new PutMeoSummaryEventResponse());
+                return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             var meoSummaryEvent = Mapper.Map<MeoSummaryEvent>(putNewMeoSummaryEventNoteRequest);
@@ -285,10 +286,10 @@ namespace MedicalExaminer.API.Controllers
 
             if (result == null)
             {
-                return NotFound(new PutMeoSummaryEventResponse());
+                return NotFound(new PutCaseBreakdownEventResponse());
             }
 
-            var res = new PutMeoSummaryEventResponse
+            var res = new PutCaseBreakdownEventResponse
             {
                 EventId = result
             };
