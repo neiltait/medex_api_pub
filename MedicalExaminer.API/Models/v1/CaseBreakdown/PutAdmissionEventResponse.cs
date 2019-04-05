@@ -1,9 +1,9 @@
 ﻿namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
-    public class PutPreScrutinyEventResponse : ResponseBase
+    public class PutAdmissionEventResponse : ResponseBase
     {
         /// <summary>
-        ///     The id of the new Pre-Scrutiny Event.
+        ///     The id of the new case
         /// </summary>
         public string EventId { get; set; }
     }
