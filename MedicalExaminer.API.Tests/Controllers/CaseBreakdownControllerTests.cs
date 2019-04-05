@@ -6,6 +6,7 @@ using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -22,11 +23,13 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+
             var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var sut = new CaseBreakdownController(logger.Object, mapper.Object, 
-                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
+                otherEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
             // Act
             var response = await sut.GetCaseBreakdown(null);
 
@@ -42,12 +45,13 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object, 
-                otherEventCreationService.Object, examinationRetrievalQueryService.Object);
+                otherEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
             // Act
             var response = await sut.GetCaseBreakdown("aaaa");
 
@@ -65,16 +69,16 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
 
             var examinationId = "7E5D50CE-05BF-4A1F-AA6E-25418A723A7F";
-            
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-                       
+
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               otherEventCreationService.Object, examinationRetrievalQueryService.Object);
+               otherEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.GetCaseBreakdown(examinationId);
@@ -94,7 +98,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationObj = new Mock<Examination>().Object;
             var examinationId = "7E5D50CE-05BF-4A1F-AA6E-25418A723A7F";
             var getOtherResponse = new Mock<GetCaseBreakdownResponse>().Object;
-            
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var mapper = new Mock<IMapper>();
             mapper.Setup(m => m.Map<GetCaseBreakdownResponse>(examinationObj)).Returns(getOtherResponse);
 
@@ -107,7 +111,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(examinationObj)).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               otherEventCreationService.Object, examinationRetrievalQueryService.Object);
+               otherEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.GetCaseBreakdown(examinationId);
@@ -126,7 +130,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var medicalHistoryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
@@ -136,7 +140,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               medicalHistoryEventCreationService.Object, examinationRetrievalQueryService.Object);
+               medicalHistoryEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewMedicalHistoryEvent("a", null);
@@ -153,7 +157,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var medicalHistoryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
@@ -169,7 +173,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               medicalHistoryEventCreationService.Object, examinationRetrievalQueryService.Object);
+               medicalHistoryEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             sut.ModelState.AddModelError("i", "broke it");
             // Act
@@ -187,7 +191,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var medicalHistoryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
@@ -203,7 +207,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               medicalHistoryEventCreationService.Object, examinationRetrievalQueryService.Object);
+               medicalHistoryEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewMedicalHistoryEvent("a", validRequest);
@@ -224,7 +228,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var validRequest = new PutMedicalHistoryEventRequest
             {
                 EventId = "1",
@@ -238,7 +242,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               eventCreationService.Object, examinationRetrievalQueryService.Object);
+               eventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewMedicalHistoryEvent("a", validRequest);
@@ -261,13 +265,13 @@ namespace MedicalExaminer.API.Tests.Controllers
             var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               otherEventCreationService.Object, examinationRetrievalQueryService.Object);
+               otherEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewOtherEvent("a", null);
@@ -288,7 +292,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var invalidRequest = new PutOtherEventRequest
             {
              EventId = null,
@@ -300,7 +304,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               otherEventCreationService.Object, examinationRetrievalQueryService.Object);
+               otherEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             sut.ModelState.AddModelError("i", "broke it");
             // Act
@@ -318,7 +322,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
@@ -334,7 +338,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               otherEventCreationService.Object, examinationRetrievalQueryService.Object);
+               otherEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewOtherEvent("a", validRequest);
@@ -355,7 +359,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var validRequest = new PutOtherEventRequest
             {
                 EventId = "1",
@@ -369,7 +373,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               eventCreationService.Object, examinationRetrievalQueryService.Object);
+               eventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewOtherEvent("a", validRequest);
@@ -388,7 +392,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var admissionEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
@@ -398,7 +402,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               admissionEventCreationService.Object, examinationRetrievalQueryService.Object);
+               admissionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewAdmissionEvent("a", null);
@@ -415,7 +419,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var admissionEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
@@ -431,7 +435,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               admissionEventCreationService.Object, examinationRetrievalQueryService.Object);
+               admissionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             sut.ModelState.AddModelError("i", "broke it");
             // Act
@@ -449,7 +453,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var admissionEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
@@ -465,7 +469,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               admissionEventCreationService.Object, examinationRetrievalQueryService.Object);
+               admissionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewAdmissionEvent("a", validRequest);
@@ -486,7 +490,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var validRequest = new PutAdmissionEventRequest
             {
                 EventId = "1",
@@ -500,7 +504,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               eventCreationService.Object, examinationRetrievalQueryService.Object);
+               eventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewAdmissionEvent("a", validRequest);
@@ -523,8 +527,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
-
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, examinationRetrievalQueryService.Object);
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, 
+                examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewPreScrutinyEvent("a", null);
@@ -543,7 +548,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var invalidRequest = new PutPreScrutinyEventRequest
             {
                 EventId = null,
@@ -554,7 +559,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, examinationRetrievalQueryService.Object);
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, 
+                examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             sut.ModelState.AddModelError("i", "broke it");
             // Act
@@ -575,7 +581,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var validRequest = new PutPreScrutinyEventRequest
             {
                 EventId = "1",
@@ -586,7 +592,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, examinationRetrievalQueryService.Object);
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, 
+                examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewPreScrutinyEvent("a", validRequest);
@@ -607,7 +614,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var validRequest = new PutPreScrutinyEventRequest
             {
                 EventId = "1",
@@ -620,7 +627,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, examinationRetrievalQueryService.Object);
+            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, 
+                examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewPreScrutinyEvent("a", validRequest);
@@ -639,7 +647,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
@@ -649,7 +657,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               eventCreationService.Object, examinationRetrievalQueryService.Object);
+               eventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewBereavedDiscussionEvent("a", null);
@@ -666,7 +674,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
@@ -682,7 +690,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               eventCreationService.Object, examinationRetrievalQueryService.Object);
+               eventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             sut.ModelState.AddModelError("i", "broke it");
             // Act
@@ -700,7 +708,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
@@ -716,7 +724,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               eventCreationService.Object, examinationRetrievalQueryService.Object);
+               eventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewBereavedDiscussionEvent("a", validRequest);
@@ -737,7 +745,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var validRequest = new PutBereavedDiscussionEventRequest
             {
                 EventId = "1",
@@ -751,7 +759,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               eventCreationService.Object, examinationRetrievalQueryService.Object);
+               eventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewBereavedDiscussionEvent("a", validRequest);
@@ -770,7 +778,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var qapDiscussionEventCreationService =
                 new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
@@ -781,7 +789,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-                qapDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
+                qapDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewQapDiscussionEvent("a", null);
@@ -798,7 +806,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var qapDiscussionEventCreationService =
                 new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
@@ -815,7 +823,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-                qapDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
+                qapDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             sut.ModelState.AddModelError("i", "broke it");
             // Act
@@ -833,7 +841,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var qapDiscussionEventCreationService =
                 new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
@@ -850,7 +858,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-                qapDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
+                qapDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewQapDiscussionEvent("a", validRequest);
@@ -872,7 +880,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var validRequest = new PutQapDiscussionEventRequest
             {
                 EventId = "1",
@@ -887,7 +895,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-                qapDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object);
+                qapDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewQapDiscussionEvent("a", validRequest);
@@ -907,7 +915,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var meoSummaryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -916,7 +924,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               meoSummaryEventCreationService.Object, examinationRetrievalQueryService.Object);
+               meoSummaryEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewMeoSummaryEvent("a", null);
@@ -933,7 +941,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var meoSummaryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -948,7 +956,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               meoSummaryEventCreationService.Object, examinationRetrievalQueryService.Object);
+               meoSummaryEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             sut.ModelState.AddModelError("i", "broke it");
             // Act
@@ -966,7 +974,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var meoSummaryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -981,7 +989,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                .Returns(Task.FromResult(default(Examination))).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               meoSummaryEventCreationService.Object, examinationRetrievalQueryService.Object);
+               meoSummaryEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewMeoSummaryEvent("a", validRequest);
@@ -999,7 +1007,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var examination = new Mock<Examination>();
-
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var meoSummaryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -1017,7 +1025,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                .Returns(Task.FromResult(examination.Object)).Verifiable();
 
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               meoSummaryEventCreationService.Object, examinationRetrievalQueryService.Object);
+               meoSummaryEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = await sut.UpsertNewMeoSummaryEvent("a", validRequest);

@@ -69,9 +69,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<GetExaminationsResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-            //var examinationResponse = okResult..Value.Should().BeAssignableTo<GetExaminationsResponse>().Subject;
-            //var examinations = examinationResponse.Examinations;
-            //Assert.Equal(2, examinations.Count());
         }
 
         [Fact]

@@ -10,5 +10,10 @@
         public BaseEventContainter<MeoSummaryEvent> MeoSummary { get; set; } = new MeoSummaryEventContainer();
 
         public BaseEventContainter<QapDiscussionEvent> QapDiscussion { get; set; } = new QapDiscussionEventContainer();
+
+        public BaseEventContainter<MedicalHistoryEvent> MedicalHistory { get; set; } = new MedicalHistoryEventContainer();
+
+        public BaseEventContainter<AdmissionEvent> AdmissionNotes { get; set; } = new AdmissionNotesEventContainer();
+
     }
 }

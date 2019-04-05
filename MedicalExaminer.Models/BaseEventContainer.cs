@@ -25,12 +25,7 @@ namespace MedicalExaminer.Models
             {
                 Latest = theEvent;
                 History.Add(theEvent);
-                var draft = Drafts.SingleOrDefault(d => d.EventId == theEvent.EventId);
-                if (draft != null)
-                {
-                    Drafts.Remove(draft);
-                }
-
+                Drafts.Clear();
                 return;
             }
             else

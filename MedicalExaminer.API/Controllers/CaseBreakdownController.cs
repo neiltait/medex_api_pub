@@ -6,6 +6,7 @@ using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -18,17 +19,18 @@ namespace MedicalExaminer.API.Controllers
     [Route("/v{api-version:apiVersion}/examinations")]
     [ApiController]
     [Authorize]
-    public class CaseBreakdownController : BaseController
+    public class CaseBreakdownController : AuthenticatedBaseController
     {
         private IAsyncQueryHandler<CreateEventQuery, string> _eventCreationService;
         private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
-
+        
         public CaseBreakdownController(
             IMELogger logger,
             IMapper mapper,
             IAsyncQueryHandler<CreateEventQuery, string> eventCreationService,
-            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService)
-            : base(logger, mapper)
+            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
+            : base(logger, mapper, usersRetrievalByEmailService)
         {
             _eventCreationService = eventCreationService;
             _examinationRetrievalService = examinationRetrievalService;
@@ -133,7 +135,7 @@ namespace MedicalExaminer.API.Controllers
             return Ok(res);
         }
 
-
+        [HttpPut]
         [Route("{examinationId}/admission")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewAdmissionEvent(string examinationId,
@@ -199,6 +201,11 @@ namespace MedicalExaminer.API.Controllers
             return Ok(res);
         }
 
+        /// <summary>
+        /// returns a casebreakdown object for the given examination
+        /// </summary>
+        /// <param name="examinationId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{examinationId}/casebreakdown")]
         [ServiceFilter(typeof(ControllerActionFilter))]
@@ -216,14 +223,16 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetCaseBreakdownResponse());
             }
 
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
+            var myUser = await CurrentUser();
+
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, myUser));
             
             if(examination == null)
             {
                 return new NotFoundObjectResult(new GetCaseBreakdownResponse());
             }
 
-            var result = Mapper.Map<CaseBreakDownItem>(examination);
+            var result = Mapper.Map<CaseBreakDownItem>(examination, opt => opt.Items["myUser"] = myUser);
 
             return Ok(new GetCaseBreakdownResponse
             {
