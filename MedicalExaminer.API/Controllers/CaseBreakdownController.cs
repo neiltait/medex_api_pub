@@ -117,8 +117,8 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
-            var preScrutinyEventNote = Mapper.Map<MedicalHistoryEvent>(putMedicalHistoryEventRequest);
-            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, preScrutinyEventNote));
+            var medicalHistoryEventNote = Mapper.Map<MedicalHistoryEvent>(putMedicalHistoryEventRequest);
+            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, medicalHistoryEventNote));
 
             if (result == null)
             {
@@ -133,7 +133,7 @@ namespace MedicalExaminer.API.Controllers
             return Ok(res);
         }
 
-
+        [HttpPut]
         [Route("{examinationId}/admission")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewAdmissionEvent(string examinationId,
