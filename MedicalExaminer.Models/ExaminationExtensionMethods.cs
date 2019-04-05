@@ -28,7 +28,7 @@ namespace MedicalExaminer.Models
             return examination;
         }
 
-        public static int UpdateCaseUrgencyScore(this Examination examination)
+        public static Examination UpdateCaseUrgencyScore(this Examination examination)
         {
             if (examination == null)
             {
@@ -61,7 +61,7 @@ namespace MedicalExaminer.Models
                 score = score + 1;
             }
 
-            return score;
+            return examination;
         }
 
         private static Examination UpdateCaseStatus(Examination examination)

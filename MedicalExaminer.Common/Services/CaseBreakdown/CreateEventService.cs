@@ -34,7 +34,7 @@ namespace MedicalExaminer.Common.Services.Examination
                                     examination => examination.ExaminationId == param.CaseId);
 
             examinationToUpdate = examinationToUpdate.AddEvent(param.Event);
-            examinationToUpdate.UrgencyScore = examinationToUpdate.UpdateCaseUrgencyScore();
+            examinationToUpdate = examinationToUpdate.UpdateCaseUrgencyScore();
 
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);
             return param.Event.EventId;

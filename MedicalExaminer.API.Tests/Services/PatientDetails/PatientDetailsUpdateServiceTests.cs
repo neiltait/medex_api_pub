@@ -48,6 +48,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             // Act
             var result = sut.Handle(query);
 
+            
             // Assert
             dbAccess.Verify(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>()), Times.Once);
