@@ -20,12 +20,6 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// </summary>
         public bool IsFinal { get; set; }
 
-        
-        /// <summary>
-        /// the type of event this is
-        /// </summary>
-        public EventType EventType => EventType.BereavedDiscussion;
-
         /// <summary>
         /// Participant's full name.
         /// </summary>

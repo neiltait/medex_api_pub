@@ -5,6 +5,7 @@
         Other,
         PreScrutiny,
         BereavedDiscussion,
+        MedicalHistory,
         MeoSummary,
         QapDiscussion,
         Admission
