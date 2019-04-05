@@ -10,17 +10,14 @@ using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
-    public class ExaminationsDashboardService : IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>
+    public class ExaminationsDashboardService : QueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>
     {
-        private readonly IDatabaseAccess _databaseAccess;
-        private readonly IConnectionSettings _connectionSettings;
         public ExaminationsDashboardService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
+            :base(databaseAccess, connectionSettings)
         {
-            _databaseAccess = databaseAccess;
-            _connectionSettings = connectionSettings;
         }
 
-        public async Task<ExaminationsOverview> Handle(ExaminationsRetrievalQuery param)
+        public override async Task<ExaminationsOverview> Handle(ExaminationsRetrievalQuery param)
         {
             if (param == null)
             {
@@ -51,19 +48,19 @@ namespace MedicalExaminer.Common.Services.Examination
             var caseStatusPredicate = GetCaseStatusPredicate(caseStatus);
             var query = baseQuery.And(caseStatusPredicate);
 
-            var result = await _databaseAccess.GetCountAsync(_connectionSettings,query);
+            var result = await DatabaseAccess.GetCountAsync(ConnectionSettings, query);
             return result;
         }
 
         private async Task<int> GetCount(Expression<Func<Models.Examination, bool>> query)
         {
-            return await _databaseAccess.GetCountAsync(_connectionSettings, query);
+            return await DatabaseAccess.GetCountAsync(ConnectionSettings, query);
         }
 
         private async Task<int> GetCount(Expression<Func<Models.Examination, bool>> baseQuery, Expression<Func<Models.Examination, bool>> query)
         {
             query.And(baseQuery);
-            return await _databaseAccess.GetCountAsync(_connectionSettings, query);
+            return await DatabaseAccess.GetCountAsync(ConnectionSettings, query);
         }
 
         private Expression<Func<Models.Examination, bool>> GetCaseStatusPredicate(CaseStatus? paramFilterCaseStatus)

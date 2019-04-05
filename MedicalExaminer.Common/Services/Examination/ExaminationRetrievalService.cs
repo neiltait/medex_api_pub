@@ -6,29 +6,32 @@ using MedicalExaminer.Common.Queries.Examination;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
-    public class ExaminationRetrievalService : IAsyncQueryHandler<ExaminationRetrievalQuery, Models.Examination>
+    /// <summary>
+    /// Examination Retrieval Service.
+    /// </summary>
+    public class ExaminationRetrievalService : QueryHandler<ExaminationRetrievalQuery, Models.Examination>
     {
-        private readonly IConnectionSettings connectionSettings;
-        private readonly IDatabaseAccess databaseAccess;
-
+        /// <summary>
+        /// Initialise a new instance of <see cref="ExaminationRetrievalService"/>.
+        /// </summary>
+        /// <param name="databaseAccess"></param>
+        /// <param name="connectionSettings"></param>
         public ExaminationRetrievalService(
             IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings)
+        : base(databaseAccess, connectionSettings)
         {
-            this.databaseAccess = databaseAccess;
-            this.connectionSettings = connectionSettings;
         }
 
-        public Task<Models.Examination> Handle(ExaminationRetrievalQuery param)
+        /// <inheritdoc/>
+        public override Task<Models.Examination> Handle(ExaminationRetrievalQuery param)
         {
             if (param == null)
             {
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var result = databaseAccess.GetItemAsync<Models.Examination>(
-                connectionSettings,
-                x => x.ExaminationId == param.ExaminationId);
+            var result = GetItemAsync(x => x.ExaminationId == param.ExaminationId);
             return result;
         }
     }
