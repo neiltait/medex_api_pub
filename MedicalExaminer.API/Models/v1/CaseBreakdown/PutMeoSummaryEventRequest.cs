@@ -20,11 +20,6 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         public bool IsFinal { get; set; }
 
         /// <summary>
-        /// the type of event this is
-        /// </summary>
-        public EventType EventType => EventType.MeoSummary;
-
-        /// <summary>
         /// Details of the MEO Summary.
         /// </summary>
         public string SummaryDetails { get; set; }
