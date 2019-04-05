@@ -133,7 +133,7 @@ namespace MedicalExaminer.API.Controllers
             return Ok(res);
         }
 
-
+        [HttpPut]
         [Route("{examinationId}/admission")]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewAdmissionEvent(string examinationId,
