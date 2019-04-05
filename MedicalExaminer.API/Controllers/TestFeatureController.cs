@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +22,7 @@ namespace MedicalExaminer.API.Controllers
     [Route("/v{api-version:apiVersion}/test")]
     [ApiController]
     [Authorize]
-    public class TestFeatureController : BaseAuthorizationController
+    public class TestFeatureController : AuthorizedBaseController
     {
         /// <summary>
         /// Initialise a new instance of the <see cref="TestFeatureController"/>.
@@ -28,8 +30,12 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="logger">Logger.</param>
         /// <param name="mapper">Mapper.</param>
         /// <param name="authorizationService">Authorization Service.</param>
-        public TestFeatureController(IMELogger logger, IMapper mapper, IAuthorizationService authorizationService)
-            : base(logger, mapper, authorizationService)
+        public TestFeatureController(
+            IMELogger logger, 
+            IMapper mapper,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAuthorizationService authorizationService)
+            : base(logger, mapper, usersRetrievalByEmailService, authorizationService)
         {
         }
 
