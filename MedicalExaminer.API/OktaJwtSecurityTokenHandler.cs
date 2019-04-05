@@ -8,6 +8,7 @@ using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Okta.Sdk;
@@ -87,17 +88,19 @@ namespace MedicalExaminer.API
             TokenValidationParameters validationParameters,
             out SecurityToken validatedToken)
         {
+            ClaimsPrincipal claimsPrincipal = null;
+
             var meUserWithToken = new MeUser
             {
                 OktaToken = securityToken
             };
 
-            //Attempt to retrieve user based on token. If it can be retrieved then can bypass call to Okta
+            //Attempt to retrieve user based on token. If it can be retrieved and token not expired then can bypass call to Okta
             var result = _userRetrieveOktaTokenService.Handle(new UserRetrievalByOktaTokenQuery(meUserWithToken));
 
             MeUser meUserReturned = null;
 
-            if (result != null && result.Result != null)
+            if (result?.Result != null)
                 meUserReturned = result.Result;
 
             //Cannot find user by token or token has expired so go to Okta
@@ -112,7 +115,9 @@ namespace MedicalExaminer.API
                 }
             }
 
-            var claimsPrincipal = _tokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
+            //use tokenhandler to deserialize oken onto claimsprincipal. Note that the token carries an expiry internally
+            //If it has expired then we would expect SecurityTokenExpiredException to be thrown and authentication fails
+            claimsPrincipal = _tokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
 
             //Update user record with okta settings if not found originally or if token had expired
             if ((meUserReturned == null || meUserReturned.OktaTokenExpiry < DateTimeOffset.Now) && claimsPrincipal != null)
