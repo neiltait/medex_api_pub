@@ -34,7 +34,7 @@ namespace MedicalExaminer.Models
         /// the type of event this is
         /// </summary>
         [JsonProperty(PropertyName = "event_type")]
-        public EventType EventType => EventType.Other;
+        public EventType EventType => EventType.Admission;
 
         /// <summary>
         /// the type of event this is

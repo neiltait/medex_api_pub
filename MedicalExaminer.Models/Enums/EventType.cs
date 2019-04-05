@@ -6,6 +6,7 @@
         PreScrutiny,
         BereavedDiscussion,
         MeoSummary,
-        QapDiscussion
+        QapDiscussion,
+        Admission
     }
 }
