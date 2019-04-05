@@ -16,7 +16,7 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
 {
-    public class ExaminationControllerTests : ControllerTestsBase<ExaminationsController>
+    public class ExaminationControllerTests : AuthorizedControllerTestsBase<ExaminationsController>
     {
         private PostExaminationRequest CreateValidNewCaseRequest()
         {
@@ -59,7 +59,12 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             examinationsRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationsRetrievalQuery>()))
                 .Returns(Task.FromResult(examinationsResult));
-            var sut = new ExaminationsController(logger.Object, mapper.Object, createExaminationService.Object,
+            var sut = new ExaminationsController(
+                logger.Object,
+                mapper.Object,
+                UsersRetrievalByEmailServiceMock.Object,
+                AuthorizationServiceMock.Object,
+                createExaminationService.Object,
                 examinationsRetrievalQueryService.Object,
                 examinationsDashboardService.Object);
 
@@ -80,7 +85,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examination = CreateValidExamination();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
-            var examinationsRetrievalQuery =
+            var examinationsRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var examinationsDashboardService =
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>>();
@@ -92,8 +97,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             var sut = new ExaminationsController(
                 logger.Object,
                 mapper.Object,
+                UsersRetrievalByEmailServiceMock.Object,
+                AuthorizationServiceMock.Object,
                 createExaminationService.Object,
-                examinationsRetrievalQuery.Object,
+                examinationsRetrievalQueryService.Object,
                 examinationsDashboardService.Object);
 
             sut.ModelState.AddModelError("test", "test");
@@ -111,12 +118,12 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public void ValidModelStateReturnsOkResponse()
+        public async void ValidModelStateReturnsOkResponse()
         {
             // Arrange
             var examination = CreateValidExamination();
             var createExaminationService = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>();
-            var examinationsRetrievalQuery =
+            var examinationsRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
 
             var examinationsDashboardService =
@@ -133,12 +140,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             var sut = new ExaminationsController(
                 logger.Object,
                 mapper.Object,
+                UsersRetrievalByEmailServiceMock.Object,
+                AuthorizationServiceMock.Object,
                 createExaminationService.Object,
-                examinationsRetrievalQuery.Object,
+                examinationsRetrievalQueryService.Object,
                 examinationsDashboardService.Object);
 
             // Act
-            var response = sut.CreateExamination(CreateValidNewCaseRequest()).Result;
+            var response = await sut.CreateExamination(CreateValidNewCaseRequest());
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
