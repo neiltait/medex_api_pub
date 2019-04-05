@@ -12,6 +12,7 @@ using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Authorization;
+using MedicalExaminer.Common.Authorization.Roles;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Loggers;
@@ -122,7 +123,8 @@ namespace MedicalExaminer.API
                 // add a swagger document for each discovered API version
                 foreach (var description in provider.ApiVersionDescriptions)
                 {
-                    options.SwaggerDoc(description.GroupName, CreateInfoForApiVersion(description, ApiTitle, ApiDescription));
+                    options.SwaggerDoc(description.GroupName,
+                        CreateInfoForApiVersion(description, ApiTitle, ApiDescription));
                 }
 
                 // add a custom operation filter which sets default values
@@ -141,7 +143,7 @@ namespace MedicalExaminer.API
                 // Make swagger do authentication
                 var security = new Dictionary<string, IEnumerable<string>>
                 {
-                    { "Bearer", Array.Empty<string>() },
+                    {"Bearer", Array.Empty<string>()},
                 };
 
                 options.AddSecurityDefinition("Okta", new OAuth2Scheme
@@ -151,8 +153,8 @@ namespace MedicalExaminer.API
                     AuthorizationUrl = "https://***REMOVED***.oktapreview.com/oauth2/default/v1/authorize",
                     Scopes = new Dictionary<string, string>
                     {
-                        { "profile", "Profile" },
-                        { "openid", "OpenID" },
+                        {"profile", "Profile"},
+                        {"openid", "OpenID"},
                     },
                 });
 
@@ -170,7 +172,7 @@ namespace MedicalExaminer.API
 
             // Logger 
             services.AddScoped<IMELogger, MELogger>();
-            
+
             // Database connections  
             services.AddScoped<IDocumentClientFactory, DocumentClientFactory>();
             services.AddScoped<IDatabaseAccess, DatabaseAccess>();
@@ -207,7 +209,8 @@ namespace MedicalExaminer.API
         /// <param name="env">The Environment.</param>
         /// <param name="loggerFactory">The Logger Factory.</param>
         /// <param name="provider">API Version Description Privider.</param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApiVersionDescriptionProvider provider)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
+            IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment())
             {
@@ -250,11 +253,12 @@ namespace MedicalExaminer.API
                         ClientSecret = oktaSettings.Value.ClientSecret
                     };
                     c.OAuthAdditionalQueryStringParams(new Dictionary<string, string>
-                        { { "nonce", Guid.NewGuid().ToString() } });
+                        {{"nonce", Guid.NewGuid().ToString()}});
 
                     foreach (var description in provider.ApiVersionDescriptions)
                     {
-                        c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+                        c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                            description.GroupName.ToUpperInvariant());
                     }
 
                     // c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
@@ -290,23 +294,34 @@ namespace MedicalExaminer.API
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
 
-            
+
             // Examination services 
             services.AddScoped<ExaminationsQueryExpressionBuilder>(s => new ExaminationsQueryExpressionBuilder());
-            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>,ExaminationsDashboardService>();
+            services
+                .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>,
+                    ExaminationsDashboardService>();
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, Examination>, CreateExaminationService>();
-            services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
-            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
-            services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
-            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,ExaminationsRetrievalService>();
+            services
+                .AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
+            services
+                .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
+                    ExaminationsRetrievalService>();
+            services
+                .AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
+            services
+                .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
+                    ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<CreateEventQuery, string>, CreateEventService>();
             // Medical team services
             services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
-            
+
             // Patient details services 
-            services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
-            services.AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService>();
-            
+            services
+                .AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
+            services
+                .AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService
+                >();
+
             // User servicves 
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>, UserRetrievalByEmailService>();
@@ -319,7 +334,9 @@ namespace MedicalExaminer.API
 
             // Location Services
             services.AddScoped<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>, LocationIdService>();
-            services.AddScoped<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>, LocationsQueryService>();
+            services
+                .AddScoped<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>, LocationsQueryService
+                >();
         }
 
         /// <summary>
@@ -372,7 +389,8 @@ namespace MedicalExaminer.API
         /// <param name="apiTitle">The API Title</param>
         /// <param name="apiDescription">The API Description</param>
         /// <returns>Info for Swagger</returns>
-        private static Info CreateInfoForApiVersion(ApiVersionDescription description, string apiTitle, string apiDescription)
+        private static Info CreateInfoForApiVersion(ApiVersionDescription description, string apiTitle,
+            string apiDescription)
         {
             var info = new Info
             {
@@ -397,14 +415,22 @@ namespace MedicalExaminer.API
         {
             services.AddSingleton<IRolePermissions, RolePermissions>();
 
+            // TODO: Could use reflection to get get any class with Role as an superclass.
+            services.AddSingleton<IEnumerable<Common.Authorization.Role>>(er => new List<Common.Authorization.Role>()
+            {
+                new MedicalExaminerOfficerRole(),
+                new MedicalExaminerRole(),
+                new ServiceAdministratorRole(),
+                new ServiceOwnerRole(),
+            });
+
             services.AddAuthorization(options =>
             {
-                foreach (var permission in (Common.Authorization.Permission[])Enum.GetValues(typeof(Common.Authorization.Permission)))
+                foreach (var permission in (Common.Authorization.Permission[]) Enum.GetValues(
+                    typeof(Common.Authorization.Permission)))
                 {
-                    options.AddPolicy($"HasPermission={permission}", policy =>
-                    {
-                        policy.Requirements.Add(new PermissionRequirement(permission));
-                    });
+                    options.AddPolicy($"HasPermission={permission}",
+                        policy => { policy.Requirements.Add(new PermissionRequirement(permission)); });
                 }
             });
 
