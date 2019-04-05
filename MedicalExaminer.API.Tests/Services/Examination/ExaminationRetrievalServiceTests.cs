@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
@@ -13,24 +10,21 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Services.Examination
 {
-    public class ExaminationRetrievalServiceTests
+    public class ExaminationRetrievalServiceTests : ServiceTestsBase<
+        ExaminationRetrievalQuery,
+        ExaminationConnectionSettings,
+        MedicalExaminer.Models.Examination,
+        MedicalExaminer.Models.Examination,
+        ExaminationRetrievalService>
     {
         [Fact]
-        public async virtual Task ExaminationIdFoundReturnsExpectedExamination()
+        public async Task ExaminationIdFoundReturnsExpectedExamination()
         {
             //Arrange
-            var id = "a";
-            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.ExaminationId == id;
-            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations().ToArray());
-            var clientFactory = CosmosMocker.CreateClientFactory(client);
+            const string id = "a";
 
-            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
-
-            var dataAccess = new DatabaseAccess(clientFactory.Object);
-            var sut = new ExaminationRetrievalService(dataAccess, connectionSettings.Object);
             //Act
-            
-            var result = await sut.Handle(new ExaminationRetrievalQuery(id));
+            var result = await Service.Handle(new ExaminationRetrievalQuery(id));
 
             //Assert
             result.Should().NotBeNull();
@@ -41,19 +35,11 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         public async void ExaminationIdNotFoundReturnsNull()
         {
             // Arrange
-            var examinationId = "c";
-            Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.ExaminationId == examinationId;
-            var client = CosmosMocker.CreateDocumentClient(predicate, GenerateExaminations().ToArray());
-            var clientFactory = CosmosMocker.CreateClientFactory(client);
+            const string examinationId = "c";
 
-            var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
-
-            var dataAccess = new DatabaseAccess(clientFactory.Object);
-            var sut = new ExaminationRetrievalService(dataAccess, connectionSettings.Object);
-            
             //Act
-            var results = await sut.Handle(new ExaminationRetrievalQuery(examinationId));
-            
+            var results = await Service.Handle(new ExaminationRetrievalQuery(examinationId));
+
             //Assert
             results.Should().BeNull();
         }
@@ -71,7 +57,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             act.Should().Throw<ArgumentNullException>();
         }
 
-        IEnumerable<MedicalExaminer.Models.Examination> GenerateExaminations()
+        protected override MedicalExaminer.Models.Examination[] GetExamples()
         {
             var examination1 = new MedicalExaminer.Models.Examination()
             {
@@ -83,7 +69,5 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             };
             return new []{ examination1, examination2};
         }
-        
     }
-    
 }
