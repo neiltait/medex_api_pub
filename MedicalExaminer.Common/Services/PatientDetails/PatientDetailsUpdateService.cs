@@ -40,7 +40,7 @@ namespace MedicalExaminer.Common.Services.PatientDetails
 
             _mapper.Map(param.PatientDetails, caseToReplace);
 
-            caseToReplace.UrgencyScore = caseToReplace.UpdateCaseUrgencyScore();
+            caseToReplace = caseToReplace.UpdateCaseUrgencyScore();
 
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, caseToReplace);
             return result;
