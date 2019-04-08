@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MedicalExaminer.API.Authorization;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
@@ -16,11 +15,6 @@ namespace MedicalExaminer.API.Controllers
     public abstract class AuthorizedBaseController : AuthenticatedBaseController
     {
         /// <summary>
-        /// Authorization Service.
-        /// </summary>
-        protected IAuthorizationService AuthorizationService { get; }
-
-        /// <summary>
         /// Authorization Based Controller.
         /// </summary>
         /// <param name="logger">Logger.</param>
@@ -36,6 +30,11 @@ namespace MedicalExaminer.API.Controllers
         {
             AuthorizationService = authorizationService;
         }
+
+        /// <summary>
+        /// Authorization Service.
+        /// </summary>
+        protected IAuthorizationService AuthorizationService { get; }
 
         /// <summary>
         /// Can do Permission somewhere against something.
