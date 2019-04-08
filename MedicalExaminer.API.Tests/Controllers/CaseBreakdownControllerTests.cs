@@ -897,6 +897,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             var sut = new CaseBreakdownController(logger.Object, mapper.Object,
                 qapDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
 
+            
+
             // Act
             var response = await sut.UpsertNewQapDiscussionEvent("a", validRequest);
 
