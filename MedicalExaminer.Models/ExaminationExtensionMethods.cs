@@ -61,6 +61,7 @@ namespace MedicalExaminer.Models
                 score = score + 1;
             }
 
+            examination.UrgencyScore = score;
             return examination;
         }
 

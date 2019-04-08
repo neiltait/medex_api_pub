@@ -189,7 +189,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 OtherPriority = false,
             };
             var result = examination.UpdateCaseUrgencyScore();
-            Assert.Equal(0, result);
+            Assert.Equal(0, result.UrgencyScore);
         }
 
         [Fact]
@@ -204,7 +204,25 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 OtherPriority = true,
             };
             var result = examination.UpdateCaseUrgencyScore();
-            Assert.Equal(5, result);
+            Assert.Equal(5, result.UrgencyScore);
+        }
+
+        [Fact]
+        public void When_No_Urgency_Indicators_Are_Selected_Then_The_Urgency_Score_Is_Five()
+        {
+            DateTime dateToCheck = new DateTime(2019, 4, 5);
+
+            var examination = new MedicalExaminer.Models.Examination
+            {
+                ChildPriority = false,
+                CoronerPriority = false,
+                CulturalPriority = false,
+                FaithPriority = false,
+                OtherPriority = false,
+                CaseCreated = new DateTime(2019, 4, 1)
+            };
+            var result = examination.UpdateCaseUrgencyScore();
+            Assert.Equal(1, result.UrgencyScore); // what score should we expect when 
         }
     }
 }
