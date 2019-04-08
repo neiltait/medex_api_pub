@@ -38,32 +38,32 @@ namespace MedicalExaminer.Models
             var score = 0;
             if (examination.ChildPriority)
             {
-                score = score + 1;
+                score = score + 100;
             }
 
             if (examination.CoronerPriority)
             {
-                score = score + 1;
+                score = score + 100;
             }
 
             if (examination.CulturalPriority)
             {
-                score = score + 1;
+                score = score + 100;
             }
 
             if (examination.FaithPriority)
             {
-                score = score + 1;
+                score = score + 100;
             }
 
             if (examination.OtherPriority)
             {
-                score = score + 1;
+                score = score + 100;
             }
 
             if (DateTime.Now > examination.CaseCreated.AddDays(5))
             {
-                score = score + 1;
+                score = score + 1000;
             }
 
             examination.UrgencyScore = score;
