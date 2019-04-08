@@ -95,6 +95,6 @@ namespace MedicalExaminer.Models
         /// Details of Clinical Governance Review if said yes for Clinical Governance Review radio button.
         /// </summary>
         [JsonProperty(PropertyName = "clinical_governance_review_text")]
-        public ClinicalGovernanceReview ClinicalGovernanceReviewText { get; set; }
+        public string ClinicalGovernanceReviewText { get; set; }
     }
 }
