@@ -9,8 +9,8 @@ namespace MedicalExaminer.API.Extensions.Data
     {
         public CaseBreakdownProfile()
         {
-            CreateMap<CaseBreakDown, CaseBreakDownItem>()
-                .ForMember(x=>x.OtherEvents, examination => examination.MapFrom(new UserDraftResolver()));
+            CreateMap<CaseBreakDown, CaseBreakDownItem>();
+                //.ForMember(x=>x.OtherEvents, examination => examination.MapFrom(new UserDraftResolver()));
         }
     }
 
