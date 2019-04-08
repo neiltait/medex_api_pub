@@ -351,15 +351,15 @@ namespace MedicalExaminer.Models
         public string ExaminationId { get; set; }
 
         [JsonProperty(PropertyName = "national_location_id")]
-        public string NationalLocationId { get; }
+        public string NationalLocationId { get; set; }
 
         [JsonProperty(PropertyName = "region_location_id")]
-        public string RegionLocationId { get; }
+        public string RegionLocationId { get; set; }
 
         [JsonProperty(PropertyName = "trust_location_id")]
-        public string TrustLocationId { get; }
+        public string TrustLocationId { get; set; }
 
         [JsonProperty(PropertyName = "site_location_id")]
-        public string SiteLocationId { get; }
+        public string SiteLocationId { get; set; }
     }
 }
