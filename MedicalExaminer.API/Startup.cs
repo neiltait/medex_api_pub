@@ -12,6 +12,7 @@ using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Authorization;
+using MedicalExaminer.Common.Authorization.Roles;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Loggers;
@@ -396,6 +397,15 @@ namespace MedicalExaminer.API
         private void ConfigureAuthorization(IServiceCollection services)
         {
             services.AddSingleton<IRolePermissions, RolePermissions>();
+
+            // TODO: Could use reflection to get get any class with Role as an superclass.
+            services.AddSingleton<IEnumerable<Common.Authorization.Role>>(er => new List<Common.Authorization.Role>()
+            {
+                new MedicalExaminerOfficerRole(),
+                new MedicalExaminerRole(),
+                new ServiceAdministratorRole(),
+                new ServiceOwnerRole(),
+            });
 
             services.AddAuthorization(options =>
             {
