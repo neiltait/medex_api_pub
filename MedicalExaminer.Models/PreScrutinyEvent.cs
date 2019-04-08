@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
@@ -7,6 +8,12 @@ namespace MedicalExaminer.Models
 {
     public class PreScrutinyEvent : IEvent
     {
+        /// <summary>
+        /// Date event was created
+        /// </summary>
+        [JsonProperty(PropertyName = "created")]
+        public DateTime? Created { get; set; }
+
         /// <summary>
         /// Event Identification.
         /// </summary>

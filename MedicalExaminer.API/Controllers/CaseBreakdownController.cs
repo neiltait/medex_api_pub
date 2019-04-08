@@ -185,7 +185,10 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
+            var user = await CurrentUser();
+
             var otherEventNote = Mapper.Map<OtherEvent>(putNewOtherEventNoteRequest);
+            otherEventNote.UserId = user.UserId;
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, otherEventNote));
 
             if (result == null)

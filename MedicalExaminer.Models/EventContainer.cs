@@ -20,6 +20,7 @@ namespace MedicalExaminer.Models
 
             if (theEvent.IsFinal)
             {
+                theEvent.Created = DateTime.Now;
                 Latest = theEvent;
                 History.Add(theEvent);
                 var draft = Drafts.SingleOrDefault(d => d.EventId == theEvent.EventId);
@@ -35,6 +36,7 @@ namespace MedicalExaminer.Models
                 var userHasDraft = Drafts.Any(draft => draft.UserId == theEvent.UserId);
                 if (userHasDraft)
                 {
+                    theEvent.Created = theEvent.Created == null ? DateTime.Now : theEvent.Created;
                     var usersDraft = Drafts.Single(draft => draft.EventId == theEvent.EventId);
                     Drafts.Remove(usersDraft);
                     Drafts.Add(theEvent);

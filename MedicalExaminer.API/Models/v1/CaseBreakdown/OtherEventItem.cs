@@ -1,9 +1,15 @@
 ﻿using MedicalExaminer.Models.Enums;
+using System;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
     public class OtherEventItem
     {
+        /// <summary>
+        /// Date event was created
+        /// </summary>
+        public DateTime Created { get; set; }
+
         /// <summary>
         /// Event Identication.
         /// </summary>

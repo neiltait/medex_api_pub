@@ -1,11 +1,18 @@
 ﻿using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace MedicalExaminer.Models
 {
     public class OtherEvent : IEvent
     {
+        /// <summary>
+        /// Date event was created
+        /// </summary>
+        [JsonProperty(PropertyName = "created")]
+        public DateTime? Created { get; set; }
+
         /// <summary>
         /// Event Identication.
         /// </summary>

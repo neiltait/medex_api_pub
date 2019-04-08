@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MedicalExaminer.Models.Enums;
-
-namespace MedicalExaminer.API.Models.v1.CaseBreakdown
+﻿namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
     public class PutMedicalHistoryEventRequest
     {
@@ -13,10 +7,6 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// </summary>
         public string EventId { get; set; }
 
-        /// <summary>
-        /// User Identifier.
-        /// </summary>
-        public string UserId { get; set; }
 
         /// <summary>
         /// Dictionary for the status (Draft or Final).

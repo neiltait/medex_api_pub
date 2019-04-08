@@ -40,6 +40,11 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
             /// Do you suspect this case may need Immediate Coroner Referral Yes = true, No = false
             /// </summary>
             public bool ImmediateCoronerReferral { get; set; }
-        
+
+        /// <summary>
+        /// Date event was created
+        /// </summary>
+        public DateTime Created { get; set; }
+
     }
 }

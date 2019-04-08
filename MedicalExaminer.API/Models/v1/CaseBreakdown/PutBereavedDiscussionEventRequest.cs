@@ -11,11 +11,6 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         public string EventId { get; set; }
 
         /// <summary>
-        /// User Identifier.
-        /// </summary>
-        public string UserId { get; set; }
-
-        /// <summary>
         /// Dictionary for the status (Draft or Final).
         /// </summary>
         public bool IsFinal { get; set; }
