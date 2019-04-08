@@ -3,10 +3,10 @@ using MedicalExaminer.Models;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
-    public class EventContainerItem
+    public class EventContainerItem<TEventType>
     {
-        public IEnumerable<IEvent> History { get; set; }
-        public IEvent Latest { get; set; }
-       // public IEvent UsersDraft { get; set; }
+        public IEnumerable<TEventType> History { get; set; }
+        public TEventType Latest { get; set; }
+        public TEventType UsersDraft { get; set; }
     }
 }

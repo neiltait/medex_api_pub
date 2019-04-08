@@ -1,9 +1,7 @@
 ﻿using System;
 using AutoMapper;
-using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Models;
-using System;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 
 namespace MedicalExaminer.API.Extensions.Data
@@ -61,10 +59,11 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.LastModifiedBy, opt => opt.Ignore())
                 .ForMember(examination => examination.ModifiedAt, opt => opt.Ignore())
                 .ForMember(examination => examination.CreatedAt, opt => opt.Ignore())
-                .ForMember(examination => examination.DeletedAt, opt => opt.Ignore());
+                .ForMember(examination => examination.DeletedAt, opt => opt.Ignore())
+                .ForMember(examination => examination.CaseBreakdown, opt => opt.Ignore());
 
-            CreateMap<Examination, GetPatientDetailsResponse>()
-                .ForMember(getPatientDetailsResponse => getPatientDetailsResponse.Errors, opt => opt.Ignore());
+            //CreateMap<Examination, GetPatientDetailsResponse>()
+            //    .ForMember(getPatientDetailsResponse => getPatientDetailsResponse.Errors, opt => opt.Ignore());
 
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(patientCard => patientCard.AppointmentDate,

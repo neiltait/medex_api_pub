@@ -10,7 +10,8 @@ namespace MedicalExaminer.API.Extensions.Data
         public CaseBreakdownProfile()
         {
             CreateMap<CaseBreakDown, CaseBreakDownItem>().
-                ForMember(x=>x.AdmissionNotes, opt => opt.MapFrom(s => Mapper.Map<IEventContainer<OtherEvent>, EventContainerItem>(s.OtherEvents)));
+                ForMember(x => x.OtherEvents, opt => opt.MapFrom(s => Mapper.Map<BaseEventContainter<OtherEvent>,
+                EventContainerItem<OtherEvent>>(s.OtherEvents)));
         }
     }
 
@@ -18,20 +19,26 @@ namespace MedicalExaminer.API.Extensions.Data
     {
         public EventContainerProfile()
         {
-           // CreateMap<IEventContainer<OtherEvent>, EventContainerItem>();
-           // CreateMap<IEventContainer<AdmissionEvent>, EventContainerItem>();
+            CreateMap<BaseEventContainter<OtherEvent>, EventContainerItem<OtherEventItem>>()
+                .ForMember(x => x.UsersDraft, eventContainer => eventContainer.MapFrom(new OtherEventContainerResolver()));
+            CreateMap<IEventContainer<AdmissionEvent>, EventContainerItem<AdmissionEvent>>();
+            CreateMap<IEventContainer<QapDiscussionEvent>, EventContainerItem<QapDiscussionEvent>>();
+            CreateMap<IEventContainer<MedicalHistoryEvent>, EventContainerItem<MedicalHistoryEvent>>();
+            CreateMap<IEventContainer<MeoSummaryEvent>, EventContainerItem<MeoSummaryEvent>>();
+            CreateMap<IEventContainer<BereavedDiscussionEvent>, EventContainerItem<BereavedDiscussionEvent>>();
+            CreateMap<IEventContainer<PreScrutinyEvent>, EventContainerItem<PreScrutinyEvent>>();
         }
     }
 
-    public class UserDraftResolver : IValueResolver<BaseEventContainter<IEvent>, EventContainerItem, IEvent>
+    public class OtherEventContainerResolver : IValueResolver<BaseEventContainter<OtherEvent>, EventContainerItem<OtherEventItem>, OtherEventItem>
     {
-        public IEvent Resolve(BaseEventContainter<IEvent> source, EventContainerItem destination, IEvent destMember, ResolutionContext context)
+        public OtherEventItem Resolve(BaseEventContainter<OtherEvent> source, EventContainerItem<OtherEventItem> destination, OtherEventItem destMember, ResolutionContext context)
         {
-            
-            var myUser = (MeUser)context.Items["myUser"];
-            var usersDraft = source.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
-
-            return usersDraft;
+                    var myUser = (MeUser)context.Items["myUser"];
+                    var usersDraft = source.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
+            var result = Mapper.Map<OtherEventItem>(usersDraft);
+                    return result;
         }
     }
+    
 }

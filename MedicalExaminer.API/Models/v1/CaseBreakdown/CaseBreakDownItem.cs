@@ -1,20 +1,22 @@
-﻿namespace MedicalExaminer.API.Models.v1.CaseBreakdown
+﻿using MedicalExaminer.Models;
+
+namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
     public class CaseBreakDownItem
     {
 
-        public EventContainerItem OtherEvents { get; set; }
+        public EventContainerItem<OtherEvent> OtherEvents { get; set; }
 
-        public EventContainerItem PreScrutiny { get; set; }
+        public EventContainerItem<PreScrutinyEvent> PreScrutiny { get; set; }
 
-        public EventContainerItem BereavedDiscussion { get; set; }
+        public EventContainerItem<BereavedDiscussionEvent> BereavedDiscussion { get; set; }
 
-        public EventContainerItem MeoSummary { get; set; }
+        public EventContainerItem<MeoSummaryEvent> MeoSummary { get; set; }
 
-        public EventContainerItem QapDiscussion { get; set; }
+        public EventContainerItem<QapDiscussionEvent> QapDiscussion { get; set; }
 
-        public EventContainerItem MedicalHistory { get; set; }
+        public EventContainerItem<MedicalHistoryEvent> MedicalHistory { get; set; }
 
-        public EventContainerItem AdmissionNotes { get; set; }
+        public EventContainerItem<AdmissionEvent> AdmissionNotes { get; set; }
     }
 }
