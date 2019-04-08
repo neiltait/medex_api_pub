@@ -7,6 +7,7 @@ using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
@@ -56,6 +57,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
             var examinationsDashboardService =
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>>();
+            var locationParentsService = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>();
 
             examinationsRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationsRetrievalQuery>()))
                 .Returns(Task.FromResult(examinationsResult));
@@ -66,7 +68,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 AuthorizationServiceMock.Object,
                 createExaminationService.Object,
                 examinationsRetrievalQueryService.Object,
-                examinationsDashboardService.Object);
+                examinationsDashboardService.Object,
+                locationParentsService.Object);
 
             // Act
             var response = sut.GetExaminations(null).Result;
@@ -90,6 +93,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationsDashboardService =
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>>();
             var examinationId = Guid.NewGuid();
+            var locationParentsService = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>();
 
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
@@ -101,7 +105,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 AuthorizationServiceMock.Object,
                 createExaminationService.Object,
                 examinationsRetrievalQueryService.Object,
-                examinationsDashboardService.Object);
+                examinationsDashboardService.Object,
+                locationParentsService.Object);
 
             sut.ModelState.AddModelError("test", "test");
 
@@ -131,6 +136,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var examinationId = Guid.NewGuid();
+            var locationParentsService = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>();
 
             createExaminationService.Setup(ecs => ecs.Handle(It.IsAny<CreateExaminationQuery>()))
                 .Returns(Task.FromResult(examination));
@@ -144,7 +150,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 AuthorizationServiceMock.Object,
                 createExaminationService.Object,
                 examinationsRetrievalQueryService.Object,
-                examinationsDashboardService.Object);
+                examinationsDashboardService.Object,
+                locationParentsService.Object);
 
             // Act
             var response = await sut.CreateExamination(CreateValidNewCaseRequest());
