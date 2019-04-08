@@ -20,7 +20,6 @@ namespace MedicalExaminer.API.Extensions.Data
             config.AddProfile<PatientDetailsProfile>();
             config.AddProfile<CaseBreakdownProfile>();
             config.AddProfile<OtherEventProfile>();
-            config.AddProfile<EventContainerProfile>();
         }
     }
 }

@@ -54,10 +54,28 @@ namespace MedicalExaminer.Models
         public OverallCircumstancesOfDeath CircumstancesOfDeath { get; set; }
 
         /// <summary>
-        /// Cause Of Death. (Data type to be confirmed).
+        /// Possible cause of death established during scrutiny by Medical Examiner 1a
         /// </summary>
-        [JsonProperty(PropertyName = "cause_of_death")]
-        public IEnumerable<string> CauseOfDeath { get; set; }
+        [JsonProperty(PropertyName = "cause_of_death_1a")]
+        public string CauseOfDeath1a { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 1b
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death_1b")]
+        public string CauseOfDeath1b { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 1c
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death_1c")]
+        public string CauseOfDeath1c { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 2
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death_2")]
+        public string CauseOfDeath2 { get; set; }
 
         /// <summary>
         /// Dictionary for Outcome Of Pre-Scrutiny radio button.

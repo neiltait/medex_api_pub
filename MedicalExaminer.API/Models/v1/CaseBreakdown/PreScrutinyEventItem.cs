@@ -44,9 +44,24 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         public OverallCircumstancesOfDeath CircumstancesOfDeath { get; set; }
 
         /// <summary>
-        /// Cause Of Death. (Data type to be confirmed).
+        /// Possible cause of death established during scrutiny by Medical Examiner 1a
         /// </summary>
-        public IEnumerable<string> CauseOfDeath { get; set; }
+        public string CauseOfDeath1a { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 1b
+        /// </summary>
+        public string CauseOfDeath1b { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 1c
+        /// </summary>
+        public string CauseOfDeath1c { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 2
+        /// </summary>
+        public string CauseOfDeath2 { get; set; }
 
         /// <summary>
         /// Dictionary for Outcome Of Pre-Scrutiny radio button.
@@ -61,6 +76,6 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Details of Clinical Governance Review if said yes for Clinical Governance Review radio button.
         /// </summary>
-        public ClinicalGovernanceReview ClinicalGovernanceReviewText { get; set; }
+        public string ClinicalGovernanceReviewText { get; set; }
     }
 }
