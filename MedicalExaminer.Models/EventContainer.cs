@@ -6,9 +6,10 @@ namespace MedicalExaminer.Models
 {
     public class OtherEventContainer : BaseEventContainter<OtherEvent>
     {
-
         public override OtherEvent Latest { get; set; }
+
         public override IList<OtherEvent> Drafts { get; set; } = new List<OtherEvent>();
+
         public override IList<OtherEvent> History { get; set; } = new List<OtherEvent>();
 
         public override void Add(OtherEvent theEvent)
@@ -57,9 +58,10 @@ namespace MedicalExaminer.Models
 
     public class PreScrutinyEventContainer : BaseEventContainter<PreScrutinyEvent>
     {
-
         public override PreScrutinyEvent Latest { get; set; }
+
         public override IList<PreScrutinyEvent> Drafts { get; set; } = new List<PreScrutinyEvent>();
+
         public override IList<PreScrutinyEvent> History { get; set; } = new List<PreScrutinyEvent>();
 
         public override void Add(PreScrutinyEvent theEvent)
@@ -71,7 +73,9 @@ namespace MedicalExaminer.Models
     public class BereavedDiscussionEventContainer: BaseEventContainter<BereavedDiscussionEvent>
     {
         public override BereavedDiscussionEvent Latest { get; set; }
+
         public override IList<BereavedDiscussionEvent> Drafts { get; set; } = new List<BereavedDiscussionEvent>();
+
         public override IList<BereavedDiscussionEvent> History { get; set; } = new List<BereavedDiscussionEvent>();
 
         public override void Add(BereavedDiscussionEvent theEvent)
@@ -83,7 +87,9 @@ namespace MedicalExaminer.Models
     public class MeoSummaryEventContainer: BaseEventContainter<MeoSummaryEvent>
     {
         public override MeoSummaryEvent Latest { get; set; }
+
         public override IList<MeoSummaryEvent> Drafts { get; set; } = new List<MeoSummaryEvent>();
+
         public override IList<MeoSummaryEvent> History { get; set; } = new List<MeoSummaryEvent>();
 
         public override void Add(MeoSummaryEvent theEvent)
@@ -95,7 +101,9 @@ namespace MedicalExaminer.Models
     public class AdmissionNotesEventContainer: BaseEventContainter<AdmissionEvent>
     {
         public override AdmissionEvent Latest { get; set; }
+
         public override IList<AdmissionEvent> Drafts { get; set; } = new List<AdmissionEvent>();
+
         public override IList<AdmissionEvent> History { get; set; } = new List<AdmissionEvent>();
 
         public override void Add(AdmissionEvent theEvent)
@@ -107,7 +115,9 @@ namespace MedicalExaminer.Models
     public class MedicalHistoryEventContainer: BaseEventContainter<MedicalHistoryEvent>
     {
         public override MedicalHistoryEvent Latest { get; set; }
+
         public override IList<MedicalHistoryEvent> Drafts { get; set; } = new List<MedicalHistoryEvent>();
+
         public override IList<MedicalHistoryEvent> History { get; set; } = new List<MedicalHistoryEvent>();
 
         public override void Add(MedicalHistoryEvent theEvent)
@@ -115,10 +125,13 @@ namespace MedicalExaminer.Models
             base.Add(theEvent);
         }
     }
+
     public class QapDiscussionEventContainer: BaseEventContainter<QapDiscussionEvent>
     {
         public override QapDiscussionEvent Latest { get; set; }
+
         public override IList<QapDiscussionEvent> Drafts { get; set; } = new List<QapDiscussionEvent>();
+
         public override IList<QapDiscussionEvent> History { get; set; } = new List<QapDiscussionEvent>();
 
         public override void Add(QapDiscussionEvent theEvent)
