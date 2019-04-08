@@ -31,11 +31,16 @@ namespace MedicalExaminer.Models
             }
             else
             {
+                theEvent.Created = theEvent.Created == null ? DateTime.Now : theEvent.Created;
                 var userHasDraft = Drafts.Any(draft => draft.UserId == theEvent.UserId);
                 if (userHasDraft)
                 {
-                    theEvent.Created = theEvent.Created == null ? DateTime.Now : theEvent.Created;
-                    var usersDraft = Drafts.Single(draft => draft.EventId == theEvent.EventId);
+                    var usersDraft = Drafts.SingleOrDefault(draft => draft.EventId == theEvent.EventId);
+                    if (usersDraft == null)
+                    {
+                        throw new ArgumentException(nameof(theEvent.EventId));
+                    }
+
                     Drafts.Remove(usersDraft);
                     Drafts.Add(theEvent);
                     return;
