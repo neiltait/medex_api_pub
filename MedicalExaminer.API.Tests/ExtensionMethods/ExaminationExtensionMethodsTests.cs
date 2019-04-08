@@ -109,7 +109,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 Text = "updated event",
                 UserId = "userOne"
             };
-            
+
             // Act
             Action act = () => examination.AddEvent(updateDraft);
 
@@ -180,7 +180,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         public void When_No_Urgency_Indicators_Are_Selected_Then_The_Urgency_Score_Is_Zero()
         {
-            var examination = new MedicalExaminer.Models.Examination
+            var examination = new Examination
             {
                 ChildPriority = false,
                 CoronerPriority = false,
@@ -195,7 +195,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         public void When_All_Urgency_Indicators_Are_Selected_Then_The_Urgency_Score_Is_Five()
         {
-            var examination = new MedicalExaminer.Models.Examination
+            var examination = new Examination
             {
                 ChildPriority = true,
                 CoronerPriority = true,
@@ -208,21 +208,25 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void When_No_Urgency_Indicators_Are_Selected_Then_The_Urgency_Score_Is_Five()
+        public void Greater_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_One()
         {
-            DateTime dateToCheck = new DateTime(2019, 4, 5);
-
-            var examination = new MedicalExaminer.Models.Examination
+            var examination = new Examination
             {
-                ChildPriority = false,
-                CoronerPriority = false,
-                CulturalPriority = false,
-                FaithPriority = false,
-                OtherPriority = false,
-                CaseCreated = new DateTime(2019, 4, 1)
+                CaseCreated = DateTime.Now.AddDays(-6)
             };
             var result = examination.UpdateCaseUrgencyScore();
-            Assert.Equal(1, result.UrgencyScore); // what score should we expect when 
+            Assert.Equal(1, result.UrgencyScore);
+        }
+
+        [Fact]
+        public void Less_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_Zero()
+        {
+            var examination = new Examination
+            {
+                CaseCreated = DateTime.Now.AddDays(-3)
+            };
+            var result = examination.UpdateCaseUrgencyScore();
+            Assert.Equal(0, result.UrgencyScore); 
         }
     }
 }

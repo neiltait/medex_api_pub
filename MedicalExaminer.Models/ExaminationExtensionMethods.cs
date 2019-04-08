@@ -61,6 +61,11 @@ namespace MedicalExaminer.Models
                 score = score + 1;
             }
 
+            if (DateTime.Now > examination.CaseCreated.AddDays(5))
+            {
+                score = score + 1;
+            }
+
             examination.UrgencyScore = score;
             return examination;
         }
