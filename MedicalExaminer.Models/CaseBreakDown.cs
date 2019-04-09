@@ -2,6 +2,7 @@
 {
     public class CaseBreakDown
     {
+        public DeathEvent DeathEvent {get; set;}
         public BaseEventContainter<OtherEvent> OtherEvents { get; set; } = new OtherEventContainer();
         public BaseEventContainter<PreScrutinyEvent> PreScrutiny { get; set; } = new PreScrutinyEventContainer();
 

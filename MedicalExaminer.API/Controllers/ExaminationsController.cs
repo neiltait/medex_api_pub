@@ -7,6 +7,7 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -23,12 +24,12 @@ namespace MedicalExaminer.API.Controllers
     [Route("/v{api-version:apiVersion}/examinations")]
     [ApiController]
     [Authorize]
-    public class ExaminationsController : BaseController
+    public class ExaminationsController : AuthenticatedBaseController
     {
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> _examinationsDashboardService;
         private readonly IAsyncQueryHandler<CreateExaminationQuery, Examination> _examinationCreationService;
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
-
+        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _usersRetrievalByEmailService;
         /// <summary>
         /// Initializes a new instance of the <see cref="ExaminationsController"/> class.
         /// </summary>
@@ -42,12 +43,14 @@ namespace MedicalExaminer.API.Controllers
             IMapper mapper,
             IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
-            IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> examinationsDashboardService)
-            : base(logger, mapper)
+            IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> examinationsDashboardService,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
+            : base(logger, mapper, usersRetrievalByEmailService)
         {
             _examinationCreationService = examinationCreationService;
             _examinationsRetrievalService = examinationsRetrievalService;
             _examinationsDashboardService = examinationsDashboardService;
+            _usersRetrievalByEmailService = usersRetrievalByEmailService;
         }
 
         /// <summary>
@@ -110,6 +113,12 @@ namespace MedicalExaminer.API.Controllers
             try
             {
                 var examination = Mapper.Map<Examination>(postExaminationRequest);
+
+                var myUser = await CurrentUser();
+
+                examination.CreatedBy = myUser.UserId;
+                examination.CreatedAt = DateTime.Now;
+
                 var result = await _examinationCreationService.Handle(new CreateExaminationQuery(examination));
                 var res = new PutExaminationResponse
                 {

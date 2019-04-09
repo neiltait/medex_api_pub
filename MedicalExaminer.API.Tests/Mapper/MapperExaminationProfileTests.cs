@@ -466,7 +466,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                 TimeOfDeath = TimeOfDeath,
                 UrgencyScore = UrgencyScore,
                 LastAdmission = LastAdmission,
-                CaseCreated = CaseCreated,
                 PendingAdmissionNotes = true,
                 PendingDiscussionWithQAP = true,
                 PendingDiscussionWithRepresentative = true,
@@ -475,7 +474,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                 HaveFinalCaseOutstandingOutcomes = true,
                 ReadyForMEScrutiny = true,
                 Unassigned = true,
-                CaseOfficer = CaseOfficer
             };
 
             return examination;

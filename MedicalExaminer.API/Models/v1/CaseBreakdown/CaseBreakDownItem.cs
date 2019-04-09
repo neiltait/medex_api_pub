@@ -4,6 +4,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
     public class CaseBreakDownItem
     {
+        public PatientDeathEventItem PatientDeathEvent { get; set; }
         /// <summary>
         /// Case breakdown other events
         /// </summary>
