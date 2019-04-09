@@ -24,7 +24,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Event Text.
         /// </summary>
-        public string EventText { get; set; }
+        public string MedicalExaminerThoughts { get; set; }
 
 
         /// <summary>

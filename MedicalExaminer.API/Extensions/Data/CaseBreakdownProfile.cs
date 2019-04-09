@@ -14,7 +14,6 @@ namespace MedicalExaminer.API.Extensions.Data
                 var myUser = (MeUser)context.Items["myUser"];
                 var usersDraft = source.OtherEvents.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
                 var usersDraftItem = context.Mapper.Map<OtherEventItem>(usersDraft);
-                //var usersDraftItem = Mapper.Map<OtherEventItem>(usersDraft);
                 return new EventContainerItem<OtherEventItem>
                 {
                     UsersDraft = usersDraftItem,
