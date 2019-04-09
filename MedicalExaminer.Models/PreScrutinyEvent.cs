@@ -29,8 +29,8 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Event Text.
         /// </summary>
-        [JsonProperty(PropertyName = "pre_scrutiny_event_text")]
-        public string EventText { get; set; }
+        [JsonProperty(PropertyName = "medical_examiner_thoughts")]
+        public string MedicalExaminerThoughts { get; set; }
 
 
         /// <summary>

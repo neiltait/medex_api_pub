@@ -17,7 +17,8 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<PutQapDiscussionEventRequest, QapDiscussionEvent>()
                 .ForMember(p => p.EventType, opt => opt.Ignore())
-                .ForMember(p => p.UserId, opt => opt.Ignore());
+                .ForMember(p => p.UserId, opt => opt.Ignore())
+                .ForMember(p => p.Created, opt => opt.Ignore());
         }
     }
 }

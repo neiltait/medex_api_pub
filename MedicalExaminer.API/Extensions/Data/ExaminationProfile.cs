@@ -18,7 +18,6 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<Examination, ExaminationItem>();
             CreateMap<PostExaminationRequest, Examination>()
-                .ForMember(examination => examination.UrgencyScore, opt => opt.Ignore())
                 .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
                 .ForMember(examination => examination.HouseNameNumber, opt => opt.Ignore())
                 .ForMember(examination => examination.Street, opt => opt.Ignore())
@@ -60,10 +59,9 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.ModifiedAt, opt => opt.Ignore())
                 .ForMember(examination => examination.CreatedAt, opt => opt.Ignore())
                 .ForMember(examination => examination.DeletedAt, opt => opt.Ignore())
-                .ForMember(examination => examination.CaseBreakdown, opt => opt.Ignore());
-
-            //CreateMap<Examination, GetPatientDetailsResponse>()
-            //    .ForMember(getPatientDetailsResponse => getPatientDetailsResponse.Errors, opt => opt.Ignore());
+                .ForMember(examination => examination.CaseBreakdown, opt => opt.Ignore())
+                .ForMember(examination => examination.MedicalTeam, opt => opt.Ignore())
+                .ForMember(examination => examination.UrgencyScore, opt => opt.Ignore());
 
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(patientCard => patientCard.AppointmentDate,
@@ -119,6 +117,5 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             return _appointmentFinder.FindAppointment(source.Representatives)?.AppointmentTime;
         }
-}
-
+    }
 }

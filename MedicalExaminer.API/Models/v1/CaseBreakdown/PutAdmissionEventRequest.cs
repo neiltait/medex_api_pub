@@ -17,7 +17,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// Event Text (Length to be confirmed).
         /// </summary>
         [RequiredIfAttributesMatch(nameof(IsFinal), true)]
-        public string Text { get; set; }
+        public string Notes { get; set; }
 
         /// <summary>
         /// Draft is false, final true

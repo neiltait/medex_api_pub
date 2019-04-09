@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
@@ -61,15 +62,18 @@ namespace MedicalExaminer.API.Tests.Controllers
             notFoundResult.Value.Should().BeAssignableTo<GetCaseBreakdownResponse>();
         }
 
+
         [Fact]
         public async void GetOtherEvent_When_Called_With_Valid_Examination_Id_But_Examination_Not_Found_Returns_Not_Found_Response()
         {
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
+            var expectedUserId = "123";
 
             var examinationId = "7E5D50CE-05BF-4A1F-AA6E-25418A723A7F";
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            
             var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
@@ -428,7 +432,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             {
                 EventId = null,
                 IsFinal = true,
-                Text = null
+                Notes = null
             };
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
@@ -462,7 +466,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             {
                 EventId = "1",
                 IsFinal = true,
-                Text = "Hello Planet"
+                Notes = "Hello Planet"
             };
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
@@ -495,7 +499,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             {
                 EventId = "1",
                 IsFinal = true,
-                Text = "Hello Planet"
+                Notes = "Hello Planet"
             };
             eventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
                 .Returns(Task.FromResult("hi mark")).Verifiable();

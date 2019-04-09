@@ -12,7 +12,16 @@ namespace MedicalExaminer.API.Tests.Mapper
         IMapper _mapper;
         public MapperCaseBreakdownProfileTests()
         {
-            var config = new MapperConfiguration(cfg => { cfg.AddProfile<CaseBreakdownProfile>(); });
+            var config = new MapperConfiguration(cfg => {
+                cfg.AddProfile<CaseBreakdownProfile>();
+                cfg.AddProfile<OtherEventProfile>();
+                cfg.AddProfile<AdmissionEventProfile>();
+                cfg.AddProfile<BereavedDiscussionEventProfile>();
+                cfg.AddProfile<MedicalHistoryEventProfile>();
+                cfg.AddProfile<MeoSummaryEventProfile>();
+                cfg.AddProfile<PreScrutinyEventProfile>();
+                cfg.AddProfile<QapDiscussionEventProfile>();
+            });
 
             _mapper = config.CreateMapper();
 
@@ -67,7 +76,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     History = history
                 }
             };
-
+            
             var result = _mapper.Map<CaseBreakDownItem>(caseBreakdown, opt=>opt.Items["myUser"] = myUser);
 
             Assert.Equal(latest, result.OtherEvents.Latest);

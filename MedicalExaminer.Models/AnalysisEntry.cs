@@ -19,7 +19,7 @@ namespace MedicalExaminer.Models
         public string ExaminationId { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "notes")]
+        [JsonProperty(PropertyName= "notes")]
         public string Notes { get; set; }
 
         [Required]
