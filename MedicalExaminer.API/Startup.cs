@@ -307,11 +307,12 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
             services.AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService>();
             
-            // User servicves 
+            // User services 
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>, UserRetrievalByEmailService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>, UserRetrievalByIdService>();
             services.AddScoped<IAsyncQueryHandler<UserUpdateQuery, MeUser>, UserUpdateService>();
+            services.AddScoped<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>, UserUpdateOktaTokenService>();
 
             // Used for roles; but is being abused to pass null and get all users.
             services.AddScoped<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>, UsersRetrievalService>();
@@ -320,6 +321,7 @@ namespace MedicalExaminer.API
             // Location Services
             services.AddScoped<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>, LocationIdService>();
             services.AddScoped<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>, LocationsQueryService>();
+
         }
 
         /// <summary>
@@ -330,8 +332,14 @@ namespace MedicalExaminer.API
         /// <param name="oktaSettings">Okta Settings.</param>
         private void ConfigureAuthentication(IServiceCollection services, OktaSettings oktaSettings)
         {
+            var oktaTokenExpiry = Int32.Parse(oktaSettings.LocalTokenExpiryTimeMinutes);
             var provider = services.BuildServiceProvider();
             var tokenService = provider.GetRequiredService<ITokenService>();
+
+            var userConnectionSetting = new UserConnectionSettings(
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"],
+                Configuration["CosmosDB:DatabaseId"]);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -342,7 +350,14 @@ namespace MedicalExaminer.API
                     options.SecurityTokenValidators.Add(
                         new OktaJwtSecurityTokenHandler(
                             tokenService,
-                            new JwtSecurityTokenHandler()));
+                            new JwtSecurityTokenHandler(),
+                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
+                                userConnectionSetting),
+                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
+                                userConnectionSetting),
+                            new UserRetrievalByEmailService(new DatabaseAccess(new DocumentClientFactory()),
+                                userConnectionSetting),
+                            oktaTokenExpiry));
                 });
         }
 
