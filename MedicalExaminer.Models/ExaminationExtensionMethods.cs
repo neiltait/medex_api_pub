@@ -61,7 +61,7 @@ namespace MedicalExaminer.Models
                 score = score + 100;
             }
 
-            if (DateTime.Now > examination.CaseCreated.AddDays(5))
+            if (DateTime.Now > examination.CaseCreated.AddDays(4))
             {
                 score = score + 1000;
             }

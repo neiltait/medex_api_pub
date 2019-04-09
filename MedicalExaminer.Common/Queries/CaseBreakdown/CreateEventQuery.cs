@@ -1,5 +1,4 @@
-﻿
-using MedicalExaminer.Models;
+﻿using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Queries.CaseBreakdown
 {
