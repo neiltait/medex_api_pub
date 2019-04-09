@@ -42,5 +42,11 @@
         /// </summary>
         /// <remarks>API Access token to use SDK</remarks>
         public string SdkToken { get; set; }
+
+        /// <summary>
+        /// LocalTokenExpiryTimeMinutes
+        /// </summary>
+        /// <remarks>Time in minutes before API will recheck token with Okta</remarks>
+        public string LocalTokenExpiryTimeMinutes { get; set; }
     }
 }
