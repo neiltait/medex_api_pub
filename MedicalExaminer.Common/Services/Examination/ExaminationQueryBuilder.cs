@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.Examination;
@@ -10,15 +12,30 @@ namespace MedicalExaminer.Common.Services.Examination
     {
         public Expression<Func<Models.Examination, bool>> GetPredicate(ExaminationsRetrievalQuery queryObject)
         {
+            var locationFilter = GetLocationPredicate(queryObject.PermissedLocations);
             var caseStatusFilter = GetCaseStatusPredicate(queryObject.FilterCaseStatus);
             var medicalExaminerOfficeFilter = GetCaseMEOfficePredicate(queryObject.FilterLocationId);
             var userIdFilter = GetUserIdPredicate(queryObject.FilterUserId);
             var openCases = GetOpenCasesPredicate(queryObject.FilterOpenCases);
 
-            var predicate = caseStatusFilter.And(medicalExaminerOfficeFilter)
-                .And(userIdFilter).And(openCases);
+            var predicate = locationFilter
+                .And(caseStatusFilter)
+                .And(medicalExaminerOfficeFilter)
+                .And(userIdFilter)
+                .And(openCases);
 
             return predicate;
+        }
+
+        private Expression<Func<Models.Examination, bool>> GetLocationPredicate(IEnumerable<string> permissedLocations)
+        {
+            var locationList = permissedLocations.ToList();
+
+            return examination =>
+                locationList.Contains(examination.NationalLocationId)
+                || locationList.Contains(examination.RegionLocationId)
+                || locationList.Contains(examination.TrustLocationId)
+                || locationList.Contains(examination.SiteLocationId);
         }
 
         private Expression<Func<Models.Examination, bool>> GetOpenCasesPredicate(bool paramFilterOpenCases)
