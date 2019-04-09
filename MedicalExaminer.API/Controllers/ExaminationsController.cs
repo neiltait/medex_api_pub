@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
+using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Extensions.Examination;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
@@ -42,6 +43,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="mapper">The Mapper.</param>
         /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
         /// <param name="authorizationService">Authorization Service.</param>
+        /// <param name="permissionService">Permission Service.</param>
         /// <param name="examinationCreationService">examinationCreationService.</param>
         /// <param name="examinationsRetrievalService">examinationsRetrievalService.</param>
         /// <param name="examinationsDashboardService">Examination Dashboard Service.</param>
@@ -51,11 +53,12 @@ namespace MedicalExaminer.API.Controllers
             IMapper mapper,
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
             IAuthorizationService authorizationService,
+            IPermissionService permissionService,
             IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> examinationsDashboardService,
             IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService)
-            : base(logger, mapper, usersRetrievalByEmailService, authorizationService)
+            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
             _examinationCreationService = examinationCreationService;
             _examinationsRetrievalService = examinationsRetrievalService;
@@ -77,7 +80,10 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetExaminationsResponse());
             }
 
+            var permissedLocations = await LocationsWithPermission(Permission.GetExaminations);
+
             var examinationsQuery = new ExaminationsRetrievalQuery(
+                permissedLocations,
                 filter.CaseStatus,
                 filter.LocationId,
                 filter.OrderBy,

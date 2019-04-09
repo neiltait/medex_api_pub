@@ -1,5 +1,8 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
 using MedicalExaminer.API.Authorization;
+using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
@@ -21,20 +24,28 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="mapper">Mapper.</param>
         /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
         /// <param name="authorizationService">Authorization Service.</param>
+        /// <param name="permissionService">Permission Service.</param>
         protected AuthorizedBaseController(
             IMELogger logger,
             IMapper mapper,
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
-            IAuthorizationService authorizationService)
+            IAuthorizationService authorizationService,
+            IPermissionService permissionService)
             : base(logger, mapper, usersRetrievalByEmailService)
         {
             AuthorizationService = authorizationService;
+            PermissionService = permissionService;
         }
 
         /// <summary>
         /// Authorization Service.
         /// </summary>
         protected IAuthorizationService AuthorizationService { get; }
+
+        /// <summary>
+        /// Permission Service.
+        /// </summary>
+        private IPermissionService PermissionService { get; }
 
         /// <summary>
         /// Can do Permission somewhere against something.
@@ -61,6 +72,18 @@ namespace MedicalExaminer.API.Controllers
                 .AuthorizeAsync(User, document, new PermissionRequirement(permission)).Result;
 
             return authorizationResult.Succeeded;
+        }
+
+        /// <summary>
+        /// Locations With Permission.
+        /// </summary>
+        /// <param name="permission">Permission.</param>
+        /// <returns>List of Location Ids.</returns>
+        protected async Task<IEnumerable<string>> LocationsWithPermission(Permission permission)
+        {
+            var currentUser = await CurrentUser();
+
+            return PermissionService.LocationIdsWithPermission(currentUser, permission);
         }
     }
 }

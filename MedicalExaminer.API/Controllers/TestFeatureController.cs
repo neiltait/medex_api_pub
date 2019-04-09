@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
+using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
@@ -30,12 +31,14 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="logger">Logger.</param>
         /// <param name="mapper">Mapper.</param>
         /// <param name="authorizationService">Authorization Service.</param>
+        /// <param name="permissionService">Permission Service.</param>
         public TestFeatureController(
-            IMELogger logger, 
+            IMELogger logger,
             IMapper mapper,
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
-            IAuthorizationService authorizationService)
-            : base(logger, mapper, usersRetrievalByEmailService, authorizationService)
+            IAuthorizationService authorizationService,
+            IPermissionService permissionService)
+            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
         }
 

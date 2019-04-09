@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
@@ -18,26 +19,17 @@ namespace MedicalExaminer.API.Authorization
     public class DocumentPermissionHandler : AuthorizationHandler<PermissionRequirement, ILocationBasedDocument>
     {
         /// <summary>
-        /// User Retrieval Service.
+        /// Permission Service.
         /// </summary>
-        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _userRetrievalService;
+        private readonly IPermissionService _permissionService;
 
         /// <summary>
-        /// Role Permissions.
+        /// Initialise a new instance of <see cref="DocumentPermissionHandler"/>.
         /// </summary>
-        private readonly IRolePermissions _rolePermissions;
-
-        /// <summary>
-        /// Initialise a new instance of <see cref="PermissionHandler"/>.
-        /// </summary>
-        /// <param name="rolePermissions">Role Permissions.</param>
-        /// <param name="userRetrievalService">User Retrieval Service.</param>
-        public DocumentPermissionHandler(
-            IRolePermissions rolePermissions,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalService)
+        /// <param name="permissionService">Permission Service.</param>
+        public DocumentPermissionHandler(IPermissionService permissionService)
         {
-            _rolePermissions = rolePermissions;
-            _userRetrievalService = userRetrievalService;
+            _permissionService = permissionService;
         }
 
         /// <inheritdoc/>
@@ -48,18 +40,9 @@ namespace MedicalExaminer.API.Authorization
         {
             var emailAddress = context.User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
 
-            var meUser = await _userRetrievalService.Handle(new UserRetrievalByEmailQuery(emailAddress));
-
-            if (meUser.Permissions != null)
+            if (await _permissionService.HasPermission(emailAddress, document, requirement.Permission))
             {
-                var hasPermission = meUser.Permissions.Any(
-                    p => _rolePermissions.Can((UserRoles) p.UserRole, requirement.Permission)
-                         && document.LocationIds().Any(l => l == p.LocationId));
-
-                if (hasPermission)
-                {
-                    context.Succeed(requirement);
-                }
+                context.Succeed(requirement);
             }
         }
     }
