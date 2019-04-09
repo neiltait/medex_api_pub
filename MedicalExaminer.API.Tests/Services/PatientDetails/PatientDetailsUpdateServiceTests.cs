@@ -80,6 +80,9 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             Assert.NotNull(result.Result);
         }
 
+        /// <summary>
+        /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
+        /// </summary>
         [Fact]
         public void PatientDetailsUpdateOnExaminationWithNoUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScoreZero()
         {
@@ -112,6 +115,9 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             Assert.Equal(0, result.Result.UrgencyScore);
         }
 
+        /// <summary>
+        /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
+        /// </summary>
         [Fact]
         public void PatientDetailsUpdateOnExaminationWithAllUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScore500()
         {

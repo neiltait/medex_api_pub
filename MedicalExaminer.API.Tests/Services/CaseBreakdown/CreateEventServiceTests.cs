@@ -14,6 +14,9 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
 {
     public class CreateEventServiceTests
     {
+        /// <summary>
+        /// Behavior when incoming Create Event Query is NUll.
+        /// </summary>
         [Fact]
         public void CreateEventQueryIsNullThrowsException()
         {
@@ -27,6 +30,9 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             act.Should().Throw<ArgumentNullException>();
         }
 
+        /// <summary>
+        /// Successful Creation of an Event.
+        /// </summary>
         [Fact]
         public void CreateEventQuerySuccessReturnsEventId()
         {
@@ -56,6 +62,9 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             Assert.NotNull(result.Result);
         }
 
+        /// <summary>
+        /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
+        /// </summary>
         [Fact]
         public void CreateEventOnExaminationWithNoUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScoreZero()
         {
@@ -90,6 +99,9 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             Assert.Equal(0, examination.UrgencyScore);
         }
 
+        /// <summary>
+        /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
+        /// </summary>
         [Fact]
         public void CreateEventOnExaminationWithAllUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScore500()
         {

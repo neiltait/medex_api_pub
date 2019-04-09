@@ -47,6 +47,9 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             Assert.NotNull(result.Result);
         }
 
+        /// <summary>
+        /// Test to make sure UpdateCaseUrgencyScore method is called when the Examination is created
+        /// </summary>
         [Fact]
         public void CreateExaminationQueryWithNoUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScoreZero()
         {
@@ -76,6 +79,9 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             Assert.Equal(0, result.Result.UrgencyScore);
         }
 
+        /// <summary>
+        /// Test to make sure UpdateCaseUrgencyScore method is called when the Examination is created
+        /// </summary>
         [Fact]
         public void CreateExaminationQueryWithAllUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScore500()
         {

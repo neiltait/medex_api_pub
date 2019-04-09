@@ -13,6 +13,23 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
     public class MedicalTeamUpdateServiceTests
     {
         [Fact]
+        public void ExaminationIdNull_ThrowsException()
+        {
+            // Arrange
+            var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            var dbAccess = new Mock<IDatabaseAccess>();
+            dbAccess.Setup(db =>
+                    db.GetItemAsync(connectionSettings.Object,
+                        It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+                .Returns(Task.FromResult<MedicalExaminer.Models.Examination>(null));
+
+            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object);
+
+            // Assert
+            Assert.ThrowsAsync<ArgumentNullException>(() => sut.Handle(null));
+        }
+
+        [Fact]
         public async void ExaminationFound_ReturnsExaminationId()
         {
             // Arrange
@@ -35,6 +52,9 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             Assert.Equal(examinationId, result.ExaminationId);
         }
 
+        /// <summary>
+        /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
+        /// </summary>
         [Fact]
         public async void UpdateMedicalTeamOfExaminationWithNoUrgencyIndicatorsThenCaseUrgencyScoreUpdatedWithZero()
         {
@@ -62,6 +82,9 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             Assert.Equal(0, result.UrgencyScore);
         }
 
+        /// <summary>
+        /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
+        /// </summary>
         [Fact]
         public async void UpdateMedicalTeamOfExaminationWithAllUrgencyIndicatorsThenCaseUrgencyScoreUpdatedWith500()
         {
@@ -76,7 +99,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                 CaseCreated = DateTime.Now.AddDays(-3)
             };
             IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>
-                { examination };
+                {examination};
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object, examination))
@@ -87,26 +110,6 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var result = await sut.Handle(examination);
 
             Assert.Equal(500, result.UrgencyScore);
-        }
-
-        [Fact]
-        public void ExaminationIdNull_ThrowsException()
-        {
-            // Arrange
-            // IEnumerable<MedicalExaminer.Models.Examination> examinations = null;
-            var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db =>
-                    db.GetItemAsync(connectionSettings.Object,
-                        It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
-                .Returns(Task.FromResult<MedicalExaminer.Models.Examination>(null));
-
-            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object);
-
-            // Act
-
-            // Assert
-            Assert.ThrowsAsync<ArgumentNullException>(() => sut.Handle(null));
         }
     }
 }
