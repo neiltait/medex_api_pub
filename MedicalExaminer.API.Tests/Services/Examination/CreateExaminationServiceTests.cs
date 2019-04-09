@@ -4,7 +4,6 @@ using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
-using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.Examination;
 using Moq;
 using Xunit;
@@ -34,7 +33,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examination = new MedicalExaminer.Models.Examination();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             CreateExaminationQuery query = new CreateExaminationQuery(examination);
-            
+
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
                 examination, false)).Returns(Task.FromResult(examination)).Verifiable();
@@ -46,6 +45,64 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             // Assert
             dbAccess.Verify(db => db.CreateItemAsync(connectionSettings.Object, examination, false), Times.Once);
             Assert.NotNull(result.Result);
+        }
+
+        [Fact]
+        public void CreateExaminationQueryWithNoUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScoreZero()
+        {
+            // Arrange
+            var examination = new MedicalExaminer.Models.Examination()
+            {
+                ChildPriority = false,
+                CoronerPriority = false,
+                CulturalPriority = false,
+                FaithPriority = false,
+                OtherPriority = false,
+                CaseCreated = DateTime.Now
+            };
+            var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            CreateExaminationQuery query = new CreateExaminationQuery(examination);
+
+            var dbAccess = new Mock<IDatabaseAccess>();
+            dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
+                examination, false)).Returns(Task.FromResult(examination)).Verifiable();
+            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object);
+
+            // Act
+            var result = sut.Handle(query);
+
+            // Assert
+            Assert.NotNull(result.Result);
+            Assert.Equal(0, result.Result.UrgencyScore);
+        }
+
+        [Fact]
+        public void CreateExaminationQueryWithAllUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScore500()
+        {
+            // Arrange
+            var examination = new MedicalExaminer.Models.Examination()
+            {
+                ChildPriority = true,
+                CoronerPriority = true,
+                CulturalPriority = true,
+                FaithPriority = true,
+                OtherPriority = true,
+                CaseCreated = DateTime.Now
+            };
+            var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            CreateExaminationQuery query = new CreateExaminationQuery(examination);
+
+            var dbAccess = new Mock<IDatabaseAccess>();
+            dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
+                examination, false)).Returns(Task.FromResult(examination)).Verifiable();
+            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object);
+
+            // Act
+            var result = sut.Handle(query);
+
+            // Assert
+            Assert.NotNull(result.Result);
+            Assert.Equal(500, result.Result.UrgencyScore);
         }
     }
 }

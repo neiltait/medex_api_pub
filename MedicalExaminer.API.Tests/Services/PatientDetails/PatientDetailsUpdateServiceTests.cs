@@ -48,7 +48,6 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             // Act
             var result = sut.Handle(query);
 
-            
             // Assert
             dbAccess.Verify(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>()), Times.Once);
@@ -79,6 +78,70 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             dbAccess.Verify(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>()), Times.Once);
             Assert.NotNull(result.Result);
+        }
+
+        [Fact]
+        public void PatientDetailsUpdateOnExaminationWithNoUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScoreZero()
+        {
+            // Arrange
+            var examination = new MedicalExaminer.Models.Examination()
+            {
+                ChildPriority = false,
+                CoronerPriority = false,
+                CulturalPriority = false,
+                FaithPriority = false,
+                OtherPriority = false,
+                CaseCreated = DateTime.Now.AddDays(-3)
+            };
+            var patientDetails = new Mock<MedicalExaminer.Models.PatientDetails>();
+            var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            var mapper = new Mock<IMapper>();
+            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object);
+            var dbAccess = new Mock<IDatabaseAccess>();
+            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
+                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+                .Returns(Task.FromResult(examination)).Verifiable();
+            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
+                It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
+            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object);
+
+            // Act
+            var result = sut.Handle(query);
+
+            // Assert
+            Assert.Equal(0, result.Result.UrgencyScore);
+        }
+
+        [Fact]
+        public void PatientDetailsUpdateOnExaminationWithAllUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScore500()
+        {
+            // Arrange
+            var examination = new MedicalExaminer.Models.Examination()
+            {
+                ChildPriority = true,
+                CoronerPriority = true,
+                CulturalPriority = true,
+                FaithPriority = true,
+                OtherPriority = true,
+                CaseCreated = DateTime.Now.AddDays(-3)
+            };
+            var patientDetails = new Mock<MedicalExaminer.Models.PatientDetails>();
+            var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            var mapper = new Mock<IMapper>();
+            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object);
+            var dbAccess = new Mock<IDatabaseAccess>();
+            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
+                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+                .Returns(Task.FromResult(examination)).Verifiable();
+            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
+                It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
+            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object);
+
+            // Act
+            var result = sut.Handle(query);
+
+            // Assert
+            Assert.Equal(500, result.Result.UrgencyScore);
         }
     }
 }
