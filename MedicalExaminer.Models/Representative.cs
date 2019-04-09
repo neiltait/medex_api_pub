@@ -50,5 +50,9 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "appointment_time")]
         [Required]
         public TimeSpan? AppointmentTime { get; set; }
+
+
+        [JsonProperty(PropertyName = "notes")]
+        public string Notes { get; set; }
     }
 }
