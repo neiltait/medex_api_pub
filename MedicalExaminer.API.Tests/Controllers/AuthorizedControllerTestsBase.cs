@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using MedicalExaminer.API.Controllers;
+using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -22,6 +23,8 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             AuthorizationServiceMock = new Mock<IAuthorizationService>();
 
+            PermissionServiceMock = new Mock<IPermissionService>();
+
             AuthorizationServiceMock
                 .Setup(aus => aus.AuthorizeAsync(
                     It.IsAny<ClaimsPrincipal>(),
@@ -33,5 +36,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         protected Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>> UsersRetrievalByEmailServiceMock { get; }
 
         protected Mock<IAuthorizationService> AuthorizationServiceMock { get; }
+
+        protected Mock<IPermissionService> PermissionServiceMock { get; }
     }
 }

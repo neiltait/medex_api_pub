@@ -77,11 +77,12 @@ namespace MedicalExaminer.API.Services.Implementations
             return false;
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> LocationIdsWithPermission(MeUser user, Permission permission)
         {
             var locations = user
                 .Permissions
-                .Where(up => _rolePermissions.Can((UserRoles) up.UserRole, permission))
+                .Where(up => _rolePermissions.Can((UserRoles)up.UserRole, permission))
                 .Select(up => up.LocationId);
 
             return locations;

@@ -5,6 +5,7 @@ using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Examinations;
+using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
@@ -66,6 +67,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 mapper.Object,
                 UsersRetrievalByEmailServiceMock.Object,
                 AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
                 createExaminationService.Object,
                 examinationsRetrievalQueryService.Object,
                 examinationsDashboardService.Object,
@@ -103,6 +105,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 mapper.Object,
                 UsersRetrievalByEmailServiceMock.Object,
                 AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
                 createExaminationService.Object,
                 examinationsRetrievalQueryService.Object,
                 examinationsDashboardService.Object,
@@ -148,6 +151,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 mapper.Object,
                 UsersRetrievalByEmailServiceMock.Object,
                 AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
                 createExaminationService.Object,
                 examinationsRetrievalQueryService.Object,
                 examinationsDashboardService.Object,

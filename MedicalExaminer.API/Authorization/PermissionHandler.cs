@@ -2,6 +2,11 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using MedicalExaminer.API.Services;
+using MedicalExaminer.Common.Authorization;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalExaminer.API.Authorization
