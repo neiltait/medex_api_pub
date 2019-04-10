@@ -1,14 +1,15 @@
 ﻿using System;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
-    public class BereavedDiscussionEventItem
+    public class BereavedDiscussionEventItem : IEvent
     {
         /// <summary>
         /// Date event was created
         /// </summary>
-        public DateTime Created { get; set; }
+        public DateTime? Created { get; set; }
 
         /// <summary>
         /// Event Identification.

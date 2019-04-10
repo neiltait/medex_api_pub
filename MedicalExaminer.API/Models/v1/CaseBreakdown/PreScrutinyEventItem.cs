@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
-    public class PreScrutinyEventItem
+    public class PreScrutinyEventItem : IEvent
     {
         /// <summary>
         /// Date event was created
         /// </summary>
-        public DateTime Created { get; set; }
+        public DateTime? Created { get; set; }
 
         /// <summary>
         /// Event Identification.

@@ -9,90 +9,52 @@ namespace MedicalExaminer.API.Extensions.Data
     {
         public CaseBreakdownProfile()
         {
-            CreateMap<CaseBreakDown, CaseBreakDownItem>().ForMember(x => x.OtherEvents, ev => ev.MapFrom((source, destination, destinationMember, context) =>
+            CreateMap<CaseBreakDown, CaseBreakDownItem>()
+            .ForMember(x=>x.PatientDeathEvent, cbd => cbd.MapFrom(x=>x.DeathEvent))
+            .ForMember(x => x.OtherEvents, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
-                var myUser = (MeUser)context.Items["myUser"];
-                var usersDraft = source.OtherEvents.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
-                var usersDraftItem = context.Mapper.Map<OtherEventItem>(usersDraft);
-                return new EventContainerItem<OtherEventItem>
-                {
-                    UsersDraft = usersDraftItem,
-                    History = source.OtherEvents.History.Select(hist => context.Mapper.Map<OtherEventItem>(hist)),
-                    Latest = context.Mapper.Map<OtherEventItem>(source.OtherEvents.Latest)
-                };
+                return EventContainerMapping(source.OtherEvents, context);
             }))
             .ForMember(x => x.MedicalHistory, ev => ev.MapFrom((source, destination, destinationMember, context) =>
              {
-                 var myUser = (MeUser)context.Items["myUser"];
-                 var usersDraft = source.MedicalHistory.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
-                 var usersDraftItem = context.Mapper.Map<MedicalHistoryEventItem>(usersDraft);
-                 return new EventContainerItem<MedicalHistoryEventItem>
-                 {
-                     UsersDraft = usersDraftItem,
-                     History = source.MedicalHistory.History.Select(hist => context.Mapper.Map<MedicalHistoryEventItem>(hist)),
-                     Latest = context.Mapper.Map<MedicalHistoryEventItem>(source.MedicalHistory.Latest)
-                 };
+                 return EventContainerMapping(source.MedicalHistory, context);
              }))
             .ForMember(x => x.AdmissionNotes, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
-                var myUser = (MeUser)context.Items["myUser"];
-                var usersDraft = source.AdmissionNotes.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
-                var usersDraftItem = context.Mapper.Map<AdmissionEventItem>(usersDraft);
-                return new EventContainerItem<AdmissionEventItem>
-                {
-                    UsersDraft = usersDraftItem,
-                    History = source.AdmissionNotes.History.Select(hist => context.Mapper.Map<AdmissionEventItem>(hist)),
-                    Latest = context.Mapper.Map<AdmissionEventItem>(source.AdmissionNotes.Latest)
-                };
+                return EventContainerMapping(source.AdmissionNotes, context);
             }))
             .ForMember(x => x.BereavedDiscussion, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
-                var myUser = (MeUser)context.Items["myUser"];
-                var usersDraft = source.BereavedDiscussion.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
-                var usersDraftItem = context.Mapper.Map<BereavedDiscussionEvent>(usersDraft);
-                return new EventContainerItem<BereavedDiscussionEvent>
-                {
-                    UsersDraft = usersDraftItem,
-                    History = source.BereavedDiscussion.History.Select(hist => context.Mapper.Map<BereavedDiscussionEvent>(hist)),
-                    Latest = context.Mapper.Map<BereavedDiscussionEvent>(source.BereavedDiscussion.Latest)
-                };
+                return EventContainerMapping(source.BereavedDiscussion, context);
             }))
             .ForMember(x => x.MeoSummary, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
-                var myUser = (MeUser)context.Items["myUser"];
-                var usersDraft = source.MeoSummary.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
-                var usersDraftItem = context.Mapper.Map<MeoSummaryEventItem>(usersDraft);
-                return new EventContainerItem<MeoSummaryEventItem>
-                {
-                    UsersDraft = usersDraftItem,
-                    History = source.MeoSummary.History.Select(hist => context.Mapper.Map<MeoSummaryEventItem>(hist)),
-                    Latest = context.Mapper.Map<MeoSummaryEventItem>(source.MeoSummary.Latest)
-                };
+                return EventContainerMapping(source.MeoSummary, context);
             }))
             .ForMember(x => x.PreScrutiny, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
-                var myUser = (MeUser)context.Items["myUser"];
-                var usersDraft = source.PreScrutiny.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
-                var usersDraftItem = context.Mapper.Map<PreScrutinyEventItem>(usersDraft);
-                return new EventContainerItem<PreScrutinyEventItem>
-                {
-                    UsersDraft = usersDraftItem,
-                    History = source.PreScrutiny.History.Select(hist => context.Mapper.Map<PreScrutinyEventItem>(hist)),
-                    Latest = context.Mapper.Map<PreScrutinyEventItem>(source.PreScrutiny.Latest)
-                };
+                return EventContainerMapping(source.PreScrutiny, context);
             }))
             .ForMember(x => x.QapDiscussion, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
-                var myUser = (MeUser)context.Items["myUser"];
-                var usersDraft = source.QapDiscussion.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
-                var usersDraftItem = context.Mapper.Map<QapDiscussionEventItem>(usersDraft);
-                return new EventContainerItem<QapDiscussionEventItem>
-                {
-                    UsersDraft = usersDraftItem,
-                    History = source.QapDiscussion.History.Select(hist => context.Mapper.Map<QapDiscussionEventItem>(hist)),
-                    Latest = context.Mapper.Map<QapDiscussionEventItem>(source.QapDiscussion.Latest)
-                };
+                return EventContainerMapping(source.QapDiscussion, context);
             }));
+        }
+
+        private EventContainerItem<T> EventContainerMapping<T>(
+            BaseEventContainter<T> source,
+            ResolutionContext context)
+            where T : IEvent
+        {
+            var myUser = (MeUser)context.Items["myUser"];
+            var usersDraft = source.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
+            var usersDraftItem = context.Mapper.Map<T>(usersDraft);
+            return new EventContainerItem<T>
+            {
+                UsersDraft = usersDraftItem,
+                History = source.History.Select(hist => context.Mapper.Map<T>(hist)),
+                Latest = context.Mapper.Map<T>(source.Latest)
+            };
         }
     }
 }

@@ -108,10 +108,8 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AppointmentDate.Should().Be(null);
             result.AppointmentTime.Should().Be(null);
             result.LastAdmission.Should().Be(LastAdmission);
-            result.CaseCreatedDate.Should().Be(CaseCreated);
             result.ReadyForMEScrutiny.Should().Be(true);
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
-            result.CaseOfficer.Should().Be(CaseOfficer);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutstandingOutcomes.Should().Be(true);
             result.PendingAdmissionNotes.Should().Be(true);
@@ -151,10 +149,8 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AppointmentDate.Should().Be(null);
             result.AppointmentTime.Should().Be(null);
             result.LastAdmission.Should().Be(LastAdmission);
-            result.CaseCreatedDate.Should().Be(CaseCreated);
             result.ReadyForMEScrutiny.Should().Be(true);
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
-            result.CaseOfficer.Should().Be(CaseOfficer);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutstandingOutcomes.Should().Be(true);
             result.PendingAdmissionNotes.Should().Be(true);
@@ -251,10 +247,8 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AppointmentDate.Should().Be(appointmentDate);
             result.AppointmentTime.Should().Be(appointmentTime);
             result.LastAdmission.Should().Be(LastAdmission);
-            result.CaseCreatedDate.Should().Be(CaseCreated);
             result.ReadyForMEScrutiny.Should().Be(true);
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
-            result.CaseOfficer.Should().Be(CaseOfficer);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutstandingOutcomes.Should().Be(true);
             result.PendingAdmissionNotes.Should().Be(true);
@@ -308,10 +302,8 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AppointmentDate.Should().Be(null);
             result.AppointmentTime.Should().Be(null);
             result.LastAdmission.Should().Be(LastAdmission);
-            result.CaseCreatedDate.Should().Be(CaseCreated);
             result.ReadyForMEScrutiny.Should().Be(true);
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
-            result.CaseOfficer.Should().Be(CaseOfficer);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutstandingOutcomes.Should().Be(true);
             result.PendingAdmissionNotes.Should().Be(true);
@@ -366,10 +358,8 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AppointmentDate.Should().Be(appointmentDate1);
             result.AppointmentTime.Should().Be(appointmentTime);
             result.LastAdmission.Should().Be(LastAdmission);
-            result.CaseCreatedDate.Should().Be(CaseCreated);
             result.ReadyForMEScrutiny.Should().Be(true);
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
-            result.CaseOfficer.Should().Be(CaseOfficer);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutstandingOutcomes.Should().Be(true);
             result.PendingAdmissionNotes.Should().Be(true);

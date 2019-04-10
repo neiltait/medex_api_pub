@@ -26,7 +26,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             {
                 IsFinal = false,
                 Text = "other event one",
-                UserId = "userOne"
+                UserId = "userOne",
+                EventId = "a"
             };
 
             examination.CaseBreakdown = caseBreakdown;

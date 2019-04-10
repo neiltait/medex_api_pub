@@ -1,4 +1,5 @@
-﻿using MedicalExaminer.Models.Enums;
+﻿using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
-    public class PatientDeathEventItem
+    public class PatientDeathEventItem : IEvent
     {
         /// <summary>
         /// Event Identification.
@@ -41,7 +42,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Date event was created
         /// </summary>
-        public DateTime Created { get; set; }
+        public DateTime? Created { get; set; }
 
     }
 }

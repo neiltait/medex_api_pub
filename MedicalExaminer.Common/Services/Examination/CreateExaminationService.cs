@@ -39,16 +39,15 @@ namespace MedicalExaminer.Common.Services.Examination
                     UserId = param.Examination.CreatedBy,
                     EventId = Guid.NewGuid().ToString()
                 };
-                return await _databaseAccess.CreateItemAsync(_connectionSettings, 
-                    param.Examination, false);
+                return await _databaseAccess.CreateItemAsync(
+                    _connectionSettings,
+                    param.Examination,
+                    false);
             }
             catch (Exception)
             {
-                //_logger.Log("Failed to retrieve examination data", e);
                 throw;
             }
-            
-
         }
     }
 }
