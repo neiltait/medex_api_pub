@@ -1,4 +1,5 @@
 ﻿using MedicalExaminer.Models.Enums;
+using System;
 
 namespace MedicalExaminer.Models
 {
@@ -8,5 +9,6 @@ namespace MedicalExaminer.Models
         string EventId { get; set; }
         bool IsFinal { get; }
         string UserId { get; }
+        DateTime? Created { get; set; }
     }
 }

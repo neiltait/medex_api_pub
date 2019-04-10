@@ -14,10 +14,14 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public UsersProfile()
         {
-            CreateMap<MeUser, UserItem>();
-            CreateMap<MeUser, GetUserResponse>();
-            CreateMap<MeUser, PutUserResponse>();
-            CreateMap<MeUser, PostUserResponse>();
+            CreateMap<MeUser, UserItem>()
+                .ForMember(x => x.UserRole, opt => opt.Ignore());
+            CreateMap<MeUser, GetUserResponse>()
+                .ForMember(x => x.Errors, opt => opt.Ignore());
+            CreateMap<MeUser, PutUserResponse>()
+                .ForMember(x => x.Errors, opt => opt.Ignore());
+            CreateMap<MeUser, PostUserResponse>()
+                .ForMember(x => x.Errors, opt => opt.Ignore());
             CreateMap<PostUserRequest, MeUser>();
             CreateMap<PutUserRequest, MeUser>();
             CreateMap<UserItem, MeUser>();

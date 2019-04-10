@@ -216,12 +216,6 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "date_of_death")]
         public DateTime DateOfDeath { get; set; }
 
-        [Required]
-        [DataType(DataType.DateTime)]
-        [JsonProperty(PropertyName = "case_created")]
-        public DateTime CaseCreated { get; set; }
-
-
         /// <summary>
         /// The medical team associated with the patient
         /// </summary>
@@ -343,9 +337,6 @@ namespace MedicalExaminer.Models
 
         [JsonProperty(PropertyName = "have_final_case_outstanding_outcomes")]
         public bool HaveFinalCaseOutstandingOutcomes { get; set; }
-
-        [JsonProperty(PropertyName = "case_officer")]
-        public string CaseOfficer { get; set; }
 
         [JsonProperty(PropertyName = "id")]
         public string ExaminationId { get; set; }
