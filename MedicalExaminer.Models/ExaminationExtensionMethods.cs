@@ -124,7 +124,7 @@ namespace MedicalExaminer.Models
                 score = score + defaultScoreWeighting;
             }
 
-            if (DateTime.Now.AddDays(-4) > examination.CaseCreated)
+            if (DateTime.Now.AddDays(-4) > examination.CreatedAt)
             {
                 score = score + overdueScoreWeighting;
             }

@@ -77,7 +77,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
                 CulturalPriority = false,
                 FaithPriority = false,
                 OtherPriority = false,
-                CaseCreated = DateTime.Now.AddDays(-3)
+                CreatedAt = DateTime.Now.AddDays(-3)
             };
             var theEvent = new Mock<OtherEvent>(); // only other event has been implemented so far.
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
@@ -114,7 +114,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
                 CulturalPriority = true,
                 FaithPriority = true,
                 OtherPriority = true,
-                CaseCreated = DateTime.Now.AddDays(-3)
+                CreatedAt = DateTime.Now.AddDays(-3)
             };
             var theEvent = new Mock<OtherEvent>(); // only other event has been implemented so far.
             var connectionSettings = new Mock<IExaminationConnectionSettings>();

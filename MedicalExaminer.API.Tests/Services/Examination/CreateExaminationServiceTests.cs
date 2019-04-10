@@ -61,7 +61,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CulturalPriority = false,
                 FaithPriority = false,
                 OtherPriority = false,
-                CaseCreated = DateTime.Now
+                CreatedAt = DateTime.Now.AddDays(-3)
             };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             CreateExaminationQuery query = new CreateExaminationQuery(examination);
@@ -93,7 +93,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CulturalPriority = true,
                 FaithPriority = true,
                 OtherPriority = true,
-                CaseCreated = DateTime.Now
+                CreatedAt = DateTime.Now
             };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             CreateExaminationQuery query = new CreateExaminationQuery(examination);

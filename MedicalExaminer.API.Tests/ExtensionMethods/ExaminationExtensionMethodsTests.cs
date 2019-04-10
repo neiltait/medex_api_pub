@@ -189,7 +189,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 CulturalPriority = false,
                 FaithPriority = false,
                 OtherPriority = false,
-                CaseCreated = DateTime.Now.AddDays(-3)
+                CreatedAt = DateTime.Now.AddDays(-3)
             };
 
             // Act
@@ -210,7 +210,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 CulturalPriority = true,
                 FaithPriority = true,
                 OtherPriority = true,
-                CaseCreated = DateTime.Now.AddDays(-3)
+                CreatedAt = DateTime.Now.AddDays(-3)
             };
 
             // Act
@@ -231,7 +231,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 CulturalPriority = false,
                 FaithPriority = false,
                 OtherPriority = false,
-                CaseCreated = DateTime.Now.AddDays(-6)
+                CreatedAt = DateTime.Now.AddDays(-6)
             };
 
             // Act
@@ -252,7 +252,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 CulturalPriority = true,
                 FaithPriority = true,
                 OtherPriority = true,
-                CaseCreated = DateTime.Now.AddDays(-6)
+                CreatedAt = DateTime.Now.AddDays(-6)
             };
 
             // Act

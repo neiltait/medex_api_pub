@@ -67,7 +67,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                 CulturalPriority = false,
                 FaithPriority = false,
                 OtherPriority = false,
-                CaseCreated = DateTime.Now.AddDays(-3)
+                CreatedAt = DateTime.Now.AddDays(-3)
             };
             IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>
                 { examination };
@@ -98,7 +98,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                 CulturalPriority = true,
                 FaithPriority = true,
                 OtherPriority = true,
-                CaseCreated = DateTime.Now.AddDays(-3)
+                CreatedAt = DateTime.Now.AddDays(-3)
             };
             IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>
                 {examination};
