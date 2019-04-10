@@ -142,5 +142,22 @@ namespace MedicalExaminer.Models
 
             return examination;
         }
+
+        private static bool CalculateReadyForScrutiny(this Examination examination)
+        {
+            if(examination.CaseBreakdown.AdmissionNotes.Latest != null)
+            {
+                return examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral;
+            }
+            else
+            {
+                if(examination.CaseBreakdown.MeoSummary != null)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 }

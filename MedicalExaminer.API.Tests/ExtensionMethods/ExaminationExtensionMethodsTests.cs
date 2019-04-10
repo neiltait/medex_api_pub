@@ -337,20 +337,20 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             Assert.Equal(false, examination.HaveBeenScrutinisedByME);
         }
 
-        //[Fact]
-        //public void Draft_Me_Scrutiny_Case_Status_HaveBeenScrutinisedByME_False()
-        //{
-        //    var examination = new Examination();
-        //    var caseBreakDown = new CaseBreakDown();
-        //    var preScrutiny = new PreScrutinyEventContainer();
-        //    preScrutiny.Drafts.Add(new PreScrutinyEvent());
-        //    caseBreakDown.PreScrutiny = preScrutiny;
-        //    examination.CaseBreakdown = caseBreakDown;
+        [Fact]
+        public void Draft_Me_Scrutiny_Case_Status_HaveBeenScrutinisedByME_False()
+        {
+            var examination = new Examination();
+            var caseBreakDown = new CaseBreakDown();
+            var preScrutiny = new PreScrutinyEventContainer();
+            preScrutiny.Drafts.Add(new PreScrutinyEvent());
+            caseBreakDown.PreScrutiny = preScrutiny;
+            examination.CaseBreakdown = caseBreakDown;
 
-        //    examination = examination.UpdateCaseStatus();
+            examination = examination.UpdateCaseStatus();
 
-        //    Assert.Equal(false, examination..Me);
-        //}
+            Assert.Equal(false, examination.Me);
+        }
 
         //[Fact]
         //public void Latest_AdmissionNotes_Case_Status_Admission_Notes_Have_Been_Added_True()
