@@ -44,7 +44,7 @@ namespace MedicalExaminer.Models
             return caseBreakDown;
         }
 
-        private static BaseEventContainter<T> GetEvents<T>(IEventContainer<IEvent> otherEvents, MeUser myUser) where T : IEvent
+        private static BaseEventContainter<T> GetEvents<T>(IEventContainer<T> otherEvents, MeUser myUser) where T : IEvent
         {
             var usersDrafts = otherEvents.Drafts.Where(draft => draft.UserId == myUser.UserId);
             otherEvents.Drafts = usersDrafts.ToList();

@@ -7,11 +7,11 @@ namespace MedicalExaminer.Models
     public abstract class BaseEventContainter<TEvent> : IEventContainer<TEvent>
         where TEvent : IEvent
     {
-        public abstract IEvent Latest { get; set; }
+        public abstract TEvent Latest { get; set; }
 
-        public abstract IList<IEvent> Drafts { get; set; }
+        public abstract IList<TEvent> Drafts { get; set; }
 
-        public abstract IList<IEvent> History { get; set; }
+        public abstract IList<TEvent> History { get; set; }
 
 
         public virtual void Add(TEvent theEvent)

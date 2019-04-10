@@ -2,13 +2,13 @@
 
 namespace MedicalExaminer.Models
 {
-    public interface IEventContainer<out TEvent>
+    public interface IEventContainer<TEvent>
         where TEvent : IEvent
     {
-        IEvent Latest { get; }
+        TEvent Latest { get; }
 
-        IList<IEvent> Drafts { get; set; }
+        IList<TEvent> Drafts { get; set; }
 
-        IList<IEvent> History { get; set; }
-    }    
+        IList<TEvent> History { get; set; }
+    }
 }
