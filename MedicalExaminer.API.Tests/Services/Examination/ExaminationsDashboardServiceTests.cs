@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
+using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Models;
@@ -15,6 +16,20 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         MedicalExaminer.Models.Examination,
         ExaminationsDashboardService>
     {
+        /// <inheritdoc/>
+        /// <remarks>Overrides to pass extra constructor parameter.</remarks>
+        protected override ExaminationsDashboardService GetService(
+            IDatabaseAccess databaseAccess,
+            ExaminationConnectionSettings connectionSettings)
+        {
+            var examinationQueryBuilder = new ExaminationsQueryExpressionBuilder();
+
+            return new ExaminationsDashboardService(
+                databaseAccess,
+                connectionSettings,
+                examinationQueryBuilder);
+        }
+
         [Fact]
         public virtual async Task UnassignedCasesReturnsCorrectCount()
         {
@@ -42,7 +57,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(2, results.CountOfReadyForMEScrutiny);
+            Assert.Equal(1, results.CountOfReadyForMEScrutiny);
         }
 
         [Fact]
@@ -72,7 +87,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(10, results.TotalCases);
+            Assert.Equal(9, results.TotalCases);
         }
 
         [Fact]
@@ -210,12 +225,12 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 Completed = false
             };
 
-            var examination3 = new MedicalExaminer.Models.Examination()
+            /*var examination3 = new MedicalExaminer.Models.Examination()
             {
                 MedicalExaminerOfficeResponsible = "a",
                 ReadyForMEScrutiny = true,
                 Completed = false
-            };
+            };*/
 
             var examination4 = new MedicalExaminer.Models.Examination()
             {
@@ -264,7 +279,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 PendingAdmissionNotes = true
             };
 
-            return new[] { examination1, examination2, examination3, examination4, examination5,
+            return new[] { examination1, examination2, /*examination3,*/ examination4, examination5,
                            examination6, examination7, examination8, examination9, examination10,
                            examination11};
         }
