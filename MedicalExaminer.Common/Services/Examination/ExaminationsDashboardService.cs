@@ -12,9 +12,15 @@ namespace MedicalExaminer.Common.Services.Examination
 {
     public class ExaminationsDashboardService : QueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>
     {
-        public ExaminationsDashboardService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
+        private readonly ExaminationsQueryExpressionBuilder _examinationQueryBuilder;
+
+        public ExaminationsDashboardService(
+            IDatabaseAccess databaseAccess, 
+            IExaminationConnectionSettings connectionSettings,
+            ExaminationsQueryExpressionBuilder examinationQueryBuilder)
             :base(databaseAccess, connectionSettings)
         {
+            _examinationQueryBuilder = examinationQueryBuilder;
         }
 
         public override Task<ExaminationsOverview> Handle(ExaminationsRetrievalQuery param)
@@ -24,8 +30,8 @@ namespace MedicalExaminer.Common.Services.Examination
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var baseQuery = GetBaseQuery(param);
-            
+            var baseQuery = _examinationQueryBuilder.GetPredicate(param);
+
             var overView = new ExaminationsOverview
             {
                 CountOfAdmissionNotesHaveBeenAdded = GetCount(baseQuery, CaseStatus.AdmissionNotesHaveBeenAdded).Result,
@@ -72,7 +78,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 case CaseStatus.ReadyForMEScrutiny:
                     return examination => examination.ReadyForMEScrutiny;
                 case CaseStatus.Unassigned:
-                    return examination => examination.Unassigned == false;
+                    return examination => examination.Unassigned;
                 case CaseStatus.HaveBeenScrutinisedByME:
                     return examination => examination.HaveBeenScrutinisedByME;
                 case CaseStatus.PendingAdmissionNotes:
@@ -90,6 +96,8 @@ namespace MedicalExaminer.Common.Services.Examination
             }
         }
 
+
+/*
         private Expression<Func<Models.Examination, bool>> GetBaseQuery(ExaminationsRetrievalQuery param)
         {
             var openCasePredicate = GetOpenCasesPredicate(param.FilterOpenCases);
@@ -101,7 +109,8 @@ namespace MedicalExaminer.Common.Services.Examination
             predicate.And(userIdPredicate);
             return predicate;
         }
-
+*/
+        /*
         private Expression<Func<Models.Examination, bool>> GetOpenCasesPredicate(bool paramFilterOpenCases)
         {
             return examination => examination.Completed == !paramFilterOpenCases;
@@ -124,5 +133,6 @@ namespace MedicalExaminer.Common.Services.Examination
             }
             return examination => examination.CaseOfficer == userId;
         }
+        */
     }
 }
