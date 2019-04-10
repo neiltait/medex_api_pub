@@ -3,20 +3,27 @@ using FluentAssertions;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.Models;
+using System;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Mapper
 {
     public class MapperCaseBreakdownProfileTests
     {
-        IMapper _mapper;
+        private readonly IMapper _mapper;
         public MapperCaseBreakdownProfileTests()
         {
-            var config = new MapperConfiguration(cfg => { cfg.AddProfile<CaseBreakdownProfile>(); });
-
+            var config = new MapperConfiguration(cfg => {
+                cfg.AddProfile<CaseBreakdownProfile>();
+                cfg.AddProfile<OtherEventProfile>();
+                cfg.AddProfile<AdmissionEventProfile>();
+                cfg.AddProfile<BereavedDiscussionEventProfile>();
+                cfg.AddProfile<MedicalHistoryEventProfile>();
+                cfg.AddProfile<MeoSummaryEventProfile>();
+                cfg.AddProfile<PreScrutinyEventProfile>();
+                cfg.AddProfile<QapDiscussionEventProfile>();
+            });
             _mapper = config.CreateMapper();
-
-            
         }
 
         [Fact]
@@ -37,7 +44,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                 EventId = "2",
                 IsFinal = false,
                 Text = "draft user one",
-                UserId = "123"
+                UserId = "123",
+                Created = DateTime.Now
             };
 
             var otherUserDraft = new OtherEvent()
@@ -45,7 +53,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                 EventId = "3",
                 IsFinal = false,
                 Text = "draft user other",
-                UserId = "456"
+                UserId = "456",
+                Created = DateTime.Now
             };
 
             var latest = new OtherEvent()
@@ -53,7 +62,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                 EventId = "1",
                 IsFinal = true,
                 Text = "The others",
-                UserId = "123"
+                UserId = "123",
+                Created = DateTime.Now
             };
             var drafts = new[] { otherUserDraft };
             var history = new[] { latest };
@@ -67,18 +77,18 @@ namespace MedicalExaminer.API.Tests.Mapper
                     History = history
                 }
             };
-
+            
             var result = _mapper.Map<CaseBreakDownItem>(caseBreakdown, opt=>opt.Items["myUser"] = myUser);
 
-            Assert.Equal(latest, result.OtherEvents.Latest);
+            Assert.Equal(latest.EventId, result.OtherEvents.Latest.EventId);
             result.OtherEvents.History.Should().BeEquivalentTo(history);
             Assert.Null(result.OtherEvents.UsersDraft);
 
             var otherResult = _mapper.Map<CaseBreakDownItem>(caseBreakdown, opt => opt.Items["myUser"] = otherUser);
 
-            Assert.Equal(latest, otherResult.OtherEvents.Latest);
+            Assert.Equal(latest.EventId, result.OtherEvents.Latest.EventId);
             otherResult.OtherEvents.History.Should().BeEquivalentTo(history);
-            Assert.Equal(otherUserDraft, otherResult.OtherEvents.UsersDraft);
+            Assert.Equal(otherUserDraft.EventId, otherResult.OtherEvents.UsersDraft.EventId);
         }
     }
 }

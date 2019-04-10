@@ -21,7 +21,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     The case id?.
         /// </summary>
-        public string id { get; set; }
+        public string ExaminationId { get; set; }
 
         /// <summary>
         ///     Is the case a cultural priority?.

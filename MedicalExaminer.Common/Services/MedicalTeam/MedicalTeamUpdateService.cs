@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
+using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.MedicalTeam
 {
@@ -24,6 +25,8 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
             {
                 throw new ArgumentNullException(nameof(examination));
             }
+
+            examination.UpdateCaseUrgencyScore();
 
             var returnedDocument = await _databaseAccess.UpdateItemAsync(_connectionSettings, examination);
 

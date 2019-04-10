@@ -1,82 +1,65 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
-using MedicalExaminer.Common.Queries.PatientDetails;
-using MedicalExaminer.Common.Services.PatientDetails;
+using MedicalExaminer.Common.Queries.CaseBreakdown;
+using MedicalExaminer.Common.Services.Examination;
+using MedicalExaminer.Models;
 using Moq;
 using Xunit;
 
-namespace MedicalExaminer.API.Tests.Services.PatientDetails
+namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
 {
-    public class PatientDetailsUpdateServiceTests
+    public class CreateEventServiceTests
     {
+        /// <summary>
+        /// Behavior when incoming Create Event Query is NUll.
+        /// </summary>
         [Fact]
-        public void PatientDetailsUpdateQueryIsNullThrowsException()
+        public void CreateEventQueryIsNullThrowsException()
         {
             // Arrange
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            PatientDetailsUpdateQuery query = null;
-            var mapper = new Mock<IMapper>();
+            CreateEventQuery query = null;
             var dbAccess = new Mock<IDatabaseAccess>();
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object);
+            var sut = new CreateEventService(dbAccess.Object, connectionSettings.Object);
 
+            // Act
             Action act = () => sut.Handle(query).GetAwaiter().GetResult();
             act.Should().Throw<ArgumentNullException>();
         }
 
+        /// <summary>
+        /// Successful Creation of an Event.
+        /// </summary>
         [Fact]
-        public void PatientDetailsUpdateQuerySuccessReturnsCorrectPropertyValues()
+        public void CreateEventQuerySuccessReturnsEventId()
         {
             // Arrange
             var examination = new MedicalExaminer.Models.Examination();
-            var patientDetails = new Mock<MedicalExaminer.Models.PatientDetails>();
+            var theEvent = new Mock<OtherEvent>(); // only other event has been implemented so far.
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var mapper = new Mock<IMapper>();
-            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object);
+            var query = new CreateEventQuery("1", theEvent.Object);
             var dbAccess = new Mock<IDatabaseAccess>();
+
             dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
                     It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
+
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object);
+
+            var sut = new CreateEventService(dbAccess.Object, connectionSettings.Object);
 
             // Act
             var result = sut.Handle(query);
 
             // Assert
-            dbAccess.Verify(db => db.UpdateItemAsync(connectionSettings.Object,
+            dbAccess.Verify(db => db.UpdateItemAsync(connectionSettings.Object, 
                 It.IsAny<MedicalExaminer.Models.Examination>()), Times.Once);
-            Assert.NotNull(result.Result);
-        }
 
-        [Fact]
-        public void PatientDetailsUpdateQuerySuccessReturnsExaminationId()
-        {
-            // Arrange
-            var examination = new MedicalExaminer.Models.Examination();
-            var patientDetails = new Mock<MedicalExaminer.Models.PatientDetails>();
-            var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var mapper = new Mock<IMapper>();
-            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object);
-            var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
-                .Returns(Task.FromResult(examination)).Verifiable();
-            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
-                It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object);
-
-            // Act
-            var result = sut.Handle(query);
-
-            // Assert
-            dbAccess.Verify(db => db.UpdateItemAsync(connectionSettings.Object,
-                It.IsAny<MedicalExaminer.Models.Examination>()), Times.Once);
             Assert.NotNull(result.Result);
         }
 
@@ -84,7 +67,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
         /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
         /// </summary>
         [Fact]
-        public void PatientDetailsUpdateOnExaminationWithNoUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScoreZero()
+        public void CreateEventOnExaminationWithNoUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScoreZero()
         {
             // Arrange
             var examination = new MedicalExaminer.Models.Examination()
@@ -96,30 +79,32 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
                 OtherPriority = false,
                 CreatedAt = DateTime.Now.AddDays(-3)
             };
-            var patientDetails = new Mock<MedicalExaminer.Models.PatientDetails>();
+            var theEvent = new Mock<OtherEvent>(); // only other event has been implemented so far.
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var mapper = new Mock<IMapper>();
-            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object);
+            var query = new CreateEventQuery("1", theEvent.Object);
             var dbAccess = new Mock<IDatabaseAccess>();
+
             dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
                     It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
+
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object);
+
+            var sut = new CreateEventService(dbAccess.Object, connectionSettings.Object);
 
             // Act
             var result = sut.Handle(query);
 
             // Assert
-            Assert.Equal(0, result.Result.UrgencyScore);
+            Assert.Equal(0, examination.UrgencyScore);
         }
 
         /// <summary>
         /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
         /// </summary>
         [Fact]
-        public void PatientDetailsUpdateOnExaminationWithAllUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScore500()
+        public void CreateEventOnExaminationWithAllUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScore500()
         {
             // Arrange
             var examination = new MedicalExaminer.Models.Examination()
@@ -131,23 +116,25 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
                 OtherPriority = true,
                 CreatedAt = DateTime.Now.AddDays(-3)
             };
-            var patientDetails = new Mock<MedicalExaminer.Models.PatientDetails>();
+            var theEvent = new Mock<OtherEvent>(); // only other event has been implemented so far.
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var mapper = new Mock<IMapper>();
-            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object);
+            var query = new CreateEventQuery("1", theEvent.Object);
             var dbAccess = new Mock<IDatabaseAccess>();
+
             dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
                     It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
+
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object);
+
+            var sut = new CreateEventService(dbAccess.Object, connectionSettings.Object);
 
             // Act
             var result = sut.Handle(query);
 
             // Assert
-            Assert.Equal(500, result.Result.UrgencyScore);
+            Assert.Equal(500, examination.UrgencyScore);
         }
     }
 }
