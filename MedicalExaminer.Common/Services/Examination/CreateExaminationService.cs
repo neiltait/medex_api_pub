@@ -32,7 +32,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 param.Examination.ExaminationId = Guid.NewGuid().ToString();
                 param.Examination.Unassigned = true;
                 param.Examination.CaseBreakdown = new Models.CaseBreakDown();
-                param.Examination = param.Examination.UpdateCaseUrgencyScore();
+                param.Examination.UpdateCaseUrgencyScore();
                 return await _databaseAccess.CreateItemAsync(_connectionSettings, 
                     param.Examination, false);
             }

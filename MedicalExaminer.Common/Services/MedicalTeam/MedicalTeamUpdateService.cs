@@ -26,7 +26,7 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
                 throw new ArgumentNullException(nameof(examination));
             }
 
-            examination = examination.UpdateCaseUrgencyScore();
+            examination.UpdateCaseUrgencyScore();
 
             var returnedDocument = await _databaseAccess.UpdateItemAsync(_connectionSettings, examination);
 

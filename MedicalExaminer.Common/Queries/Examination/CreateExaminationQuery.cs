@@ -7,6 +7,6 @@
             Examination = examination;
         }
 
-        public Models.Examination Examination { get; set; }
+        public Models.Examination Examination { get; }
     }
 }

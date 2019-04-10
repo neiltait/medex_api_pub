@@ -49,6 +49,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             // Act
             var result = await sut.Handle(examination1);
 
+            // Assert
             Assert.Equal(examinationId, result.ExaminationId);
         }
 
@@ -79,6 +80,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             // Act
             var result = await sut.Handle(examination);
 
+            // Assert
             Assert.Equal(0, result.UrgencyScore);
         }
 
@@ -109,6 +111,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             // Act
             var result = await sut.Handle(examination);
 
+            // Assert
             Assert.Equal(500, result.UrgencyScore);
         }
     }
