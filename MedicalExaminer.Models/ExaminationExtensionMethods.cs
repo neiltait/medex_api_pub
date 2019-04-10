@@ -88,6 +88,51 @@ namespace MedicalExaminer.Models
             return examination;
         }
 
+        public static Examination UpdateCaseUrgencyScore(this Examination examination)
+        {
+            var score = 0;
+            const int defaultScoreWeighting = 100;
+            const int overdueScoreWeighting = 1000;
+
+            if (examination == null)
+            {
+                throw new ArgumentNullException(nameof(examination));
+            }
+
+            if (examination.ChildPriority)
+            {
+                score = score + defaultScoreWeighting;
+            }
+
+            if (examination.CoronerPriority)
+            {
+                score = score + defaultScoreWeighting;
+            }
+
+            if (examination.CulturalPriority)
+            {
+                score = score + defaultScoreWeighting;
+            }
+
+            if (examination.FaithPriority)
+            {
+                score = score + defaultScoreWeighting;
+            }
+
+            if (examination.OtherPriority)
+            {
+                score = score + defaultScoreWeighting;
+            }
+
+            if (DateTime.Now.AddDays(-4) > examination.CreatedAt)
+            {
+                score = score + overdueScoreWeighting;
+            }
+
+            examination.UrgencyScore = score;
+            return examination;
+        }
+
         private static Examination UpdateCaseStatus(Examination examination)
         {
             return examination;

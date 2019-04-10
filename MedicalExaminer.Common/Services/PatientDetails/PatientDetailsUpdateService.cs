@@ -4,6 +4,7 @@ using AutoMapper;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.PatientDetails;
+using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.PatientDetails
 {
@@ -38,7 +39,7 @@ namespace MedicalExaminer.Common.Services.PatientDetails
 
             _mapper.Map(param.PatientDetails, caseToReplace);
 
-            caseToReplace.UrgencyScore = Calculator.CalculateUrgencyScore(caseToReplace);
+            caseToReplace.UpdateCaseUrgencyScore();
 
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, caseToReplace);
             return result;
