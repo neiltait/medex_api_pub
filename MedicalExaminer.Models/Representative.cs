@@ -43,15 +43,23 @@ namespace MedicalExaminer.Models
         [Required]
         public Informed Informed { get; set; }
 
+        /// <summary>
+        /// appointment date
+        /// </summary>
         [JsonProperty(PropertyName = "appointment_date")]
         [Required]
         public DateTime? AppointmentDate { get; set; }
 
+        /// <summary>
+        /// appointment time
+        /// </summary>
         [JsonProperty(PropertyName = "appointment_time")]
         [Required]
         public TimeSpan? AppointmentTime { get; set; }
 
-
+        /// <summary>
+        /// representative notes
+        /// </summary>
         [JsonProperty(PropertyName = "notes")]
         public string Notes { get; set; }
     }
