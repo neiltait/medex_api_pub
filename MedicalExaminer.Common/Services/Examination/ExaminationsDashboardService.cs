@@ -12,15 +12,9 @@ namespace MedicalExaminer.Common.Services.Examination
 {
     public class ExaminationsDashboardService : QueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>
     {
-        private readonly ExaminationsQueryExpressionBuilder _examinationQueryBuilder;
-
-        public ExaminationsDashboardService(
-            IDatabaseAccess databaseAccess, 
-            IExaminationConnectionSettings connectionSettings,
-            ExaminationsQueryExpressionBuilder examinationQueryBuilder)
+        public ExaminationsDashboardService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
             :base(databaseAccess, connectionSettings)
         {
-            _examinationQueryBuilder = examinationQueryBuilder;
         }
 
         public override Task<ExaminationsOverview> Handle(ExaminationsRetrievalQuery param)
@@ -30,8 +24,8 @@ namespace MedicalExaminer.Common.Services.Examination
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var baseQuery = _examinationQueryBuilder.GetPredicate(param);
-
+            var baseQuery = GetBaseQuery(param);
+            
             var overView = new ExaminationsOverview
             {
                 CountOfAdmissionNotesHaveBeenAdded = GetCount(baseQuery, CaseStatus.AdmissionNotesHaveBeenAdded).Result,
@@ -96,8 +90,6 @@ namespace MedicalExaminer.Common.Services.Examination
             }
         }
 
-
-/*
         private Expression<Func<Models.Examination, bool>> GetBaseQuery(ExaminationsRetrievalQuery param)
         {
             var openCasePredicate = GetOpenCasesPredicate(param.FilterOpenCases);
@@ -109,8 +101,7 @@ namespace MedicalExaminer.Common.Services.Examination
             predicate.And(userIdPredicate);
             return predicate;
         }
-*/
-        /*
+
         private Expression<Func<Models.Examination, bool>> GetOpenCasesPredicate(bool paramFilterOpenCases)
         {
             return examination => examination.Completed == !paramFilterOpenCases;
@@ -133,6 +124,5 @@ namespace MedicalExaminer.Common.Services.Examination
             }
             return examination => examination.CaseOfficer == userId;
         }
-        */
     }
 }
