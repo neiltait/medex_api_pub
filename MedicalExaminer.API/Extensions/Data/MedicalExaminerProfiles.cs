@@ -18,6 +18,16 @@ namespace MedicalExaminer.API.Extensions.Data
             config.AddProfile<PermissionsProfile>();
             config.AddProfile<MedicalTeamProfile>();
             config.AddProfile<PatientDetailsProfile>();
+            config.AddProfile<CaseBreakdownProfile>();
+            config.AddProfile<OtherEventProfile>();
+            config.AddProfile<AdmissionEventProfile>();
+            config.AddProfile<BereavedDiscussionEventProfile>();
+            config.AddProfile<MedicalHistoryEventProfile>();
+            config.AddProfile<MeoSummaryEventProfile>();
+            config.AddProfile<NewExaminationProfile>();
+            config.AddProfile<OtherEventProfile>();
+            config.AddProfile<PreScrutinyEventProfile>();
+            config.AddProfile<QapDiscussionEventProfile>();
         }
     }
 }

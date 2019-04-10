@@ -68,7 +68,12 @@ namespace MedicalExaminer.Common.Services.Examination
             {
                 return null;
             }
-            return examination => examination.CaseOfficer == userId;
+
+            Expression<Func<Models.Examination, bool>> mePredicate = examination => examination.MedicalTeam.MedicalExaminerUserId == userId;
+            Expression<Func<Models.Examination, bool>> meoPredicate = examination => examination.MedicalTeam.MedicalExaminerOfficerUserId == userId;
+
+            var predicate = mePredicate.Or(meoPredicate);
+            return predicate;
         }
     }
 }

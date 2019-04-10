@@ -7,6 +7,12 @@ namespace MedicalExaminer.Models
     public class AdmissionEvent : IEvent
     {
         /// <summary>
+        /// Date event was created
+        /// </summary>
+        [JsonProperty(PropertyName = "created")]
+        public DateTime? Created { get; set; }
+
+        /// <summary>
         /// Event Identification.
         /// </summary>
         [JsonProperty(PropertyName = "event_id")]
@@ -37,10 +43,16 @@ namespace MedicalExaminer.Models
         public EventType EventType => EventType.Admission;
 
         /// <summary>
-        /// the type of event this is
+        /// date of last admission
         /// </summary>
-        [JsonProperty(PropertyName = "admitted_date_time")]
-        public DateTime AdmittedDateTime { get; set; }
+        [JsonProperty(PropertyName = "admitted_date")]
+        public DateTime? AdmittedDate { get; set; }
+
+        /// <summary>
+        /// time of last admission
+        /// </summary>
+        [JsonProperty(PropertyName = "admitted_time")]
+        public TimeSpan? AdmittedTime { get; set; }
 
         /// <summary>
         /// Do you suspect this case may need Immediate Coroner Referral Yes = true, No = false
