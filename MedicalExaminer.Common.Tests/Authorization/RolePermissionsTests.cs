@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using FluentAssertions;
 using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Models.Enums;
-using Moq;
 using Xunit;
 
 namespace MedicalExaminer.Common.Tests.Authorization
@@ -29,6 +26,40 @@ namespace MedicalExaminer.Common.Tests.Authorization
 
             // Assert
             result.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Can Return False.
+        /// </summary>
+        [Fact]
+        public void Can_ReturnFalse()
+        {
+            // Arrange
+            var role = new TestRole();
+            var sut = new RolePermissions(new List<Role> { role });
+
+            // Act
+            var result = sut.Can(UserRoles.MedicalExaminer, Permission.CreateUserPermission);
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Can Return False.
+        /// </summary>
+        [Fact]
+        public void Can_ReturnFalse_WhenException()
+        {
+            // Arrange
+            var role = new TestRole();
+            var sut = new RolePermissions(new List<Role> { role });
+
+            // Act
+            var result = sut.Can(UserRoles.MedicalExaminerOfficer, Permission.CreateUserPermission);
+
+            // Assert
+            result.Should().BeFalse();
         }
 
         private class TestRole : Role
