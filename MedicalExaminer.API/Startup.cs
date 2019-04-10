@@ -321,6 +321,7 @@ namespace MedicalExaminer.API
             // Location Services
             services.AddScoped<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>, LocationIdService>();
             services.AddScoped<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>, LocationsQueryService>();
+            services.AddScoped<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>, LocationParentsQueryService>();
         }
 
         /// <summary>
@@ -421,6 +422,7 @@ namespace MedicalExaminer.API
             // Needs to be scoped since it takes scoped parameters.
             services.AddScoped<IAuthorizationHandler, PermissionHandler>();
             services.AddScoped<IAuthorizationHandler, DocumentPermissionHandler>();
+            services.AddScoped<IPermissionService, PermissionService>();
         }
     }
 }
