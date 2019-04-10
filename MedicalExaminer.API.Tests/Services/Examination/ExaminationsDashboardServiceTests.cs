@@ -22,12 +22,9 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             IDatabaseAccess databaseAccess,
             ExaminationConnectionSettings connectionSettings)
         {
-            var examinationQueryBuilder = new ExaminationsQueryExpressionBuilder();
-
             return new ExaminationsDashboardService(
                 databaseAccess,
-                connectionSettings,
-                examinationQueryBuilder);
+                connectionSettings);
         }
 
         [Fact]
@@ -72,7 +69,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(1, results.CountOfReadyForMEScrutiny);
+            Assert.Equal(0, results.CountOfReadyForMEScrutiny);
         }
 
         [Fact]
