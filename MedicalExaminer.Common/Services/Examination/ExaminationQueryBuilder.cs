@@ -14,13 +14,11 @@ namespace MedicalExaminer.Common.Services.Examination
         {
             var locationFilter = GetLocationPredicate(queryObject.PermissedLocations);
             var caseStatusFilter = GetCaseStatusPredicate(queryObject.FilterCaseStatus);
-            var medicalExaminerOfficeFilter = GetCaseMEOfficePredicate(queryObject.FilterLocationId);
             var userIdFilter = GetUserIdPredicate(queryObject.FilterUserId);
             var openCases = GetOpenCasesPredicate(queryObject.FilterOpenCases);
 
             var predicate = locationFilter
                 .And(caseStatusFilter)
-                .And(medicalExaminerOfficeFilter)
                 .And(userIdFilter)
                 .And(openCases);
 
@@ -74,15 +72,6 @@ namespace MedicalExaminer.Common.Services.Examination
                 default:
                     throw new ArgumentOutOfRangeException(nameof(paramFilterCaseStatus), paramFilterCaseStatus, null);
             }
-        }
-
-        private Expression<Func<Models.Examination, bool>> GetCaseMEOfficePredicate(string meOffice)
-        {
-            if (string.IsNullOrEmpty(meOffice))
-            {
-                return null;
-            }
-            return examination => examination.MedicalExaminerOfficeResponsible == meOffice;
         }
 
         private Expression<Func<Models.Examination, bool>> GetUserIdPredicate(string userId)
