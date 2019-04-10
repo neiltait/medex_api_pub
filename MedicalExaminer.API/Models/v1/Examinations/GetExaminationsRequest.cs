@@ -33,7 +33,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Return only open cases = true, else false for closed cases
         /// </summary>
-        public bool OpenCases { get; set; }
+        public bool OpenCases { get; set; } = true;
 
         /// <summary>
         /// What size page should be returned
