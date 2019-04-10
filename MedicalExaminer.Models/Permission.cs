@@ -6,7 +6,7 @@ namespace MedicalExaminer.Models
     public class Permission : Record
     {
         [Required]
-        [JsonProperty(PropertyName = "permission_id")]
+        [JsonProperty(PropertyName = "id")]
         public string PermissionId { get; set; }
 
         [Required]
