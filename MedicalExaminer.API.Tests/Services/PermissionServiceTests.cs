@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -37,7 +38,115 @@ namespace MedicalExaminer.API.Tests.Services
         }
 
         [Fact]
-        public async void HasPermission_()
+        public async void HasPermission_ForDocument_ReturnsTrue_WhenRolePermissionReturnsTrue()
+        {
+            // Arrange
+            var expectedEmail = "expectedEmail";
+            var expectedRole = UserRoles.MedicalExaminer;
+            var expectedPermission = Permission.AddEventToExamination;
+            var expectedNationalLocationId = "expectedNationalLocationId";
+
+            var meUser = new MeUser()
+            {
+                Permissions = new List<MEUserPermission>()
+                {
+                    new MEUserPermission()
+                    {
+                        PermissionId = "",
+                        LocationId = expectedNationalLocationId,
+                        UserRole = (int)expectedRole,
+                    }
+                }
+            };
+
+            var document = new Mock<ILocationBasedDocument>();
+
+            document.Setup(d => d.NationalLocationId).Returns(expectedNationalLocationId);
+
+            _rolePermissionsMock
+                .Setup(rp => rp.Can(expectedRole, expectedPermission))
+                .Returns(true);
+
+            _userRetrievalServiceMock
+                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(meUser));
+
+            // Act
+            var result = await _sut.HasPermission(expectedEmail, document.Object, expectedPermission);
+
+            // Assert
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public async void HasPermission_ForDocument_ReturnsFalse_WhenRolePermissionReturnsFalse()
+        {
+            // Arrange
+            var expectedEmail = "expectedEmail";
+            var expectedRole = UserRoles.MedicalExaminer;
+            var expectedPermission = Permission.AddEventToExamination;
+            var expectedNationalLocationId = "expectedNationalLocationId";
+
+            var meUser = new MeUser()
+            {
+                Permissions = new List<MEUserPermission>()
+                {
+                    new MEUserPermission()
+                    {
+                        PermissionId = "",
+                        LocationId = expectedNationalLocationId,
+                        UserRole = (int)expectedRole,
+                    }
+                }
+            };
+
+            var document = new Mock<ILocationBasedDocument>();
+
+            document.Setup(d => d.NationalLocationId).Returns(expectedNationalLocationId);
+
+            _rolePermissionsMock
+                .Setup(rp => rp.Can(expectedRole, expectedPermission))
+                .Returns(false);
+
+            _userRetrievalServiceMock
+                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(meUser));
+
+            // Act
+            var result = await _sut.HasPermission(expectedEmail, document.Object, expectedPermission);
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public async void HasPermission_ForDocument_ReturnsFalse_WhenUserHasNoPermissions()
+        {
+            // Arrange
+            var expectedEmail = "expectedEmail";
+            var expectedRole = UserRoles.MedicalExaminer;
+            var expectedPermission = Permission.AddEventToExamination;
+
+            var meUser = new MeUser()
+            {
+                Permissions = new List<MEUserPermission>()
+                {
+                }
+            };
+
+            _userRetrievalServiceMock
+                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(meUser));
+
+            // Act
+            var result = await _sut.HasPermission(expectedEmail, null, expectedPermission);
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public async void HasPermission_ReturnsTrue_WhenRolePermissionReturnsTrue()
         {
             // Arrange
             var expectedEmail = "expectedEmail";
@@ -72,50 +181,14 @@ namespace MedicalExaminer.API.Tests.Services
             result.Should().BeTrue();
         }
 
-/*
         [Fact]
-        public async void HandleRequirementAsync_WithNoPermissions_Failed()
+        public async void HasPermission_ReturnsFalse_WhenRolePermissionReturnsFalse()
         {
             // Arrange
-            var expectedPermission = Permission.AddEventToExamination;
-            var requirements = new List<IAuthorizationRequirement>()
-            {
-                new PermissionRequirement(expectedPermission)
-            };
-            var claim = new Claim(ClaimTypes.Email, "test@example.com");
-            var user = new TestPrincipal(claim);
-            const object resource = (object)null;
-            var context = new AuthorizationHandlerContext(requirements, user, resource);
-            var meUser = new MeUser()
-            {
-                Permissions = null
-            };
-
-            _userRetrievalServiceMock
-                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
-                .Returns(Task.FromResult(meUser));
-
-            // Act
-            await _sut.HandleAsync(context);
-
-            // Assert
-            context.HasSucceeded.Should().BeFalse();
-        }
-
-        [Fact]
-        public async void HandleRequirementAsync_WithPermissionsButNotCorrect_Failed()
-        {
-            // Arrange
+            var expectedEmail = "expectedEmail";
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedPermission = Permission.AddEventToExamination;
-            var requirements = new List<IAuthorizationRequirement>()
-            {
-                new PermissionRequirement(expectedPermission)
-            };
-            var claim = new Claim(ClaimTypes.Email, "test@example.com");
-            var user = new TestPrincipal(claim);
-            const object resource = (object)null;
-            var context = new AuthorizationHandlerContext(requirements, user, resource);
+
             var meUser = new MeUser()
             {
                 Permissions = new List<MEUserPermission>()
@@ -138,11 +211,82 @@ namespace MedicalExaminer.API.Tests.Services
                 .Returns(Task.FromResult(meUser));
 
             // Act
-            await _sut.HandleAsync(context);
+            var result = await _sut.HasPermission(expectedEmail, expectedPermission);
 
             // Assert
-            context.HasSucceeded.Should().BeFalse();
+            result.Should().BeFalse();
         }
-         */
+
+        [Fact]
+        public async void HasPermission_ReturnsFalse_WhenUserHasNoPermissions()
+        {
+            // Arrange
+            var expectedEmail = "expectedEmail";
+            var expectedRole = UserRoles.MedicalExaminer;
+            var expectedPermission = Permission.AddEventToExamination;
+
+            var meUser = new MeUser()
+            {
+                Permissions = new List<MEUserPermission>()
+            };
+
+            _userRetrievalServiceMock
+                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(meUser));
+
+            // Act
+            var result = await _sut.HasPermission(expectedEmail, expectedPermission);
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void LocationIdsWithPermission_ReturnsLocations()
+        {
+            // Arrange
+            var expectedRole = UserRoles.MedicalExaminer;
+            var unexpectedRole = UserRoles.MedicalExaminerOfficer;
+            var expectedPermission = Permission.AddEventToExamination;
+            var expectedLocation = "expectedLocation";
+            var unexpectedLocation = "unexpectedLocation";
+            var meUser = new MeUser()
+            {
+                Permissions = new List<MEUserPermission>()
+                {
+                    new MEUserPermission()
+                    {
+                        PermissionId = string.Empty,
+                        LocationId = expectedLocation,
+                        UserRole = (int)expectedRole,
+                    },
+                    new MEUserPermission()
+                    {
+                        PermissionId = string.Empty,
+                        LocationId = unexpectedLocation,
+                        UserRole = (int)unexpectedRole,
+                    }
+                }
+            };
+
+            _rolePermissionsMock
+                .Setup(rp => rp.Can(expectedRole, expectedPermission))
+                .Returns(true);
+
+            _rolePermissionsMock
+                .Setup(rp => rp.Can(unexpectedRole, expectedPermission))
+                .Returns(false);
+
+            _userRetrievalServiceMock
+                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(meUser));
+
+            // Act
+            var actualLocations = _sut.LocationIdsWithPermission(meUser, expectedPermission).ToList();
+
+            // Assert
+            actualLocations.Contains(expectedLocation).Should().BeTrue();
+            actualLocations.Contains(unexpectedLocation).Should().BeFalse();
+        }
     }
 }
