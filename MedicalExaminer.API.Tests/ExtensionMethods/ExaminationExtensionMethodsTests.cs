@@ -180,6 +180,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         public void No_Urgency_Indicators_Selected_And_Less_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_Zero()
         {
+            // Arrange
             var examination = new Examination
             {
                 ChildPriority = false,
@@ -189,13 +190,18 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 OtherPriority = false,
                 CaseCreated = DateTime.Now.AddDays(-3)
             };
+
+            // Act
             var result = examination.UpdateCaseUrgencyScore();
+
+            // Assert
             Assert.Equal(0, result.UrgencyScore);
         }
 
         [Fact]
         public void All_Urgency_Indicators_Selected_And_Less_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_500()
         {
+            // Arrange
             var examination = new Examination
             {
                 ChildPriority = true,
@@ -205,13 +211,18 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 OtherPriority = true,
                 CaseCreated = DateTime.Now.AddDays(-3)
             };
+
+            // Act
             var result = examination.UpdateCaseUrgencyScore();
+
+            // Assert
             Assert.Equal(500, result.UrgencyScore);
         }
 
         [Fact]
         public void No_Urgency_Indicators_Selected_And_Greater_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_1000()
         {
+            // Arrange
             var examination = new Examination
             {
                 ChildPriority = false,
@@ -221,13 +232,18 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 OtherPriority = false,
                 CaseCreated = DateTime.Now.AddDays(-6)
             };
+
+            // Act
             var result = examination.UpdateCaseUrgencyScore();
+
+            // Assert
             Assert.Equal(1000, result.UrgencyScore);
         }
 
         [Fact]
         public void All_Urgency_Indicators_Selected_And_Greater_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_1500()
         {
+            // Arrange
             var examination = new Examination
             {
                 ChildPriority = true,
@@ -237,7 +253,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 OtherPriority = true,
                 CaseCreated = DateTime.Now.AddDays(-6)
             };
+
+            // Act
             var result = examination.UpdateCaseUrgencyScore();
+
+            // Assert
             Assert.Equal(1500, result.UrgencyScore);
         }
     }

@@ -26,6 +26,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             var dbAccess = new Mock<IDatabaseAccess>();
             var sut = new CreateEventService(dbAccess.Object, connectionSettings.Object);
 
+            // Act
             Action act = () => sut.Handle(query).GetAwaiter().GetResult();
             act.Should().Throw<ArgumentNullException>();
         }
