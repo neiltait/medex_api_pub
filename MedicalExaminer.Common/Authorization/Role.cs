@@ -9,11 +9,6 @@ namespace MedicalExaminer.Common.Authorization
     public abstract class Role
     {
         /// <summary>
-        /// Permissions this role has been granted.
-        /// </summary>
-        private readonly HashSet<Permission> _granted = new HashSet<Permission>();
-
-        /// <summary>
         /// Initialise a new instance of <see cref="Role"/>.
         /// </summary>
         /// <param name="userRole">User role to initialise.</param>
@@ -23,30 +18,15 @@ namespace MedicalExaminer.Common.Authorization
         }
 
         /// <summary>
+        /// Granted.
+        /// </summary>
+        /// <remarks>Get all granted permissions.</remarks>
+        public HashSet<Permission> Granted { get; } = new HashSet<Permission>();
+
+        /// <summary>
         /// The User Role this Role is representing.
         /// </summary>
         public UserRoles UserRole { get; }
-
-        /// <summary>
-        /// Grant the role a permission.
-        /// </summary>
-        /// <param name="permission">Permission.</param>
-        public void Grant(Permission permission)
-        {
-            _granted.Add(permission);
-        }
-
-        /// <summary>
-        /// Grant the role a number of permissions.
-        /// </summary>
-        /// <param name="permissions">Permissions.</param>
-        public void Grant(params Permission[] permissions)
-        {
-            foreach (var permission in permissions)
-            {
-                Grant(permission);
-            }
-        }
 
         /// <summary>
         /// Can role do Permission.
@@ -56,7 +36,28 @@ namespace MedicalExaminer.Common.Authorization
         /// <returns>Boolean indicating whether it can.</returns>
         public bool Can(Permission permission)
         {
-            return _granted.Contains(permission);
+            return Granted.Contains(permission);
+        }
+
+        /// <summary>
+        /// Grant the role a permission.
+        /// </summary>
+        /// <param name="permission">Permission.</param>
+        protected void Grant(Permission permission)
+        {
+            Granted.Add(permission);
+        }
+
+        /// <summary>
+        /// Grant the role a number of permissions.
+        /// </summary>
+        /// <param name="permissions">Permissions.</param>
+        protected void Grant(params Permission[] permissions)
+        {
+            foreach (var permission in permissions)
+            {
+                Grant(permission);
+            }
         }
     }
 }
