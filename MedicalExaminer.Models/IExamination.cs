@@ -79,6 +79,5 @@ namespace MedicalExaminer.Models
 
         IEnumerable<Representative> Representatives { get; set; }
 
-        bool OutOfHours { get; set; }
     }
 }

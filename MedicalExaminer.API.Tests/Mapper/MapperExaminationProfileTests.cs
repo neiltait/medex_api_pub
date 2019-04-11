@@ -57,7 +57,6 @@ namespace MedicalExaminer.API.Tests.Mapper
         private const string NhsNumber = "123456789";
         private const string OrganisationCareBeforeDeathLocationId = "organisationCareBeforeDeathLocationId";
         private const bool OtherPriority = true;
-        private const bool OutOfHours = true;
         private const string PersonalEffectDetails = "personalEffectDetails";
         private const string Postcode = "postcode";
         private const string PlaceDeathOccured = "placeDeathOccured";
@@ -385,7 +384,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                 HospitalNumber_3 = HospitalNumber_3,
                 MedicalExaminerOfficeResponsible = MedicalExaminerOfficeResponsible,
                 NhsNumber = NhsNumber,
-                OutOfHours = OutOfHours,
                 PlaceDeathOccured = PlaceDeathOccured,
                 Surname = Surname,
                 TimeOfDeath = TimeOfDeath
@@ -403,7 +401,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.HospitalNumber_3.Should().Be(HospitalNumber_3);
             result.MedicalExaminerOfficeResponsible.Should().Be(MedicalExaminerOfficeResponsible);
             result.NhsNumber.Should().Be(NhsNumber);
-            result.OutOfHours.Should().Be(OutOfHours);
             result.PlaceDeathOccured.Should().Be(PlaceDeathOccured);
             result.Surname.Should().Be(Surname);
             result.TimeOfDeath.Should().Be(TimeOfDeath);
@@ -443,7 +440,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                 NhsNumber = NhsNumber,
                 OrganisationCareBeforeDeathLocationId = OrganisationCareBeforeDeathLocationId,
                 OtherPriority = OtherPriority,
-                OutOfHours = OutOfHours,
                 PersonalEffectDetails = PersonalEffectDetails,
                 Postcode = Postcode,
                 PlaceDeathOccured = PlaceDeathOccured,
@@ -491,7 +487,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             response.HospitalNumber_3.Should().Be(HospitalNumber_3);
             response.MedicalExaminerOfficeResponsible.Should().Be(MedicalExaminerOfficeResponsible);
             response.NhsNumber.Should().Be(NhsNumber);
-            response.OutOfHours.Should().Be(OutOfHours);
             response.PlaceDeathOccured.Should().Be(PlaceDeathOccured);
             response.Surname.Should().Be(Surname);
             response.TimeOfDeath.Should().Be(TimeOfDeath);

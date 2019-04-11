@@ -62,11 +62,6 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         public CoronerStatus CoronerStatus { get; set; }
 
         /// <summary>
-        ///     Has out of hours scrutiny already taken place on this case.
-        /// </summary>
-        public bool OutOfHours { get; set; }
-
-        /// <summary>
         ///     Location where the death occured.
         /// </summary>
         public string PlaceDeathOccured { get; set; }

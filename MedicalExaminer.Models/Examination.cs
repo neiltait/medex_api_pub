@@ -13,9 +13,6 @@ namespace MedicalExaminer.Models
         public int UrgencyScore { get; set; }
 
         
-        [JsonProperty(PropertyName = "out_of_hours")]
-        public bool OutOfHours { get; set; }
-
         /// <summary>
         /// Patients first hospital number.
         /// </summary>
