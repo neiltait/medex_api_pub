@@ -14,6 +14,12 @@ namespace MedicalExaminer.Common.Services.Location
     public class LocationParentsQueryService : QueryHandler<LocationParentsQuery, IEnumerable<Models.Location>>
     {
         /// <summary>
+        /// Maximum number of "recursive" loops before exiting.
+        /// </summary>
+        /// <remarks>Shouldn't be possible if locations are automatically configured, but better not left to chance.</remarks>
+        private const int MaxLoopIterations = 10;
+
+        /// <summary>
         /// Initialise a new instance of <see cref="LocationParentsQueryService"/>.
         /// </summary>
         /// <param name="databaseAccess">Database Access.</param>
@@ -34,7 +40,7 @@ namespace MedicalExaminer.Common.Services.Location
             }
 
             var locationId = param.LocationId;
-            var maxLoops = 100;
+            var maxLoops = MaxLoopIterations;
             var result = new List<Models.Location>();
 
             while (locationId != null && (maxLoops--) > 0)
