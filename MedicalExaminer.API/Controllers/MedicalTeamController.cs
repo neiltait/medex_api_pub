@@ -1,12 +1,18 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.API.Models.v1.Users;
+using MedicalExaminer.Common.Authorization;
+using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +31,9 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncUpdateDocumentHandler _medicalTeamUpdateService;
 
+        private readonly IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>
+            _usersRetrievalByRoleLocationQueryService;
+
         /// <summary>
         /// Initialise a new instance of the <see cref="MedicalTeamController"/>.
         /// </summary>
@@ -36,11 +45,14 @@ namespace MedicalExaminer.API.Controllers
             IMELogger logger,
             IMapper mapper,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
-            IAsyncUpdateDocumentHandler medicalTeamUpdateService)
+            IAsyncUpdateDocumentHandler medicalTeamUpdateService,
+            IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>
+                usersRetrievalByRoleLocationQueryService)
             : base(logger, mapper)
         {
             _examinationRetrievalService = examinationRetrievalService;
             _medicalTeamUpdateService = medicalTeamUpdateService;
+            _usersRetrievalByRoleLocationQueryService = usersRetrievalByRoleLocationQueryService;
         }
 
         /// <summary>
@@ -68,7 +80,30 @@ namespace MedicalExaminer.API.Controllers
                     NursingTeamInformation = string.Empty,
                 };
 
+            getMedicalTeamResponse.AddLookup("medicalExaminers", await GetLookupFor(examination, UserRoles.MedicalExaminer));
+            getMedicalTeamResponse.AddLookup("medicalExaminerOfficers", await GetLookupFor(examination, UserRoles.MedicalExaminerOfficer));
+
             return Ok(getMedicalTeamResponse);
+        }
+
+        private async Task<IDictionary<string, string>> GetLookupFor(Examination examination, UserRoles role)
+        {
+            var users = await GetUsersFor(examination, role);
+
+            return users.ToDictionary(u => u.UserId, u => u.FullName());
+        }
+
+        private async Task<IEnumerable<MeUser>> GetUsersFor(Examination examination, UserRoles role)
+        {
+            // get all users that have that role on this examination
+
+            // get all the locations from the examination
+            var locations = examination.LocationIds();
+
+            // get all users that have a permission in those locations where the role matches
+            var users = await _usersRetrievalByRoleLocationQueryService.Handle(new UsersRetrievalByRoleLocationQuery(locations, role));
+
+            return users;
         }
 
         /// <summary>
