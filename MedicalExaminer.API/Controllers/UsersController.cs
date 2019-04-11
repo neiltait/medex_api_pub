@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Users;
+using MedicalExaminer.API.Services;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
@@ -26,7 +27,7 @@ namespace MedicalExaminer.API.Controllers
     [Route("/v{api-version:apiVersion}/users")]
     [ApiController]
     [Authorize]
-    public class UsersController : BaseController
+    public class UsersController : AuthorizedBaseController
     {
         /// <summary>
         ///     The User Persistence Layer
@@ -41,6 +42,9 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
+        /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
+        /// <param name="authorizationService">Authorization Service.</param>
+        /// <param name="permissionService">Permission Service.</param>
         /// <param name="userCreationService">User creation service.</param>
         /// <param name="userRetrievalByIdService">User retrieval service.</param>
         /// <param name="usersRetrievalService">Users retrieval service.</param>
@@ -48,11 +52,14 @@ namespace MedicalExaminer.API.Controllers
         public UsersController(
             IMELogger logger,
             IMapper mapper,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAuthorizationService authorizationService,
+            IPermissionService permissionService,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService)
-            : base(logger, mapper)
+            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
             _userCreationService = userCreationService;
             _userRetrievalByIdService = userRetrievalByIdService;
