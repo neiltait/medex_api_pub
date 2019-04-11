@@ -8,36 +8,36 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Case breakdown other events
         /// </summary>
-        public EventContainerItem<OtherEvent> OtherEvents { get; set; }
+        public EventContainerItem<OtherEventItem> OtherEvents { get; set; }
 
         /// <summary>
         /// Case breakdown pre scrutiny notes
         /// </summary>
-        public EventContainerItem<PreScrutinyEvent> PreScrutiny { get; set; }
+        public EventContainerItem<PreScrutinyEventItem> PreScrutiny { get; set; }
 
         /// <summary>
         /// Case breakdown berevaed discussion notes
         /// </summary>
-        public EventContainerItem<BereavedDiscussionEvent> BereavedDiscussion { get; set; }
+        public EventContainerItem<BereavedDiscussionEventItem> BereavedDiscussion { get; set; }
 
         /// <summary>
         /// Case breakdown meo summary notes
         /// </summary>
-        public EventContainerItem<MeoSummaryEvent> MeoSummary { get; set; }
+        public EventContainerItem<MeoSummaryEventItem> MeoSummary { get; set; }
 
         /// <summary>
         /// Case breakdown qap discussion
         /// </summary>
-        public EventContainerItem<QapDiscussionEvent> QapDiscussion { get; set; }
+        public EventContainerItem<QapDiscussionEventItem> QapDiscussion { get; set; }
 
         /// <summary>
         /// case breakdown medical history
         /// </summary>
-        public EventContainerItem<MedicalHistoryEvent> MedicalHistory { get; set; }
+        public EventContainerItem<MedicalHistoryEventItem> MedicalHistory { get; set; }
 
         /// <summary>
         /// case breakdown admission notes
         /// </summary>
-        public EventContainerItem<AdmissionEvent> AdmissionNotes { get; set; }
+        public EventContainerItem<AdmissionEventItem> AdmissionNotes { get; set; }
     }
 }

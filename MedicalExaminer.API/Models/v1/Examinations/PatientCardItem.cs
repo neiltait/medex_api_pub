@@ -110,9 +110,5 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// </summary>
         public bool HaveFinalCaseOutstandingOutcomes { get; set; }
 
-        /// <summary>
-        /// Case Officer.
-        /// </summary>
-        public string CaseOfficer { get; set; }
     }
 }
