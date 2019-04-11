@@ -26,7 +26,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             {
                 IsFinal = false,
                 Text = "other event one",
-                UserId = "userOne"
+                UserId = "userOne",
+                EventId = "a"
             };
 
             examination.CaseBreakdown = caseBreakdown;
@@ -109,7 +110,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 Text = "updated event",
                 UserId = "userOne"
             };
-            
+
             // Act
             Action act = () => examination.AddEvent(updateDraft);
 
@@ -168,6 +169,97 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             Assert.Single(examination.CaseBreakdown.OtherEvents.Drafts);
             Assert.Equal(newDraftTwo, examination.CaseBreakdown.OtherEvents.Drafts.First());
             Assert.Equal(updateDraft, examination.CaseBreakdown.OtherEvents.Latest);
+        }
+
+        [Fact]
+        public void When_Null_Examination_Is_Passed_Throws_Argument_Null_Exception()
+        {
+            Action act = () => ExaminationExtensionMethods.UpdateCaseUrgencyScore(null);
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void No_Urgency_Indicators_Selected_And_Less_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_Zero()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                ChildPriority = false,
+                CoronerPriority = false,
+                CulturalPriority = false,
+                FaithPriority = false,
+                OtherPriority = false,
+                CreatedAt = DateTime.Now.AddDays(-3)
+            };
+
+            // Act
+            var result = examination.UpdateCaseUrgencyScore();
+
+            // Assert
+            Assert.Equal(0, result.UrgencyScore);
+        }
+
+        [Fact]
+        public void All_Urgency_Indicators_Selected_And_Less_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_500()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                ChildPriority = true,
+                CoronerPriority = true,
+                CulturalPriority = true,
+                FaithPriority = true,
+                OtherPriority = true,
+                CreatedAt = DateTime.Now.AddDays(-3)
+            };
+
+            // Act
+            var result = examination.UpdateCaseUrgencyScore();
+
+            // Assert
+            Assert.Equal(500, result.UrgencyScore);
+        }
+
+        [Fact]
+        public void No_Urgency_Indicators_Selected_And_Greater_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_1000()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                ChildPriority = false,
+                CoronerPriority = false,
+                CulturalPriority = false,
+                FaithPriority = false,
+                OtherPriority = false,
+                CreatedAt = DateTime.Now.AddDays(-6)
+            };
+
+            // Act
+            var result = examination.UpdateCaseUrgencyScore();
+
+            // Assert
+            Assert.Equal(1000, result.UrgencyScore);
+        }
+
+        [Fact]
+        public void All_Urgency_Indicators_Selected_And_Greater_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_1500()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                ChildPriority = true,
+                CoronerPriority = true,
+                CulturalPriority = true,
+                FaithPriority = true,
+                OtherPriority = true,
+                CreatedAt = DateTime.Now.AddDays(-6)
+            };
+
+            // Act
+            var result = examination.UpdateCaseUrgencyScore();
+
+            // Assert
+            Assert.Equal(1500, result.UrgencyScore);
         }
     }
 }

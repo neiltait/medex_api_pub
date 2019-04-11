@@ -1,9 +1,7 @@
 ﻿using System;
 using AutoMapper;
-using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Models;
-using System;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 
 namespace MedicalExaminer.API.Extensions.Data
@@ -20,7 +18,6 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<Examination, ExaminationItem>();
             CreateMap<PostExaminationRequest, Examination>()
-                .ForMember(examination => examination.UrgencyScore, opt => opt.Ignore())
                 .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
                 .ForMember(examination => examination.HouseNameNumber, opt => opt.Ignore())
                 .ForMember(examination => examination.Street, opt => opt.Ignore())
@@ -35,7 +32,6 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.AnyPersonalEffects, opt => opt.Ignore())
                 .ForMember(examination => examination.PersonalEffectDetails, opt => opt.Ignore())
                 .ForMember(examination => examination.LastAdmission, opt => opt.Ignore())
-                .ForMember(examination => examination.CaseCreated, opt => opt.Ignore())
                 .ForMember(examination => examination.CulturalPriority, opt => opt.Ignore())
                 .ForMember(examination => examination.MedicalTeam, opt => opt.Ignore())
                 .ForMember(examination => examination.FaithPriority, opt => opt.Ignore())
@@ -56,15 +52,14 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.PendingDiscussionWithQAP, opt => opt.Ignore())
                 .ForMember(examination => examination.PendingDiscussionWithRepresentative, opt => opt.Ignore())
                 .ForMember(examination => examination.HaveFinalCaseOutstandingOutcomes, opt => opt.Ignore())
-                .ForMember(examination => examination.CaseOfficer, opt => opt.Ignore())
                 .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
                 .ForMember(examination => examination.LastModifiedBy, opt => opt.Ignore())
                 .ForMember(examination => examination.ModifiedAt, opt => opt.Ignore())
                 .ForMember(examination => examination.CreatedAt, opt => opt.Ignore())
-                .ForMember(examination => examination.DeletedAt, opt => opt.Ignore());
-
-            CreateMap<Examination, GetPatientDetailsResponse>()
-                .ForMember(getPatientDetailsResponse => getPatientDetailsResponse.Errors, opt => opt.Ignore());
+                .ForMember(examination => examination.DeletedAt, opt => opt.Ignore())
+                .ForMember(examination => examination.CaseBreakdown, opt => opt.Ignore())
+                .ForMember(examination => examination.MedicalTeam, opt => opt.Ignore())
+                .ForMember(examination => examination.UrgencyScore, opt => opt.Ignore());
 
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(patientCard => patientCard.AppointmentDate,
@@ -120,6 +115,5 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             return _appointmentFinder.FindAppointment(source.Representatives)?.AppointmentTime;
         }
-}
-
+    }
 }

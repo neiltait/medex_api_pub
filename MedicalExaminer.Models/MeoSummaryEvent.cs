@@ -1,4 +1,5 @@
-﻿using MedicalExaminer.Models.Enums;
+﻿using System;
+using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
 
 namespace MedicalExaminer.Models
@@ -35,5 +36,11 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "summary_details")]
         public string SummaryDetails { get; set; }
+        
+        /// <summary>
+        /// Date event was created
+        /// </summary>
+        [JsonProperty(PropertyName = "created")]
+        public DateTime? Created { get; set; }
     }
 }

@@ -7,6 +7,12 @@ namespace MedicalExaminer.Models
     public class QapDiscussionEvent : IEvent
     {
         /// <summary>
+        /// Date event was created
+        /// </summary>
+        [JsonProperty(PropertyName = "created")]
+        public DateTime? Created { get; set; }
+
+        /// <summary>
         /// Event Identification.
         /// </summary>
         [JsonProperty(PropertyName = "event_id")]

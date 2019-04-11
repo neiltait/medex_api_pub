@@ -140,6 +140,11 @@ namespace MedicalExaminer.API.Controllers
                 {
                     return Forbid();
                 }
+                
+                var myUser = await CurrentUser();
+
+                examination.CreatedBy = myUser.UserId;
+                examination.CreatedAt = DateTime.Now;
 
                 var result = await _examinationCreationService.Handle(new CreateExaminationQuery(examination));
                 var res = new PutExaminationResponse

@@ -28,6 +28,7 @@ namespace MedicalExaminer.API
             // Not using https for now until we resolve certificates.
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .UseApplicationInsights()
                 .UseUrls("http://0.0.0.0:80");
         }
     }
