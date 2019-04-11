@@ -194,7 +194,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.CaseCreatedDate.Should().Be(CaseCreated);
             result.ReadyForMEScrutiny.Should().Be(true);
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
-            result.CaseOfficer.Should().Be(CaseOfficer);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutstandingOutcomes.Should().Be(true);
             result.PendingAdmissionNotes.Should().Be(true);
