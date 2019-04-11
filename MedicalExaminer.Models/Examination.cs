@@ -9,10 +9,12 @@ namespace MedicalExaminer.Models
 {
     public class Examination : Record,  IExamination, ILocationBasedDocument
     {
+        /// <summary>
+        /// the urgency score assinged to the case
+        /// </summary>
         [JsonProperty(PropertyName = "urgency_score")]
         public int UrgencyScore { get; set; }
 
-        
         /// <summary>
         /// Patients first hospital number.
         /// </summary>
@@ -124,7 +126,7 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "gender_details")]
         [DataType(DataType.Text)]
         public string GenderDetails { get; set; }
-        
+
         /// <summary>
         /// patients country.
         /// </summary>
@@ -211,7 +213,7 @@ namespace MedicalExaminer.Models
         [Required]
         [DataType(DataType.DateTime)]
         [JsonProperty(PropertyName = "date_of_death")]
-        public DateTime DateOfDeath { get; set; }
+        public DateTime? DateOfDeath { get; set; }
 
         /// <summary>
         /// The medical team associated with the patient
