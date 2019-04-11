@@ -76,11 +76,34 @@ namespace MedicalExaminer.API.Tests.Services.Location
             results.Count.Should().Be(1);
         }
 
+        [Fact]
+        public async Task Handle_ReturnsFiltered_WhenFilteredByPermissedLocations()
+        {
+            // Arrange
+            var permissedLocations = new[]
+            {
+                "Name2",
+                "Name3",
+            };
+
+            var query = new LocationsRetrievalByQuery(null, null, permissedLocations);
+
+            // Act
+            var results = (await Service.Handle(query)).ToList();
+
+            // Assert
+            results.Should().NotBeNull();
+            results.Count.Should().Be(2);
+            results.ElementAt(0).Name.Should().Be("Name2");
+            results.ElementAt(1).Name.Should().Be("Name3");
+        }
+
         protected override MedicalExaminer.Models.Location[] GetExamples()
         {
             const int start = 1;
             return Enumerable.Range(start, 50).Select(i => new MedicalExaminer.Models.Location
             {
+                LocationId = $"Name{i}",
                 Name = $"Name{i}",
                 ParentId = i > start ? $"Name{(i-1)}" : null
             }).ToArray();
