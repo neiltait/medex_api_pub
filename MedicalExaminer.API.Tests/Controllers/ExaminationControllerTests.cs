@@ -165,6 +165,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationsDashboardService.Object,
                 locationParentsService.Object);
 
+            sut.ControllerContext = GetContollerContext();
+
             // Act
             var response = await sut.CreateExamination(CreateValidNewCaseRequest());
 

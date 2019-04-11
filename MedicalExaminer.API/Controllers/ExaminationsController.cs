@@ -140,7 +140,7 @@ namespace MedicalExaminer.API.Controllers
                 {
                     return Forbid();
                 }
-                
+
                 var myUser = await CurrentUser();
 
                 examination.CreatedBy = myUser.UserId;
