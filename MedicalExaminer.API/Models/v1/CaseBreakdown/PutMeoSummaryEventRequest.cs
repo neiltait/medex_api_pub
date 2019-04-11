@@ -1,6 +1,4 @@
-﻿using MedicalExaminer.Models.Enums;
-
-namespace MedicalExaminer.API.Models.v1.CaseBreakdown
+﻿namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
     public class PutMeoSummaryEventRequest
     {
@@ -8,11 +6,6 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// Event Identification.
         /// </summary>
         public string EventId { get; set; }
-
-        /// <summary>
-        /// User Identifier.
-        /// </summary>
-        public string UserId { get; set; }
 
         ///// <summary>
         ///// bool for the status (Draft or Final).

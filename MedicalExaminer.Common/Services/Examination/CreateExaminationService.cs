@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
@@ -31,16 +32,24 @@ namespace MedicalExaminer.Common.Services.Examination
                 param.Examination.ExaminationId = Guid.NewGuid().ToString();
                 param.Examination.Unassigned = true;
                 param.Examination.CaseBreakdown = new Models.CaseBreakDown();
-                return await _databaseAccess.CreateItemAsync(_connectionSettings, 
-                    param.Examination, false);
+                param.Examination.CaseBreakdown.DeathEvent = new Models.DeathEvent()
+                {
+                    Created = param.Examination.CreatedAt.Date,
+                    DateOfDeath = param.Examination.DateOfDeath,
+                    TimeOfDeath = param.Examination.TimeOfDeath,
+                    UserId = param.Examination.CreatedBy,
+                    EventId = Guid.NewGuid().ToString()
+                };
+                param.Examination.UpdateCaseUrgencyScore();
+                return await _databaseAccess.CreateItemAsync(
+                    _connectionSettings, 
+                    param.Examination, 
+                    false);
             }
             catch (Exception)
             {
-                //_logger.Log("Failed to retrieve examination data", e);
                 throw;
             }
-            
-
         }
     }
 }

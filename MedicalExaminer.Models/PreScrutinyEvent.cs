@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
@@ -7,6 +7,12 @@ namespace MedicalExaminer.Models
 {
     public class PreScrutinyEvent : IEvent
     {
+        /// <summary>
+        /// Date event was created
+        /// </summary>
+        [JsonProperty(PropertyName = "created")]
+        public DateTime? Created { get; set; }
+
         /// <summary>
         /// Event Identification.
         /// </summary>
@@ -22,8 +28,8 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Event Text.
         /// </summary>
-        [JsonProperty(PropertyName = "pre_scrutiny_event_text")]
-        public string EventText { get; set; }
+        [JsonProperty(PropertyName = "medical_examiner_thoughts")]
+        public string MedicalExaminerThoughts { get; set; }
 
 
         /// <summary>
@@ -47,10 +53,28 @@ namespace MedicalExaminer.Models
         public OverallCircumstancesOfDeath CircumstancesOfDeath { get; set; }
 
         /// <summary>
-        /// Cause Of Death. (Data type to be confirmed).
+        /// Possible cause of death established during scrutiny by Medical Examiner 1a
         /// </summary>
-        [JsonProperty(PropertyName = "cause_of_death")]
-        public IEnumerable<string> CauseOfDeath { get; set; }
+        [JsonProperty(PropertyName = "cause_of_death_1a")]
+        public string CauseOfDeath1a { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 1b
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death_1b")]
+        public string CauseOfDeath1b { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 1c
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death_1c")]
+        public string CauseOfDeath1c { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 2
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death_2")]
+        public string CauseOfDeath2 { get; set; }
 
         /// <summary>
         /// Dictionary for Outcome Of Pre-Scrutiny radio button.
@@ -70,6 +94,6 @@ namespace MedicalExaminer.Models
         /// Details of Clinical Governance Review if said yes for Clinical Governance Review radio button.
         /// </summary>
         [JsonProperty(PropertyName = "clinical_governance_review_text")]
-        public ClinicalGovernanceReview ClinicalGovernanceReviewText { get; set; }
+        public string ClinicalGovernanceReviewText { get; set; }
     }
 }

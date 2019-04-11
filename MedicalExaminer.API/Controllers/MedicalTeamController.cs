@@ -109,7 +109,6 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutMedicalTeamResponse());
             }
 
-            //var response = new GetMedicalTeamResponse();
             var response = Mapper.Map<PutMedicalTeamResponse>(returnedExamination.MedicalTeam);
 
             return Ok(response);

@@ -17,7 +17,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// Event Text (Length to be confirmed).
         /// </summary>
         [RequiredIfAttributesMatch(nameof(IsFinal), true)]
-        public string Text { get; set; }
+        public string Notes { get; set; }
 
         /// <summary>
         /// Draft is false, final true
@@ -25,9 +25,14 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         public bool IsFinal { get; set; }
 
         /// <summary>
-        /// the type of event this is
+        /// date of last admission, if known
         /// </summary>
-        public DateTime AdmittedDateTime { get; set; }
+        public DateTime? AdmittedDate { get; set; }
+
+        /// <summary>
+        /// time of last admission, if known
+        /// </summary>
+        public TimeSpan? AdmittedTime { get; set; }
 
         /// <summary>
         /// Do you suspect this case may need Immediate Coroner Referral Yes = true, No = false

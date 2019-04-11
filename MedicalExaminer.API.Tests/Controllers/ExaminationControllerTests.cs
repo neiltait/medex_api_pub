@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
@@ -9,9 +10,11 @@ using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -79,9 +82,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<GetExaminationsResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
-            //var examinationResponse = okResult..Value.Should().BeAssignableTo<GetExaminationsResponse>().Subject;
-            //var examinations = examinationResponse.Examinations;
-            //Assert.Equal(2, examinations.Count());
         }
 
         [Fact]
@@ -138,13 +138,18 @@ namespace MedicalExaminer.API.Tests.Controllers
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var examinationId = Guid.NewGuid();
             var locationParentsService = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>();
 
             createExaminationService.Setup(ecs => ecs.Handle(It.IsAny<CreateExaminationQuery>()))
                 .Returns(Task.FromResult(examination));
-
             mapper.Setup(m => m.Map<Examination>(It.IsAny<PostExaminationRequest>())).Returns(examination);
+
+            var mockMeUser = new MeUser()
+            {
+                UserId = "abcd"
+            };
+            UsersRetrievalByEmailServiceMock.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser));
 
             var sut = new ExaminationsController(
                 logger.Object,
@@ -157,6 +162,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationsDashboardService.Object,
                 locationParentsService.Object);
 
+            sut.ControllerContext = GetContollerContext();
+
             // Act
             var response = await sut.CreateExamination(CreateValidNewCaseRequest());
 
@@ -167,6 +174,20 @@ namespace MedicalExaminer.API.Tests.Controllers
             var model = (PutExaminationResponse) result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
+        }
+
+        private ControllerContext GetContollerContext()
+        {
+            return new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.Email, "username")
+            }, "someAuthTypeName"))
+                }
+            };
         }
     }
 }

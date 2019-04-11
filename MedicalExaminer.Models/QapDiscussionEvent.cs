@@ -7,6 +7,12 @@ namespace MedicalExaminer.Models
     public class QapDiscussionEvent : IEvent
     {
         /// <summary>
+        /// Date event was created
+        /// </summary>
+        [JsonProperty(PropertyName = "created")]
+        public DateTime? Created { get; set; }
+
+        /// <summary>
         /// Event Identification.
         /// </summary>
         [JsonProperty(PropertyName = "event_id")]
@@ -71,5 +77,36 @@ namespace MedicalExaminer.Models
         ///// </summary>
         [JsonProperty(PropertyName = "bereaved_discussion_outcome")]
         public QapDiscussionOutcome QapDiscussionOutcome { get; set; }
+
+        ///// <summary>
+        ///// Qap particpant name
+        ///// </summary>
+        [JsonProperty(PropertyName = "participant_name")]
+        public string ParticipantName { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 1a
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death_1a")]
+        public string CauseOfDeath1a { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 1b
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death_1b")]
+        public string CauseOfDeath1b { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 1c
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death_1c")]
+        public string CauseOfDeath1c { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 2
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death_2")]
+        public string CauseOfDeath2 { get; set; }
+
     }
 }

@@ -13,6 +13,23 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
     public class MedicalTeamUpdateServiceTests
     {
         [Fact]
+        public void ExaminationIdNull_ThrowsException()
+        {
+            // Arrange
+            var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            var dbAccess = new Mock<IDatabaseAccess>();
+            dbAccess.Setup(db =>
+                    db.GetItemAsync(connectionSettings.Object,
+                        It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+                .Returns(Task.FromResult<MedicalExaminer.Models.Examination>(null));
+
+            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object);
+
+            // Assert
+            Assert.ThrowsAsync<ArgumentNullException>(() => sut.Handle(null));
+        }
+
+        [Fact]
         public async void ExaminationFound_ReturnsExaminationId()
         {
             // Arrange
@@ -32,27 +49,70 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             // Act
             var result = await sut.Handle(examination1);
 
+            // Assert
             Assert.Equal(examinationId, result.ExaminationId);
         }
 
+        /// <summary>
+        /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
+        /// </summary>
         [Fact]
-        public void ExaminationIdNull_ThrowsException()
+        public async void UpdateMedicalTeamOfExaminationWithNoUrgencyIndicatorsThenCaseUrgencyScoreUpdatedWithZero()
         {
             // Arrange
-            // IEnumerable<MedicalExaminer.Models.Examination> examinations = null;
+            var examination = new MedicalExaminer.Models.Examination
+            {
+                ChildPriority = false,
+                CoronerPriority = false,
+                CulturalPriority = false,
+                FaithPriority = false,
+                OtherPriority = false,
+                CreatedAt = DateTime.Now.AddDays(-3)
+            };
+            IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>
+                { examination };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var dbAccess = new Mock<IDatabaseAccess>();
-            dbAccess.Setup(db =>
-                    db.GetItemAsync(connectionSettings.Object,
-                        It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
-                .Returns(Task.FromResult<MedicalExaminer.Models.Examination>(null));
-
+            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object, examination))
+                .Returns(Task.FromResult(examination));
             var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object);
 
             // Act
+            var result = await sut.Handle(examination);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentNullException>(() => sut.Handle(null));
+            Assert.Equal(0, result.UrgencyScore);
+        }
+
+        /// <summary>
+        /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
+        /// </summary>
+        [Fact]
+        public async void UpdateMedicalTeamOfExaminationWithAllUrgencyIndicatorsThenCaseUrgencyScoreUpdatedWith500()
+        {
+            // Arrange
+            var examination = new MedicalExaminer.Models.Examination
+            {
+                ChildPriority = true,
+                CoronerPriority = true,
+                CulturalPriority = true,
+                FaithPriority = true,
+                OtherPriority = true,
+                CreatedAt = DateTime.Now.AddDays(-3)
+            };
+            IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>
+                {examination};
+            var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            var dbAccess = new Mock<IDatabaseAccess>();
+            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object, examination))
+                .Returns(Task.FromResult(examination));
+            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object);
+
+            // Act
+            var result = await sut.Handle(examination);
+
+            // Assert
+            Assert.Equal(500, result.UrgencyScore);
         }
     }
 }

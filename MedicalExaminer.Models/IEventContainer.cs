@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace MedicalExaminer.Models
 {
@@ -10,5 +11,5 @@ namespace MedicalExaminer.Models
         IList<TEvent> Drafts { get; set; }
 
         IList<TEvent> History { get; set; }
-    }
+    }    
 }

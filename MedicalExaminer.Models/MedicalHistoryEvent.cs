@@ -1,10 +1,17 @@
 ﻿using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
+using System;
 
 namespace MedicalExaminer.Models
 {
     public class MedicalHistoryEvent : IEvent
     {
+        /// <summary>
+        /// Date event was created
+        /// </summary>
+        [JsonProperty(PropertyName = "created")]
+        public DateTime? Created { get; set; }
+
         /// <summary>
         /// Event Identification.
         /// </summary>
@@ -15,7 +22,7 @@ namespace MedicalExaminer.Models
         /// User Identifier.
         /// </summary>
         [JsonProperty(PropertyName = "user_id")]
-        public string UserId { get; }
+        public string UserId { get; set; }
 
         /// <summary>
         /// the type of event this is
@@ -27,7 +34,7 @@ namespace MedicalExaminer.Models
         /// Draft is false, final true
         /// </summary>
         [JsonProperty(PropertyName = "is_final")]
-        public bool IsFinal { get; }
+        public bool IsFinal { get; set; }
 
         /// <summary>
         /// Event Text (Length to be confirmed).

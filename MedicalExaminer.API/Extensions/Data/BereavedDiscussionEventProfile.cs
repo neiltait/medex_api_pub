@@ -16,7 +16,8 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<PutBereavedDiscussionEventRequest, BereavedDiscussionEvent>()
                 .ForMember(p => p.EventType, opt => opt.Ignore())
-                .ForMember(p => p.UserId, opt => opt.Ignore());
+                .ForMember(p => p.UserId, opt => opt.Ignore())
+                .ForMember(p => p.Created, opt => opt.Ignore());
         }
     }
 }

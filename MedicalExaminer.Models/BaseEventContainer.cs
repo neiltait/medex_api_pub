@@ -7,11 +7,11 @@ namespace MedicalExaminer.Models
     public abstract class BaseEventContainter<TEvent> : IEventContainer<TEvent>
         where TEvent : IEvent
     {
-        public abstract TEvent Latest { get; set; }
+        public TEvent Latest { get; set; }
 
-        public abstract IList<TEvent> Drafts { get; set; }
+        public IList<TEvent> Drafts { get; set; }
 
-        public abstract IList<TEvent> History { get; set; }
+        public IList<TEvent> History { get; set; }
 
 
         public virtual void Add(TEvent theEvent)
@@ -23,22 +23,24 @@ namespace MedicalExaminer.Models
 
             if (theEvent.IsFinal)
             {
+                theEvent.Created = DateTime.Now;
                 Latest = theEvent;
                 History.Add(theEvent);
-                var draft = Drafts.SingleOrDefault(d => d.EventId == theEvent.EventId);
-                if (draft != null)
-                {
-                    Drafts.Remove(draft);
-                }
-
+                Drafts.Clear();
                 return;
             }
             else
             {
+                theEvent.Created = theEvent.Created == null ? DateTime.Now : theEvent.Created;
                 var userHasDraft = Drafts.Any(draft => draft.UserId == theEvent.UserId);
                 if (userHasDraft)
                 {
-                    var usersDraft = Drafts.Single(draft => draft.EventId == theEvent.EventId);
+                    var usersDraft = Drafts.SingleOrDefault(draft => draft.EventId == theEvent.EventId);
+                    if (usersDraft == null)
+                    {
+                        throw new ArgumentException(nameof(theEvent.EventId));
+                    }
+
                     Drafts.Remove(usersDraft);
                     Drafts.Add(theEvent);
                     return;
