@@ -40,7 +40,6 @@ namespace MedicalExaminer.Models
         [DataType(DataType.DateTime)]
         public DateTimeOffset? DeletedAt { get; set; }
 
-        
         /// <summary>
         /// Last Modified By.
         /// </summary>
@@ -48,6 +47,5 @@ namespace MedicalExaminer.Models
         [Display(Name = "created_by")]
         [DataType(DataType.Text)]
         public string CreatedBy { get; set; }
-
     }
 }

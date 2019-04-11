@@ -49,5 +49,30 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         ///// Outcome of the Bereaved Discussion.
         ///// </summary>
         public QapDiscussionOutcome QapDiscussionOutcome { get; set; }
+
+        /// <summary>
+        /// Participants Full name
+        /// </summary>
+        public string ParticipantName { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 1a
+        /// </summary>
+        public string CauseOfDeath1a { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 1b
+        /// </summary>
+        public string CauseOfDeath1b { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 1c
+        /// </summary>
+        public string CauseOfDeath1c { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 2
+        /// </summary>
+        public string CauseOfDeath2 { get; set; }
     }
 }

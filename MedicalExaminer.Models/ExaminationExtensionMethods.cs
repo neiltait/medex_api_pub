@@ -133,9 +133,31 @@ namespace MedicalExaminer.Models
             return examination;
         }
 
-        private static Examination UpdateCaseStatus(Examination examination)
+        public static Examination UpdateCaseStatus(this Examination examination)
         {
+            examination.PendingAdmissionNotes = examination.CaseBreakdown.AdmissionNotes.Latest == null;
+            examination.AdmissionNotesHaveBeenAdded = examination.CaseBreakdown.AdmissionNotes.Latest != null;
+
+            examination.Unassigned = !(examination.MedicalTeam.MedicalExaminerOfficerUserId != null && examination.MedicalTeam.MedicalExaminerUserId != null);
+
             return examination;
         }
+
+        private static bool CalculateReadyForScrutiny(this Examination examination)
+        {
+            if(examination.CaseBreakdown.AdmissionNotes.Latest != null)
+            {
+                return examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral;
+            }
+            else
+            {
+                if(examination.CaseBreakdown.MeoSummary != null)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 }

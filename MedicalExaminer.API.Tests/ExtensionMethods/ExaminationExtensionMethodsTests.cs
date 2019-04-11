@@ -242,6 +242,169 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
+        public void No_AdmissionNotes_Case_Status_Pending_Admission_Notes_True()
+        {
+            var examination = new Examination();
+            var caseBreakDown = new CaseBreakDown();
+            examination.CaseBreakdown = caseBreakDown;
+
+            examination = examination.UpdateCaseStatus();
+
+            Assert.Equal(true, examination.PendingAdmissionNotes);
+        }
+
+        [Fact]
+        public void Draft_AdmissionNotes_Case_Status_Pending_Admission_Notes_True()
+        {
+            var examination = new Examination();
+            var caseBreakDown = new CaseBreakDown();
+            var admissionNotes = new AdmissionNotesEventContainer();
+            admissionNotes.Drafts.Add(new AdmissionEvent());
+            caseBreakDown.AdmissionNotes = admissionNotes;
+            examination.CaseBreakdown = caseBreakDown;
+
+            examination = examination.UpdateCaseStatus();
+
+            Assert.Equal(true, examination.PendingAdmissionNotes);
+        }
+
+        [Fact]
+        public void Latest_AdmissionNotes_Case_Status_Pending_Admission_Notes_False()
+        {
+            var examination = new Examination();
+            var caseBreakDown = new CaseBreakDown();
+            var admissionNotes = new AdmissionNotesEventContainer();
+            admissionNotes.Latest = new AdmissionEvent();
+            caseBreakDown.AdmissionNotes = admissionNotes;
+            examination.CaseBreakdown = caseBreakDown;
+
+            examination = examination.UpdateCaseStatus();
+
+            Assert.Equal(false, examination.PendingAdmissionNotes);
+        }
+
+        [Fact]
+        public void No_AdmissionNotes_Case_Status_Admission_Notes_Have_Been_Added_False()
+        {
+            var examination = new Examination();
+            var caseBreakDown = new CaseBreakDown();
+            examination.CaseBreakdown = caseBreakDown;
+
+            examination = examination.UpdateCaseStatus();
+
+            Assert.Equal(false, examination.AdmissionNotesHaveBeenAdded);
+        }
+
+        [Fact]
+        public void Draft_AdmissionNotes_Case_Status_Admission_Notes_Have_Been_Added_False()
+        {
+            var examination = new Examination();
+            var caseBreakDown = new CaseBreakDown();
+            var admissionNotes = new AdmissionNotesEventContainer();
+            admissionNotes.Drafts.Add(new AdmissionEvent());
+            caseBreakDown.AdmissionNotes = admissionNotes;
+            examination.CaseBreakdown = caseBreakDown;
+
+            examination = examination.UpdateCaseStatus();
+
+            Assert.Equal(false, examination.AdmissionNotesHaveBeenAdded);
+        }
+
+        [Fact]
+        public void Latest_AdmissionNotes_Case_Status_Admission_Notes_Have_Been_Added_True()
+        {
+            var examination = new Examination();
+            var caseBreakDown = new CaseBreakDown();
+            var admissionNotes = new AdmissionNotesEventContainer();
+            admissionNotes.Latest = new AdmissionEvent();
+            caseBreakDown.AdmissionNotes = admissionNotes;
+            examination.CaseBreakdown = caseBreakDown;
+
+            examination = examination.UpdateCaseStatus();
+
+            Assert.Equal(true, examination.AdmissionNotesHaveBeenAdded);
+        }
+
+        [Fact]
+        public void No_Me_Scrutiny_Case_Status_HaveBeenScrutinisedByME_False()
+        {
+            var examination = new Examination();
+            var caseBreakDown = new CaseBreakDown();
+            examination.CaseBreakdown = caseBreakDown;
+
+            examination = examination.UpdateCaseStatus();
+
+            Assert.Equal(false, examination.HaveBeenScrutinisedByME);
+        }
+
+        //[Fact]
+        //public void Draft_Me_Scrutiny_Case_Status_HaveBeenScrutinisedByME_False()
+        //{
+        //    var examination = new Examination();
+        //    var caseBreakDown = new CaseBreakDown();
+        //    var preScrutiny = new PreScrutinyEventContainer();
+        //    preScrutiny.Drafts.Add(new PreScrutinyEvent());
+        //    caseBreakDown.PreScrutiny = preScrutiny;
+        //    examination.CaseBreakdown = caseBreakDown;
+
+        //    examination = examination.UpdateCaseStatus();
+
+        //    Assert.Equal(false, examination.Me);
+        //}
+
+        //[Fact]
+        //public void Latest_AdmissionNotes_Case_Status_Admission_Notes_Have_Been_Added_True()
+        //{
+        //    var examination = new Examination();
+        //    var caseBreakDown = new CaseBreakDown();
+        //    var admissionNotes = new AdmissionNotesEventContainer();
+        //    admissionNotes.Latest = new AdmissionEvent();
+        //    caseBreakDown.AdmissionNotes = admissionNotes;
+        //    examination.CaseBreakdown = caseBreakDown;
+
+        //    examination = examination.UpdateCaseStatus();
+
+        //    Assert.Equal(true, examination.AdmissionNotesHaveBeenAdded);
+        //}
+
+        [Fact]
+        public void No_Me_Or_Meo_Unassigned_True()
+        {
+            var examination = new Examination();
+            examination = examination.UpdateCaseStatus();
+
+            Assert.True(examination.Unassigned);
+        }
+
+        [Fact]
+        public void No_Me_Assigned_Meo_Unassigned_True()
+        {
+            var examination = new Examination();
+            examination.MedicalTeam.MedicalExaminerOfficerUserId = "a";
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.Unassigned);
+        }
+
+        [Fact]
+        public void Assigned_Me_Assigned_Meo_Unassigned_False()
+        {
+            var examination = new Examination();
+            examination.MedicalTeam.MedicalExaminerOfficerUserId = "a";
+            examination.MedicalTeam.MedicalExaminerUserId = "a";
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.Unassigned);
+        }
+
+        [Fact]
+        public void Assigned_Me_No_Meo_Unassigned_True()
+        {
+            var examination = new Examination();
+            examination.MedicalTeam.MedicalExaminerUserId = "a";
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.Unassigned);
+        }
+
+        [Fact]
         public void All_Urgency_Indicators_Selected_And_Greater_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_1500()
         {
             // Arrange
