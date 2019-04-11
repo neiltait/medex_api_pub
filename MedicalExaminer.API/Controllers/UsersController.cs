@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.API.Services;
-using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
-using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
-using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
+using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -73,6 +72,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A GetUsersResponse.</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
+        [AuthorizePermission(Permission.GetUsers)]
         public async Task<ActionResult<GetUsersResponse>> GetUsers()
         {
             try
@@ -100,6 +100,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A GetUserResponse.</returns>
         [HttpGet("{meUserId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
+        [AuthorizePermission(Permission.GetUser)]
         public async Task<ActionResult<GetUserResponse>> GetUser(string meUserId)
         {
             if (!ModelState.IsValid)
@@ -186,6 +187,7 @@ namespace MedicalExaminer.API.Controllers
         // POST api/users
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
+        [AuthorizePermission(Permission.CreateUser)]
         public async Task<ActionResult<PostUserResponse>> CreateUser([FromBody] PostUserRequest postUser)
         {
             if (!ModelState.IsValid)
@@ -216,6 +218,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutUserResponse.</returns>
         [HttpPut("{meUserId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
+        [AuthorizePermission(Permission.UpdateUser)]
         public async Task<ActionResult<PutUserResponse>> UpdateUser([FromBody] PutUserRequest putUser)
         {
             if (!ModelState.IsValid)
