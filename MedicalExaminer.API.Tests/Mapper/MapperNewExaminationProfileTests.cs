@@ -30,7 +30,6 @@ namespace MedicalExaminer.API.Tests.Mapper
         private const string MedicalExaminerOfficeResponsible = "medicalExaminerOfficeResponsible";
         private ModeOfDisposal ModeOfDisposal = ModeOfDisposal.BuriedAtSea;
         private const string NhsNumber = "123456789";
-        private const bool OutOfHours = true;
         private const string PlaceDeathOccured = "placeDeathOccured";
         private const string Surname = "surname";
         private readonly TimeSpan TimeOfDeath = new TimeSpan(11, 30, 00);
@@ -54,7 +53,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                 HospitalNumber_3 = HospitalNumber_3,
                 MedicalExaminerOfficeResponsible = MedicalExaminerOfficeResponsible,
                 NhsNumber = NhsNumber,
-                OutOfHours = OutOfHours,
                 PlaceDeathOccured = PlaceDeathOccured,
                 Surname = Surname,
                 TimeOfDeath = TimeOfDeath
@@ -73,7 +71,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             response.HospitalNumber_3.Should().Be(HospitalNumber_3);
             response.MedicalExaminerOfficeResponsible.Should().Be(MedicalExaminerOfficeResponsible);
             response.NhsNumber.Should().Be(NhsNumber);
-            response.OutOfHours.Should().Be(OutOfHours);
             response.PlaceDeathOccured.Should().Be(PlaceDeathOccured);
             response.Surname.Should().Be(Surname);
             response.TimeOfDeath.Should().Be(TimeOfDeath);

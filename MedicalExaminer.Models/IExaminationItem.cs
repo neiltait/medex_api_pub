@@ -75,9 +75,5 @@ namespace MedicalExaminer.Models
         /// </summary>
         TimeSpan? TimeOfDeath { get; set; }
 
-        /// <summary>
-        ///     Out of hours/urgent scrutiny has taken place out of hours
-        /// </summary>
-        bool OutOfHours { get; set; }
     }
 }
