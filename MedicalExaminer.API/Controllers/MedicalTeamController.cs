@@ -88,6 +88,11 @@ namespace MedicalExaminer.API.Controllers
 
         private async Task<IDictionary<string, string>> GetLookupFor(Examination examination, UserRoles role)
         {
+            if (examination == null)
+            {
+                return null;
+            }
+
             var users = await GetUsersFor(examination, role);
 
             return users.ToDictionary(u => u.UserId, u => u.FullName());
@@ -123,11 +128,6 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var medicalTeamRequest = Mapper.Map<MedicalTeam>(putMedicalTeamRequest);
-
-            if (medicalTeamRequest == null)
-            {
-                return BadRequest(new PutMedicalTeamResponse());
-            }
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
             if (examination == null)
