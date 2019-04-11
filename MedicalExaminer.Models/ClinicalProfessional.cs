@@ -20,5 +20,9 @@ namespace MedicalExaminer.Models
 
         [JsonProperty(PropertyName = "notes")]
         public string Notes { get; set; }
+
+        [JsonProperty(PropertyName = "gmc_number")]
+        public string GMCNumber { get; set; }
+
     }
 }
