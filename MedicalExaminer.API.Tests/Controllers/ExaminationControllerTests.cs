@@ -53,7 +53,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examination2 = new Examination();
             IEnumerable<Examination> examinationsResult = new List<Examination> { examination1, examination2 };
             var er = new Mock<GetExaminationsResponse>();
-            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             mapper.Setup(m => m.Map<GetExaminationsResponse>(It.IsAny<Examination>())).Returns(er.Object);
@@ -139,19 +138,17 @@ namespace MedicalExaminer.API.Tests.Controllers
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>>();
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var examinationId = Guid.NewGuid();
             var locationParentsService = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>();
 
             createExaminationService.Setup(ecs => ecs.Handle(It.IsAny<CreateExaminationQuery>()))
                 .Returns(Task.FromResult(examination));
-            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             mapper.Setup(m => m.Map<Examination>(It.IsAny<PostExaminationRequest>())).Returns(examination);
 
             var mockMeUser = new MeUser()
             {
                 UserId = "abcd"
             };
-            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+            UsersRetrievalByEmailServiceMock.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
                 .Returns(Task.FromResult(mockMeUser));
 
             var sut = new ExaminationsController(
