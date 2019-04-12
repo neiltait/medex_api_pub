@@ -252,5 +252,63 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             ((PutMedicalTeamResponse)okResult.Value).NursingTeamInformation.Should().Be(expectedNursingTeamInformation);
         }
+
+        [Fact]
+        public void GetMedicalTeam_PopulatesLookups()
+        {
+            // Arrange
+            var examinationId = Guid.NewGuid().ToString();
+            var examination = new Examination
+            {
+                ExaminationId = examinationId,
+            };
+
+            var expectedMedicalExaminers = (IEnumerable<MeUser>)new List<MeUser>
+            {
+                new MeUser()
+                {
+                    UserId = "user1",
+                    FirstName = "User",
+                    LastName = "1",
+                },
+            };
+            var expectedMedicalExaminerOfficers = (IEnumerable<MeUser>)new List<MeUser>
+            {
+                new MeUser()
+                {
+                    UserId = "user2",
+                    FirstName = "User",
+                    LastName = "2",
+                },
+            };
+
+            var expectedMedicalExaminer = new KeyValuePair<string, string>("user1", "User 1");
+            var expectedMedicalExaminerOfficer = new KeyValuePair<string, string>("user2", "User 2");
+
+            _usersRetrievalByRoleLocationQueryServiceMock
+                .Setup(service => service.Handle(It.IsAny<UsersRetrievalByRoleLocationQuery>()))
+                .Returns((UsersRetrievalByRoleLocationQuery query) => Task.FromResult(query.Role == UserRoles.MedicalExaminer
+                    ? expectedMedicalExaminers
+                    : expectedMedicalExaminerOfficers));
+
+            _examinationRetrievalServiceMock.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination));
+            _medicalTeamUpdateServiceMock.Setup(u => u.Handle(It.IsAny<Examination>()))
+                .Returns(Task.FromResult(examination));
+
+            // Act
+            var response = Controller.GetMedicalTeam(examinationId).Result;
+
+            var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
+            var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var typedResponse = (GetMedicalTeamResponse) okResult.Value;
+
+            // Assert
+            typedResponse.Lookups.ContainsKey(MedicalTeamController.MedicalExaminersLookupKey).Should().BeTrue();
+            typedResponse.Lookups[MedicalTeamController.MedicalExaminersLookupKey].Contains(expectedMedicalExaminer).Should().BeTrue();
+
+            typedResponse.Lookups.ContainsKey(MedicalTeamController.MedicalExaminerOfficersLookupKey).Should().BeTrue();
+            typedResponse.Lookups[MedicalTeamController.MedicalExaminerOfficersLookupKey].Contains(expectedMedicalExaminerOfficer).Should().BeTrue();
+        }
     }
 }
