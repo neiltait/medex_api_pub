@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
-using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Models;
