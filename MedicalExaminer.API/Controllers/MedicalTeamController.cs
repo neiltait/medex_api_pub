@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
+using MedicalExaminer.API.Models.v1;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
-using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Loggers;
@@ -28,6 +28,16 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class MedicalTeamController : BaseController
     {
+        /// <summary>
+        /// Medical Examiners Lookup Key.
+        /// </summary>
+        public const string MedicalExaminersLookupKey = "medicalExaminers";
+
+        /// <summary>
+        /// Medical Examiner Officers Lookup Key.
+        /// </summary>
+        public const string MedicalExaminerOfficersLookupKey = "medicalExaminerOfficers";
+
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncUpdateDocumentHandler _medicalTeamUpdateService;
 
@@ -41,6 +51,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="mapper">Mapper.</param>
         /// <param name="examinationRetrievalService">Examination Retrieval Service.</param>
         /// <param name="medicalTeamUpdateService">Medical Team Update Service.</param>
+        /// <param name="usersRetrievalByRoleLocationQueryService">Users Retrieval by Role Location Query Service.</param>
         public MedicalTeamController(
             IMELogger logger,
             IMapper mapper,
@@ -76,39 +87,15 @@ namespace MedicalExaminer.API.Controllers
                 ? Mapper.Map<GetMedicalTeamResponse>(examination.MedicalTeam)
                 : new GetMedicalTeamResponse
                 {
-                    ConsultantsOther = new Models.v1.MedicalTeams.ClinicalProfessionalItem[] { },
+                    ConsultantsOther = new ClinicalProfessionalItem[] { },
                     NursingTeamInformation = string.Empty,
                 };
 
-            getMedicalTeamResponse.AddLookup("medicalExaminers", await GetLookupFor(examination, UserRoles.MedicalExaminer));
-            getMedicalTeamResponse.AddLookup("medicalExaminerOfficers", await GetLookupFor(examination, UserRoles.MedicalExaminerOfficer));
+            getMedicalTeamResponse
+                .AddLookup(MedicalExaminersLookupKey, await GetLookupForExamination(examination, UserRoles.MedicalExaminer))
+                .AddLookup(MedicalExaminerOfficersLookupKey, await GetLookupForExamination(examination, UserRoles.MedicalExaminerOfficer));
 
             return Ok(getMedicalTeamResponse);
-        }
-
-        private async Task<IDictionary<string, string>> GetLookupFor(Examination examination, UserRoles role)
-        {
-            if (examination == null)
-            {
-                return null;
-            }
-
-            var users = await GetUsersFor(examination, role);
-
-            return users.ToDictionary(u => u.UserId, u => u.FullName());
-        }
-
-        private async Task<IEnumerable<MeUser>> GetUsersFor(Examination examination, UserRoles role)
-        {
-            // get all users that have that role on this examination
-
-            // get all the locations from the examination
-            var locations = examination.LocationIds();
-
-            // get all users that have a permission in those locations where the role matches
-            var users = await _usersRetrievalByRoleLocationQueryService.Handle(new UsersRetrievalByRoleLocationQuery(locations, role));
-
-            return users;
         }
 
         /// <summary>
@@ -148,5 +135,42 @@ namespace MedicalExaminer.API.Controllers
 
             return Ok(response);
         }
+
+        /// <summary>
+        /// Get Lookup for Examination.
+        /// </summary>
+        /// <param name="examination">Examination.</param>
+        /// <param name="role">Role.</param>
+        /// <returns>A Lookup.</returns>
+        private async Task<IDictionary<string, string>> GetLookupForExamination(Examination examination, UserRoles role)
+        {
+            if (examination == null)
+            {
+                return null;
+            }
+
+            var users = await GetUsersForExamination(examination, role);
+
+            return users.ToDictionary(
+                u => u.UserId,
+                u => u.FullName());
+        }
+
+        /// <summary>
+        /// Get Users For Examination
+        /// </summary>
+        /// <param name="examination">Examination.</param>
+        /// <param name="role">Role.</param>
+        /// <returns>List of Users.</returns>
+        private async Task<IEnumerable<MeUser>> GetUsersForExamination(Examination examination, UserRoles role)
+        {
+            var locations = examination.LocationIds();
+
+            // TODO: Should we care about max results?
+            var users = await _usersRetrievalByRoleLocationQueryService.Handle(new UsersRetrievalByRoleLocationQuery(locations, role));
+
+            return users;
+        }
+
     }
 }
