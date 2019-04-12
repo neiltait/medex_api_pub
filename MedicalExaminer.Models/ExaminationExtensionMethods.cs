@@ -135,12 +135,24 @@ namespace MedicalExaminer.Models
 
         public static Examination UpdateCaseStatus(this Examination examination)
         {
-            examination.PendingAdmissionNotes = examination.CaseBreakdown.AdmissionNotes.Latest == null;
-            examination.AdmissionNotesHaveBeenAdded = examination.CaseBreakdown.AdmissionNotes.Latest != null;
+            examination.PendingAdmissionNotes = CalculateAdmissionNotesPending(examination);
+            examination.AdmissionNotesHaveBeenAdded = !examination.PendingAdmissionNotes;
 
             examination.Unassigned = !(examination.MedicalTeam.MedicalExaminerOfficerUserId != null && examination.MedicalTeam.MedicalExaminerUserId != null);
 
             return examination;
+        }
+
+        private static bool CalculateAdmissionNotesPending(Examination examination)
+        {
+            if(examination.CaseBreakdown.AdmissionNotes.Latest != null)
+            {
+                if(examination.MedicalTeam.ConsultantResponsible != null)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private static bool CalculateReadyForScrutiny(this Examination examination)
