@@ -9,10 +9,18 @@ namespace MedicalExaminer.Models
 {
     public class Examination : Record,  IExamination, ILocationBasedDocument
     {
+        /// <summary>
+        /// Patient Details Header
+        /// </summary>
+        [JsonProperty(PropertyName = "header")]
+        public PatientDetailsHeader Header { get; set; }
+
+        /// <summary>
+        /// Urgency Score based on urgency indicators
+        /// </summary>
         [JsonProperty(PropertyName = "urgency_score")]
         public int UrgencyScore { get; set; }
 
-        
         /// <summary>
         /// Patients first hospital number.
         /// </summary>
@@ -31,7 +39,6 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "hospital_number_3")]
         public string HospitalNumber_3 { get; set; }
 
-        
         /// <summary>
         /// time of death
         /// </summary>
@@ -311,6 +318,7 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "case_break_down")]
         public CaseBreakDown CaseBreakdown { get; set; } = new CaseBreakDown();
+
         [JsonProperty(PropertyName = "admission_notes_have_been_added")]
         public bool AdmissionNotesHaveBeenAdded { get; set; }
 

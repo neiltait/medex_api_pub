@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MedicalExaminer.Models;
 
 namespace MedicalExaminer.API.Models.v1.Examinations
 {
@@ -8,6 +9,11 @@ namespace MedicalExaminer.API.Models.v1.Examinations
     /// </summary>
     public class GetExaminationsResponse : ResponseBase
     {
+        /// <summary>
+        /// Patient Details Header
+        /// </summary>
+        public PatientDetailsHeader Header { get; set; }
+
         /// <summary>
         /// Count of Total Cases.
         /// </summary>
