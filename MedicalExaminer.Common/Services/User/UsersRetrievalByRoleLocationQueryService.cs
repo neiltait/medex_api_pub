@@ -36,7 +36,7 @@ namespace MedicalExaminer.Common.Services.User
             }
 
             Expression<Func<MeUser, bool>> predicate = mu =>
-                mu.Permissions.Any(p => param.Locations.Contains(p.LocationId) && p.UserRole == (int) param.Role);
+                mu.Permissions.Any(p => p.UserRole == (int)param.Role && param.Locations.Contains(p.LocationId));
 
             return GetItemsAsync(predicate);
         }
