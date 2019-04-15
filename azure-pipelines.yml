@@ -8,7 +8,6 @@ resources:
 
 trigger:
   - master
-  - development
   - release/*
   - feature/*
   - hotfix/*
@@ -24,12 +23,12 @@ steps:
   displayName: Restore
   inputs:
     command: restore
-    projects: 'MedicalExaminer.API/MedicalExaminer.API.csproj'
+    projects: 'Medical_Examiner_API/Medical_Examiner_API.csproj'
 
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
-    projects: 'MedicalExaminer.API/MedicalExaminer.API.csproj'
+    projects: 'Medical_Examiner_API/Medical_Examiner_API.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 
 
@@ -38,7 +37,7 @@ steps:
   inputs:
     codeCoverageEnabled: True
     command: test
-    projects: 'MedicalExaminer.API.Tests/MedicalExaminer.API.Tests.csproj'
+    projects: 'Medical_Examiner_API_Tests/Medical_Examiner_API_Tests.csproj'
     arguments: '--configuration $(BuildConfiguration)'
     publishTestResults: true
 
@@ -47,7 +46,6 @@ steps:
   inputs:
     command: publish
     publishWebProjects: false
-    projects: 'MedicalExaminer.API/MedicalExaminer.API.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
       
 - task: PublishBuildArtifacts@1
