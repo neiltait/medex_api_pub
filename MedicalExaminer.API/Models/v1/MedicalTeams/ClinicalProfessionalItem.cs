@@ -32,5 +32,10 @@ namespace MedicalExaminer.API.Models.v1.MedicalTeams
         /// Notes.
         /// </summary>
         public string Notes { get; set; }
+
+        /// <summary>
+        /// The clinical professionals GMC Number
+        /// </summary>
+        public string GMCNumber { get; set; }
     }
 }

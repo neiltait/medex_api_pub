@@ -129,11 +129,6 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         public string Surname { get; set; }
 
         /// <summary>
-        ///     Has out of hours scrutiny already taken place on this case.
-        /// </summary>
-        public bool OutOfHours { get; set; }
-
-        /// <summary>
         ///     Patients Postcode.
         /// </summary>
         [Required]

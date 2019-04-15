@@ -21,8 +21,6 @@ namespace MedicalExaminer.Models
 
         public CoronerStatus CoronerStatus { get; set; }
 
-        public bool OutOfHours { get; set; }
-
         public string PlaceDeathOccured { get; set; }
 
         public string GenderDetails { get; set; }

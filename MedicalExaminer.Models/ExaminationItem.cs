@@ -102,11 +102,5 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "time_of_death")]
         public TimeSpan? TimeOfDeath { get; set; }
-
-        /// <summary>
-        ///     Out of hours/urgent scrutiny has taken place out of hours
-        /// </summary>
-        [JsonProperty(PropertyName = "out_of_hours")]
-        public bool OutOfHours { get; set; }
     }
 }
