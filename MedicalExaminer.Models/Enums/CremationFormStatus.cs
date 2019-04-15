@@ -4,9 +4,10 @@ using Newtonsoft.Json.Converters;
 namespace MedicalExaminer.Models.Enums
 {
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum OverallOutcomeOfPreScrutiny
+
+    public enum CremationFormStatus
     {
-        IssueAnMccd,
-        ReferToCoroner
+        No,
+        Yes,
     }
 }
