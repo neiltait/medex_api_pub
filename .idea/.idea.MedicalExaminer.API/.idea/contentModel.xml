@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.4.0/build/netcoreapp1.0/xunit.runner.reporters.netcoreapp10.dll" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.4.0/build/netcoreapp1.0/xunit.runner.utility.netcoreapp10.dll" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.4.0/build/netcoreapp1.0/xunit.runner.visualstudio.dotnetcore.testadapter.dll" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.4.1/build/netcoreapp1.0/xunit.runner.reporters.netcoreapp10.dll" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.4.1/build/netcoreapp1.0/xunit.runner.utility.netcoreapp10.dll" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.4.1/build/netcoreapp1.0/xunit.runner.visualstudio.dotnetcore.testadapter.dll" t="Include" />
+    <e p="$PROJECT_DIR$" t="IncludeRecursive">
+      <e p=".dockerignore" t="Include" />
+      <e p="Analyzers/Analyzers.ruleset" t="Include" />
+      <e p="Analyzers/stylecop.json" t="Include" />
+      <e p="azure-pipelines.yml" t="Include" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="docker-compose.dcproj" t="IncludeRecursive" />
+      <e p="docker-compose.override.yml" t="Include" />
+      <e p="docker-compose.yml" t="Include" />
+      <e p="MedicalExaminer.API" t="IncludeRecursive">
+        <e p="appsettings.Development.json" t="Include" />
+        <e p="appsettings.json" t="Include" />
+        <e p="Attributes" t="Include">
+          <e p="DateIsLessThanOrEqualToNullsAllowed.cs" t="Include" />
+          <e p="RequiredIfAttributesMatch.cs" t="Include" />
+          <e p="ValidMedicalExaminer.cs" t="Include" />
+          <e p="ValidMedicalExaminerOffice.cs" t="Include" />
+          <e p="ValidMedicalExaminerOfficeNullAllowed.cs" t="Include" />
+          <e p="ValidMedicalExaminerOfficer.cs" t="Include" />
+          <e p="ValidNhsNumberNullAllowedAttribute.cs" t="Include" />
+          <e p="ValidUserBase.cs" t="Include" />
+          <e p="ValidUserId.cs" t="Include" />
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Controllers" t="Include">
+          <e p="AccountController.cs" t="Include" />
+          <e p="BaseController.cs" t="Include" />
+          <e p="DataTypesController.cs" t="Include" />
+          <e p="ExaminationsController.cs" t="Include" />
+          <e p="LocationsController.cs" t="Include" />
+          <e p="MedicalTeamController.cs" t="Include" />
+          <e p="PatientDetailsController.cs" t="Include" />
+          <e p="PermissionsController.cs" t="Include" />
+          <e p="UsersController.cs" t="Include" />
+        </e>
+        <e p="Dockerfile" t="Include" />
+        <e p="Extensions" t="Include">
+          <e p="Data" t="Include">
+            <e p="AppointmentFinder.cs" t="Include" />
+            <e p="ClinicalProfessionalProfile.cs" t="Include" />
+            <e p="ExaminationProfile.cs" t="Include" />
+            <e p="MedicalExaminerProfiles.cs" t="Include" />
+            <e p="MedicalTeamProfile.cs" t="Include" />
+            <e p="NewExaminationProfile.cs" t="Include" />
+            <e p="PatientDetailsProfile.cs" t="Include" />
+            <e p="PermissionsProfile.cs" t="Include" />
+            <e p="UsersProfile.cs" t="Include" />
+          </e>
+          <e p="Models" t="Include">
+            <e p="ResponseBaseExtensions.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Filters" t="Include">
+          <e p="ControllerActionFilter.cs" t="Include" />
+        </e>
+        <e p="Helpers" t="Include">
+          <e p="AuthenticationSettings.cs" t="Include" />
+        </e>
+        <e p="MedicalExaminer.API.csproj" t="IncludeRecursive" />
+        <e p="Models" t="Include">
+          <e p="OktaSettings.cs" t="Include" />
+          <e p="v1" t="Include">
+            <e p="Account" t="Include">
+              <e p="PostValidateSessionResponse.cs" t="Include" />
+            </e>
+            <e p="Examinations" t="Include">
+              <e p="GetExaminationResponse.cs" t="Include" />
+              <e p="GetExaminationsRequest.cs" t="Include" />
+              <e p="GetExaminationsResponse.cs" t="Include" />
+              <e p="PatientCardItem.cs" t="Include" />
+              <e p="PostClinicalProfessional.cs" t="Include" />
+              <e p="PostExaminationRequest.cs" t="Include" />
+              <e p="PutExaminationResponse.cs" t="Include" />
+            </e>
+            <e p="Locations" t="Include">
+              <e p="GetLocationResponse.cs" t="Include" />
+              <e p="GetLocationsResponse.cs" t="Include" />
+              <e p="LocationItem.cs" t="Include" />
+            </e>
+            <e p="MedicalTeams" t="Include">
+              <e p="GetMedicalTeamResponse.cs" t="Include" />
+              <e p="MedicalTeamItem.cs" t="Include" />
+              <e p="PostMedicalTeamRequest.cs" t="Include" />
+              <e p="PutMedicalTeamResponse.cs" t="Include" />
+            </e>
+            <e p="PatientDetails" t="Include">
+              <e p="GetPatientDetailsResponse.cs" t="Include" />
+              <e p="PutPatientDetailsRequest.cs" t="Include" />
+              <e p="PutPatientDetailsResponse.cs" t="Include" />
+              <e p="RepresentativeItem.cs" t="Include" />
+            </e>
+            <e p="Permissions" t="Include">
+              <e p="GetPermissionResponse.cs" t="Include" />
+              <e p="GetPermissionsResponse.cs" t="Include" />
+              <e p="PermissionItem.cs" t="Include" />
+              <e p="PostPermissionRequest.cs" t="Include" />
+              <e p="PostPermissionResponse.cs" t="Include" />
+              <e p="PutPermissionRequest.cs" t="Include" />
+              <e p="PutPermissionResponse.cs" t="Include" />
+            </e>
+            <e p="ResponseBase.cs" t="Include" />
+            <e p="Users" t="Include">
+              <e p="GetUserResponse.cs" t="Include" />
+              <e p="GetUsersResponse.cs" t="Include" />
+              <e p="PostUserRequest.cs" t="Include" />
+              <e p="PostUserResponse.cs" t="Include" />
+              <e p="PutUserRequest.cs" t="Include" />
+              <e p="PutUserResponse.cs" t="Include" />
+              <e p="UserItem.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.1" t="Include">
+              <e p="MedicalExaminer.API.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="OktaJwtSecurityTokenHandler.cs" t="Include" />
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="launchSettings.json" t="Include" />
+        </e>
+        <e p="Services" t="Include">
+          <e p="Implementations" t="Include">
+            <e p="OktaTokenService.cs" t="Include" />
+          </e>
+          <e p="IntrospectResponse.cs" t="Include" />
+          <e p="ITokenService.cs" t="Include" />
+        </e>
+        <e p="Startup.cs" t="Include" />
+        <e p="SwaggerDefaultValues.cs" t="Include" />
+        <e p="SwaggerIndex.html" t="Include" />
+      </e>
+      <e p="MedicalExaminer.API.sln" t="IncludeFlat" />
+      <e p="MedicalExaminer.API.Tests" t="IncludeRecursive">
+        <e p="Attributes" t="Include">
+          <e p="DateIsLessThanOrEqualToTests.cs" t="Include" />
+          <e p="ValidMedicalExaminerOfficerTests.cs" t="Include" />
+          <e p="ValidMedicalExaminerOfficeTests.cs" t="Include" />
+          <e p="ValidMedicalExaminerTests.cs" t="Include" />
+          <e p="ValidNhsNumberAttributeTest.cs" t="Include" />
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="ConnectionSettings" t="Include">
+          <e p="ExaminationConnectionSettingsTests.cs" t="Include" />
+        </e>
+        <e p="Controllers" t="Include">
+          <e p="ControllerActionFilterTests.cs" t="Include" />
+          <e p="ControllerTestsBase.cs" t="Include" />
+          <e p="DataTypesControllerTests.cs" t="Include" />
+          <e p="ExaminationControllerTests.cs" t="Include" />
+          <e p="LocationControllerTests.cs" t="Include" />
+          <e p="MedicalTeamControllerTests.cs" t="Include" />
+          <e p="PatientDetailsControllerTest.cs" t="Include" />
+          <e p="TestPermissionsController.cs" t="Include" />
+          <e p="UserControllerTests.cs" t="Include" />
+          <e p="UsersControllerTests.cs" t="Include" />
+        </e>
+        <e p="Mapper" t="Include">
+          <e p="MapperExaminationProfileTests.cs" t="Include" />
+          <e p="MapperNewExaminationProfileTests.cs" t="Include" />
+          <e p="MapperUsersProfileTests.cs" t="Include" />
+        </e>
+        <e p="MedicalExaminer.API.Tests.csproj" t="IncludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.1" t="Include">
+              <e p="MedicalExaminer.API.Tests.AssemblyInfo.cs" t="Include" />
+              <e p="MedicalExaminer.API.Tests.Program.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="OktaJwtSecurityTokenHandlerTests.cs" t="Include" />
+        <e p="Persistence" t="Include">
+          <e p="LocationPersistenceFake.cs" t="Include" />
+          <e p="UserPersistanceFake.cs" t="Include" />
+        </e>
+        <e p="Services" t="Include">
+          <e p="CalculatorTests.cs" t="Include" />
+          <e p="CosmosMocker.cs" t="Include" />
+          <e p="Examination" t="Include">
+            <e p="CreateExaminationServiceTests.cs" t="Include" />
+            <e p="ExaminationRetrievalServiceTests.cs" t="Include" />
+            <e p="ExaminationsDashboardServiceTests.cs" t="Include" />
+            <e p="ExaminationsRetrievalServiceTests.cs" t="Include" />
+          </e>
+          <e p="Implementations" t="Include">
+            <e p="OktaTokenServiceTests.cs" t="Include" />
+          </e>
+          <e p="Location" t="Include">
+            <e p="LocationIdServiceTests.cs" t="Include" />
+          </e>
+          <e p="MedicalTeam" t="Include">
+            <e p="MedicalTeamUpdateServiceTests.cs" t="Include" />
+          </e>
+          <e p="PatientDetails" t="Include">
+            <e p="PatientDetailsRetrievalServiceTests.cs" t="Include" />
+            <e p="PatientDetailsUpdateServiceTests.cs" t="Include" />
+          </e>
+        </e>
+        <e p="ValidateRouteVariablesTests.cs" t="Include" />
+      </e>
+      <e p="MedicalExaminer.Common" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="ConnectionSettings" t="Include">
+          <e p="ExaminationConnectionSettings.cs" t="Include" />
+          <e p="IConnectionSettings.cs" t="Include" />
+          <e p="IExaminationConnectionSettings.cs" t="Include" />
+          <e p="ILocationConnectionSettings.cs" t="Include" />
+          <e p="IUserConnectionSettings.cs" t="Include" />
+          <e p="LocationConnectionSettings.cs" t="Include" />
+          <e p="UserConnectionSettings.cs" t="Include" />
+        </e>
+        <e p="Database" t="Include">
+          <e p="DatabaseAccess.cs" t="Include" />
+          <e p="DocumentClientFactory.cs" t="Include" />
+          <e p="IDatabaseAccess.cs" t="Include" />
+          <e p="IDocumentClientFactory.cs" t="Include" />
+        </e>
+        <e p="IInformantPersistence.cs" t="Include" />
+        <e p="ILocationPersistence.cs" t="Include" />
+        <e p="IMELoggerPersistence.cs" t="Include" />
+        <e p="IPermissionPersistence.cs" t="Include" />
+        <e p="IUserPersistence.cs" t="Include" />
+        <e p="LocationPersistence.cs" t="Include" />
+        <e p="Loggers" t="Include">
+          <e p="IMELogger.cs" t="Include" />
+          <e p="LogMessageActionDefault.cs" t="Include" />
+          <e p="MELogger.cs" t="Include" />
+          <e p="MELoggerMocker.cs" t="Include" />
+        </e>
+        <e p="MedicalExaminer.Common.csproj" t="IncludeRecursive" />
+        <e p="MELoggerPersistence.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.1" t="Include">
+              <e p="MedicalExaminer.Common.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="PermissionPersistence.cs" t="Include" />
+        <e p="PersistenceBase.cs" t="Include" />
+        <e p="Queries" t="Include">
+          <e p="Examination" t="Include">
+            <e p="CreateExaminationQuery.cs" t="Include" />
+            <e p="ExaminationMedicalTeamPostQuery.cs" t="Include" />
+            <e p="ExaminationRetrievalQuery.cs" t="Include" />
+            <e p="ExaminationsRetrievalQuery.cs" t="Include" />
+          </e>
+          <e p="IQuery.cs" t="Include" />
+          <e p="Location" t="Include">
+            <e p="LocationRetrievalByIdQuery.cs" t="Include" />
+          </e>
+          <e p="ParameterRebinder.cs" t="Include" />
+          <e p="PatientDetails" t="Include">
+            <e p="PatientDetailsByCaseIdQuery.cs" t="Include" />
+            <e p="PatientDetailsUpdateQuery.cs" t="Include" />
+          </e>
+          <e p="User" t="Include">
+            <e p="CreateUserQuery.cs" t="Include" />
+            <e p="UserRetrievalByEmailQuery.cs" t="Include" />
+            <e p="UserRetrievalByIdQuery.cs" t="Include" />
+            <e p="UserRetrievalByTypeMEQuery.cs" t="Include" />
+            <e p="UsersRetrievalQuery.cs" t="Include" />
+            <e p="UsersUpdateQuery.cs" t="Include" />
+          </e>
+          <e p="Utility.cs" t="Include" />
+        </e>
+        <e p="Services" t="Include">
+          <e p="Calculator.cs" t="Include" />
+          <e p="Examination" t="Include">
+            <e p="CreateExaminationService.cs" t="Include" />
+            <e p="ExaminationQueryBuilder.cs" t="Include" />
+            <e p="ExaminationRetrievalService.cs" t="Include" />
+            <e p="ExaminationsDashboardService.cs" t="Include" />
+            <e p="ExaminationsRetrievalService.cs" t="Include" />
+          </e>
+          <e p="IAsyncQueryHandler.cs" t="Include" />
+          <e p="IAsyncUpdateDocumentHandler.cs" t="Include" />
+          <e p="Location" t="Include">
+            <e p="LocationIdService.cs" t="Include" />
+          </e>
+          <e p="MedicalTeam" t="Include">
+            <e p="MedicalTeamUpdateService.cs" t="Include" />
+          </e>
+          <e p="PatientDetails" t="Include">
+            <e p="PatientDetailsRetrievalService.cs" t="Include" />
+            <e p="PatientDetailsUpdateService.cs" t="Include" />
+          </e>
+          <e p="User" t="Include">
+            <e p="CreateUserService.cs" t="Include" />
+            <e p="UserRetrievalByEmailService.cs" t="Include" />
+            <e p="UserRetrievalByIdService.cs" t="Include" />
+            <e p="UsersRetrievalService.cs" t="Include" />
+            <e p="UserUpdateService.cs" t="Include" />
+          </e>
+        </e>
+        <e p="UserPersistence.cs" t="Include" />
+        <e p="UserRolesContainer.cs" t="Include" />
+      </e>
+      <e p="MedicalExaminer.Models" t="IncludeRecursive">
+        <e p="AnalysisEntry.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="ClinicalProfessional.cs" t="Include" />
+        <e p="Enums" t="Include">
+          <e p="AnalysisEntryType.cs" t="Include" />
+          <e p="CaseStatus.cs" t="Include" />
+          <e p="CoronerStatus.cs" t="Include" />
+          <e p="ExaminationGender.cs" t="Include" />
+          <e p="ExaminationsOrderBy.cs" t="Include" />
+          <e p="Informed.cs" t="Include" />
+          <e p="LocationType.cs" t="Include" />
+          <e p="ModeOfDisposal.cs" t="Include" />
+          <e p="PresentAtDeath.cs" t="Include" />
+          <e p="UserRoles.cs" t="Include" />
+        </e>
+        <e p="Examination.cs" t="Include" />
+        <e p="ExaminationItem.cs" t="Include" />
+        <e p="ExaminationQuery.cs" t="Include" />
+        <e p="ExaminationsOverview.cs" t="Include" />
+        <e p="IExamination.cs" t="Include" />
+        <e p="IExaminationItem.cs" t="Include" />
+        <e p="IMedicalTeam.cs" t="Include" />
+        <e p="Location.cs" t="Include" />
+        <e p="MedicalExaminer.Models.csproj" t="IncludeRecursive" />
+        <e p="MedicalTeam.cs" t="Include" />
+        <e p="MEUser.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.1" t="Include">
+              <e p="MedicalExaminer.Models.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="PatientDetails.cs" t="Include" />
+        <e p="Permission.cs" t="Include" />
+        <e p="PriorityCalculator.cs" t="Include" />
+        <e p="Query.cs" t="Include" />
+        <e p="Record.cs" t="Include" />
+        <e p="Representative.cs" t="Include" />
+      </e>
+      <e p="MedicalExaminer.ReferenceDataLoader" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Loaders" t="Include">
+          <e p="LocationsChecker.cs" t="Include" />
+          <e p="LocationsLoader.cs" t="Include" />
+        </e>
+        <e p="MedicalExaminer.ReferenceDataLoader.csproj" t="IncludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.1" t="Include">
+              <e p="MedicalExaminer.ReferenceDataLoader.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="launchSettings.json" t="Include" />
+          <e p="PublishProfiles" t="Include">
+            <e p="FolderProfile.pubxml" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="MedicalExaminers.ReferenceDataLoader.Tests" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Loaders" t="Include" />
+        <e p="LocationsCheckerTests.cs" t="Include" />
+        <e p="MedicalExaminers.ReferenceDataLoader.Tests.csproj" t="IncludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.1" t="Include">
+              <e p="MedicalExaminers.ReferenceDataLoader.Tests.AssemblyInfo.cs" t="Include" />
+              <e p="MedicalExaminers.ReferenceDataLoader.Tests.Program.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="README.md" t="Include" />
+      <e p="Solution Items" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/Rider2018.3/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/Rider2018.3/resharper-host/local/Transient/ReSharperHost/v183/SolutionCaches/_MedicalExaminer.API.958322288.00" t="ExcludeRecursive" />
+  </component>
+</project>
