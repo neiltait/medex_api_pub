@@ -10,11 +10,6 @@ namespace MedicalExaminer.API.Models.v1.Examinations
     public class GetExaminationsResponse : ResponseBase
     {
         /// <summary>
-        /// Patient Details Header
-        /// </summary>
-        public PatientCardItem Header { get; set; }
-
-        /// <summary>
         /// Count of Total Cases.
         /// </summary>
         public int CountOfTotalCases { get; set; }
