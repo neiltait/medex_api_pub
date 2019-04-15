@@ -6,7 +6,7 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
 {
     public class GetCaseOutcomeResponse
     {
-        public PatientCardItem CaseHeader { get; set; }
+        public PatientCardItem Header { get; set; }
         public CaseOutcomeSummary? CaseOutcomeSummary { get; set; }
         public BereavedDiscussionOutcome? OutcomeOfRepresentativeDiscussion { get; set; }
         public OverallOutcomeOfPreScrutiny? OutcomeOfPrescrutiny { get; set; }
