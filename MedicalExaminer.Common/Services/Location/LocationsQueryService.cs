@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
+using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.Location;
 
 namespace MedicalExaminer.Common.Services.Location
@@ -33,6 +35,13 @@ namespace MedicalExaminer.Common.Services.Location
             }
 
             var predicate = GetPredicate(param);
+
+            if (param.PermissedLocations != null)
+            {
+                Expression<Func<Models.Location, bool>> idFilter = l => param.PermissedLocations.Contains(l.LocationId);
+
+                predicate = predicate.And(idFilter);
+            }
 
             return GetItemsAsync(predicate);
         }

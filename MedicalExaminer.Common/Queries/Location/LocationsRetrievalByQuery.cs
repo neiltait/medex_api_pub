@@ -12,10 +12,12 @@ namespace MedicalExaminer.Common.Queries.Location
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="parentId">Parent Id.</param>
-        public LocationsRetrievalByQuery(string name, string parentId)
+        /// <param name="permissedLocations">Permissed locations.</param>
+        public LocationsRetrievalByQuery(string name, string parentId, IEnumerable<string> permissedLocations = null)
         {
             Name = name;
             ParentId = parentId;
+            PermissedLocations = permissedLocations;
         }
 
         /// <summary>
@@ -27,5 +29,10 @@ namespace MedicalExaminer.Common.Queries.Location
         /// Parent Id.
         /// </summary>
         public string ParentId { get; }
+
+        /// <summary>
+        /// Permissed Locations.
+        /// </summary>
+        public IEnumerable<string> PermissedLocations { get; }
     }
 }
