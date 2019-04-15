@@ -12,7 +12,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Patient Details Header
         /// </summary>
-        public PatientDetailsHeader Header { get; set; }
+        public PatientCardItem Header { get; set; }
 
         /// <summary>
         /// Count of Total Cases.

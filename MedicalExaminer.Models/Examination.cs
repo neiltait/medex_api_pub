@@ -10,12 +10,6 @@ namespace MedicalExaminer.Models
     public class Examination : Record,  IExamination, ILocationBasedDocument
     {
         /// <summary>
-        /// Patient Details Header
-        /// </summary>
-        [JsonProperty(PropertyName = "header")]
-        public PatientDetailsHeader Header { get; set; }
-
-        /// <summary>
         /// Urgency Score based on urgency indicators
         /// </summary>
         [JsonProperty(PropertyName = "urgency_score")]
