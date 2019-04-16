@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.CaseBreakdown;
+using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Queries.Examination;
@@ -11,7 +12,6 @@ using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -57,6 +57,30 @@ namespace MedicalExaminer.API.Controllers
             var bereavedDiscussionEventNote = Mapper.Map<BereavedDiscussionEvent>(putNewBereavedDiscussionEventNoteRequest);
             bereavedDiscussionEventNote.UserId = myUser.UserId;
 
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, myUser));
+
+            var patientCard = new PatientCardItem
+            {
+                UrgencyScore = examination.UrgencyScore,
+                GivenNames = examination.GivenNames,
+                Surname = examination.Surname,
+                NhsNumber = examination.NhsNumber,
+                ExaminationId = examination.ExaminationId,
+                TimeOfDeath = examination.TimeOfDeath,
+                DateOfBirth = examination.DateOfBirth,
+                DateOfDeath = examination.DateOfDeath,
+                LastAdmission = examination.LastAdmission,
+                CaseCreatedDate = Convert.ToDateTime(examination.CreatedAt),
+                AdmissionNotesHaveBeenAdded = examination.AdmissionNotesHaveBeenAdded,
+                ReadyForMEScrutiny = examination.ReadyForMEScrutiny,
+                Unassigned = examination.Unassigned,
+                HaveBeenScrutinisedByME = examination.HaveBeenScrutinisedByME,
+                PendingAdmissionNotes = examination.PendingAdmissionNotes,
+                PendingDiscussionWithQAP = examination.PendingDiscussionWithQAP,
+                PendingDiscussionWithRepresentative = examination.PendingDiscussionWithRepresentative,
+                HaveFinalCaseOutstandingOutcomes = examination.HaveFinalCaseOutstandingOutcomes
+            };
+
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, bereavedDiscussionEventNote));
 
             if (result == null)
@@ -66,6 +90,7 @@ namespace MedicalExaminer.API.Controllers
 
             var res = new PutCaseBreakdownEventResponse
             {
+                //Header = patientCard,
                 EventId = result
             };
 
