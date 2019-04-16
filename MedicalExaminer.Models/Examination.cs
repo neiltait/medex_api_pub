@@ -9,10 +9,12 @@ namespace MedicalExaminer.Models
 {
     public class Examination : Record,  IExamination, ILocationBasedDocument
     {
+        /// <summary>
+        /// the urgency score assinged to the case
+        /// </summary>
         [JsonProperty(PropertyName = "urgency_score")]
         public int UrgencyScore { get; set; }
 
-        
         /// <summary>
         /// Patients first hospital number.
         /// </summary>
@@ -124,7 +126,7 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "gender_details")]
         [DataType(DataType.Text)]
         public string GenderDetails { get; set; }
-        
+
         /// <summary>
         /// patients country.
         /// </summary>
@@ -198,7 +200,7 @@ namespace MedicalExaminer.Models
         [Required]
         [DataType(DataType.Date)]
         [JsonProperty(PropertyName = "date_of_birth")]
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         /// <summary>
         /// date of death of the patient.
@@ -211,7 +213,7 @@ namespace MedicalExaminer.Models
         [Required]
         [DataType(DataType.DateTime)]
         [JsonProperty(PropertyName = "date_of_death")]
-        public DateTime DateOfDeath { get; set; }
+        public DateTime? DateOfDeath { get; set; }
 
         /// <summary>
         /// The medical team associated with the patient
@@ -302,6 +304,9 @@ namespace MedicalExaminer.Models
         [DataType(DataType.Text)]
         public string MedicalExaminerOfficeResponsible { get; set; }
 
+        /// <summary>
+        /// enumerable of patients representatives
+        /// </summary>
         [JsonProperty(PropertyName = "representatives")]
         public IEnumerable<Representative> Representatives { get; set; }
 
@@ -311,42 +316,82 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "case_break_down")]
         public CaseBreakDown CaseBreakdown { get; set; } = new CaseBreakDown();
+
+        /// <summary>
+        /// Have the admission notes been added
+        /// </summary>
         [JsonProperty(PropertyName = "admission_notes_have_been_added")]
         public bool AdmissionNotesHaveBeenAdded { get; set; }
 
+        /// <summary>
+        /// is the examination ready for medical examiner scrutiny
+        /// </summary>
         [JsonProperty(PropertyName = "ready_for_me_scrutiny")]
         public bool ReadyForMEScrutiny { get; set; }
 
+        /// <summary>
+        /// is the case currently unassigned
+        /// </summary>
         [JsonProperty(PropertyName = "unassigned")]
         public bool Unassigned { get; set; }
 
+        /// <summary>
+        /// has the case been scrutinised by the medical examiner
+        /// </summary>
         [JsonProperty(PropertyName = "have_been_scrutinised_by_me")]
         public bool HaveBeenScrutinisedByME { get; set; }
 
+        /// <summary>
+        /// have admission notes been added for the examination
+        /// </summary>
         [JsonProperty(PropertyName = "pending_admission_notes")]
         public bool PendingAdmissionNotes { get; set; }
 
+        /// <summary>
+        /// has the qap discussion occured
+        /// </summary>
         [JsonProperty(PropertyName = "pending_discussion_with_qap")]
         public bool PendingDiscussionWithQAP { get; set; }
 
+        /// <summary>
+        /// has the discussion with the representative
+        /// </summary>
         [JsonProperty(PropertyName = "pending_discussion_with_representative")]
         public bool PendingDiscussionWithRepresentative { get; set; }
 
+        /// <summary>
+        /// have the final case outcomes been determined
+        /// </summary>
         [JsonProperty(PropertyName = "have_final_case_outstanding_outcomes")]
         public bool HaveFinalCaseOutstandingOutcomes { get; set; }
 
+        /// <summary>
+        /// the unique identifier for the examination
+        /// </summary>
         [JsonProperty(PropertyName = "id")]
         public string ExaminationId { get; set; }
 
+        /// <summary>
+        /// the national location id
+        /// </summary>
         [JsonProperty(PropertyName = "national_location_id")]
         public string NationalLocationId { get; }
 
+        /// <summary>
+        /// the regional location id
+        /// </summary>
         [JsonProperty(PropertyName = "region_location_id")]
         public string RegionLocationId { get; }
 
+        /// <summary>
+        /// the trusts location id
+        /// </summary>
         [JsonProperty(PropertyName = "trust_location_id")]
         public string TrustLocationId { get; }
 
+        /// <summary>
+        /// the sites location id
+        /// </summary>
         [JsonProperty(PropertyName = "site_location_id")]
         public string SiteLocationId { get; }
     }
