@@ -8,7 +8,7 @@ namespace MedicalExaminer.Models
         EventType EventType { get; }
         string EventId { get; set; }
         bool IsFinal { get; }
-        string UserId { get; }
+        string UserId { get; set; }
         DateTime? Created { get; set; }
     }
 }
