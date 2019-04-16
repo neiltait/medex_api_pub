@@ -8,6 +8,8 @@ namespace MedicalExaminer.API.Models.v1.Examinations
     /// </summary>
     public class GetExaminationsResponse : ResponseBase
     {
+        public string PagingToken { get; set; }
+
         /// <summary>
         /// Count of Total Cases.
         /// </summary>

@@ -43,6 +43,11 @@ using Okta.Sdk.Configuration;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
+using Cosmonaut.Extensions;
+using Cosmonaut.Configuration;
+using Cosmonaut.Extensions.Microsoft.DependencyInjection;
+using Cosmonaut;
+
 namespace MedicalExaminer.API
 {
     /// <summary>
@@ -101,6 +106,8 @@ namespace MedicalExaminer.API
                     // Tells swagger to replace the version in the controller route
                     options.SubstituteApiVersionInUrl = true;
                 });
+
+        //    services.AddMvc(options => options.Filters.Add(new GlobalExceptionFilter(new Logger<Exception>())));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -176,6 +183,13 @@ namespace MedicalExaminer.API
             services.AddScoped<IDatabaseAccess, DatabaseAccess>();
 
             services.AddScoped<ControllerActionFilter>();
+
+            var cosmosSettings = new CosmosStoreSettings(
+                Configuration["CosmosDB:DatabaseId"],
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"]);
+
+            services.AddCosmosStore<Examination>(cosmosSettings, "Examinations");
 
             ConfigureQueries(services);
 

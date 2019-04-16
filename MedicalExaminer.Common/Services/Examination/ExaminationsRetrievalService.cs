@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Cosmonaut;
+using Cosmonaut.Extensions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
@@ -14,6 +17,7 @@ namespace MedicalExaminer.Common.Services.Examination
     public class ExaminationsRetrievalService : QueryHandler<ExaminationsRetrievalQuery, IEnumerable<Models.Examination>>
     {
         private readonly ExaminationsQueryExpressionBuilder _examinationQueryBuilder;
+        private readonly ICosmosStore<Models.Examination> _store;
 
         /// <summary>
         /// Initialise a new instance of <see cref="ExaminationsRetrievalService"/>.
@@ -21,14 +25,19 @@ namespace MedicalExaminer.Common.Services.Examination
         /// <param name="databaseAccess">Database Access.</param>
         /// <param name="connectionSettings">Connection Settings.</param>
         /// <param name="examinationQueryBuilder">Examination Query Builder.</param>
-        public ExaminationsRetrievalService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings, ExaminationsQueryExpressionBuilder examinationQueryBuilder)
+        public ExaminationsRetrievalService(IDatabaseAccess databaseAccess, 
+            IExaminationConnectionSettings connectionSettings, 
+            ExaminationsQueryExpressionBuilder examinationQueryBuilder,
+            ICosmosStore<Models.Examination> store)
             : base(databaseAccess, connectionSettings)
         {
             _examinationQueryBuilder = examinationQueryBuilder;
+            _store = store;
+
         }
 
         /// <inheritdoc/>
-        public override Task<IEnumerable<Models.Examination>> Handle(ExaminationsRetrievalQuery param)
+        public async override Task<IEnumerable<Models.Examination>> Handle(ExaminationsRetrievalQuery param)
         {
             if (param == null)
             {
@@ -36,15 +45,15 @@ namespace MedicalExaminer.Common.Services.Examination
             }
 
             var predicate = _examinationQueryBuilder.GetPredicate(param);
-            
+
             switch (param.FilterOrderBy)
             {
                 case ExaminationsOrderBy.Urgency:
-                    return GetItemsAsync(predicate, x => x.UrgencyScore);
+                    return _store.Query().WithPagination(param.FilterPageNumber, param.FilterPageSize).Where(predicate).OrderByDescending(x => x.UrgencyScore).ToListAsync().Result;
                 case ExaminationsOrderBy.CaseCreated:
-                    return GetItemsAsync(predicate, x => x.CreatedAt);
+                    return _store.Query().WithPagination(param.FilterPageNumber, param.FilterPageSize).Where(predicate).OrderBy(x => x.CreatedAt).ToListAsync().Result;//, param.FilterPageSize, param.FilterPageNumber);
                 case null:
-                    return GetItemsAsync(predicate);
+                    return _store.Query().WithPagination(param.FilterPageNumber, param.FilterPageSize).Where(predicate).ToListAsync().Result;// param.FilterPageSize, param.FilterPageNumber);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(param.FilterOrderBy));
             }
