@@ -107,8 +107,6 @@ namespace MedicalExaminer.API
                     options.SubstituteApiVersionInUrl = true;
                 });
 
-        //    services.AddMvc(options => options.Filters.Add(new GlobalExceptionFilter(new Logger<Exception>())));
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
