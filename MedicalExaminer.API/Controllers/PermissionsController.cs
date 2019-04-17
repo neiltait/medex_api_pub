@@ -210,6 +210,17 @@ namespace MedicalExaminer.API.Controllers
                 }
 
                 var permission = Mapper.Map<Permission>(putPermission);
+
+                var locationDocument = (await
+                        _locationParentsService.Handle(
+                            new LocationParentsQuery(permission.LocationId)))
+                    .ToLocationPath();
+
+                if (!CanAsync(Common.Authorization.Permission.CreateUserPermission, locationDocument))
+                {
+                    Forbid();
+                }
+
                 var updatedPermission = await _permissionPersistence.UpdatePermissionAsync(permission);
 
                 await DuplicateOnUser(permission);
