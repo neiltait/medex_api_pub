@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
+using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
@@ -69,9 +70,12 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var result = await _patientDetailsByCaseIdService.Handle(new PatientDetailsByCaseIdQuery(examinationId));
+            var getPatientDetailsResponse = Mapper.Map<GetPatientDetailsResponse>(result);
+            var patientCard = Mapper.Map<PatientCardItem>(result);
 
+            getPatientDetailsResponse.Header = patientCard;
 
-            return Ok(Mapper.Map<GetPatientDetailsResponse>(result));
+            return Ok(getPatientDetailsResponse);
         }
 
         /// <summary>

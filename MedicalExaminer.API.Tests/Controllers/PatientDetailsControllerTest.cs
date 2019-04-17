@@ -106,6 +106,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(examination));
             var sut = new PatientDetailsController(logger.Object, mapper.Object, examinationRetrievalService.Object,
                 patientDetailsUpdateService.Object, patientDetailsByCaseIdService.Object);
+
             // Act
             var response = sut.GetPatientDetails("a").Result;
 

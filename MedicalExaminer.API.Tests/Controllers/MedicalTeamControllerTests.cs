@@ -119,9 +119,12 @@ namespace MedicalExaminer.API.Tests.Controllers
                 ExaminationId = examinationId,
                 MedicalTeam = new MedicalTeam()
                 {
-                    NursingTeamInformation = expectedNursingTeamInformation,
+                    NursingTeamInformation = expectedNursingTeamInformation
                 }
 
+                //DateOfBirth = new DateTime(2000, 1, 18),
+                //DateOfDeath = new DateTime(2019, 4, 15),
+                //CreatedAt = DateTimeOffset.Now
             };
 
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
@@ -140,7 +143,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             ((GetMedicalTeamResponse)okResult.Value).NursingTeamInformation.Should().Be(expectedNursingTeamInformation);
-
+            ((GetMedicalTeamResponse)okResult.Value).Header.Should().NotBe(null);
         }
 
         [Fact]

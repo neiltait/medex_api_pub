@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
+using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
-using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
@@ -59,14 +59,18 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
+            var patientCard = Mapper.Map<PatientCardItem>(examination);
 
             var getMedicalTeamResponse = examination?.MedicalTeam != null
                 ? Mapper.Map<GetMedicalTeamResponse>(examination.MedicalTeam)
                 : new GetMedicalTeamResponse
                 {
-                    ConsultantsOther = new Models.v1.MedicalTeams.ClinicalProfessionalItem[] { },
+                    Header = patientCard,
+                    ConsultantsOther = new ClinicalProfessionalItem[] { },
                     NursingTeamInformation = string.Empty,
                 };
+
+            getMedicalTeamResponse.Header = patientCard;
 
             return Ok(getMedicalTeamResponse);
         }
