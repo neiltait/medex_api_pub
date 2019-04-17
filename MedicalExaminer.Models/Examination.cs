@@ -7,7 +7,7 @@ using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace MedicalExaminer.Models
 {
-    public class Examination : Record,  IExamination, ILocationBasedDocument
+    public class Examination : Record,  IExamination, ILocationPath
     {
         [JsonProperty(PropertyName = "urgency_score")]
         public int UrgencyScore { get; set; }

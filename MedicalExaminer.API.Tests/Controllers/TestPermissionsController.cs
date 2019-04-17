@@ -7,6 +7,7 @@ using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -19,27 +20,34 @@ namespace MedicalExaminer.API.Tests.Controllers
     /// <summary>
     ///     Tests the Users Controller
     /// </summary>
-    public class TestPermissionsController : ControllerTestsBase<PermissionsController>
+    public class TestPermissionsController : AuthorizedControllerTestsBase<PermissionsController>
     {
-        private readonly Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>> _userRetrievalByIdService;
-        private readonly Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>> _userUpdateService;
-        private readonly Mock<IPermissionPersistence> _permissionPersistence;
+        private readonly Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>> _userRetrievalByIdServiceMock;
+        private readonly Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>> _userUpdateServiceMock;
+        private readonly Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>> _locationParentsServiceMock;
+        private readonly Mock<IPermissionPersistence> _permissionPersistenceMock;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TestPermissionsController" /> class.
         /// </summary>
         public TestPermissionsController()
         {
-            _permissionPersistence = new Mock<IPermissionPersistence>();
-            _userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
-            _userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
-            var logger = new Mock<IMELogger>();
+            _permissionPersistenceMock = new Mock<IPermissionPersistence>();
+            _userRetrievalByIdServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
+            _userUpdateServiceMock = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
+            _locationParentsServiceMock = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>();
 
-            Controller = new PermissionsController(_permissionPersistence.Object,
-                _userRetrievalByIdService.Object,
-                _userUpdateService.Object,
-                logger.Object,
-                Mapper);
+            Controller = new PermissionsController(
+                LoggerMock.Object,
+                Mapper,
+                UsersRetrievalByEmailServiceMock.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                _userRetrievalByIdServiceMock.Object,
+                _userUpdateServiceMock.Object,
+                _locationParentsServiceMock.Object,
+                _permissionPersistenceMock.Object
+            );
         }
 
         /// <summary>
@@ -52,7 +60,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var userId = "fake_id_01";
 
-            _permissionPersistence.Setup(pp => pp.GetPermissionsAsync(userId)).Returns(
+            _permissionPersistenceMock.Setup(pp => pp.GetPermissionsAsync(userId)).Returns(
                 Task.FromResult<IEnumerable<Permission>>(
                     new List<Permission>()));
 
@@ -81,7 +89,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             const string expectedPermissionId = "fake_id_02";
             const string userId = "fake_id_01";
 
-            _permissionPersistence.Setup(pp => pp.GetPermissionsAsync("fake_id_01")).Returns(
+            _permissionPersistenceMock.Setup(pp => pp.GetPermissionsAsync("fake_id_01")).Returns(
                 Task.FromResult<IEnumerable<Permission>>(
                     new List<Permission>
                         { new Permission { UserId = "fake_id_01", PermissionId = expectedPermissionId } }));
@@ -114,7 +122,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var expectedPermission = new Permission { PermissionId = expectedPermissionId, UserId = expectedUserId };
 
-            _permissionPersistence.Setup(pp => pp.GetPermissionAsync(expectedUserId, expectedPermissionId)).Returns(
+            _permissionPersistenceMock.Setup(pp => pp.GetPermissionAsync(expectedUserId, expectedPermissionId)).Returns(
                 Task.FromResult(expectedPermission));
 
             // Act
@@ -141,7 +149,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             const string expectedUserId = "expectedUserId";
 
-            _permissionPersistence.Setup(up => up.GetPermissionAsync(It.IsAny<string>(), It.IsAny<string>()))
+            _permissionPersistenceMock.Setup(up => up.GetPermissionAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .Throws<NullReferenceException>();
 
             // Act

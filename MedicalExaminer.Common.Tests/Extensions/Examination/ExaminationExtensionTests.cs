@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FluentAssertions;
-using MedicalExaminer.Common.Extensions.Examination;
+using MedicalExaminer.Common.Extensions.Models;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Xunit;
@@ -37,7 +37,7 @@ namespace MedicalExaminer.Common.Tests.Extensions.Examination
             var locations = Enumerable.Empty<Location>();
 
             // Act
-            examination.UpdateLocationCache(locations);
+            examination.UpdateLocationPath(locations);
 
             // Assert
             examination.NationalLocationId.Should().Be(expectedNationalLocationId);
@@ -83,7 +83,7 @@ namespace MedicalExaminer.Common.Tests.Extensions.Examination
             };
 
             // Act
-            examination.UpdateLocationCache(locations);
+            examination.UpdateLocationPath(locations);
 
             // Assert
             examination.NationalLocationId.Should().Be(expectedNationalLocationId);

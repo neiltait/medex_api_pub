@@ -17,7 +17,7 @@ namespace MedicalExaminer.API.Services
         /// <param name="document">Document.</param>
         /// <param name="permission">Permission.</param>
         /// <returns>True if has permission.</returns>
-        Task<bool> HasPermission(string emailAddress, ILocationBasedDocument document, Permission permission);
+        Task<bool> HasPermission(string emailAddress, ILocationPath document, Permission permission);
 
         /// <summary>
         /// Has Permission

@@ -39,7 +39,7 @@ namespace MedicalExaminer.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<bool> HasPermission(string emailAddress, ILocationBasedDocument document, Permission permission)
+        public async Task<bool> HasPermission(string emailAddress, ILocationPath document, Permission permission)
         {
             var meUser = await _userRetrievalService.Handle(new UserRetrievalByEmailQuery(emailAddress));
 

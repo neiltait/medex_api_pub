@@ -59,7 +59,7 @@ namespace MedicalExaminer.API.Tests.Services
                 }
             };
 
-            var document = new Mock<ILocationBasedDocument>();
+            var document = new Mock<ILocationPath>();
 
             document.Setup(d => d.NationalLocationId).Returns(expectedNationalLocationId);
 
@@ -100,7 +100,7 @@ namespace MedicalExaminer.API.Tests.Services
                 }
             };
 
-            var document = new Mock<ILocationBasedDocument>();
+            var document = new Mock<ILocationPath>();
 
             document.Setup(d => d.NationalLocationId).Returns(expectedNationalLocationId);
 

@@ -15,8 +15,8 @@ namespace MedicalExaminer.API.Authorization
     /// Permission Handler.
     /// </summary>
     /// <inheritdoc/>
-    /// <see cref="AuthorizationHandler{PermissionRequirement, ILocationBasedDocument}"/>
-    public class DocumentPermissionHandler : AuthorizationHandler<PermissionRequirement, ILocationBasedDocument>
+    /// <see cref="AuthorizationHandler{PermissionRequirement, ILocationPath}"/>
+    public class DocumentPermissionHandler : AuthorizationHandler<PermissionRequirement, ILocationPath>
     {
         /// <summary>
         /// Permission Service.
@@ -36,7 +36,7 @@ namespace MedicalExaminer.API.Authorization
         protected override async Task HandleRequirementAsync(
             AuthorizationHandlerContext context,
             PermissionRequirement requirement,
-            ILocationBasedDocument document)
+            ILocationPath document)
         {
             var emailAddress = context.User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
 

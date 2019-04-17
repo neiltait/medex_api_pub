@@ -12,16 +12,16 @@ namespace MedicalExaminer.Common.Authorization
         /// Location Ids.
         /// </summary>
         /// <remarks>Returns a flat array of the 4 locations as a single array.</remarks>
-        /// <param name="locationBasedDocument">Document.</param>
+        /// <param name="locationPath">Document.</param>
         /// <returns>List of Locations.</returns>
-        public static IEnumerable<string> LocationIds(this ILocationBasedDocument locationBasedDocument)
+        public static IEnumerable<string> LocationIds(this ILocationPath locationPath)
         {
             return new[]
             {
-                locationBasedDocument.NationalLocationId,
-                locationBasedDocument.RegionLocationId,
-                locationBasedDocument.TrustLocationId,
-                locationBasedDocument.SiteLocationId,
+                locationPath.NationalLocationId,
+                locationPath.RegionLocationId,
+                locationPath.TrustLocationId,
+                locationPath.SiteLocationId,
             };
         }
     }

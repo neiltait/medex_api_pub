@@ -28,7 +28,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             AuthorizationServiceMock
                 .Setup(aus => aus.AuthorizeAsync(
                     It.IsAny<ClaimsPrincipal>(),
-                    It.IsAny<ILocationBasedDocument>(),
+                    It.IsAny<ILocationPath>(),
                     It.IsAny<IEnumerable<IAuthorizationRequirement>>()))
                 .Returns(Task.FromResult(AuthorizationResult.Success()));
         }
