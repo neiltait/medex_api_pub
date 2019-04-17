@@ -84,11 +84,11 @@ namespace MedicalExaminer.Common.Services
         /// <typeparam name="T">Query Reqyest.</typeparam>
         /// <param name="predicate">Predicate.</param>
         /// <returns>A list of <see cref="IEnumerable{T}"/>.</returns>
-        protected Task<(IEnumerable<T> result, string ContinuationToken)> GetItemsAsync<T>(
-            Expression<Func<T, bool>> predicate, int pageSize = 25, int pageNumber = 1, string continuationToken = null)
+        protected Task<IEnumerable<T>> GetItemsAsync<T>(
+            Expression<Func<T, bool>> predicate)
             where T:class
         {
-            return DatabaseAccess.GetItemsAsync(ConnectionSettings, predicate, pageSize, pageNumber, continuationToken);
+            return DatabaseAccess.GetItemsAsync(ConnectionSettings, predicate);
         }
 
         /// <summary>
@@ -99,15 +99,12 @@ namespace MedicalExaminer.Common.Services
         /// <param name="predicate">Predicate.</param>
         /// <param name="orderBy">Order By.</param>
         /// <returns>A list of <see cref="IEnumerable{T}"/>.</returns>
-        protected Task<(IEnumerable<T> result, string ContinuationToken)> GetItemsAsync<T, TKey>(
+        protected Task<IEnumerable<T>> GetItemsAsync<T, TKey>(
             Expression<Func<T, bool>> predicate,
-            Expression<Func<T, TKey>> orderBy,
-            int pageSize = 25,
-            int pageNumber = 1,
-            string continuationToken = null)
+            Expression<Func<T, TKey>> orderBy)
             where T : class
         {
-            return DatabaseAccess.GetItemsAsync(ConnectionSettings, predicate, orderBy, pageSize, pageNumber, continuationToken);
+            return DatabaseAccess.GetItemsAsync(ConnectionSettings, predicate, orderBy);
         }
     }
 }

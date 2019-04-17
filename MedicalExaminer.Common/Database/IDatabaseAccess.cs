@@ -17,15 +17,13 @@ namespace MedicalExaminer.Common.Database
 
         Task<T> GetItemAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate);
 
-        Task<(IEnumerable<T> result, string ContinuationToken)> GetItemsAsync<T>(
+        Task<IEnumerable<T>> GetItemsAsync<T>(
             IConnectionSettings connectionSettings,
-            Expression<Func<T, bool>> predicate,
-            int pageSize = 25, int pageNumber = 1, string continuationToken = null)
+            Expression<Func<T, bool>> predicate)
             where T : class;
 
-        Task<(IEnumerable<T> result, string ContinuationToken)> GetItemsAsync<T, TKey>(IConnectionSettings connectionSettings,
-            Expression<Func<T, bool>> predicate, Expression<Func<T, TKey>> orderBy,
-            int pageSize = 25, int pageNumber = 1, string continuationToken = null)
+        Task<IEnumerable<T>> GetItemsAsync<T, TKey>(IConnectionSettings connectionSettings,
+            Expression<Func<T, bool>> predicate, Expression<Func<T, TKey>> orderBy)
             where T : class;
 
         Task<int> GetCountAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate);

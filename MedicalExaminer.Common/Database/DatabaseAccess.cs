@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
-using Cosmonaut.Extensions;
 using MedicalExaminer.Common.ConnectionSettings;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
-using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore.Query.ExpressionVisitors;
 
 namespace MedicalExaminer.Common.Database
 {
@@ -61,77 +57,62 @@ namespace MedicalExaminer.Common.Database
             }
         }
 
-        public async Task<(IEnumerable<T> result, string ContinuationToken)> GetItemsAsync<T>(
+        public async Task<IEnumerable<T>> GetItemsAsync<T>(
             IConnectionSettings connectionSettings,
-            Expression<Func<T, bool>> predicate,
-            int pageSize = 25, int pageNumber = 1, string pagingToken = "")
+            Expression<Func<T, bool>> predicate)
             where T : class
         {
-            var tempToken = pagingToken;
             var _client = _documentClientFactory.CreateClient(connectionSettings);
-
-
-            var store = _documentClientFactory.CreateCosmosStore<T>(connectionSettings);
-
-            var result = store.Query().Where(predicate).WithPagination(pageNumber, pageSize);
-
-            //var query = _client.CreateDocumentQuery<T>(
-            //        UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
-            //        connectionSettings.Collection),
-            //        new FeedOptions
-            //        {
-            //            MaxItemCount = pageSize,
-            //            RequestContinuation = pagingToken ?? string.Empty
-            //        })
-            //    .Where(predicate)
-            //.AsDocumentQuery();
-
-
             
+            var query = _client.CreateDocumentQuery<T>(
+                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
+                    connectionSettings.Collection),
+                    new FeedOptions
+                    {
+                        MaxItemCount = -1,
+                    })
+                .Where(predicate)
+            .AsDocumentQuery();
 
-            //FeedResponse<T> response = await query.ExecuteNextAsync<T>();
+            FeedResponse<T> response = await query.ExecuteNextAsync<T>();
 
-            //var results = new List<T>();
+            var results = new List<T>();
             
-            //foreach(var t in response)
-            //{
-            //    results.Add(t);
-            //}
-            //var continuationToken = response.ResponseContinuation;
-            return (result, null);
+            foreach (var t in response)
+            {
+                results.Add(t);
+            };
+
+            return results;
         }
 
 
-        public async Task<(IEnumerable<T> result, string ContinuationToken)> GetItemsAsync<T, TKey>(IConnectionSettings connectionSettings,
-            Expression<Func<T, bool>> predicate, Expression<Func<T, TKey>> orderBy,
-            int pageSize = 25, int pageNumber = 1, string pagingToken = null)
+        public async Task<IEnumerable<T>> GetItemsAsync<T, TKey>(IConnectionSettings connectionSettings,
+            Expression<Func<T, bool>> predicate, Expression<Func<T, TKey>> orderBy)
             where T : class
         {
 
-            //var _client = _documentClientFactory.CreateClient(connectionSettings);
-            //var query = _client.CreateDocumentQuery<T>(
-            //        UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
-            //        new FeedOptions {
-            //            MaxItemCount = pageSize,
-            //            RequestContinuation = pagingToken ?? string.Empty
-            //        })
-            //    .Where(predicate)
-            //    .OrderBy(orderBy)
-            //    .AsDocumentQuery();
+            var _client = _documentClientFactory.CreateClient(connectionSettings);
+            var query = _client.CreateDocumentQuery<T>(
+                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
+                    new FeedOptions
+                    {
+                        MaxItemCount = -1,
+                    })
+                .Where(predicate)
+                .OrderBy(orderBy)
+                .AsDocumentQuery();
 
-            //FeedResponse<T> response = await query.ExecuteNextAsync<T>();
+            FeedResponse<T> response = await query.ExecuteNextAsync<T>();
 
-            //var results = new List<T>();
+            var results = new List<T>();
 
-            //foreach (var t in response)
-            //{
-            //    results.Add(t);
-            //}
-            //var continuationToken = response.ResponseContinuation;
-            var store = _documentClientFactory.CreateCosmosStore<T>(connectionSettings);
-
-            var result = await store.Query().Where(predicate).WithPagination(pageNumber, pageSize).ToListAsync();
-            return (result, null);
+            foreach (var t in response)
+            {
+                results.Add(t);
+            }
+            
+            return results;
         }
 
         public async Task<int> GetCountAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)

@@ -35,7 +35,7 @@ namespace MedicalExaminer.Common.Services.Location
             var predicate = GetPredicate(param);
 
             var result = await GetItemsAsync(predicate);
-            return result.result;
+            return result;
         }
 
         /// <summary>

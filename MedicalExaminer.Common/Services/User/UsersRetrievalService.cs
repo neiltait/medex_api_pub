@@ -31,7 +31,7 @@ namespace MedicalExaminer.Common.Services.Examination
             // can put whatever filters in the param, just empty for now
             var result = await _databaseAccess.GetItemsAsync<Models.MeUser>(_connectionSettings, x => true);
 
-            return result.result;
+            return result;
         }
     }
 }
