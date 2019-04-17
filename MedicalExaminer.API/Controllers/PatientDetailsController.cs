@@ -39,7 +39,8 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationRetrievalService"></param>
         /// <param name="patientDetailsUpdateService"></param>
         /// <param name="patientDetailsByCaseIdService"></param>
-        public PatientDetailsController(IMELogger logger, IMapper mapper,
+        public PatientDetailsController(IMELogger logger,
+            IMapper mapper,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination> patientDetailsUpdateService,
             IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination> patientDetailsByCaseIdService)
@@ -73,7 +74,7 @@ namespace MedicalExaminer.API.Controllers
             var getPatientDetailsResponse = Mapper.Map<GetPatientDetailsResponse>(result);
             var patientCard = Mapper.Map<PatientCardItem>(result);
 
-            getPatientDetailsResponse.Header = patientCard;
+            //getPatientDetailsResponse.Header = patientCard;
 
             return Ok(getPatientDetailsResponse);
         }
