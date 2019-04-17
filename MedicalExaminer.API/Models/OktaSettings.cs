@@ -22,6 +22,11 @@
         public string IntrospectUrl { get; set; }
 
         /// <summary>
+        ///     Authorization Endpoint.
+        /// </summary>
+        public string AuthorizationUrl { get; set; }
+
+        /// <summary>
         ///     Client Id.
         /// </summary>
         public string ClientId { get; set; }
