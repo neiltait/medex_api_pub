@@ -30,8 +30,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             ExaminationConnectionSettings connectionSettings,
             ICosmosStore<MedicalExaminer.Models.Examination> cosmosStore = null)
         {
-            var examinations = new MedicalExaminer.Models.Examination[1];
-            var store = CosmosMocker.CreateCosmosStore(examinations);
+            var store = CosmosMocker.CreateCosmosStore(GetExamples());
             
             var examinationQueryBuilder = new ExaminationsQueryExpressionBuilder();
 

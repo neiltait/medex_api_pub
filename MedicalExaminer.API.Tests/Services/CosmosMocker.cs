@@ -44,7 +44,6 @@ namespace MedicalExaminer.API.Tests.Services
                 .Setup(_ => _.CreateQuery<T>(It.IsAny<Expression>()))
                 .Returns((Expression expression) =>
                 {
-                    
                     var query = new EnumerableQuery<T>(expression);
                     var response = new FeedResponse<T>(query);
 
@@ -60,9 +59,11 @@ namespace MedicalExaminer.API.Tests.Services
                     return mockDocumentQuery.Object;
                 });
 
-
+            mockOrderedQueryable.Setup(x => x.Provider).Returns(provider.Object);
             mockOrderedQueryable.Setup(x => x.Expression).Returns(() => dataSource.Expression);
-            mock.Setup(x => x.Query(null)).Returns(mockDocumentQuery.Object);
+
+            mock.Setup(x => x.Query(null)).Returns(mockOrderedQueryable.Object);
+
             return mock;
         }
 
