@@ -44,6 +44,5 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// Page number to begin the results on
         /// </summary>
         public int PageNumber { get; set; }
-
     }
 }

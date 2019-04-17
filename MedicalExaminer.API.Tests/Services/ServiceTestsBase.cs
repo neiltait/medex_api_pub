@@ -40,7 +40,6 @@ namespace MedicalExaminer.API.Tests.Services
             var clientFactory = CosmosMocker.CreateClientFactory(client);
             var dataAccess = new DatabaseAccess(clientFactory.Object);
             var connectionSettings = CosmosMocker.CreateConnectionSettings<TConnectionSettings>();
-            
             Service = GetService(dataAccess, connectionSettings.Object);
         }
 

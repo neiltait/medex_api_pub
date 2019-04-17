@@ -71,8 +71,8 @@ namespace MedicalExaminer.Common.Database
                     {
                         MaxItemCount = -1,
                     })
-                .Where(predicate)
-            .AsDocumentQuery();
+                    .Where(predicate)
+                    .AsDocumentQuery();
 
             FeedResponse<T> response = await query.ExecuteNextAsync<T>();
 
@@ -99,9 +99,9 @@ namespace MedicalExaminer.Common.Database
                     {
                         MaxItemCount = -1,
                     })
-                .Where(predicate)
-                .OrderBy(orderBy)
-                .AsDocumentQuery();
+                    .Where(predicate)
+                    .OrderBy(orderBy)
+                    .AsDocumentQuery();
 
             FeedResponse<T> response = await query.ExecuteNextAsync<T>();
 
