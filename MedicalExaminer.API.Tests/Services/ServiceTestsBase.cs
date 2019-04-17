@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosmonaut;
 using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
@@ -22,6 +23,7 @@ namespace MedicalExaminer.API.Tests.Services
         where TQuery : class, IQuery<TItem>
         where TConnectionSettings : class, IConnectionSettings
         where TService : QueryHandler<TQuery, TItem>
+        where TType : class
     {
         /// <summary>
         /// The Service under test.
@@ -38,7 +40,7 @@ namespace MedicalExaminer.API.Tests.Services
             var clientFactory = CosmosMocker.CreateClientFactory(client);
             var dataAccess = new DatabaseAccess(clientFactory.Object);
             var connectionSettings = CosmosMocker.CreateConnectionSettings<TConnectionSettings>();
-
+            
             Service = GetService(dataAccess, connectionSettings.Object);
         }
 
@@ -48,11 +50,14 @@ namespace MedicalExaminer.API.Tests.Services
         /// <param name="databaseAccess"></param>
         /// <param name="connectionSettings"></param>
         /// <returns></returns>
-        protected virtual TService GetService(IDatabaseAccess databaseAccess, TConnectionSettings connectionSettings)
+        protected virtual TService GetService(IDatabaseAccess databaseAccess, TConnectionSettings connectionSettings, ICosmosStore<TType> cosmosStore = null)
         {
-            var service = (TService)Activator.CreateInstance(typeof(TService), databaseAccess, connectionSettings);
+            if (cosmosStore != null)
+            {
+                return  (TService)Activator.CreateInstance(typeof(TService), databaseAccess, connectionSettings, cosmosStore);
+            }
 
-            return service;
+            return (TService)Activator.CreateInstance(typeof(TService), databaseAccess, connectionSettings);
         }
 
         /// <summary>

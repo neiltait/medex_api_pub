@@ -25,15 +25,16 @@ namespace MedicalExaminer.Common.Services.Examination
         /// <param name="databaseAccess">Database Access.</param>
         /// <param name="connectionSettings">Connection Settings.</param>
         /// <param name="examinationQueryBuilder">Examination Query Builder.</param>
-        public ExaminationsRetrievalService(IDatabaseAccess databaseAccess, 
-            IExaminationConnectionSettings connectionSettings, 
+        /// <param name="store">Cosmos Store for paging.</param>
+        public ExaminationsRetrievalService(
+            IDatabaseAccess databaseAccess,
+            IExaminationConnectionSettings connectionSettings,
             ExaminationsQueryExpressionBuilder examinationQueryBuilder,
             ICosmosStore<Models.Examination> store)
             : base(databaseAccess, connectionSettings)
         {
             _examinationQueryBuilder = examinationQueryBuilder;
             _store = store;
-
         }
 
         /// <inheritdoc/>
@@ -51,9 +52,9 @@ namespace MedicalExaminer.Common.Services.Examination
                 case ExaminationsOrderBy.Urgency:
                     return _store.Query().WithPagination(param.FilterPageNumber, param.FilterPageSize).Where(predicate).OrderByDescending(x => x.UrgencyScore).ToListAsync().Result;
                 case ExaminationsOrderBy.CaseCreated:
-                    return _store.Query().WithPagination(param.FilterPageNumber, param.FilterPageSize).Where(predicate).OrderBy(x => x.CreatedAt).ToListAsync().Result;//, param.FilterPageSize, param.FilterPageNumber);
+                    return _store.Query().WithPagination(param.FilterPageNumber, param.FilterPageSize).Where(predicate).OrderBy(x => x.CreatedAt).ToListAsync().Result;
                 case null:
-                    return _store.Query().WithPagination(param.FilterPageNumber, param.FilterPageSize).Where(predicate).ToListAsync().Result;// param.FilterPageSize, param.FilterPageNumber);
+                    return _store.Query().WithPagination(param.FilterPageNumber, param.FilterPageSize).Where(predicate).ToListAsync().Result;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(param.FilterOrderBy));
             }

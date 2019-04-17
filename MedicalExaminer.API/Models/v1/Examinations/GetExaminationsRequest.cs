@@ -45,10 +45,5 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// </summary>
         public int PageNumber { get; set; }
 
-        /// <summary>
-        /// Page number to begin the results on
-        /// </summary>
-        public string PagingToken { get; set; }
-
     }
 }

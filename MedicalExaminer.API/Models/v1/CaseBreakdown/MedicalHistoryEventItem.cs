@@ -19,7 +19,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// User Identifier.
         /// </summary>
-        public string UserId { get; }
+        public string UserId { get; set; }
 
         /// <summary>
         /// the type of event this is

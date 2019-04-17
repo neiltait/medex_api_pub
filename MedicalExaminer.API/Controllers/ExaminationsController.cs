@@ -76,9 +76,8 @@ namespace MedicalExaminer.API.Controllers
                 filter.PageNumber,
                 filter.PageSize,
                 filter.UserId,
-                filter.OpenCases,
-                filter.PagingToken,
-                user.UserId);
+                filter.OpenCases);
+
             var examinations = await _examinationsRetrievalService.Handle(examinationsQuery);
 
             var dashboardOverview = await _examinationsDashboardService.Handle(examinationsQuery);

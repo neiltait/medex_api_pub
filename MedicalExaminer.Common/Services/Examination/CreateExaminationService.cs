@@ -13,16 +13,13 @@ namespace MedicalExaminer.Common.Services.Examination
 
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
-        private readonly ICosmosStore<Models.Examination> _store;
 
         public CreateExaminationService(
             IDatabaseAccess databaseAccess,
-            IExaminationConnectionSettings connectionSettings,
-            ICosmosStore<Models.Examination> store)
+            IExaminationConnectionSettings connectionSettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
-            _store = store;
         }
         
         public async Task<Models.Examination> Handle(CreateExaminationQuery param)
@@ -31,6 +28,7 @@ namespace MedicalExaminer.Common.Services.Examination
             {
                 throw new ArgumentNullException(nameof(param));
             }
+
             try
             {
                 param.Examination.ExaminationId = Guid.NewGuid().ToString();
@@ -46,8 +44,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 };
                 param.Examination.UpdateCaseUrgencyScore();
 
-                return await _store.UpsertAsync(param.Examination);
-
+                return await _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination);
             }
             catch (Exception)
             {

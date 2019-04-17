@@ -34,6 +34,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             CreateExaminationQuery query = new CreateExaminationQuery(examination);
 
+
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
                 examination, false)).Returns(Task.FromResult(examination)).Verifiable();

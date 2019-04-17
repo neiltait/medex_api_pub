@@ -1,4 +1,5 @@
-﻿using MedicalExaminer.Common.ConnectionSettings;
+﻿using Cosmonaut;
+using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -29,6 +30,40 @@ namespace MedicalExaminer.API.Tests.Services
         {
             return new Mock<T>(
                 new Mock<Uri>("https://anything.co.uk").Object, "a", "c");
+        }
+
+        public static Mock<ICosmosStore<T>> CreateCosmosStore<T>(T[] collectionDocuments)
+            where T : class
+        {
+            var mock = new Mock<ICosmosStore<T>>();
+            var provider = new Mock<IQueryProvider>();
+            var mockOrderedQueryable = new Mock<IOrderedQueryable<T>>();
+            var dataSource = collectionDocuments.AsQueryable();
+            var mockDocumentQuery = new Mock<IFakeDocumentQuery<T>>();
+            provider
+                .Setup(_ => _.CreateQuery<T>(It.IsAny<Expression>()))
+                .Returns((Expression expression) =>
+                {
+                    
+                    var query = new EnumerableQuery<T>(expression);
+                    var response = new FeedResponse<T>(query);
+
+                    mockDocumentQuery
+                        .SetupSequence(_ => _.HasMoreResults)
+                        .Returns(true)
+                        .Returns(false);
+
+                    mockDocumentQuery
+                        .Setup(_ => _.ExecuteNextAsync<T>(It.IsAny<CancellationToken>()))
+                        .ReturnsAsync(response);
+
+                    return mockDocumentQuery.Object;
+                });
+
+
+            mockOrderedQueryable.Setup(x => x.Expression).Returns(() => dataSource.Expression);
+            mock.Setup(x => x.Query(null)).Returns(mockDocumentQuery.Object);
+            return mock;
         }
 
         public static Mock<IDocumentClient> CreateDocumentClient<T>(T[] collectionDocuments)
