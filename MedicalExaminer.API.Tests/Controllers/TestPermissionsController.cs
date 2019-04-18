@@ -78,7 +78,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 {
                     User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                     {
-                        new Claim(ClaimTypes.Email, "username")
+                        new Claim(ClaimTypes.Email, "test@example.com")
                     }))
                 }
             };
@@ -89,10 +89,12 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             // Arrange
             var expectedEmail = "expectedEmail";
+            var expectedCurrentUserId = "expectedCurrentUserId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
+            var expectedCurrentUserEmail = "test@example.com";
             var expectedUser = new MeUser()
             {
                 UserId = expectedUserId,
@@ -100,8 +102,21 @@ namespace MedicalExaminer.API.Tests.Controllers
                 {
                     new MEUserPermission()
                     {
-                        LocationId = expectedNationalId,
+                        LocationId = expectedSiteId,
                         UserRole = (int)expectedRole,
+                    },
+                }
+            };
+            var expectedCurrentUser = new MeUser()
+            {
+                UserId = expectedCurrentUserId,
+                Email = expectedCurrentUserEmail,
+                Permissions = new[]
+                {
+                    new MEUserPermission()
+                    {
+                        LocationId = expectedNationalId,
+                        UserRole = (int) expectedRole,
                     },
                 }
             };
@@ -120,9 +135,13 @@ namespace MedicalExaminer.API.Tests.Controllers
                 }},
             };
 
-            UsersRetrievalByEmailServiceMock
-                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedEmail)))
+            _userRetrievalByIdServiceMock
+                .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
+
+            UsersRetrievalByEmailServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedCurrentUserEmail)))
+                .Returns(Task.FromResult(expectedCurrentUser));
 
             PermissionServiceMock
                 .Setup(ps => ps.LocationIdsWithPermission(expectedUser, expectedPermission))
