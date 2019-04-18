@@ -5,7 +5,7 @@ using System.Text;
 namespace MedicalExaminer.Common.Queries.Location
 {
     /// <summary>
-    /// Location Prents Query.
+    /// Location Parents Query.
     /// </summary>
     public class LocationParentsQuery: IQuery<IEnumerable<Models.Location>>
     {
