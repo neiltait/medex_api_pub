@@ -116,7 +116,7 @@ namespace MedicalExaminer.API.Controllers
             {
                 // Get all the permission location ids on the user in the request.
                 var meUser = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
-                var permissionLocations = meUser.Permissions.Select(p => p.LocationId);
+                var permissionLocations = meUser.Permissions.Select(p => p.LocationId).ToList();
 
                 // Get all the location paths for all those locations.
                 var locationPaths =
@@ -125,7 +125,7 @@ namespace MedicalExaminer.API.Controllers
                 // The locations the user making the request has direct access to.
                 var permissedLocations = (await LocationsWithPermission(Common.Authorization.Permission.GetUserPermissions)).ToList();
 
-                // Select only the permissions that the user making the request has access to.
+                // Select only the permissions that the user making the request has access to from the user in question.
                 var permissions = meUser
                     .Permissions
                     .Where(p => locationPaths[p.LocationId]
@@ -164,7 +164,9 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var permission = await _permissionPersistence.GetPermissionAsync(meUserId, permissionId);
+                var meUser = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
+
+                var permission = meUser.Permissions.First(p => p.PermissionId == permissionId);
 
                 var locationDocument = (await
                         _locationParentsService.Handle(
@@ -173,7 +175,7 @@ namespace MedicalExaminer.API.Controllers
 
                 if (!CanAsync(Common.Authorization.Permission.GetUserPermission, locationDocument))
                 {
-                    Forbid();
+                    return Forbid();
                 }
 
                 return Ok(Mapper.Map<GetPermissionResponse>(permission));
@@ -216,7 +218,7 @@ namespace MedicalExaminer.API.Controllers
 
                 if (!CanAsync(Common.Authorization.Permission.CreateUserPermission, locationDocument))
                 {
-                    Forbid();
+                    return Forbid();
                 }
 
                 var createdPermission = await _permissionPersistence.CreatePermissionAsync(permission);
@@ -263,7 +265,7 @@ namespace MedicalExaminer.API.Controllers
 
                 if (!CanAsync(Common.Authorization.Permission.CreateUserPermission, locationDocument))
                 {
-                    Forbid();
+                    return Forbid();
                 }
 
                 var updatedPermission = await _permissionPersistence.UpdatePermissionAsync(permission);

@@ -12,8 +12,6 @@ namespace MedicalExaminer.Common
 
         Task<Permission> GetPermissionAsync(string meUserId, string permissionId);
 
-        Task<IEnumerable<Permission>> GetPermissionsAsync(IEnumerable<string> locations, string meUserId);
-
         Task<IEnumerable<Permission>> GetPermissionsAsync(string meUserId);
     }
 }

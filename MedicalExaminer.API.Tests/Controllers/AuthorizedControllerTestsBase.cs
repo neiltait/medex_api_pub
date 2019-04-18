@@ -17,7 +17,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         : ControllerTestsBase<TController>
         where TController : AuthorizedBaseController
     {
-        public AuthorizedControllerTestsBase()
+        public AuthorizedControllerTestsBase(bool setupAuthorize = true)
         {
             UsersRetrievalByEmailServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
 
@@ -25,12 +25,25 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             PermissionServiceMock = new Mock<IPermissionService>();
 
+            if (setupAuthorize)
+            {
+                AuthorizationServiceMock
+                    .Setup(aus => aus.AuthorizeAsync(
+                        It.IsAny<ClaimsPrincipal>(),
+                        It.IsAny<ILocationPath>(),
+                        It.IsAny<IEnumerable<IAuthorizationRequirement>>()))
+                    .Returns(Task.FromResult(AuthorizationResult.Success()));
+            }
+        }
+
+        protected void SetupAuthorize(AuthorizationResult result)
+        {
             AuthorizationServiceMock
                 .Setup(aus => aus.AuthorizeAsync(
                     It.IsAny<ClaimsPrincipal>(),
                     It.IsAny<ILocationPath>(),
                     It.IsAny<IEnumerable<IAuthorizationRequirement>>()))
-                .Returns(Task.FromResult(AuthorizationResult.Success()));
+                .Returns(Task.FromResult(result));
         }
 
         protected Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>> UsersRetrievalByEmailServiceMock { get; }

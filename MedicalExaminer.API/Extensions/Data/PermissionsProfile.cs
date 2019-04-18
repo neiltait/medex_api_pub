@@ -15,6 +15,10 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public PermissionsProfile()
         {
+            CreateMap<MEUserPermission, PermissionItem>();
+            CreateMap<MEUserPermission, GetPermissionResponse>()
+                .ForMember(x => x.Errors, opt => opt.Ignore());
+
             CreateMap<Permission, PermissionItem>();
             CreateMap<Permission, GetPermissionResponse>()
                 .ForMember(x => x.Errors, opt => opt.Ignore());
