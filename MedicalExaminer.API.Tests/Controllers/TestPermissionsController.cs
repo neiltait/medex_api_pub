@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
@@ -8,9 +9,12 @@ using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Queries.Permission;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -27,15 +31,26 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>> _locationParentsServiceMock;
         private readonly Mock<IPermissionPersistence> _permissionPersistenceMock;
 
+        private readonly
+            Mock<IAsyncQueryHandler<PermissionsRetrievalByLocationsAndUserServiceQuery, IEnumerable<Permission>>>
+            _permissionsRetrievalByLocationsAndUserServiceMock;
+
+        private readonly Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>
+            _locationsParentsServiceMock;
+
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="TestPermissionsController" /> class.
         /// </summary>
         public TestPermissionsController()
         {
-            _permissionPersistenceMock = new Mock<IPermissionPersistence>();
-            _userRetrievalByIdServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
-            _userUpdateServiceMock = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
-            _locationParentsServiceMock = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>();
+            _permissionPersistenceMock = new Mock<IPermissionPersistence>(MockBehavior.Strict);
+            _userRetrievalByIdServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>(MockBehavior.Strict);
+            _userUpdateServiceMock = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>(MockBehavior.Strict);
+            _locationParentsServiceMock = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>(MockBehavior.Strict);
+            _permissionsRetrievalByLocationsAndUserServiceMock = new Mock<IAsyncQueryHandler<PermissionsRetrievalByLocationsAndUserServiceQuery, IEnumerable<Permission>>>(MockBehavior.Strict);
+            _locationsParentsServiceMock = new Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>(MockBehavior.Strict);
+
 
             Controller = new PermissionsController(
                 LoggerMock.Object,
@@ -46,26 +61,83 @@ namespace MedicalExaminer.API.Tests.Controllers
                 _userRetrievalByIdServiceMock.Object,
                 _userUpdateServiceMock.Object,
                 _locationParentsServiceMock.Object,
+                _permissionsRetrievalByLocationsAndUserServiceMock.Object,
+                _locationsParentsServiceMock.Object,
                 _permissionPersistenceMock.Object
             );
+
+            Controller.ControllerContext = GetContollerContext();
+
         }
 
-        /// <summary>
-        ///     Test returning an empty list
-        /// </summary>
-        /// <returns>Async Task</returns>
+        private ControllerContext GetContollerContext()
+        {
+            return new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                    {
+                        new Claim(ClaimTypes.Email, "username")
+                    }))
+                }
+            };
+        }
+
         [Fact]
-        public async Task TestGetEmptyResponse()
+        public async Task GetPermissions_ReturnsPermission()
         {
             // Arrange
-            var userId = "fake_id_01";
+            var expectedEmail = "expectedEmail";
+            var expectedUserId = "expectedUserId";
+            var expectedSiteId = "site1";
+            var expectedNationalId = "national1";
+            var expectedRole = UserRoles.MedicalExaminer;
+            var expectedUser = new MeUser()
+            {
+                UserId = expectedUserId,
+                Permissions = new[]
+                {
+                    new MEUserPermission()
+                    {
+                        LocationId = expectedNationalId,
+                        UserRole = (int)expectedRole,
+                    },
+                }
+            };
+            var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
+            var expectedLocations = new[]
+            {
+                expectedNationalId,
+            };
+            IDictionary<string, IEnumerable<Location>> expectedLocationsParents = new Dictionary<string, IEnumerable<Location>>()
+            {
+                { expectedSiteId, new[] {
+                    new Location(){ LocationId = expectedSiteId },
+                    new Location(){ LocationId = "trust1" },
+                    new Location(){ LocationId = "region1" },
+                    new Location(){ LocationId = expectedNationalId },
+                }},
+            };
 
-            _permissionPersistenceMock.Setup(pp => pp.GetPermissionsAsync(userId)).Returns(
+            UsersRetrievalByEmailServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedEmail)))
+                .Returns(Task.FromResult(expectedUser));
+
+            PermissionServiceMock
+                .Setup(ps => ps.LocationIdsWithPermission(expectedUser, expectedPermission))
+                .Returns(expectedLocations);
+
+            _locationsParentsServiceMock
+                .Setup(lps => lps.Handle(It.IsAny<LocationsParentsQuery>()))
+                .Returns(Task.FromResult(expectedLocationsParents));
+
+            /*_permissionPersistenceMock.Setup(pp => pp.GetPermissionsAsync(userId)).Returns(
                 Task.FromResult<IEnumerable<Permission>>(
-                    new List<Permission>()));
+                    new List<Permission>()));*/
 
             // Act
-            var response = await Controller.GetPermissions(userId);
+            var response = await Controller.GetPermissions(expectedUserId);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
@@ -75,7 +147,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 
-            model.Permissions.Count().Should().Be(0);
+            model.Permissions.Count().Should().Be(1);
+            model.Permissions.ElementAt(0).LocationId.Should().Be(expectedNationalId);
+            model.Permissions.ElementAt(0).UserRole.Should().Be((int)expectedRole);
         }
 
         /// <summary>

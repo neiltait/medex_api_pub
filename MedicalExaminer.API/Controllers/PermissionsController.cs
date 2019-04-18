@@ -11,6 +11,7 @@ using MedicalExaminer.Common;
 using MedicalExaminer.Common.Extensions.Models;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Queries.Permission;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -42,6 +43,20 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
 
         /// <summary>
+        /// Permissions Retrieval By Locations And User Service.
+        /// </summary>
+        private readonly
+            IAsyncQueryHandler<PermissionsRetrievalByLocationsAndUserServiceQuery, IEnumerable<Permission>>
+            _permissionsRetrievalByLocationsAndUserService;
+
+        /// <summary>
+        /// Locations Parents Service.
+        /// </summary>
+        private readonly
+            IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>
+            _locationsParentsService;
+
+        /// <summary>
         ///     The Permission Persistence Layer
         /// </summary>
         private readonly IPermissionPersistence _permissionPersistence;
@@ -62,6 +77,8 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="userRetrievalByIdService">User retrieval by id service.</param>
         /// <param name="userUpdateService">User update service.</param>
         /// <param name="locationParentsService">Location Parents Service.</param>
+        /// <param name="permissionsRetrievalByLocationsAndUserService">Permissions Retrieval By Locations and User Service.</param>
+        /// <param name="locationsParentsService">Locations Parents Service.</param>
         /// <param name="permissionPersistence">The Permission Persistence</param>
         public PermissionsController(
             IMELogger logger,
@@ -72,6 +89,8 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
             IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService,
+            IAsyncQueryHandler<PermissionsRetrievalByLocationsAndUserServiceQuery, IEnumerable<Permission>> permissionsRetrievalByLocationsAndUserService,
+            IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>> locationsParentsService,
             IPermissionPersistence permissionPersistence)
             : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
@@ -79,6 +98,8 @@ namespace MedicalExaminer.API.Controllers
             _userUpdateService = userUpdateService;
             _permissionPersistence = permissionPersistence;
             _locationParentsService = locationParentsService;
+            _permissionsRetrievalByLocationsAndUserService = permissionsRetrievalByLocationsAndUserService;
+            _locationsParentsService = locationsParentsService;
         }
 
         /// <summary>
@@ -93,9 +114,22 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var permissedLocations = await LocationsWithPermission(Common.Authorization.Permission.GetUserPermissions);
+                // Get all the permission location ids on the user in the request.
+                var meUser = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
+                var permissionLocations = meUser.Permissions.Select(p => p.LocationId);
 
-                var permissions = await _permissionPersistence.GetPermissionsAsync(permissedLocations, meUserId);
+                // Get all the location paths for all those locations.
+                var locationPaths =
+                    await _locationsParentsService.Handle(new LocationsParentsQuery(permissionLocations));
+
+                // The locations the user making the request has direct access to.
+                var permissedLocations = (await LocationsWithPermission(Common.Authorization.Permission.GetUserPermissions)).ToList();
+
+                // Select only the permissions that the user making the request has access to.
+                var permissions = meUser
+                    .Permissions
+                    .Where(p => locationPaths[p.LocationId]
+                        .Any(l => permissedLocations.Contains(l.LocationId)));
 
                 return Ok(new GetPermissionsResponse
                 {
