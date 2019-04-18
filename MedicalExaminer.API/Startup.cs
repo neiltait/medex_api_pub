@@ -148,7 +148,7 @@ namespace MedicalExaminer.API
                 {
                     Type = "oauth2",
                     Flow = "implicit",
-                    AuthorizationUrl = "https://***REMOVED***.oktapreview.com/oauth2/default/v1/authorize",
+                    AuthorizationUrl = okatSettings.AuthorizationUrl,
                     Scopes = new Dictionary<string, string>
                     {
                         { "profile", "Profile" },
