@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
+using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
@@ -106,9 +107,11 @@ namespace MedicalExaminer.API.Controllers
 
             var result = _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(examinationId, patientDetails));
 
+            var patientCard = Mapper.Map<PatientCardItem>(result);
+
             return Ok(new PutPatientDetailsResponse
             {
-                ExaminationId = result.Result.ExaminationId
+                Header = patientCard
             });
         }
     }
