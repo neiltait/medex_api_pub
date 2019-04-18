@@ -65,11 +65,11 @@ namespace MedicalExaminer.API.Controllers
             var bereavedDiscussionEventNote = Mapper.Map<BereavedDiscussionEvent>(putNewBereavedDiscussionEventNoteRequest);
             bereavedDiscussionEventNote.UserId = user.UserId;
 
-            // Code improvement
-            //var x = ConvertRequestToObject<BereavedDiscussionEvent, PutBereavedDiscussionEventRequest>(putNewBereavedDiscussionEventNoteRequest);
-
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
             var patientCard = Mapper.Map<PatientCardItem>(examination);
+
+            // Code improvement
+            //var x = ConvertRequestToObject<BereavedDiscussionEvent, PutBereavedDiscussionEventRequest>(putNewBereavedDiscussionEventNoteRequest);
 
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, bereavedDiscussionEventNote));
 

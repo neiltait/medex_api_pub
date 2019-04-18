@@ -137,10 +137,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 {
                     NursingTeamInformation = expectedNursingTeamInformation
                 }
-
-                //DateOfBirth = new DateTime(2000, 1, 18),
-                //DateOfDeath = new DateTime(2019, 4, 15),
-                //CreatedAt = DateTimeOffset.Now
             };
 
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
