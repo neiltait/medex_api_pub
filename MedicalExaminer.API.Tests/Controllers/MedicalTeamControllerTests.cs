@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
@@ -9,6 +10,7 @@ using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -75,6 +77,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new MedicalTeamController(logger.Object, Mapper, 
                 examinationRetrievalService.Object,  medicalTeamUpdateService.Object, usersRetrievalByEmailService.Object);
 
+            Controller.ControllerContext = GetContollerContext();
+
             // Act
             var response = Controller.GetMedicalTeam(examinationId).Result;
 
@@ -111,17 +115,31 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 medicalTeamUpdateService.Object,
                 usersRetrievalByEmailService.Object);
-
+            Controller.ControllerContext = GetContollerContext();
             // Act
             var response = Controller.GetMedicalTeam(examinationId).Result;
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
-            var emptyResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var emptyResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
             var examinationIdReturned = (GetMedicalTeamResponse)emptyResult.Value;
             examinationIdReturned.MedicalExaminerUserId.Should().BeNull();
             examinationIdReturned.MedicalExaminerOfficerUserId.Should().BeNull();
-            examinationIdReturned.NursingTeamInformation.Should().BeEmpty();
+            examinationIdReturned.NursingTeamInformation.Should().BeNull();
+        }
+
+        private ControllerContext GetContollerContext()
+        {
+            return new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.Email, "username")
+            }, "someAuthTypeName"))
+                }
+            };
         }
 
         [Fact]
@@ -153,7 +171,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             Controller = new MedicalTeamController(logger.Object, Mapper, 
                 examinationRetrievalService.Object, medicalTeamUpdateService.Object, usersRetrievalByEmailService.Object);
-
+            Controller.ControllerContext = GetContollerContext();
             // Act
             var response = Controller.GetMedicalTeam(examinationId).Result;
 
