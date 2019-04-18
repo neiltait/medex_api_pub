@@ -35,5 +35,15 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// Event Text (Length to be confirmed).
         /// </summary>
         public string Text { get; set; }
+
+        /// <summary>
+        /// Users full name
+        /// </summary>
+        public string UserFullName { get; set; }
+
+        /// <summary>
+        /// Users Role
+        /// </summary>
+        public string UsersRole { get; set; }
     }
 }
