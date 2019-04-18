@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using MedicalExaminer.API.Models.v1.Examinations;
+using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.Models;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 
@@ -18,6 +19,8 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<Examination, ExaminationItem>();
             CreateMap<Examination, GetPatientDetailsResponse>()
+                .ForMember(x => x.Header, opt => opt.MapFrom(y => y));
+            CreateMap<Examination, GetMedicalTeamResponse>()
                 .ForMember(x => x.Header, opt => opt.MapFrom(y => y));
             CreateMap<PostExaminationRequest, Examination>()
                 .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())

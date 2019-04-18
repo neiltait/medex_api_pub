@@ -3,14 +3,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
-using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
-using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -30,7 +28,13 @@ namespace MedicalExaminer.API.Tests.Controllers
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
             var logger = new Mock<IMELogger>();
 
-            Controller = new MedicalTeamController(logger.Object, Mapper, examinationRetrievalService.Object, medicalTeamUpdateService.Object);
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var mockMeUser = new Mock<MeUser>();
+            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser.Object));
+
+            Controller = new MedicalTeamController(logger.Object, Mapper, 
+                examinationRetrievalService.Object, medicalTeamUpdateService.Object, usersRetrievalByEmailService.Object);
             Controller.ModelState.AddModelError("An", "Error");
 
             // Act
@@ -63,7 +67,13 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
 
-            Controller = new MedicalTeamController(logger.Object, Mapper, examinationRetrievalService.Object,  medicalTeamUpdateService.Object);
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var mockMeUser = new Mock<MeUser>();
+            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser.Object));
+
+            Controller = new MedicalTeamController(logger.Object, Mapper, 
+                examinationRetrievalService.Object,  medicalTeamUpdateService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = Controller.GetMedicalTeam(examinationId).Result;
@@ -90,11 +100,17 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
 
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var mockMeUser = new Mock<MeUser>();
+            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser.Object));
+
             Controller = new MedicalTeamController(
                 logger.Object,
                 Mapper,
                 examinationRetrievalService.Object,
-                medicalTeamUpdateService.Object);
+                medicalTeamUpdateService.Object,
+                usersRetrievalByEmailService.Object);
 
             // Act
             var response = Controller.GetMedicalTeam(examinationId).Result;
@@ -134,7 +150,13 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
 
-            Controller = new MedicalTeamController(logger.Object, Mapper, examinationRetrievalService.Object, medicalTeamUpdateService.Object);
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var mockMeUser = new Mock<MeUser>();
+            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser.Object));
+
+            Controller = new MedicalTeamController(logger.Object, Mapper, 
+                examinationRetrievalService.Object, medicalTeamUpdateService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = Controller.GetMedicalTeam(examinationId).Result;
@@ -154,7 +176,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
             var logger = new Mock<IMELogger>();
 
-            Controller = new MedicalTeamController(logger.Object, Mapper, examinationRetrievalService.Object, medicalTeamUpdateService.Object);
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var mockMeUser = new Mock<MeUser>();
+            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser.Object));
+
+            Controller = new MedicalTeamController(logger.Object, Mapper, 
+                examinationRetrievalService.Object, medicalTeamUpdateService.Object,
+                usersRetrievalByEmailService.Object);
             Controller.ModelState.AddModelError("An", "Error");
             var examinationId = "examinationId";
             var request = new PutMedicalTeamRequest();
@@ -180,7 +209,13 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
 
-            Controller = new MedicalTeamController(logger.Object, mapper.Object, examinationRetrievalService.Object, medicalTeamUpdateService.Object);
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var mockMeUser = new Mock<MeUser>();
+            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser.Object));
+
+            Controller = new MedicalTeamController(logger.Object, mapper.Object, 
+                examinationRetrievalService.Object, medicalTeamUpdateService.Object, usersRetrievalByEmailService.Object);
             var examinationId = "examinationId";
             var request = new PutMedicalTeamRequest();
 
@@ -215,7 +250,14 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(examination));
             medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>()))
                 .Returns(Task.FromResult(examination));
-            Controller = new MedicalTeamController(logger.Object, Mapper, examinationRetrievalService.Object, medicalTeamUpdateService.Object);
+
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var mockMeUser = new Mock<MeUser>();
+            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser.Object));
+
+            Controller = new MedicalTeamController(logger.Object, Mapper, 
+                examinationRetrievalService.Object, medicalTeamUpdateService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = Controller.PutMedicalTeam(examinationId, postMedicalTeamRequest).Result;
@@ -255,11 +297,17 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(u => u.Handle(It.IsAny<Examination>()))
                 .Returns(Task.FromResult(nullExamination));
 
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var mockMeUser = new Mock<MeUser>();
+            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser.Object));
+
             Controller = new MedicalTeamController(
                 logger.Object,
                 mapper.Object,
                 examinationRetrievalService.Object,
-                medicalTeamUpdateService.Object);
+                medicalTeamUpdateService.Object,
+                usersRetrievalByEmailService.Object);
 
             // Act
             var response = Controller.PutMedicalTeam(examinationId, putMedicalTeamRequest).Result;
@@ -294,7 +342,13 @@ namespace MedicalExaminer.API.Tests.Controllers
             medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>()))
                 .Returns(Task.FromResult(examination));
 
-            Controller = new MedicalTeamController(logger.Object, Mapper, examinationRetrievalService.Object,medicalTeamUpdateService.Object);
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var mockMeUser = new Mock<MeUser>();
+            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser.Object));
+
+            Controller = new MedicalTeamController(logger.Object, Mapper, 
+                examinationRetrievalService.Object,medicalTeamUpdateService.Object, usersRetrievalByEmailService.Object);
 
             // Act
             var response = Controller.PutMedicalTeam(examinationId, postMedicalTeamRequest).Result;

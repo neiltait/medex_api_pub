@@ -1,8 +1,6 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
-using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
@@ -12,9 +10,6 @@ using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing.Internal;
-using Microsoft.Azure.Documents.SystemFunctions;
-using Remotion.Linq.Clauses.ResultOperators;
 
 namespace MedicalExaminer.API.Controllers
 {
