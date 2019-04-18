@@ -44,7 +44,6 @@ namespace MedicalExaminer.Models
 
         string OrganisationCareBeforeDeathLocationId { get; set; }
 
-        // string DeathOccuredLocationId { get; set; }
         ModeOfDisposal ModeOfDisposal { get; set; }
 
         string FuneralDirectors { get; set; }
@@ -55,8 +54,10 @@ namespace MedicalExaminer.Models
 
         string PlaceDeathOccured { get; set; }
 
-        DateTime DateOfBirth { get; set; }
-        DateTime DateOfDeath { get; set; }
+        DateTime? DateOfBirth { get; set; }
+
+        DateTime? DateOfDeath { get; set; }
+
         bool CulturalPriority { get; set; }
 
         bool FaithPriority { get; set; }
@@ -78,6 +79,5 @@ namespace MedicalExaminer.Models
         string ImplantDetails { get; set; }
 
         IEnumerable<Representative> Representatives { get; set; }
-
     }
 }

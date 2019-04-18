@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.API.Attributes;
+using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.PatientDetails
@@ -12,6 +13,10 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
     /// </summary>
     public class GetPatientDetailsResponse : ResponseBase
     {
+        /// <summary>
+        /// Patient Details Header
+        /// </summary>
+        public PatientCardItem Header { get; set; }
 
         /// <summary>
         /// The case urgency score

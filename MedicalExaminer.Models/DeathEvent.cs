@@ -47,5 +47,15 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "created")]
         public DateTime? Created { get; set; }
+
+        /// <summary>
+        /// Users full name
+        /// </summary>
+        public string UserFullName { get; set; }
+
+        /// <summary>
+        /// Users Role
+        /// </summary>
+        public string UsersRole { get; set; }
     }
 }

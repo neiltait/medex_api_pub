@@ -175,6 +175,36 @@ namespace MedicalExaminer.API.Controllers
             return Ok(GetDictionary(typeof(CaseStatus)));
         }
 
+        /// Returns all Case Statuses
+        /// </summary>
+        /// <returns>Dictionary of Case Statuses</returns>
+        [HttpGet("cremation_form_statuses")]
+        public ActionResult GetCremationFormStatuses()
+        {
+            return Ok(GetDictionary(typeof(CremationFormStatus)));
+        }
+
+        /// Returns all Case Statuses
+        /// </summary>
+        /// <returns>Dictionary of Case Statuses</returns>
+        [HttpGet("gp_notified_statuses")]
+        public ActionResult GetGPNotifiedStatuses()
+        {
+            return Ok(GetDictionary(typeof(GPNotified)));
+        }
+
+        /// Returns all Case Statuses
+        /// </summary>
+        /// <returns>Dictionary of Case Statuses</returns>
+        [HttpGet("case_outcome_summary_statuses")]
+        public ActionResult GetCaseOutcomeSummaryStatuses()
+        {
+            return Ok(GetDictionary(typeof(CaseOutcomeSummary)));
+        }
+
+
+
+
         private Dictionary<string, int> GetDictionary(Type enumeratorType)
         {
             var dic = new Dictionary<string, int>();

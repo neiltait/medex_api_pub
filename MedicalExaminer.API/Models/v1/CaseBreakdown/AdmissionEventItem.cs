@@ -6,11 +6,20 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
     public class AdmissionEventItem : IEvent
     {
-        
-            /// <summary>
-            /// Event Identification.
-            /// </summary>
-            public string EventId { get; set; }
+        /// <summary>
+        /// Users full name
+        /// </summary>
+        public string UserFullName { get; set; }
+
+        /// <summary>
+        /// Users Role
+        /// </summary>
+        public string UsersRole { get; set; }
+
+        /// <summary>
+        /// Event Identification.
+        /// </summary>
+        public string EventId { get; set; }
 
             /// <summary>
             /// User Identifier.

@@ -42,3 +42,7 @@ Thumbs.db
 
 MedicalExaminer.API/appsettings.Development.json
 MedicalExaminer.API/appsettings.Development.backup.json
+
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+
