@@ -55,7 +55,8 @@ namespace MedicalExaminer.API.Controllers
 
             var user = await CurrentUser();
             var bereavedDiscussionEventNote = Mapper.Map<BereavedDiscussionEvent>(putNewBereavedDiscussionEventNoteRequest);
-            bereavedDiscussionEventNote.UserId = user.UserId;
+
+            bereavedDiscussionEventNote = SetEventUserStatuses(bereavedDiscussionEventNote, user);
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
             var patientCard = Mapper.Map<PatientCardItem>(examination);
@@ -74,6 +75,14 @@ namespace MedicalExaminer.API.Controllers
             };
 
             return Ok(res);
+        }
+
+        private T SetEventUserStatuses<T>(T theEvent, MeUser user)
+            where T : IEvent
+        {
+            theEvent.UserId = user.UserId;
+            theEvent.UserFullName = user.FirstName + user.LastName;
+            return theEvent;
         }
 
         [HttpPut]
@@ -95,7 +104,7 @@ namespace MedicalExaminer.API.Controllers
 
             var user = await CurrentUser();
             var preScrutinyEventNote = Mapper.Map<PreScrutinyEvent>(putNewPreScrutinyEventNoteRequest);
-            preScrutinyEventNote.UserId = user.UserId;
+            preScrutinyEventNote = SetEventUserStatuses(preScrutinyEventNote, user);
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
             var patientCard = Mapper.Map<PatientCardItem>(examination);
@@ -135,8 +144,8 @@ namespace MedicalExaminer.API.Controllers
 
             var user = await CurrentUser();
             var medicalHistoryEventNote = Mapper.Map<MedicalHistoryEvent>(putMedicalHistoryEventRequest);
-            medicalHistoryEventNote.UserId = user.UserId;
-
+            medicalHistoryEventNote = SetEventUserStatuses(medicalHistoryEventNote, user);
+            
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
             var patientCard = Mapper.Map<PatientCardItem>(examination);
 
@@ -174,7 +183,7 @@ namespace MedicalExaminer.API.Controllers
             }
             var user = await CurrentUser();
             var admissionEventNote = Mapper.Map<AdmissionEvent>(putNewAdmissionEventNoteRequest);
-            admissionEventNote.UserId = user.UserId;
+            admissionEventNote = SetEventUserStatuses(admissionEventNote, user);
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
             var patientCard = Mapper.Map<PatientCardItem>(examination);
@@ -215,7 +224,8 @@ namespace MedicalExaminer.API.Controllers
             var user = await CurrentUser();
 
             var otherEventNote = Mapper.Map<OtherEvent>(putNewOtherEventNoteRequest);
-            otherEventNote.UserId = user.UserId;
+            otherEventNote = SetEventUserStatuses(otherEventNote, user);
+
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
             var patientCard = Mapper.Map<PatientCardItem>(examination);
@@ -294,7 +304,7 @@ namespace MedicalExaminer.API.Controllers
 
             var user = await CurrentUser();
             var qapDiscussionEventNote = Mapper.Map<QapDiscussionEvent>(putNewQapDiscussionEventNoteRequest);
-            qapDiscussionEventNote.UserId = user.UserId;
+            qapDiscussionEventNote = SetEventUserStatuses(qapDiscussionEventNote, user);
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
             var patientCard = Mapper.Map<PatientCardItem>(examination);
@@ -334,7 +344,7 @@ namespace MedicalExaminer.API.Controllers
 
             var user = await CurrentUser();
             var meoSummaryEvent = Mapper.Map<MeoSummaryEvent>(putNewMeoSummaryEventNoteRequest);
-            meoSummaryEvent.UserId = user.UserId;
+            meoSummaryEvent = SetEventUserStatuses(meoSummaryEvent, user);
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
             var patientCard = Mapper.Map<PatientCardItem>(examination);

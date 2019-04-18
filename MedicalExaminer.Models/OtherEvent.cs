@@ -7,6 +7,16 @@ namespace MedicalExaminer.Models
     public class OtherEvent : IEvent
     {
         /// <summary>
+        /// Users full name
+        /// </summary>
+        public string UserFullName { get; set; }
+
+        /// <summary>
+        /// Users Role
+        /// </summary>
+        public string UsersRole { get; set; }
+
+        /// <summary>
         /// Date event was created
         /// </summary>
         [JsonProperty(PropertyName = "created")]
