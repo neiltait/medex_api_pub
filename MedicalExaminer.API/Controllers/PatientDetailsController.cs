@@ -91,7 +91,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns></returns>
         [HttpPut]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public ActionResult<PutPatientDetailsResponse> UpdatePatientDetails(string examinationId, [FromBody]PutPatientDetailsRequest putPatientDetailsRequest)
+        public async Task<ActionResult<PutPatientDetailsResponse>> UpdatePatientDetails(string examinationId, [FromBody]PutPatientDetailsRequest putPatientDetailsRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -105,7 +105,7 @@ namespace MedicalExaminer.API.Controllers
 
             var patientDetails = Mapper.Map<PatientDetails>(putPatientDetailsRequest);
 
-            var result = _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(examinationId, patientDetails));
+            var result =await _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(examinationId, patientDetails));
 
             var patientCard = Mapper.Map<PatientCardItem>(result);
 
