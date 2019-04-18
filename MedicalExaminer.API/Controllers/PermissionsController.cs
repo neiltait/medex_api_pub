@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.API.Services;
@@ -45,6 +46,9 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         private readonly IPermissionPersistence _permissionPersistence;
 
+        /// <summary>
+        /// Location Parents Service.
+        /// </summary>
         private readonly IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> _locationParentsService;
 
         /// <summary>
@@ -83,15 +87,15 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="meUserId">The User Identifier.</param>
         /// <returns>A GetPermissionsResponse.</returns>
         [HttpGet]
+        [AuthorizePermission(Common.Authorization.Permission.GetUserPermissions)]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetPermissionsResponse>> GetPermissions(string meUserId)
         {
-            // Is this user me - then we can return permissions
-            // Do we have the get permissions permission?
-
             try
             {
-                var permissions = await _permissionPersistence.GetPermissionsAsync(meUserId);
+                var permissedLocations = await LocationsWithPermission(Common.Authorization.Permission.GetUserPermissions);
+
+                var permissions = await _permissionPersistence.GetPermissionsAsync(permissedLocations, meUserId);
 
                 return Ok(new GetPermissionsResponse
                 {
@@ -115,13 +119,10 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="permissionId">The Permission Id.</param>
         /// <returns>A GetPermissionResponse.</returns>
         [HttpGet("{permissionId}")]
+        [AuthorizePermission(Common.Authorization.Permission.GetUserPermission)]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetPermissionResponse>> GetPermission(string meUserId, string permissionId)
         {
-            // Can only get if
-            // The user is you
-            // The location is one you have permission on.
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(new GetPermissionResponse());
@@ -130,6 +131,17 @@ namespace MedicalExaminer.API.Controllers
             try
             {
                 var permission = await _permissionPersistence.GetPermissionAsync(meUserId, permissionId);
+
+                var locationDocument = (await
+                        _locationParentsService.Handle(
+                            new LocationParentsQuery(permission.LocationId)))
+                    .ToLocationPath();
+
+                if (!CanAsync(Common.Authorization.Permission.GetUserPermission, locationDocument))
+                {
+                    Forbid();
+                }
+
                 return Ok(Mapper.Map<GetPermissionResponse>(permission));
             }
             catch (ArgumentException)
@@ -148,14 +160,12 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="postPermission">The PostPermissionRequest.</param>
         /// <returns>A PostPermissionResponse.</returns>
         [HttpPost]
+        [AuthorizePermission(Common.Authorization.Permission.CreateUserPermission)]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PostPermissionResponse>> CreatePermission(
             [FromBody]
             PostPermissionRequest postPermission)
         {
-            // Do I have permission in the location that is being added.
-            // You can only give permission to somebody that you already have.
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(new PostPermissionResponse());
@@ -197,6 +207,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="putPermission">The PutPermissionRequest.</param>
         /// <returns>A PutPermissionResponse.</returns>
         [HttpPut("{permissionId}")]
+        [AuthorizePermission(Common.Authorization.Permission.UpdateUserPermission)]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(
             [FromBody]
