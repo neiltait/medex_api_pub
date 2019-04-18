@@ -107,36 +107,5 @@ namespace MedicalExaminer.Common
 
             return results;
         }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="meUserId"></param>
-        /// <returns></returns>
-        public async Task<IEnumerable<Permission>> GetPermissionsAsync(IEnumerable<string> locations, string meUserId)
-        {
-            await EnsureSetupAsync();
-
-            throw new NotImplementedException();
-            /*
-            var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, collectionName);
-
-            // build the query
-            var feedOptions = new FeedOptions { MaxItemCount = -1 };
-            var query = client.CreateDocumentQuery<MeUser>(
-                documentCollectionUri,
-                $"SELECT * FROM {collectionName} WHERE Permissions.user_id = \"{meUserId}\"",
-                feedOptions);
-            var queryAll = query.AsDocumentQuery();
-
-            // combine the results
-            var results = new List<Permission>();
-            while (queryAll.HasMoreResults)
-            {
-                results.AddRange(await queryAll.ExecuteNextAsync<Permission>());
-            }
-
-            return results;*/
-        }
     }
 }
