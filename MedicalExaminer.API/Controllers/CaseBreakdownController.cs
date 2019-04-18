@@ -35,14 +35,7 @@ namespace MedicalExaminer.API.Controllers
             _eventCreationService = eventCreationService;
             _examinationRetrievalService = examinationRetrievalService;
         }
-
-        //public async Task<T> ConvertRequestToObject<T, TU>(TU incomingObj)
-        //{
-        //    var user = await CurrentUser();
-        //    var mappedObj = Mapper.Map<T>(incomingObj);
-        //    //mappedObj.
-        //    return mappedObj;
-        //}
+        
 
         [HttpPut]
         [Route("{examinationId}/bereaved_discussion")]
@@ -67,10 +60,7 @@ namespace MedicalExaminer.API.Controllers
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
             var patientCard = Mapper.Map<PatientCardItem>(examination);
-
-            // Code improvement
-            //var x = ConvertRequestToObject<BereavedDiscussionEvent, PutBereavedDiscussionEventRequest>(putNewBereavedDiscussionEventNoteRequest);
-
+            
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, bereavedDiscussionEventNote));
 
             if (result == null)

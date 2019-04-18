@@ -132,11 +132,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
                 .Returns(Task.FromResult(mockMeUser.Object));
 
-
             var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examinationObj)).Verifiable();
