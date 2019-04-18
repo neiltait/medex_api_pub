@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
-using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Services.Location;
 using MedicalExaminer.Models.Enums;
-using Moq;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Services.Location
