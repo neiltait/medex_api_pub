@@ -7,6 +7,16 @@ namespace MedicalExaminer.Models
     public class MeoSummaryEvent : IEvent
     {
         /// <summary>
+        /// Users full name
+        /// </summary>
+        public string UserFullName { get; set; }
+
+        /// <summary>
+        /// Users Role
+        /// </summary>
+        public string UsersRole { get; set; }
+
+        /// <summary>
         /// Event Identification.
         /// </summary>
         [JsonProperty(PropertyName = "event_id")]

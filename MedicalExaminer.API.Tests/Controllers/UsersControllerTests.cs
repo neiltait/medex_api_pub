@@ -27,7 +27,7 @@ namespace MedicalExaminer.API.Tests.Controllers
     /// <summary>
     ///     Users Controller Tests
     /// </summary>
-    public class UsersControllerTests : ControllerTestsBase<UsersController>
+    public class UsersControllerTests : AuthorizedControllerTestsBase<UsersController>
     {
         public Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>> createUserService;
         public Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>> userRetrievalService;
@@ -46,6 +46,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new UsersController(
                 logger.Object,
                 Mapper,
+                UsersRetrievalByEmailServiceMock.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
                 createUserService.Object,
                 userRetrievalService.Object,
                 usersRetrievalService.Object,

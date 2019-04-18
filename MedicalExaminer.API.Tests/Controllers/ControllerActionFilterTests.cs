@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Filters;
+using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -145,10 +147,19 @@ namespace MedicalExaminer.API.Tests.Controllers
             var usersRetrievalService =
                 new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
             var userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
-            
+
+            var usersRetrievalByEmailServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+
+            var authorizationServiceMock = new Mock<IAuthorizationService>();
+
+            var permissionServiceMock = new Mock<IPermissionService>();
+
             _controller = new UsersController(
                 _mockLogger,
                 _mapper.Object,
+                usersRetrievalByEmailServiceMock.Object,
+                authorizationServiceMock.Object,
+                permissionServiceMock.Object,
                 createUserService.Object,
                 userRetrievalService.Object,
                 usersRetrievalService.Object,
