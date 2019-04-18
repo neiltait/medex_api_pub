@@ -46,7 +46,7 @@ namespace MedicalExaminer.API.Extensions.Data
             ResolutionContext context)
             where T : IEvent
         {
-            var myUser = (MeUser)context.Items["myUser"];
+            var myUser = (MeUser)context.Items["user"];
             var usersDraft = source.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
             var usersDraftItem = context.Mapper.Map<T>(usersDraft);
             return new EventContainerItem<T>
