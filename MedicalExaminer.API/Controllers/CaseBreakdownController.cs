@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.CaseBreakdown;
+using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Queries.Examination;
@@ -11,7 +12,6 @@ using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -53,9 +53,12 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
-            var myUser = await CurrentUser();
+            var user = await CurrentUser();
             var bereavedDiscussionEventNote = Mapper.Map<BereavedDiscussionEvent>(putNewBereavedDiscussionEventNoteRequest);
-            bereavedDiscussionEventNote.UserId = myUser.UserId;
+            bereavedDiscussionEventNote.UserId = user.UserId;
+
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+            var patientCard = Mapper.Map<PatientCardItem>(examination);
 
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, bereavedDiscussionEventNote));
 
@@ -66,6 +69,7 @@ namespace MedicalExaminer.API.Controllers
 
             var res = new PutCaseBreakdownEventResponse
             {
+                Header = patientCard,
                 EventId = result
             };
 
@@ -89,9 +93,12 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
-            var myUser = await CurrentUser();
+            var user = await CurrentUser();
             var preScrutinyEventNote = Mapper.Map<PreScrutinyEvent>(putNewPreScrutinyEventNoteRequest);
-            preScrutinyEventNote.UserId = myUser.UserId;
+            preScrutinyEventNote.UserId = user.UserId;
+
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+            var patientCard = Mapper.Map<PatientCardItem>(examination);
 
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, preScrutinyEventNote));
 
@@ -102,6 +109,7 @@ namespace MedicalExaminer.API.Controllers
 
             var res = new PutCaseBreakdownEventResponse
             {
+                Header = patientCard,
                 EventId = result
             };
 
@@ -125,9 +133,12 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
-            var myUser = await CurrentUser();
+            var user = await CurrentUser();
             var medicalHistoryEventNote = Mapper.Map<MedicalHistoryEvent>(putMedicalHistoryEventRequest);
-            medicalHistoryEventNote.UserId = myUser.UserId;
+            medicalHistoryEventNote.UserId = user.UserId;
+
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+            var patientCard = Mapper.Map<PatientCardItem>(examination);
 
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, medicalHistoryEventNote));
 
@@ -138,6 +149,7 @@ namespace MedicalExaminer.API.Controllers
 
             var res = new PutCaseBreakdownEventResponse
             {
+                Header = patientCard,
                 EventId = result
             };
 
@@ -160,9 +172,13 @@ namespace MedicalExaminer.API.Controllers
             {
                 return BadRequest(new PutCaseBreakdownEventResponse());
             }
-            var myUser = await CurrentUser();
+            var user = await CurrentUser();
             var admissionEventNote = Mapper.Map<AdmissionEvent>(putNewAdmissionEventNoteRequest);
-            admissionEventNote.UserId = myUser.UserId;
+            admissionEventNote.UserId = user.UserId;
+
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+            var patientCard = Mapper.Map<PatientCardItem>(examination);
+
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, admissionEventNote));
 
             if (result == null)
@@ -172,6 +188,7 @@ namespace MedicalExaminer.API.Controllers
 
             var res = new PutCaseBreakdownEventResponse
             {
+                Header = patientCard,
                 EventId = result
             };
 
@@ -199,6 +216,10 @@ namespace MedicalExaminer.API.Controllers
 
             var otherEventNote = Mapper.Map<OtherEvent>(putNewOtherEventNoteRequest);
             otherEventNote.UserId = user.UserId;
+
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+            var patientCard = Mapper.Map<PatientCardItem>(examination);
+
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, otherEventNote));
 
             if (result == null)
@@ -208,6 +229,7 @@ namespace MedicalExaminer.API.Controllers
 
             var res = new PutCaseBreakdownEventResponse
             {
+                Header = patientCard,
                 EventId = result
             };
 
@@ -236,16 +258,16 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetCaseBreakdownResponse());
             }
 
-            var myUser = await CurrentUser();
+            var user = await CurrentUser();
 
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, myUser));
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
             
             if(examination == null)
             {
                 return new NotFoundObjectResult(new GetCaseBreakdownResponse());
             }
 
-            var result = Mapper.Map<CaseBreakDownItem>(examination.CaseBreakdown, opt => opt.Items["myUser"] = myUser);
+            var result = Mapper.Map<CaseBreakDownItem>(examination.CaseBreakdown, opt => opt.Items["user"] = user);
 
             return Ok(new GetCaseBreakdownResponse
             {
@@ -270,9 +292,12 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
-            var myUser = await CurrentUser();
+            var user = await CurrentUser();
             var qapDiscussionEventNote = Mapper.Map<QapDiscussionEvent>(putNewQapDiscussionEventNoteRequest);
-            qapDiscussionEventNote.UserId = myUser.UserId;
+            qapDiscussionEventNote.UserId = user.UserId;
+
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+            var patientCard = Mapper.Map<PatientCardItem>(examination);
 
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, qapDiscussionEventNote));
 
@@ -283,6 +308,7 @@ namespace MedicalExaminer.API.Controllers
 
             var res = new PutCaseBreakdownEventResponse
             {
+                Header = patientCard,
                 EventId = result
             };
 
@@ -306,9 +332,12 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
-            var myUser = await CurrentUser();
+            var user = await CurrentUser();
             var meoSummaryEvent = Mapper.Map<MeoSummaryEvent>(putNewMeoSummaryEventNoteRequest);
-            meoSummaryEvent.UserId = myUser.UserId;
+            meoSummaryEvent.UserId = user.UserId;
+
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+            var patientCard = Mapper.Map<PatientCardItem>(examination);
 
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, meoSummaryEvent));
 
@@ -319,6 +348,7 @@ namespace MedicalExaminer.API.Controllers
 
             var res = new PutCaseBreakdownEventResponse
             {
+                Header = patientCard,
                 EventId = result
             };
 

@@ -244,18 +244,22 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         public void No_AdmissionNotes_Case_Status_Pending_Admission_Notes_True()
         {
+            // Arrange
             var examination = new Examination();
             var caseBreakDown = new CaseBreakDown();
             examination.CaseBreakdown = caseBreakDown;
 
+            // Act
             examination = examination.UpdateCaseStatus();
 
+            // Assert
             Assert.Equal(true, examination.PendingAdmissionNotes);
         }
 
         [Fact]
         public void Draft_AdmissionNotes_Case_Status_Pending_Admission_Notes_True()
         {
+            // Arrange
             var examination = new Examination();
             var caseBreakDown = new CaseBreakDown();
             var admissionNotes = new AdmissionNotesEventContainer();
@@ -263,14 +267,17 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             caseBreakDown.AdmissionNotes = admissionNotes;
             examination.CaseBreakdown = caseBreakDown;
 
+            // Act
             examination = examination.UpdateCaseStatus();
 
+            // Assert
             Assert.Equal(true, examination.PendingAdmissionNotes);
         }
 
         [Fact]
         public void Latest_AdmissionNotes_Case_Status_Pending_Admission_Notes_False()
         {
+            // Arrange
             var examination = new Examination();
             var caseBreakDown = new CaseBreakDown();
             var admissionNotes = new AdmissionNotesEventContainer();
@@ -278,26 +285,32 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             caseBreakDown.AdmissionNotes = admissionNotes;
             examination.CaseBreakdown = caseBreakDown;
 
+            // Act
             examination = examination.UpdateCaseStatus();
 
-            Assert.Equal(false, examination.PendingAdmissionNotes);
+            // Assert
+            Assert.Equal(true, examination.PendingAdmissionNotes);
         }
 
         [Fact]
         public void No_AdmissionNotes_Case_Status_Admission_Notes_Have_Been_Added_False()
         {
+            // Arrange
             var examination = new Examination();
             var caseBreakDown = new CaseBreakDown();
             examination.CaseBreakdown = caseBreakDown;
 
+            // Act
             examination = examination.UpdateCaseStatus();
 
+            // Assert
             Assert.Equal(false, examination.AdmissionNotesHaveBeenAdded);
         }
 
         [Fact]
         public void Draft_AdmissionNotes_Case_Status_Admission_Notes_Have_Been_Added_False()
         {
+            // Arrange
             var examination = new Examination();
             var caseBreakDown = new CaseBreakDown();
             var admissionNotes = new AdmissionNotesEventContainer();
@@ -305,14 +318,17 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             caseBreakDown.AdmissionNotes = admissionNotes;
             examination.CaseBreakdown = caseBreakDown;
 
+            // Act
             examination = examination.UpdateCaseStatus();
 
+            // Assert
             Assert.Equal(false, examination.AdmissionNotesHaveBeenAdded);
         }
 
         [Fact]
-        public void Latest_AdmissionNotes_Case_Status_Admission_Notes_Have_Been_Added_True()
+        public void Latest_AdmissionNotes_No_Consultant_Case_Status_Admission_Notes_Have_Been_Added_False()
         {
+            // Arrange
             var examination = new Examination();
             var caseBreakDown = new CaseBreakDown();
             var admissionNotes = new AdmissionNotesEventContainer();
@@ -320,8 +336,31 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             caseBreakDown.AdmissionNotes = admissionNotes;
             examination.CaseBreakdown = caseBreakDown;
 
+            // Act
             examination = examination.UpdateCaseStatus();
 
+            // Assert
+            Assert.Equal(false, examination.AdmissionNotesHaveBeenAdded);
+        }
+
+        [Fact]
+        public void Latest_AdmissionNotes_And_Consultant_Case_Status_Admission_Notes_Have_Been_Added_True()
+        {
+            // Arrange
+            var examination = new Examination();
+            var medicalTeam = new MedicalTeam();
+            medicalTeam.ConsultantResponsible = new ClinicalProfessional();
+            examination.MedicalTeam = medicalTeam;
+            var caseBreakDown = new CaseBreakDown();
+            var admissionNotes = new AdmissionNotesEventContainer();
+            admissionNotes.Latest = new AdmissionEvent();
+            caseBreakDown.AdmissionNotes = admissionNotes;
+            examination.CaseBreakdown = caseBreakDown;
+
+            // Act
+            examination = examination.UpdateCaseStatus();
+
+            // Assert
             Assert.Equal(true, examination.AdmissionNotesHaveBeenAdded);
         }
 
@@ -337,35 +376,6 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             Assert.Equal(false, examination.HaveBeenScrutinisedByME);
         }
 
-        //[Fact]
-        //public void Draft_Me_Scrutiny_Case_Status_HaveBeenScrutinisedByME_False()
-        //{
-        //    var examination = new Examination();
-        //    var caseBreakDown = new CaseBreakDown();
-        //    var preScrutiny = new PreScrutinyEventContainer();
-        //    preScrutiny.Drafts.Add(new PreScrutinyEvent());
-        //    caseBreakDown.PreScrutiny = preScrutiny;
-        //    examination.CaseBreakdown = caseBreakDown;
-
-        //    examination = examination.UpdateCaseStatus();
-
-        //    Assert.Equal(false, examination.Me);
-        //}
-
-        //[Fact]
-        //public void Latest_AdmissionNotes_Case_Status_Admission_Notes_Have_Been_Added_True()
-        //{
-        //    var examination = new Examination();
-        //    var caseBreakDown = new CaseBreakDown();
-        //    var admissionNotes = new AdmissionNotesEventContainer();
-        //    admissionNotes.Latest = new AdmissionEvent();
-        //    caseBreakDown.AdmissionNotes = admissionNotes;
-        //    examination.CaseBreakdown = caseBreakDown;
-
-        //    examination = examination.UpdateCaseStatus();
-
-        //    Assert.Equal(true, examination.AdmissionNotesHaveBeenAdded);
-        //}
 
         [Fact]
         public void No_Me_Or_Meo_Unassigned_True()

@@ -78,13 +78,13 @@ namespace MedicalExaminer.API.Tests.Mapper
                 }
             };
             
-            var result = _mapper.Map<CaseBreakDownItem>(caseBreakdown, opt=>opt.Items["myUser"] = myUser);
+            var result = _mapper.Map<CaseBreakDownItem>(caseBreakdown, opt=>opt.Items["user"] = myUser);
 
             Assert.Equal(latest.EventId, result.OtherEvents.Latest.EventId);
             result.OtherEvents.History.Should().BeEquivalentTo(history);
             Assert.Null(result.OtherEvents.UsersDraft);
 
-            var otherResult = _mapper.Map<CaseBreakDownItem>(caseBreakdown, opt => opt.Items["myUser"] = otherUser);
+            var otherResult = _mapper.Map<CaseBreakDownItem>(caseBreakdown, opt => opt.Items["user"] = otherUser);
 
             Assert.Equal(latest.EventId, result.OtherEvents.Latest.EventId);
             otherResult.OtherEvents.History.Should().BeEquivalentTo(history);

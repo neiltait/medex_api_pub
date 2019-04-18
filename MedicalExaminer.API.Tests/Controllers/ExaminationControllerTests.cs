@@ -176,6 +176,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             model.Success.Should().BeTrue();
         }
 
+        
         private ControllerContext GetContollerContext()
         {
             return new ControllerContext
