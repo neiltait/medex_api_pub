@@ -207,7 +207,7 @@ namespace MedicalExaminer.Models
         [Required]
         [DataType(DataType.DateTime)]
         [JsonProperty(PropertyName = "last_admission")]
-        public DateTime LastAdmission { get; set; }
+        public DateTime? LastAdmission { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]

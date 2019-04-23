@@ -94,7 +94,8 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(patientCard => patientCard.AppointmentDate,
                     examination => examination.MapFrom(new AppointmentDateResolver(new AppointmentFinder())))
                 .ForMember(patientCard => patientCard.AppointmentTime,
-                    examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())));
+                    examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())))
+                    .ForMember(patientCard => patientCard.CaseCreatedDate, opt => opt.MapFrom(examination => examination.CreatedAt));
 
             CreateMap<Representative, RepresentativeItem>();
         }
