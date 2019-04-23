@@ -4,7 +4,10 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.MedicalTeam;
+using MedicalExaminer.Common.Services.User;
 using Moq;
 using Xunit;
 
@@ -22,8 +25,11 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                     db.GetItemAsync(connectionSettings.Object,
                         It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
                 .Returns(Task.FromResult<MedicalExaminer.Models.Examination>(null));
+            var user = new MedicalExaminer.Models.MeUser();
+            var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MedicalExaminer.Models.MeUser>>();
 
-            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object);
+            userRetrievalByIdService.Setup(x => x.Handle(It.IsAny<UserRetrievalByIdQuery>())).Returns(Task.FromResult(user));
+            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
 
             // Assert
             Assert.ThrowsAsync<ArgumentNullException>(() => sut.Handle(null));
@@ -38,13 +44,21 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             {
                 ExaminationId = examinationId
             };
+
             IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>
                 { examination1 };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            var userConnectionSettings = new Mock<IUserConnectionSettings>();
+
             var dbAccess = new Mock<IDatabaseAccess>();
+            var user = new MedicalExaminer.Models.MeUser();
+            var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MedicalExaminer.Models.MeUser>>();
+
+            userRetrievalByIdService.Setup(x => x.Handle(It.IsAny<UserRetrievalByIdQuery>())).Returns(Task.FromResult(user));
+
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object, examination1))
                 .Returns(Task.FromResult(examination1));
-            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object);
+            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
 
             // Act
             var result = await sut.Handle(examination1);
@@ -69,13 +83,17 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                 OtherPriority = false,
                 CreatedAt = DateTime.Now.AddDays(-3)
             };
+            var user = new MedicalExaminer.Models.MeUser();
+            var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MedicalExaminer.Models.MeUser>>();
+
+            userRetrievalByIdService.Setup(x => x.Handle(It.IsAny<UserRetrievalByIdQuery>())).Returns(Task.FromResult(user));
             IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>
                 { examination };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object, examination))
                 .Returns(Task.FromResult(examination));
-            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object);
+            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
 
             // Act
             var result = await sut.Handle(examination);
@@ -100,13 +118,18 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                 OtherPriority = true,
                 CreatedAt = DateTime.Now.AddDays(-3)
             };
+
+            var user = new MedicalExaminer.Models.MeUser();
+            var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MedicalExaminer.Models.MeUser>>();
+
+            userRetrievalByIdService.Setup(x => x.Handle(It.IsAny<UserRetrievalByIdQuery>())).Returns(Task.FromResult(user));
             IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>
                 {examination};
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object, examination))
                 .Returns(Task.FromResult(examination));
-            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object);
+            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
 
             // Act
             var result = await sut.Handle(examination);
