@@ -13,6 +13,7 @@ using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -22,7 +23,7 @@ namespace MedicalExaminer.API.Tests.Controllers
     /// <summary>
     /// Medical Team Controller Tests.
     /// </summary>
-    public class MedicalTeamControllerTests : ControllerTestsBase<MedicalTeamController>
+    public class MedicalTeamControllerTests : AuthorizedControllerTestsBase<MedicalTeamController>
     {
         private Mock<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>>
             _usersRetrievalByRoleLocationQueryServiceMock;
@@ -31,6 +32,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         private Mock<IAsyncUpdateDocumentHandler> _medicalTeamUpdateServiceMock;
 
         public MedicalTeamControllerTests()
+            :base(setupAuthorize: false)
         {
             _usersRetrievalByRoleLocationQueryServiceMock =
                 new Mock<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>>();
@@ -41,6 +43,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new MedicalTeamController(
                 LoggerMock.Object,
                 Mapper,
+                UsersRetrievalByEmailServiceMock.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
                 _examinationRetrievalServiceMock.Object,
                 _medicalTeamUpdateServiceMock.Object,
                 _usersRetrievalByRoleLocationQueryServiceMock.Object);
@@ -69,6 +74,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public void GetMedical_When_Called_With_No_MedicalTeam_InExamination_Returns_Expected_Type()
         {
             // Arrange
+            SetupAuthorize(AuthorizationResult.Success());
             var examinationId = Guid.NewGuid().ToString();
             var examination = new Examination
             {
@@ -95,6 +101,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public void GetMedicalTeam_ExaminationNotFound_Returns_Expected_Type()
         {
             // Arrange
+            SetupAuthorize(AuthorizationResult.Success());
             var examinationId = Guid.NewGuid().ToString();
             const Examination examination = null;
 
@@ -118,6 +125,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public void GetMedicalTeam_Ok()
         {
             // Arrange
+            SetupAuthorize(AuthorizationResult.Success());
             var expectedNursingTeamInformation = "expectedNursingTeamInformation";
             var examinationId = Guid.NewGuid().ToString();
             var examination = new Examination
@@ -140,7 +148,34 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             ((GetMedicalTeamResponse)okResult.Value).NursingTeamInformation.Should().Be(expectedNursingTeamInformation);
+        }
 
+        [Fact]
+        public void GetMedicalTeam_Forbid()
+        {
+            // Arrange
+            SetupAuthorize(AuthorizationResult.Failed());
+            var expectedNursingTeamInformation = "expectedNursingTeamInformation";
+            var examinationId = Guid.NewGuid().ToString();
+            var examination = new Examination
+            {
+                ExaminationId = examinationId,
+                MedicalTeam = new MedicalTeam()
+                {
+                    NursingTeamInformation = expectedNursingTeamInformation,
+                }
+
+            };
+
+            _examinationRetrievalServiceMock.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination));
+
+            // Act
+            var response = Controller.GetMedicalTeam(examinationId).Result;
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
+            var okResult = taskResult.Result.Should().BeAssignableTo<ForbidResult>().Subject;
         }
 
         [Fact]
@@ -254,9 +289,44 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
+        public void PostMedicalTeam_Forbid()
+        {
+            // Arrange
+            SetupAuthorize(AuthorizationResult.Failed());
+            var examinationId = Guid.NewGuid().ToString();
+            var expectedNursingTeamInformation = "expectedNursingTeamInformation";
+
+            var examination = new Examination
+            {
+                ExaminationId = examinationId,
+            };
+
+            var logger = new Mock<IMELogger>();
+            var postMedicalTeamRequest = new PutMedicalTeamRequest()
+            {
+                NursingTeamInformation = expectedNursingTeamInformation,
+            };
+
+            _examinationRetrievalServiceMock.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination));
+            _medicalTeamUpdateServiceMock.Setup(u => u.Handle(It.IsAny<Examination>()))
+                .Returns(Task.FromResult(examination));
+
+            // Act
+            var response = Controller.PutMedicalTeam(examinationId, postMedicalTeamRequest).Result;
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutMedicalTeamResponse>>().Subject;
+            var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+
+            ((PutMedicalTeamResponse)okResult.Value).NursingTeamInformation.Should().Be(expectedNursingTeamInformation);
+        }
+
+        [Fact]
         public void GetMedicalTeam_PopulatesLookups()
         {
             // Arrange
+            SetupAuthorize(AuthorizationResult.Success());
             var examinationId = Guid.NewGuid().ToString();
             var examination = new Examination
             {

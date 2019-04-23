@@ -15,6 +15,7 @@ namespace MedicalExaminer.API.Controllers
     /// <summary>
     /// Base Authorization Controller.
     /// </summary>
+    [Authorize]
     public abstract class AuthorizedBaseController : AuthenticatedBaseController
     {
         /// <summary>
