@@ -23,7 +23,7 @@ namespace MedicalExaminer.API.Controllers
     {
         private IAsyncQueryHandler<CreateEventQuery, string> _eventCreationService;
         private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
-        
+
         public CaseBreakdownController(
             IMELogger logger,
             IMapper mapper,
@@ -35,6 +35,7 @@ namespace MedicalExaminer.API.Controllers
             _eventCreationService = eventCreationService;
             _examinationRetrievalService = examinationRetrievalService;
         }
+        
 
         [HttpPut]
         [Route("{examinationId}/bereaved_discussion")]
@@ -60,7 +61,7 @@ namespace MedicalExaminer.API.Controllers
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
             var patientCard = Mapper.Map<PatientCardItem>(examination);
-
+            
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, bereavedDiscussionEventNote));
 
             if (result == null)
@@ -256,7 +257,6 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetCaseBreakdownResponse>> GetCaseBreakdown(string examinationId)
         {
-            
             if (string.IsNullOrEmpty(examinationId))
             {
                 return BadRequest(new GetCaseBreakdownResponse());
@@ -271,8 +271,9 @@ namespace MedicalExaminer.API.Controllers
             var user = await CurrentUser();
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
-            
-            if(examination == null)
+            var patientCard = Mapper.Map<PatientCardItem>(examination);
+
+            if (examination == null)
             {
                 return new NotFoundObjectResult(new GetCaseBreakdownResponse());
             }
@@ -281,6 +282,7 @@ namespace MedicalExaminer.API.Controllers
 
             return Ok(new GetCaseBreakdownResponse
             {
+                Header = patientCard,
                 CaseBreakdown = result
             });
         }

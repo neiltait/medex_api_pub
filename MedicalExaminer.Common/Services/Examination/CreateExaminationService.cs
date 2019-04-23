@@ -4,6 +4,7 @@ using Cosmonaut;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.Examination
@@ -13,13 +14,16 @@ namespace MedicalExaminer.Common.Services.Examination
 
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
+        private readonly IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location> _locationHandler;
 
         public CreateExaminationService(
             IDatabaseAccess databaseAccess,
-            IExaminationConnectionSettings connectionSettings)
+            IExaminationConnectionSettings connectionSettings,
+            IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location> locationHandler)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
+            _locationHandler = locationHandler;
         }
         
         public async Task<Models.Examination> Handle(CreateExaminationQuery param)
@@ -32,6 +36,7 @@ namespace MedicalExaminer.Common.Services.Examination
             try
             {
                 param.Examination.ExaminationId = Guid.NewGuid().ToString();
+                param.Examination.MedicalExaminerOfficeResponsibleName = _locationHandler.Handle(new LocationRetrievalByIdQuery(param.Examination.MedicalExaminerOfficeResponsible)).Result.Name;
                 param.Examination.Unassigned = true;
                 param.Examination.CaseBreakdown = new CaseBreakDown();
                 param.Examination.CaseBreakdown.DeathEvent = new DeathEvent()
