@@ -1,10 +1,17 @@
-﻿namespace MedicalExaminer.API.Models.v1.MedicalTeams
+﻿using MedicalExaminer.API.Models.v1.Examinations;
+
+namespace MedicalExaminer.API.Models.v1.MedicalTeams
 {
     /// <summary>
     ///     GetMedicalTeamResponse class.
     /// </summary>
     public class GetMedicalTeamResponse : ResponseBase
     {
+        /// <summary>
+        /// Patient Details Header
+        /// </summary>
+        public PatientCardItem Header { get; set; }
+
         /// <summary>
         ///     Consultant primarily responsible for care of patient.
         /// </summary>

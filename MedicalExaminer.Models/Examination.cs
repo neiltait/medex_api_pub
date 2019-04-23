@@ -33,7 +33,6 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "hospital_number_3")]
         public string HospitalNumber_3 { get; set; }
 
-        
         /// <summary>
         /// time of death
         /// </summary>
