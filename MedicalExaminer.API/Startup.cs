@@ -43,6 +43,11 @@ using Okta.Sdk.Configuration;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
+using Cosmonaut.Extensions;
+using Cosmonaut.Configuration;
+using Cosmonaut.Extensions.Microsoft.DependencyInjection;
+using Cosmonaut;
+
 namespace MedicalExaminer.API
 {
     /// <summary>
@@ -176,6 +181,13 @@ namespace MedicalExaminer.API
             services.AddScoped<IDatabaseAccess, DatabaseAccess>();
 
             services.AddScoped<ControllerActionFilter>();
+
+            var cosmosSettings = new CosmosStoreSettings(
+                Configuration["CosmosDB:DatabaseId"],
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"]);
+
+            services.AddCosmosStore<Examination>(cosmosSettings, "Examinations");
 
             ConfigureQueries(services);
 

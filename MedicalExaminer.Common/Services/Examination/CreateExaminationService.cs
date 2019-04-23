@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Cosmonaut;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
@@ -27,12 +28,13 @@ namespace MedicalExaminer.Common.Services.Examination
             {
                 throw new ArgumentNullException(nameof(param));
             }
+
             try
             {
                 param.Examination.ExaminationId = Guid.NewGuid().ToString();
                 param.Examination.Unassigned = true;
-                param.Examination.CaseBreakdown = new Models.CaseBreakDown();
-                param.Examination.CaseBreakdown.DeathEvent = new Models.DeathEvent()
+                param.Examination.CaseBreakdown = new CaseBreakDown();
+                param.Examination.CaseBreakdown.DeathEvent = new DeathEvent()
                 {
                     Created = param.Examination.CreatedAt.Date,
                     DateOfDeath = param.Examination.DateOfDeath,
@@ -41,10 +43,8 @@ namespace MedicalExaminer.Common.Services.Examination
                     EventId = Guid.NewGuid().ToString()
                 };
                 param.Examination.UpdateCaseUrgencyScore();
-                return await _databaseAccess.CreateItemAsync(
-                    _connectionSettings, 
-                    param.Examination, 
-                    false);
+
+                return await _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination);
             }
             catch (Exception)
             {

@@ -67,6 +67,8 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetExaminationsResponse());
             }
 
+            var user = await CurrentUser();
+
             var examinationsQuery = new ExaminationsRetrievalQuery(
                 filter.CaseStatus,
                 filter.LocationId,
@@ -75,7 +77,8 @@ namespace MedicalExaminer.API.Controllers
                 filter.PageSize,
                 filter.UserId,
                 filter.OpenCases);
-            var examinations = _examinationsRetrievalService.Handle(examinationsQuery);
+
+            var examinations = await _examinationsRetrievalService.Handle(examinationsQuery);
 
             var dashboardOverview = await _examinationsDashboardService.Handle(examinationsQuery);
 
@@ -91,7 +94,7 @@ namespace MedicalExaminer.API.Controllers
                 CountOfCasesPendingDiscussionWithQAP = dashboardOverview.CountOfPendingDiscussionWithQAP,
                 CountOfCasesPendingDiscussionWithRepresentative = dashboardOverview.CountOfPendingDiscussionWithRepresentative,
                 CountOfCasesReadyForMEScrutiny = dashboardOverview.CountOfReadyForMEScrutiny,
-                Examinations = examinations.Result.Select(e => Mapper.Map<PatientCardItem>(e)).ToList()
+                Examinations = examinations.Select(e => Mapper.Map<PatientCardItem>(e)).ToList()
             });
         }
 
