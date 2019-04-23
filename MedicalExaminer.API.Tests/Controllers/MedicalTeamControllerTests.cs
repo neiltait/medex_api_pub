@@ -28,7 +28,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly Mock<IAsyncUpdateDocumentHandler> _medicalTeamUpdateServiceMock;
 
         public MedicalTeamControllerTests()
-            :base(setupAuthorize: false)
+            : base(setupAuthorize: false)
         {
             _usersRetrievalByRoleLocationQueryServiceMock =
                 new Mock<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>>();
@@ -110,11 +110,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
-            var emptyResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            var examinationIdReturned = (GetMedicalTeamResponse)emptyResult.Value;
-            examinationIdReturned.MedicalExaminerUserId.Should().BeNull();
-            examinationIdReturned.MedicalExaminerOfficerUserId.Should().BeNull();
-            examinationIdReturned.NursingTeamInformation.Should().BeEmpty();
+            taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>();
         }
 
         [Fact]
