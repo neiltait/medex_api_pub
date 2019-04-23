@@ -40,6 +40,8 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(x => x.MedicalExaminerUserId, opt => opt.MapFrom(x => x.MedicalTeam.MedicalExaminerUserId))
                 .ForMember(x => x.NursingTeamInformation, opt => opt.MapFrom(x => x.MedicalTeam.NursingTeamInformation))
                 .ForMember(x => x.Qap, opt => opt.MapFrom(x => x.MedicalTeam.Qap))
+                .ForMember(x => x.MedicalExaminerFullName, opt => opt.MapFrom(x => x.MedicalTeam.MedicalExaminerFullName))
+                .ForMember(x => x.MedicalExaminerOfficerFullName, opt => opt.MapFrom(x => x.MedicalTeam.MedicalExaminerOfficerFullName))
                 .ForMember(x => x.Errors, opt => opt.Ignore());
             CreateMap<Examination, GetCaseBreakdownResponse>()
                 .ForMember(x => x.Header, opt => opt.MapFrom(y => y));
@@ -85,6 +87,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.DeletedAt, opt => opt.Ignore())
                 .ForMember(examination => examination.CaseBreakdown, opt => opt.Ignore())
                 .ForMember(examination => examination.MedicalTeam, opt => opt.Ignore())
+                .ForMember(examination => examination.MedicalExaminerOfficeResponsibleName, opt => opt.Ignore())
                 .ForMember(examination => examination.UrgencyScore, opt => opt.Ignore());
 
             CreateMap<Examination, PatientCardItem>()

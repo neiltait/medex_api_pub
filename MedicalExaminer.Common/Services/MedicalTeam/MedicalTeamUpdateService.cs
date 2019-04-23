@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
+using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Models;
 

@@ -304,6 +304,14 @@ namespace MedicalExaminer.Models
         public string MedicalExaminerOfficeResponsible { get; set; }
 
         /// <summary>
+        /// ID of MEO user who will be working on the scrutiny
+        /// </summary>
+        [Required]
+        [JsonProperty(PropertyName = "medical_examiner_office_responsible_name")]
+        [DataType(DataType.Text)]
+        public string MedicalExaminerOfficeResponsibleName { get; set; }
+
+        /// <summary>
         /// enumerable of patients representatives
         /// </summary>
         [JsonProperty(PropertyName = "representatives")]

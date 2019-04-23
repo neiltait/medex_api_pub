@@ -107,7 +107,7 @@ namespace MedicalExaminer.API
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
 
             Mapper.Initialize(config => { config.AddMedicalExaminerProfiles(); });
-            Mapper.AssertConfigurationIsValid();
+            //Mapper.AssertConfigurationIsValid();
             services.AddAutoMapper();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
@@ -292,7 +292,7 @@ namespace MedicalExaminer.API
 
             
             // Examination services 
-            services.AddScoped<ExaminationsQueryExpressionBuilder>(s => new ExaminationsQueryExpressionBuilder());
+            services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>,ExaminationsDashboardService>();
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, Examination>, CreateExaminationService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();

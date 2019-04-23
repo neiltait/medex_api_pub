@@ -89,14 +89,19 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         public string MedicalExaminerOfficeResponsible { get; set; }
 
         /// <summary>
+        ///     The medical examiners office name responsible for investigating the death.
+        /// </summary>
+        public string MedicalExaminerOfficeResponsibleName { get; set; }
+
+        /// <summary>
         ///     Details of the patients date of birth.
         /// </summary>
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         /// <summary>
         ///     Details of the patients date of death.
         /// </summary>
-        public DateTime DateOfDeath { get; set; }
+        public DateTime? DateOfDeath { get; set; }
 
         /// <summary>
         ///     Patients NHS Number.
