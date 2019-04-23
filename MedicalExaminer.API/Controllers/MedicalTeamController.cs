@@ -133,7 +133,7 @@ namespace MedicalExaminer.API.Controllers
                 return NotFound();
             }
 
-            if (!CanAsync(Permission.GetExamination, examination))
+            if (!CanAsync(Permission.UpdateExamination, examination))
             {
                 return Forbid();
             }
@@ -182,7 +182,6 @@ namespace MedicalExaminer.API.Controllers
         {
             var locations = examination.LocationIds();
 
-            // TODO: Should we care about max results?
             var users = await _usersRetrievalByRoleLocationQueryService.Handle(new UsersRetrievalByRoleLocationQuery(locations, role));
 
             return users;

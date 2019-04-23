@@ -50,6 +50,11 @@ namespace MedicalExaminer.API.Models.v1
         /// <returns>Response Base for chainging.</returns>
         public ResponseBase AddLookup(string key, IDictionary<string, string> lookup)
         {
+            if (lookup == null)
+            {
+                throw new ArgumentException("Lookup null");
+            }
+
             if (Lookups == null)
             {
                 Lookups = new Dictionary<string, IDictionary<string, string>>();
