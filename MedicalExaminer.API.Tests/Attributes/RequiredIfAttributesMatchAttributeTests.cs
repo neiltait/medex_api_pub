@@ -21,7 +21,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var serviceProvider = new Mock<IServiceProvider>().Object;
             serviceProvider.GetService(dto.GetType());
             var validationContext = new ValidationContext(dto, serviceProvider, new Dictionary<object, object>());
-            var sut = new RequiredIfAttributesMatch("status", true);
+            var sut = new RequiredIfAttributesMatch(nameof(TestDtoTdo.Status), true);
 
             // Act
             var result = sut.GetValidationResult(dto.TestField, validationContext);
@@ -42,7 +42,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var serviceProvider = new Mock<IServiceProvider>().Object;
             serviceProvider.GetService(dto.GetType());
             var validationContext = new ValidationContext(dto, serviceProvider, new Dictionary<object, object>());
-            var sut = new RequiredIfAttributesMatch("predicateProperty", true);
+            var sut = new RequiredIfAttributesMatch(nameof(TestDto.PredicateProperty), true);
             var expectedResult = ValidationResult.Success;
 
             // Act
@@ -62,7 +62,7 @@ namespace MedicalExaminer.API.Tests.Attributes
                 TestField = null
             };
             var serviceProvider = new Mock<IServiceProvider>();
-            var sut = new RequiredIfAttributesMatch("predicateProperty", true);
+            var sut = new RequiredIfAttributesMatch(nameof(TestDto.PredicateProperty), true);
             serviceProvider.Setup(context => context.GetService(It.IsAny<Type>())).Returns(dto);
 
             // Act
@@ -84,7 +84,7 @@ namespace MedicalExaminer.API.Tests.Attributes
                 TestField = "something"
             };
             var serviceProvider = new Mock<IServiceProvider>();
-            var sut = new RequiredIfAttributesMatch("predicateProperty", true);
+            var sut = new RequiredIfAttributesMatch(nameof(TestDto.PredicateProperty), true);
             serviceProvider.Setup(context => context.GetService(It.IsAny<Type>())).Returns(dto);
 
             // Act
@@ -105,11 +105,12 @@ namespace MedicalExaminer.API.Tests.Attributes
                 TestField = null
             };
             var serviceProvider = new Mock<IServiceProvider>();
-            var sut = new RequiredIfAttributesMatch("predicateProperty", true);
+            var sut = new RequiredIfAttributesMatch(nameof(TestDto.PredicateProperty), true);
             serviceProvider.Setup(context => context.GetService(It.IsAny<Type>())).Returns(dto);
 
             // Act
-            var result = sut.GetValidationResult(dto.TestField, 
+            var result = sut.GetValidationResult(
+                dto.TestField, 
                 new ValidationContext(dto, serviceProvider.Object, new Dictionary<object, object>()));
 
             // Assert
@@ -126,7 +127,7 @@ namespace MedicalExaminer.API.Tests.Attributes
                 TestField = null
             };
             var serviceProvider = new Mock<IServiceProvider>();
-            var sut = new RequiredIfAttributesMatch("predicateProperty", true);
+            var sut = new RequiredIfAttributesMatch(nameof(TestDto.PredicateProperty), true);
             serviceProvider.Setup(context => context.GetService(It.IsAny<Type>())).Returns(dto);
 
             // Act
