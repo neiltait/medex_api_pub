@@ -9,54 +9,35 @@ namespace MedicalExaminer.API.Tests.Attributes
 {
     public class RequiredIfAttributesMatchAttributeTests
     {
-        public class TestDto
-        {
-            public bool predicateProperty { get; set; }
-
-            [RequiredIfAttributesMatch(nameof(predicateProperty), true)]
-            public string testField { get; set; }
-        }
-
-        public class TestDtoTdo
-        {
-            public bool status { get; set; }
-
-            [RequiredIfAttributesMatch(nameof(status), true)]
-            public string testField { get; set; }
-        }
-
-
         [Fact]
-        public async void PredicateFinalAndRequiredFieldPopulated_Returns_True()
+        public void PredicateFinalAndRequiredFieldPopulated_Returns_True()
         {
             // Arrange
             var dto = new TestDtoTdo
             {
-                status = true,
-                testField = null
+                Status = true,
+                TestField = null
             };
             var serviceProvider = new Mock<IServiceProvider>().Object;
             serviceProvider.GetService(dto.GetType());
             var validationContext = new ValidationContext(dto, serviceProvider, new Dictionary<object, object>());
             var sut = new RequiredIfAttributesMatch("status", true);
-            var expectedResult = ValidationResult.Success;
 
             // Act
-            var result = sut.GetValidationResult(dto.testField, validationContext);
+            var result = sut.GetValidationResult(dto.TestField, validationContext);
 
-            //Assert
-            Assert.Equal("The TestDtoTdo field is required.", result.ErrorMessage);
+            // Assert
+            Assert.Equal("The TestDtoTdo field is required.", result?.ErrorMessage);
         }
 
-
         [Fact]
-        public async void PredicateTrueAndRequiredFieldPopulated_Returns_True()
+        public void PredicateTrueAndRequiredFieldPopulated_Returns_True()
         {
             // Arrange
             var dto = new TestDto
             {
-                predicateProperty = true,
-                testField = "bob"
+                PredicateProperty = true,
+                TestField = "bob"
             };
             var serviceProvider = new Mock<IServiceProvider>().Object;
             serviceProvider.GetService(dto.GetType());
@@ -65,77 +46,112 @@ namespace MedicalExaminer.API.Tests.Attributes
             var expectedResult = ValidationResult.Success;
 
             // Act
-            var result = sut.GetValidationResult(dto.testField, validationContext);
+            var result = sut.GetValidationResult(dto.TestField, validationContext);
 
-            //Assert
+            // Assert
             Assert.Equal(expectedResult, result);
         }
 
         [Fact]
-        public async void PredicateTrueAndRequiredFieldNull_Returns_False()
+        public void PredicateTrueAndRequiredFieldNull_Returns_False()
         {
             // Arrange
             var dto = new TestDto
             {
-                predicateProperty = true,
-                testField = null
+                PredicateProperty = true,
+                TestField = null
             };
             var serviceProvider = new Mock<IServiceProvider>();
             var sut = new RequiredIfAttributesMatch("predicateProperty", true);
             serviceProvider.Setup(context => context.GetService(It.IsAny<Type>())).Returns(dto);
 
-
             // Act
-            var result = sut.GetValidationResult(dto.testField,
+            var result = sut.GetValidationResult(
+                dto.TestField,
                 new ValidationContext(dto, serviceProvider.Object, new Dictionary<object, object>()));
 
-            //Assert
-            Assert.Equal("The TestDto field is required.", result.ErrorMessage);
+            // Assert
+            Assert.Equal("The TestDto field is required.", result?.ErrorMessage);
         }
 
         [Fact]
-        public async void PredicateFalseAndRequiredFieldPopulated_Returns_True()
+        public void PredicateFalseAndRequiredFieldPopulated_Returns_True()
         {
             // Arrange
             var dto = new TestDto
             {
-                predicateProperty = false,
-                testField = "something"
+                PredicateProperty = false,
+                TestField = "something"
             };
             var serviceProvider = new Mock<IServiceProvider>();
             var sut = new RequiredIfAttributesMatch("predicateProperty", true);
             serviceProvider.Setup(context => context.GetService(It.IsAny<Type>())).Returns(dto);
 
-
             // Act
-            var result = sut.GetValidationResult(dto.testField,
+            var result = sut.GetValidationResult(dto.TestField,
                 new ValidationContext(dto, serviceProvider.Object, new Dictionary<object, object>()));
 
-            //Assert
+            // Assert
             Assert.Equal(ValidationResult.Success, result);
         }
 
         [Fact]
-        public async void PredicateFalseAndRequiredFieldNull_Returns_True()
+        public void PredicateFalseAndRequiredFieldNull_Returns_True()
         {
             // Arrange
             var dto = new TestDto
             {
-                predicateProperty = false,
-                testField = null
+                PredicateProperty = false,
+                TestField = null
             };
             var serviceProvider = new Mock<IServiceProvider>();
             var sut = new RequiredIfAttributesMatch("predicateProperty", true);
             serviceProvider.Setup(context => context.GetService(It.IsAny<Type>())).Returns(dto);
 
-
             // Act
-            var result = sut.GetValidationResult(dto.testField, 
+            var result = sut.GetValidationResult(dto.TestField, 
                 new ValidationContext(dto, serviceProvider.Object, new Dictionary<object, object>()));
 
-            //Assert
+            // Assert
             Assert.Equal(ValidationResult.Success, result);
         }
 
+        [Fact]
+        public void PredicateNullAndRequiredFieldNull_Returns_True()
+        {
+            // Arrange
+            var dto = new TestDto
+            {
+                PredicateProperty = null,
+                TestField = null
+            };
+            var serviceProvider = new Mock<IServiceProvider>();
+            var sut = new RequiredIfAttributesMatch("predicateProperty", true);
+            serviceProvider.Setup(context => context.GetService(It.IsAny<Type>())).Returns(dto);
+
+            // Act
+            var result = sut.GetValidationResult(
+                dto.TestField,
+                new ValidationContext(dto, serviceProvider.Object, new Dictionary<object, object>()));
+
+            // Assert
+            Assert.Equal(ValidationResult.Success, result);
+        }
+
+        public class TestDto
+        {
+            public bool? PredicateProperty { get; set; }
+
+            [RequiredIfAttributesMatch(nameof(PredicateProperty), true)]
+            public string TestField { get; set; }
+        }
+
+        public class TestDtoTdo
+        {
+            public bool Status { get; set; }
+
+            [RequiredIfAttributesMatch(nameof(Status), true)]
+            public string TestField { get; set; }
+        }
     }
 }
