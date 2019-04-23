@@ -41,6 +41,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationRetrievalService"></param>
         /// <param name="patientDetailsUpdateService"></param>
         /// <param name="patientDetailsByCaseIdService"></param>
+        /// <param name="usersRetrievalByEmailService"></param>
         public PatientDetailsController(IMELogger logger,
             IMapper mapper,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
@@ -88,7 +89,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="examinationId">Examination Id.</param>
         /// <param name="putPatientDetailsRequest">Put Patient Details Request.</param>
-        /// <returns></returns>
+        /// <returns>PutPatientDetailsResponse</returns>
         [HttpPut]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutPatientDetailsResponse>> UpdatePatientDetails(string examinationId, [FromBody]PutPatientDetailsRequest putPatientDetailsRequest)
