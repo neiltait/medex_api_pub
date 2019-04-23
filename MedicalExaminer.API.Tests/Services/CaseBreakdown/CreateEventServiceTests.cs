@@ -42,6 +42,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             var theEvent = new Mock<OtherEvent>(); // only other event has been implemented so far.
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var query = new CreateEventQuery("1", theEvent.Object);
+            theEvent.Object.UserId = "a";
             var dbAccess = new Mock<IDatabaseAccess>();
 
             dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
@@ -61,6 +62,8 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
                 It.IsAny<MedicalExaminer.Models.Examination>()), Times.Once);
 
             Assert.NotNull(result.Result);
+            Assert.Equal("a", examination.LastModifiedBy);
+
         }
 
         /// <summary>
@@ -82,6 +85,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             var theEvent = new Mock<OtherEvent>(); // only other event has been implemented so far.
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var query = new CreateEventQuery("1", theEvent.Object);
+            theEvent.Object.UserId = "a";
             var dbAccess = new Mock<IDatabaseAccess>();
 
             dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
@@ -98,6 +102,8 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
 
             // Assert
             Assert.Equal(0, examination.UrgencyScore);
+            Assert.Equal("a", examination.LastModifiedBy);
+
         }
 
         /// <summary>
@@ -114,9 +120,10 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
                 CulturalPriority = true,
                 FaithPriority = true,
                 OtherPriority = true,
-                CreatedAt = DateTime.Now.AddDays(-3)
+                CreatedAt = DateTime.Now.AddDays(-3),
             };
             var theEvent = new Mock<OtherEvent>(); // only other event has been implemented so far.
+            theEvent.Object.UserId = "a";
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var query = new CreateEventQuery("1", theEvent.Object);
             var dbAccess = new Mock<IDatabaseAccess>();
@@ -135,6 +142,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
 
             // Assert
             Assert.Equal(500, examination.UrgencyScore);
+            Assert.Equal("a", examination.LastModifiedBy);
         }
     }
 }

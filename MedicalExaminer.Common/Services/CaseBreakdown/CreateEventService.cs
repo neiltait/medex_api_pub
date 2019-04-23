@@ -36,6 +36,7 @@ namespace MedicalExaminer.Common.Services.Examination
             examinationToUpdate = examinationToUpdate
                                             .AddEvent(param.Event)
                                             .UpdateCaseUrgencyScore();
+            examinationToUpdate.LastModifiedBy = param.Event.UserId;
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);
             return param.Event.EventId;
         }

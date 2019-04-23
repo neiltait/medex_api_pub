@@ -262,7 +262,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
-            medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>()))
+            medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>(), "a"))
                 .Returns(Task.FromResult(examination));
 
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
@@ -308,7 +308,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var medicalTeamUpdateService = new Mock<IAsyncUpdateDocumentHandler>();
             medicalTeamUpdateService
-                .Setup(u => u.Handle(It.IsAny<Examination>()))
+                .Setup(u => u.Handle(It.IsAny<Examination>(), "a"))
                 .Returns(Task.FromResult(nullExamination));
 
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
@@ -353,7 +353,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
-            medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>()))
+            medicalTeamUpdateService.Setup(u => u.Handle(It.IsAny<Examination>(), "a"))
                 .Returns(Task.FromResult(examination));
 
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();

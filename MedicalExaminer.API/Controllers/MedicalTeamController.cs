@@ -112,7 +112,9 @@ namespace MedicalExaminer.API.Controllers
 
             examination.MedicalTeam = medicalTeamRequest;
 
-            var returnedExamination = await _medicalTeamUpdateService.Handle(examination);
+            var user = await CurrentUser();
+
+            var returnedExamination = await _medicalTeamUpdateService.Handle(examination, user.UserId);
 
             if (returnedExamination == null)
             {
