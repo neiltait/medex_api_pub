@@ -102,9 +102,16 @@ namespace MedicalExaminer.API.Controllers
                     NursingTeamInformation = string.Empty,
                 };
 
-            getMedicalTeamResponse
-                .AddLookup(MedicalExaminersLookupKey, await GetLookupForExamination(examination, UserRoles.MedicalExaminer))
-                .AddLookup(MedicalExaminerOfficersLookupKey, await GetLookupForExamination(examination, UserRoles.MedicalExaminerOfficer));
+            if (examination != null)
+            {
+                getMedicalTeamResponse
+                    .AddLookup(
+                        MedicalExaminersLookupKey,
+                        await GetLookupForExamination(examination, UserRoles.MedicalExaminer))
+                    .AddLookup(
+                        MedicalExaminerOfficersLookupKey,
+                        await GetLookupForExamination(examination, UserRoles.MedicalExaminerOfficer));
+            }
 
             return Ok(getMedicalTeamResponse);
         }
