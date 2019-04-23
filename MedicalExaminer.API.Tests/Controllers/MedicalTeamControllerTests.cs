@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
-using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
-using MedicalExaminer.API.Models.v1.Users;
-using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
@@ -25,11 +21,11 @@ namespace MedicalExaminer.API.Tests.Controllers
     /// </summary>
     public class MedicalTeamControllerTests : AuthorizedControllerTestsBase<MedicalTeamController>
     {
-        private Mock<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>>
+        private readonly Mock<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>>
             _usersRetrievalByRoleLocationQueryServiceMock;
 
-        private Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>> _examinationRetrievalServiceMock;
-        private Mock<IAsyncUpdateDocumentHandler> _medicalTeamUpdateServiceMock;
+        private readonly Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>> _examinationRetrievalServiceMock;
+        private readonly Mock<IAsyncUpdateDocumentHandler> _medicalTeamUpdateServiceMock;
 
         public MedicalTeamControllerTests()
             :base(setupAuthorize: false)
@@ -175,7 +171,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
-            var okResult = taskResult.Result.Should().BeAssignableTo<ForbidResult>().Subject;
+            taskResult.Result.Should().BeAssignableTo<ForbidResult>();
         }
 
         [Fact]
@@ -204,10 +200,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var examinationId = Guid.NewGuid().ToString();
             const Examination examination = null;
-
-            var logger = new Mock<IMELogger>();
             var postMedicalTeamRequest = new PutMedicalTeamRequest();
-            var medicalTeam = new MedicalTeam();
 
             _examinationRetrievalServiceMock.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
@@ -219,25 +212,21 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<PutMedicalTeamResponse>>().Subject;
-            var notFoundResult = taskResult.Result.Should().BeAssignableTo<NotFoundResult>().Subject;
+            taskResult.Result.Should().BeAssignableTo<NotFoundResult>();
         }
 
         [Fact]
         public void PostMedicalTeam_MedicalteamUpdateServiceErrors_Returns_Expected_Type()
         {
             // Arrange
+            SetupAuthorize(AuthorizationResult.Success());
             var examinationId = Guid.NewGuid().ToString();
             var examination = new Examination
             {
                 ExaminationId = examinationId
             };
-            var nullExamination = (Examination)null;
-
-            var logger = new Mock<IMELogger>();
-            var mapper = new Mock<IMapper>();
+            const Examination nullExamination = (Examination)null;
             var putMedicalTeamRequest = new PutMedicalTeamRequest();
-            var medicalTeam = new MedicalTeam();
-
 
             _examinationRetrievalServiceMock
                 .Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
@@ -252,22 +241,20 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<PutMedicalTeamResponse>>().Subject;
-            var badResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
+            taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>();
         }
 
         [Fact]
         public void PostMedicalTeam_OK()
         {
             // Arrange
+            SetupAuthorize(AuthorizationResult.Success());
             var examinationId = Guid.NewGuid().ToString();
-            var expectedNursingTeamInformation = "expectedNursingTeamInformation";
-
+            const string expectedNursingTeamInformation = "expectedNursingTeamInformation";
             var examination = new Examination
             {
                 ExaminationId = examinationId,
             };
-
-            var logger = new Mock<IMELogger>();
             var postMedicalTeamRequest = new PutMedicalTeamRequest()
             {
                 NursingTeamInformation = expectedNursingTeamInformation,
@@ -294,14 +281,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             SetupAuthorize(AuthorizationResult.Failed());
             var examinationId = Guid.NewGuid().ToString();
-            var expectedNursingTeamInformation = "expectedNursingTeamInformation";
-
+            const string expectedNursingTeamInformation = "expectedNursingTeamInformation";
             var examination = new Examination
             {
                 ExaminationId = examinationId,
             };
-
-            var logger = new Mock<IMELogger>();
             var postMedicalTeamRequest = new PutMedicalTeamRequest()
             {
                 NursingTeamInformation = expectedNursingTeamInformation,
@@ -317,9 +301,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<PutMedicalTeamResponse>>().Subject;
-            var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-
-            ((PutMedicalTeamResponse)okResult.Value).NursingTeamInformation.Should().Be(expectedNursingTeamInformation);
+            taskResult.Result.Should().BeAssignableTo<ForbidResult>();
         }
 
         [Fact]

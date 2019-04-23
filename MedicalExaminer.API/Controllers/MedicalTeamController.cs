@@ -133,6 +133,11 @@ namespace MedicalExaminer.API.Controllers
                 return NotFound();
             }
 
+            if (!CanAsync(Permission.GetExamination, examination))
+            {
+                return Forbid();
+            }
+
             examination.MedicalTeam = medicalTeamRequest;
 
             var returnedExamination = await _medicalTeamUpdateService.Handle(examination);
