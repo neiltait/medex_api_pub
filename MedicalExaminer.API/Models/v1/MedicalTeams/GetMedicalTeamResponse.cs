@@ -46,5 +46,15 @@ namespace MedicalExaminer.API.Models.v1.MedicalTeams
         ///     Medical Examiner Officer.
         /// </summary>
         public string MedicalExaminerOfficerUserId { get; set; }
+
+        /// <summary>
+        ///     Medical Examiner full name.
+        /// </summary>
+        public string MedicalExaminerFullName { get; set; }
+
+        /// <summary>
+        ///     Medical Examiner Officer full name.
+        /// </summary>
+        public string MedicalExaminerOfficerFullName { get; set; }
     }
 }

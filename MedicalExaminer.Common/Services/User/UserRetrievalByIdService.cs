@@ -32,7 +32,6 @@ namespace MedicalExaminer.Common.Services.User
             }
             catch (Exception)
             {
-                //_logger.Log("Failed to retrieve examination data", e);
                 throw;
             }
         }

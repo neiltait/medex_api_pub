@@ -77,7 +77,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     History = history
                 }
             };
-            
+
             var result = _mapper.Map<CaseBreakDownItem>(caseBreakdown, opt=>opt.Items["user"] = myUser);
 
             Assert.Equal(latest.EventId, result.OtherEvents.Latest.EventId);

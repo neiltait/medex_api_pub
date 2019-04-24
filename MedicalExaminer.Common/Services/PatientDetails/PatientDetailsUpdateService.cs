@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
+using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Models;
 
@@ -13,15 +14,17 @@ namespace MedicalExaminer.Common.Services.PatientDetails
         private readonly IExaminationConnectionSettings _connectionSettings;
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IMapper _mapper;
-
+        private readonly IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location> _locationHandler;
         public PatientDetailsUpdateService(
             IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings,
-            IMapper mapper)
+            IMapper mapper,
+            IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location> locationHandler)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
             _mapper = mapper;
+            _locationHandler = locationHandler;
         }
 
         public async Task<Models.Examination> Handle(PatientDetailsUpdateQuery param)
@@ -38,6 +41,9 @@ namespace MedicalExaminer.Common.Services.PatientDetails
                         examination => examination.ExaminationId == param.CaseId);
 
             _mapper.Map(param.PatientDetails, caseToReplace);
+
+            caseToReplace.MedicalExaminerOfficeResponsibleName = _locationHandler.Handle(new LocationRetrievalByIdQuery(caseToReplace.MedicalExaminerOfficeResponsible)).Result.Name;
+
 
             caseToReplace.UpdateCaseUrgencyScore();
 
