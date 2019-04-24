@@ -98,6 +98,11 @@ namespace MedicalExaminer.API.Controllers
                 return NotFound(new GetMedicalTeamResponse());
             }
 
+            if (examination == null)
+            {
+                return NotFound(new GetMedicalTeamResponse());
+            }
+
             if (!CanAsync(Permission.GetExamination, examination))
             {
                 return Forbid();
@@ -111,16 +116,13 @@ namespace MedicalExaminer.API.Controllers
                     NursingTeamInformation = string.Empty,
                 };
 
-            if (examination != null)
-            {
-                getMedicalTeamResponse
-                    .AddLookup(
-                        MedicalExaminersLookupKey,
-                        await GetLookupForExamination(examination, UserRoles.MedicalExaminer))
-                    .AddLookup(
-                        MedicalExaminerOfficersLookupKey,
-                        await GetLookupForExamination(examination, UserRoles.MedicalExaminerOfficer));
-            }
+            getMedicalTeamResponse
+                .AddLookup(
+                    MedicalExaminersLookupKey,
+                    await GetLookupForExamination(examination, UserRoles.MedicalExaminer))
+                .AddLookup(
+                    MedicalExaminerOfficersLookupKey,
+                    await GetLookupForExamination(examination, UserRoles.MedicalExaminerOfficer));
 
             return Ok(getMedicalTeamResponse);
         }
@@ -144,6 +146,7 @@ namespace MedicalExaminer.API.Controllers
             var medicalTeamRequest = Mapper.Map<MedicalTeam>(putMedicalTeamRequest);
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
+
             if (examination == null)
             {
                 return NotFound();
@@ -176,11 +179,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A Lookup.</returns>
         private async Task<IDictionary<string, string>> GetLookupForExamination(Examination examination, UserRoles role)
         {
-            if (examination == null)
-            {
-                return null;
-            }
-
             var users = await GetUsersForExamination(examination, role);
 
             return users.ToDictionary(
