@@ -89,14 +89,7 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetMedicalTeamResponse());
             }
 
-            var myUser = await CurrentUser();
-
-            var examination = _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, myUser)).Result;
-
-            if (examination == null)
-            {
-                return NotFound(new GetMedicalTeamResponse());
-            }
+            var examination = _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null)).Result;
 
             if (examination == null)
             {

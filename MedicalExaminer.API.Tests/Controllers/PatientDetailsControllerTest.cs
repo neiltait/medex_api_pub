@@ -281,7 +281,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<ActionResult<PutPatientDetailsResponse>>().Subject;
             var okObjectResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             var okObjectResultValue = okObjectResult.Value.Should().BeAssignableTo<PutPatientDetailsResponse>().Subject;
-            okObjectResultValue.ExaminationId.Should().Be(expectedExaminationId);
+            okObjectResultValue.Header.Should().NotBeNull();
         }
 
         private ControllerContext GetContollerContext() =>

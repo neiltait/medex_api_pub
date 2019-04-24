@@ -113,9 +113,11 @@ namespace MedicalExaminer.API.Controllers
 
             var result = await _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(examinationId, patientDetails));
 
+            var patientCard = Mapper.Map<PatientCardItem>(result);
+
             return Ok(new PutPatientDetailsResponse
             {
-                ExaminationId = result.ExaminationId
+                Header = patientCard
             });
         }
     }
