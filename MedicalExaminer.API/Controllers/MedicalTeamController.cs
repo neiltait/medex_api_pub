@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
-using MedicalExaminer.API.Models.v1;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
+using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Loggers;
@@ -15,18 +15,19 @@ using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
 {
-    /// <inheritdoc />
     /// <summary>
     ///     Medical Team Controller.
     /// </summary>
+    /// <inheritdoc />
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/examinations/{examinationId}")]
     [ApiController]
     [Authorize]
-    public class MedicalTeamController : AuthenticatedBaseController
+    public class MedicalTeamController : AuthorizedBaseController
     {
         /// <summary>
         /// Medical Examiners Lookup Key.
@@ -50,17 +51,22 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="mapper">Mapper.</param>
+        /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
+        /// <param name="authorizationService">Authorization Service.</param>
+        /// <param name="permissionService">Permission Service.</param>
         /// <param name="examinationRetrievalService">Examination Retrieval Service.</param>
         /// <param name="medicalTeamUpdateService">Medical Team Update Service.</param>
         /// <param name="usersRetrievalByRoleLocationQueryService">Users Retrieval by Role Location Query Service.</param>
         public MedicalTeamController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAuthorizationService authorizationService,
+            IPermissionService permissionService,
+            IAsyncQueryHandler<ExaminationRetrievalQuery,Examination> examinationRetrievalService,
             IAsyncUpdateDocumentHandler medicalTeamUpdateService,
-            IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>> usersRetrievalByRoleLocationQueryService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
-            : base(logger, mapper, usersRetrievalByEmailService)
+            IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>> usersRetrievalByRoleLocationQueryService)
+            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
             _examinationRetrievalService = examinationRetrievalService;
             _medicalTeamUpdateService = medicalTeamUpdateService;
@@ -92,6 +98,11 @@ namespace MedicalExaminer.API.Controllers
                 return NotFound(new GetMedicalTeamResponse());
             }
 
+            if (!CanAsync(Permission.GetExamination, examination))
+            {
+                return Forbid();
+            }
+
             var getMedicalTeamResponse = examination?.MedicalTeam != null
                 ? Mapper.Map<GetMedicalTeamResponse>(examination)
                 : new GetMedicalTeamResponse
@@ -100,9 +111,16 @@ namespace MedicalExaminer.API.Controllers
                     NursingTeamInformation = string.Empty,
                 };
 
-            getMedicalTeamResponse
-                .AddLookup(MedicalExaminersLookupKey, await GetLookupForExamination(examination, UserRoles.MedicalExaminer))
-                .AddLookup(MedicalExaminerOfficersLookupKey, await GetLookupForExamination(examination, UserRoles.MedicalExaminerOfficer));
+            if (examination != null)
+            {
+                getMedicalTeamResponse
+                    .AddLookup(
+                        MedicalExaminersLookupKey,
+                        await GetLookupForExamination(examination, UserRoles.MedicalExaminer))
+                    .AddLookup(
+                        MedicalExaminerOfficersLookupKey,
+                        await GetLookupForExamination(examination, UserRoles.MedicalExaminerOfficer));
+            }
 
             return Ok(getMedicalTeamResponse);
         }
@@ -129,6 +147,11 @@ namespace MedicalExaminer.API.Controllers
             if (examination == null)
             {
                 return NotFound();
+            }
+
+            if (!CanAsync(Permission.UpdateExamination, examination))
+            {
+                return Forbid();
             }
 
             examination.MedicalTeam = medicalTeamRequest;
@@ -175,11 +198,9 @@ namespace MedicalExaminer.API.Controllers
         {
             var locations = examination.LocationIds();
 
-            // TODO: Should we care about max results?
             var users = await _usersRetrievalByRoleLocationQueryService.Handle(new UsersRetrievalByRoleLocationQuery(locations, role));
 
             return users;
         }
-
     }
 }
