@@ -174,5 +174,110 @@ namespace MedicalExaminer.API.Tests.Controllers
             var taskResult = response.Should().BeOfType<ActionResult<GetPatientDetailsResponse>>().Subject;
             taskResult.Result.Should().BeAssignableTo<OkObjectResult>();
         }
+
+        [Fact]
+        public void UpdatePatientDetails_ReturnsBadRequest_WhenModelError()
+        {
+            // Arrange
+            var expectedExaminationId = "expectedExaminationId";
+
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var patientDetailsUpdateService = new Mock<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>>();
+
+            Controller = new PatientDetailsController(
+                LoggerMock.Object,
+                Mapper,
+                UsersRetrievalByEmailServiceMock.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                examinationRetrievalService.Object,
+                patientDetailsUpdateService.Object);
+
+            Controller.ModelState.AddModelError("An", "Error");
+
+            var expectedPutPatientDetailsRequest = new PutPatientDetailsRequest();
+
+            // Act
+            var response = Controller.UpdatePatientDetails(expectedExaminationId, expectedPutPatientDetailsRequest).Result;
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutPatientDetailsResponse>>().Subject;
+            var badRequestObjectResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
+            badRequestObjectResult.Value.Should().BeAssignableTo<PutPatientDetailsResponse>();
+        }
+
+        [Fact]
+        public void UpdatePatientDetails_ReturnsNotFound_WhenRetrievalServiceReturnsNull()
+        {
+            // Arrange
+            var expectedExaminationId = "expectedExaminationId";
+
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var patientDetailsUpdateService = new Mock<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>>();
+
+            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult((Examination)null));
+
+            Controller = new PatientDetailsController(
+                LoggerMock.Object,
+                Mapper,
+                UsersRetrievalByEmailServiceMock.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                examinationRetrievalService.Object,
+                patientDetailsUpdateService.Object);
+
+            var expectedPutPatientDetailsRequest = new PutPatientDetailsRequest();
+
+            // Act
+            var response = Controller.UpdatePatientDetails(expectedExaminationId, expectedPutPatientDetailsRequest).Result;
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutPatientDetailsResponse>>().Subject;
+            var notFoundObjectResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
+            notFoundObjectResult.Value.Should().BeAssignableTo<PutPatientDetailsResponse>();
+        }
+
+        [Fact]
+        public void UpdatePatientDetails_ReturnsOkay_WhenUpdateSuccessful()
+        {
+            // Arrange
+            var expectedExaminationId = "expectedExaminationId";
+            var expectedExamination = new Examination()
+            {
+                ExaminationId = expectedExaminationId,
+            };
+
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var patientDetailsUpdateService = new Mock<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>>();
+
+            examinationRetrievalService
+                .Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(expectedExamination));
+
+            patientDetailsUpdateService
+                .Setup(pdus => pdus.Handle(It.IsAny<PatientDetailsUpdateQuery>()))
+                .Returns(Task.FromResult(expectedExamination));
+
+            Controller = new PatientDetailsController(
+                LoggerMock.Object,
+                Mapper,
+                UsersRetrievalByEmailServiceMock.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                examinationRetrievalService.Object,
+                patientDetailsUpdateService.Object);
+
+            var expectedPutPatientDetailsRequest = new PutPatientDetailsRequest();
+
+            // Act
+            var response = Controller.UpdatePatientDetails(expectedExaminationId, expectedPutPatientDetailsRequest).Result;
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutPatientDetailsResponse>>().Subject;
+            var okObjectResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var okObjectResultValue = okObjectResult.Value.Should().BeAssignableTo<PutPatientDetailsResponse>().Subject;
+            okObjectResultValue.ExaminationId.Should().Be(expectedExaminationId);
+        }
     }
 }

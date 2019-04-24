@@ -39,7 +39,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="authorizationService">Authorization Service.</param>
         /// <param name="permissionService">Permission Service.</param>
         /// <param name="examinationRetrievalService">Examination Retrieval Service.</param>
-        /// <param name="patientDetailsByCaseIdService">Patient Details By Case Id Service.</param>
         /// <param name="patientDetailsUpdateService">Patient Details Update Service.</param>
         public PatientDetailsController(
             IMELogger logger,
@@ -90,28 +89,31 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="examinationId">Examination Id.</param>
         /// <param name="putPatientDetailsRequest">Put Patient Details Request.</param>
-        /// <returns></returns>
+        /// <returns><see cref="Examination"/> Id.</returns>
         [HttpPut]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public ActionResult<PutPatientDetailsResponse> UpdatePatientDetails(string examinationId, [FromBody]PutPatientDetailsRequest putPatientDetailsRequest)
+        public async Task<ActionResult<PutPatientDetailsResponse>> UpdatePatientDetails(string examinationId, [FromBody]PutPatientDetailsRequest putPatientDetailsRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new PutPatientDetailsResponse());
             }
 
-            if (_examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null)) == null)
+            var examination =
+                await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
+
+            if (examination == null)
             {
-                return NotFound("Case was not found");
+                return NotFound(new PutPatientDetailsResponse());
             }
 
             var patientDetails = Mapper.Map<PatientDetails>(putPatientDetailsRequest);
 
-            var result = _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(examinationId, patientDetails));
+            var result = await _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(examinationId, patientDetails));
 
             return Ok(new PutPatientDetailsResponse
             {
-                ExaminationId = result.Result.ExaminationId
+                ExaminationId = result.ExaminationId
             });
         }
     }

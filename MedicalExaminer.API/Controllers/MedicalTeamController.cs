@@ -170,11 +170,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A Lookup.</returns>
         private async Task<IDictionary<string, string>> GetLookupForExamination(Examination examination, UserRoles role)
         {
-            if (examination == null)
-            {
-                return null;
-            }
-
             var users = await GetUsersForExamination(examination, role);
 
             return users.ToDictionary(
