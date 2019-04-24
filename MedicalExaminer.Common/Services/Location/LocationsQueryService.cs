@@ -27,7 +27,7 @@ namespace MedicalExaminer.Common.Services.Location
         }
 
         /// <inheritdoc/>
-        public override Task<IEnumerable<Models.Location>> Handle(LocationsRetrievalByQuery param)
+        public async override Task<IEnumerable<Models.Location>> Handle(LocationsRetrievalByQuery param)
         {
             if (param == null)
             {
@@ -43,7 +43,8 @@ namespace MedicalExaminer.Common.Services.Location
                 predicate = predicate.And(idFilter);
             }
 
-            return GetItemsAsync(predicate);
+            var result = await GetItemsAsync(predicate);
+            return result;
         }
 
         /// <summary>

@@ -44,6 +44,11 @@ using Okta.Sdk.Configuration;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
+using Cosmonaut.Extensions;
+using Cosmonaut.Configuration;
+using Cosmonaut.Extensions.Microsoft.DependencyInjection;
+using Cosmonaut;
+
 namespace MedicalExaminer.API
 {
     /// <summary>
@@ -108,7 +113,7 @@ namespace MedicalExaminer.API
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
 
             Mapper.Initialize(config => { config.AddMedicalExaminerProfiles(); });
-         //   Mapper.AssertConfigurationIsValid();
+            //Mapper.AssertConfigurationIsValid();
             services.AddAutoMapper();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
@@ -177,6 +182,13 @@ namespace MedicalExaminer.API
             services.AddScoped<IDatabaseAccess, DatabaseAccess>();
 
             services.AddScoped<ControllerActionFilter>();
+
+            var cosmosSettings = new CosmosStoreSettings(
+                Configuration["CosmosDB:DatabaseId"],
+                new Uri(Configuration["CosmosDB:URL"]),
+                Configuration["CosmosDB:PrimaryKey"]);
+
+            services.AddCosmosStore<Examination>(cosmosSettings, "Examinations");
 
             ConfigureQueries(services);
 
@@ -293,7 +305,7 @@ namespace MedicalExaminer.API
 
             
             // Examination services 
-            services.AddScoped<ExaminationsQueryExpressionBuilder>(s => new ExaminationsQueryExpressionBuilder());
+            services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>,ExaminationsDashboardService>();
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, Examination>, CreateExaminationService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();

@@ -4,7 +4,9 @@ using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Services.Examination;
+using MedicalExaminer.Common.Services.Location;
 using Moq;
 using Xunit;
 
@@ -18,9 +20,11 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             // Arrange
             MedicalExaminer.Models.Examination examination = new MedicalExaminer.Models.Examination();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             CreateExaminationQuery query = null;
             var dbAccess = new Mock<IDatabaseAccess>();
-            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object);
+            var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
+            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
 
             Action act = () => sut.Handle(query).GetAwaiter().GetResult();
             act.Should().Throw<ArgumentNullException>();
@@ -32,12 +36,16 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             // Arrange
             var examination = new MedicalExaminer.Models.Examination();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            CreateExaminationQuery query = new CreateExaminationQuery(examination);
+            var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
 
+            CreateExaminationQuery query = new CreateExaminationQuery(examination);
             var dbAccess = new Mock<IDatabaseAccess>();
+            var location = new MedicalExaminer.Models.Location();
+            var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
+            locationService.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
             dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
                 examination, false)).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object);
+            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -65,11 +73,15 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             CreateExaminationQuery query = new CreateExaminationQuery(examination);
-
             var dbAccess = new Mock<IDatabaseAccess>();
+            var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
+            var location = new MedicalExaminer.Models.Location();
+            var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
+            locationService.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
+
             dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
                 examination, false)).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object);
+            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -97,11 +109,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             CreateExaminationQuery query = new CreateExaminationQuery(examination);
-
             var dbAccess = new Mock<IDatabaseAccess>();
+            var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
+            var location = new MedicalExaminer.Models.Location();
+            var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
+            locationService.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
             dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
                 examination, false)).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object);
+            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
 
             // Act
             var result = sut.Handle(query);

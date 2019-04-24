@@ -59,8 +59,8 @@ namespace MedicalExaminer.Common.Services.Examination
 
         private async Task<int> GetCount(Expression<Func<Models.Examination, bool>> baseQuery, Expression<Func<Models.Examination, bool>> query)
         {
-            query.And(baseQuery);
-            return await DatabaseAccess.GetCountAsync(ConnectionSettings, query);
+            var combinedQuery = query.And(baseQuery);
+            return await DatabaseAccess.GetCountAsync(ConnectionSettings, combinedQuery);
         }
 
         private Expression<Func<Models.Examination, bool>> GetCaseStatusPredicate(CaseStatus? paramFilterCaseStatus)

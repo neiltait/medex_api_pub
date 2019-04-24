@@ -207,7 +207,7 @@ namespace MedicalExaminer.Models
         [Required]
         [DataType(DataType.DateTime)]
         [JsonProperty(PropertyName = "last_admission")]
-        public DateTime LastAdmission { get; set; }
+        public DateTime? LastAdmission { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]
@@ -302,6 +302,14 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "medical_examiner_office_responsible")]
         [DataType(DataType.Text)]
         public string MedicalExaminerOfficeResponsible { get; set; }
+
+        /// <summary>
+        /// ID of MEO user who will be working on the scrutiny
+        /// </summary>
+        [Required]
+        [JsonProperty(PropertyName = "medical_examiner_office_responsible_name")]
+        [DataType(DataType.Text)]
+        public string MedicalExaminerOfficeResponsibleName { get; set; }
 
         /// <summary>
         /// enumerable of patients representatives

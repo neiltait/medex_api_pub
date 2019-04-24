@@ -1,4 +1,5 @@
-﻿using MedicalExaminer.Common.ConnectionSettings;
+﻿using Cosmonaut;
+using MedicalExaminer.Common.ConnectionSettings;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
@@ -16,6 +17,17 @@ namespace MedicalExaminer.Common.Database
             Client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection { Id = connectionSettings.Collection });
 
             return Client;
+        }
+
+        public ICosmosStore<TEntity> CreateCosmosStore<TEntity>(IConnectionSettings connectionSettings)
+            where TEntity : class
+        {
+            var cosmosSettings = new CosmosStoreSettings(connectionSettings.DatabaseId, connectionSettings.EndPointUri
+                , connectionSettings.PrimaryKey);
+
+            ICosmosStore<TEntity> cosmosStore = new CosmosStore<TEntity>(cosmosSettings);
+            
+            return cosmosStore;
         }
     }
 }

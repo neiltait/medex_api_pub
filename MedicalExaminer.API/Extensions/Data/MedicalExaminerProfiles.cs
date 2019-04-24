@@ -25,7 +25,6 @@ namespace MedicalExaminer.API.Extensions.Data
             config.AddProfile<MedicalHistoryEventProfile>();
             config.AddProfile<MeoSummaryEventProfile>();
             config.AddProfile<NewExaminationProfile>();
-            config.AddProfile<OtherEventProfile>();
             config.AddProfile<PreScrutinyEventProfile>();
             config.AddProfile<QapDiscussionEventProfile>();
         }
