@@ -401,5 +401,8 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "site_location_id")]
         public string SiteLocationId { get; set; }
+
+        public DateTime ConfirmationOfScrutinyCompletedAt { get; set; }
+        public string ConfirmationOfScrutinyCompletedBy { get; set; }
     }
 }

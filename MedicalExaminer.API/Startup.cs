@@ -47,6 +47,7 @@ using Cosmonaut.Extensions;
 using Cosmonaut.Configuration;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
 using Cosmonaut;
+using MedicalExaminer.Common.Services.CaseOutcome;
 
 namespace MedicalExaminer.API
 {
@@ -302,8 +303,7 @@ namespace MedicalExaminer.API
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
 
-            
-            // Examination services 
+            // Examination services
             services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>,ExaminationsDashboardService>();
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, Examination>, CreateExaminationService>();
@@ -314,12 +314,15 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<CreateEventQuery, string>, CreateEventService>();
             // Medical team services
             services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
-            
-            // Patient details services 
+
+            // Case Outcome Confirmation of Scrutiny
+            services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ConfirmationOfScrutinyService>();
+
+            // Patient details services
             services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
             services.AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService>();
-            
-            // User services 
+
+            // User services
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>, UserRetrievalByEmailService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>, UserRetrievalByIdService>();
@@ -329,11 +332,9 @@ namespace MedicalExaminer.API
             // Used for roles; but is being abused to pass null and get all users.
             services.AddScoped<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>, UsersRetrievalService>();
 
-
             // Location Services
             services.AddScoped<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>, LocationIdService>();
             services.AddScoped<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>, LocationsQueryService>();
-
         }
 
         /// <summary>
@@ -363,12 +364,9 @@ namespace MedicalExaminer.API
                         new OktaJwtSecurityTokenHandler(
                             tokenService,
                             new JwtSecurityTokenHandler(),
-                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
-                                userConnectionSetting),
-                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
-                                userConnectionSetting),
-                            new UserRetrievalByEmailService(new DatabaseAccess(new DocumentClientFactory()),
-                                userConnectionSetting),
+                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
+                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
+                            new UserRetrievalByEmailService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
                             oktaTokenExpiry));
                 });
         }
