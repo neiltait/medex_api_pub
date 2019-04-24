@@ -104,7 +104,8 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutMedicalTeamResponse());
             }
 
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
+            var myUser = await CurrentUser();
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, myUser));
             if (examination == null)
             {
                 return NotFound();
@@ -112,9 +113,7 @@ namespace MedicalExaminer.API.Controllers
 
             examination.MedicalTeam = medicalTeamRequest;
 
-            var user = await CurrentUser();
-
-            var returnedExamination = await _medicalTeamUpdateService.Handle(examination, user.UserId);
+            var returnedExamination = await _medicalTeamUpdateService.Handle(examination, myUser.UserId);
 
             if (returnedExamination == null)
             {
