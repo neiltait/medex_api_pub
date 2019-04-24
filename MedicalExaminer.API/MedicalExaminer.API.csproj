@@ -58,4 +58,10 @@
     <ProjectReference Include="..\MedicalExaminer.Common\MedicalExaminer.Common.csproj" />
     <ProjectReference Include="..\MedicalExaminer.Models\MedicalExaminer.Models.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FluentAssertions">
+      <HintPath>..\..\..\Users\light\.nuget\packages\fluentassertions\5.6.0\lib\netcoreapp2.0\FluentAssertions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

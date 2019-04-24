@@ -122,7 +122,7 @@ namespace MedicalExaminer.API.Tests.Authorization
             }
         }
 
-        private class TestDocument : ILocationBasedDocument
+        private class TestDocument : ILocationPath
         {
             public string NationalLocationId { get; set; }
             public string RegionLocationId { get; set; }

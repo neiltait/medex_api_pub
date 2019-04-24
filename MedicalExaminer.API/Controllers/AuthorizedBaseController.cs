@@ -66,7 +66,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="permission">The Permission.</param>
         /// <param name="document">The Document.</param>
         /// <returns>True if can.</returns>
-        protected bool CanAsync(Permission permission, ILocationBasedDocument document)
+        protected bool CanAsync(Permission permission, ILocationPath document)
         {
             var authorizationResult = AuthorizationService
                 .AuthorizeAsync(User, document, new PermissionRequirement(permission)).Result;

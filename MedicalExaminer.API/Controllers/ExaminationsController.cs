@@ -6,7 +6,6 @@ using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Services;
-using MedicalExaminer.Common.Extensions.Examination;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
@@ -18,6 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Permission = MedicalExaminer.Common.Authorization.Permission;
+using MedicalExaminer.Common.Extensions.Models;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -137,7 +137,7 @@ namespace MedicalExaminer.API.Controllers
                     _locationParentsService.Handle(
                         new LocationParentsQuery(examination.MedicalExaminerOfficeResponsible));
 
-                examination.UpdateLocationCache(locations);
+                examination.UpdateLocationPath(locations);
 
                 if (!CanAsync(Permission.CreateExamination, examination))
                 {

@@ -5,28 +5,28 @@ using System.Text;
 namespace MedicalExaminer.Models
 {
     /// <summary>
-    /// Location Based Document Interface.
+    /// Location Path Interface.
     /// </summary>
-    public interface ILocationBasedDocument
+    public interface ILocationPath
     {
         /// <summary>
         /// National Location Id.
         /// </summary>
-        string NationalLocationId { get; }
+        string NationalLocationId { get; set; }
 
         /// <summary>
         /// Region Location Id.
         /// </summary>
-        string RegionLocationId { get; }
+        string RegionLocationId { get; set; }
 
         /// <summary>
         /// Trust Location Id.
         /// </summary>
-        string TrustLocationId { get; }
+        string TrustLocationId { get; set; }
 
         /// <summary>
         /// Site Location Id.
         /// </summary>
-        string SiteLocationId { get; }
+        string SiteLocationId { get; set; }
     }
 }

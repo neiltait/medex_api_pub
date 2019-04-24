@@ -15,6 +15,10 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public PermissionsProfile()
         {
+            CreateMap<MEUserPermission, PermissionItem>();
+            CreateMap<MEUserPermission, GetPermissionResponse>()
+                .ForMember(x => x.Errors, opt => opt.Ignore());
+
             CreateMap<Permission, PermissionItem>();
             CreateMap<Permission, GetPermissionResponse>()
                 .ForMember(x => x.Errors, opt => opt.Ignore());
@@ -22,9 +26,10 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(x => x.Errors, opt => opt.Ignore());
             CreateMap<Permission, PutPermissionResponse>()
                 .ForMember(x => x.Errors, opt => opt.Ignore());
+
             CreateMap<PostPermissionRequest, Permission>();
             CreateMap<PutPermissionRequest, Permission>()
-                .ForMember(x=>x.CreatedAt, opt => opt.Ignore())
+                .ForMember(x => x.CreatedAt, opt => opt.Ignore())
                 .ForMember(x => x.LastModifiedBy, opt => opt.Ignore())
                 .ForMember(x => x.ModifiedAt, opt => opt.Ignore())
                 .ForMember(x => x.DeletedAt, opt => opt.Ignore());

@@ -19,7 +19,13 @@ namespace MedicalExaminer.API.Controllers
     [ApiController]
     public class CaseOutcomeController : AuthorizedBaseController
     {
-        protected CaseOutcomeController(IMELogger logger, IMapper mapper, IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService, IAuthorizationService authorizationService, IPermissionService permissionService) : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
+        public CaseOutcomeController(
+            IMELogger logger,
+            IMapper mapper,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAuthorizationService authorizationService,
+            IPermissionService permissionService)
+            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
         }
 
