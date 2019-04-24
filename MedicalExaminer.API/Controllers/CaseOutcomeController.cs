@@ -4,7 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
+using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,14 +17,11 @@ namespace MedicalExaminer.API.Controllers
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/examinations/{examinationId}")]
     [ApiController]
-    public class CaseOutcomeController : BaseAuthorizationController
+    public class CaseOutcomeController : AuthorizedBaseController
     {
-        public CaseOutcomeController(IMELogger logger, IMapper mapper, IAuthorizationService authorizationService) 
-            : base(logger, mapper, authorizationService)
+        protected CaseOutcomeController(IMELogger logger, IMapper mapper, IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService, IAuthorizationService authorizationService, IPermissionService permissionService) : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
-
         }
-
 
         [HttpPut]
         [Route("confirmation_of_scrutiny")]

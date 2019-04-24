@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Cosmonaut;
 using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
@@ -20,7 +21,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         /// <remarks>Overrides to pass extra constructor parameter.</remarks>
         protected override ExaminationsDashboardService GetService(
             IDatabaseAccess databaseAccess,
-            ExaminationConnectionSettings connectionSettings)
+            ExaminationConnectionSettings connectionSettings,
+            ICosmosStore<MedicalExaminer.Models.Examination> cosmosStore = null)
         {
             return new ExaminationsDashboardService(
                 databaseAccess,
