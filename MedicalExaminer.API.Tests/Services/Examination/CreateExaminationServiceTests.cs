@@ -38,7 +38,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
 
-            CreateExaminationQuery query = new CreateExaminationQuery(examination);
+            CreateExaminationQuery query = new CreateExaminationQuery(examination, "a");
             var dbAccess = new Mock<IDatabaseAccess>();
             var location = new MedicalExaminer.Models.Location();
             var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
@@ -53,6 +53,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             // Assert
             dbAccess.Verify(db => db.CreateItemAsync(connectionSettings.Object, examination, false), Times.Once);
             Assert.NotNull(result.Result);
+            Assert.Equal("a", result.Result.LastModifiedBy);
         }
 
         /// <summary>
@@ -72,7 +73,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CreatedAt = DateTime.Now.AddDays(-3)
             };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            CreateExaminationQuery query = new CreateExaminationQuery(examination);
+            CreateExaminationQuery query = new CreateExaminationQuery(examination, "a");
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -89,6 +90,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             // Assert
             Assert.NotNull(result.Result);
             Assert.Equal(0, result.Result.UrgencyScore);
+            Assert.Equal("a", result.Result.LastModifiedBy);
         }
 
         /// <summary>
@@ -108,7 +110,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CreatedAt = DateTime.Now
             };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            CreateExaminationQuery query = new CreateExaminationQuery(examination);
+            CreateExaminationQuery query = new CreateExaminationQuery(examination, "a");
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -124,6 +126,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             // Assert
             Assert.NotNull(result.Result);
             Assert.Equal(500, result.Result.UrgencyScore);
+            Assert.Equal("a", result.Result.LastModifiedBy);
         }
     }
 }

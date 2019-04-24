@@ -48,7 +48,7 @@ namespace MedicalExaminer.Common.Services.Examination
                     EventId = Guid.NewGuid().ToString()
                 };
                 param.Examination.UpdateCaseUrgencyScore();
-
+                param.Examination.LastModifiedBy = param.UserId;
                 return await _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination);
             }
             catch (Exception)

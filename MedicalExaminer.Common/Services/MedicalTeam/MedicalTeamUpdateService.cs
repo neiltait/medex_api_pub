@@ -24,7 +24,7 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
             _userService = userService;
         }
 
-        public async Task<Models.Examination> Handle(Models.Examination examination)
+        public async Task<Models.Examination> Handle(Models.Examination examination, string userId)
         {
             if (examination == null)
             {
@@ -38,7 +38,7 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
             examination.MedicalTeam.MedicalExaminerOfficerFullName = meo.FullName();
 
             examination.UpdateCaseUrgencyScore();
-
+            examination.LastModifiedBy = userId;
             var returnedDocument = await _databaseAccess.UpdateItemAsync(_connectionSettings, examination);
 
             return returnedDocument;
