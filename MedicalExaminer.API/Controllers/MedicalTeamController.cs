@@ -2,9 +2,9 @@
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
-using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -20,10 +20,11 @@ namespace MedicalExaminer.API.Controllers
     [Route("/v{api-version:apiVersion}/examinations/{examinationId}")]
     [ApiController]
     [Authorize]
-    public class MedicalTeamController : BaseController
+    public class MedicalTeamController : AuthenticatedBaseController
     {
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncUpdateDocumentHandler _medicalTeamUpdateService;
+        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _usersRetrievalByEmailService;
 
         /// <summary>
         /// Initialise a new instance of the <see cref="MedicalTeamController"/>.
@@ -36,11 +37,13 @@ namespace MedicalExaminer.API.Controllers
             IMELogger logger,
             IMapper mapper,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
-            IAsyncUpdateDocumentHandler medicalTeamUpdateService)
-            : base(logger, mapper)
+            IAsyncUpdateDocumentHandler medicalTeamUpdateService,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
+            : base(logger, mapper, usersRetrievalByEmailService)
         {
             _examinationRetrievalService = examinationRetrievalService;
             _medicalTeamUpdateService = medicalTeamUpdateService;
+            _usersRetrievalByEmailService = usersRetrievalByEmailService;
         }
 
         /// <summary>
@@ -58,13 +61,20 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetMedicalTeamResponse());
             }
 
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
+            var myUser = await CurrentUser();
+
+            var examination = _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, myUser)).Result;
+
+            if (examination == null)
+            {
+                return NotFound(new GetMedicalTeamResponse());
+            }
 
             var getMedicalTeamResponse = examination?.MedicalTeam != null
-                ? Mapper.Map<GetMedicalTeamResponse>(examination.MedicalTeam)
+                ? Mapper.Map<GetMedicalTeamResponse>(examination)
                 : new GetMedicalTeamResponse
                 {
-                    ConsultantsOther = new Models.v1.MedicalTeams.ClinicalProfessionalItem[] { },
+                    ConsultantsOther = new ClinicalProfessionalItem[] { },
                     NursingTeamInformation = string.Empty,
                 };
 
@@ -109,7 +119,7 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutMedicalTeamResponse());
             }
 
-            var response = Mapper.Map<PutMedicalTeamResponse>(returnedExamination.MedicalTeam);
+            var response = Mapper.Map<PutMedicalTeamResponse>(returnedExamination);
 
             return Ok(response);
         }

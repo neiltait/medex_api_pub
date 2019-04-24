@@ -21,7 +21,7 @@ namespace MedicalExaminer.Common.Services.Examination
             _connectionSettings = connectionSettings;
         }
 
-        public Task<IEnumerable<Models.MeUser>> Handle(UsersRetrievalQuery param)
+        public async Task<IEnumerable<Models.MeUser>> Handle(UsersRetrievalQuery param)
         {
             if (param == null)
             {
@@ -29,7 +29,9 @@ namespace MedicalExaminer.Common.Services.Examination
             }
 
             // can put whatever filters in the param, just empty for now
-            return _databaseAccess.GetItemsAsync<Models.MeUser>(_connectionSettings, x => true);
+            var result = await _databaseAccess.GetItemsAsync<Models.MeUser>(_connectionSettings, x => true);
+
+            return result;
         }
     }
 }

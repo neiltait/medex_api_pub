@@ -207,7 +207,7 @@ namespace MedicalExaminer.Models
         [Required]
         [DataType(DataType.DateTime)]
         [JsonProperty(PropertyName = "last_admission")]
-        public DateTime LastAdmission { get; set; }
+        public DateTime? LastAdmission { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]
@@ -304,6 +304,14 @@ namespace MedicalExaminer.Models
         public string MedicalExaminerOfficeResponsible { get; set; }
 
         /// <summary>
+        /// ID of MEO user who will be working on the scrutiny
+        /// </summary>
+        [Required]
+        [JsonProperty(PropertyName = "medical_examiner_office_responsible_name")]
+        [DataType(DataType.Text)]
+        public string MedicalExaminerOfficeResponsibleName { get; set; }
+
+        /// <summary>
         /// enumerable of patients representatives
         /// </summary>
         [JsonProperty(PropertyName = "representatives")]
@@ -374,24 +382,24 @@ namespace MedicalExaminer.Models
         /// the national location id
         /// </summary>
         [JsonProperty(PropertyName = "national_location_id")]
-        public string NationalLocationId { get; }
+        public string NationalLocationId { get; set; }
 
         /// <summary>
         /// the regional location id
         /// </summary>
         [JsonProperty(PropertyName = "region_location_id")]
-        public string RegionLocationId { get; }
+        public string RegionLocationId { get; set; }
 
         /// <summary>
         /// the trusts location id
         /// </summary>
         [JsonProperty(PropertyName = "trust_location_id")]
-        public string TrustLocationId { get; }
+        public string TrustLocationId { get; set; }
 
         /// <summary>
         /// the sites location id
         /// </summary>
         [JsonProperty(PropertyName = "site_location_id")]
-        public string SiteLocationId { get; }
+        public string SiteLocationId { get; set; }
     }
 }

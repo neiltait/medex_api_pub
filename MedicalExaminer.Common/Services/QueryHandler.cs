@@ -84,7 +84,9 @@ namespace MedicalExaminer.Common.Services
         /// <typeparam name="T">Query Reqyest.</typeparam>
         /// <param name="predicate">Predicate.</param>
         /// <returns>A list of <see cref="IEnumerable{T}"/>.</returns>
-        protected Task<IEnumerable<T>> GetItemsAsync<T>(Expression<Func<T, bool>> predicate)
+        protected Task<IEnumerable<T>> GetItemsAsync<T>(
+            Expression<Func<T, bool>> predicate)
+            where T:class
         {
             return DatabaseAccess.GetItemsAsync(ConnectionSettings, predicate);
         }
@@ -100,6 +102,7 @@ namespace MedicalExaminer.Common.Services
         protected Task<IEnumerable<T>> GetItemsAsync<T, TKey>(
             Expression<Func<T, bool>> predicate,
             Expression<Func<T, TKey>> orderBy)
+            where T : class
         {
             return DatabaseAccess.GetItemsAsync(ConnectionSettings, predicate, orderBy);
         }

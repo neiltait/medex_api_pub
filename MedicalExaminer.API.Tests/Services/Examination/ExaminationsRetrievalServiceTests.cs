@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cosmonaut;
 using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services.Examination;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
+using Microsoft.Azure.Documents.Client;
 using Moq;
 using Xunit;
 
@@ -24,14 +27,18 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         /// <remarks>Overrides to pass extra constructor parameter.</remarks>
         protected override ExaminationsRetrievalService GetService(
             IDatabaseAccess databaseAccess,
-            ExaminationConnectionSettings connectionSettings)
+            ExaminationConnectionSettings connectionSettings,
+            ICosmosStore<MedicalExaminer.Models.Examination> cosmosStore = null)
         {
+            var store = CosmosMocker.CreateCosmosStore(GetExamples());
+            
             var examinationQueryBuilder = new ExaminationsQueryExpressionBuilder();
 
             return new ExaminationsRetrievalService(
                 databaseAccess, 
                 connectionSettings, 
-                examinationQueryBuilder);
+                examinationQueryBuilder,
+                store.Object);
         }
 
         [Fact]
@@ -39,7 +46,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(CaseStatus.Unassigned,
-                "", null, 0, 0, "", true);
+                "", null, 1, 10, "", true);
 
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -54,7 +61,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(CaseStatus.ReadyForMEScrutiny,
-                "", null, 0, 0, "", true);
+                "", null, 1, 10, "", true);
 
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -69,7 +76,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(CaseStatus.ReadyForMEScrutiny,
-                "a", null, 0, 0, "", true);
+                "a", null, 1, 10, "", true);
 
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -84,7 +91,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
-                "", null, 0, 0, "", true);
+                "", null, 1, 10, "", true);
             
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -99,7 +106,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
-                "", null, 0, 0, "", true);
+                "", null, 1, 10, "", true);
 
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -114,7 +121,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(null,
-                "", null, 0, 0, "", false);
+                "", null, 1, 10, "", false);
             
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -156,7 +163,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(CaseStatus.AdmissionNotesHaveBeenAdded,
-                "", null, 0, 0, "", true);
+                "", null, 1, 10, "", true);
             
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -171,7 +178,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(CaseStatus.HaveBeenScrutinisedByME,
-                "", null, 0, 0, "", true);
+                "", null, 1, 10, "", true);
             
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -186,7 +193,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(CaseStatus.PendingAdmissionNotes,
-                "", null, 0, 0, "", true);
+                "", null, 1, 10, "", true);
 
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -201,7 +208,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(CaseStatus.PendingDiscussionWithQAP,
-                "", null, 0, 0, "", true);
+                "", null, 1, 10, "", true);
 
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -216,7 +223,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(CaseStatus.PendingDiscussionWithRepresentative,
-                "", null, 0, 0, "", true);
+                "", null, 1, 10, "", true);
             
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -231,7 +238,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(CaseStatus.HaveFinalCaseOutstandingOutcomes,
-                "", null, 0, 0, "", true);
+                "", null, 1, 10, "", true);
             
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);

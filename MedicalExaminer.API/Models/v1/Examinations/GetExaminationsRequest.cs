@@ -1,4 +1,5 @@
-﻿using MedicalExaminer.API.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
+using MedicalExaminer.API.Attributes;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.Examinations
@@ -28,11 +29,13 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// What to order the results by
         /// </summary>
+        [Required]
         public ExaminationsOrderBy OrderBy { get; set; }
 
         /// <summary>
         /// Return only open cases = true, else false for closed cases
         /// </summary>
+        [Required]
         public bool OpenCases { get; set; }
 
         /// <summary>

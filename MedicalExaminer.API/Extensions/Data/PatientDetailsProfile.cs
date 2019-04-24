@@ -15,8 +15,6 @@ namespace MedicalExaminer.API.Extensions.Data
         public PatientDetailsProfile()
         {
             CreateMap<PutPatientDetailsRequest, PatientDetails>();
-            CreateMap<Examination, GetPatientDetailsResponse>()
-                .ForMember(getPatientDetailsResponse => getPatientDetailsResponse.Errors, opt => opt.Ignore());
             CreateMap<PatientDetails, Examination>()
                 .ForMember(x => x.ExaminationId, opt => opt.Ignore())
                 .ForMember(x => x.UrgencyScore, opt => opt.Ignore())

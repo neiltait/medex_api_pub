@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
-using MedicalExaminer.Models;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -41,7 +40,7 @@ namespace MedicalExaminer.Common.Database
                 var queryable = _client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions);
                 IQueryable<T> filter = queryable.Where(predicate);
                 IDocumentQuery<T> query = filter.AsDocumentQuery();
-
+                
                 var results = new List<T>();
                 results.AddRange(await query.ExecuteNextAsync<T>());
                 
@@ -61,41 +60,58 @@ namespace MedicalExaminer.Common.Database
         public async Task<IEnumerable<T>> GetItemsAsync<T>(
             IConnectionSettings connectionSettings,
             Expression<Func<T, bool>> predicate)
+            where T : class
         {
             var _client = _documentClientFactory.CreateClient(connectionSettings);
+            
             var query = _client.CreateDocumentQuery<T>(
-                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
-                    new FeedOptions { MaxItemCount = -1 })
-                .Where(predicate)
-                .AsDocumentQuery();
+                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
+                    connectionSettings.Collection),
+                    new FeedOptions
+                    {
+                        MaxItemCount = -1,
+                    })
+                    .Where(predicate)
+                    .AsDocumentQuery();
+
+            FeedResponse<T> response = await query.ExecuteNextAsync<T>();
 
             var results = new List<T>();
-            while (query.HasMoreResults)
+            
+            foreach (var t in response)
             {
-                results.AddRange(await query.ExecuteNextAsync<T>());
-            }
+                results.Add(t);
+            };
 
             return results;
         }
 
 
-        public async Task<IEnumerable<T>> GetItemsAsync<T, TKey>(IConnectionSettings connectionSettings, 
+        public async Task<IEnumerable<T>> GetItemsAsync<T, TKey>(IConnectionSettings connectionSettings,
             Expression<Func<T, bool>> predicate, Expression<Func<T, TKey>> orderBy)
+            where T : class
         {
+
             var _client = _documentClientFactory.CreateClient(connectionSettings);
             var query = _client.CreateDocumentQuery<T>(
                     UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
-                    new FeedOptions { MaxItemCount = -1 })
-                .Where(predicate)
-                .OrderBy(orderBy)
-                .AsDocumentQuery();
+                    new FeedOptions
+                    {
+                        MaxItemCount = -1,
+                    })
+                    .Where(predicate)
+                    .OrderBy(orderBy)
+                    .AsDocumentQuery();
+
+            FeedResponse<T> response = await query.ExecuteNextAsync<T>();
 
             var results = new List<T>();
-            while (query.HasMoreResults)
-            {
-                results.AddRange(await query.ExecuteNextAsync<T>());
-            }
 
+            foreach (var t in response)
+            {
+                results.Add(t);
+            }
+            
             return results;
         }
 

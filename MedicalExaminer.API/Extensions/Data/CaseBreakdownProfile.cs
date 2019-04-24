@@ -39,6 +39,7 @@ namespace MedicalExaminer.API.Extensions.Data
             {
                 return EventContainerMapping(source.QapDiscussion, context);
             }));
+
         }
 
         private EventContainerItem<T> EventContainerMapping<T>(
