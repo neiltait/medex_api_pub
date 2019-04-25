@@ -25,6 +25,11 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             PermissionServiceMock = new Mock<IPermissionService>();
 
+            AuthorizedUser = new MeUser()
+            {
+                UserId = "authorizedUserId",
+            };
+
             if (setupAuthorize)
             {
                 AuthorizationServiceMock
@@ -51,5 +56,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         protected Mock<IAuthorizationService> AuthorizationServiceMock { get; }
 
         protected Mock<IPermissionService> PermissionServiceMock { get; }
+
+        protected MeUser AuthorizedUser { get; }
     }
 }
