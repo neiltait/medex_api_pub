@@ -4,6 +4,7 @@ using AutoMapper;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseOutcome;
+using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -24,6 +25,7 @@ namespace MedicalExaminer.API.Controllers
             IMapper mapper,
             IAuthorizationService authorizationService,
             IAsyncQueryHandler<CoronerReferralQuery, string> coronerReferralService,
+         //   IAsyncQueryHandler<ExaminationRetrievalQuery, string> closeCaseService,
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
             : base(logger, mapper, usersRetrievalByEmailService)
         {
@@ -69,9 +71,17 @@ namespace MedicalExaminer.API.Controllers
 
         [HttpPut]
         [Route("close_case")]
-        public ActionResult PutCloseCase()
+        public async Task<ActionResult> PutCloseCase(string examinationId)
         {
-            // TODO:  Implement
+            if (string.IsNullOrEmpty(examinationId))
+            {
+                return new BadRequestObjectResult(nameof(examinationId));
+            }
+
+            var user = await CurrentUser();
+
+            var result = await _closeCaseService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+
             return Ok();
         }
 
