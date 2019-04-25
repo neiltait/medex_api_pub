@@ -43,7 +43,7 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             _mapper.Map(param.PatientDetails, caseToReplace);
 
             caseToReplace.MedicalExaminerOfficeResponsibleName = _locationHandler.Handle(new LocationRetrievalByIdQuery(caseToReplace.MedicalExaminerOfficeResponsible)).Result.Name;
-
+            caseToReplace.LastModifiedBy = param.UserId;
 
             caseToReplace.UpdateCaseUrgencyScore();
 

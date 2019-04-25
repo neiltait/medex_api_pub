@@ -32,7 +32,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentNullException>(() => sut.Handle(null));
+            Assert.ThrowsAsync<ArgumentNullException>(() => sut.Handle(null, "a"));
         }
 
         [Fact]
@@ -61,10 +61,11 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
 
             // Act
-            var result = await sut.Handle(examination1);
+            var result = await sut.Handle(examination1, "a");
 
             // Assert
             Assert.Equal(examinationId, result.ExaminationId);
+            Assert.Equal("a", result.LastModifiedBy);
         }
 
         /// <summary>
@@ -96,10 +97,11 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
 
             // Act
-            var result = await sut.Handle(examination);
+            var result = await sut.Handle(examination, "a");
 
             // Assert
             Assert.Equal(0, result.UrgencyScore);
+            Assert.Equal("a", result.LastModifiedBy);
         }
 
         /// <summary>
@@ -132,10 +134,11 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
 
             // Act
-            var result = await sut.Handle(examination);
+            var result = await sut.Handle(examination, "a");
 
             // Assert
             Assert.Equal(500, result.UrgencyScore);
+            Assert.Equal("a", result.LastModifiedBy);
         }
     }
 }
