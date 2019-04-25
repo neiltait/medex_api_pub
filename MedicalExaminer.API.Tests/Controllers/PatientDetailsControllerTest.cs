@@ -246,6 +246,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public void UpdatePatientDetails_ReturnsOkay_WhenUpdateSuccessful()
         {
             // Arrange
+            SetupAuthorize(AuthorizationResult.Success());
             var expectedExaminationId = "expectedExaminationId";
             var expectedExamination = new Examination()
             {

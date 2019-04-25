@@ -109,6 +109,11 @@ namespace MedicalExaminer.API.Controllers
                 return NotFound(new PutPatientDetailsResponse());
             }
 
+            if (!CanAsync(Permission.UpdateExamination, examination))
+            {
+                return Forbid();
+            }
+
             var patientDetails = Mapper.Map<PatientDetails>(putPatientDetailsRequest);
 
             var myUser = await CurrentUser();

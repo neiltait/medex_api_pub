@@ -69,7 +69,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="userRetrievalByIdService">User retrieval by id service.</param>
         /// <param name="userUpdateService">User update service.</param>
         /// <param name="locationParentsService">Location Parents Service.</param>
-        /// <param name="permissionsRetrievalByLocationsAndUserService">Permissions Retrieval By Locations and User Service.</param>
         /// <param name="locationsParentsService">Locations Parents Service.</param>
         /// <param name="permissionPersistence">The Permission Persistence</param>
         public PermissionsController(
