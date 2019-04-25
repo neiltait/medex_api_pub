@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseOutcome;
-using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -40,9 +38,13 @@ namespace MedicalExaminer.API.Controllers
         [Route("confirmation_of_scrutiny")]
         public async Task<ActionResult<PutConfirmationOfScrutinyResponse>> PutConfirmationOfScrutiny(string examinationId)
         {
-            var user = await CurrentUser();
+            if (string.IsNullOrEmpty(examinationId))
+            {
+                return BadRequest(new PutConfirmationOfScrutinyResponse());
+            }
 
-            // var confirmationOfScrutinyQuery = new ConfirmationOfScrutinyQuery(examinationId, user);
+            var user = await CurrentUser();
+            
             var result = await _confirmationOfScrutinyService.Handle(new ConfirmationOfScrutinyQuery(examinationId, user));
 
             return Ok(new PutConfirmationOfScrutinyResponse()

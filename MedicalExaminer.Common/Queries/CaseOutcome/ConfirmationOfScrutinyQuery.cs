@@ -1,4 +1,5 @@
 ﻿using MedicalExaminer.Models;
+using System;
 
 namespace MedicalExaminer.Common.Queries.CaseOutcome
 {
@@ -6,8 +7,13 @@ namespace MedicalExaminer.Common.Queries.CaseOutcome
     {
         public ConfirmationOfScrutinyQuery(string examinationId, MeUser user)
         {
+            if (string.IsNullOrEmpty(examinationId))
+            {
+                throw new ArgumentNullException(nameof(examinationId));
+            }
+
             ExaminationId = examinationId;
-            User = user;
+            User = user ?? throw new ArgumentException(nameof(user));
         }
 
         public string ExaminationId { get; }
