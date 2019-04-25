@@ -6,7 +6,9 @@ namespace MedicalExaminer.Models.Enums
     [JsonConverter(typeof(StringEnumConverter))]
     public enum BereavedDiscussionOutcome
     {
-        CouseOfDeathAccepted,
-        ConcernsRaised
+        CauseOfDeathAccepted = 0,
+        ConcernsCoronerInvestigation = 1,
+        ConcernsRequires100a = 2,
+        ConcernsAddressedWithoutCoroner = 3
     }
 }
