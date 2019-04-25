@@ -111,7 +111,9 @@ namespace MedicalExaminer.API.Controllers
 
             var patientDetails = Mapper.Map<PatientDetails>(putPatientDetailsRequest);
 
-            var result = await _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(examinationId, patientDetails));
+            var myUser = await CurrentUser();
+
+            var result = await _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(examinationId, patientDetails, myUser.UserId));
 
             var patientCard = Mapper.Map<PatientCardItem>(result);
 

@@ -44,7 +44,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
 
             var mapper = new Mock<IMapper>();
-            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object);
+            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object, "a");
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -64,6 +64,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             dbAccess.Verify(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>()), Times.Once);
             Assert.NotNull(result.Result);
+            Assert.Equal("a", result.Result.LastModifiedBy);
         }
 
         [Fact]
@@ -75,7 +76,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
 
             var mapper = new Mock<IMapper>();
-            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object);
+            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object, "a");
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -117,7 +118,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
 
             var mapper = new Mock<IMapper>();
-            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object);
+            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object, "a");
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -135,6 +136,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
 
             // Assert
             Assert.Equal(0, result.Result.UrgencyScore);
+            Assert.Equal("a", result.Result.LastModifiedBy);
         }
 
         /// <summary>
@@ -157,7 +159,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
 
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var mapper = new Mock<IMapper>();
-            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object);
+            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object, "a");
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -175,6 +177,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
 
             // Assert
             Assert.Equal(500, result.Result.UrgencyScore);
+            Assert.Equal("a", result.Result.LastModifiedBy);
         }
     }
 }

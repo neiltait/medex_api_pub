@@ -179,8 +179,12 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             };
 
-            _examinationRetrievalServiceMock.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+            _examinationRetrievalServiceMock
+                .Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
+
+            Controller.ControllerContext = GetContollerContext();
+            Controller.ModelState.AddModelError("An", "Error");
 
             // Act
             var response = Controller.GetMedicalTeam(examinationId).Result;
@@ -200,6 +204,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller.ModelState.AddModelError("An", "Error");
             var examinationId = "examinationId";
             var request = new PutMedicalTeamRequest();
+
+            Controller.ControllerContext = GetContollerContext();
 
             // Act
             var response = await Controller.PutMedicalTeam(examinationId, request);
@@ -223,8 +229,11 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             _examinationRetrievalServiceMock.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
-            _medicalTeamUpdateServiceMock.Setup(u => u.Handle(It.IsAny<Examination>()))
+
+            _medicalTeamUpdateServiceMock.Setup(u => u.Handle(It.IsAny<Examination>(), "a"))
                 .Returns(Task.FromResult(examination));
+
+            Controller.ControllerContext = GetContollerContext();
 
             // Act
             var response = Controller.PutMedicalTeam(examinationId, postMedicalTeamRequest).Result;
@@ -252,8 +261,10 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(examination));
 
             _medicalTeamUpdateServiceMock
-                .Setup(u => u.Handle(It.IsAny<Examination>()))
+                .Setup(u => u.Handle(It.IsAny<Examination>(), "a"))
                 .Returns(Task.FromResult(nullExamination));
+
+            Controller.ControllerContext = GetContollerContext();
 
             // Act
             var response = Controller.PutMedicalTeam(examinationId, putMedicalTeamRequest).Result;
@@ -279,9 +290,12 @@ namespace MedicalExaminer.API.Tests.Controllers
                 NursingTeamInformation = expectedNursingTeamInformation,
             };
 
-            _examinationRetrievalServiceMock.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+            _examinationRetrievalServiceMock
+                .Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
-            _medicalTeamUpdateServiceMock.Setup(u => u.Handle(It.IsAny<Examination>()))
+
+            _medicalTeamUpdateServiceMock
+                .Setup(u => u.Handle(It.IsAny<Examination>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(examination));
 
             // Act
@@ -315,6 +329,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             _medicalTeamUpdateServiceMock.Setup(u => u.Handle(It.IsAny<Examination>()))
                 .Returns(Task.FromResult(examination));
 
+            Controller.ControllerContext = GetContollerContext();
             // Act
             var response = Controller.PutMedicalTeam(examinationId, postMedicalTeamRequest).Result;
 
@@ -381,5 +396,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             typedResponse.Lookups.ContainsKey(MedicalTeamController.MedicalExaminerOfficersLookupKey).Should().BeTrue();
             typedResponse.Lookups[MedicalTeamController.MedicalExaminerOfficersLookupKey].Contains(expectedMedicalExaminerOfficer).Should().BeTrue();
         }
+
+        
     }
 }
