@@ -242,7 +242,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void No_AdmissionNotes_Case_Status_Pending_Admission_Notes_True()
+        public void No_AdmissionNotes_Case_Status_PendingAdmissionNotes_True()
         {
             // Arrange
             var examination = new Examination();
@@ -257,7 +257,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void Draft_AdmissionNotes_Case_Status_Pending_Admission_Notes_True()
+        public void Draft_AdmissionNotes_Case_Status_PendingAdmissionNotes_True()
         {
             // Arrange
             var examination = new Examination();
@@ -275,7 +275,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void Latest_AdmissionNotes_Case_Status_Pending_Admission_Notes_False()
+        public void Latest_AdmissionNotes_Case_Status_PendingAdmissionNotes_False()
         {
             // Arrange
             var examination = new Examination();

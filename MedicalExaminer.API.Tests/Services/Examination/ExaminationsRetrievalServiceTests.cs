@@ -302,7 +302,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examination9 = new MedicalExaminer.Models.Examination()
             {
                 Completed = false,
-                HaveFinalCaseOutstandingOutcomes = true
+                HaveFinalCaseOutcomesOutstanding = true
             };
 
             var examination10 = new MedicalExaminer.Models.Examination()

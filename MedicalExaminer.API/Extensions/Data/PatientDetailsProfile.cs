@@ -28,7 +28,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(x => x.PendingAdmissionNotes, opt => opt.Ignore())
                 .ForMember(x => x.PendingDiscussionWithQAP, opt => opt.Ignore())
                 .ForMember(x => x.PendingDiscussionWithRepresentative, opt => opt.Ignore())
-                .ForMember(x => x.HaveFinalCaseOutstandingOutcomes, opt => opt.Ignore())
+                .ForMember(x => x.HaveFinalCaseOutcomesOutstanding, opt => opt.Ignore())
                 .ForMember(x => x.LastModifiedBy, opt => opt.Ignore())
                 .ForMember(x => x.ModifiedAt, opt => opt.Ignore())
                 .ForMember(x => x.CreatedAt, opt => opt.Ignore())

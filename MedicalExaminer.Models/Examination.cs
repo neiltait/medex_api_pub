@@ -328,49 +328,49 @@ namespace MedicalExaminer.Models
         /// Have the admission notes been added
         /// </summary>
         [JsonProperty(PropertyName = "admission_notes_have_been_added")]
-        public bool AdmissionNotesHaveBeenAdded { get; set; }
+        public bool AdmissionNotesHaveBeenAdded { get; set; } = false;
 
         /// <summary>
         /// is the examination ready for medical examiner scrutiny
         /// </summary>
         [JsonProperty(PropertyName = "ready_for_me_scrutiny")]
-        public bool ReadyForMEScrutiny { get; set; }
+        public bool ReadyForMEScrutiny { get; set; } = false;
 
         /// <summary>
         /// is the case currently unassigned
         /// </summary>
         [JsonProperty(PropertyName = "unassigned")]
-        public bool Unassigned { get; set; }
+        public bool Unassigned { get; set; } = true;
 
         /// <summary>
         /// has the case been scrutinised by the medical examiner
         /// </summary>
         [JsonProperty(PropertyName = "have_been_scrutinised_by_me")]
-        public bool HaveBeenScrutinisedByME { get; set; }
+        public bool HaveBeenScrutinisedByME { get; set; } = false;
 
         /// <summary>
         /// have admission notes been added for the examination
         /// </summary>
         [JsonProperty(PropertyName = "pending_admission_notes")]
-        public bool PendingAdmissionNotes { get; set; }
+        public bool PendingAdmissionNotes { get; set; } = true;
 
         /// <summary>
         /// has the qap discussion occured
         /// </summary>
         [JsonProperty(PropertyName = "pending_discussion_with_qap")]
-        public bool PendingDiscussionWithQAP { get; set; }
+        public bool PendingDiscussionWithQAP { get; set; } = true;
 
         /// <summary>
         /// has the discussion with the representative
         /// </summary>
         [JsonProperty(PropertyName = "pending_discussion_with_representative")]
-        public bool PendingDiscussionWithRepresentative { get; set; }
+        public bool PendingDiscussionWithRepresentative { get; set; } = true;
 
         /// <summary>
         /// have the final case outcomes been determined
         /// </summary>
-        [JsonProperty(PropertyName = "have_final_case_outstanding_outcomes")]
-        public bool HaveFinalCaseOutstandingOutcomes { get; set; }
+        [JsonProperty(PropertyName = "have_final_case_outcomes_outstanding")]
+        public bool HaveFinalCaseOutcomesOutstanding { get; set; } = true;
 
         /// <summary>
         /// the unique identifier for the examination

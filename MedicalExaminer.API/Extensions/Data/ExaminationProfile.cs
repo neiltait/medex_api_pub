@@ -79,7 +79,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.PendingAdmissionNotes, opt => opt.Ignore())
                 .ForMember(examination => examination.PendingDiscussionWithQAP, opt => opt.Ignore())
                 .ForMember(examination => examination.PendingDiscussionWithRepresentative, opt => opt.Ignore())
-                .ForMember(examination => examination.HaveFinalCaseOutstandingOutcomes, opt => opt.Ignore())
+                .ForMember(examination => examination.HaveFinalCaseOutcomesOutstanding, opt => opt.Ignore())
                 .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
                 .ForMember(examination => examination.LastModifiedBy, opt => opt.Ignore())
                 .ForMember(examination => examination.ModifiedAt, opt => opt.Ignore())

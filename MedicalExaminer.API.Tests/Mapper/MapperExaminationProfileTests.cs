@@ -456,7 +456,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 PendingDiscussionWithRepresentative = true,
                 AdmissionNotesHaveBeenAdded = true,
                 HaveBeenScrutinisedByME = true,
-                HaveFinalCaseOutstandingOutcomes = true,
+                HaveFinalCaseOutcomesOutstanding = true,
                 ReadyForMEScrutiny = true,
                 Unassigned = true,
             };
