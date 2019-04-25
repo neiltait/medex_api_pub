@@ -47,6 +47,7 @@ using Cosmonaut.Extensions;
 using Cosmonaut.Configuration;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
 using Cosmonaut;
+using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Services.CaseOutcome;
 
 namespace MedicalExaminer.API
@@ -316,7 +317,7 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
 
             // Case Outcome Confirmation of Scrutiny
-            services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ConfirmationOfScrutinyService>();
+            services.AddScoped<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>, ConfirmationOfScrutinyService>();
 
             // Patient details services
             services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();

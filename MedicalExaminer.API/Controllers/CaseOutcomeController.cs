@@ -37,7 +37,7 @@ namespace MedicalExaminer.API.Controllers
             var user = await CurrentUser();
             //var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
             var confirmationOfScrutinyQuery = new ConfirmationOfScrutinyQuery(examinationId, user);
-            
+
             return Ok(new PutConfirmationOfScrutinyResponse()
             {
                 ScrutinyConfirmedOn = DateTime.Now

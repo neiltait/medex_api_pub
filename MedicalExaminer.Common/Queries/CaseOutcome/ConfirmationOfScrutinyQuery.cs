@@ -1,10 +1,10 @@
 ﻿using MedicalExaminer.Models;
 
-namespace MedicalExaminer.Common.Queries.Examination
+namespace MedicalExaminer.Common.Queries.CaseOutcome
 {
-    public class ExaminationRetrievalQuery : IQuery<Models.Examination>
+    public class ConfirmationOfScrutinyQuery : IQuery<Models.Examination>
     {
-        public ExaminationRetrievalQuery(string examinationId, MeUser user)
+        public ConfirmationOfScrutinyQuery(string examinationId, MeUser user)
         {
             ExaminationId = examinationId;
             User = user;
