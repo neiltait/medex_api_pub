@@ -17,15 +17,21 @@ using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
 {
+    /// <summary>
+    /// Case Breakdown Controller.
+    /// </summary>
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/examinations")]
     [ApiController]
     [Authorize]
     public class CaseBreakdownController : AuthorizedBaseController
     {
-        private IAsyncQueryHandler<CreateEventQuery, string> _eventCreationService;
-        private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
+        private readonly IAsyncQueryHandler<CreateEventQuery, string> _eventCreationService;
+        private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
 
+        /// <summary>
+        /// Initialise a new instance of <see cref="CaseBreakdownController"/>.
+        /// </summary>
         public CaseBreakdownController(
             IMELogger logger,
             IMapper mapper,
@@ -41,9 +47,9 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// returns a casebreakdown object for the given examination
+        /// Returns a <see cref="GetCaseBreakdownResponse"/> object for the given examination.
         /// </summary>
-        /// <param name="examinationId"></param>
+        /// <param name="examinationId">The examination id.</param>
         /// <returns></returns>
         [HttpGet]
         [Route("{examinationId}/casebreakdown")]
@@ -55,8 +61,7 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetCaseBreakdownResponse());
             }
 
-            Guid examinationGuid;
-            if (!Guid.TryParse(examinationId, out examinationGuid))
+            if (!Guid.TryParse(examinationId, out _))
             {
                 return BadRequest(new GetCaseBreakdownResponse());
             }
