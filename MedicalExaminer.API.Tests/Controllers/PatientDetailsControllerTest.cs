@@ -255,6 +255,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var patientDetailsUpdateService = new Mock<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>>();
 
+            UsersRetrievalByEmailServiceMock
+                .Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(AuthorizedUser));
+
             examinationRetrievalService
                 .Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(expectedExamination));
@@ -271,6 +275,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
                 patientDetailsUpdateService.Object);
+
+            Controller.ControllerContext = GetContollerContext();
 
             var expectedPutPatientDetailsRequest = new PutPatientDetailsRequest();
 
