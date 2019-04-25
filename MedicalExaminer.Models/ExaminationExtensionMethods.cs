@@ -138,9 +138,34 @@ namespace MedicalExaminer.Models
             examination.PendingAdmissionNotes = CalculateAdmissionNotesPending(examination);
             examination.AdmissionNotesHaveBeenAdded = !examination.PendingAdmissionNotes;
             examination.PendingDiscussionWithQAP = CalculatePendingQAPDiscussion(examination);
+            examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
             examination.Unassigned = !(examination.MedicalTeam.MedicalExaminerOfficerUserId != null && examination.MedicalTeam.MedicalExaminerUserId != null);
 
             return examination;
+        }
+
+        private static bool CalculatePendingDiscussionWithRepresentative(Examination examination)
+        {
+            if (examination.ReadyForMEScrutiny)
+            {
+                return false;
+            }
+            else
+            {
+                if (examination.CaseBreakdown.AdmissionNotes.Latest!=null && examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral)
+                {
+                    return false;
+                }
+                else
+                {
+                    if (examination.CaseBreakdown.BereavedDiscussion.Latest!=null && !examination.CaseBreakdown.BereavedDiscussion.Latest.DiscussionUnableHappen)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         private static bool CalculatePendingQAPDiscussion(Examination examination)

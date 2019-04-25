@@ -513,5 +513,84 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination = examination.UpdateCaseStatus();
             Assert.False(examination.PendingDiscussionWithQAP);
         }
+
+        [Fact]
+        public void NewExamination_PendingRepresentativeDiscussion_True()
+        {
+            var examination = new Examination();
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void PendingRepresentativeDiscussion_ReadyForMeScrutiny_False()
+        {
+            var examination = new Examination();
+            examination.ReadyForMEScrutiny = true;
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void PendingRepresentativeDiscussion_NotReadyForMeScrutiny_NoLatestAdmissionNotes_True()
+        {
+            var examination = new Examination();
+            examination.ReadyForMEScrutiny = false;
+            examination.CaseBreakdown.AdmissionNotes.Latest = null;
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void PendingRepresentativeDiscussion_NotReadyForMeScrutiny_LatestAdmissionNotes_True()
+        {
+            var examination = new Examination();
+            examination.ReadyForMEScrutiny = false;
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent();
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void PendingRepresentativeDiscussion_NotReadyForMeScrutiny_LatestAdmissionNotes_ImmediateCoronerReferral_False()
+        {
+            var examination = new Examination();
+            examination.ReadyForMEScrutiny = false;
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = true };
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void PendingRepresentativeDiscussion_NotReadyForMeScrutiny_LatestAdmissionNotes_NoImmediateCoronerReferral_True()
+        {
+            var examination = new Examination();
+            examination.ReadyForMEScrutiny = false;
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void PendingRepresentativeDiscussion_NotReadyForMeScrutiny_LatestAdmissionNotes_NoImmediateCoronerReferral_LatestBereavedDiscussion_False()
+        {
+            var examination = new Examination();
+            examination.ReadyForMEScrutiny = false;
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
+            examination.CaseBreakdown.BereavedDiscussion.Latest = new BereavedDiscussionEvent();
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void PendingRepresentativeDiscussion_NotReadyForMeScrutiny_LatestAdmissionNotes_NoImmediateCoronerReferral_LatestBereavedDiscussionUnableToHappen_True()
+        {
+            var examination = new Examination();
+            examination.ReadyForMEScrutiny = false;
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
+            examination.CaseBreakdown.BereavedDiscussion.Latest = new BereavedDiscussionEvent() { DiscussionUnableHappen = true};
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithRepresentative);
+        }
     }
 }
