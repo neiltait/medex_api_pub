@@ -35,6 +35,14 @@ namespace MedicalExaminer.API.Controllers
 
 
         [HttpPut]
+        [Route("coroner_referral")]
+        public ActionResult PutCoronerReferral()
+        {
+            // TODO:  Implement
+            return Ok();
+        }
+
+        [HttpPut]
         [Route("outstanding_case_items")]
         public ActionResult PutOutstandingCaseItems([FromBody] PutOutstandingCaseItemsRequest request)
         {
