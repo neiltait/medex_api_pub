@@ -8,7 +8,6 @@ using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalExaminer.API.Controllers
@@ -19,19 +18,19 @@ namespace MedicalExaminer.API.Controllers
     public class CaseOutcomeController : AuthenticatedBaseController
     {
         IAsyncQueryHandler<CoronerReferralQuery, string> _coronerReferralService;
+        IAsyncQueryHandler<CloseCaseQuery, string> _closeCaseService;
 
         public CaseOutcomeController(
             IMELogger logger,
             IMapper mapper,
-            IAuthorizationService authorizationService,
             IAsyncQueryHandler<CoronerReferralQuery, string> coronerReferralService,
-         //   IAsyncQueryHandler<ExaminationRetrievalQuery, string> closeCaseService,
+            IAsyncQueryHandler<CloseCaseQuery, string> closeCaseService,
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
             : base(logger, mapper, usersRetrievalByEmailService)
         {
             _coronerReferralService = coronerReferralService;
+            _closeCaseService = closeCaseService;
         }
-
 
         [HttpPut]
         [Route("confirmation_of_scrutiny")]
@@ -43,7 +42,6 @@ namespace MedicalExaminer.API.Controllers
                 ScrutinyConfirmedOn = DateTime.Now
             });
         }
-
 
         [HttpPut]
         [Route("coroner_referral")]
@@ -86,7 +84,7 @@ namespace MedicalExaminer.API.Controllers
 
             var user = await CurrentUser();
 
-            var result = await _closeCaseService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+            var result = await _closeCaseService.Handle(new CloseCaseQuery(examinationId, user));
 
             return Ok();
         }
