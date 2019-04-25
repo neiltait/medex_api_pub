@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Security.Claims;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
@@ -82,5 +85,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 }
             };
         }
+
     }
 }
