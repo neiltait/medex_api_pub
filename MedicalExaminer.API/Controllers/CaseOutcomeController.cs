@@ -34,8 +34,8 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// Confirmation Of Scrutiny
         /// </summary>
-        /// <param name="examinationId"></param>
-        /// <returns></returns>
+        /// <param name="examinationId">Examination Identifier</param>
+        /// <returns>Date time of Scrutiny Confirmed On</returns>
         [HttpPut]
         [Route("confirmation_of_scrutiny")]
         public async Task<ActionResult<PutConfirmationOfScrutinyResponse>> PutConfirmationOfScrutiny(string examinationId)
@@ -44,11 +44,12 @@ namespace MedicalExaminer.API.Controllers
 
             // var confirmationOfScrutinyQuery = new ConfirmationOfScrutinyQuery(examinationId, user);
             var result = await _confirmationOfScrutinyService.Handle(new ConfirmationOfScrutinyQuery(examinationId, user));
+            return Ok(Mapper.Map<PutConfirmationOfScrutinyResponse>(result));
 
-            return Ok(new PutConfirmationOfScrutinyResponse()
-            {
-                ScrutinyConfirmedOn = result.ConfirmationOfScrutinyCompletedAt
-            });
+            //return Ok(new PutConfirmationOfScrutinyResponse()
+            //{
+            //    ScrutinyConfirmedOn = result.ConfirmationOfScrutinyCompletedAt
+            //});
         }
 
         [HttpPut]
