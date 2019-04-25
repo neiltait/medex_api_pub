@@ -47,44 +47,7 @@ namespace MedicalExaminer.API.Controllers
             [FromBody]
             PutBereavedDiscussionEventRequest putNewBereavedDiscussionEventNoteRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new PutCaseBreakdownEventResponse());
-            }
-
-            if (putNewBereavedDiscussionEventNoteRequest == null)
-            {
-                return BadRequest(new PutCaseBreakdownEventResponse());
-            }
-
-            var user = await CurrentUser();
-            var bereavedDiscussionEventNote = Mapper.Map<BereavedDiscussionEvent>(putNewBereavedDiscussionEventNoteRequest);
-
-            bereavedDiscussionEventNote = SetEventUserStatuses(bereavedDiscussionEventNote, user);
-
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
-
-            if (!CanAsync(Permission.UpdateExamination, examination))
-            {
-                return Forbid();
-            }
-
-            var patientCard = Mapper.Map<PatientCardItem>(examination);
-
-            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, bereavedDiscussionEventNote));
-
-            if (result == null)
-            {
-                return NotFound(new PutCaseBreakdownEventResponse());
-            }
-
-            var res = new PutCaseBreakdownEventResponse
-            {
-                Header = patientCard,
-                EventId = result
-            };
-
-            return Ok(res);
+            return await UpsertEvent<BereavedDiscussionEvent, PutBereavedDiscussionEventRequest>(examinationId, putNewBereavedDiscussionEventNoteRequest);
         }
 
         private T SetEventUserStatuses<T>(T theEvent, MeUser user)
@@ -102,38 +65,8 @@ namespace MedicalExaminer.API.Controllers
             [FromBody]
             PutPreScrutinyEventRequest putNewPreScrutinyEventNoteRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new PutCaseBreakdownEventResponse());
-            }
-
-            if (putNewPreScrutinyEventNoteRequest == null)
-            {
-                return BadRequest(new PutCaseBreakdownEventResponse());
-            }
-
-            var user = await CurrentUser();
-            var preScrutinyEventNote = Mapper.Map<PreScrutinyEvent>(putNewPreScrutinyEventNoteRequest);
-            preScrutinyEventNote = SetEventUserStatuses(preScrutinyEventNote, user);
-
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
-            var patientCard = Mapper.Map<PatientCardItem>(examination);
-
-            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, preScrutinyEventNote));
-
-            if (result == null)
-            {
-                return NotFound(new PutCaseBreakdownEventResponse());
-            }
-
-            var res = new PutCaseBreakdownEventResponse
-            {
-                Header = patientCard,
-                EventId = result
-            };
-
-            return Ok(res);
-        }
+            return await UpsertEvent<PreScrutinyEvent, PutPreScrutinyEventRequest>(examinationId, putNewPreScrutinyEventNoteRequest);
+ }
 
         [HttpPut]
         [Route("{examinationId}/medical_history")]
@@ -142,37 +75,7 @@ namespace MedicalExaminer.API.Controllers
             [FromBody]
             PutMedicalHistoryEventRequest putMedicalHistoryEventRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new PutCaseBreakdownEventResponse());
-            }
-
-            if (putMedicalHistoryEventRequest == null)
-            {
-                return BadRequest(new PutCaseBreakdownEventResponse());
-            }
-
-            var user = await CurrentUser();
-            var medicalHistoryEventNote = Mapper.Map<MedicalHistoryEvent>(putMedicalHistoryEventRequest);
-            medicalHistoryEventNote = SetEventUserStatuses(medicalHistoryEventNote, user);
-            
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
-            var patientCard = Mapper.Map<PatientCardItem>(examination);
-
-            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, medicalHistoryEventNote));
-
-            if (result == null)
-            {
-                return NotFound(new PutCaseBreakdownEventResponse());
-            }
-
-            var res = new PutCaseBreakdownEventResponse
-            {
-                Header = patientCard,
-                EventId = result
-            };
-
-            return Ok(res);
+            return await UpsertEvent<MedicalHistoryEvent, PutMedicalHistoryEventRequest>(examinationId, putMedicalHistoryEventRequest);
         }
 
         [HttpPut]
@@ -182,36 +85,7 @@ namespace MedicalExaminer.API.Controllers
             [FromBody]
             PutAdmissionEventRequest putNewAdmissionEventNoteRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new PutCaseBreakdownEventResponse());
-            }
-
-            if (putNewAdmissionEventNoteRequest == null)
-            {
-                return BadRequest(new PutCaseBreakdownEventResponse());
-            }
-            var user = await CurrentUser();
-            var admissionEventNote = Mapper.Map<AdmissionEvent>(putNewAdmissionEventNoteRequest);
-            admissionEventNote = SetEventUserStatuses(admissionEventNote, user);
-
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
-            var patientCard = Mapper.Map<PatientCardItem>(examination);
-
-            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, admissionEventNote));
-
-            if (result == null)
-            {
-                return NotFound(new PutCaseBreakdownEventResponse());
-            }
-
-            var res = new PutCaseBreakdownEventResponse
-            {
-                Header = patientCard,
-                EventId = result
-            };
-
-            return Ok(res);
+            return await UpsertEvent<AdmissionEvent, PutAdmissionEventRequest>(examinationId, putNewAdmissionEventNoteRequest);
         }
 
         [HttpPut]
@@ -221,39 +95,7 @@ namespace MedicalExaminer.API.Controllers
             [FromBody]
             PutOtherEventRequest putNewOtherEventNoteRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new PutCaseBreakdownEventResponse());
-            }
-
-            if (putNewOtherEventNoteRequest == null)
-            {
-                return BadRequest(new PutCaseBreakdownEventResponse());
-            }
-
-            var user = await CurrentUser();
-
-            var otherEventNote = Mapper.Map<OtherEvent>(putNewOtherEventNoteRequest);
-            otherEventNote = SetEventUserStatuses(otherEventNote, user);
-
-
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
-            var patientCard = Mapper.Map<PatientCardItem>(examination);
-
-            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, otherEventNote));
-
-            if (result == null)
-            {
-                return NotFound(new PutCaseBreakdownEventResponse());
-            }
-
-            var res = new PutCaseBreakdownEventResponse
-            {
-                Header = patientCard,
-                EventId = result
-            };
-
-            return Ok(res);
+            return await UpsertEvent<OtherEvent, PutOtherEventRequest>(examinationId, putNewOtherEventNoteRequest);
         }
 
         /// <summary>
@@ -303,37 +145,7 @@ namespace MedicalExaminer.API.Controllers
             [FromBody]
             PutQapDiscussionEventRequest putNewQapDiscussionEventNoteRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new PutCaseBreakdownEventResponse());
-            }
-
-            if (putNewQapDiscussionEventNoteRequest == null)
-            {
-                return BadRequest(new PutCaseBreakdownEventResponse());
-            }
-
-            var user = await CurrentUser();
-            var qapDiscussionEventNote = Mapper.Map<QapDiscussionEvent>(putNewQapDiscussionEventNoteRequest);
-            qapDiscussionEventNote = SetEventUserStatuses(qapDiscussionEventNote, user);
-
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
-            var patientCard = Mapper.Map<PatientCardItem>(examination);
-
-            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, qapDiscussionEventNote));
-
-            if (result == null)
-            {
-                return NotFound(new PutCaseBreakdownEventResponse());
-            }
-
-            var res = new PutCaseBreakdownEventResponse
-            {
-                Header = patientCard,
-                EventId = result
-            };
-
-            return Ok(res);
+            return await UpsertEvent<QapDiscussionEvent, PutQapDiscussionEventRequest>(examinationId, putNewQapDiscussionEventNoteRequest);
         }
 
         [HttpPut]
@@ -344,38 +156,6 @@ namespace MedicalExaminer.API.Controllers
             PutMeoSummaryEventRequest putNewMeoSummaryEventNoteRequest)
         {
             return await UpsertEvent<MeoSummaryEvent, PutMeoSummaryEventRequest>(examinationId, putNewMeoSummaryEventNoteRequest);
-/*
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new PutCaseBreakdownEventResponse());
-            }
-
-            if (putNewMeoSummaryEventNoteRequest == null)
-            {
-                return BadRequest(new PutCaseBreakdownEventResponse());
-            }
-
-            var user = await CurrentUser();
-            var meoSummaryEvent = Mapper.Map<MeoSummaryEvent>(putNewMeoSummaryEventNoteRequest);
-            meoSummaryEvent = SetEventUserStatuses(meoSummaryEvent, user);
-
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
-            var patientCard = Mapper.Map<PatientCardItem>(examination);
-
-            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, meoSummaryEvent));
-
-            if (result == null)
-            {
-                return NotFound(new PutCaseBreakdownEventResponse());
-            }
-
-            var res = new PutCaseBreakdownEventResponse
-            {
-                Header = patientCard,
-                EventId = result
-            };
-
-            return Ok(res);*/
         }
 
         private async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertEvent<TEvent, TRequest>(string examinationId,
@@ -398,6 +178,12 @@ namespace MedicalExaminer.API.Controllers
             meoSummaryEvent = SetEventUserStatuses(meoSummaryEvent, user);
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+
+            if (!CanAsync(Permission.UpdateExamination, examination))
+            {
+                return Forbid();
+            }
+
             var patientCard = Mapper.Map<PatientCardItem>(examination);
 
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, meoSummaryEvent));
