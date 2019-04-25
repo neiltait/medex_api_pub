@@ -66,6 +66,12 @@ namespace MedicalExaminer.API.Controllers
         public ActionResult PutOutstandingCaseItems([FromBody] PutOutstandingCaseItemsRequest request)
         {
             // TODO:  Implement
+
+            //  get examination to update
+
+            //  map the putoutstandingcaseitemsrequest onto the examinationtoUpdate
+
+            //  save the examination
             return Ok();
         }
 
