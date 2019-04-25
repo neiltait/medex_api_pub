@@ -47,6 +47,8 @@ using Cosmonaut.Extensions;
 using Cosmonaut.Configuration;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
 using Cosmonaut;
+using MedicalExaminer.Common.Queries.CaseOutcome;
+using MedicalExaminer.Common.Services.CaseOutcome;
 
 namespace MedicalExaminer.API
 {
@@ -302,7 +304,6 @@ namespace MedicalExaminer.API
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
 
-            
             // Examination services 
             services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>,ExaminationsDashboardService>();
@@ -312,13 +313,19 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<CreateEventQuery, string>, CreateEventService>();
+
             // Medical team services
             services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
-            
+
+            // Case Outcome Services
+            services.AddScoped<IAsyncQueryHandler<CloseCaseQuery, string>, CloseCaseService>();
+            services.AddScoped<IAsyncQueryHandler<CoronerReferralQuery, string>, CoronerReferralService>();
+
+
             // Patient details services 
             services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
             services.AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService>();
-            
+
             // User services 
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>, UserRetrievalByEmailService>();
