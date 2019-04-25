@@ -1,7 +1,7 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
-using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.User;
@@ -11,9 +11,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Security.Claims;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
@@ -47,7 +44,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public async void PutCloseCase_When_Called_With_Invalid_Case_Id_Returns_Not_Found()
+        public async void PutCloseCase_When_Called_With_Invalid_Case_Id_Returns_Bad_Request()
         {
             // Arrange
             var logger = new Mock<IMELogger>();
@@ -69,7 +66,38 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.PutCloseCase("invalidCaseId");
 
             // Assert
-            response.Should().BeAssignableTo<NotFoundObjectResult>();
+            response.Should().BeAssignableTo<BadRequestObjectResult>();
+        }
+
+        [Fact]
+        public async void PutCloseCase_When_Called_With_Valid_Case_Id_Mark_Case_As_Completed()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            var examinationId = Guid.NewGuid().ToString();
+            var examination = new Examination
+            {
+                ExaminationId = examinationId
+            };
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
+            var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
+
+            var sut = new CaseOutcomeController(
+                logger.Object,
+                mapper.Object,
+                coronerReferralService.Object,
+                closeCaseService.Object,
+                usersRetrievalByEmailService.Object);
+
+            sut.ControllerContext = GetContollerContext();
+
+            // Act
+            var response = await sut.PutCloseCase(examination.ExaminationId);
+
+            // Assert
+            examination.Completed.Equals(true);
         }
 
         private ControllerContext GetContollerContext()

@@ -82,6 +82,12 @@ namespace MedicalExaminer.API.Controllers
                 return new BadRequestObjectResult(nameof(examinationId));
             }
 
+            Guid examinationGuid;
+            if (!Guid.TryParse(examinationId, out examinationGuid))
+            {
+                return new BadRequestObjectResult(nameof(examinationId));
+            }
+
             var user = await CurrentUser();
 
             var result = await _closeCaseService.Handle(new CloseCaseQuery(examinationId, user));
