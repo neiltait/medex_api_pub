@@ -44,14 +44,26 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var user = await CurrentUser();
-            
+
             var result = await _confirmationOfScrutinyService.Handle(new ConfirmationOfScrutinyQuery(examinationId, user));
             return Ok(Mapper.Map<PutConfirmationOfScrutinyResponse>(result));
 
-            //return Ok(new PutConfirmationOfScrutinyResponse()
-            //{
-            //    ScrutinyConfirmedOn = result.ConfirmationOfScrutinyCompletedAt
-            //});
+        }
+
+        [HttpPut]
+        [Route("coroner_referral")]
+        public ActionResult PutCoronerReferral()
+        {
+            // TODO:  Implement
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("outstanding_case_items")]
+        public ActionResult PutOutstandingCaseItems([FromBody] PutOutstandingCaseItemsRequest request)
+        {
+            // TODO:  Implement
+            return Ok();
         }
 
         [HttpPut]
