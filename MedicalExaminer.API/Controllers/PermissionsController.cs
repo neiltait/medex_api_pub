@@ -11,7 +11,6 @@ using MedicalExaminer.Common;
 using MedicalExaminer.Common.Extensions.Models;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Location;
-using MedicalExaminer.Common.Queries.Permission;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -41,13 +40,6 @@ namespace MedicalExaminer.API.Controllers
         /// User Update Service.
         /// </summary>
         private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
-
-        /// <summary>
-        /// Permissions Retrieval By Locations And User Service.
-        /// </summary>
-        private readonly
-            IAsyncQueryHandler<PermissionsRetrievalByLocationsAndUserServiceQuery, IEnumerable<Permission>>
-            _permissionsRetrievalByLocationsAndUserService;
 
         /// <summary>
         /// Locations Parents Service.
@@ -89,7 +81,6 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
             IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService,
-            IAsyncQueryHandler<PermissionsRetrievalByLocationsAndUserServiceQuery, IEnumerable<Permission>> permissionsRetrievalByLocationsAndUserService,
             IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>> locationsParentsService,
             IPermissionPersistence permissionPersistence)
             : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
@@ -98,7 +89,6 @@ namespace MedicalExaminer.API.Controllers
             _userUpdateService = userUpdateService;
             _permissionPersistence = permissionPersistence;
             _locationParentsService = locationParentsService;
-            _permissionsRetrievalByLocationsAndUserService = permissionsRetrievalByLocationsAndUserService;
             _locationsParentsService = locationsParentsService;
         }
 

@@ -7,9 +7,7 @@ using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.Common;
-using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Location;
-using MedicalExaminer.Common.Queries.Permission;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -32,10 +30,6 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>> _locationParentsServiceMock;
         private readonly Mock<IPermissionPersistence> _permissionPersistenceMock;
 
-        private readonly
-            Mock<IAsyncQueryHandler<PermissionsRetrievalByLocationsAndUserServiceQuery, IEnumerable<Permission>>>
-            _permissionsRetrievalByLocationsAndUserServiceMock;
-
         private readonly Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>
             _locationsParentsServiceMock;
 
@@ -50,7 +44,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             _userRetrievalByIdServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>(MockBehavior.Strict);
             _userUpdateServiceMock = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>(MockBehavior.Strict);
             _locationParentsServiceMock = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>(MockBehavior.Strict);
-            _permissionsRetrievalByLocationsAndUserServiceMock = new Mock<IAsyncQueryHandler<PermissionsRetrievalByLocationsAndUserServiceQuery, IEnumerable<Permission>>>(MockBehavior.Strict);
             _locationsParentsServiceMock = new Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>(MockBehavior.Strict);
 
             Controller = new PermissionsController(
@@ -62,7 +55,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 _userRetrievalByIdServiceMock.Object,
                 _userUpdateServiceMock.Object,
                 _locationParentsServiceMock.Object,
-                _permissionsRetrievalByLocationsAndUserServiceMock.Object,
                 _locationsParentsServiceMock.Object,
                 _permissionPersistenceMock.Object
             );

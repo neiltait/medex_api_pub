@@ -43,9 +43,6 @@ using Okta.Sdk;
 using Okta.Sdk.Configuration;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
-
-using Cosmonaut.Extensions;
-using Cosmonaut.Configuration;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
 using Cosmonaut;
 
@@ -334,6 +331,7 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>, LocationIdService>();
             services.AddScoped<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>, LocationsQueryService>();
             services.AddScoped<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>, LocationParentsQueryService>();
+            services.AddScoped<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string,IEnumerable<Location>>>, LocationsParentsQueryService>();
         }
 
         /// <summary>
