@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.CaseOutcome;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,12 +15,19 @@ namespace MedicalExaminer.API.Controllers
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/examinations/{examinationId}")]
     [ApiController]
-    public class CaseOutcomeController : BaseAuthorizationController
+    public class CaseOutcomeController : AuthenticatedBaseController
     {
-        public CaseOutcomeController(IMELogger logger, IMapper mapper, IAuthorizationService authorizationService) 
-            : base(logger, mapper, authorizationService)
-        {
+        IAsyncQueryHandler<CoronerReferralQuery, string> _coronerReferralService;
 
+        public CaseOutcomeController(
+            IMELogger logger,
+            IMapper mapper,
+            IAuthorizationService authorizationService,
+            IAsyncQueryHandler<CoronerReferralQuery, string> coronerReferralService,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
+            : base(logger, mapper, usersRetrievalByEmailService)
+        {
+            _coronerReferralService = coronerReferralService;
         }
 
 
@@ -36,9 +45,17 @@ namespace MedicalExaminer.API.Controllers
 
         [HttpPut]
         [Route("coroner_referral")]
-        public ActionResult PutCoronerReferral()
+        public async Task<ActionResult> PutCoronerReferral(string examinationId)
         {
-            // TODO:  Implement
+            if (string.IsNullOrEmpty(examinationId))
+            {
+                return new BadRequestObjectResult(nameof(examinationId));
+            }
+
+            var user = await CurrentUser();
+
+            var result = await _coronerReferralService.Handle(new CoronerReferralQuery(examinationId, user));
+
             return Ok();
         }
 
