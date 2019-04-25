@@ -326,7 +326,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             _examinationRetrievalServiceMock.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
-            _medicalTeamUpdateServiceMock.Setup(u => u.Handle(It.IsAny<Examination>()))
+            _medicalTeamUpdateServiceMock.Setup(u => u.Handle(It.IsAny<Examination>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(examination));
 
             Controller.ControllerContext = GetContollerContext();
@@ -379,7 +379,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             _examinationRetrievalServiceMock.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
-            _medicalTeamUpdateServiceMock.Setup(u => u.Handle(It.IsAny<Examination>()))
+            _medicalTeamUpdateServiceMock.Setup(u => u.Handle(It.IsAny<Examination>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(examination));
 
             // Act
