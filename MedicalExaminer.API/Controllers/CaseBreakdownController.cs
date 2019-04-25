@@ -40,64 +40,6 @@ namespace MedicalExaminer.API.Controllers
             _examinationRetrievalService = examinationRetrievalService;
         }
 
-        [HttpPut]
-        [Route("{examinationId}/bereaved_discussion")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewBereavedDiscussionEvent(string examinationId,
-            [FromBody]
-            PutBereavedDiscussionEventRequest putNewBereavedDiscussionEventNoteRequest)
-        {
-            return await UpsertEvent<BereavedDiscussionEvent, PutBereavedDiscussionEventRequest>(examinationId, putNewBereavedDiscussionEventNoteRequest);
-        }
-
-        private T SetEventUserStatuses<T>(T theEvent, MeUser user)
-            where T : IEvent
-        {
-            theEvent.UserId = user.UserId;
-            theEvent.UserFullName = user.FirstName + user.LastName;
-            return theEvent;
-        }
-
-        [HttpPut]
-        [Route("{examinationId}/prescrutiny")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewPreScrutinyEvent(string examinationId,
-            [FromBody]
-            PutPreScrutinyEventRequest putNewPreScrutinyEventNoteRequest)
-        {
-            return await UpsertEvent<PreScrutinyEvent, PutPreScrutinyEventRequest>(examinationId, putNewPreScrutinyEventNoteRequest);
- }
-
-        [HttpPut]
-        [Route("{examinationId}/medical_history")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewMedicalHistoryEvent(string examinationId,
-            [FromBody]
-            PutMedicalHistoryEventRequest putMedicalHistoryEventRequest)
-        {
-            return await UpsertEvent<MedicalHistoryEvent, PutMedicalHistoryEventRequest>(examinationId, putMedicalHistoryEventRequest);
-        }
-
-        [HttpPut]
-        [Route("{examinationId}/admission")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewAdmissionEvent(string examinationId,
-            [FromBody]
-            PutAdmissionEventRequest putNewAdmissionEventNoteRequest)
-        {
-            return await UpsertEvent<AdmissionEvent, PutAdmissionEventRequest>(examinationId, putNewAdmissionEventNoteRequest);
-        }
-
-        [HttpPut]
-        [Route("{examinationId}/other")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewOtherEvent(string examinationId,
-            [FromBody]
-            PutOtherEventRequest putNewOtherEventNoteRequest)
-        {
-            return await UpsertEvent<OtherEvent, PutOtherEventRequest>(examinationId, putNewOtherEventNoteRequest);
-        }
-
         /// <summary>
         /// returns a casebreakdown object for the given examination
         /// </summary>
@@ -114,7 +56,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             Guid examinationGuid;
-            if(!Guid.TryParse(examinationId, out examinationGuid))
+            if (!Guid.TryParse(examinationId, out examinationGuid))
             {
                 return BadRequest(new GetCaseBreakdownResponse());
             }
@@ -139,29 +81,93 @@ namespace MedicalExaminer.API.Controllers
         }
 
         [HttpPut]
+        [Route("{examinationId}/bereaved_discussion")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewBereavedDiscussionEvent(
+            string examinationId,
+            [FromBody] PutBereavedDiscussionEventRequest putNewBereavedDiscussionEventNoteRequest)
+        {
+            return await UpsertEvent<BereavedDiscussionEvent, PutBereavedDiscussionEventRequest>(examinationId,
+                putNewBereavedDiscussionEventNoteRequest);
+        }
+
+        [HttpPut]
+        [Route("{examinationId}/prescrutiny")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewPreScrutinyEvent(
+            string examinationId,
+            [FromBody] PutPreScrutinyEventRequest putNewPreScrutinyEventNoteRequest)
+        {
+            return await UpsertEvent<PreScrutinyEvent, PutPreScrutinyEventRequest>(examinationId,
+                putNewPreScrutinyEventNoteRequest);
+        }
+
+        [HttpPut]
+        [Route("{examinationId}/medical_history")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewMedicalHistoryEvent(
+            string examinationId,
+            [FromBody] PutMedicalHistoryEventRequest putMedicalHistoryEventRequest)
+        {
+            return await UpsertEvent<MedicalHistoryEvent, PutMedicalHistoryEventRequest>(examinationId,
+                putMedicalHistoryEventRequest);
+        }
+
+        [HttpPut]
+        [Route("{examinationId}/admission")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewAdmissionEvent(
+            string examinationId,
+            [FromBody] PutAdmissionEventRequest putNewAdmissionEventNoteRequest)
+        {
+            return await UpsertEvent<AdmissionEvent, PutAdmissionEventRequest>(examinationId,
+                putNewAdmissionEventNoteRequest);
+        }
+
+        [HttpPut]
+        [Route("{examinationId}/other")]
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewOtherEvent(
+            string examinationId,
+            [FromBody] PutOtherEventRequest putNewOtherEventNoteRequest)
+        {
+            return await UpsertEvent<OtherEvent, PutOtherEventRequest>(examinationId, putNewOtherEventNoteRequest);
+        }
+
+        [HttpPut]
         [Route("{examinationId}/qap_discussion")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewQapDiscussionEvent(string examinationId,
-            [FromBody]
-            PutQapDiscussionEventRequest putNewQapDiscussionEventNoteRequest)
+        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewQapDiscussionEvent(
+            string examinationId,
+            [FromBody] PutQapDiscussionEventRequest putNewQapDiscussionEventNoteRequest)
         {
-            return await UpsertEvent<QapDiscussionEvent, PutQapDiscussionEventRequest>(examinationId, putNewQapDiscussionEventNoteRequest);
+            return await UpsertEvent<QapDiscussionEvent, PutQapDiscussionEventRequest>(examinationId,
+                putNewQapDiscussionEventNoteRequest);
         }
 
         [HttpPut]
         [Route("{examinationId}/meo_summary")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewMeoSummaryEvent(string examinationId,
-            [FromBody]
-            PutMeoSummaryEventRequest putNewMeoSummaryEventNoteRequest)
+        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewMeoSummaryEvent(
+            string examinationId,
+            [FromBody] PutMeoSummaryEventRequest putNewMeoSummaryEventNoteRequest)
         {
-            return await UpsertEvent<MeoSummaryEvent, PutMeoSummaryEventRequest>(examinationId, putNewMeoSummaryEventNoteRequest);
+            return await UpsertEvent<MeoSummaryEvent, PutMeoSummaryEventRequest>(examinationId,
+                putNewMeoSummaryEventNoteRequest);
         }
 
-        private async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertEvent<TEvent, TRequest>(string examinationId,
-            [FromBody]
-            TRequest putNewMeoSummaryEventNoteRequest)
-        where TEvent : IEvent
+        private T SetEventUserStatuses<T>(T theEvent, MeUser user)
+            where T : IEvent
+        {
+            theEvent.UserId = user.UserId;
+            theEvent.UserFullName = user.FirstName + user.LastName;
+            return theEvent;
+        }
+
+        private async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertEvent<TEvent, TRequest>(
+            string examinationId,
+            [FromBody] TRequest putNewMeoSummaryEventNoteRequest)
+            where TEvent : IEvent
         {
             if (!ModelState.IsValid)
             {
@@ -177,7 +183,8 @@ namespace MedicalExaminer.API.Controllers
             var meoSummaryEvent = Mapper.Map<TEvent>(putNewMeoSummaryEventNoteRequest);
             meoSummaryEvent = SetEventUserStatuses(meoSummaryEvent, user);
 
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+            var examination =
+                await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
 
             if (!CanAsync(Permission.UpdateExamination, examination))
             {
