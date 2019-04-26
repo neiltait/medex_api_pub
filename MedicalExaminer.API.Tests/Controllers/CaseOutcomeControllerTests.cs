@@ -82,15 +82,21 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var examination = new Mock<Examination>();
+
+            var mockMeUser = new Mock<MeUser>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser.Object));
+
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
+            closeCaseService.Setup(service => service.Handle(It.IsAny<CloseCaseQuery>()))
+                .Returns(Task.FromResult("test")).Verifiable();
+
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
+
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
-            var mockMeUser = new Mock<MeUser>();
-            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
-                .Returns(Task.FromResult(mockMeUser.Object));
 
             var sut = new CaseOutcomeController(
                 logger.Object,
