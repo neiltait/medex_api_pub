@@ -14,7 +14,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
         private readonly IConnectionSettings _connectionSettings;
         private readonly IDatabaseAccess _databaseAccess;
 
-        public CloseCaseService(
+        public SaveOutstandingCaseItemsService(
             IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Models.Examination> examinationRetrievalService)

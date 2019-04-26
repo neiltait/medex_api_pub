@@ -85,7 +85,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var examination = new Mock<Examination>();
+            var examination = new Examination
+            {
+                ExaminationId = Guid.NewGuid().ToString()
+            };
 
             var mockMeUser = new Mock<MeUser>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
@@ -101,7 +104,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
-                .Returns(Task.FromResult(examination.Object)).Verifiable();
+                .Returns(Task.FromResult(examination)).Verifiable();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -115,10 +118,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             sut.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await sut.PutCloseCase(examination.Object.ExaminationId);
+            var response = await sut.PutCloseCase(examination.ExaminationId);
 
             // Assert
-            Assert.Equal(expected: true, actual: examination.Object.Completed);
+            var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
         }
 
         private ControllerContext GetControllerContext()
