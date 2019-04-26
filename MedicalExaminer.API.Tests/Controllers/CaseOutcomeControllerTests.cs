@@ -121,7 +121,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.PutCloseCase(examination.ExaminationId);
 
             // Assert
-            var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var okResult = response.Should().BeAssignableTo<OkResult>().Subject;
         }
 
         private ControllerContext GetControllerContext()
