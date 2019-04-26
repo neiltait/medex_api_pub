@@ -54,7 +54,7 @@ namespace MedicalExaminer.ToolBox.MVC.Controllers
 
             return  View("ConfigurePost", new GenerateResultViewModel()
             {
-                Success = false,
+                Success = true,
             });
         }
     }
