@@ -5,3 +5,8 @@ services:
     build:
       context: .
       dockerfile: MedicalExaminer.API/Dockerfile
+
+  toolbox:
+    build:
+      context: .
+      dockerfile: MedicalExaminer.ToolBox.MVC/Dockerfile
