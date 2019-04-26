@@ -447,7 +447,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         public void ReadyForMeScrutiny_PendingQapDiscussion_False()
         {
             var examination = new Examination();
-            examination.ReadyForMEScrutiny = true;
+            examination.CaseBreakdown.MeoSummary.Latest = new MeoSummaryEvent();
             examination = examination.UpdateCaseStatus();
             Assert.False(examination.PendingDiscussionWithQAP);
         }
@@ -526,7 +526,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         public void PendingRepresentativeDiscussion_ReadyForMeScrutiny_False()
         {
             var examination = new Examination();
-            examination.ReadyForMEScrutiny = true;
+            examination.CaseBreakdown.MeoSummary.Latest = new MeoSummaryEvent();
             examination = examination.UpdateCaseStatus();
             Assert.False(examination.PendingDiscussionWithRepresentative);
         }
@@ -592,5 +592,48 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination = examination.UpdateCaseStatus();
             Assert.True(examination.PendingDiscussionWithRepresentative);
         }
+
+        [Fact]
+        public void NewExamination_ScrutinyComplete_False()
+        {
+            var examination = new Examination();
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.ScrutinyComplete);
+        }
+
+        [Fact]
+        public void ScrutinyComplete_Unassigned_False()
+        {
+            var examination = new Examination();
+            examination.Unassigned = true;
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.ScrutinyComplete);
+        }
+
+        [Fact]
+        public void ScrutinyComplete_ReadyForScrutiny_Unassigned_False()
+        {
+            var examination = new Examination();
+            examination.CaseBreakdown.MeoSummary.Latest = new MeoSummaryEvent();
+            examination.MedicalTeam.MedicalExaminerOfficerUserId = null;
+            examination.MedicalTeam.MedicalExaminerUserId = null;
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.ScrutinyComplete);
+        }
+
+        [Fact]
+        public void ScrutinyComplete_ReadyForScrutiny_Assigned_AdmissionNotesAdded_False()
+        {
+            var examination = new Examination();
+            examination.MedicalTeam.MedicalExaminerOfficerUserId = "medicalExaminerOfficer";
+            examination.MedicalTeam.MedicalExaminerUserId = "medicalExaminer";
+            examination.CaseBreakdown.MeoSummary.Latest = new MeoSummaryEvent();
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent();
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional();
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.ScrutinyComplete);
+        }
+
+
     }
 }
