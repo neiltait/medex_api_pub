@@ -29,6 +29,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
 
         var sut = new CaseOutcomeController(
                 logger.Object,
@@ -36,6 +37,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 coronerReferralService.Object,
                 closeCaseService.Object,
                 examinationRetrievalService.Object,
+                saveOutstandingCaseItems.Object,
                 usersRetrievalByEmailService.Object);
 
             sut.ControllerContext = GetControllerContext();
@@ -57,6 +59,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -64,6 +67,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 coronerReferralService.Object,
                 closeCaseService.Object,
                 examinationRetrievalService.Object,
+                saveOutstandingCaseItems.Object,
                 usersRetrievalByEmailService.Object);
 
             sut.ControllerContext = GetControllerContext();
@@ -76,7 +80,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public async void PutCloseCase_When_Called_With_Valid_Case_Id_Mark_Case_As_Completed()
+        public async void PutCloseCase_When_Called_With_Valid_Examination_Id_Returns_Ok()
         {
             // Arrange
             var logger = new Mock<IMELogger>();
@@ -93,6 +97,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult("test")).Verifiable();
 
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
+            var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
 
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
@@ -104,6 +109,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 coronerReferralService.Object,
                 closeCaseService.Object,
                 examinationRetrievalService.Object,
+                saveOutstandingCaseItems.Object,
                 usersRetrievalByEmailService.Object);
 
             sut.ControllerContext = GetControllerContext();

@@ -9,6 +9,7 @@ using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -20,6 +21,7 @@ namespace MedicalExaminer.API.Controllers
         private IAsyncQueryHandler<CoronerReferralQuery, string> _coronerReferralService;
         private IAsyncQueryHandler<CloseCaseQuery, string> _closeCaseService;
         private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
+        private IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> _saveOutstandingCaseItems;
 
         public CaseOutcomeController(
             IMELogger logger,
@@ -27,12 +29,14 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<CoronerReferralQuery, string> coronerReferralService,
             IAsyncQueryHandler<CloseCaseQuery, string> closeCaseService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
+            IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> saveOutstandingCaseItems,
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
             : base(logger, mapper, usersRetrievalByEmailService)
         {
             _coronerReferralService = coronerReferralService;
             _closeCaseService = closeCaseService;
             _examinationRetrievalService = examinationRetrievalService;
+            _saveOutstandingCaseItems = saveOutstandingCaseItems;
         }
 
         [HttpPut]
@@ -56,7 +60,6 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var user = await CurrentUser();
-
             var result = await _coronerReferralService.Handle(new CoronerReferralQuery(examinationId, user));
 
             return Ok();
@@ -84,7 +87,15 @@ namespace MedicalExaminer.API.Controllers
             var request = Mapper.Map<PutOutstandingCaseItemsRequest>(examination);
 
             //  save the examination
-            return Ok();
+            if (examination.CoronerReferralSent)
+            {
+                var result = await _closeCaseService.Handle(new CloseCaseQuery(examinationId, user));
+                return Ok();
+            }
+            else
+            {
+                return BadRequest(); // for now
+            }
         }
 
         [HttpPut]
@@ -103,7 +114,6 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var user = await CurrentUser();
-
             var result = await _closeCaseService.Handle(new CloseCaseQuery(examinationId, user));
 
             return Ok();
