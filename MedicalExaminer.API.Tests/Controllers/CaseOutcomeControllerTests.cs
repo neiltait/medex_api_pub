@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Security.Claims;
 using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseOutcome;
+using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System.Security.Claims;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
@@ -26,12 +27,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
-            var sut = new CaseOutcomeController(
+        var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
                 coronerReferralService.Object,
                 closeCaseService.Object,
+                examinationRetrievalService.Object,
                 usersRetrievalByEmailService.Object);
 
             sut.ControllerContext = GetContollerContext();
@@ -52,12 +55,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
                 coronerReferralService.Object,
                 closeCaseService.Object,
+                examinationRetrievalService.Object,
                 usersRetrievalByEmailService.Object);
 
             sut.ControllerContext = GetContollerContext();
@@ -83,12 +88,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
                 coronerReferralService.Object,
                 closeCaseService.Object,
+                examinationRetrievalService.Object,
                 usersRetrievalByEmailService.Object);
 
             sut.ControllerContext = GetContollerContext();
@@ -97,7 +104,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await sut.PutCloseCase(examination.ExaminationId);
 
             // Assert
-            examination.Completed.Equals(true);
+            Assert.Equal(expected: true, actual: examination.Completed);
         }
 
         private ControllerContext GetContollerContext()
@@ -107,9 +114,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 HttpContext = new DefaultHttpContext
                 {
                     User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Email, "username")
-            }, "someAuthTypeName"))
+                    {
+                        new Claim(ClaimTypes.Email, "username")
+                    }, "someAuthTypeName"))
                 }
             };
         }

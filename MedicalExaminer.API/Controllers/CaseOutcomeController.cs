@@ -17,19 +17,22 @@ namespace MedicalExaminer.API.Controllers
     [ApiController]
     public class CaseOutcomeController : AuthenticatedBaseController
     {
-        IAsyncQueryHandler<CoronerReferralQuery, string> _coronerReferralService;
-        IAsyncQueryHandler<CloseCaseQuery, string> _closeCaseService;
+        private IAsyncQueryHandler<CoronerReferralQuery, string> _coronerReferralService;
+        private IAsyncQueryHandler<CloseCaseQuery, string> _closeCaseService;
+        private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
 
         public CaseOutcomeController(
             IMELogger logger,
             IMapper mapper,
             IAsyncQueryHandler<CoronerReferralQuery, string> coronerReferralService,
             IAsyncQueryHandler<CloseCaseQuery, string> closeCaseService,
+            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
             : base(logger, mapper, usersRetrievalByEmailService)
         {
             _coronerReferralService = coronerReferralService;
             _closeCaseService = closeCaseService;
+            _examinationRetrievalService = examinationRetrievalService;
         }
 
         [HttpPut]
@@ -61,13 +64,24 @@ namespace MedicalExaminer.API.Controllers
 
         [HttpPut]
         [Route("outstanding_case_items")]
-        public ActionResult PutOutstandingCaseItems([FromBody] PutOutstandingCaseItemsRequest request)
+        public async Task<ActionResult> PutOutstandingCaseItems(
+            string examinationId,
+            [FromBody]
+            PutOutstandingCaseItemsRequest putOutstandingCaseItemsRequest)
         {
             // TODO:  Implement
 
             //  get examination to update
+            var user = await CurrentUser();
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+
+            if (examination == null)
+            {
+                return NotFound();
+            }
 
             //  map the putoutstandingcaseitemsrequest onto the examinationtoUpdate
+            var request = Mapper.Map<PutOutstandingCaseItemsRequest>(examination);
 
             //  save the examination
             return Ok();
