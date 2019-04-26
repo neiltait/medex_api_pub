@@ -28,6 +28,7 @@ namespace MedicalExaminer.ToolBox.Common.Extensions
 
             services.AddCosmosStore<MeUser>(cosmosSettings, "Users");
             services.AddCosmosStore<Location>(cosmosSettings, "Locations");
+            services.AddCosmosStore<Permission>(cosmosSettings, "Permissions");
 
 
             services.AddScoped<IDocumentClientFactory, DocumentClientFactory>();
