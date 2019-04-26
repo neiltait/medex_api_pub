@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
@@ -37,7 +38,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 usersRetrievalByEmailService.Object);
 
-            sut.ControllerContext = GetContollerContext();
+            sut.ControllerContext = GetControllerContext();
 
             // Act
             var response = await sut.PutCloseCase(string.Empty);
@@ -65,7 +66,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 usersRetrievalByEmailService.Object);
 
-            sut.ControllerContext = GetContollerContext();
+            sut.ControllerContext = GetControllerContext();
 
             // Act
             var response = await sut.PutCloseCase("invalidCaseId");
@@ -80,15 +81,16 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var examinationId = Guid.NewGuid().ToString();
-            var examination = new Examination
-            {
-                ExaminationId = examinationId
-            };
+            var examination = new Mock<Examination>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination.Object)).Verifiable();
+            var mockMeUser = new Mock<MeUser>();
+            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser.Object));
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -98,16 +100,16 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 usersRetrievalByEmailService.Object);
 
-            sut.ControllerContext = GetContollerContext();
+            sut.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await sut.PutCloseCase(examination.ExaminationId);
+            var response = await sut.PutCloseCase(examination.Object.ExaminationId);
 
             // Assert
-            Assert.Equal(expected: true, actual: examination.Completed);
+            Assert.Equal(expected: true, actual: examination.Object.Completed);
         }
 
-        private ControllerContext GetContollerContext()
+        private ControllerContext GetControllerContext()
         {
             return new ControllerContext
             {

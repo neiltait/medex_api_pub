@@ -407,5 +407,17 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "coroner_referral_sent")]
         public bool CoronerReferralSent { get; set; } = false;
+
+        /// <summary>
+        /// has the Scrutiny been confirmed?
+        /// </summary>
+        [JsonProperty(PropertyName = "scrutiny_confirmed")]
+        public bool ScrutinyConfirmed { get; set; } = false;
+
+        /// <summary>
+        /// have the outstanding case items been completed?
+        /// </summary>
+        [JsonProperty(PropertyName = "outstanding_case_items_completed")]
+        public bool OutstandingCaseItemsCompleted { get; set; } = false;
     }
 }
