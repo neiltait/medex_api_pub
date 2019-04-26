@@ -83,6 +83,7 @@ namespace MedicalExaminer.ToolBox.Common.Services
 
         private async Task ClearUsers()
         {
+            await _permissionStore.RemoveAsync(p => true);
             await _userStore.RemoveAsync(u => true);
         }
 
@@ -138,7 +139,7 @@ namespace MedicalExaminer.ToolBox.Common.Services
             {
                 UserId = id,
                 FirstName = $"{role}{index}",
-                LastName = $"At{location.Name}",
+                LastName = $"At-{location.Name}",
                 Email = $"{id}@example.com",
                 Permissions = new List<MEUserPermission>()
                 {
@@ -158,16 +159,18 @@ namespace MedicalExaminer.ToolBox.Common.Services
 
         private static string NameForLocation(LocationType locationType, Location parent, int index)
         {
+            var prefix = parent != null ? $"{parent.Name}-" : string.Empty;
+
             switch (locationType)
             {
                 case LocationType.Site:
-                    return $"Site{index}";
+                    return $"{prefix}Site{index}";
                 case LocationType.Trust:
-                    return $"Trust{index}";
+                    return $"{prefix}Trust{index}";
                 case LocationType.Region:
-                    return $"Region{index}";
+                    return $"{prefix}Region{index}";
                 case LocationType.National:
-                    return $"National{index}";
+                    return $"{prefix}National{index}";
                 default:
                     break;
             }
