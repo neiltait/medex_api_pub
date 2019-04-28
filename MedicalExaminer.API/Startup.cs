@@ -320,7 +320,7 @@ namespace MedicalExaminer.API
             // Case Outcome Services
             services.AddScoped<IAsyncQueryHandler<CloseCaseQuery, string>, CloseCaseService>();
             services.AddScoped<IAsyncQueryHandler<CoronerReferralQuery, string>, CoronerReferralService>();
-
+            services.AddScoped<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>, SaveOutstandingCaseItemsService>();
 
             // Patient details services 
             services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();

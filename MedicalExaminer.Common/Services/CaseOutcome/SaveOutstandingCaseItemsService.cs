@@ -8,7 +8,7 @@ using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.CaseOutcome
 {
-    public class SaveOutstandingCaseItemsService : IAsyncQueryHandler<CloseCaseQuery, string>
+    public class SaveOutstandingCaseItemsService : IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>
     {
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Models.Examination> _examinationRetrievalService;
         private readonly IConnectionSettings _connectionSettings;
@@ -24,11 +24,11 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             _examinationRetrievalService = examinationRetrievalService;
         }
 
-        public async Task<string> Handle(CloseCaseQuery param)
+        public async Task<string> Handle(SaveOutstandingCaseItemsQuery param)
         {
-            if (string.IsNullOrEmpty(param.ExaminationId))
+            if (string.IsNullOrEmpty(param.Examination.ExaminationId))
             {
-                throw new ArgumentNullException(nameof(param.ExaminationId));
+                throw new ArgumentNullException(nameof(param.Examination.ExaminationId));
             }
 
             if (param.User == null)
@@ -36,7 +36,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
                 throw new ArgumentNullException(nameof(param.User));
             }
 
-            var examinationToUpdate = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(param.ExaminationId, param.User));
+            var examinationToUpdate = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(param.Examination.ExaminationId, param.User));
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
 
@@ -45,8 +45,15 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate = examinationToUpdate.UpdateCaseUrgencyScore();
             examinationToUpdate = examinationToUpdate.UpdateCaseStatus();
 
-            var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);
-            return result.ExaminationId;
+            if (examinationToUpdate.ScrutinyConfirmed)
+            {
+                var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);
+                return result.ExaminationId;
+            }
+            else
+            {
+                return null; // for now
+            }
         }
     }
 }
