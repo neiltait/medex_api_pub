@@ -37,7 +37,7 @@ namespace MedicalExaminer.API.Authorization
             AuthorizationHandlerContext context,
             PermissionRequirement requirement)
         {
-            var emailAddress = context.User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
+            var emailAddress = context.User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).FirstOrDefault();
 
             if (await _permissionService.HasPermission(emailAddress, requirement.Permission))
             {
