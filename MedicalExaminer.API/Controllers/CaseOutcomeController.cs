@@ -175,7 +175,7 @@ namespace MedicalExaminer.API.Controllers
                 return NotFound(new GetCaseOutcomeResponse());
             }
 
-            var result = Mapper.Map<CaseOutcome>(examination);
+            var result = Mapper.Map<GetCaseOutcomeResponse>(examination);
 
             return Ok(result);
         }

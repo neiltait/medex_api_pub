@@ -29,6 +29,11 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(x => x.GPNotifedStatus, opt => opt.MapFrom(y => y));
             CreateMap<Examination, GetPatientDetailsResponse>()
                 .ForMember(x => x.Header, opt => opt.MapFrom(y => y));
+            CreateMap<Examination, GetCaseOutcomeResponse>()
+                .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
+                .ForMember(x => x.MCCDIssed, opt => opt.MapFrom(y => y.CaseOutcome.MCCDIssued))
+                .ForMember(x => x.CremationFormStatus, opt => opt.MapFrom(y => y.CaseOutcome.CremationFormStatus))
+                .ForMember(x => x.GPNotifedStatus, opt => opt.MapFrom(y => y.CaseOutcome.GPNotifiedStatus));
             CreateMap<Examination, PutMedicalTeamResponse>()
                 .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
                 .ForMember(x => x.ConsultantResponsible, opt => opt.MapFrom(x => x.MedicalTeam.ConsultantResponsible))

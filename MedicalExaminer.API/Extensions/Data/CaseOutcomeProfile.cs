@@ -18,8 +18,6 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(x => x.MCCDIssued, opt => opt.MapFrom(y => y.MCCDIssued))
                 .ForMember(x => x.CremationFormStatus, opt => opt.MapFrom(y => y.CremationFormStatus))
                 .ForMember(x => x.GPNotifiedStatus, opt => opt.MapFrom(y => y.GPNotifiedStatus));
-            //CreateMap<CaseOutcome, Examination>()
-            //    .ForMember(x => x.CaseOutcome, opt => opt.MapFrom(y => y));
         }
     }
 }
