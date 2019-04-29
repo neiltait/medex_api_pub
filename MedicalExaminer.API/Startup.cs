@@ -423,7 +423,6 @@ namespace MedicalExaminer.API
         {
             services.AddSingleton<IRolePermissions, RolePermissions>();
 
-            // TODO: Could use reflection to get get any class with Role as an superclass.
             services.AddSingleton<IEnumerable<Common.Authorization.Role>>(er => new List<Common.Authorization.Role>()
             {
                 new MedicalExaminerOfficerRole(),
