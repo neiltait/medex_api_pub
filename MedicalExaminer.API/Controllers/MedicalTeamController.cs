@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedicalExaminer.API.Authorization.ExaminationContext;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.API.Services;
@@ -129,7 +130,9 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutExaminationResponse.</returns>
         [HttpPut("medical_team/")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutMedicalTeamResponse>> PutMedicalTeam(string examinationId, [FromBody] PutMedicalTeamRequest putMedicalTeamRequest)
+        public async Task<ActionResult<PutMedicalTeamResponse>> PutMedicalTeam(
+            string examinationId,
+            [FromBody] [ModelBinder(Name = "examinationId")] PutMedicalTeamRequest putMedicalTeamRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -137,7 +140,6 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var medicalTeamRequest = Mapper.Map<MedicalTeam>(putMedicalTeamRequest);
-
             var myUser = await CurrentUser();
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
 
