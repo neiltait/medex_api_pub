@@ -1,12 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.API.Attributes;
+using MedicalExaminer.API.Authorization.ExaminationContext;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.MedicalTeams
 {
     /// <summary>
     ///     Put Medical Team Request.
     /// </summary>
-    public class PutMedicalTeamRequest
+    public class PutMedicalTeamRequest : IExaminationValidationModel
     {
         /// <summary>
         ///     Consultant primarily responsible for care of patient.
@@ -37,13 +39,13 @@ namespace MedicalExaminer.API.Models.v1.MedicalTeams
         /// <summary>
         ///     Medical Examiner.
         /// </summary>
-        [ValidMedicalExaminer]
+        [ValidRoleOnExamination(UserRoles.MedicalExaminer)]
         public string MedicalExaminerUserId { get; set; }
 
         /// <summary>
         ///     Medical Examiner Officer.
         /// </summary>
-        [ValidMedicalExaminerOfficer]
+        [ValidRoleOnExamination(UserRoles.MedicalExaminerOfficer)]
         public string MedicalExaminerOfficerUserId { get; set; }
     }
 }
