@@ -28,11 +28,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var examinationId = "7E5D50CE-05BF-4A1F-AA6E-25418A723A7F";
-            var examination = new Examination
-            {
-                ExaminationId = examinationId
-            };
-
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var mockMeUser = new Mock<MeUser>();
             usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
@@ -42,9 +37,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
 
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
-                .Returns(Task.FromResult(examination));
-
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
 
             var sut = new CaseOutcomeController(
@@ -59,7 +51,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             sut.ControllerContext = GetControllerContext();
 
             // Act
-            var response = sut.GetCaseOutcome("EDC2E452-E032-43E9-A5D3-B0610CC0E28C").Result;
+            var response = sut.GetCaseOutcome(examinationId).Result;
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<GetCaseOutcomeResponse>>().Subject;

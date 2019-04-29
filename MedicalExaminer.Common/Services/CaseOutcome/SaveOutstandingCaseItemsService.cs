@@ -26,9 +26,9 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
 
         public async Task<string> Handle(SaveOutstandingCaseItemsQuery param)
         {
-            if (string.IsNullOrEmpty(param.Examination.ExaminationId))
+            if (string.IsNullOrEmpty(param.CaseOutcome.ToString()))
             {
-                throw new ArgumentNullException(nameof(param.Examination.ExaminationId));
+                throw new ArgumentNullException(nameof(param.CaseOutcome.ToString));
             }
 
             if (param.User == null)
@@ -36,10 +36,11 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
                 throw new ArgumentNullException(nameof(param.User));
             }
 
-            var examinationToUpdate = param.Examination;
+            var examinationToUpdate = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(param.ExaminationId, param.User));
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
 
+            examinationToUpdate.CaseOutcome = param.CaseOutcome;
             examinationToUpdate.OutstandingCaseItemsCompleted = true;
 
             examinationToUpdate = examinationToUpdate.UpdateCaseUrgencyScore();

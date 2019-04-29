@@ -421,21 +421,10 @@ namespace MedicalExaminer.Models
         public bool OutstandingCaseItemsCompleted { get; set; } = false;
 
         /// <summary>
-        /// MCCD Issued or not
+        /// Case Outcome Items
         /// </summary>
-        [JsonProperty(PropertyName = "mccd_issued")]
-        public bool? MCCDIssued { get; set; }
-
-        /// <summary>
-        /// Status of the Cremation Form
-        /// </summary>
-        [JsonProperty(PropertyName = "cremation_form_status")]
-        public CremationFormStatus? CremationFormStatus { get; set; }
-
-        /// <summary>
-        /// GP Notified or not.
-        /// </summary>
-        [JsonProperty(PropertyName = "gp_notified_status")]
-        public GPNotified? GPNotifiedStatus { get; set; }
+        [Required]
+        [JsonProperty(PropertyName = "case_outcome")]
+        public CaseOutcome CaseOutcome { get; set; } = new CaseOutcome();
     }
 }

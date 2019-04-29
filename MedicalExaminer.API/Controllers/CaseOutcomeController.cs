@@ -10,7 +10,6 @@ using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -117,12 +116,8 @@ namespace MedicalExaminer.API.Controllers
             // map the putoutstandingcaseitemsrequest onto the examinationtoUpdate
             var outstandingCaseItems = Mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
 
-            examination.MCCDIssued = outstandingCaseItems.MCCDIssued;
-            examination.CremationFormStatus = outstandingCaseItems.CremationFormStatus;
-            examination.GPNotifiedStatus = outstandingCaseItems.GPNotifiedStatus;
-
             // save the examination
-            var result = await _saveOutstandingCaseItemsService.Handle(new SaveOutstandingCaseItemsQuery(examination, user));
+            var result = await _saveOutstandingCaseItemsService.Handle(new SaveOutstandingCaseItemsQuery(examinationId, outstandingCaseItems, user));
             return Ok();
         }
 
@@ -153,7 +148,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Get Case Outcome details
         /// </summary>
         /// <returns></returns>
         [HttpGet]

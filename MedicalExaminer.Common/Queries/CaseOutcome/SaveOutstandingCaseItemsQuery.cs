@@ -4,13 +4,16 @@ namespace MedicalExaminer.Common.Queries.CaseOutcome
 {
     public class SaveOutstandingCaseItemsQuery : IQuery<string>
     {
-        public Models.Examination Examination { get; }
+        public string ExaminationId { get; set; }
+
+        public Models.CaseOutcome CaseOutcome { get; }
 
         public MeUser User { get; }
 
-        public SaveOutstandingCaseItemsQuery(Models.Examination examination, MeUser user)
+        public SaveOutstandingCaseItemsQuery(string examinationId, Models.CaseOutcome caseOutcome, MeUser user)
         {
-            Examination = examination;
+            ExaminationId = examinationId;
+            CaseOutcome = caseOutcome;
             User = user;
         }
     }

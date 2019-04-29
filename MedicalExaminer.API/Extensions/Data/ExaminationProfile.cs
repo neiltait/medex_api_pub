@@ -19,6 +19,7 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public ExaminationProfile()
         {
+            CreateMap<Examination, CaseOutcome>();
             CreateMap<Examination, ExaminationItem>();
             CreateMap<Examination, GetCaseOutcomeResponse>() // in progress
                 .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
