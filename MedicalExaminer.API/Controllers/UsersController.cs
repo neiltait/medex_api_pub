@@ -123,7 +123,7 @@ namespace MedicalExaminer.API.Controllers
             }
         }
 
-        // TODO: Merge this and the one belwo into a single queyr.
+        // TODO: Depricate this method; superceded by lookups on medical team.
         /// <summary>
         ///     Get all Users that are in the role of Medical Examiner on this case.
         /// </summary>
@@ -152,6 +152,7 @@ namespace MedicalExaminer.API.Controllers
             }
         }
 
+        // TODO: Depricate this method; superceded by lookups on medical team.
         /// <summary>
         ///     Get all Users that are in the role of Medical Examiner Officer on this case.
         /// </summary>

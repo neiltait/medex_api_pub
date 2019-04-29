@@ -6,18 +6,17 @@ using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Services;
+using MedicalExaminer.Common.Extensions.Models;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Permission = MedicalExaminer.Common.Authorization.Permission;
-using MedicalExaminer.Common.Extensions.Models;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -81,8 +80,6 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var permissedLocations = await LocationsWithPermission(Permission.GetExaminations);
-            
-            var user = await CurrentUser();
 
             var examinationsQuery = new ExaminationsRetrievalQuery(
                 permissedLocations,
