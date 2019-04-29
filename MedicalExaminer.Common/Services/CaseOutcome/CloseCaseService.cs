@@ -10,18 +10,15 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
 {
     public class CloseCaseService : IAsyncQueryHandler<CloseCaseQuery, string>
     {
-        private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Models.Examination> _examinationRetrievalService;
         private readonly IConnectionSettings _connectionSettings;
         private readonly IDatabaseAccess _databaseAccess;
 
         public CloseCaseService(
             IDatabaseAccess databaseAccess,
-            IExaminationConnectionSettings connectionSettings,
-            IAsyncQueryHandler<ExaminationRetrievalQuery, Models.Examination> examinationRetrievalService)
+            IExaminationConnectionSettings connectionSettings)
         {
             _connectionSettings = connectionSettings;
             _databaseAccess = databaseAccess;
-            _examinationRetrievalService = examinationRetrievalService;
         }
 
         public async Task<string> Handle(CloseCaseQuery param)
@@ -36,7 +33,12 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
                 throw new ArgumentNullException(nameof(param.User));
             }
 
-            var examinationToUpdate = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(param.ExaminationId, param.User));
+            var examinationToUpdate = await
+                _databaseAccess
+                    .GetItemAsync<Models.Examination>(
+                        _connectionSettings,
+                        examination => examination.ExaminationId == param.ExaminationId);
+
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
 

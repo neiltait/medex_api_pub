@@ -110,7 +110,7 @@ namespace MedicalExaminer.API.Controllers
 
             if (examination == null)
             {
-                return NotFound();
+                return new NotFoundResult();
             }
 
             // map the putoutstandingcaseitemsrequest onto the examinationtoUpdate
