@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.API.Authorization;
+using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
 using MedicalExaminer.Common.Authorization;
@@ -12,6 +13,8 @@ using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
+using Microsoft.CodeAnalysis.Options;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 using Permission = MedicalExaminer.Common.Authorization.Permission;
@@ -24,6 +27,8 @@ namespace MedicalExaminer.API.Tests.Services
 
         private readonly Mock<IRolePermissions> _rolePermissionsMock;
 
+        private readonly Mock<IOptions<AuthorizationSettings>> _optionAuthorizationSettingsMock;
+
         private readonly IPermissionService _sut;
 
         public PermissionServiceTests()
@@ -32,9 +37,18 @@ namespace MedicalExaminer.API.Tests.Services
 
             _userRetrievalServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
 
+            _optionAuthorizationSettingsMock = new Mock<IOptions<AuthorizationSettings>>();
+            _optionAuthorizationSettingsMock
+                .SetupGet(oas => oas.Value)
+                .Returns(new AuthorizationSettings()
+                {
+                    Disable = false
+                });
+
             _sut = new PermissionService(
                 _rolePermissionsMock.Object,
-                _userRetrievalServiceMock.Object);
+                _userRetrievalServiceMock.Object,
+                _optionAuthorizationSettingsMock.Object);
         }
 
         [Fact]
