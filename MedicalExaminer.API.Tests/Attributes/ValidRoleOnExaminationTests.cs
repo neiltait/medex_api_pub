@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentAssertions;
-using MedicalExaminer.API.Attributes;
 using MedicalExaminer.API.Authorization.ExaminationContext;
-using MedicalExaminer.Common;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -19,9 +17,9 @@ namespace MedicalExaminer.API.Tests.Attributes
     {
         private readonly ValidationContext _context;
 
-        private Mock<IServiceProvider> _serviceProvideMock;
+        private readonly Mock<IServiceProvider> _serviceProvideMock;
 
-        private Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MedicalExaminer.Models.MeUser>>
+        private readonly Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>
             _userRetrievalByIdServiceMock;
 
         public ValidRoleOnExaminationTests()
@@ -33,7 +31,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             _serviceProvideMock
                 .Setup(context =>
                     context.GetService(
-                        typeof(IAsyncQueryHandler<UserRetrievalByIdQuery, MedicalExaminer.Models.MeUser>)))
+                        typeof(IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>)))
                 .Returns(_userRetrievalByIdServiceMock.Object);
 
             _context = new ValidationContext(new object(), _serviceProvideMock.Object, new Dictionary<object, object>());
@@ -176,7 +174,6 @@ namespace MedicalExaminer.API.Tests.Attributes
             SetupUserRetrievalByIdMock(userId, expectedUser);
             SetupExaminationValidationContextProvider(_serviceProvideMock, expectedExamination);
 
-
             var sut = new ValidRoleOnExamination(UserRoles.MedicalExaminer);
 
             // Act
@@ -195,7 +192,6 @@ namespace MedicalExaminer.API.Tests.Attributes
         {
             // Arrange
             var expectedResult = ValidationResult.Success;
-            // Arrange
             var userId = "1";
             var expectedUser = new MeUser
             {
