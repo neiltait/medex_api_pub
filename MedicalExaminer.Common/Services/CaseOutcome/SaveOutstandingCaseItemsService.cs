@@ -36,7 +36,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
                 throw new ArgumentNullException(nameof(param.User));
             }
 
-            var examinationToUpdate = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(param.Examination.ExaminationId, param.User));
+            var examinationToUpdate = param.Examination;
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
 

@@ -162,18 +162,24 @@ namespace MedicalExaminer.API.Controllers
         {
             if (string.IsNullOrEmpty(examinationId))
             {
-                return new BadRequestObjectResult(nameof(examinationId));
+                return BadRequest(new GetCaseOutcomeResponse());
             }
 
             Guid examinationGuid;
             if (!Guid.TryParse(examinationId, out examinationGuid))
             {
-                return new BadRequestObjectResult(nameof(examinationId));
+                return BadRequest(new GetCaseOutcomeResponse());
             }
 
             var user = await CurrentUser();
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+
+            if (examination == null)
+            {
+                return NotFound(new GetCaseOutcomeResponse());
+            }
+
             var result = Mapper.Map<CaseOutcome>(examination);
 
             return Ok(result);

@@ -22,6 +22,141 @@ namespace MedicalExaminer.API.Tests.Controllers
     public class CaseOutcomeControllerTests : ControllerTestsBase<CaseOutcomeController>
     {
         [Fact]
+        public void GetCaseOutcome_When_Called_With_Id_Not_Found_Returns_NotFound()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            var examinationId = "7E5D50CE-05BF-4A1F-AA6E-25418A723A7F";
+            var examination = new Examination
+            {
+                ExaminationId = examinationId
+            };
+
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var mockMeUser = new Mock<MeUser>();
+            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser.Object));
+
+            var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
+            var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
+
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination));
+
+            var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
+
+            var sut = new CaseOutcomeController(
+                logger.Object,
+                mapper.Object,
+                coronerReferralService.Object,
+                closeCaseService.Object,
+                examinationRetrievalService.Object,
+                saveOutstandingCaseItems.Object,
+                usersRetrievalByEmailService.Object);
+
+            sut.ControllerContext = GetControllerContext();
+
+            // Act
+            var response = sut.GetCaseOutcome("EDC2E452-E032-43E9-A5D3-B0610CC0E28C").Result;
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<GetCaseOutcomeResponse>>().Subject;
+            var notFoundResult = taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject;
+            notFoundResult.Value.Should().BeAssignableTo<GetCaseOutcomeResponse>();
+        }
+
+        [Fact]
+        public void GetCaseOutcome_When_Called_With_Invalid_Id_Returns_Expected_Type()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            var examination = new Examination
+            {
+                ExaminationId = Guid.NewGuid().ToString()
+            };
+
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var mockMeUser = new Mock<MeUser>();
+            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser.Object));
+
+            var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
+            var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
+
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination));
+
+            var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
+
+            var sut = new CaseOutcomeController(
+                logger.Object,
+                mapper.Object,
+                coronerReferralService.Object,
+                closeCaseService.Object,
+                examinationRetrievalService.Object,
+                saveOutstandingCaseItems.Object,
+                usersRetrievalByEmailService.Object);
+
+            sut.ControllerContext = GetControllerContext();
+
+            // Act
+            var response = sut.GetCaseOutcome("InvalidExaminationId").Result;
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<GetCaseOutcomeResponse>>().Subject;
+            var notFoundResult = taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
+            notFoundResult.Value.Should().BeAssignableTo<GetCaseOutcomeResponse>();
+        }
+
+        [Fact]
+        public void GetCaseOutcome_When_Called_With_Valid_Id_Returns_Expected_Type()
+        {
+            // Arrange
+            var logger = new Mock<IMELogger>();
+            var mapper = new Mock<IMapper>();
+            var examination = new Examination
+            {
+                ExaminationId = Guid.NewGuid().ToString()
+            };
+
+            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var mockMeUser = new Mock<MeUser>();
+            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(mockMeUser.Object));
+
+            var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
+            var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
+
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(examination));
+
+            var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
+
+            var sut = new CaseOutcomeController(
+                logger.Object,
+                mapper.Object,
+                coronerReferralService.Object,
+                closeCaseService.Object,
+                examinationRetrievalService.Object,
+                saveOutstandingCaseItems.Object,
+                usersRetrievalByEmailService.Object);
+
+            sut.ControllerContext = GetControllerContext();
+
+            // Act
+            var response = sut.GetCaseOutcome(examination.ExaminationId).Result;
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<GetCaseOutcomeResponse>>().Subject;
+            var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+        }
+
+        [Fact]
         public async void PutOutstandingCaseItems_When_Called_With_No_Case_Id_Returns_Bad_Request()
         {
             // Arrange
