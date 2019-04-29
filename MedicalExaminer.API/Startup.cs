@@ -45,6 +45,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
 using Cosmonaut;
+using MedicalExaminer.API.Extensions;
 
 namespace MedicalExaminer.API
 {
@@ -76,9 +77,9 @@ namespace MedicalExaminer.API
         /// <param name="services">Service Collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            var oktaSettingsSection = Configuration.GetSection("Okta");
-            var okatSettings = oktaSettingsSection.Get<OktaSettings>();
-            services.Configure<OktaSettings>(oktaSettingsSection);
+            var oktaSettings = services.ConfigureSettings<OktaSettings>(Configuration, "Okta");
+
+            services.ConfigureSettings<AuthorizationSettings>(Configuration, "Authorization");
 
             ConfigureOktaClient(services);
 
@@ -91,7 +92,7 @@ namespace MedicalExaminer.API
                     .AllowAnyHeader();
             }));
 
-            ConfigureAuthentication(services, okatSettings);
+            ConfigureAuthentication(services, oktaSettings);
 
             ConfigureAuthorization(services);
 
@@ -151,7 +152,7 @@ namespace MedicalExaminer.API
                 {
                     Type = "oauth2",
                     Flow = "implicit",
-                    AuthorizationUrl = okatSettings.AuthorizationUrl,
+                    AuthorizationUrl = oktaSettings.AuthorizationUrl,
                     Scopes = new Dictionary<string, string>
                     {
                         { "profile", "Profile" },
