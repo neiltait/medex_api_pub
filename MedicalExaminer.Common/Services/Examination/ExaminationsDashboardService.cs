@@ -13,7 +13,7 @@ namespace MedicalExaminer.Common.Services.Examination
     public class ExaminationsDashboardService : QueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>
     {
         public ExaminationsDashboardService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
-            :base(databaseAccess, connectionSettings)
+            : base(databaseAccess, connectionSettings)
         {
         }
 
@@ -25,7 +25,7 @@ namespace MedicalExaminer.Common.Services.Examination
             }
 
             var baseQuery = GetBaseQuery(param);
-            
+
             var overView = new ExaminationsOverview
             {
                 CountOfAdmissionNotesHaveBeenAdded = GetCount(baseQuery, CaseStatus.AdmissionNotesHaveBeenAdded).Result,
@@ -106,13 +106,14 @@ namespace MedicalExaminer.Common.Services.Examination
         {
             return examination => examination.Completed == !paramFilterOpenCases;
         }
-        
+
         private Expression<Func<Models.Examination, bool>> GetCaseMEOfficePredicate(string meOffice)
         {
             if (string.IsNullOrEmpty(meOffice))
             {
                 return null;
             }
+
             return examination => examination.MedicalExaminerOfficeResponsible == meOffice;
         }
 

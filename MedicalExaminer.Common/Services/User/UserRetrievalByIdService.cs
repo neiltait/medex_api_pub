@@ -24,16 +24,10 @@ namespace MedicalExaminer.Common.Services.User
                 throw new ArgumentNullException(nameof(param));
             }
 
-            try
-            {
-                var result = _databaseAccess.GetItemAsync<Models.MeUser>(_connectionSettings,
-                    x => x.UserId == param.UserId);
-                return result;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var result = _databaseAccess.GetItemAsync<Models.MeUser>(
+                _connectionSettings,
+                x => x.UserId == param.UserId);
+            return result;
         }
     }
 }
