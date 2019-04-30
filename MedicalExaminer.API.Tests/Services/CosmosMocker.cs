@@ -1,20 +1,17 @@
-﻿using Cosmonaut;
+﻿using System;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using Cosmonaut;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Document = Microsoft.Azure.Documents.Document;
 
 namespace MedicalExaminer.API.Tests.Services
@@ -105,35 +102,45 @@ namespace MedicalExaminer.API.Tests.Services
             client.Setup(c => c.CreateDocumentQuery<T>(It.IsAny<Uri>(), It.IsAny<FeedOptions>()))
                 .Returns(mockOrderedQueryable.Object);
 
-            // Attempt to provide something close to cosmos and pass the object through using its json property
-            // names instead (to catch when ID is named differently)
             client.Setup(c => c.CreateDocumentAsync(
                     It.IsAny<Uri>(),
                     It.IsAny<T>(),
                     null,
                     false,
                     default(CancellationToken)))
-                .Returns((Uri uri, T item, RequestOptions ro, bool b, CancellationToken ct) =>
-                {
-                    var document = new Document();
+                .Returns((Uri uri, T item, RequestOptions ro, bool b, CancellationToken ct) => GetDocumentForItem(item));
 
-                    foreach (PropertyInfo propertyInfo in item.GetType().GetProperties())
-                    {
-                        if (propertyInfo.CanRead)
-                        {
-                            var value = propertyInfo.GetValue(item, null);
-
-                            var jsonProperty =
-                                (JsonPropertyAttribute) propertyInfo.GetCustomAttribute(typeof(JsonPropertyAttribute));
-
-                            document.SetPropertyValue(jsonProperty?.PropertyName ?? propertyInfo.Name, value);
-                        }
-                    }
-
-                    return Task.FromResult(new ResourceResponse<Document>(document));
-                });
+            client.Setup(c => c.UpsertDocumentAsync(
+                    It.IsAny<Uri>(),
+                    It.IsAny<T>(),
+                    null,
+                    false,
+                    default(CancellationToken)))
+                .Returns((Uri uri, T item, RequestOptions ro, bool b, CancellationToken ct) => GetDocumentForItem(item));
 
             return client;
+        }
+
+        private static Task<ResourceResponse<Document>> GetDocumentForItem<T>(T item)
+        {
+            var document = new Document();
+
+            // Attempt to provide something close to cosmos and pass the object through using its json property
+            // names instead (to catch when ID is named differently)
+            foreach (PropertyInfo propertyInfo in item.GetType().GetProperties())
+            {
+                if (propertyInfo.CanRead)
+                {
+                    var value = propertyInfo.GetValue(item, null);
+
+                    var jsonProperty =
+                        (JsonPropertyAttribute) propertyInfo.GetCustomAttribute(typeof(JsonPropertyAttribute));
+
+                    document.SetPropertyValue(jsonProperty?.PropertyName ?? propertyInfo.Name, value);
+                }
+            }
+
+            return Task.FromResult(new ResourceResponse<Document>(document));
         }
     }
 
