@@ -149,17 +149,36 @@ namespace MedicalExaminer.Models
 
         private static bool CalculateScrutinyComplete(Examination examination)
         {
-            if (!examination.ReadyForMEScrutiny)
-            {
-                return false;
-            }
-
             if (examination.Unassigned)
             {
                 return false;
             }
 
-            return true;
+            if (examination.CaseBreakdown.PreScrutiny.Latest != null
+                && examination.AdmissionNotesHaveBeenAdded
+                && examination.PendingDiscussionWithQAP
+                && examination.PendingDiscussionWithRepresentative)
+            {
+                return false;
+            }
+
+            if (examination.CaseBreakdown.PreScrutiny.Latest != null
+                && examination.AdmissionNotesHaveBeenAdded
+                && !examination.PendingDiscussionWithQAP
+                && examination.HaveFinalCaseOutcomesOutstanding)
+            {
+                return false;
+            }
+
+            if (examination.CaseBreakdown.PreScrutiny.Latest != null
+                && examination.AdmissionNotesHaveBeenAdded
+                && !examination.PendingDiscussionWithQAP
+                && !examination.HaveFinalCaseOutcomesOutstanding)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static bool CalculatePendingDiscussionWithRepresentative(Examination examination)
@@ -170,13 +189,13 @@ namespace MedicalExaminer.Models
             }
             else
             {
-                if (examination.CaseBreakdown.AdmissionNotes.Latest!=null && examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral)
+                if (examination.CaseBreakdown.AdmissionNotes.Latest != null && examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral)
                 {
                     return false;
                 }
                 else
                 {
-                    if (examination.CaseBreakdown.BereavedDiscussion.Latest!=null && !examination.CaseBreakdown.BereavedDiscussion.Latest.DiscussionUnableHappen)
+                    if (examination.CaseBreakdown.BereavedDiscussion.Latest != null && !examination.CaseBreakdown.BereavedDiscussion.Latest.DiscussionUnableHappen)
                     {
                         return false;
                     }
@@ -212,13 +231,14 @@ namespace MedicalExaminer.Models
 
         private static bool CalculateAdmissionNotesPending(Examination examination)
         {
-            if(examination.CaseBreakdown.AdmissionNotes.Latest != null)
+            if (examination.CaseBreakdown.AdmissionNotes.Latest != null)
             {
-                if(examination.MedicalTeam.ConsultantResponsible != null)
+                if (examination.MedicalTeam.ConsultantResponsible != null)
                 {
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -239,6 +259,5 @@ namespace MedicalExaminer.Models
 
             return false;
         }
-
     }
 }

@@ -21,7 +21,7 @@ namespace MedicalExaminer.API.Tests.Controllers
     /// Medical Team Controller Tests.
     /// </summary>
     public class MedicalTeamControllerTests : ControllerTestsBase<MedicalTeamController>
-    {       
+    {
         [Fact]
         public async Task GetMedicalTeam_ShouldReturnBadRequest_WhenModelStateInvalid()
         {
@@ -35,8 +35,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
                 .Returns(Task.FromResult(mockMeUser.Object));
 
-            Controller = new MedicalTeamController(logger.Object, Mapper, 
-                examinationRetrievalService.Object, medicalTeamUpdateService.Object, usersRetrievalByEmailService.Object);
+            Controller = new MedicalTeamController(
+                logger.Object,
+                Mapper,
+                examinationRetrievalService.Object,
+                medicalTeamUpdateService.Object,
+                usersRetrievalByEmailService.Object);
             Controller.ModelState.AddModelError("An", "Error");
 
             // Act
@@ -74,8 +78,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
                 .Returns(Task.FromResult(mockMeUser.Object));
 
-            Controller = new MedicalTeamController(logger.Object, Mapper, 
-                examinationRetrievalService.Object,  medicalTeamUpdateService.Object, usersRetrievalByEmailService.Object);
+            Controller = new MedicalTeamController(
+                logger.Object,
+                Mapper,
+                examinationRetrievalService.Object,
+                medicalTeamUpdateService.Object,
+                usersRetrievalByEmailService.Object);
 
             Controller.ControllerContext = GetContollerContext();
 
@@ -116,6 +124,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 medicalTeamUpdateService.Object,
                 usersRetrievalByEmailService.Object);
             Controller.ControllerContext = GetContollerContext();
+
             // Act
             var response = Controller.GetMedicalTeam(examinationId).Result;
 
@@ -134,7 +143,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             {
                 HttpContext = new DefaultHttpContext
                 {
-                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                    User = new ClaimsPrincipal(new ClaimsIdentity(
+                        new Claim[]
             {
                 new Claim(ClaimTypes.Email, "username")
             }, "someAuthTypeName"))
@@ -169,9 +179,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
                 .Returns(Task.FromResult(mockMeUser.Object));
 
-            Controller = new MedicalTeamController(logger.Object, Mapper, 
-                examinationRetrievalService.Object, medicalTeamUpdateService.Object, usersRetrievalByEmailService.Object);
+            Controller = new MedicalTeamController(
+                logger.Object,
+                Mapper,
+                examinationRetrievalService.Object,
+                medicalTeamUpdateService.Object,
+                usersRetrievalByEmailService.Object);
             Controller.ControllerContext = GetContollerContext();
+
             // Act
             var response = Controller.GetMedicalTeam(examinationId).Result;
 
@@ -195,8 +210,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
                 .Returns(Task.FromResult(mockMeUser.Object));
 
-            Controller = new MedicalTeamController(logger.Object, Mapper, 
-                examinationRetrievalService.Object, medicalTeamUpdateService.Object,
+            Controller = new MedicalTeamController(
+                logger.Object,
+                Mapper,
+                examinationRetrievalService.Object,
+                medicalTeamUpdateService.Object,
                 usersRetrievalByEmailService.Object);
             Controller.ControllerContext = GetContollerContext();
             Controller.ModelState.AddModelError("An", "Error");
@@ -229,8 +247,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
                 .Returns(Task.FromResult(mockMeUser.Object));
 
-            Controller = new MedicalTeamController(logger.Object, mapper.Object, 
-                examinationRetrievalService.Object, medicalTeamUpdateService.Object, usersRetrievalByEmailService.Object);
+            Controller = new MedicalTeamController(
+                logger.Object,
+                mapper.Object,
+                examinationRetrievalService.Object,
+                medicalTeamUpdateService.Object,
+                usersRetrievalByEmailService.Object);
             var examinationId = "examinationId";
             var request = new PutMedicalTeamRequest();
             Controller.ControllerContext = GetContollerContext();
@@ -271,9 +293,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
                 .Returns(Task.FromResult(mockMeUser.Object));
 
-            Controller = new MedicalTeamController(logger.Object, Mapper, 
-                examinationRetrievalService.Object, medicalTeamUpdateService.Object, usersRetrievalByEmailService.Object);
+            Controller = new MedicalTeamController(
+                logger.Object,
+                Mapper,
+                examinationRetrievalService.Object,
+                medicalTeamUpdateService.Object,
+                usersRetrievalByEmailService.Object);
             Controller.ControllerContext = GetContollerContext();
+
             // Act
             var response = Controller.PutMedicalTeam(examinationId, postMedicalTeamRequest).Result;
 
@@ -324,6 +351,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 medicalTeamUpdateService.Object,
                 usersRetrievalByEmailService.Object);
             Controller.ControllerContext = GetContollerContext();
+
             // Act
             var response = Controller.PutMedicalTeam(examinationId, putMedicalTeamRequest).Result;
 
@@ -362,10 +390,15 @@ namespace MedicalExaminer.API.Tests.Controllers
             usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
                 .Returns(Task.FromResult(mockMeUser.Object));
 
-            Controller = new MedicalTeamController(logger.Object, Mapper, 
-                examinationRetrievalService.Object,medicalTeamUpdateService.Object, usersRetrievalByEmailService.Object);
+            Controller = new MedicalTeamController(
+                logger.Object,
+                Mapper,
+                examinationRetrievalService.Object,
+                medicalTeamUpdateService.Object,
+                usersRetrievalByEmailService.Object);
 
             Controller.ControllerContext = GetContollerContext();
+
             // Act
             var response = Controller.PutMedicalTeam(examinationId, postMedicalTeamRequest).Result;
 
@@ -375,7 +408,5 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             ((PutMedicalTeamResponse)okResult.Value).NursingTeamInformation.Should().Be(expectedNursingTeamInformation);
         }
-
-        
     }
 }

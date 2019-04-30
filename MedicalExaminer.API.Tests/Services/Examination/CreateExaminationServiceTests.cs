@@ -43,8 +43,10 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var location = new MedicalExaminer.Models.Location();
             var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
             locationService.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
-            dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
-                examination, false)).Returns(Task.FromResult(examination)).Verifiable();
+            dbAccess.Setup(db => db.CreateItemAsync(
+                connectionSettings.Object,
+                examination,
+                false)).Returns(Task.FromResult(examination)).Verifiable();
             var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
 
             // Act
@@ -80,8 +82,10 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
             locationService.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
 
-            dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
-                examination, false)).Returns(Task.FromResult(examination)).Verifiable();
+            dbAccess.Setup(db => db.CreateItemAsync(
+                connectionSettings.Object,
+                examination,
+                false)).Returns(Task.FromResult(examination)).Verifiable();
             var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
 
             // Act
@@ -116,8 +120,10 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var location = new MedicalExaminer.Models.Location();
             var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
             locationService.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
-            dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
-                examination, false)).Returns(Task.FromResult(examination)).Verifiable();
+            dbAccess.Setup(db => db.CreateItemAsync(
+                connectionSettings.Object,
+                examination,
+                false)).Returns(Task.FromResult(examination)).Verifiable();
             var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
 
             // Act

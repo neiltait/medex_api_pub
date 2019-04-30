@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.Common.Loggers;
@@ -15,12 +12,10 @@ namespace MedicalExaminer.API.Controllers
     [ApiController]
     public class CaseOutcomeController : BaseAuthorizationController
     {
-        public CaseOutcomeController(IMELogger logger, IMapper mapper, IAuthorizationService authorizationService) 
+        public CaseOutcomeController(IMELogger logger, IMapper mapper, IAuthorizationService authorizationService)
             : base(logger, mapper, authorizationService)
         {
-
         }
-
 
         [HttpPut]
         [Route("confirmation_of_scrutiny")]
@@ -32,7 +27,6 @@ namespace MedicalExaminer.API.Controllers
                 ScrutinyConfirmedOn = DateTime.Now
             });
         }
-
 
         [HttpPut]
         [Route("coroner_referral")]
