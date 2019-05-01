@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.Account
 {
@@ -26,5 +26,10 @@ namespace MedicalExaminer.API.Models.v1.Account
         ///     Email Address
         /// </summary>
         public string EmailAddress { get; set; }
+
+        /// <summary>
+        /// Role.
+        /// </summary>
+        public UserRoles Role { get; set; }
     }
 }

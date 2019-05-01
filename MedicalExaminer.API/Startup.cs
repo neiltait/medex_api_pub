@@ -49,6 +49,7 @@ using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Services.CaseOutcome;
 using MedicalExaminer.API.Authorization.ExaminationContext;
 using MedicalExaminer.API.Extensions;
+using MedicalExaminer.API.Extensions.ApplicationBuilder;
 
 namespace MedicalExaminer.API
 {
@@ -270,6 +271,9 @@ namespace MedicalExaminer.API
                     // c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 });
             }
+
+            // Must be above UseMvc
+            app.UseProductVersionInAllResponseHeaders();
 
             // Must be above UseMvc
             app.UseAuthentication();
