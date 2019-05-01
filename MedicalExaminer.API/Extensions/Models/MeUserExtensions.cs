@@ -19,15 +19,20 @@ namespace MedicalExaminer.API.Extensions.Models
         /// <param name="user">The user.</param>
         /// <param name="examination">The examination.</param>
         /// <returns>The highest role they have for this examination.</returns>
-        public static UserRoles RoleForExamination(this MeUser user, Examination examination)
+        public static UserRoles? RoleForExamination(this MeUser user, Examination examination)
         {
             var locations = examination.LocationIds();
 
-            var permissions = user.Permissions.Where(p => locations.Contains(p.LocationId));
+            var permissions = user.Permissions.Where(p => locations.Contains(p.LocationId)).ToList();
 
-            var topPermission = permissions.OrderByDescending(p => p.UserRole).First();
+            if (permissions.Any())
+            {
+                var topPermission = permissions.OrderByDescending(p => p.UserRole).First();
 
-            return (UserRoles)topPermission.UserRole;
+                return (UserRoles)topPermission.UserRole;
+            }
+
+            return null;
         }
     }
 }

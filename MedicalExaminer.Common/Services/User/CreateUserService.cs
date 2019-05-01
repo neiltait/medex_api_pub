@@ -7,20 +7,23 @@ using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.User
 {
-    public class CreateUserService : IAsyncQueryHandler<CreateUserQuery, MeUser>
+    /// <summary>
+    /// Create User Service.
+    /// </summary>
+    public class CreateUserService : QueryHandler<CreateUserQuery, MeUser>
     {
-        private readonly IConnectionSettings _connectionSettings;
-        private readonly IDatabaseAccess _databaseAccess;
-
-        public CreateUserService(
-            IDatabaseAccess databaseAccess, 
-            IUserConnectionSettings connectionSettings)
+        /// <summary>
+        /// Initialise a new instance of <see cref="CreateUserService"/>.
+        /// </summary>
+        /// <param name="databaseAccess">Database Access.</param>
+        /// <param name="connectionSettings">User Connection Settings.</param>
+        public CreateUserService(IDatabaseAccess databaseAccess, IUserConnectionSettings connectionSettings)
+            : base(databaseAccess, connectionSettings)
         {
-            _databaseAccess = databaseAccess;
-            _connectionSettings = connectionSettings;
         }
 
-        public async Task<MeUser> Handle(CreateUserQuery param)
+        /// <inheritdoc/>
+        public override async Task<MeUser> Handle(CreateUserQuery param)
         {
             if (param == null)
             {
@@ -28,7 +31,7 @@ namespace MedicalExaminer.Common.Services.User
             }
 
             param.MeUser.UserId = Guid.NewGuid().ToString();
-            var result = await _databaseAccess.CreateItemAsync(_connectionSettings, param.MeUser, false);
+            var result = await CreateItemAsync(param.MeUser);
             return result;
         }
     }

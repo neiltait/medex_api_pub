@@ -136,8 +136,7 @@ namespace MedicalExaminer.API.Controllers
                 FirstName = oktaUser.Profile.FirstName,
                 LastName = oktaUser.Profile.LastName,
                 Email = oktaUser.Profile.Email,
-                // TODO: Default to null?
-                LastModifiedBy = "whodunit",
+                LastModifiedBy = null,
                 ModifiedAt = DateTimeOffset.Now,
                 CreatedAt = DateTimeOffset.Now,
                 OktaToken = oktaToken,

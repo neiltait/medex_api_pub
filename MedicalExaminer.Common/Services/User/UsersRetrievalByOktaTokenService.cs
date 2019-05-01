@@ -19,7 +19,6 @@ namespace MedicalExaminer.Common.Services.User
             _connectionSettings = connectionSettings;
         }
 
-
         public  Task<Models.MeUser> Handle(UserRetrievalByOktaTokenQuery param)
         {
             if (param == null)
@@ -27,20 +26,17 @@ namespace MedicalExaminer.Common.Services.User
                 throw new ArgumentNullException(nameof(param));
             }
 
-            try
-            {
-                var result = _databaseAccess.GetItemAsync<Models.MeUser>(_connectionSettings,
-                    x => x.OktaToken == param.OktaToken);
+            var result = _databaseAccess.GetItemAsync<Models.MeUser>(
+                _connectionSettings,
+                x => x.OktaToken == param.OktaToken);
 
-                if (result.Result != null)
-                    return result;
-                else
-                    return null;
-            }
-            catch (Exception e)
+            if (result.Result != null)
             {
-                //_logger.Log("Failed to retrieve examination data", e);
-                throw;
+                return result;
+            }
+            else
+            {
+                return null;
             }
         }
     }

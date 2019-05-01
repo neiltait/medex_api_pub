@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Cosmonaut;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
@@ -11,7 +10,6 @@ namespace MedicalExaminer.Common.Services.Examination
 {
     public class CreateExaminationService : IAsyncQueryHandler<CreateExaminationQuery, Models.Examination>
     {
-
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
         private readonly IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location> _locationHandler;
@@ -25,7 +23,7 @@ namespace MedicalExaminer.Common.Services.Examination
             _connectionSettings = connectionSettings;
             _locationHandler = locationHandler;
         }
-        
+
         public async Task<Models.Examination> Handle(CreateExaminationQuery param)
         {
             if (param == null)
@@ -33,28 +31,21 @@ namespace MedicalExaminer.Common.Services.Examination
                 throw new ArgumentNullException(nameof(param));
             }
 
-            try
+            param.Examination.ExaminationId = Guid.NewGuid().ToString();
+            param.Examination.MedicalExaminerOfficeResponsibleName = _locationHandler.Handle(new LocationRetrievalByIdQuery(param.Examination.MedicalExaminerOfficeResponsible)).Result.Name;
+            param.Examination.Unassigned = true;
+            param.Examination.CaseBreakdown = new CaseBreakDown();
+            param.Examination.CaseBreakdown.DeathEvent = new DeathEvent()
             {
-                param.Examination.ExaminationId = Guid.NewGuid().ToString();
-                param.Examination.MedicalExaminerOfficeResponsibleName = _locationHandler.Handle(new LocationRetrievalByIdQuery(param.Examination.MedicalExaminerOfficeResponsible)).Result.Name;
-                param.Examination.Unassigned = true;
-                param.Examination.CaseBreakdown = new CaseBreakDown();
-                param.Examination.CaseBreakdown.DeathEvent = new DeathEvent()
-                {
-                    Created = param.Examination.CreatedAt.Date,
-                    DateOfDeath = param.Examination.DateOfDeath,
-                    TimeOfDeath = param.Examination.TimeOfDeath,
-                    UserId = param.Examination.CreatedBy,
-                    EventId = Guid.NewGuid().ToString()
-                };
-                param.Examination.UpdateCaseUrgencyScore();
-                param.Examination.LastModifiedBy = param.UserId;
-                return await _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+                Created = param.Examination.CreatedAt.Date,
+                DateOfDeath = param.Examination.DateOfDeath,
+                TimeOfDeath = param.Examination.TimeOfDeath,
+                UserId = param.Examination.CreatedBy,
+                EventId = Guid.NewGuid().ToString()
+            };
+            param.Examination.UpdateCaseUrgencyScore();
+            param.Examination.LastModifiedBy = param.UserId;
+            return await _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination);
         }
     }
 }
