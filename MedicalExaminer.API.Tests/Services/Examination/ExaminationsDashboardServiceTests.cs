@@ -245,7 +245,12 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             var examination5 = new MedicalExaminer.Models.Examination()
             {
-                Completed = false,
+                ExaminationId = "examination5",
+                CaseCompleted = false,
+                UrgencyScore = 3
+            };
+
+            var examination6 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination6",
                 CaseCompleted = false,
@@ -270,7 +275,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             {
                 ExaminationId = "examination9",
                 CaseCompleted = false,
-                HaveFinalCaseOutstandingOutcomes = true
+                HaveFinalCaseOutcomesOutstanding = true
             };
 
             var examination10 = new MedicalExaminer.Models.Examination()

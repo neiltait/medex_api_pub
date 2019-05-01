@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
-using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;

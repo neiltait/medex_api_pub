@@ -51,45 +51,6 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="examinationId">The examination id.</param>
         /// <returns></returns>
-        [HttpGet]
-        [Route("{examinationId}/casebreakdown")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewBereavedDiscussionEvent(
-            string examinationId,
-            [FromBody]
-            PutBereavedDiscussionEventRequest putNewBereavedDiscussionEventNoteRequest)
-        {
-            if (string.IsNullOrEmpty(examinationId))
-            {
-                return BadRequest(new GetCaseBreakdownResponse());
-            }
-
-            if (!Guid.TryParse(examinationId, out _))
-            {
-                return BadRequest(new GetCaseBreakdownResponse());
-            }
-
-            var user = await CurrentUser();
-
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
-            var patientCard = Mapper.Map<PatientCardItem>(examination);
-
-            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, bereavedDiscussionEventNote));
-
-            if (examination == null)
-            {
-                return new NotFoundObjectResult(new GetCaseBreakdownResponse());
-            }
-
-            var result = Mapper.Map<CaseBreakDownItem>(examination.CaseBreakdown, opt => opt.Items["user"] = user);
-
-            return Ok(new GetCaseBreakdownResponse
-            {
-                Header = patientCard,
-                CaseBreakdown = result
-            });
-        }
-
         [HttpPut]
         [Route("{examinationId}/bereaved_discussion")]
         [ServiceFilter(typeof(ControllerActionFilter))]

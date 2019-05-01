@@ -36,10 +36,10 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\MedicalExaminer.API\MedicalExaminer.API.csproj" />
+    <Folder Include="Services\CaseOutcome\" />
   </ItemGroup>
   
   <ItemGroup>
-    <Folder Include="Services\CaseOutcome\" />
+    <ProjectReference Include="..\MedicalExaminer.API\MedicalExaminer.API.csproj" />
   </ItemGroup>
 </Project>
