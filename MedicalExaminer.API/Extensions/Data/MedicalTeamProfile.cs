@@ -14,7 +14,9 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public MedicalTeamProfile()
         {
-            CreateMap<PutMedicalTeamRequest, MedicalTeam>();
+            CreateMap<PutMedicalTeamRequest, MedicalTeam>()
+                .ForMember(x => x.MedicalExaminerOfficerFullName, opt => opt.Ignore())
+                .ForMember(x => x.MedicalExaminerFullName, opt => opt.Ignore());
             CreateMap<ClinicalProfessional, ClinicalProfessionalItem>();
         }
     }

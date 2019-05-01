@@ -118,7 +118,7 @@ namespace MedicalExaminer.API
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
 
             Mapper.Initialize(config => { config.AddMedicalExaminerProfiles(); });
-            //Mapper.AssertConfigurationIsValid();
+            Mapper.AssertConfigurationIsValid();
             services.AddAutoMapper();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
@@ -416,7 +416,6 @@ namespace MedicalExaminer.API
         {
             services.AddSingleton<IRolePermissions, RolePermissions>();
 
-            // TODO: Could use reflection to get get any class with Role as an superclass.
             services.AddSingleton<IEnumerable<Common.Authorization.Role>>(er => new List<Common.Authorization.Role>()
             {
                 new MedicalExaminerOfficerRole(),
