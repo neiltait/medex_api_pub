@@ -74,8 +74,7 @@ namespace MedicalExaminer.API.Controllers
         {
             return Ok(GetDictionary(typeof(CoronerStatus)));
         }
-        
-        
+
         /// <summary>
         /// Returns all Examination Genders
         /// </summary>
@@ -85,7 +84,7 @@ namespace MedicalExaminer.API.Controllers
         {
             return Ok(GetDictionary(typeof(ExaminationGender)));
         }
-        
+
         /// <summary>
         /// Returns all location types
         /// </summary>
@@ -95,7 +94,7 @@ namespace MedicalExaminer.API.Controllers
         {
             return Ok(GetDictionary(typeof(LocationType)));
         }
-   
+
         /// <summary>
         /// Returns all options for the present at death value for a bereaved .
         /// </summary>
@@ -115,7 +114,8 @@ namespace MedicalExaminer.API.Controllers
         {
             return Ok(GetDictionary(typeof(QapDiscussionOutcome)));
         }
-        
+
+        /// <summary>
         /// Returns all options for the informed at death value for a bereaved .
         /// </summary>
         /// <returns>List of values for informed at death</returns>
@@ -144,7 +144,7 @@ namespace MedicalExaminer.API.Controllers
         {
             return Ok(GetDictionary(typeof(ModeOfDisposal)));
         }
-        
+
         /// <summary>
         /// List of user roles
         /// </summary>
@@ -165,7 +165,7 @@ namespace MedicalExaminer.API.Controllers
             return Ok(GetDictionary(typeof(EventType)));
         }
 
-
+        /// <summary>
         /// Returns all Case Statuses
         /// </summary>
         /// <returns>Dictionary of Case Statuses</returns>
@@ -175,6 +175,7 @@ namespace MedicalExaminer.API.Controllers
             return Ok(GetDictionary(typeof(CaseStatus)));
         }
 
+        /// <summary>
         /// Returns all Case Statuses
         /// </summary>
         /// <returns>Dictionary of Case Statuses</returns>
@@ -184,6 +185,7 @@ namespace MedicalExaminer.API.Controllers
             return Ok(GetDictionary(typeof(CremationFormStatus)));
         }
 
+        /// <summary>
         /// Returns all Case Statuses
         /// </summary>
         /// <returns>Dictionary of Case Statuses</returns>
@@ -193,6 +195,7 @@ namespace MedicalExaminer.API.Controllers
             return Ok(GetDictionary(typeof(GPNotified)));
         }
 
+        /// <summary>
         /// Returns all Case Statuses
         /// </summary>
         /// <returns>Dictionary of Case Statuses</returns>
@@ -202,9 +205,11 @@ namespace MedicalExaminer.API.Controllers
             return Ok(GetDictionary(typeof(CaseOutcomeSummary)));
         }
 
-
-
-
+        /// <summary>
+        /// Get Dictionary.
+        /// </summary>
+        /// <param name="enumeratorType">Type.</param>
+        /// <returns>Dictionary with enum types and values.</returns>
         private Dictionary<string, int> GetDictionary(Type enumeratorType)
         {
             var dic = new Dictionary<string, int>();

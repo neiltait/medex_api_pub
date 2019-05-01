@@ -19,7 +19,7 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
 {
-    public class CaseBreakdownControllerTests
+    public class CaseBreakdownControllerTests : AuthorizedControllerTestsBase<CaseBreakdownController>
     {
         [Fact]
         public async void GetOtherEvent_When_Called_With_Null_Returns_Bad_Request()
@@ -35,9 +35,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             var sut = new CaseBreakdownController(
                 logger.Object,
                 mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
                 otherEventCreationService.Object,
-                examinationRetrievalQueryService.Object,
-                usersRetrievalByEmailService.Object);
+                examinationRetrievalQueryService.Object);
 
             // Act
             var response = await sut.GetCaseBreakdown(null);
@@ -59,8 +61,15 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object, 
-                otherEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                otherEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
+
             // Act
             var response = await sut.GetCaseBreakdown("aaaa");
 
@@ -93,8 +102,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               otherEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                otherEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
 
             sut.ControllerContext = GetContollerContext();
 
@@ -144,8 +159,15 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examinationObj)).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               otherEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                otherEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
+
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -174,8 +196,15 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               medicalHistoryEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                medicalHistoryEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
+
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -212,8 +241,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               medicalHistoryEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                medicalHistoryEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             sut.ModelState.AddModelError("i", "broke it");
@@ -256,8 +291,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             mapper.Setup(m => m.Map<MedicalHistoryEvent>(validRequest)).Returns(medicalHistoryEvent.Object);
 
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               medicalHistoryEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                medicalHistoryEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
 
@@ -305,8 +346,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             mapper.Setup(m => m.Map<MedicalHistoryEvent>(validRequest)).Returns(medicalHistoryEvent.Object);
 
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               eventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                eventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -335,8 +382,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               otherEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                otherEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -374,8 +427,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               otherEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                otherEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             sut.ModelState.AddModelError("i", "broke it");
@@ -421,8 +480,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               otherEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                otherEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -469,8 +534,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             mapper.Setup(m => m.Map<OtherEvent>(validRequest)).Returns(otherEvent.Object);
 
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               eventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                eventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -499,8 +570,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               admissionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                admissionEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -533,8 +610,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               admissionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                admissionEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             sut.ModelState.AddModelError("i", "broke it");
@@ -575,8 +658,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               admissionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                admissionEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -622,8 +711,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             mapper.Setup(m => m.Map<AdmissionEvent>(validRequest)).Returns(admissionEvent.Object);
 
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               eventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                eventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -648,8 +743,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, 
-                examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                eventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -685,8 +786,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, 
-                examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                eventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             sut.ModelState.AddModelError("i", "broke it");
@@ -719,8 +826,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, 
-                examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                eventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             var mockMeUser = new MeUser()
@@ -778,10 +891,14 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             mapper.Setup(m => m.Map<PreScrutinyEvent>(validRequest)).Returns(preScrutinyEvent.Object);
 
-
-
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object, eventCreationService.Object, 
-                examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                eventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -810,8 +927,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               eventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                eventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -844,8 +967,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               eventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                eventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             sut.ModelState.AddModelError("i", "broke it");
@@ -887,8 +1016,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               eventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                eventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -933,8 +1068,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               eventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                eventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -964,8 +1105,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-                qapDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                qapDiscussionEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -999,8 +1146,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-                qapDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                qapDiscussionEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             sut.ModelState.AddModelError("i", "broke it");
@@ -1046,10 +1199,14 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             mapper.Setup(m => m.Map<QapDiscussionEvent>(validRequest)).Returns(qapDiscussionEvent.Object);
 
-
-
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-                qapDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                qapDiscussionEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -1097,11 +1254,14 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             mapper.Setup(m => m.Map<QapDiscussionEvent>(validRequest)).Returns(qapDiscussionEvent.Object);
 
-
-
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-                qapDiscussionEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
-
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                qapDiscussionEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
 
@@ -1131,8 +1291,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               meoSummaryEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                meoSummaryEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -1164,9 +1330,15 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               meoSummaryEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                meoSummaryEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             sut.ModelState.AddModelError("i", "broke it");
@@ -1210,8 +1382,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                .Returns(Task.FromResult(default(Examination))).Verifiable();
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               meoSummaryEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                meoSummaryEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act
@@ -1259,8 +1437,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             mapper.Setup(m => m.Map<MeoSummaryEvent>(validRequest)).Returns(meoSummaryEvent.Object);
 
 
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object,
-               meoSummaryEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                usersRetrievalByEmailService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                meoSummaryEventCreationService.Object,
+                examinationRetrievalQueryService.Object);
             sut.ControllerContext = GetContollerContext();
 
             // Act

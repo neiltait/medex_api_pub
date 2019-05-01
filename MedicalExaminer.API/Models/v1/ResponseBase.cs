@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MedicalExaminer.API.Models.v1
@@ -12,6 +13,11 @@ namespace MedicalExaminer.API.Models.v1
         ///     Get the Errors.
         /// </summary>
         public IDictionary<string, ICollection<string>> Errors { get; } = new Dictionary<string, ICollection<string>>();
+
+        /// <summary>
+        /// Lookups.
+        /// </summary>
+        public IDictionary<string, IDictionary<string, string>> Lookups { get; private set; }
 
         /// <summary>
         ///     Gets a value indicating whether this response is successful.
@@ -34,6 +40,35 @@ namespace MedicalExaminer.API.Models.v1
             }
 
             messages.Add(message);
+        }
+
+        /// <summary>
+        /// Add a lookup to the response.
+        /// </summary>
+        /// <param name="key">The key for the lookup</param>
+        /// <param name="lookup">A dictionary of lookups</param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <returns>Response Base for chainging.</returns>
+        public ResponseBase AddLookup(string key, IDictionary<string, string> lookup)
+        {
+            if (lookup == null)
+            {
+                throw new ArgumentException("Lookup null");
+            }
+
+            if (Lookups == null)
+            {
+                Lookups = new Dictionary<string, IDictionary<string, string>>();
+            }
+
+            if (Lookups.ContainsKey(key))
+            {
+                throw new ArgumentException("Key already added");
+            }
+
+            Lookups[key] = lookup;
+
+            return this;
         }
     }
 }

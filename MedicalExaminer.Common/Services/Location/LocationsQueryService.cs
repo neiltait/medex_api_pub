@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
+using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.Location;
 
 namespace MedicalExaminer.Common.Services.Location
@@ -25,7 +27,7 @@ namespace MedicalExaminer.Common.Services.Location
         }
 
         /// <inheritdoc/>
-        public async override Task<IEnumerable<Models.Location>> Handle(LocationsRetrievalByQuery param)
+        public override async Task<IEnumerable<Models.Location>> Handle(LocationsRetrievalByQuery param)
         {
             if (param == null)
             {
@@ -33,6 +35,13 @@ namespace MedicalExaminer.Common.Services.Location
             }
 
             var predicate = GetPredicate(param);
+
+            if (param.PermissedLocations != null)
+            {
+                Expression<Func<Models.Location, bool>> idFilter = l => param.PermissedLocations.Contains(l.LocationId);
+
+                predicate = predicate.And(idFilter);
+            }
 
             var result = await GetItemsAsync(predicate);
             return result;
