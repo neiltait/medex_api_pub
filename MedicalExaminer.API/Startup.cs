@@ -45,6 +45,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
 using Cosmonaut;
+using MedicalExaminer.API.Authorization.ExaminationContext;
 using MedicalExaminer.API.Extensions;
 
 namespace MedicalExaminer.API
@@ -106,7 +107,13 @@ namespace MedicalExaminer.API
                     options.SubstituteApiVersionInUrl = true;
                 });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(options =>
+            {
+                options.UseExaminationContextModelBindingProvider();
+
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddExaminationValidation();
 
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
 
@@ -190,10 +197,11 @@ namespace MedicalExaminer.API
 
             ConfigureQueries(services);
 
-            services.AddScoped<IUserPersistence>(s => new UserPersistence(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]));
+            services.AddScoped<ILocationPersistence>(s => new LocationPersistence(
+               new Uri(Configuration["CosmosDB:URL"]),
+               Configuration["CosmosDB:PrimaryKey"],
+               Configuration["CosmosDB:DatabaseId"]));
+
 
             services.AddScoped<IMeLoggerPersistence>(s => new MeLoggerPersistence(
                 new Uri(Configuration["CosmosDB:URL"]),
@@ -317,6 +325,7 @@ namespace MedicalExaminer.API
 
             // Used for roles; but is being abused to pass null and get all users.
             services.AddScoped<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>, UsersRetrievalService>();
+            services.AddScoped<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>, UsersRetrievalByRoleLocationQueryService>();
 
             // Location Services
             services.AddScoped<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>, LocationIdService>();
