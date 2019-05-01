@@ -3,6 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedicalExaminer.API.Extensions.Models;
 using MedicalExaminer.API.Models.v1.Account;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
@@ -114,6 +115,7 @@ namespace MedicalExaminer.API.Controllers
                 EmailAddress = meUser.Email,
                 FirstName = meUser.FirstName,
                 LastName = meUser.LastName,
+                Role = meUser.Role()
             };
         }
 
