@@ -1,5 +1,4 @@
-﻿@@ -1,40 +0,0 @@
-﻿using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using MedicalExaminer.Models;
 
