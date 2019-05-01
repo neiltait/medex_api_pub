@@ -42,7 +42,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
 
-            examinationToUpdate.Completed = true;
+            examinationToUpdate.CaseCompleted = true;
 
             examinationToUpdate = examinationToUpdate.UpdateCaseUrgencyScore();
             examinationToUpdate = examinationToUpdate.UpdateCaseStatus();

@@ -416,7 +416,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 AnyImplants = AnyImplants,
                 AnyPersonalEffects = AnyPersonalEffects,
                 ChildPriority = ChildPriority,
-                Completed = Completed,
+                CaseCompleted = Completed,
                 CoronerPriority = CoronerPriority,
                 CoronerStatus = CoronerStatus,
                 County = County,

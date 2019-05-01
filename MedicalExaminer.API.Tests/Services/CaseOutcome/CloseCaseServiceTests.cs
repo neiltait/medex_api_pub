@@ -83,7 +83,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
 
             // Assert
             Assert.NotNull(result.Result);
-            Assert.True(examination.Completed);
+            Assert.True(examination.CaseCompleted);
             Assert.Equal(examinationId, result.Result);
         }
     }

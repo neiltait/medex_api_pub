@@ -23,7 +23,7 @@ namespace MedicalExaminer.Common.Services.Examination
 
         private Expression<Func<Models.Examination, bool>> GetOpenCasesPredicate(bool paramFilterOpenCases)
         {
-            return examination => examination.Completed == !paramFilterOpenCases;
+            return examination => examination.CaseCompleted == !paramFilterOpenCases;
         }
 
         private Expression<Func<Models.Examination, bool>> GetCaseStatusPredicate(CaseStatus? paramFilterCaseStatus)

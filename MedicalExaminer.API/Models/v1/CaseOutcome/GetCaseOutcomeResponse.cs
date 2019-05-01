@@ -16,7 +16,7 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
 
         public QapDiscussionOutcome? OutcomeQapDiscussion { get; set; }
 
-        public bool CaseOpen { get; set; }
+        public bool CaseCompleted { get; set; }
 
         public DateTime? ScrutinyConfirmedOn { get; set; }
 

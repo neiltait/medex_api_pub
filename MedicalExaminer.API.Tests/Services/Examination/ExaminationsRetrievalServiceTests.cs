@@ -298,66 +298,66 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examination1 = new MedicalExaminer.Models.Examination()
             {
                 Unassigned = true,
-                Completed = false
+                CaseCompleted = false
             };
 
             var examination2 = new MedicalExaminer.Models.Examination()
             {
                 ReadyForMEScrutiny = true,
-                Completed = false
+                CaseCompleted = false
             };
 
             var examination3 = new MedicalExaminer.Models.Examination()
             {
                 MedicalExaminerOfficeResponsible = "a",
                 ReadyForMEScrutiny = true,
-                Completed = false
+                CaseCompleted = false
             };
 
             var examination4 = new MedicalExaminer.Models.Examination()
             {
-                Completed = true
+                CaseCompleted = true
             };
 
             var examination5 = new MedicalExaminer.Models.Examination()
             {
-                Completed = false,
+                CaseCompleted = false,
                 UrgencyScore = 3
             };
 
             var examination6 = new MedicalExaminer.Models.Examination()
             {
-                Completed = false,
+                CaseCompleted = false,
                 AdmissionNotesHaveBeenAdded = true
             };
 
             var examination7 = new MedicalExaminer.Models.Examination()
             {
-                Completed = false,
+                CaseCompleted = false,
                 PendingDiscussionWithQAP = true
             };
 
             var examination8 = new MedicalExaminer.Models.Examination()
             {
-                Completed = false,
+                CaseCompleted = false,
                 PendingDiscussionWithRepresentative = true
             };
 
             var examination9 = new MedicalExaminer.Models.Examination()
             {
-                Completed = false,
+                CaseCompleted = false,
                 HaveFinalCaseOutcomesOutstanding = true
             };
 
             var examination10 = new MedicalExaminer.Models.Examination()
             {
-                Completed = false,
+                CaseCompleted = false,
                 HaveBeenScrutinisedByME = true
             };
 
             var examination11 = new MedicalExaminer.Models.Examination()
             {
-                Completed = false,
+                CaseCompleted = false,
                 PendingAdmissionNotes = true
             };
 

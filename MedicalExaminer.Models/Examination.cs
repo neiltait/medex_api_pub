@@ -271,8 +271,8 @@ namespace MedicalExaminer.Models
         /// </summary>
         // Status Fields
         [Required]
-        [JsonProperty(PropertyName = "completed")]
-        public bool Completed { get; set; }
+        [JsonProperty(PropertyName = "case_completed")]
+        public bool CaseCompleted { get; set; }
 
         /// <summary>
         /// Coroner status, updated with interaction with coroner

@@ -21,12 +21,8 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<Examination, CaseOutcome>();
             CreateMap<Examination, ExaminationItem>();
-            CreateMap<Examination, GetCaseOutcomeResponse>() // in progress
-                .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
-                .ForMember(x => x.CaseMedicalExaminerFullName, opt => opt.MapFrom(x => x.MedicalExaminerOfficeResponsibleName))
-                .ForMember(x => x.MCCDIssed, opt => opt.MapFrom(y => y))
-                .ForMember(x => x.CremationFormStatus, opt => opt.MapFrom(y => y))
-                .ForMember(x => x.GPNotifedStatus, opt => opt.MapFrom(y => y));
+            CreateMap<Examination, GetCaseOutcomeResponse>()
+                .ForMember(x => x.CaseMedicalExaminerFullName, opt => opt.MapFrom(x => x.MedicalExaminerOfficeResponsibleName));
             CreateMap<Examination, GetPatientDetailsResponse>()
                 .ForMember(x => x.Header, opt => opt.MapFrom(y => y));
             CreateMap<Examination, GetCaseOutcomeResponse>()
@@ -80,7 +76,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.CoronerPriority, opt => opt.Ignore())
                 .ForMember(examination => examination.OtherPriority, opt => opt.Ignore())
                 .ForMember(examination => examination.PriorityDetails, opt => opt.Ignore())
-                .ForMember(examination => examination.Completed, opt => opt.Ignore())
+                .ForMember(examination => examination.CaseCompleted, opt => opt.Ignore())
                 .ForMember(examination => examination.CoronerStatus, opt => opt.Ignore())
                 .ForMember(examination => examination.AnyImplants, opt => opt.Ignore())
                 .ForMember(examination => examination.ImplantDetails, opt => opt.Ignore())

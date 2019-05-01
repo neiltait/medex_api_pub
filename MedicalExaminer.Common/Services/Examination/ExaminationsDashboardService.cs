@@ -37,7 +37,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 CountOfPendingDiscussionWithRepresentative = GetCount(baseQuery, CaseStatus.PendingDiscussionWithRepresentative).Result,
                 CountOfReadyForMEScrutiny = GetCount(baseQuery, CaseStatus.ReadyForMEScrutiny).Result,
                 TotalCases = GetCount(baseQuery).Result,
-                CountOfUrgentCases = GetCount(baseQuery, x => ((x.UrgencyScore > 0) && (x.Completed == false))).Result
+                CountOfUrgentCases = GetCount(baseQuery, x => ((x.UrgencyScore > 0) && (x.CaseCompleted == false))).Result
             };
 
             return Task.FromResult(overView);
@@ -104,7 +104,7 @@ namespace MedicalExaminer.Common.Services.Examination
 
         private Expression<Func<Models.Examination, bool>> GetOpenCasesPredicate(bool paramFilterOpenCases)
         {
-            return examination => examination.Completed == !paramFilterOpenCases;
+            return examination => examination.CaseCompleted == !paramFilterOpenCases;
         }
         
         private Expression<Func<Models.Examination, bool>> GetCaseMEOfficePredicate(string meOffice)
