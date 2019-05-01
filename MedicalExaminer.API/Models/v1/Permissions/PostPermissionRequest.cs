@@ -1,4 +1,7 @@
-﻿namespace MedicalExaminer.API.Models.v1.Permissions
+﻿using MedicalExaminer.API.Attributes;
+using Microsoft.CodeAnalysis.Operations;
+
+namespace MedicalExaminer.API.Models.v1.Permissions
 {
     /// <summary>
     ///     Post Permission Request.
@@ -18,6 +21,7 @@
         /// <summary>
         ///     Gets or sets the User Role for the Permission.
         /// </summary>
+        [ValidRolePerUser(nameof(PostPermissionRequest.UserId))]
         public int UserRole { get; set; }
     }
 }

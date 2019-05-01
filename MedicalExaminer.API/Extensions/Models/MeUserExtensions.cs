@@ -14,6 +14,20 @@ namespace MedicalExaminer.API.Extensions.Models
     public static class MeUserExtensions
     {
         /// <summary>
+        /// Role.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns>The highest role they have in the system.</returns>
+        public static UserRoles Role(this MeUser user)
+        {
+            var permissions = user.Permissions;
+
+            var topPermission = permissions.OrderByDescending(p => p.UserRole).First();
+
+            return (UserRoles)topPermission.UserRole;
+        }
+
+        /// <summary>
         /// Role For Examination.
         /// </summary>
         /// <param name="user">The user.</param>
