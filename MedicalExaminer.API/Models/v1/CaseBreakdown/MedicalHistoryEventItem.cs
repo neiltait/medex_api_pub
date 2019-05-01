@@ -29,7 +29,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Draft is false, final true
         /// </summary>
-        public bool IsFinal { get; }
+        public bool IsFinal { get; set; }
 
         /// <summary>
         /// Event Text (Length to be confirmed).
