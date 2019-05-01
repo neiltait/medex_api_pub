@@ -45,10 +45,10 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
 using Cosmonaut;
-using MedicalExaminer.Common.Queries.CaseOutcome;
-using MedicalExaminer.Common.Services.CaseOutcome;
 using MedicalExaminer.API.Authorization.ExaminationContext;
 using MedicalExaminer.API.Extensions;
+using MedicalExaminer.Common.Queries.CaseOutcome;
+using MedicalExaminer.Common.Services.CaseOutcome;
 
 namespace MedicalExaminer.API
 {
@@ -114,7 +114,7 @@ namespace MedicalExaminer.API
                 options.UseExaminationContextModelBindingProvider();
                 options.Filters.Add<GlobalExceptionFilter>();
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-                
+
             services.AddExaminationValidation();
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
 
@@ -182,7 +182,7 @@ namespace MedicalExaminer.API
 
             // Logger 
             services.AddScoped<IMELogger, MELogger>();
-            
+
             // Database connections  
             services.AddScoped<IDocumentClientFactory, DocumentClientFactory>();
             services.AddScoped<IDatabaseAccess, DatabaseAccess>();
@@ -300,13 +300,15 @@ namespace MedicalExaminer.API
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
 
-            // Examination services
+
+            // Examination services 
             services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
-            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>,ExaminationsDashboardService>();
+            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>, ExaminationsDashboardService>();
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, Examination>, CreateExaminationService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
+            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<CreateEventQuery, string>, CreateEventService>();
 
             // Medical team services
@@ -317,6 +319,7 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<CoronerReferralQuery, string>, CoronerReferralService>();
             services.AddScoped<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>, SaveOutstandingCaseItemsService>();
             services.AddScoped<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>, ConfirmationOfScrutinyService>();
+
 
             // Patient details services
             services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
@@ -336,7 +339,7 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>, LocationIdService>();
             services.AddScoped<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>, LocationsQueryService>();
             services.AddScoped<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>, LocationParentsQueryService>();
-            services.AddScoped<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string,IEnumerable<Location>>>, LocationsParentsQueryService>();
+            services.AddScoped<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>, LocationsParentsQueryService>();
         }
 
         /// <summary>
@@ -366,9 +369,12 @@ namespace MedicalExaminer.API
                         new OktaJwtSecurityTokenHandler(
                             tokenService,
                             new JwtSecurityTokenHandler(),
-                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
-                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
-                            new UserRetrievalByEmailService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
+                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
+                                userConnectionSetting),
+                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
+                                userConnectionSetting),
+                            new UserRetrievalByEmailService(new DatabaseAccess(new DocumentClientFactory()),
+                                userConnectionSetting),
                             oktaTokenExpiry));
                 });
         }
