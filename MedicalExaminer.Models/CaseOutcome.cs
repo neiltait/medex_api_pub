@@ -3,27 +3,30 @@ using System.Collections.Generic;
 using System.Text;
 using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models
 {
     public class CaseOutcome
     {
-        /// <summary>
-        /// Whether the MCCD is Issued.
-        /// </summary>
-        [JsonProperty(PropertyName = "mccd_issued")]
-        public bool MccdIssued { get; set; }
+        public CaseOutcomeSummary? CaseOutcomeSummary { get; set; }
 
-        /// <summary>
-        /// Whether the Cremation form is completed.
-        /// </summary>
-        [JsonProperty(PropertyName = "cremation_form_status")]
-        public CremationFormStatus CremationFormStatus { get; set; }
+        public BereavedDiscussionOutcome? OutcomeOfRepresentativeDiscussion { get; set; }
 
-        /// <summary>
-        /// Whether the GP is notified.
-        /// </summary>
-        [JsonProperty(PropertyName = "gp_notified")]
-        public GPNotified GpNotified { get; set; }
+        public OverallOutcomeOfPreScrutiny? OutcomeOfPrescrutiny { get; set; }
+
+        public QapDiscussionOutcome? OutcomeQapDiscussion { get; set; }
+
+        public bool CaseOpen { get; set; }
+
+        public DateTime? ScrutinyConfirmedOn { get; set; }
+
+        public string CaseMedicalExaminerFullName { get; set; }
+
+        public bool? MCCDIssued { get; set; }
+
+        public CremationFormStatus? CremationFormStatus { get; set; }
+
+        public GPNotified? GPNotifiedStatus { get; set; }
     }
 }

@@ -5,18 +5,23 @@ using MedicalExaminer.Models;
 namespace MedicalExaminer.API.Extensions.Data
 {
     /// <summary>
-    /// Case Outcome Profile.
+    ///     Examination Profile for AutoMapper
     /// </summary>
     public class CaseOutcomeProfile : Profile
     {
         /// <summary>
-        /// Initialise a new instance of <see cref="CaseOutcomeProfile"/>.
+
+        ///     Initialise a new instance of the Examination AutoMapper Profile.
         /// </summary>
         public CaseOutcomeProfile()
         {
-            CreateMap<Examination, PutConfirmationOfScrutinyResponse>()
+             CreateMap<Examination, PutConfirmationOfScrutinyResponse>()
                 .ForMember(x => x.ScrutinyConfirmedOn, opt => opt.MapFrom(x => x.ConfirmationOfScrutinyCompletedAt))
                 .ForMember(x => x.Errors, opt => opt.Ignore());
+            CreateMap<PutOutstandingCaseItemsRequest, CaseOutcome>()
+                .ForMember(x => x.MCCDIssued, opt => opt.MapFrom(y => y.MCCDIssued))
+                .ForMember(x => x.CremationFormStatus, opt => opt.MapFrom(y => y.CremationFormStatus))
+                .ForMember(x => x.GPNotifiedStatus, opt => opt.MapFrom(y => y.GPNotifiedStatus));
         }
     }
 }

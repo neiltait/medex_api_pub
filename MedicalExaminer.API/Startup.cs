@@ -312,6 +312,7 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<CreateEventQuery, string>, CreateEventService>();
+
             // Medical team services
             services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
 
@@ -322,7 +323,17 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
             services.AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService>();
 
-            // User services
+            // Case Outcome Services
+            services.AddScoped<IAsyncQueryHandler<CloseCaseQuery, string>, CloseCaseService>();
+            services.AddScoped<IAsyncQueryHandler<CoronerReferralQuery, string>, CoronerReferralService>();
+            services.AddScoped<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>, SaveOutstandingCaseItemsService>();
+            services.AddScoped<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>, ConfirmationOfScrutinyService>();
+
+            // Patient details services 
+            services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
+            services.AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService>();
+
+            // User services 
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>, UserRetrievalByEmailService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>, UserRetrievalByIdService>();
