@@ -39,7 +39,13 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(x => x.ModifiedAt, opt => opt.Ignore())
                 .ForMember(x => x.CreatedAt, opt => opt.Ignore())
                 .ForMember(x => x.CreatedBy, opt => opt.Ignore())
-                .ForMember(x => x.DeletedAt, opt => opt.Ignore());
+                .ForMember(x => x.DeletedAt, opt => opt.Ignore())
+                .ForMember(x => x.ConfirmationOfScrutinyCompletedAt, opt => opt.Ignore())
+                .ForMember(x => x.ConfirmationOfScrutinyCompletedBy, opt => opt.Ignore())
+                .ForMember(x => x.CoronerReferralSent, opt => opt.Ignore())
+                .ForMember(x => x.ScrutinyConfirmed, opt => opt.Ignore())
+                .ForMember(x => x.OutstandingCaseItemsCompleted, opt => opt.Ignore())
+                .ForMember(x => x.CaseOutcome, opt => opt.Ignore());
         }
     }
 }

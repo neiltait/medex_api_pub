@@ -22,7 +22,7 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
 
         public string CaseMedicalExaminerFullName { get; set; }
 
-        public bool? MCCDIssed { get; set; }
+        public bool? MCCDIssued { get; set; }
 
         public CremationFormStatus? CremationFormStatus { get; set; }
 

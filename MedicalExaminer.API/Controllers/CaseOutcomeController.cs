@@ -10,6 +10,9 @@ using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +21,7 @@ namespace MedicalExaminer.API.Controllers
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/examinations/{examinationId}")]
     [ApiController]
-    public class CaseOutcomeController : AuthorizedBaseController
+    public class CaseOutcomeController : AuthenticatedBaseController
     {
         private IAsyncQueryHandler<CoronerReferralQuery, string> _coronerReferralService;
         private IAsyncQueryHandler<CloseCaseQuery, string> _closeCaseService;
@@ -50,7 +53,6 @@ namespace MedicalExaminer.API.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-
         [HttpPut]
         [Route("confirmation_of_scrutiny")]
         public async Task<ActionResult<PutConfirmationOfScrutinyResponse>> PutConfirmationOfScrutiny(string examinationId)
@@ -111,8 +113,7 @@ namespace MedicalExaminer.API.Controllers
             {
                 return new BadRequestObjectResult(nameof(examinationId));
             }
-
-            // get examination to update
+            
             var user = await CurrentUser();
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
 
@@ -121,10 +122,7 @@ namespace MedicalExaminer.API.Controllers
                 return new NotFoundResult();
             }
 
-            // map the putoutstandingcaseitemsrequest onto the examinationtoUpdate
             var outstandingCaseItems = Mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
-
-            // save the examination
             var result = await _saveOutstandingCaseItemsService.Handle(new SaveOutstandingCaseItemsQuery(examinationId, outstandingCaseItems, user));
             return Ok();
         }
