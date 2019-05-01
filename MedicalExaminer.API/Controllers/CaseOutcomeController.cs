@@ -111,8 +111,7 @@ namespace MedicalExaminer.API.Controllers
             {
                 return new BadRequestObjectResult(nameof(examinationId));
             }
-
-            // get examination to update
+            
             var user = await CurrentUser();
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
 
@@ -121,10 +120,7 @@ namespace MedicalExaminer.API.Controllers
                 return new NotFoundResult();
             }
 
-            // map the putoutstandingcaseitemsrequest onto the examinationtoUpdate
             var outstandingCaseItems = Mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
-
-            // save the examination
             var result = await _saveOutstandingCaseItemsService.Handle(new SaveOutstandingCaseItemsQuery(examinationId, outstandingCaseItems, user));
             return Ok();
         }
