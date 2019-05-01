@@ -46,6 +46,7 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
 using Cosmonaut;
 using MedicalExaminer.API.Extensions;
+using MedicalExaminer.API.Extensions.ApplicationBuilder;
 
 namespace MedicalExaminer.API
 {
@@ -261,6 +262,9 @@ namespace MedicalExaminer.API
                     // c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 });
             }
+
+            // Must be above UseMvc
+            app.UseProductVersionInAllResponseHeaders();
 
             // Must be above UseMvc
             app.UseAuthentication();
