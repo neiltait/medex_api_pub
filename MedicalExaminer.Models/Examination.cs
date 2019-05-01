@@ -401,6 +401,36 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "site_location_id")]
         public string SiteLocationId { get; set; }
-        public bool ScrutinyComplete { get;  set; }
+
+
+        public DateTime ConfirmationOfScrutinyCompletedAt { get; set; }
+
+        public string ConfirmationOfScrutinyCompletedBy { get; set; }
+
+        /// <summary>
+        /// has the coroners referral been sent?
+        /// </summary>
+        [JsonProperty(PropertyName = "coroner_referral_sent")]
+        public bool CoronerReferralSent { get; set; } = false;
+
+        /// <summary>
+        /// has the Scrutiny been confirmed?
+        /// </summary>
+        [JsonProperty(PropertyName = "scrutiny_confirmed")]
+        public bool ScrutinyConfirmed { get; set; } = false;
+
+        /// <summary>
+        /// have the outstanding case items been completed?
+        /// </summary>
+        [JsonProperty(PropertyName = "outstanding_case_items_completed")]
+        public bool OutstandingCaseItemsCompleted { get; set; } = false;
+
+        /// <summary>
+        /// Case Outcome Items
+        /// </summary>
+        [Required]
+        [JsonProperty(PropertyName = "case_outcome")]
+        public CaseOutcome CaseOutcome { get; set; } = new CaseOutcome();
+
     }
 }

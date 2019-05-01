@@ -32,8 +32,13 @@ namespace MedicalExaminer.API.Tests.Controllers
             var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            var sut = new CaseBreakdownController(logger.Object, mapper.Object, 
-                otherEventCreationService.Object, examinationRetrievalQueryService.Object, usersRetrievalByEmailService.Object);
+            var sut = new CaseBreakdownController(
+                logger.Object,
+                mapper.Object,
+                otherEventCreationService.Object,
+                examinationRetrievalQueryService.Object,
+                usersRetrievalByEmailService.Object);
+
             // Act
             var response = await sut.GetCaseBreakdown(null);
 

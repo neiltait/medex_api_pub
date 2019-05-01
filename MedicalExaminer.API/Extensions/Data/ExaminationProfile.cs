@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using MedicalExaminer.API.Models.v1.CaseBreakdown;
+using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Models;
 using MedicalExaminer.API.Models.v1.PatientDetails;
@@ -18,9 +19,21 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public ExaminationProfile()
         {
+            CreateMap<Examination, CaseOutcome>();
             CreateMap<Examination, ExaminationItem>();
+            CreateMap<Examination, GetCaseOutcomeResponse>() // in progress
+                .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
+                .ForMember(x => x.CaseMedicalExaminerFullName, opt => opt.MapFrom(x => x.MedicalExaminerOfficeResponsibleName))
+                .ForMember(x => x.MCCDIssed, opt => opt.MapFrom(y => y))
+                .ForMember(x => x.CremationFormStatus, opt => opt.MapFrom(y => y))
+                .ForMember(x => x.GPNotifedStatus, opt => opt.MapFrom(y => y));
             CreateMap<Examination, GetPatientDetailsResponse>()
                 .ForMember(x => x.Header, opt => opt.MapFrom(y => y));
+            CreateMap<Examination, GetCaseOutcomeResponse>()
+                .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
+                .ForMember(x => x.MCCDIssed, opt => opt.MapFrom(y => y.CaseOutcome.MCCDIssued))
+                .ForMember(x => x.CremationFormStatus, opt => opt.MapFrom(y => y.CaseOutcome.CremationFormStatus))
+                .ForMember(x => x.GPNotifedStatus, opt => opt.MapFrom(y => y.CaseOutcome.GPNotifiedStatus));
             CreateMap<Examination, PutMedicalTeamResponse>()
                 .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
                 .ForMember(x => x.ConsultantResponsible, opt => opt.MapFrom(x => x.MedicalTeam.ConsultantResponsible))

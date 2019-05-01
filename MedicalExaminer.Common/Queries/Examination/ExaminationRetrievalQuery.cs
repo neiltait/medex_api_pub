@@ -10,7 +10,8 @@ namespace MedicalExaminer.Common.Queries.Examination
             User = user;
         }
 
-        public  string ExaminationId { get; }
+        public string ExaminationId { get; }
+
         public MeUser User { get; }
     }
 }
