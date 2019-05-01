@@ -3,38 +3,44 @@ using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.CaseOutcome;
-using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.CaseOutcome
 {
     public class ConfirmationOfScrutinyService : QueryHandler<ConfirmationOfScrutinyQuery, Models.Examination>
     {
-        IAsyncQueryHandler<ExaminationRetrievalQuery, Models.Examination> _examinationService;
+        private readonly IConnectionSettings _connectionSettings;
+        private readonly IDatabaseAccess _databaseAccess;
 
         public ConfirmationOfScrutinyService(
             IDatabaseAccess databaseAccess,
-            IExaminationConnectionSettings connectionSettings,
-            IAsyncQueryHandler<ExaminationRetrievalQuery, Models.Examination> examinationService)
+            IExaminationConnectionSettings connectionSettings)
         : base(databaseAccess, connectionSettings)
         {
-            _examinationService = examinationService;
+            _connectionSettings = connectionSettings;
+            _databaseAccess = databaseAccess;
         }
 
         public override async Task<Models.Examination> Handle(ConfirmationOfScrutinyQuery param)
         {
             var examinationToUpdate = await
-                _examinationService.Handle(new ExaminationRetrievalQuery(param.ExaminationId, param.User));
+                _databaseAccess
+                    .GetItemAsync<Models.Examination>(
+                        _connectionSettings,
+                        examination => examination.ExaminationId == param.ExaminationId);
 
             examinationToUpdate.ConfirmationOfScrutinyCompletedAt = DateTime.Now;
             examinationToUpdate.ConfirmationOfScrutinyCompletedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTimeOffset.Now;
             examinationToUpdate.LastModifiedBy = param.User.UserId;
 
+            // todo: Set Confirmation of scrutiny to true (after merging Feature/coroner referral branch)
+
             examinationToUpdate.UpdateCaseStatus();
             examinationToUpdate.UpdateCaseUrgencyScore();
 
-            return await UpdateItemAsync(examinationToUpdate);
+            var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);
+            return result;
         }
     }
 }
