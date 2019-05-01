@@ -33,8 +33,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.ConfirmationOfScrutinyCompletedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTimeOffset.Now;
             examinationToUpdate.LastModifiedBy = param.User.UserId;
-
-            // todo: Set Confirmation of scrutiny to true (after merging Feature/coroner referral branch)
+            examinationToUpdate.ScrutinyConfirmed = true;
 
             examinationToUpdate.UpdateCaseStatus();
             examinationToUpdate.UpdateCaseUrgencyScore();

@@ -10,8 +10,7 @@ namespace MedicalExaminer.API.Extensions.Data
     public class CaseOutcomeProfile : Profile
     {
         /// <summary>
-
-        ///     Initialise a new instance of the Examination AutoMapper Profile.
+        /// Initialise a new instance of the Examination AutoMapper Profile.
         /// </summary>
         public CaseOutcomeProfile()
         {

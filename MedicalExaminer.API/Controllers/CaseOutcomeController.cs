@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
@@ -21,6 +22,7 @@ namespace MedicalExaminer.API.Controllers
         private IAsyncQueryHandler<CloseCaseQuery, string> _closeCaseService;
         private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> _saveOutstandingCaseItemsService;
+        private IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> _confirmationOfScrutinyService;
 
         public CaseOutcomeController(
             IMELogger logger,
@@ -29,6 +31,7 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<CloseCaseQuery, string> closeCaseService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> saveOutstandingCaseItemsService,
+            IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> confirmationOfScrutinyService,
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
             : base(logger, mapper, usersRetrievalByEmailService)
         {
@@ -36,6 +39,7 @@ namespace MedicalExaminer.API.Controllers
             _closeCaseService = closeCaseService;
             _examinationRetrievalService = examinationRetrievalService;
             _saveOutstandingCaseItemsService = saveOutstandingCaseItemsService;
+            _confirmationOfScrutinyService = confirmationOfScrutinyService;
         }
 
         /// <summary>

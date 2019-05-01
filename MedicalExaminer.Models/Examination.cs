@@ -430,5 +430,6 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "case_outcome")]
         public CaseOutcome CaseOutcome { get; set; } = new CaseOutcome();
+
     }
 }
