@@ -110,11 +110,10 @@ namespace MedicalExaminer.API
             services.AddMvc(options =>
             {
                 options.UseExaminationContextModelBindingProvider();
-
+                options.Filters.Add<GlobalExceptionFilter>();
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
+                
             services.AddExaminationValidation();
-
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
 
             Mapper.Initialize(config => { config.AddMedicalExaminerProfiles(); });

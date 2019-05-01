@@ -27,7 +27,7 @@ namespace MedicalExaminer.Common.Services.Location
         }
 
         /// <inheritdoc/>
-        public async override Task<IEnumerable<Models.Location>> Handle(LocationsRetrievalByQuery param)
+        public override async Task<IEnumerable<Models.Location>> Handle(LocationsRetrievalByQuery param)
         {
             if (param == null)
             {
