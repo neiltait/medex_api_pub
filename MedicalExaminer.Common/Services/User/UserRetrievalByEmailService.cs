@@ -7,27 +7,30 @@ using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.User
 {
-    public class UserRetrievalByEmailService : IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>
+    /// <summary>
+    /// User Retrieval By Email Service.
+    /// </summary>
+    public class UserRetrievalByEmailService : QueryHandler<UserRetrievalByEmailQuery, MeUser>
     {
-        private readonly IUserConnectionSettings connectionSettings;
-        private readonly IDatabaseAccess databaseAccess;
-
+        /// <summary>
+        /// Initialise a new instance of <see cref="UserRetrievalByEmailService"/>.
+        /// </summary>
+        /// <param name="databaseAccess">Database Access.</param>
+        /// <param name="connectionSettings">Connection Settings.</param>
         public UserRetrievalByEmailService(IDatabaseAccess databaseAccess, IUserConnectionSettings connectionSettings)
+            : base(databaseAccess, connectionSettings)
         {
-            this.databaseAccess = databaseAccess;
-            this.connectionSettings = connectionSettings;
         }
 
-        public Task<MeUser> Handle(UserRetrievalByEmailQuery param)
+        /// <inheritdoc/>
+        public override Task<MeUser> Handle(UserRetrievalByEmailQuery param)
         {
             if (param == null)
             {
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var result = databaseAccess.GetItemAsync<MeUser>(
-                connectionSettings,
-                x => x.Email == param.Email);
+            var result = GetItemAsync(x => x.Email == param.Email);
             return result;
         }
     }

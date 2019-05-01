@@ -6,41 +6,40 @@ using MedicalExaminer.Common.Queries.User;
 
 namespace MedicalExaminer.Common.Services.User
 {
-    public class UserUpdateService : IAsyncQueryHandler<UserUpdateQuery, Models.MeUser>
+    /// <summary>
+    /// User Update Service.
+    /// </summary>
+    public class UserUpdateService : QueryHandler<UserUpdateQuery, Models.MeUser>
     {
-        private readonly IConnectionSettings _connectionSettings;
-        private readonly IDatabaseAccess _databaseAccess;
-
-        public UserUpdateService(
-            IDatabaseAccess databaseAccess,
-            IUserConnectionSettings connectionSettings)
+        /// <summary>
+        /// Initialise a new instance of <see cref="UserUpdateService"/>.
+        /// </summary>
+        /// <param name="databaseAccess">Database Access.</param>
+        /// <param name="connectionSettings">User Connection Settings.</param>
+        public UserUpdateService(IDatabaseAccess databaseAccess, IUserConnectionSettings connectionSettings)
+            : base(databaseAccess, connectionSettings)
         {
-            _databaseAccess = databaseAccess;
-            _connectionSettings = connectionSettings;
         }
 
-        public async Task<Models.MeUser> Handle(UserUpdateQuery userUpdate)
+        /// <inheritdoc/>
+        public override async Task<Models.MeUser> Handle(UserUpdateQuery param)
         {
-            if (userUpdate == null)
+            if (param == null)
             {
-                throw new ArgumentNullException(nameof(userUpdate));
-            }
-            
-            var userToUpdate = await
-                _databaseAccess
-                    .GetItemAsync<Models.MeUser>(
-                        _connectionSettings,
-                        meUser => meUser.UserId == userUpdate.UserId);
-
-            if (userUpdate == null)
-            {
-                throw new ArgumentNullException(nameof(userUpdate));
+                throw new ArgumentNullException(nameof(param));
             }
 
-            userToUpdate.Email = userUpdate.Email;
-            userToUpdate.Permissions = userUpdate.Permissions;
-            
-            var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, userToUpdate);
+            var userToUpdate = await GetItemAsync(meUser => meUser.UserId == param.UserId);
+
+            if (userToUpdate == null)
+            {
+                throw new InvalidOperationException($"User with id `{param.UserId}` not found.");
+            }
+
+            userToUpdate.Email = param.Email;
+            userToUpdate.Permissions = param.Permissions;
+
+            var result = await UpdateItemAsync(userToUpdate);
             return result;
         }
     }
