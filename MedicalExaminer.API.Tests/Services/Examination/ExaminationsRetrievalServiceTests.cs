@@ -196,7 +196,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             // Assert
             results.Should().NotBeNull();
-            Assert.Equal(10, results.Count());
+            Assert.Equal(9, results.Count());
         }
 
         [Fact]
