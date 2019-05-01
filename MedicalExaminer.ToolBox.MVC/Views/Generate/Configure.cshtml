@@ -1,0 +1,70 @@
+﻿@model GenerateViewModel
+
+<h2>Configure</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Configure" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="NumberOfRegions" class="control-label"></label>
+                <input asp-for="NumberOfRegions" class="form-control" />
+                <span asp-validation-for="NumberOfRegions" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfTrusts" class="control-label"></label>
+                <input asp-for="NumberOfTrusts" class="form-control" />
+                <span asp-validation-for="NumberOfTrusts" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfSites" class="control-label"></label>
+                <input asp-for="NumberOfSites" class="form-control" />
+                <span asp-validation-for="NumberOfSites" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfMedicalExaminersPerSite" class="control-label"></label>
+                <input asp-for="NumberOfMedicalExaminersPerSite" class="form-control" />
+                <span asp-validation-for="NumberOfMedicalExaminersPerSite" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfMedicalExaminerOfficersPerSite" class="control-label"></label>
+                <input asp-for="NumberOfMedicalExaminerOfficersPerSite" class="form-control" />
+                <span asp-validation-for="NumberOfMedicalExaminerOfficersPerSite" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfMedicalExaminersPerTrust" class="control-label"></label>
+                <input asp-for="NumberOfMedicalExaminersPerTrust" class="form-control" />
+                <span asp-validation-for="NumberOfMedicalExaminersPerTrust" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfMedicalExaminerOfficersPerTrust" class="control-label"></label>
+                <input asp-for="NumberOfMedicalExaminerOfficersPerTrust" class="form-control" />
+                <span asp-validation-for="NumberOfMedicalExaminerOfficersPerTrust" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfMedicalExaminersPerRegion" class="control-label"></label>
+                <input asp-for="NumberOfMedicalExaminersPerRegion" class="form-control" />
+                <span asp-validation-for="NumberOfMedicalExaminersPerRegion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfMedicalExaminerOfficersPerRegion" class="control-label"></label>
+                <input asp-for="NumberOfMedicalExaminerOfficersPerRegion" class="form-control" />
+                <span asp-validation-for="NumberOfMedicalExaminerOfficersPerRegion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfServiceAdministratorsPerRegion" class="control-label"></label>
+                <input asp-for="NumberOfServiceAdministratorsPerRegion" class="form-control" />
+                <span asp-validation-for="NumberOfServiceAdministratorsPerRegion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfServiceOwnersPerNational" class="control-label"></label>
+                <input asp-for="NumberOfServiceOwnersPerNational" class="form-control" />
+                <span asp-validation-for="NumberOfServiceOwnersPerNational" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Configure" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

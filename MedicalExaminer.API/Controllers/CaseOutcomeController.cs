@@ -3,12 +3,17 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
+using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalExaminer.API.Controllers

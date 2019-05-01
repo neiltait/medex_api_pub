@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Users;
-using MedicalExaminer.Common;
+using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
-using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
-using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
+using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -26,7 +26,7 @@ namespace MedicalExaminer.API.Controllers
     [Route("/v{api-version:apiVersion}/users")]
     [ApiController]
     [Authorize]
-    public class UsersController : BaseController
+    public class UsersController : AuthorizedBaseController
     {
         /// <summary>
         ///     The User Persistence Layer
@@ -41,6 +41,9 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
+        /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
+        /// <param name="authorizationService">Authorization Service.</param>
+        /// <param name="permissionService">Permission Service.</param>
         /// <param name="userCreationService">User creation service.</param>
         /// <param name="userRetrievalByIdService">User retrieval service.</param>
         /// <param name="usersRetrievalService">Users retrieval service.</param>
@@ -48,11 +51,14 @@ namespace MedicalExaminer.API.Controllers
         public UsersController(
             IMELogger logger,
             IMapper mapper,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAuthorizationService authorizationService,
+            IPermissionService permissionService,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService)
-            : base(logger, mapper)
+            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
             _userCreationService = userCreationService;
             _userRetrievalByIdService = userRetrievalByIdService;
@@ -66,6 +72,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A GetUsersResponse.</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
+        [AuthorizePermission(Permission.GetUsers)]
         public async Task<ActionResult<GetUsersResponse>> GetUsers()
         {
             try
@@ -93,6 +100,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A GetUserResponse.</returns>
         [HttpGet("{meUserId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
+        [AuthorizePermission(Permission.GetUser)]
         public async Task<ActionResult<GetUserResponse>> GetUser(string meUserId)
         {
             if (!ModelState.IsValid)
@@ -115,62 +123,6 @@ namespace MedicalExaminer.API.Controllers
             }
         }
 
-        // TODO: Merge this and the one belwo into a single queyr.
-        /// <summary>
-        ///     Get all Users that are in the role of Medical Examiner on this case.
-        /// </summary>
-        /// <returns>A GetUsersResponse.</returns>
-        [HttpGet("/v{api-version:apiVersion}/examination/{examinationId}/users/role/medical_examiner")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetUsersResponse>> GetMedicalExaminers()
-        {
-            // TODO: Filter users not only by role but that they have access to this case
-            try
-            {
-                var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery(null));
-
-                return Ok(new GetUsersResponse
-                {
-                    Users = users.Select(u => Mapper.Map<UserItem>(u))
-                });
-            }
-            catch (DocumentClientException)
-            {
-                return NotFound(new GetUsersResponse());
-            }
-            catch (ArgumentException)
-            {
-                return NotFound(new GetUsersResponse());
-            }
-        }
-
-        /// <summary>
-        ///     Get all Users that are in the role of Medical Examiner Officer on this case.
-        /// </summary>
-        /// <returns>A GetUsersResponse.</returns>
-        [HttpGet("/v{api-version:apiVersion}/examination/{examinationId}/users/role/medical_examiner_officer")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetUsersResponse>> GetMedicalExaminerOfficers()
-        {
-            // TODO: Filter users not only by role but that they have access to this case
-            try
-            {
-                var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery(null));
-                return Ok(new GetUsersResponse
-                {
-                    Users = users.Select(u => Mapper.Map<UserItem>(u))
-                });
-            }
-            catch (DocumentClientException)
-            {
-                return NotFound(new GetUsersResponse());
-            }
-            catch (ArgumentException)
-            {
-                return NotFound(new GetUsersResponse());
-            }
-        }
-
         /// <summary>
         ///     Create a new User.
         /// </summary>
@@ -179,6 +131,7 @@ namespace MedicalExaminer.API.Controllers
         // POST api/users
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
+        [AuthorizePermission(Permission.CreateUser)]
         public async Task<ActionResult<PostUserResponse>> CreateUser([FromBody] PostUserRequest postUser)
         {
             if (!ModelState.IsValid)
@@ -209,6 +162,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutUserResponse.</returns>
         [HttpPut("{meUserId}")]
         [ServiceFilter(typeof(ControllerActionFilter))]
+        [AuthorizePermission(Permission.UpdateUser)]
         public async Task<ActionResult<PutUserResponse>> UpdateUser([FromBody] PutUserRequest putUser)
         {
             if (!ModelState.IsValid)

@@ -11,6 +11,8 @@
         SuspendUser,
         EnableUser,
         DeleteUser,
+        UpdateUser,
+        CreateUser,
         GetUserPermissions,
         GetUserPermission,
         CreateUserPermission,

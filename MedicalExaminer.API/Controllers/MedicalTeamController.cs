@@ -1,48 +1,77 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
+using MedicalExaminer.API.Authorization.ExaminationContext;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
+using MedicalExaminer.API.Services;
+using MedicalExaminer.Common.Authorization;
+using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
 {
-    /// <inheritdoc />
     /// <summary>
     ///     Medical Team Controller.
     /// </summary>
+    /// <inheritdoc />
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/examinations/{examinationId}")]
     [ApiController]
     [Authorize]
-    public class MedicalTeamController : AuthenticatedBaseController
+    public class MedicalTeamController : AuthorizedBaseController
     {
+        /// <summary>
+        /// Medical Examiners Lookup Key.
+        /// </summary>
+        public const string MedicalExaminersLookupKey = "medicalExaminers";
+
+        /// <summary>
+        /// Medical Examiner Officers Lookup Key.
+        /// </summary>
+        public const string MedicalExaminerOfficersLookupKey = "medicalExaminerOfficers";
+
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncUpdateDocumentHandler _medicalTeamUpdateService;
         private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _usersRetrievalByEmailService;
+
+        private readonly IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>
+            _usersRetrievalByRoleLocationQueryService;
 
         /// <summary>
         /// Initialise a new instance of the <see cref="MedicalTeamController"/>.
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="mapper">Mapper.</param>
+        /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
+        /// <param name="authorizationService">Authorization Service.</param>
+        /// <param name="permissionService">Permission Service.</param>
         /// <param name="examinationRetrievalService">Examination Retrieval Service.</param>
         /// <param name="medicalTeamUpdateService">Medical Team Update Service.</param>
+        /// <param name="usersRetrievalByRoleLocationQueryService">Users Retrieval by Role Location Query Service.</param>
         public MedicalTeamController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAuthorizationService authorizationService,
+            IPermissionService permissionService,
+            IAsyncQueryHandler<ExaminationRetrievalQuery,Examination> examinationRetrievalService,
             IAsyncUpdateDocumentHandler medicalTeamUpdateService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
-            : base(logger, mapper, usersRetrievalByEmailService)
+            IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>> usersRetrievalByRoleLocationQueryService)
+            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
             _examinationRetrievalService = examinationRetrievalService;
             _medicalTeamUpdateService = medicalTeamUpdateService;
+            _usersRetrievalByRoleLocationQueryService = usersRetrievalByRoleLocationQueryService;
             _usersRetrievalByEmailService = usersRetrievalByEmailService;
         }
 
@@ -61,13 +90,16 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetMedicalTeamResponse());
             }
 
-            var myUser = await CurrentUser();
-
-            var examination = _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, myUser)).Result;
+            var examination = _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null)).Result;
 
             if (examination == null)
             {
                 return NotFound(new GetMedicalTeamResponse());
+            }
+
+            if (!CanAsync(Permission.GetExamination, examination))
+            {
+                return Forbid();
             }
 
             var getMedicalTeamResponse = examination?.MedicalTeam != null
@@ -77,6 +109,14 @@ namespace MedicalExaminer.API.Controllers
                     ConsultantsOther = new ClinicalProfessionalItem[] { },
                     NursingTeamInformation = string.Empty,
                 };
+
+            getMedicalTeamResponse
+                .AddLookup(
+                    MedicalExaminersLookupKey,
+                    await GetLookupForExamination(examination, UserRoles.MedicalExaminer))
+                .AddLookup(
+                    MedicalExaminerOfficersLookupKey,
+                    await GetLookupForExamination(examination, UserRoles.MedicalExaminerOfficer));
 
             return Ok(getMedicalTeamResponse);
         }
@@ -90,7 +130,9 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutExaminationResponse.</returns>
         [HttpPut("medical_team/")]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutMedicalTeamResponse>> PutMedicalTeam(string examinationId, [FromBody] PutMedicalTeamRequest putMedicalTeamRequest)
+        public async Task<ActionResult<PutMedicalTeamResponse>> PutMedicalTeam(
+            string examinationId,
+            [FromBody] [ModelBinder(Name = "examinationId")] PutMedicalTeamRequest putMedicalTeamRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -98,17 +140,17 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var medicalTeamRequest = Mapper.Map<MedicalTeam>(putMedicalTeamRequest);
-
-            if (medicalTeamRequest == null)
-            {
-                return BadRequest(new PutMedicalTeamResponse());
-            }
-
             var myUser = await CurrentUser();
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, myUser));
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
+
             if (examination == null)
             {
                 return NotFound();
+            }
+
+            if (!CanAsync(Permission.UpdateExamination, examination))
+            {
+                return Forbid();
             }
 
             examination.MedicalTeam = medicalTeamRequest;
@@ -123,6 +165,36 @@ namespace MedicalExaminer.API.Controllers
             var response = Mapper.Map<PutMedicalTeamResponse>(returnedExamination);
 
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Get Lookup for Examination.
+        /// </summary>
+        /// <param name="examination">Examination.</param>
+        /// <param name="role">Role.</param>
+        /// <returns>A Lookup.</returns>
+        private async Task<IDictionary<string, string>> GetLookupForExamination(Examination examination, UserRoles role)
+        {
+            var users = await GetUsersForExamination(examination, role);
+
+            return users.ToDictionary(
+                u => u.UserId,
+                u => u.FullName());
+        }
+
+        /// <summary>
+        /// Get Users For Examination
+        /// </summary>
+        /// <param name="examination">Examination.</param>
+        /// <param name="role">Role.</param>
+        /// <returns>List of Users.</returns>
+        private async Task<IEnumerable<MeUser>> GetUsersForExamination(Examination examination, UserRoles role)
+        {
+            var locations = examination.LocationIds();
+
+            var users = await _usersRetrievalByRoleLocationQueryService.Handle(new UsersRetrievalByRoleLocationQuery(locations, role));
+
+            return users;
         }
     }
 }

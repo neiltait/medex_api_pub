@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MedicalExaminer.Common.Extensions.MeUser
+﻿namespace MedicalExaminer.Common.Extensions.MeUser
 {
+    /// <summary>
+    /// MeUser Extensions.
+    /// </summary>
     public static class MeUserExtensions
     {
         /// <summary>
@@ -11,9 +10,9 @@ namespace MedicalExaminer.Common.Extensions.MeUser
         /// </summary>
         /// <param name="meUser">User object.</param>
         /// <returns>Full name string.</returns>
-        public static string FullName(this Models.MeUser meUser)
+        public static string FullName(this MedicalExaminer.Models.MeUser meUser)
         {
-            // TODO: Do we have a standard way of doing this? Can we assume this format? Does it need to be last name first?
+            // MVP: Just concat
             return $"{meUser.FirstName} {meUser.LastName}";
         }
     }

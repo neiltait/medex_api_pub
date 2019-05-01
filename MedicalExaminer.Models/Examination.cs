@@ -7,7 +7,7 @@ using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace MedicalExaminer.Models
 {
-    public class Examination : Record,  IExamination, ILocationBasedDocument
+    public class Examination : Record,  IExamination, ILocationPath
     {
         /// <summary>
         /// the urgency score assinged to the case
