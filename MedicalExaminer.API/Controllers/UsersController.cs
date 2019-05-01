@@ -123,63 +123,6 @@ namespace MedicalExaminer.API.Controllers
             }
         }
 
-        // TODO: Depricate this method; superceded by lookups on medical team.
-        /// <summary>
-        ///     Get all Users that are in the role of Medical Examiner on this case.
-        /// </summary>
-        /// <returns>A GetUsersResponse.</returns>
-        [HttpGet("/v{api-version:apiVersion}/examination/{examinationId}/users/role/medical_examiner")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetUsersResponse>> GetMedicalExaminers()
-        {
-            // TODO: Filter users not only by role but that they have access to this case
-            try
-            {
-                var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery(null));
-
-                return Ok(new GetUsersResponse
-                {
-                    Users = users.Select(u => Mapper.Map<UserItem>(u))
-                });
-            }
-            catch (DocumentClientException)
-            {
-                return NotFound(new GetUsersResponse());
-            }
-            catch (ArgumentException)
-            {
-                return NotFound(new GetUsersResponse());
-            }
-        }
-
-        // TODO: Depricate this method; superceded by lookups on medical team.
-        /// <summary>
-        ///     Get all Users that are in the role of Medical Examiner Officer on this case.
-        /// </summary>
-        /// <returns>A GetUsersResponse.</returns>
-        [HttpGet("/v{api-version:apiVersion}/examination/{examinationId}/users/role/medical_examiner_officer")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<GetUsersResponse>> GetMedicalExaminerOfficers()
-        {
-            // TODO: Filter users not only by role but that they have access to this case
-            try
-            {
-                var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery(null));
-                return Ok(new GetUsersResponse
-                {
-                    Users = users.Select(u => Mapper.Map<UserItem>(u))
-                });
-            }
-            catch (DocumentClientException)
-            {
-                return NotFound(new GetUsersResponse());
-            }
-            catch (ArgumentException)
-            {
-                return NotFound(new GetUsersResponse());
-            }
-        }
-
         /// <summary>
         ///     Create a new User.
         /// </summary>
