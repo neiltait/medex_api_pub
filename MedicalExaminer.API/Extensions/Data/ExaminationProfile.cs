@@ -21,17 +21,17 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<Examination, CaseOutcome>();
             CreateMap<Examination, ExaminationItem>();
-            CreateMap<Examination, GetCaseOutcomeResponse>() // in progress
+            CreateMap<Examination, GetCaseOutcomeResponse>()
                 .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
                 .ForMember(x => x.CaseMedicalExaminerFullName, opt => opt.MapFrom(x => x.MedicalExaminerOfficeResponsibleName))
-                .ForMember(x => x.MCCDIssed, opt => opt.MapFrom(y => y))
+                .ForMember(x => x.MCCDIssued, opt => opt.MapFrom(y => y))
                 .ForMember(x => x.CremationFormStatus, opt => opt.MapFrom(y => y))
                 .ForMember(x => x.GPNotifedStatus, opt => opt.MapFrom(y => y));
             CreateMap<Examination, GetPatientDetailsResponse>()
                 .ForMember(x => x.Header, opt => opt.MapFrom(y => y));
             CreateMap<Examination, GetCaseOutcomeResponse>()
                 .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
-                .ForMember(x => x.MCCDIssed, opt => opt.MapFrom(y => y.CaseOutcome.MCCDIssued))
+                .ForMember(x => x.MCCDIssued, opt => opt.MapFrom(y => y.CaseOutcome.MCCDIssued))
                 .ForMember(x => x.CremationFormStatus, opt => opt.MapFrom(y => y.CaseOutcome.CremationFormStatus))
                 .ForMember(x => x.GPNotifedStatus, opt => opt.MapFrom(y => y.CaseOutcome.GPNotifiedStatus));
             CreateMap<Examination, PutMedicalTeamResponse>()

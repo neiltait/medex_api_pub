@@ -315,10 +315,7 @@ namespace MedicalExaminer.API
 
             // Medical team services
             services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
-
-            // Case Outcome Confirmation of Scrutiny
-            services.AddScoped<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>, ConfirmationOfScrutinyService>();
-
+            
             // Patient details services
             services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
             services.AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService>();

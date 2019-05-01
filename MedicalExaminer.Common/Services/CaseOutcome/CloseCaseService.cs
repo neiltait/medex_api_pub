@@ -43,6 +43,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.ModifiedAt = DateTime.Now;
 
             examinationToUpdate.Completed = true;
+            examinationToUpdate.CaseOutcome.CaseOpen = false;
 
             examinationToUpdate = examinationToUpdate.UpdateCaseUrgencyScore();
             examinationToUpdate = examinationToUpdate.UpdateCaseStatus();
