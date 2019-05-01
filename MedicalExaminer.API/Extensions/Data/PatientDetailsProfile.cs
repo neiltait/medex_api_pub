@@ -30,7 +30,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(x => x.PendingAdmissionNotes, opt => opt.Ignore())
                 .ForMember(x => x.PendingDiscussionWithQAP, opt => opt.Ignore())
                 .ForMember(x => x.PendingDiscussionWithRepresentative, opt => opt.Ignore())
-                .ForMember(x => x.HaveFinalCaseOutstandingOutcomes, opt => opt.Ignore())
+                .ForMember(x => x.HaveFinalCaseOutcomesOutstanding, opt => opt.Ignore())
                 .ForMember(x => x.NationalLocationId, opt => opt.Ignore())
                 .ForMember(x => x.RegionLocationId, opt => opt.Ignore())
                 .ForMember(x => x.TrustLocationId, opt => opt.Ignore())
