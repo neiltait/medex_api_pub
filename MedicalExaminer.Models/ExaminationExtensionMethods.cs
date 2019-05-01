@@ -142,7 +142,7 @@ namespace MedicalExaminer.Models
             examination.PendingDiscussionWithQAP = CalculatePendingQAPDiscussion(examination);
             examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
 
-            examination.ScrutinyComplete = CalculateScrutinyComplete(examination);
+            examination.ScrutinyConfirmed = CalculateScrutinyComplete(examination);
 
             return examination;
         }

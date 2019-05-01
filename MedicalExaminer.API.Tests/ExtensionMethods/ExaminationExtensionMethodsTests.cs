@@ -596,7 +596,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             var examination = new Examination();
             examination = examination.UpdateCaseStatus();
-            Assert.False(examination.ScrutinyComplete);
+            Assert.False(examination.ScrutinyConfirmed);
         }
 
         [Fact]
@@ -605,7 +605,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var examination = new Examination();
             examination = SetUnassigned(examination);
             examination = examination.UpdateCaseStatus();
-            Assert.False(examination.ScrutinyComplete);
+            Assert.False(examination.ScrutinyConfirmed);
         }
 
         [Fact]
@@ -615,7 +615,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination.CaseBreakdown.MeoSummary.Latest = new MeoSummaryEvent();
             examination = SetUnassigned(examination);
             examination = examination.UpdateCaseStatus();
-            Assert.False(examination.ScrutinyComplete);
+            Assert.False(examination.ScrutinyConfirmed);
         }
 
         [Fact]
@@ -628,7 +628,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination = SetQapDiscussionDone(examination);
             examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional();
             examination = examination.UpdateCaseStatus();
-            Assert.False(examination.ScrutinyComplete);
+            Assert.False(examination.ScrutinyConfirmed);
         }
 
         [Fact]
@@ -640,7 +640,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination = SetPreScrutinyDone(examination);
             examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional();
             examination = examination.UpdateCaseStatus();
-            Assert.False(examination.ScrutinyComplete);
+            Assert.False(examination.ScrutinyConfirmed);
         }
 
         private Examination SetAssigned(Examination examination)
