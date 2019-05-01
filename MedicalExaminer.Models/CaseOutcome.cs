@@ -1,13 +1,14 @@
-﻿using MedicalExaminer.API.Models.v1.Examinations;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using MedicalExaminer.Models.Enums;
-using System;
+using Newtonsoft.Json;
+using MedicalExaminer.Models.Enums;
 
-namespace MedicalExaminer.API.Models.v1.CaseOutcome
+namespace MedicalExaminer.Models
 {
-    public class GetCaseOutcomeResponse : ResponseBase
+    public class CaseOutcome
     {
-        public PatientCardItem Header { get; set; }
-
         public CaseOutcomeSummary? CaseOutcomeSummary { get; set; }
 
         public BereavedDiscussionOutcome? OutcomeOfRepresentativeDiscussion { get; set; }
@@ -16,7 +17,7 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
 
         public QapDiscussionOutcome? OutcomeQapDiscussion { get; set; }
 
-        public bool CaseOpen { get; set; }
+        public bool CaseOpen { get; set; } = true;
 
         public DateTime? ScrutinyConfirmedOn { get; set; }
 
@@ -26,6 +27,6 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
 
         public CremationFormStatus? CremationFormStatus { get; set; }
 
-        public GPNotified? GPNotifedStatus { get; set; }
+        public GPNotified? GPNotifiedStatus { get; set; }
     }
 }

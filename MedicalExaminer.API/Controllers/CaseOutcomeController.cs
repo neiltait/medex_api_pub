@@ -1,11 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.CaseOutcome;
+using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -17,60 +21,167 @@ namespace MedicalExaminer.API.Controllers
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/examinations/{examinationId}")]
     [ApiController]
-    public class CaseOutcomeController : AuthorizedBaseController
+    public class CaseOutcomeController : AuthenticatedBaseController
     {
+        private IAsyncQueryHandler<CoronerReferralQuery, string> _coronerReferralService;
+        private IAsyncQueryHandler<CloseCaseQuery, string> _closeCaseService;
+        private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
+        private IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> _saveOutstandingCaseItemsService;
+        private IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> _confirmationOfScrutinyService;
+
         public CaseOutcomeController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
-            IAuthorizationService authorizationService,
-            IPermissionService permissionService)
-            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
+            IAsyncQueryHandler<CoronerReferralQuery, string> coronerReferralService,
+            IAsyncQueryHandler<CloseCaseQuery, string> closeCaseService,
+            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
+            IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> saveOutstandingCaseItemsService,
+            IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> confirmationOfScrutinyService,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
+            : base(logger, mapper, usersRetrievalByEmailService)
         {
+            _coronerReferralService = coronerReferralService;
+            _closeCaseService = closeCaseService;
+            _examinationRetrievalService = examinationRetrievalService;
+            _saveOutstandingCaseItemsService = saveOutstandingCaseItemsService;
+            _confirmationOfScrutinyService = confirmationOfScrutinyService;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPut]
         [Route("confirmation_of_scrutiny")]
-        public ActionResult<PutConfirmationOfScrutinyResponse> PutConfirmationOfScrutiny()
+        public async Task<ActionResult<PutConfirmationOfScrutinyResponse>> PutConfirmationOfScrutiny(string examinationId)
         {
-            // TODO:  Implement
-            return Ok(new PutConfirmationOfScrutinyResponse()
+            if (string.IsNullOrEmpty(examinationId))
             {
-                ScrutinyConfirmedOn = DateTime.Now
-            });
-        }
+                return BadRequest(new PutConfirmationOfScrutinyResponse());
+            }
 
+            var user = await CurrentUser();
+
+            var result = await _confirmationOfScrutinyService.Handle(new ConfirmationOfScrutinyQuery(examinationId, user));
+            return Ok(Mapper.Map<PutConfirmationOfScrutinyResponse>(result));
+
+        }
 
         [HttpPut]
         [Route("coroner_referral")]
-        public ActionResult PutCoronerReferral()
+        public async Task<ActionResult> PutCoronerReferral(string examinationId)
         {
-            // TODO:  Implement
+            if (string.IsNullOrEmpty(examinationId))
+            {
+                return new BadRequestObjectResult(nameof(examinationId));
+            }
+
+            Guid examinationGuid;
+            if (!Guid.TryParse(examinationId, out examinationGuid))
+            {
+                return new BadRequestObjectResult(nameof(examinationId));
+            }
+
+            var user = await CurrentUser();
+            var result = await _coronerReferralService.Handle(new CoronerReferralQuery(examinationId, user));
+
             return Ok();
         }
 
+        /// <summary>
+        /// Save Outstanding Case Items
+        /// </summary>
+        /// <param name="examinationId">Examination ID</param>
+        /// <param name="putOutstandingCaseItemsRequest">Request</param>
+        /// <returns>None</returns>
         [HttpPut]
         [Route("outstanding_case_items")]
-        public ActionResult PutOutstandingCaseItems([FromBody] PutOutstandingCaseItemsRequest request)
+        public async Task<ActionResult> PutOutstandingCaseItems(
+            string examinationId,
+            [FromBody]
+            PutOutstandingCaseItemsRequest putOutstandingCaseItemsRequest)
         {
-            // TODO:  Implement
+            if (string.IsNullOrEmpty(examinationId))
+            {
+                return new BadRequestObjectResult(nameof(examinationId));
+            }
+
+            Guid examinationGuid;
+            if (!Guid.TryParse(examinationId, out examinationGuid))
+            {
+                return new BadRequestObjectResult(nameof(examinationId));
+            }
+            
+            var user = await CurrentUser();
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+
+            if (examination == null)
+            {
+                return new NotFoundResult();
+            }
+
+            var outstandingCaseItems = Mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
+            var result = await _saveOutstandingCaseItemsService.Handle(new SaveOutstandingCaseItemsQuery(examinationId, outstandingCaseItems, user));
             return Ok();
         }
 
+        /// <summary>
+        /// Closing a case
+        /// </summary>
+        /// <param name="examinationId"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("close_case")]
-        public ActionResult PutCloseCase()
+        public async Task<ActionResult> PutCloseCase(string examinationId)
         {
-            // TODO:  Implement
+            if (string.IsNullOrEmpty(examinationId))
+            {
+                return new BadRequestObjectResult(nameof(examinationId));
+            }
+
+            Guid examinationGuid;
+            if (!Guid.TryParse(examinationId, out examinationGuid))
+            {
+                return new BadRequestObjectResult(nameof(examinationId));
+            }
+
+            var user = await CurrentUser();
+            var result = await _closeCaseService.Handle(new CloseCaseQuery(examinationId, user));
+
             return Ok();
         }
 
+        /// <summary>
+        /// Get Case Outcome details
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        [Route("case_outcome")]
-        public ActionResult<GetCaseOutcomeResponse> GetCaseOutcome()
+        [ServiceFilter(typeof(ControllerActionFilter))]
+        public async Task<ActionResult<GetCaseOutcomeResponse>> GetCaseOutcome(string examinationId)
         {
-            // TODO:  Implement
-            return Ok(new GetCaseOutcomeResponse());
+            if (string.IsNullOrEmpty(examinationId))
+            {
+                return BadRequest(new GetCaseOutcomeResponse());
+            }
+
+            Guid examinationGuid;
+            if (!Guid.TryParse(examinationId, out examinationGuid))
+            {
+                return BadRequest(new GetCaseOutcomeResponse());
+            }
+
+            var user = await CurrentUser();
+
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+
+            if (examination == null)
+            {
+                return NotFound(new GetCaseOutcomeResponse());
+            }
+
+            var result = Mapper.Map<GetCaseOutcomeResponse>(examination);
+
+            return Ok(result);
         }
     }
 }
