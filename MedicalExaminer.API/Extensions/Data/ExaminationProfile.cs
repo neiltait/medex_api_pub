@@ -107,6 +107,9 @@ namespace MedicalExaminer.API.Extensions.Data
                     .ForMember(patientCard => patientCard.CaseCreatedDate, opt => opt.MapFrom(examination => examination.CreatedAt));
 
             CreateMap<Representative, RepresentativeItem>();
+            CreateMap<Examination, DeathEvent>()
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.UserId, opt => opt.MapFrom(y => y.LastModifiedBy));
         }
     }
 

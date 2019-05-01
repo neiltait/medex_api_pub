@@ -45,10 +45,14 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             caseToReplace.MedicalExaminerOfficeResponsibleName = _locationHandler.Handle(new LocationRetrievalByIdQuery(caseToReplace.MedicalExaminerOfficeResponsible)).Result.Name;
             caseToReplace.LastModifiedBy = param.UserId;
 
-            caseToReplace.UpdateCaseUrgencyScore();
+            caseToReplace = caseToReplace.UpdateCaseUrgencyScore();
+            caseToReplace = caseToReplace.UpdateCaseStatus();
+            caseToReplace.CaseBreakdown.DeathEvent = _mapper.Map(caseToReplace, caseToReplace.CaseBreakdown.DeathEvent);
 
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, caseToReplace);
             return result;
         }
+
+        
     }
 }
