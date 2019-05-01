@@ -13,7 +13,7 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
 {
-    public class LocationControllerTests : ControllerTestsBase<LocationsController>
+    public class LocationControllerTests : AuthorizedControllerTestsBase<LocationsController>
     {
         private Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>> _locationRetrievalByIdMock;
 
@@ -26,10 +26,13 @@ namespace MedicalExaminer.API.Tests.Controllers
             _locationRetrievalMock = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>();
 
             Controller = new LocationsController(
-                _locationRetrievalByIdMock.Object,
-                _locationRetrievalMock.Object,
                 LoggerMock.Object,
-                Mapper);
+                Mapper,
+                UsersRetrievalByEmailServiceMock.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                _locationRetrievalByIdMock.Object,
+                _locationRetrievalMock.Object);
         }
 
         [Fact]

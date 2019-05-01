@@ -16,7 +16,9 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<PutOtherEventRequest, OtherEvent>()
                 .ForMember(p => p.Created, opt => opt.Ignore())
-                .ForMember(p => p.UserId, opt => opt.Ignore());
+                .ForMember(p => p.UserId, opt => opt.Ignore())
+                .ForMember(p => p.UserFullName, opt => opt.Ignore())
+                .ForMember(p => p.UsersRole, opt => opt.Ignore());
         }
     }
 }

@@ -6,27 +6,30 @@ using MedicalExaminer.Common.Queries.User;
 
 namespace MedicalExaminer.Common.Services.User
 {
-    public class UserRetrievalByIdService : IAsyncQueryHandler<UserRetrievalByIdQuery, Models.MeUser>
+    /// <summary>
+    /// User Retrieval By Id Service.
+    /// </summary>
+    public class UserRetrievalByIdService : QueryHandler<UserRetrievalByIdQuery, Models.MeUser>
     {
-        private readonly IDatabaseAccess _databaseAccess;
-        private readonly IUserConnectionSettings _connectionSettings;
-
+        /// <summary>
+        /// Initialise a new instance of <see cref="UserRetrievalByIdService"/>.
+        /// </summary>
+        /// <param name="databaseAccess">Database Access.</param>
+        /// <param name="connectionSettings">Connection Settings.</param>
         public UserRetrievalByIdService(IDatabaseAccess databaseAccess, IUserConnectionSettings connectionSettings)
+            : base(databaseAccess, connectionSettings)
         {
-            _databaseAccess = databaseAccess;
-            _connectionSettings = connectionSettings;
         }
 
-        public Task<Models.MeUser> Handle(UserRetrievalByIdQuery param)
+        /// <inheritdoc/>
+        public override Task<Models.MeUser> Handle(UserRetrievalByIdQuery param)
         {
             if (param == null)
             {
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var result = _databaseAccess.GetItemAsync<Models.MeUser>(
-                _connectionSettings,
-                x => x.UserId == param.UserId);
+            var result = GetItemAsync(x => x.UserId == param.UserId);
             return result;
         }
     }

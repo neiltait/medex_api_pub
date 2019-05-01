@@ -12,6 +12,7 @@ using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Authorization;
+using MedicalExaminer.Common.Authorization.Roles;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Loggers;
@@ -42,11 +43,10 @@ using Okta.Sdk;
 using Okta.Sdk.Configuration;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
-
-using Cosmonaut.Extensions;
-using Cosmonaut.Configuration;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
 using Cosmonaut;
+using MedicalExaminer.API.Authorization.ExaminationContext;
+using MedicalExaminer.API.Extensions;
 
 namespace MedicalExaminer.API
 {
@@ -78,9 +78,9 @@ namespace MedicalExaminer.API
         /// <param name="services">Service Collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            var oktaSettingsSection = Configuration.GetSection("Okta");
-            var okatSettings = oktaSettingsSection.Get<OktaSettings>();
-            services.Configure<OktaSettings>(oktaSettingsSection);
+            var oktaSettings = services.ConfigureSettings<OktaSettings>(Configuration, "Okta");
+
+            services.ConfigureSettings<AuthorizationSettings>(Configuration, "Authorization");
 
             ConfigureOktaClient(services);
 
@@ -93,7 +93,7 @@ namespace MedicalExaminer.API
                     .AllowAnyHeader();
             }));
 
-            ConfigureAuthentication(services, okatSettings);
+            ConfigureAuthentication(services, oktaSettings);
 
             ConfigureAuthorization(services);
 
@@ -109,13 +109,15 @@ namespace MedicalExaminer.API
 
             services.AddMvc(options =>
             {
+                options.UseExaminationContextModelBindingProvider();
                 options.Filters.Add<GlobalExceptionFilter>();
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
+                
+            services.AddExaminationValidation();
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
 
             Mapper.Initialize(config => { config.AddMedicalExaminerProfiles(); });
-            //Mapper.AssertConfigurationIsValid();
+            Mapper.AssertConfigurationIsValid();
             services.AddAutoMapper();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
@@ -156,7 +158,7 @@ namespace MedicalExaminer.API
                 {
                     Type = "oauth2",
                     Flow = "implicit",
-                    AuthorizationUrl = okatSettings.AuthorizationUrl,
+                    AuthorizationUrl = oktaSettings.AuthorizationUrl,
                     Scopes = new Dictionary<string, string>
                     {
                         { "profile", "Profile" },
@@ -195,21 +197,12 @@ namespace MedicalExaminer.API
             ConfigureQueries(services);
 
             services.AddScoped<ILocationPersistence>(s => new LocationPersistence(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]));
+               new Uri(Configuration["CosmosDB:URL"]),
+               Configuration["CosmosDB:PrimaryKey"],
+               Configuration["CosmosDB:DatabaseId"]));
 
-            services.AddScoped<IUserPersistence>(s => new UserPersistence(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]));
 
             services.AddScoped<IMeLoggerPersistence>(s => new MeLoggerPersistence(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]));
-
-            services.AddScoped<IPermissionPersistence>(s => new PermissionPersistence(
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
@@ -315,14 +308,14 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<CreateEventQuery, string>, CreateEventService>();
+
             // Medical team services
             services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
-            
-            // Patient details services 
+
+            // Patient details services
             services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
-            services.AddScoped<IAsyncQueryHandler<PatientDetailsByCaseIdQuery, Examination>, PatientDetailsRetrievalService>();
-            
-            // User services 
+
+            // User services
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>, UserRetrievalByEmailService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>, UserRetrievalByIdService>();
@@ -331,12 +324,13 @@ namespace MedicalExaminer.API
 
             // Used for roles; but is being abused to pass null and get all users.
             services.AddScoped<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>, UsersRetrievalService>();
-
+            services.AddScoped<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>, UsersRetrievalByRoleLocationQueryService>();
 
             // Location Services
             services.AddScoped<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>, LocationIdService>();
             services.AddScoped<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>, LocationsQueryService>();
-
+            services.AddScoped<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>, LocationParentsQueryService>();
+            services.AddScoped<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string,IEnumerable<Location>>>, LocationsParentsQueryService>();
         }
 
         /// <summary>
@@ -427,6 +421,14 @@ namespace MedicalExaminer.API
         {
             services.AddSingleton<IRolePermissions, RolePermissions>();
 
+            services.AddSingleton<IEnumerable<Common.Authorization.Role>>(er => new List<Common.Authorization.Role>()
+            {
+                new MedicalExaminerOfficerRole(),
+                new MedicalExaminerRole(),
+                new ServiceAdministratorRole(),
+                new ServiceOwnerRole(),
+            });
+
             services.AddAuthorization(options =>
             {
                 foreach (var permission in (Common.Authorization.Permission[])Enum.GetValues(typeof(Common.Authorization.Permission)))
@@ -441,6 +443,7 @@ namespace MedicalExaminer.API
             // Needs to be scoped since it takes scoped parameters.
             services.AddScoped<IAuthorizationHandler, PermissionHandler>();
             services.AddScoped<IAuthorizationHandler, DocumentPermissionHandler>();
+            services.AddScoped<IPermissionService, PermissionService>();
         }
     }
 }

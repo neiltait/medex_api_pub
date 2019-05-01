@@ -5,14 +5,18 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
+using MedicalExaminer.API.Services;
+using MedicalExaminer.Common.Extensions.Models;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
+using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -24,33 +28,41 @@ namespace MedicalExaminer.API.Controllers
     [Route("/v{api-version:apiVersion}/examinations")]
     [ApiController]
     [Authorize]
-    public class ExaminationsController : AuthenticatedBaseController
+    public class ExaminationsController : AuthorizedBaseController
     {
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> _examinationsDashboardService;
         private readonly IAsyncQueryHandler<CreateExaminationQuery, Examination> _examinationCreationService;
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
-        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _usersRetrievalByEmailService;
+        private readonly IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> _locationParentsService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ExaminationsController"/> class.
         /// </summary>
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
+        /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
+        /// <param name="authorizationService">Authorization Service.</param>
+        /// <param name="permissionService">Permission Service.</param>
         /// <param name="examinationCreationService">examinationCreationService.</param>
         /// <param name="examinationsRetrievalService">examinationsRetrievalService.</param>
         /// <param name="examinationsDashboardService">Examination Dashboard Service.</param>
+        /// <param name="locationParentsService">Location Parents Service.</param>
         public ExaminationsController(
             IMELogger logger,
             IMapper mapper,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAuthorizationService authorizationService,
+            IPermissionService permissionService,
             IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> examinationsDashboardService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
-            : base(logger, mapper, usersRetrievalByEmailService)
+            IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService)
+            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
             _examinationCreationService = examinationCreationService;
             _examinationsRetrievalService = examinationsRetrievalService;
             _examinationsDashboardService = examinationsDashboardService;
-            _usersRetrievalByEmailService = usersRetrievalByEmailService;
+            _locationParentsService = locationParentsService;
         }
 
         /// <summary>
@@ -67,9 +79,10 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetExaminationsResponse());
             }
 
-            var user = await CurrentUser();
+            var permissedLocations = await LocationsWithPermission(Permission.GetExaminations);
 
             var examinationsQuery = new ExaminationsRetrievalQuery(
+                permissedLocations,
                 filter.CaseStatus,
                 filter.LocationId,
                 filter.OrderBy,
@@ -116,6 +129,17 @@ namespace MedicalExaminer.API.Controllers
             try
             {
                 var examination = Mapper.Map<Examination>(postExaminationRequest);
+
+                var locations = await
+                    _locationParentsService.Handle(
+                        new LocationParentsQuery(examination.MedicalExaminerOfficeResponsible));
+
+                examination.UpdateLocationPath(locations);
+
+                if (!CanAsync(Permission.CreateExamination, examination))
+                {
+                    return Forbid();
+                }
 
                 var myUser = await CurrentUser();
 

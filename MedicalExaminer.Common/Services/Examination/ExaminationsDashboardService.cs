@@ -72,7 +72,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 case CaseStatus.ReadyForMEScrutiny:
                     return examination => examination.ReadyForMEScrutiny;
                 case CaseStatus.Unassigned:
-                    return examination => examination.Unassigned == false;
+                    return examination => examination.Unassigned;
                 case CaseStatus.HaveBeenScrutinisedByME:
                     return examination => examination.HaveBeenScrutinisedByME;
                 case CaseStatus.PendingAdmissionNotes:

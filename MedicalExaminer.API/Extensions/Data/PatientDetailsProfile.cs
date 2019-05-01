@@ -14,9 +14,11 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public PatientDetailsProfile()
         {
-            CreateMap<PutPatientDetailsRequest, PatientDetails>();
+            CreateMap<PutPatientDetailsRequest, PatientDetails>()
+                .ForMember(x => x.Id, opt => opt.Ignore());
             CreateMap<PatientDetails, Examination>()
                 .ForMember(x => x.ExaminationId, opt => opt.Ignore())
+                .ForMember(x => x.MedicalExaminerOfficeResponsibleName, opt => opt.Ignore())
                 .ForMember(x => x.UrgencyScore, opt => opt.Ignore())
                 .ForMember(x => x.LastAdmission, opt => opt.Ignore())
                 .ForMember(x => x.MedicalTeam, opt => opt.Ignore())
@@ -29,9 +31,14 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(x => x.PendingDiscussionWithQAP, opt => opt.Ignore())
                 .ForMember(x => x.PendingDiscussionWithRepresentative, opt => opt.Ignore())
                 .ForMember(x => x.HaveFinalCaseOutstandingOutcomes, opt => opt.Ignore())
+                .ForMember(x => x.NationalLocationId, opt => opt.Ignore())
+                .ForMember(x => x.RegionLocationId, opt => opt.Ignore())
+                .ForMember(x => x.TrustLocationId, opt => opt.Ignore())
+                .ForMember(x => x.SiteLocationId, opt => opt.Ignore())
                 .ForMember(x => x.LastModifiedBy, opt => opt.Ignore())
                 .ForMember(x => x.ModifiedAt, opt => opt.Ignore())
                 .ForMember(x => x.CreatedAt, opt => opt.Ignore())
+                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
                 .ForMember(x => x.DeletedAt, opt => opt.Ignore());
         }
     }

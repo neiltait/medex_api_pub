@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -93,7 +93,7 @@ namespace MedicalExaminer.Common
             await EnsureSetupAsync();
             var results = new List<Location>();
 
-            var feedOptions = new FeedOptions { MaxItemCount = - 1 };
+            var feedOptions = new FeedOptions { MaxItemCount = -1 };
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, "Locations");
             var queryString = $"SELECT * FROM Locations WHERE Locations.parentId = \"{parentId}\"";
             var query = client.CreateDocumentQuery<Location>(documentCollectionUri, queryString, feedOptions);

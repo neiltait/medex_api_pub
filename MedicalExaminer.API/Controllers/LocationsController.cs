@@ -4,12 +4,16 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Locations;
+using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
+using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -20,7 +24,7 @@ namespace MedicalExaminer.API.Controllers
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/locations")]
     [ApiController]
-    public class LocationsController : BaseController
+    public class LocationsController : AuthorizedBaseController
     {
         /// <summary>
         /// Location Retrieval by Id Query.
@@ -35,16 +39,22 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="LocationsController"/> class.
         /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="mapper">Mapper.</param>
+        /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
+        /// <param name="authorizationService">Authorization Service.</param>
+        /// <param name="permissionService">Permission Service.</param>
         /// <param name="locationRetrievalByIdQueryHandler">Location Retrieval By Id Query Handler.</param>
         /// <param name="locationRetrievalByQueryHandler">Location Retrieval By Query Handler.</param>
-        /// <param name="logger">The Logger.</param>
-        /// <param name="mapper">The Mapper.</param>
         public LocationsController(
-            IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> locationRetrievalByIdQueryHandler,
-            IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler,
             IMELogger logger,
-            IMapper mapper)
-            : base(logger, mapper)
+            IMapper mapper,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAuthorizationService authorizationService,
+            IPermissionService permissionService,
+            IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> locationRetrievalByIdQueryHandler,
+            IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler)
+            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
             _locationRetrievalByIdQueryHandler = locationRetrievalByIdQueryHandler;
             _locationRetrievalByQueryHandler = locationRetrievalByQueryHandler;
@@ -59,19 +69,22 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationsResponse>> GetLocations([FromQuery] GetLocationsRequest request)
         {
-            var locations =
-                await _locationRetrievalByQueryHandler.Handle(
-                    new LocationsRetrievalByQuery(request.Name, request.ParentId));
+            IEnumerable<string> permissedLocations = null;
 
-            // TODO: Filter on whether you have access or not
             if (request.AccessOnly)
             {
+                permissedLocations = await LocationsWithPermission(Permission.GetExaminations);
+
                 // get current user
                 // does user have access to this location directly or by having access
                 // to its parent
                 // if so include it in the list;
                 // otherwise ignore it.
             }
+
+            var locations =
+                await _locationRetrievalByQueryHandler.Handle(
+                    new LocationsRetrievalByQuery(request.Name, request.ParentId, permissedLocations));
 
             return Ok(new GetLocationsResponse
             {

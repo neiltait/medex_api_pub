@@ -3,25 +3,27 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
-using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 
-namespace MedicalExaminer.Common.Services.Examination
+namespace MedicalExaminer.Common.Services.User
 {
-    public class UsersRetrievalService : IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<Models.MeUser>>
+    /// <summary>
+    /// Users Retrieval Service.
+    /// </summary>
+    public class UsersRetrievalService : QueryHandler<UsersRetrievalQuery, IEnumerable<Models.MeUser>>
     {
-        private readonly IConnectionSettings _connectionSettings;
-        private readonly IDatabaseAccess _databaseAccess;
-
-        public UsersRetrievalService(
-            IDatabaseAccess databaseAccess,
-            IUserConnectionSettings connectionSettings)
+        /// <summary>
+        /// Initialise a new instance of <see cref="UsersRetrievalService"/>.
+        /// </summary>
+        /// <param name="databaseAccess">Database Access.</param>
+        /// <param name="connectionSettings">Connection Settings.</param>
+        public UsersRetrievalService(IDatabaseAccess databaseAccess, IUserConnectionSettings connectionSettings)
+            : base(databaseAccess, connectionSettings)
         {
-            _databaseAccess = databaseAccess;
-            _connectionSettings = connectionSettings;
         }
 
-        public async Task<IEnumerable<Models.MeUser>> Handle(UsersRetrievalQuery param)
+        /// <inheritdoc/>
+        public override async Task<IEnumerable<Models.MeUser>> Handle(UsersRetrievalQuery param)
         {
             if (param == null)
             {
@@ -29,7 +31,7 @@ namespace MedicalExaminer.Common.Services.Examination
             }
 
             // can put whatever filters in the param, just empty for now
-            var result = await _databaseAccess.GetItemsAsync<Models.MeUser>(_connectionSettings, x => true);
+            var result = await GetItemsAsync<Models.MeUser>(x => true);
 
             return result;
         }
