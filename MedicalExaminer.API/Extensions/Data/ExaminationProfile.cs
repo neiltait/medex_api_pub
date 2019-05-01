@@ -21,7 +21,7 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<Examination, CaseOutcome>();
             CreateMap<Examination, ExaminationItem>();
-            CreateMap<Examination, GetCaseOutcomeResponse>()
+            CreateMap<Examination, GetCaseOutcomeResponse>() 
                 .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
                 .ForMember(x => x.CaseMedicalExaminerFullName, opt => opt.MapFrom(x => x.MedicalExaminerOfficeResponsibleName))
                 .ForMember(x => x.MCCDIssued, opt => opt.MapFrom(y => y))
