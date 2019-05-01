@@ -373,7 +373,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            
+
             var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, string>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
@@ -419,9 +419,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var invalidRequest = new PutOtherEventRequest
             {
-             EventId = null,
-             IsFinal = true,
-             Text = null
+                EventId = null,
+                IsFinal = true,
+                Text = null
             };
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
@@ -641,7 +641,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
-            
+
             var mockMeUser = new MeUser()
             {
                 UserId = "abcd"
@@ -1378,7 +1378,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var meoSummaryEvent = new Mock<MeoSummaryEvent>();
 
             mapper.Setup(m => m.Map<MeoSummaryEvent>(validRequest)).Returns(meoSummaryEvent.Object);
-                       
+
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                .Returns(Task.FromResult(default(Examination))).Verifiable();
 
