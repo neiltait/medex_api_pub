@@ -266,7 +266,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 ExaminationId = "examination3",
                 MedicalExaminerOfficeResponsible = "a",
                 ReadyForMEScrutiny = true,
-                Completed = false
+                CaseCompleted = false
             };*/
 
             var examination4 = new MedicalExaminer.Models.Examination()

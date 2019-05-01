@@ -17,7 +17,7 @@ namespace MedicalExaminer.Models
 
         public string PriorityDetails { get; set; }
 
-        public bool Completed { get; set; }
+        public bool CaseCompleted { get; set; }
 
         public CoronerStatus CoronerStatus { get; set; }
 

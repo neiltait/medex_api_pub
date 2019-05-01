@@ -21,7 +21,7 @@ namespace MedicalExaminer.API.Controllers
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/examinations/{examinationId}")]
     [ApiController]
-    public class CaseOutcomeController : AuthenticatedBaseController
+    public class CaseOutcomeController : AuthorizedBaseController
     {
         private IAsyncQueryHandler<CoronerReferralQuery, string> _coronerReferralService;
         private IAsyncQueryHandler<CloseCaseQuery, string> _closeCaseService;

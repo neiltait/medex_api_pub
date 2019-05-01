@@ -142,7 +142,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
         
         [Fact]
-        public void GeInformedAtDeath_When_Called_Returns_Expected_Type()
+        public void GetInformedAtDeath_When_Called_Returns_Expected_Type()
         {
             // Act
             var response = _controller.GetInformedAtDeath();
