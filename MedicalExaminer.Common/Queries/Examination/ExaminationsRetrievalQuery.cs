@@ -18,25 +18,6 @@ namespace MedicalExaminer.Common.Queries.Examination
         public readonly bool FilterOpenCases;
 
         public ExaminationsRetrievalQuery(
-            CaseStatus? filterCaseStatus,
-            string filterLocationId,
-            ExaminationsOrderBy? filterOrderBy,
-            int filterPageNumber,
-            int filterPageSize,
-            string filterUserId,
-            bool filterOpenCases)
-        {
-            PermissedLocations = null;
-            FilterCaseStatus = filterCaseStatus;
-            FilterLocationId = filterLocationId;
-            FilterOrderBy = filterOrderBy;
-            FilterPageNumber = filterPageNumber;
-            FilterPageSize = filterPageSize;
-            FilterUserId = filterUserId;
-            FilterOpenCases = filterOpenCases;
-        }
-
-        public ExaminationsRetrievalQuery(
             IEnumerable<string> permissedLocations,
             CaseStatus? filterCaseStatus,
             string filterLocationId,
