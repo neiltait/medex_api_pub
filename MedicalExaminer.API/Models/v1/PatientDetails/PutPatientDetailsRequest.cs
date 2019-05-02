@@ -126,13 +126,11 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     Patients Postcode.
         /// </summary>
-        [Required]
         public string PostCode { get; set; }
 
         /// <summary>
         ///     First line of patients address.
         /// </summary>
-        [Required]
         public string HouseNameNumber { get; set; }
 
         /// <summary>
@@ -143,19 +141,16 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     Patients town or city.
         /// </summary>
-        [Required]
         public string Town { get; set; }
 
         /// <summary>
         ///     Patients county.
         /// </summary>
-        [Required]
         public string County { get; set; }
 
         /// <summary>
         ///     Patients country.
         /// </summary>
-        [Required]
         public string Country { get; set; }
 
         /// <summary>
