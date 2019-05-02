@@ -41,9 +41,8 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
 
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
-
-            examinationToUpdate.Completed = true;
-            examinationToUpdate.CaseOutcome.CaseOpen = false;
+            examinationToUpdate.CaseCompleted = true;
+            examinationToUpdate.CaseOutcome.CaseCompleted = false;
 
             examinationToUpdate = examinationToUpdate.UpdateCaseUrgencyScore();
             examinationToUpdate = examinationToUpdate.UpdateCaseStatus();

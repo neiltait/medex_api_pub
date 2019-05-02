@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
-using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Models;
+using MedicalExaminer.Common.Extensions.MeUser;
 
 namespace MedicalExaminer.Common.Services.MedicalTeam
 {
@@ -37,7 +37,8 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
             examination.MedicalTeam.MedicalExaminerFullName = me.FullName();
             examination.MedicalTeam.MedicalExaminerOfficerFullName = meo.FullName();
 
-            examination.UpdateCaseUrgencyScore();
+            examination = examination.UpdateCaseUrgencyScore();
+            examination = examination.UpdateCaseStatus();
             examination.LastModifiedBy = userId;
             var returnedDocument = await _databaseAccess.UpdateItemAsync(_connectionSettings, examination);
 

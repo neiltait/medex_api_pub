@@ -23,7 +23,7 @@ namespace MedicalExaminer.API.Extensions.Data
                  .ForMember(x => x.CremationFormStatus, opt => opt.MapFrom(y => y.CremationFormStatus))
                  .ForMember(x => x.GPNotifiedStatus, opt => opt.MapFrom(y => y.GPNotifiedStatus))
                  .ForMember(x => x.CaseMedicalExaminerFullName, opt => opt.Ignore())
-                 .ForMember(x => x.CaseOpen, opt => opt.Ignore())
+                 .ForMember(x => x.CaseCompleted, opt => opt.Ignore())
                  .ForMember(x => x.CaseOutcomeSummary, opt => opt.Ignore())
                  .ForMember(x => x.OutcomeOfPrescrutiny, opt => opt.Ignore())
                  .ForMember(x => x.OutcomeOfRepresentativeDiscussion, opt => opt.Ignore())

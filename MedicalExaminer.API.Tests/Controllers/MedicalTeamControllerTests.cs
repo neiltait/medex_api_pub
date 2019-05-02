@@ -54,7 +54,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task GetMedicalTeam_ShouldReturnBadRequest_WhenModelStateInvalid()
         {
             // Arrange
-         Controller.ModelState.AddModelError("An", "Error");
+            Controller.ModelState.AddModelError("An", "Error");
 
             // Act
             var request = "request";
@@ -125,7 +125,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 HttpContext = new DefaultHttpContext
                 {
                     User = new ClaimsPrincipal(new ClaimsIdentity(
-                        new []
+                        new[]
                         {
                             new Claim(ClaimTypes.Email, "username")
                         }, "someAuthTypeName"))
@@ -393,7 +393,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            var typedResponse = (GetMedicalTeamResponse) okResult.Value;
+            var typedResponse = (GetMedicalTeamResponse)okResult.Value;
 
             // Assert
             typedResponse.Lookups.ContainsKey(MedicalTeamController.MedicalExaminersLookupKey).Should().BeTrue();
@@ -403,6 +403,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             typedResponse.Lookups[MedicalTeamController.MedicalExaminerOfficersLookupKey].Contains(expectedMedicalExaminerOfficer).Should().BeTrue();
         }
 
-        
+
     }
 }

@@ -21,7 +21,7 @@ namespace MedicalExaminer.API.Controllers
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/examinations/{examinationId}")]
     [ApiController]
-    public class CaseOutcomeController : AuthenticatedBaseController
+    public class CaseOutcomeController : AuthorizedBaseController
     {
         private IAsyncQueryHandler<CoronerReferralQuery, string> _coronerReferralService;
         private IAsyncQueryHandler<CloseCaseQuery, string> _closeCaseService;
@@ -37,8 +37,10 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> saveOutstandingCaseItemsService,
             IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> confirmationOfScrutinyService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
-            : base(logger, mapper, usersRetrievalByEmailService)
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAuthorizationService authorizationService,
+            IPermissionService permissionService)
+            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
             _coronerReferralService = coronerReferralService;
             _closeCaseService = closeCaseService;

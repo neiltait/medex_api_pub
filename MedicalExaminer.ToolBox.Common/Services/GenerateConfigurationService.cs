@@ -134,7 +134,7 @@ namespace MedicalExaminer.ToolBox.Common.Services
                     {
                         LocationId = location.LocationId,
                         PermissionId = Guid.NewGuid().ToString(),
-                        UserRole = (int)role,
+                        UserRole = role,
                     }
                 }
             };
