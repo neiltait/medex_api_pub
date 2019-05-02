@@ -47,7 +47,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="userCreationService">User creation service.</param>
         /// <param name="userRetrievalByIdService">User retrieval service.</param>
         /// <param name="usersRetrievalService">Users retrieval service.</param>
-        /// <param name="userUpdateService">The user update service</param>
+        /// <param name="userUpdateService">The userToCreate update service</param>
         public UsersController(
             IMELogger logger,
             IMapper mapper,
@@ -141,8 +141,9 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var user = Mapper.Map<MeUser>(postUser);
-                var createdUser = await _userCreationService.Handle(new CreateUserQuery(user));
+                var userToCreate = Mapper.Map<MeUser>(postUser);
+                var currentUser = await CurrentUser();
+                var createdUser = await _userCreationService.Handle(new CreateUserQuery(userToCreate, currentUser));
                 return Ok(Mapper.Map<PostUserResponse>(createdUser));
             }
             catch (DocumentClientException)
@@ -172,8 +173,9 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var user = Mapper.Map<MeUser>(putUser);
-                var updatedUser = await _userUpdateService.Handle(new UserUpdateQuery(user));
+                var userToUpdate = Mapper.Map<MeUser>(putUser);
+                var currentUser = await CurrentUser();
+                var updatedUser = await _userUpdateService.Handle(new UserUpdateQuery(userToUpdate, currentUser));
                 return Ok(Mapper.Map<PutUserResponse>(updatedUser));
             }
             catch (DocumentClientException)

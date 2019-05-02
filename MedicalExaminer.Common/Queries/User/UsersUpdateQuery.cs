@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Common.Queries.User
 {
     public class UserUpdateQuery : IQuery<MeUser>
     {
-        public UserUpdateQuery(MeUser user)
+        public UserUpdateQuery(MeUser userToUpdate, MeUser currentUser)
         {
-            UserId = user.UserId;
-            Email = user.Email;
-            Permissions = user.Permissions != null
-                ? user.Permissions.Select(up => new MEUserPermission()
+            CurrentUser = currentUser;
+            UserId = userToUpdate.UserId;
+            Email = userToUpdate.Email;
+            Permissions = userToUpdate.Permissions != null
+                ? userToUpdate.Permissions.Select(up => new MEUserPermission()
                 {
                     PermissionId = up.PermissionId,
                     LocationId = up.LocationId,
@@ -21,8 +21,12 @@ namespace MedicalExaminer.Common.Queries.User
                 : Enumerable.Empty<MEUserPermission>();
         }
 
+        public MeUser CurrentUser { get; }
+
         public string UserId { get; }
+
         public string Email { get; }
+
         public IEnumerable<MEUserPermission> Permissions { get; }
     }
 }

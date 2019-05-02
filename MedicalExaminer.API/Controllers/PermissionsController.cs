@@ -283,7 +283,7 @@ namespace MedicalExaminer.API.Controllers
         private async Task<bool> DuplicateOnUser(Permission permission)
         {
             var meUser = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(permission.UserId));
-
+            var currentUser = await CurrentUser();
             var permissions = (await _permissionPersistence.GetPermissionsAsync(permission.UserId)).ToList();
 
             meUser.Permissions = permissions.Select(p => new MEUserPermission()
@@ -293,7 +293,7 @@ namespace MedicalExaminer.API.Controllers
                 UserRole = p.UserRole,
             }).ToList();
 
-            var updatedUser = await _userUpdateService.Handle(new UserUpdateQuery(meUser));
+            var updatedUser = await _userUpdateService.Handle(new UserUpdateQuery(meUser, currentUser));
 
             return updatedUser.Permissions.Count() == permissions.Count;
         }

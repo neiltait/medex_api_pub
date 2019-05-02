@@ -577,13 +577,13 @@ namespace MedicalExaminer.API.Tests.Controllers
             {
                 HttpContext = new DefaultHttpContext
                 {
-                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                    User = new ClaimsPrincipal(new ClaimsIdentity(
+                        new Claim[]
             {
                 new Claim(ClaimTypes.Email, "username")
             }, "someAuthTypeName"))
                 }
             };
         }
-
     }
 }

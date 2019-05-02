@@ -25,7 +25,7 @@ namespace MedicalExaminer.API.Tests.Services.Users
                 Email = expectedEmail,
             };
 
-            var query = new CreateUserQuery(expectedUser);
+            var query = new CreateUserQuery(expectedUser, new MeUser());
 
             // Act
             var result = await Service.Handle(query);

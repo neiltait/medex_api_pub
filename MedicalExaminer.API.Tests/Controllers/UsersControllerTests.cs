@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
@@ -16,6 +17,7 @@ using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Microsoft.Extensions.Logging;
@@ -65,6 +67,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange 
             createUserService.Setup(cus => cus.Handle(It.IsAny<CreateUserQuery>())).Throws<ArgumentException>();
             var expectedRequest = new PostUserRequest();
+            Controller.ControllerContext = GetControllerContext();
 
             // Act
             var response = await Controller.CreateUser(expectedRequest);
@@ -91,6 +94,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRequest = new PostUserRequest();
             createUserService.Setup(cus => cus.Handle(It.IsAny<CreateUserQuery>()))
                 .Throws(CreateDocumentClientExceptionForTesting());
+            Controller.ControllerContext = GetControllerContext();
 
             // Act
             var response = await Controller.CreateUser(expectedRequest);
@@ -130,6 +134,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             createUserService.Setup(cus => cus.Handle(It.IsAny<CreateUserQuery>()))
                 .Returns(Task.FromResult(expectedUser));
+            Controller.ControllerContext = GetControllerContext();
 
             // Act
             var response = await Controller.CreateUser(expectedRequest);
@@ -337,6 +342,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             userUpdateService.Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
                 .Throws<ArgumentException>();
+            Controller.ControllerContext = GetControllerContext();
 
             // Act
             var response = await Controller.UpdateUser(expectedRequest);
@@ -364,6 +370,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             userUpdateService.Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
                 .Throws(CreateDocumentClientExceptionForTesting());
+            Controller.ControllerContext = GetControllerContext();
 
             // Act
             var response = await Controller.UpdateUser(expectedRequest);
@@ -400,9 +407,10 @@ namespace MedicalExaminer.API.Tests.Controllers
                 UserId = expectedUserId,
                 Email = "testing@methods.co.uk"
             };
-            
+
             userUpdateService.Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
                 .Returns(Task.FromResult(expectedUser));
+            Controller.ControllerContext = GetControllerContext();
 
             // Act
             var response = await Controller.UpdateUser(expectedRequest);
@@ -438,6 +446,21 @@ namespace MedicalExaminer.API.Tests.Controllers
             var model = (PutUserResponse) result.Value;
             model.Errors.Count.Should().Be(1);
             model.Success.Should().BeFalse();
+        }
+
+        private ControllerContext GetControllerContext()
+        {
+            return new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(
+                        new Claim[]
+            {
+                new Claim(ClaimTypes.Email, "username")
+            }, "someAuthTypeName"))
+                }
+            };
         }
     }
 }

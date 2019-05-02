@@ -27,7 +27,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         private readonly IMapper _mapper;
 
         /// <summary>
-        ///     Test Mapping MeUser to GetUserResponse.
+        ///     Test Mapping UserToCreate to GetUserResponse.
         /// </summary>
         [Fact]
         public void TestGetUserResponse()
@@ -45,7 +45,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         /// <summary>
-        ///     Test Mapping PostUserRequest to MeUser.
+        ///     Test Mapping PostUserRequest to UserToCreate.
         /// </summary>
         [Fact]
         public void TestPostUserRequest()
@@ -63,7 +63,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         /// <summary>
-        ///     Test Mapping MeUser to PostUserResponse.
+        ///     Test Mapping UserToCreate to PostUserResponse.
         /// </summary>
         [Fact]
         public void TestPostUserResponse()
@@ -81,7 +81,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         /// <summary>
-        ///     Test Mapping PutUserRequest to MeUser.
+        ///     Test Mapping PutUserRequest to UserToCreate.
         /// </summary>
         [Fact]
         public void TestPutUserRequest()
@@ -102,7 +102,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         /// <summary>
-        ///     Test Mapping MeUser to PutUserResponse.
+        ///     Test Mapping UserToCreate to PutUserResponse.
         /// </summary>
         [Fact]
         public void TestPutUserResponse()
@@ -120,7 +120,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         /// <summary>
-        ///     Test Mapping MeUser to UserItem.
+        ///     Test Mapping UserToCreate to UserItem.
         /// </summary>
         [Fact]
         public void TestUserItem()

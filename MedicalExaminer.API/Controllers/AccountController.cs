@@ -123,7 +123,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="emailAddress">email address of user</param>
         /// <param name="oktaToken">Okta token</param>
-        /// <returns>MeUser</returns>
+        /// <returns>UserToCreate</returns>
         /// <remarks>virtual so that it can be unit tested via proxy class</remarks>
         protected virtual async  Task<MeUser> CreateNewUser(string emailAddress, string oktaToken)
         {
@@ -153,7 +153,8 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var createdUser = await _userCreationService.Handle(new CreateUserQuery(toCreate));
+                var currentUser = await CurrentUser();
+                var createdUser = await _userCreationService.Handle(new CreateUserQuery(toCreate, currentUser));
 
                 return createdUser;
             }
