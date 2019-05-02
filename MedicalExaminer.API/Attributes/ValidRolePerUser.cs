@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using MedicalExaminer.API.Models.v1;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
@@ -39,7 +40,7 @@ namespace MedicalExaminer.API.Attributes
                 throw new NullReferenceException("uerRetrievalByIdService is null");
             }
 
-            var instance = (PutPermissionRequest)context.ObjectInstance;
+            var instance = (IUserRequest)context.ObjectInstance;
 
             var type = instance.GetType();
             var userIdValue = (string)type.GetProperty(UserIdField).GetValue(instance, null);
@@ -50,7 +51,9 @@ namespace MedicalExaminer.API.Attributes
             {
                 if (existingPermissions.Permissions.Any(p => IsTargetRole((UserRoles)p.UserRole)))
                 {
-                    return new ValidationResult("User already has permission");
+                    var permission = existingPermissions.Permissions.First(p => IsTargetRole((UserRoles)p.UserRole));
+
+                    return new ValidationResult($"Cannot add Role `{role}`, user is already `{(UserRoles)permission.UserRole}` elsewhere in the system.");
                 }
             }
 

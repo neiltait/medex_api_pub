@@ -6,7 +6,7 @@ namespace MedicalExaminer.API.Models.v1.Permissions
     /// <summary>
     ///     Post Permission Request.
     /// </summary>
-    public class PostPermissionRequest
+    public class PostPermissionRequest : IUserRequest
     {
         /// <summary>
         ///     Gets or sets the User identifier.
@@ -21,7 +21,7 @@ namespace MedicalExaminer.API.Models.v1.Permissions
         /// <summary>
         ///     Gets or sets the User Role for the Permission.
         /// </summary>
-        [ValidRolePerUser(nameof(PostPermissionRequest.UserId))]
+        [ValidRolePerUser(nameof(UserId))]
         public int UserRole { get; set; }
     }
 }
