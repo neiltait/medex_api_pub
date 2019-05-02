@@ -48,7 +48,6 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             caseToReplace = caseToReplace.UpdateCaseUrgencyScore();
             caseToReplace = caseToReplace.UpdateCaseStatus();
             caseToReplace.CaseBreakdown.DeathEvent = _mapper.Map(caseToReplace, caseToReplace.CaseBreakdown.DeathEvent);
-
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, caseToReplace);
             return result;
         }
