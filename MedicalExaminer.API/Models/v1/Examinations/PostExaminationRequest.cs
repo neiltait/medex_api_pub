@@ -27,7 +27,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// </summary>
         [Required]
         [MinLength(1)]
-        [MaxLength(255)]
+        [MaxLength(150)]
         public string Surname { get; set; }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// </summary>
         [Required]
         [MinLength(1)]
-        [MaxLength(255)]
+        [MaxLength(150)]
         public string GivenNames { get; set; }
 
         /// <summary>
