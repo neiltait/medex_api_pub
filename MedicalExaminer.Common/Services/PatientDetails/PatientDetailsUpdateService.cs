@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
+using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Common.Services.PatientDetails
 {
@@ -43,11 +45,14 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             _mapper.Map(param.PatientDetails, caseToReplace);
 
             caseToReplace.MedicalExaminerOfficeResponsibleName = _locationHandler.Handle(new LocationRetrievalByIdQuery(caseToReplace.MedicalExaminerOfficeResponsible)).Result.Name;
-            caseToReplace.LastModifiedBy = param.UserId;
-
+            caseToReplace.LastModifiedBy = param.User.UserId;
+            
             caseToReplace = caseToReplace.UpdateCaseUrgencyScore();
             caseToReplace = caseToReplace.UpdateCaseStatus();
             caseToReplace.CaseBreakdown.DeathEvent = _mapper.Map(caseToReplace, caseToReplace.CaseBreakdown.DeathEvent);
+            caseToReplace.CaseBreakdown.DeathEvent.UserId = param.User.UserId;
+            caseToReplace.CaseBreakdown.DeathEvent.UserFullName = param.User.FullName();
+            caseToReplace.CaseBreakdown.DeathEvent.UsersRole = param.User.UsersExaminationRole(new[] { UserRoles.MedicalExaminer, UserRoles.MedicalExaminerOfficer }).ToString();
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, caseToReplace);
             return result;
         }
