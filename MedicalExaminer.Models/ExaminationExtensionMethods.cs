@@ -99,6 +99,12 @@ namespace MedicalExaminer.Models
                 throw new ArgumentNullException(nameof(examination));
             }
 
+            if (examination.Completed)
+            {
+                examination.UrgencyScore = score;
+                return examination;
+            }
+
             if (examination.ChildPriority)
             {
                 score = score + defaultScoreWeighting;

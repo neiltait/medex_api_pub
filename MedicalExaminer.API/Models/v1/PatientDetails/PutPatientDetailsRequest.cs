@@ -84,6 +84,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     Patients NHS Number.
         /// </summary>
+        [ValidNhsNumberNullAllowed]
         public string NhsNumber { get; set; }
 
         /// <summary>
