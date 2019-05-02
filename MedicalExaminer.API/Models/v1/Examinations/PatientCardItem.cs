@@ -108,7 +108,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Awaiting the final outcome of the case
         /// </summary>
-        public bool HaveFinalCaseOutstandingOutcomes { get; set; }
+        public bool HaveFinalCaseOutcomesOutstanding { get; set; }
 
     }
 }

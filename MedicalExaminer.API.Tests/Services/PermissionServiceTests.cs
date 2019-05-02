@@ -68,7 +68,7 @@ namespace MedicalExaminer.API.Tests.Services
                     {
                         PermissionId = "",
                         LocationId = expectedNationalLocationId,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     }
                 }
             };
@@ -109,7 +109,7 @@ namespace MedicalExaminer.API.Tests.Services
                     {
                         PermissionId = "",
                         LocationId = expectedNationalLocationId,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     }
                 }
             };
@@ -175,7 +175,7 @@ namespace MedicalExaminer.API.Tests.Services
                     {
                         PermissionId = "",
                         LocationId = "",
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     }
                 }
             };
@@ -211,7 +211,7 @@ namespace MedicalExaminer.API.Tests.Services
                     {
                         PermissionId = "",
                         LocationId = "",
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     }
                 }
             };
@@ -272,13 +272,13 @@ namespace MedicalExaminer.API.Tests.Services
                     {
                         PermissionId = string.Empty,
                         LocationId = expectedLocation,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     },
                     new MEUserPermission()
                     {
                         PermissionId = string.Empty,
                         LocationId = unexpectedLocation,
-                        UserRole = (int)unexpectedRole,
+                        UserRole = unexpectedRole,
                     }
                 }
             };

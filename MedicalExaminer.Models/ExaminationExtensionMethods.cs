@@ -141,12 +141,98 @@ namespace MedicalExaminer.Models
 
         public static Examination UpdateCaseStatus(this Examination examination)
         {
+            examination.Unassigned = !(examination.MedicalTeam.MedicalExaminerOfficerUserId != null && examination.MedicalTeam.MedicalExaminerUserId != null);
             examination.PendingAdmissionNotes = CalculateAdmissionNotesPending(examination);
             examination.AdmissionNotesHaveBeenAdded = !examination.PendingAdmissionNotes;
+            examination.ReadyForMEScrutiny = CalculateReadyForScrutiny(examination);
+            examination.PendingDiscussionWithQAP = CalculatePendingQAPDiscussion(examination);
+            examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
 
-            examination.Unassigned = !(examination.MedicalTeam.MedicalExaminerOfficerUserId != null && examination.MedicalTeam.MedicalExaminerUserId != null);
+            examination.ScrutinyConfirmed = CalculateScrutinyComplete(examination);
 
             return examination;
+        }
+
+        private static bool CalculateScrutinyComplete(Examination examination)
+        {
+            if (examination.Unassigned)
+            {
+                return false;
+            }
+
+            if (examination.CaseBreakdown.PreScrutiny.Latest != null
+                && examination.AdmissionNotesHaveBeenAdded
+                && examination.PendingDiscussionWithQAP
+                && examination.PendingDiscussionWithRepresentative)
+            {
+                return false;
+            }
+
+            if (examination.CaseBreakdown.PreScrutiny.Latest != null
+                && examination.AdmissionNotesHaveBeenAdded
+                && !examination.PendingDiscussionWithQAP
+                && examination.HaveFinalCaseOutcomesOutstanding)
+            {
+                return false;
+            }
+
+            if (examination.CaseBreakdown.PreScrutiny.Latest != null
+                && examination.AdmissionNotesHaveBeenAdded
+                && !examination.PendingDiscussionWithQAP
+                && !examination.HaveFinalCaseOutcomesOutstanding)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool CalculatePendingDiscussionWithRepresentative(Examination examination)
+        {
+            if (examination.ReadyForMEScrutiny)
+            {
+                return false;
+            }
+            else
+            {
+                if (examination.CaseBreakdown.AdmissionNotes.Latest != null && examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral)
+                {
+                    return false;
+                }
+                else
+                {
+                    if (examination.CaseBreakdown.BereavedDiscussion.Latest != null && !examination.CaseBreakdown.BereavedDiscussion.Latest.DiscussionUnableHappen)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private static bool CalculatePendingQAPDiscussion(Examination examination)
+        {
+            if (examination.ReadyForMEScrutiny)
+            {
+                return false;
+            }
+            else
+            {
+                if (examination.CaseBreakdown.AdmissionNotes.Latest != null && examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral)
+                {
+                    return false;
+                }
+                else
+                {
+                    if (examination.CaseBreakdown.QapDiscussion.Latest != null && examination.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         private static bool CalculateAdmissionNotesPending(Examination examination)
@@ -166,14 +252,15 @@ namespace MedicalExaminer.Models
         {
             if (examination.CaseBreakdown.AdmissionNotes.Latest != null)
             {
-                return examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral;
-            }
-            else
-            {
-                if (examination.CaseBreakdown.MeoSummary != null)
+                if (examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral)
                 {
                     return true;
                 }
+            }
+
+            if (examination.CaseBreakdown.MeoSummary.Latest != null)
+            {
+                return true;
             }
 
             return false;

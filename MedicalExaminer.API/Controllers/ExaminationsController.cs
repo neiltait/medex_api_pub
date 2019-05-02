@@ -146,7 +146,7 @@ namespace MedicalExaminer.API.Controllers
                 examination.CreatedBy = myUser.UserId;
                 examination.CreatedAt = DateTime.Now;
 
-                var result = await _examinationCreationService.Handle(new CreateExaminationQuery(examination, myUser.UserId));
+                var result = await _examinationCreationService.Handle(new CreateExaminationQuery(examination, myUser));
                 var res = new PutExaminationResponse
                 {
                     ExaminationId = result.ExaminationId
