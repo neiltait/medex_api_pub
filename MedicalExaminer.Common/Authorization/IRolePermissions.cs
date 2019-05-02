@@ -22,7 +22,7 @@ namespace MedicalExaminer.Common.Authorization
         /// Get Permissions for Roles
         /// </summary>
         /// <param name="roles">List of Roles</param>
-        /// <returns>Dictionary of Permissions with Roles implementing each Permission.</returns>
-        IDictionary<Permission, IEnumerable<UserRoles>> PermissionsForRoles(IEnumerable<UserRoles> roles);
+        /// <returns>Dictionary of Permissions with true/false indicating they have the permission or not.</returns>
+        IDictionary<Permission, bool> PermissionsForRoles(IEnumerable<UserRoles> roles);
     }
 }

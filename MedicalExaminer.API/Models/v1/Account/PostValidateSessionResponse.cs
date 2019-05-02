@@ -32,6 +32,6 @@ namespace MedicalExaminer.API.Models.v1.Account
         /// <summary>
         /// Role.
         /// </summary>
-        public IDictionary<Permission, IEnumerable<UserRoles>> Permissions { get; set; }
+        public IDictionary<Permission, bool> Permissions { get; set; }
     }
 }

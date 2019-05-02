@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MedicalExaminer.Common.Authorization.Roles;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Common.Authorization
@@ -41,7 +40,7 @@ namespace MedicalExaminer.Common.Authorization
         }
 
         /// <inheritdoc/>
-        public IDictionary<Permission, IEnumerable<UserRoles>> PermissionsForRoles(IEnumerable<UserRoles> roles)
+        public IDictionary<Permission, bool> PermissionsForRoles(IEnumerable<UserRoles> roles)
         {
             var result = new Dictionary<Permission, HashSet<UserRoles>>();
 
@@ -65,7 +64,7 @@ namespace MedicalExaminer.Common.Authorization
             return result
                 .ToDictionary(
                     k => k.Key,
-                    v => v.Value.AsEnumerable());
+                    v => v.Value.Any());
         }
     }
 }
