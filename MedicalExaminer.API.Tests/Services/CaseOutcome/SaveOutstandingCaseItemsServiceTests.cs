@@ -64,6 +64,11 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             var examination = new MedicalExaminer.Models.Examination
             {
                 ExaminationId = examinationId,
+                MedicalTeam = new MedicalExaminer.Models.MedicalTeam()
+                {
+                    MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId",
+                    MedicalExaminerUserId = "MedicalExaminerUserId"
+                },
                 ScrutinyConfirmed = true
             };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
