@@ -99,7 +99,7 @@ namespace MedicalExaminer.Models
                 throw new ArgumentNullException(nameof(examination));
             }
 
-            if (examination.Completed)
+            if (examination.CaseCompleted)
             {
                 examination.UrgencyScore = score;
                 return examination;

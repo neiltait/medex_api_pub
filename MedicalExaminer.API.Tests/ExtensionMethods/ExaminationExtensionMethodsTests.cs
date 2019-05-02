@@ -44,7 +44,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             // Arrange
             var examination = new Examination();
-            examination.Completed = true;
+            examination.CaseCompleted = true;
 
             // Act
             examination.UpdateCaseUrgencyScore();
