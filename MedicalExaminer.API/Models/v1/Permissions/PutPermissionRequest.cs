@@ -1,4 +1,5 @@
 ﻿using MedicalExaminer.API.Attributes;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.Permissions
 {
@@ -26,6 +27,6 @@ namespace MedicalExaminer.API.Models.v1.Permissions
         ///     Gets or sets the User Role for the Permission.
         /// </summary>
         [ValidRolePerUser(nameof(UserId))]
-        public int UserRole { get; set; }
+        public UserRoles UserRole { get; set; }
     }
 }
