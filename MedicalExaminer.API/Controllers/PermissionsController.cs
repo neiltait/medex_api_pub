@@ -228,6 +228,8 @@ namespace MedicalExaminer.API.Controllers
 
                 existingPermissions.Add(permission);
 
+                user.Permissions = existingPermissions;
+
                 await _userUpdateService.Handle(new UserUpdateQuery(user));
 
                 return Ok(Mapper.Map<MEUserPermission, PostPermissionResponse>(
