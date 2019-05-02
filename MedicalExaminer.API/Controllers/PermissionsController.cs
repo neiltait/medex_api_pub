@@ -7,7 +7,6 @@ using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.API.Services;
-using MedicalExaminer.Common;
 using MedicalExaminer.Common.Extensions.Models;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Location;
@@ -17,7 +16,6 @@ using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
-using Permission = MedicalExaminer.Models.Permission;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -49,11 +47,6 @@ namespace MedicalExaminer.API.Controllers
             _locationsParentsService;
 
         /// <summary>
-        ///     The Permission Persistence Layer
-        /// </summary>
-        private readonly IPermissionPersistence _permissionPersistence;
-
-        /// <summary>
         /// Location Parents Service.
         /// </summary>
         private readonly IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> _locationParentsService;
@@ -70,7 +63,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="userUpdateService">User update service.</param>
         /// <param name="locationParentsService">Location Parents Service.</param>
         /// <param name="locationsParentsService">Locations Parents Service.</param>
-        /// <param name="permissionPersistence">The Permission Persistence</param>
         public PermissionsController(
             IMELogger logger,
             IMapper mapper,
@@ -80,13 +72,11 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
             IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService,
-            IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>> locationsParentsService,
-            IPermissionPersistence permissionPersistence)
+            IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>> locationsParentsService)
             : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
             _userRetrievalByIdService = userRetrievalByIdService;
             _userUpdateService = userUpdateService;
-            _permissionPersistence = permissionPersistence;
             _locationParentsService = locationParentsService;
             _locationsParentsService = locationsParentsService;
         }
@@ -105,6 +95,12 @@ namespace MedicalExaminer.API.Controllers
             {
                 // Get all the permission location ids on the user in the request.
                 var meUser = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
+
+                if (meUser == null)
+                {
+                    return NotFound(new GetPermissionsResponse());
+                }
+
                 var permissionLocations = meUser.Permissions.Select(p => p.LocationId).ToList();
 
                 // Get all the location paths for all those locations.
@@ -153,9 +149,19 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var meUser = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
+                var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
 
-                var permission = meUser.Permissions.First(p => p.PermissionId == permissionId);
+                if (user == null)
+                {
+                    return NotFound(new GetPermissionResponse());
+                }
+
+                var permission = user.Permissions.FirstOrDefault(p => p.PermissionId == permissionId);
+
+                if (permission == null)
+                {
+                    return NotFound(new GetPermissionResponse());
+                }
 
                 var locationDocument = (await
                         _locationParentsService.Handle(
@@ -198,7 +204,8 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var permission = Mapper.Map<Permission>(postPermission);
+                var permission = Mapper.Map<MEUserPermission>(postPermission);
+                permission.PermissionId = Guid.NewGuid().ToString();
 
                 var locationDocument = (await
                         _locationParentsService.Handle(
@@ -210,11 +217,22 @@ namespace MedicalExaminer.API.Controllers
                     return Forbid();
                 }
 
-                var createdPermission = await _permissionPersistence.CreatePermissionAsync(permission);
+                var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(postPermission.UserId));
 
-                await DuplicateOnUser(permission);
+                if (user == null)
+                {
+                    return NotFound(new PostPermissionResponse());
+                }
 
-                return Ok(Mapper.Map<PostPermissionResponse>(createdPermission));
+                var existingPermissions = user.Permissions != null ? user.Permissions.ToList() : new List<MEUserPermission>();
+
+                existingPermissions.Add(permission);
+
+                await _userUpdateService.Handle(new UserUpdateQuery(user));
+
+                return Ok(Mapper.Map<MEUserPermission, PostPermissionResponse>(
+                    permission,
+                    opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; })));
             }
             catch (DocumentClientException)
             {
@@ -245,7 +263,21 @@ namespace MedicalExaminer.API.Controllers
                     return BadRequest(new PutPermissionResponse());
                 }
 
-                var permission = Mapper.Map<Permission>(putPermission);
+                var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(putPermission.UserId));
+
+                if (user == null)
+                {
+                    return NotFound(new PutPermissionResponse());
+                }
+
+                var permissionToUpdate = user.Permissions.FirstOrDefault(p => p.PermissionId == putPermission.PermissionId);
+
+                if (permissionToUpdate == null)
+                {
+                    return NotFound(new PutPermissionResponse());
+                }
+
+                var permission = Mapper.Map(putPermission, permissionToUpdate);
 
                 var locationDocument = (await
                         _locationParentsService.Handle(
@@ -257,11 +289,11 @@ namespace MedicalExaminer.API.Controllers
                     return Forbid();
                 }
 
-                var updatedPermission = await _permissionPersistence.UpdatePermissionAsync(permission);
+                await _userUpdateService.Handle(new UserUpdateQuery(user));
 
-                await DuplicateOnUser(permission);
-
-                return Ok(Mapper.Map<PutPermissionResponse>(updatedPermission));
+                return Ok(Mapper.Map<MEUserPermission, PutPermissionResponse>(
+                    permission,
+                    opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; })));
             }
             catch (DocumentClientException)
             {
@@ -271,31 +303,6 @@ namespace MedicalExaminer.API.Controllers
             {
                 return NotFound(new PutPermissionResponse());
             }
-        }
-
-        /// <summary>
-        /// Replace whatever permissiona are on the user object with the current permissions
-        /// in the collection.
-        /// </summary>
-        /// <remarks>Updates the user specified in this permission.</remarks>
-        /// <param name="permission">A permission.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation completed successfully.</returns>
-        private async Task<bool> DuplicateOnUser(Permission permission)
-        {
-            var meUser = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(permission.UserId));
-
-            var permissions = (await _permissionPersistence.GetPermissionsAsync(permission.UserId)).ToList();
-
-            meUser.Permissions = permissions.Select(p => new MEUserPermission()
-            {
-                LocationId = p.LocationId,
-                PermissionId = p.PermissionId,
-                UserRole = p.UserRole,
-            }).ToList();
-
-            var updatedUser = await _userUpdateService.Handle(new UserUpdateQuery(meUser));
-
-            return updatedUser.Permissions.Count() == permissions.Count;
         }
     }
 }
