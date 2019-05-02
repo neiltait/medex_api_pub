@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MedicalExaminer.Common.Authorization.Roles;
 using MedicalExaminer.Models.Enums;
@@ -37,6 +38,34 @@ namespace MedicalExaminer.Common.Authorization
             {
                 return false;
             }
+        }
+
+        /// <inheritdoc/>
+        public IDictionary<Permission, IEnumerable<UserRoles>> PermissionsForRoles(IEnumerable<UserRoles> roles)
+        {
+            var result = new Dictionary<Permission, HashSet<UserRoles>>();
+
+            var values = Enum.GetValues(typeof(Permission));
+
+            foreach (var value in values)
+            {
+                result[(Permission)value] = new HashSet<UserRoles>();
+            }
+
+            foreach (var role in roles)
+            {
+                var permissions = _roles[role].Granted;
+
+                foreach (var permission in permissions)
+                {
+                    result[permission].Add(role);
+                }
+            }
+
+            return result
+                .ToDictionary(
+                    k => k.Key,
+                    v => v.Value.AsEnumerable());
         }
     }
 }

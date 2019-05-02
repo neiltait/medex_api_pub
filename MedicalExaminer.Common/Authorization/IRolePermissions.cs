@@ -17,5 +17,12 @@ namespace MedicalExaminer.Common.Authorization
         /// <param name="permission">The Permission.</param>
         /// <returns>True if it can.</returns>
         bool Can(UserRoles role, Permission permission);
+
+        /// <summary>
+        /// Get Permissions for Roles
+        /// </summary>
+        /// <param name="roles">List of Roles</param>
+        /// <returns>Dictionary of Permissions with Roles implementing each Permission.</returns>
+        IDictionary<Permission, IEnumerable<UserRoles>> PermissionsForRoles(IEnumerable<UserRoles> roles);
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models;
+using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
@@ -41,9 +42,10 @@ namespace MedicalExaminer.API.Tests.Controllers
                 IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
                 IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
                 IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService,
-                IOptions<OktaSettings> oktaSettings)
+                IOptions<OktaSettings> oktaSettings,
+                IRolePermissions rolePermissions)
                 : base(logger, mapper, oktaClient, userCreationService, usersRetrievalByEmailService,
-                    userUpdateOktaTokenService, oktaSettings)
+                    userUpdateOktaTokenService, oktaSettings, rolePermissions)
             {
 
             }
@@ -114,8 +116,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var oktaClient = new OktaClient(oktaClientConfiguration);
 
+            var rolePermissionsMock = new Mock<RolePermissions>();
 
-            _accountController = new AccountControllerProxy(_mockLogger.Object, _mockMapper.Object, oktaClient, _mockUserCreationService.Object, _mockUsersRetrievalByEmailService.Object, _mockUserUpdateOktaTokenService.Object, oktaSettings)
+            _accountController = new AccountControllerProxy(_mockLogger.Object, _mockMapper.Object, oktaClient, _mockUserCreationService.Object, _mockUsersRetrievalByEmailService.Object, _mockUserUpdateOktaTokenService.Object, oktaSettings, rolePermissionsMock.Object)
             {
                 ControllerContext = context
             };
