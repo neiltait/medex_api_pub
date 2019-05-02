@@ -183,5 +183,38 @@ namespace MedicalExaminer.Common.Tests.Extensions.MeUser
             // Assert
             role.Should().BeNull();
         }
+
+        /// <summary>
+        /// A nother test.
+        /// </summary>
+        [Fact]
+        public void UsersExaminationRole_UserHasNoPermissions_Returns_Null()
+        {
+            // Arrange
+            var user = new Models.MeUser()
+            {
+                Permissions = null
+            };
+
+            List<UserRoles> requiredRoles = new List<UserRoles>(2)
+            {
+                UserRoles.MedicalExaminer,
+                UserRoles.MedicalExaminerOfficer
+            };
+
+            var examination = new Models.Examination()
+            {
+                NationalLocationId = "national1",
+                RegionLocationId = "region1",
+                TrustLocationId = "trust1",
+                SiteLocationId = "site1"
+            };
+
+            // Act
+            var role = user.UsersExaminationRole(requiredRoles);
+
+            // Assert
+            role.Should().BeNull();
+        }
     }
 }

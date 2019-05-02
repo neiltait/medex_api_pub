@@ -52,13 +52,17 @@ namespace MedicalExaminer.Common.Extensions.MeUser
         /// </summary>
         public static UserRoles? UsersExaminationRole(this MedicalExaminer.Models.MeUser user, IEnumerable<UserRoles> requiredRoles)
         {
-            foreach(var role in requiredRoles)
+            if (user.Permissions != null)
             {
-                if((user.Permissions.SingleOrDefault(x=>x.UserRole == role)) != null)
+                foreach (var role in requiredRoles)
                 {
-                    return role;
+                    if ((user.Permissions.SingleOrDefault(x => x.UserRole == role)) != null)
+                    {
+                        return role;
+                    }
                 }
             }
+
             return null;
         }
 
