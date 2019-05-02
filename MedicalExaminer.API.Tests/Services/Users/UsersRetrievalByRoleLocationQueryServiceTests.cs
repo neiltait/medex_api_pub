@@ -82,7 +82,7 @@ namespace MedicalExaminer.API.Tests.Services.Users
                         new MEUserPermission
                         {
                             LocationId = "location1",
-                            UserRole = (int)UserRoles.MedicalExaminer,
+                            UserRole = UserRoles.MedicalExaminer,
                         }
                     }
                 },
@@ -94,12 +94,12 @@ namespace MedicalExaminer.API.Tests.Services.Users
                         new MEUserPermission
                         {
                             LocationId = "location2",
-                            UserRole = (int)UserRoles.MedicalExaminer,
+                            UserRole = UserRoles.MedicalExaminer,
                         },
                         new MEUserPermission
                         {
                             LocationId = "location3",
-                            UserRole = (int)UserRoles.MedicalExaminerOfficer,
+                            UserRole = UserRoles.MedicalExaminerOfficer,
                         }
                     }
                 },

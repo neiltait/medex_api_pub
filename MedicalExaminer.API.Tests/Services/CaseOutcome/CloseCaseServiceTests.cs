@@ -14,7 +14,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
     public class CloseCaseServiceTests
     {
         /// <summary>
-        /// Close Case When Outstanding Case Items Are Not Completed
+        /// Close Case When Outstanding Case Items Are Not CaseCompleted
         /// </summary>
         [Fact]
         public void Close_Case_When_Outstanding_Case_Items_Are_Not_Completed_Returns_Null()
@@ -50,7 +50,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
         }
 
         /// <summary>
-        /// Close Case When Outstanding Case Items Are Completed
+        /// Close Case When Outstanding Case Items Are CaseCompleted
         /// </summary>
         [Fact]
         public void Close_Case_When_Outstanding_Case_Items_Completed_Marks_Examination_Completed_And_Returns_ExaminationID()
@@ -83,7 +83,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
 
             // Assert
             Assert.NotNull(result.Result);
-            Assert.True(examination.Completed);
+            Assert.True(examination.CaseCompleted);
             Assert.Equal(examinationId, result.Result);
         }
     }

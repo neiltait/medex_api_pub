@@ -201,7 +201,7 @@ namespace MedicalExaminer.API.Tests.Attributes
                     new MEUserPermission()
                     {
                         LocationId = "site",
-                        UserRole = (int)UserRoles.MedicalExaminer,
+                        UserRole = UserRoles.MedicalExaminer,
                     }
                 }
             };

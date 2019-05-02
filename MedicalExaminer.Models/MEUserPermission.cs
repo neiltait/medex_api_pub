@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
 
 namespace MedicalExaminer.Models
@@ -27,6 +28,6 @@ namespace MedicalExaminer.Models
         /// </summary>
         [Required]
         [JsonProperty(PropertyName = "user_role")]
-        public int UserRole { get; set; }
+        public UserRoles UserRole { get; set; }
     }
 }

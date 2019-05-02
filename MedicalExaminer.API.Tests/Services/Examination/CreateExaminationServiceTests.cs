@@ -7,6 +7,7 @@ using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.Location;
+using MedicalExaminer.Models;
 using Moq;
 using Xunit;
 
@@ -37,14 +38,16 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examination = new MedicalExaminer.Models.Examination();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
-
-            CreateExaminationQuery query = new CreateExaminationQuery(examination, "a");
+            var myUser = new Mock<MeUser>();
+            CreateExaminationQuery query = new CreateExaminationQuery(examination, myUser.Object);
             var dbAccess = new Mock<IDatabaseAccess>();
             var location = new MedicalExaminer.Models.Location();
             var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
             locationService.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
-            dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
-                examination, false)).Returns(Task.FromResult(examination)).Verifiable();
+            dbAccess.Setup(db => db.CreateItemAsync(
+                connectionSettings.Object,
+                examination,
+                false)).Returns(Task.FromResult(examination)).Verifiable();
             var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
 
             // Act
@@ -53,7 +56,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             // Assert
             dbAccess.Verify(db => db.CreateItemAsync(connectionSettings.Object, examination, false), Times.Once);
             Assert.NotNull(result.Result);
-            Assert.Equal("a", result.Result.LastModifiedBy);
+            Assert.Equal(myUser.Object.UserId, result.Result.LastModifiedBy);
         }
 
         /// <summary>
@@ -72,16 +75,20 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 OtherPriority = false,
                 CreatedAt = DateTime.Now.AddDays(-3)
             };
+
+            var myUser = new Mock<MeUser>();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            CreateExaminationQuery query = new CreateExaminationQuery(examination, "a");
+            CreateExaminationQuery query = new CreateExaminationQuery(examination, myUser.Object);
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
             var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
             locationService.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
 
-            dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
-                examination, false)).Returns(Task.FromResult(examination)).Verifiable();
+            dbAccess.Setup(db => db.CreateItemAsync(
+                connectionSettings.Object,
+                examination,
+                false)).Returns(Task.FromResult(examination)).Verifiable();
             var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
 
             // Act
@@ -90,7 +97,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             // Assert
             Assert.NotNull(result.Result);
             Assert.Equal(0, result.Result.UrgencyScore);
-            Assert.Equal("a", result.Result.LastModifiedBy);
+            Assert.Equal(myUser.Object.UserId, result.Result.LastModifiedBy);
         }
 
         /// <summary>
@@ -110,14 +117,17 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CreatedAt = DateTime.Now
             };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            CreateExaminationQuery query = new CreateExaminationQuery(examination, "a");
+            var myUser = new Mock<MeUser>();
+            CreateExaminationQuery query = new CreateExaminationQuery(examination, myUser.Object);
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
             var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
             locationService.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
-            dbAccess.Setup(db => db.CreateItemAsync(connectionSettings.Object,
-                examination, false)).Returns(Task.FromResult(examination)).Verifiable();
+            dbAccess.Setup(db => db.CreateItemAsync(
+                connectionSettings.Object,
+                examination,
+                false)).Returns(Task.FromResult(examination)).Verifiable();
             var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
 
             // Act
@@ -126,7 +136,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             // Assert
             Assert.NotNull(result.Result);
             Assert.Equal(500, result.Result.UrgencyScore);
-            Assert.Equal("a", result.Result.LastModifiedBy);
+            Assert.Equal(myUser.Object.UserId, result.Result.LastModifiedBy);
         }
     }
 }

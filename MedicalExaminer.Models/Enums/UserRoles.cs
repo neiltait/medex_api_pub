@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.ComponentModel;
 
 namespace MedicalExaminer.Models.Enums
@@ -5,6 +7,7 @@ namespace MedicalExaminer.Models.Enums
     /// <summary>
     /// User Roles.
     /// </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum UserRoles
     {
         /// <summary>

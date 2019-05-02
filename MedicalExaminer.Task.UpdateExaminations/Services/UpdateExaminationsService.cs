@@ -17,7 +17,7 @@ namespace MedicalExaminer.Task.UpdateExaminations.Services
 
         public async System.Threading.Tasks.Task Handle()
         {
-            var examinations = await _examinationStore.Query().Where(e => !e.Completed).ToListAsync();
+            var examinations = await _examinationStore.Query().Where(e => !e.CaseCompleted).ToListAsync();
 
             foreach (var examination in examinations)
             {

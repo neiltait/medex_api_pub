@@ -9,24 +9,26 @@ namespace MedicalExaminer.Common.Database
     {
         public IDocumentClient CreateClient(IConnectionSettings connectionSettings)
         {
-            var Client = new DocumentClient(connectionSettings.EndPointUri, connectionSettings.PrimaryKey);
+            var client = new DocumentClient(connectionSettings.EndPointUri, connectionSettings.PrimaryKey);
 
-            Client.CreateDatabaseIfNotExistsAsync(new Microsoft.Azure.Documents.Database { Id = connectionSettings.DatabaseId });
+            client.CreateDatabaseIfNotExistsAsync(new Microsoft.Azure.Documents.Database { Id = connectionSettings.DatabaseId });
             var databaseUri = UriFactory.CreateDatabaseUri(connectionSettings.DatabaseId);
 
-            Client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection { Id = connectionSettings.Collection });
+            client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, new DocumentCollection { Id = connectionSettings.Collection });
 
-            return Client;
+            return client;
         }
 
         public ICosmosStore<TEntity> CreateCosmosStore<TEntity>(IConnectionSettings connectionSettings)
             where TEntity : class
         {
-            var cosmosSettings = new CosmosStoreSettings(connectionSettings.DatabaseId, connectionSettings.EndPointUri
-                , connectionSettings.PrimaryKey);
+            var cosmosSettings = new CosmosStoreSettings(
+                connectionSettings.DatabaseId,
+                connectionSettings.EndPointUri,
+                connectionSettings.PrimaryKey);
 
             ICosmosStore<TEntity> cosmosStore = new CosmosStore<TEntity>(cosmosSettings);
-            
+
             return cosmosStore;
         }
     }

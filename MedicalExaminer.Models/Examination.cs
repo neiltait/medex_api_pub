@@ -271,8 +271,8 @@ namespace MedicalExaminer.Models
         /// </summary>
         // Status Fields
         [Required]
-        [JsonProperty(PropertyName = "completed")]
-        public bool Completed { get; set; }
+        [JsonProperty(PropertyName = "case_completed")]
+        public bool CaseCompleted { get; set; }
 
         /// <summary>
         /// Coroner status, updated with interaction with coroner
@@ -340,7 +340,7 @@ namespace MedicalExaminer.Models
         /// is the case currently unassigned
         /// </summary>
         [JsonProperty(PropertyName = "unassigned")]
-        public bool Unassigned { get; set; } = false;
+        public bool Unassigned { get; set; } = true;
 
         /// <summary>
         /// has the case been scrutinised by the medical examiner
@@ -358,19 +358,19 @@ namespace MedicalExaminer.Models
         /// has the qap discussion occured
         /// </summary>
         [JsonProperty(PropertyName = "pending_discussion_with_qap")]
-        public bool PendingDiscussionWithQAP { get; set; } //  TODO: What should the default value be????
+        public bool PendingDiscussionWithQAP { get; set; } = true;
 
         /// <summary>
         /// has the discussion with the representative
         /// </summary>
         [JsonProperty(PropertyName = "pending_discussion_with_representative")]
-        public bool PendingDiscussionWithRepresentative { get; set; } //  TODO: What should the default value be????
+        public bool PendingDiscussionWithRepresentative { get; set; } = true;
 
         /// <summary>
         /// have the final case outcomes been determined
         /// </summary>
-        [JsonProperty(PropertyName = "have_final_case_outstanding_outcomes")]
-        public bool HaveFinalCaseOutstandingOutcomes { get; set; } = false;
+        [JsonProperty(PropertyName = "have_final_case_outcomes_outstanding")]
+        public bool HaveFinalCaseOutcomesOutstanding { get; set; } = true;
 
         /// <summary>
         /// the unique identifier for the examination
@@ -401,6 +401,7 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "site_location_id")]
         public string SiteLocationId { get; set; }
+
 
         public DateTime ConfirmationOfScrutinyCompletedAt { get; set; }
 
