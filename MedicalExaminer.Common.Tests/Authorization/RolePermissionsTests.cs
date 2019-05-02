@@ -62,6 +62,24 @@ namespace MedicalExaminer.Common.Tests.Authorization
             result.Should().BeFalse();
         }
 
+        /// <summary>
+        /// Permissions For Roles.
+        /// </summary>
+        [Fact]
+        public void PermissionsForRoles()
+        {
+            // Arrange
+            var role = new TestRole();
+            var sut = new RolePermissions(new List<Role> { role });
+
+            // Act
+            var result = sut.PermissionsForRoles(new[] { UserRoles.MedicalExaminer });
+
+            // Assert
+            result.Keys.Should().Contain(Permission.AddEventToExamination);
+            result[Permission.AddEventToExamination].Should().BeTrue();
+        }
+
         private class TestRole : Role
         {
             public TestRole()
