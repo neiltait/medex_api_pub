@@ -108,14 +108,20 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         public TimeSpan? TimeOfDeath { get; set; }
 
         /// <summary>
-        ///     patients given names.
+        ///     Patients surname
         /// </summary>
-        public string GivenNames { get; set; }
+        [Required]
+        [MinLength(1)]
+        [MaxLength(150)]
+        public string Surname { get; set; }
 
         /// <summary>
-        ///     patients surname.
+        ///     Patients given names
         /// </summary>
-        public string Surname { get; set; }
+        [Required]
+        [MinLength(1)]
+        [MaxLength(150)]
+        public string GivenNames { get; set; }
 
         /// <summary>
         ///     Patients Postcode.
