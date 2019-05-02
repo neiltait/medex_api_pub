@@ -2,7 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using MedicalExaminer.API.Models.v1.Permissions;
-using MedicalExaminer.Common;
+using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Attributes
@@ -30,23 +32,23 @@ namespace MedicalExaminer.API.Attributes
         {
             var role = (UserRoles)Enum.Parse(typeof(UserRoles), value.ToString());
 
-            var permissionPersistence = (IPermissionPersistence)context.GetService(typeof(IPermissionPersistence));
+            var uerRetrievalByIdService = (IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>)context.GetService(typeof(IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>));
 
-            if (permissionPersistence == null)
+            if (uerRetrievalByIdService == null)
             {
-                throw new NullReferenceException("permissionPersistence is null");
+                throw new NullReferenceException("uerRetrievalByIdService is null");
             }
 
             var instance = (PutPermissionRequest)context.ObjectInstance;
 
             var type = instance.GetType();
-            var propertyValue = (string)type.GetProperty(UserIdField).GetValue(instance, null);
+            var userIdValue = (string)type.GetProperty(UserIdField).GetValue(instance, null);
 
-            var existingPermissions = permissionPersistence.GetPermissionsAsync(propertyValue).Result;
+            var existingPermissions = uerRetrievalByIdService.Handle(new UserRetrievalByIdQuery(userIdValue)).Result;
 
             if (IsTargetRole(role))
             {
-                if (existingPermissions.Any(p => IsTargetRole((UserRoles)p.UserRole)))
+                if (existingPermissions.Permissions.Any(p => IsTargetRole((UserRoles)p.UserRole)))
                 {
                     return new ValidationResult("User already has permission");
                 }
