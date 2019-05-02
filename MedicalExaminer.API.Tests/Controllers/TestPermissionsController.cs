@@ -558,7 +558,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                     {
                         LocationId = "locationId",
                         PermissionId = "permissionId",
-                        UserRole = (int)UserRoles.MedicalExaminer,
+                        UserRole = UserRoles.MedicalExaminer,
                     }
                 }.AsEnumerable()));
 
