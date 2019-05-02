@@ -116,7 +116,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var oktaClient = new OktaClient(oktaClientConfiguration);
 
-            var rolePermissionsMock = new Mock<RolePermissions>();
+            var rolePermissionsMock = new Mock<IRolePermissions>();
 
             _accountController = new AccountControllerProxy(_mockLogger.Object, _mockMapper.Object, oktaClient, _mockUserCreationService.Object, _mockUsersRetrievalByEmailService.Object, _mockUserUpdateOktaTokenService.Object, oktaSettings, rolePermissionsMock.Object)
             {
