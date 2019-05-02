@@ -5,12 +5,14 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Services;
+using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Permission = MedicalExaminer.Common.Authorization.Permission;
@@ -101,7 +103,8 @@ namespace MedicalExaminer.API.Controllers
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewPreScrutinyEvent(
             string examinationId,
-            [FromBody] PutPreScrutinyEventRequest putNewPreScrutinyEventNoteRequest)
+            [FromBody]
+            PutPreScrutinyEventRequest putNewPreScrutinyEventNoteRequest)
         {
             return await UpsertEvent<PreScrutinyEvent, PutPreScrutinyEventRequest>(examinationId,
                 putNewPreScrutinyEventNoteRequest);
@@ -165,13 +168,14 @@ namespace MedicalExaminer.API.Controllers
             where T : IEvent
         {
             theEvent.UserId = user.UserId;
-            theEvent.UserFullName = user.FirstName + user.LastName;
+            theEvent.UserFullName = user.FullName();
+            theEvent.UsersRole = user.UsersExaminationRole(new[] { UserRoles.MedicalExaminer, UserRoles.MedicalExaminerOfficer }).ToString();
             return theEvent;
         }
 
         private async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertEvent<TEvent, TRequest>(
             string examinationId,
-            [FromBody] TRequest putNewMeoSummaryEventNoteRequest)
+            [FromBody] TRequest putNewMeoSummaryEventNoteRequest)   //refactor - name change
             where TEvent : IEvent
         {
             if (!ModelState.IsValid)

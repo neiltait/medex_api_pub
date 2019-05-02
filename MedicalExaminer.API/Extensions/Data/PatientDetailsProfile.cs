@@ -15,7 +15,8 @@ namespace MedicalExaminer.API.Extensions.Data
         public PatientDetailsProfile()
         {
             CreateMap<PutPatientDetailsRequest, PatientDetails>()
-                .ForMember(x => x.Id, opt => opt.Ignore());
+                .ForMember(x => x.Id, opt => opt.Ignore())
+                .ForMember(x => x.CaseCompleted, opt => opt.MapFrom(y => y.Completed));
             CreateMap<PatientDetails, Examination>()
                 .ForMember(x => x.ExaminationId, opt => opt.Ignore())
                 .ForMember(x => x.MedicalExaminerOfficeResponsibleName, opt => opt.Ignore())
@@ -30,7 +31,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(x => x.PendingAdmissionNotes, opt => opt.Ignore())
                 .ForMember(x => x.PendingDiscussionWithQAP, opt => opt.Ignore())
                 .ForMember(x => x.PendingDiscussionWithRepresentative, opt => opt.Ignore())
-                .ForMember(x => x.HaveFinalCaseOutstandingOutcomes, opt => opt.Ignore())
+                .ForMember(x => x.HaveFinalCaseOutcomesOutstanding, opt => opt.Ignore())
                 .ForMember(x => x.NationalLocationId, opt => opt.Ignore())
                 .ForMember(x => x.RegionLocationId, opt => opt.Ignore())
                 .ForMember(x => x.TrustLocationId, opt => opt.Ignore())
@@ -39,7 +40,14 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(x => x.ModifiedAt, opt => opt.Ignore())
                 .ForMember(x => x.CreatedAt, opt => opt.Ignore())
                 .ForMember(x => x.CreatedBy, opt => opt.Ignore())
-                .ForMember(x => x.DeletedAt, opt => opt.Ignore());
+                .ForMember(x => x.DeletedAt, opt => opt.Ignore())
+                .ForMember(x => x.ConfirmationOfScrutinyCompletedAt, opt => opt.Ignore())
+                .ForMember(x => x.ConfirmationOfScrutinyCompletedBy, opt => opt.Ignore())
+                .ForMember(x => x.CoronerReferralSent, opt => opt.Ignore())
+                .ForMember(x => x.ScrutinyConfirmed, opt => opt.Ignore())
+                .ForMember(x => x.OutstandingCaseItemsCompleted, opt => opt.Ignore())
+                .ForMember(x => x.CaseOutcome, opt => opt.Ignore())
+                .ForMember(x => x.CaseCompleted, opt => opt.MapFrom(y => y.CaseCompleted));
         }
     }
 }

@@ -271,8 +271,8 @@ namespace MedicalExaminer.Models
         /// </summary>
         // Status Fields
         [Required]
-        [JsonProperty(PropertyName = "completed")]
-        public bool Completed { get; set; }
+        [JsonProperty(PropertyName = "case_completed")]
+        public bool CaseCompleted { get; set; }
 
         /// <summary>
         /// Coroner status, updated with interaction with coroner
@@ -328,49 +328,49 @@ namespace MedicalExaminer.Models
         /// Have the admission notes been added
         /// </summary>
         [JsonProperty(PropertyName = "admission_notes_have_been_added")]
-        public bool AdmissionNotesHaveBeenAdded { get; set; }
+        public bool AdmissionNotesHaveBeenAdded { get; set; } = false;
 
         /// <summary>
         /// is the examination ready for medical examiner scrutiny
         /// </summary>
         [JsonProperty(PropertyName = "ready_for_me_scrutiny")]
-        public bool ReadyForMEScrutiny { get; set; }
+        public bool ReadyForMEScrutiny { get; set; } = false;
 
         /// <summary>
         /// is the case currently unassigned
         /// </summary>
         [JsonProperty(PropertyName = "unassigned")]
-        public bool Unassigned { get; set; }
+        public bool Unassigned { get; set; } = true;
 
         /// <summary>
         /// has the case been scrutinised by the medical examiner
         /// </summary>
         [JsonProperty(PropertyName = "have_been_scrutinised_by_me")]
-        public bool HaveBeenScrutinisedByME { get; set; }
+        public bool HaveBeenScrutinisedByME { get; set; } = false;
 
         /// <summary>
         /// have admission notes been added for the examination
         /// </summary>
         [JsonProperty(PropertyName = "pending_admission_notes")]
-        public bool PendingAdmissionNotes { get; set; }
+        public bool PendingAdmissionNotes { get; set; } = true;
 
         /// <summary>
         /// has the qap discussion occured
         /// </summary>
         [JsonProperty(PropertyName = "pending_discussion_with_qap")]
-        public bool PendingDiscussionWithQAP { get; set; }
+        public bool PendingDiscussionWithQAP { get; set; } = true;
 
         /// <summary>
         /// has the discussion with the representative
         /// </summary>
         [JsonProperty(PropertyName = "pending_discussion_with_representative")]
-        public bool PendingDiscussionWithRepresentative { get; set; }
+        public bool PendingDiscussionWithRepresentative { get; set; } = true;
 
         /// <summary>
         /// have the final case outcomes been determined
         /// </summary>
-        [JsonProperty(PropertyName = "have_final_case_outstanding_outcomes")]
-        public bool HaveFinalCaseOutstandingOutcomes { get; set; }
+        [JsonProperty(PropertyName = "have_final_case_outcomes_outstanding")]
+        public bool HaveFinalCaseOutcomesOutstanding { get; set; } = true;
 
         /// <summary>
         /// the unique identifier for the examination
@@ -401,5 +401,36 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "site_location_id")]
         public string SiteLocationId { get; set; }
+
+
+        public DateTime ConfirmationOfScrutinyCompletedAt { get; set; }
+
+        public string ConfirmationOfScrutinyCompletedBy { get; set; }
+
+        /// <summary>
+        /// has the coroners referral been sent?
+        /// </summary>
+        [JsonProperty(PropertyName = "coroner_referral_sent")]
+        public bool CoronerReferralSent { get; set; } = false;
+
+        /// <summary>
+        /// has the Scrutiny been confirmed?
+        /// </summary>
+        [JsonProperty(PropertyName = "scrutiny_confirmed")]
+        public bool ScrutinyConfirmed { get; set; } = false;
+
+        /// <summary>
+        /// have the outstanding case items been completed?
+        /// </summary>
+        [JsonProperty(PropertyName = "outstanding_case_items_completed")]
+        public bool OutstandingCaseItemsCompleted { get; set; } = false;
+
+        /// <summary>
+        /// Case Outcome Items
+        /// </summary>
+        [Required]
+        [JsonProperty(PropertyName = "case_outcome")]
+        public CaseOutcome CaseOutcome { get; set; } = new CaseOutcome();
+
     }
 }

@@ -1,17 +1,19 @@
-﻿namespace MedicalExaminer.Common.Queries.PatientDetails
+﻿using MedicalExaminer.Models;
+
+namespace MedicalExaminer.Common.Queries.PatientDetails
 {
     public class PatientDetailsUpdateQuery : IQuery<Models.Examination>
     {
-        public PatientDetailsUpdateQuery(string caseId, Models.PatientDetails patientDetails, string userId)
+        public PatientDetailsUpdateQuery(string caseId, Models.PatientDetails patientDetails, MeUser user)
         {
             CaseId = caseId;
             PatientDetails = patientDetails;
-            UserId = userId;
+            User = user;
         }
 
         public string CaseId { get; }
 
-        public string UserId { get; }
+        public MeUser User { get; }
 
         public Models.PatientDetails PatientDetails { get; }
     }

@@ -3,9 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using MedicalExaminer.API.Extensions.Models;
 using MedicalExaminer.API.Models.v1.Account;
-using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
@@ -20,6 +18,7 @@ using Microsoft.Azure.Documents;
 using Microsoft.Extensions.Options;
 using Okta.Sdk;
 using Permission = MedicalExaminer.Common.Authorization.Permission;
+using MedicalExaminer.Common.Extensions.MeUser;
 
 namespace MedicalExaminer.API.Controllers
 {

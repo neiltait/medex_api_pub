@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using MedicalExaminer.API.Models.v1.CaseBreakdown;
+using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Models;
 using MedicalExaminer.API.Models.v1.PatientDetails;
@@ -18,6 +19,31 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public ExaminationProfile()
         {
+            CreateMap<Examination, CaseOutcome>()
+                .ForMember(x => x.CaseMedicalExaminerFullName, opt => opt.MapFrom(y => y.CaseOutcome.CaseMedicalExaminerFullName))
+                .ForMember(x => x.CaseCompleted, opt => opt.MapFrom(y => y.CaseOutcome.CaseCompleted))
+                .ForMember(x => x.CaseOutcomeSummary, opt => opt.MapFrom(y => y.CaseOutcome.CaseOutcomeSummary))
+                .ForMember(x => x.OutcomeOfPrescrutiny, opt => opt.MapFrom(y => y.CaseOutcome.OutcomeOfPrescrutiny))
+                .ForMember(x => x.OutcomeOfRepresentativeDiscussion, opt => opt.MapFrom(y => y.CaseOutcome.OutcomeOfRepresentativeDiscussion))
+                .ForMember(x => x.OutcomeQapDiscussion, opt => opt.MapFrom(y => y.CaseOutcome.OutcomeQapDiscussion))
+                .ForMember(x => x.ScrutinyConfirmedOn, opt => opt.MapFrom(y => y.CaseOutcome.ScrutinyConfirmedOn))
+                .ForMember(x => x.CremationFormStatus, opt => opt.MapFrom(y => y.CaseOutcome.CremationFormStatus))
+                .ForMember(x => x.MCCDIssued, opt => opt.MapFrom(y => y.CaseOutcome.MCCDIssued))
+                .ForMember(x => x.GPNotifiedStatus, opt => opt.MapFrom(y => y.CaseOutcome.GPNotifiedStatus));
+            CreateMap<Examination, GetCaseOutcomeResponse>()
+                .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
+                .ForMember(x => x.CaseMedicalExaminerFullName, opt => opt.MapFrom(x => x.MedicalExaminerOfficeResponsibleName))
+                .ForMember(x => x.MCCDIssued, opt => opt.MapFrom(y => y.CaseOutcome.MCCDIssued))
+                .ForMember(x => x.CremationFormStatus, opt => opt.MapFrom(y => y.CaseOutcome.CremationFormStatus))
+                .ForMember(x => x.GPNotifedStatus, opt => opt.MapFrom(y => y.CaseOutcome.GPNotifiedStatus))
+                .ForMember(x => x.Errors, opt => opt.Ignore())
+                .ForMember(x => x.Lookups, opt => opt.Ignore())
+                .ForMember(x => x.CaseCompleted, opt => opt.MapFrom(y => y.CaseOutcome.CaseCompleted))
+                .ForMember(x => x.CaseOutcomeSummary, opt => opt.MapFrom(y => y.CaseOutcome.CaseOutcomeSummary))
+                .ForMember(x => x.OutcomeOfPrescrutiny, opt => opt.MapFrom(y => y.CaseOutcome.OutcomeOfPrescrutiny))
+                .ForMember(x => x.OutcomeOfRepresentativeDiscussion, opt => opt.MapFrom(y => y.CaseOutcome.OutcomeOfRepresentativeDiscussion))
+                .ForMember(x => x.OutcomeQapDiscussion, opt => opt.MapFrom(y => y.CaseOutcome.OutcomeQapDiscussion))
+                .ForMember(x => x.ScrutinyConfirmedOn, opt => opt.MapFrom(y => y.ConfirmationOfScrutinyCompletedAt));
             CreateMap<Examination, ExaminationItem>();
             CreateMap<Examination, GetPatientDetailsResponse>()
                 .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
@@ -73,7 +99,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.CoronerPriority, opt => opt.Ignore())
                 .ForMember(examination => examination.OtherPriority, opt => opt.Ignore())
                 .ForMember(examination => examination.PriorityDetails, opt => opt.Ignore())
-                .ForMember(examination => examination.Completed, opt => opt.Ignore())
+                .ForMember(examination => examination.CaseCompleted, opt => opt.Ignore())
                 .ForMember(examination => examination.CoronerStatus, opt => opt.Ignore())
                 .ForMember(examination => examination.AnyImplants, opt => opt.Ignore())
                 .ForMember(examination => examination.ImplantDetails, opt => opt.Ignore())
@@ -85,7 +111,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.PendingAdmissionNotes, opt => opt.Ignore())
                 .ForMember(examination => examination.PendingDiscussionWithQAP, opt => opt.Ignore())
                 .ForMember(examination => examination.PendingDiscussionWithRepresentative, opt => opt.Ignore())
-                .ForMember(examination => examination.HaveFinalCaseOutstandingOutcomes, opt => opt.Ignore())
+                .ForMember(examination => examination.HaveFinalCaseOutcomesOutstanding, opt => opt.Ignore())
                 .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
                 .ForMember(examination => examination.LastModifiedBy, opt => opt.Ignore())
                 .ForMember(examination => examination.ModifiedAt, opt => opt.Ignore())
@@ -99,6 +125,12 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.RegionLocationId, opt => opt.Ignore())
                 .ForMember(examination => examination.TrustLocationId, opt => opt.Ignore())
                 .ForMember(examination => examination.SiteLocationId, opt => opt.Ignore())
+                .ForMember(examination => examination.ConfirmationOfScrutinyCompletedAt, opt => opt.Ignore())
+                .ForMember(examination => examination.ConfirmationOfScrutinyCompletedBy, opt => opt.Ignore())
+                .ForMember(examination => examination.CoronerReferralSent, opt => opt.Ignore())
+                .ForMember(examination => examination.ScrutinyConfirmed, opt => opt.Ignore())
+                .ForMember(examination => examination.OutstandingCaseItemsCompleted, opt => opt.Ignore())
+                .ForMember(examination => examination.CaseOutcome, opt => opt.Ignore())
                 .ForMember(examination => examination.CreatedBy, opt => opt.Ignore());
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(patientCard => patientCard.AppointmentDate,
@@ -108,6 +140,12 @@ namespace MedicalExaminer.API.Extensions.Data
                     .ForMember(patientCard => patientCard.CaseCreatedDate, opt => opt.MapFrom(examination => examination.CreatedAt));
 
             CreateMap<Representative, RepresentativeItem>();
+            CreateMap<Examination, DeathEvent>()
+                .ForMember(x => x.Created, opt => opt.Ignore())
+                .ForMember(x => x.UserId, opt => opt.MapFrom(y => y.LastModifiedBy))
+                .ForMember(x => x.EventId, opt => opt.Ignore())
+                .ForMember(x => x.UsersRole, opt => opt.Ignore())
+                .ForMember(x => x.UserFullName, opt => opt.Ignore());
         }
     }
 

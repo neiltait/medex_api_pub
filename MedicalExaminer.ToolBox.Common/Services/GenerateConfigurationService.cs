@@ -130,7 +130,7 @@ namespace MedicalExaminer.ToolBox.Common.Services
             {
                 PermissionId = Guid.NewGuid().ToString(),
                 LocationId = location.LocationId,
-                UserRole = (int) role,
+                UserRole = role,
             };
 
             await _permissionStore.UpsertAsync(permission);
@@ -147,7 +147,7 @@ namespace MedicalExaminer.ToolBox.Common.Services
                     {
                         LocationId = location.LocationId,
                         PermissionId = permission.PermissionId,
-                        UserRole = (int)role,
+                        UserRole = role,
                     }
                 }
             };

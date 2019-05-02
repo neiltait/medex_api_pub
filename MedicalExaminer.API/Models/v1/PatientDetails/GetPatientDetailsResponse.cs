@@ -61,7 +61,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     Is the case completed?.
         /// </summary>
-        public bool Completed { get; set; }
+        public bool CaseCompleted { get; set; }
 
         /// <summary>
         ///     The cases coroner status.

@@ -38,7 +38,7 @@ namespace MedicalExaminer.Common.Services.Examination
 
         private Expression<Func<Models.Examination, bool>> GetOpenCasesPredicate(bool paramFilterOpenCases)
         {
-            return examination => examination.Completed == !paramFilterOpenCases;
+            return examination => examination.CaseCompleted == !paramFilterOpenCases;
         }
 
         private Expression<Func<Models.Examination, bool>> GetCaseStatusPredicate(CaseStatus? paramFilterCaseStatus)
@@ -60,7 +60,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 case CaseStatus.PendingDiscussionWithRepresentative:
                     return examination => examination.PendingDiscussionWithRepresentative;
                 case CaseStatus.HaveFinalCaseOutstandingOutcomes:
-                    return examination => examination.HaveFinalCaseOutstandingOutcomes;
+                    return examination => examination.HaveFinalCaseOutcomesOutstanding;
                 case null:
                     return null;
                 default:

@@ -1,6 +1,6 @@
-﻿using MedicalExaminer.Models.Enums;
+﻿using System;
+using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
-using System;
 
 namespace MedicalExaminer.Models
 {

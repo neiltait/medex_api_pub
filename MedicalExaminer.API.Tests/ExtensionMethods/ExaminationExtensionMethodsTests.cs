@@ -8,7 +8,6 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 {
     public class ExaminationExtensionMethodsTests
     {
-
         [Fact]
         public void CreateDraftEventForUserReturnsDraft()
         {
@@ -242,7 +241,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void No_AdmissionNotes_Case_Status_Pending_Admission_Notes_True()
+        public void No_AdmissionNotes_Case_Status_PendingAdmissionNotes_True()
         {
             // Arrange
             var examination = new Examination();
@@ -253,11 +252,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination = examination.UpdateCaseStatus();
 
             // Assert
-            Assert.Equal(true, examination.PendingAdmissionNotes);
+            Assert.True(examination.PendingAdmissionNotes);
         }
 
         [Fact]
-        public void Draft_AdmissionNotes_Case_Status_Pending_Admission_Notes_True()
+        public void Draft_AdmissionNotes_Case_Status_PendingAdmissionNotes_True()
         {
             // Arrange
             var examination = new Examination();
@@ -271,11 +270,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination = examination.UpdateCaseStatus();
 
             // Assert
-            Assert.Equal(true, examination.PendingAdmissionNotes);
+            Assert.True(examination.PendingAdmissionNotes);
         }
 
         [Fact]
-        public void Latest_AdmissionNotes_Case_Status_Pending_Admission_Notes_False()
+        public void Latest_AdmissionNotes_Case_Status_PendingAdmissionNotes_False()
         {
             // Arrange
             var examination = new Examination();
@@ -289,7 +288,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination = examination.UpdateCaseStatus();
 
             // Assert
-            Assert.Equal(true, examination.PendingAdmissionNotes);
+            Assert.True(examination.PendingAdmissionNotes);
         }
 
         [Fact]
@@ -304,7 +303,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination = examination.UpdateCaseStatus();
 
             // Assert
-            Assert.Equal(false, examination.AdmissionNotesHaveBeenAdded);
+            Assert.False(examination.AdmissionNotesHaveBeenAdded);
         }
 
         [Fact]
@@ -322,7 +321,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination = examination.UpdateCaseStatus();
 
             // Assert
-            Assert.Equal(false, examination.AdmissionNotesHaveBeenAdded);
+            Assert.False(examination.AdmissionNotesHaveBeenAdded);
         }
 
         [Fact]
@@ -340,7 +339,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination = examination.UpdateCaseStatus();
 
             // Assert
-            Assert.Equal(false, examination.AdmissionNotesHaveBeenAdded);
+            Assert.False(examination.AdmissionNotesHaveBeenAdded);
         }
 
         [Fact]
@@ -361,7 +360,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination = examination.UpdateCaseStatus();
 
             // Assert
-            Assert.Equal(true, examination.AdmissionNotesHaveBeenAdded);
+            Assert.True(examination.AdmissionNotesHaveBeenAdded);
         }
 
         [Fact]
@@ -373,9 +372,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             examination = examination.UpdateCaseStatus();
 
-            Assert.Equal(false, examination.HaveBeenScrutinisedByME);
+            Assert.False(examination.HaveBeenScrutinisedByME);
         }
-
 
         [Fact]
         public void No_Me_Or_Meo_Unassigned_True()
@@ -433,6 +431,335 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             // Assert
             Assert.Equal(1500, result.UrgencyScore);
+        }
+
+        [Fact]
+        public void NewExamination_PendingQapDiscussion_True()
+        {
+            var examination = new Examination();
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithQAP);
+        }
+
+        [Fact]
+        public void ReadyForMeScrutiny_PendingQapDiscussion_False()
+        {
+            var examination = new Examination();
+            examination.CaseBreakdown.MeoSummary.Latest = new MeoSummaryEvent();
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.PendingDiscussionWithQAP);
+        }
+
+        [Fact]
+        public void NotReadyForMeScrutiny_DraftAdmissionNotes_PendingQapDiscussion_False()
+        {
+            var examination = new Examination();
+            examination = SetNotReadyForMeScrutiny(examination);
+            examination.CaseBreakdown.AdmissionNotes.Drafts.Add(new AdmissionEvent());
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithQAP);
+        }
+
+        [Fact]
+        public void NotReadyForMeScrutiny_FinalAdmissionNotes_PendingQapDiscussion_False()
+        {
+            var examination = new Examination();
+            examination.ReadyForMEScrutiny = false;
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent();
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithQAP);
+        }
+
+        [Fact]
+        public void NotReadyForMeScrutiny_FinalAdmissionNotes_ImmediateCoronerTrue_PendingQapDiscussion_False()
+        {
+            var examination = new Examination();
+            examination.ReadyForMEScrutiny = false;
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = true };
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.PendingDiscussionWithQAP);
+        }
+
+        [Fact]
+        public void NotReadyForMeScrutiny_FinalAdmissionNotes_ImmediateCoronerFalse_PendingQapDiscussion_False()
+        {
+            var examination = new Examination();
+            examination = SetNotReadyForMeScrutiny(examination);
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithQAP);
+        }
+
+        [Fact]
+        public void NotReadyForMeScrutiny_FinalAdmissionNotes_ImmediateCoronerFalse_QAPDiscussionOccured_PendingQapDiscussion_False()
+        {
+            var examination = new Examination();
+            examination = SetNotReadyForMeScrutiny(examination);
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
+            examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent() { DiscussionUnableHappen = false };
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithQAP);
+        }
+
+        [Fact]
+        public void NotReadyForMeScrutiny_FinalAdmissionNotes_ImmediateCoronerFalse_QAPDiscussionNotOccured_PendingQapDiscussion_False()
+        {
+            var examination = new Examination();
+            examination = SetNotReadyForMeScrutiny(examination);
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
+            examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent() { DiscussionUnableHappen = true };
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.PendingDiscussionWithQAP);
+        }
+
+        [Fact]
+        public void NewExamination_PendingRepresentativeDiscussion_True()
+        {
+            var examination = new Examination();
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void PendingRepresentativeDiscussion_ReadyForMeScrutiny_False()
+        {
+            var examination = new Examination();
+            examination.CaseBreakdown.MeoSummary.Latest = new MeoSummaryEvent();
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void PendingRepresentativeDiscussion_NotReadyForMeScrutiny_NoLatestAdmissionNotes_True()
+        {
+            var examination = new Examination();
+            examination = SetNotReadyForMeScrutiny(examination);
+            examination.CaseBreakdown.AdmissionNotes.Latest = null;
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void PendingRepresentativeDiscussion_NotReadyForMeScrutiny_LatestAdmissionNotes_True()
+        {
+            var examination = new Examination();
+            examination = SetNotReadyForMeScrutiny(examination);
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent();
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void PendingRepresentativeDiscussion_NotReadyForMeScrutiny_LatestAdmissionNotes_ImmediateCoronerReferral_False()
+        {
+            var examination = new Examination();
+            examination = SetNotReadyForMeScrutiny(examination);
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = true };
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void PendingRepresentativeDiscussion_NotReadyForMeScrutiny_LatestAdmissionNotes_NoImmediateCoronerReferral_True()
+        {
+            var examination = new Examination();
+            examination = SetNotReadyForMeScrutiny(examination);
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void PendingRepresentativeDiscussion_NotReadyForMeScrutiny_LatestAdmissionNotes_NoImmediateCoronerReferral_LatestBereavedDiscussion_False()
+        {
+            var examination = new Examination();
+            examination = SetNotReadyForMeScrutiny(examination);
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
+            examination.CaseBreakdown.BereavedDiscussion.Latest = new BereavedDiscussionEvent();
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void PendingRepresentativeDiscussion_NotReadyForMeScrutiny_LatestAdmissionNotes_NoImmediateCoronerReferral_LatestBereavedDiscussionUnableToHappen_True()
+        {
+            var examination = new Examination();
+            examination = SetNotReadyForMeScrutiny(examination);
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
+            examination.CaseBreakdown.BereavedDiscussion.Latest = new BereavedDiscussionEvent() { DiscussionUnableHappen = true };
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingDiscussionWithRepresentative);
+        }
+
+        [Fact]
+        public void NewExamination_ScrutinyComplete_False()
+        {
+            var examination = new Examination();
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.ScrutinyConfirmed);
+        }
+
+        [Fact]
+        public void ScrutinyComplete_Unassigned_False()
+        {
+            var examination = new Examination();
+            examination = SetUnassigned(examination);
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.ScrutinyConfirmed);
+        }
+
+        [Fact]
+        public void ScrutinyComplete_ReadyForScrutiny_Unassigned_False()
+        {
+            var examination = new Examination();
+            examination.CaseBreakdown.MeoSummary.Latest = new MeoSummaryEvent();
+            examination = SetUnassigned(examination);
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.ScrutinyConfirmed);
+        }
+
+        [Fact]
+        public void ScrutinyComplete_ReadyForScrutiny_AdmissionNotes_Assigned_False()
+        {
+            var examination = new Examination();
+            examination = SetAssigned(examination);
+            examination = SetReadyForMeScrutinyAdmissionNotes(examination);
+            examination = SetPreScrutinyDone(examination);
+            examination = SetQapDiscussionDone(examination);
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional();
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.ScrutinyConfirmed);
+        }
+
+        [Fact]
+        public void ScrutinyComplete_ReadyForScrutiny_MeoSummary_Assigned_False()
+        {
+            var examination = new Examination();
+            examination = SetAssigned(examination);
+            examination = SetReadyForMeScrutinyMeoSummary(examination);
+            examination = SetPreScrutinyDone(examination);
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional();
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.ScrutinyConfirmed);
+        }
+
+        private Examination SetAssigned(Examination examination)
+        {
+            examination.MedicalTeam.MedicalExaminerOfficerUserId = "medicalExaminerOfficer";
+            examination.MedicalTeam.MedicalExaminerUserId = "medicalExaminer";
+
+            return examination;
+        }
+
+        private Examination SetUnassigned(Examination examination)
+        {
+            examination.MedicalTeam.MedicalExaminerOfficerUserId = null;
+            examination.MedicalTeam.MedicalExaminerUserId = null;
+
+            return examination;
+        }
+
+        private Examination SetReadyForMeScrutinyAdmissionNotes(Examination examination)
+        {
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent()
+            {
+                ImmediateCoronerReferral = true
+            };
+
+            return examination;
+        }
+
+        private Examination SetReadyForMeScrutinyMeoSummary(Examination examination)
+        {
+            examination.CaseBreakdown.MeoSummary.Latest = new MeoSummaryEvent();
+            return examination;
+        }
+
+        private Examination SetNotReadyForMeScrutiny(Examination examination)
+        {
+            examination.CaseBreakdown.AdmissionNotes.Drafts.Add(new AdmissionEvent());
+            examination.CaseBreakdown.MeoSummary.Latest = null;
+            return examination;
+        }
+
+        private Examination SetAdmissionNotesAdded(Examination examination)
+        {
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent();
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional();
+            return examination;
+        }
+
+        private Examination SetPendingQapDiscussion(Examination examination)
+        {
+            examination = SetNotReadyForMeScrutiny(examination);
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent()
+            {
+                ImmediateCoronerReferral = false
+            };
+            examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent()
+            {
+                DiscussionUnableHappen = false
+            };
+
+            return examination;
+        }
+
+        private Examination SetPreScrutinyDone(Examination examination)
+        {
+            examination.CaseBreakdown.PreScrutiny.Latest = new PreScrutinyEvent();
+            return examination;
+        }
+
+        private Examination SetQapDiscussionDone(Examination examination)
+        {
+            examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent();
+            return examination;
+        }
+
+        private Examination SetRepresentativeDiscussionDone_ReadyForMeScrutiny_AdmissionNotes(Examination examination)
+        {
+            examination = SetReadyForMeScrutinyAdmissionNotes(examination);
+            return examination;
+        }
+
+        private Examination SetRepresentativeDiscussionDone_ReadyForMeScrutiny_MeoSummary(Examination examination)
+        {
+            examination = SetReadyForMeScrutinyMeoSummary(examination);
+            return examination;
+        }
+
+        private Examination SetRepresentativeDiscussionDone_AdmissionNotes_ImmediateReferral(Examination examination)
+        {
+            if (examination.CaseBreakdown.AdmissionNotes.Latest != null)
+            {
+                examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral = true;
+            }
+            else
+            {
+                examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent()
+                {
+                    ImmediateCoronerReferral = true
+                };
+            }
+
+            return examination;
+        }
+
+        private Examination SetRepresentativeDiscussionDone_RepresentativeDiscussion(Examination examination)
+        {
+            if (examination.CaseBreakdown.BereavedDiscussion.Latest != null)
+            {
+                examination.CaseBreakdown.BereavedDiscussion.Latest.DiscussionUnableHappen = false;
+            }
+            else
+            {
+                examination.CaseBreakdown.BereavedDiscussion.Latest = new BereavedDiscussionEvent()
+                {
+                    DiscussionUnableHappen = false
+                };
+            }
+
+            return examination;
         }
     }
 }

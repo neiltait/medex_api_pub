@@ -31,8 +31,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examinationQueryBuilder = new ExaminationsQueryExpressionBuilder();
 
             return new ExaminationsRetrievalService(
-                databaseAccess, 
-                connectionSettings, 
+                databaseAccess,
+                connectionSettings,
                 examinationQueryBuilder,
                 store.Object);
         }
@@ -49,7 +49,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(9, results.Count());
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), null,
                 "", null, 1, 10, "", true);
-            
+
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
@@ -118,7 +118,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), null,
                 "", null, 1, 10, "", false);
-            
+
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
@@ -160,7 +160,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.AdmissionNotesHaveBeenAdded,
                 "", null, 1, 10, "", true);
-            
+
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
@@ -175,7 +175,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.HaveBeenScrutinisedByME,
                 "", null, 1, 10, "", true);
-            
+
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
@@ -196,7 +196,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(9, results.Count());
         }
 
         [Fact]
@@ -211,7 +211,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(9, results.Count());
         }
 
         [Fact]
@@ -220,13 +220,13 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.PendingDiscussionWithRepresentative,
                 "", null, 1, 10, "", true);
-            
+
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(9, results.Count());
         }
 
         [Fact]
@@ -235,13 +235,13 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             //Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.HaveFinalCaseOutstandingOutcomes,
                 "", null, 1, 10, "", true);
-            
+
             //Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(9, results.Count());
         }
 
         /// <inheritdoc/>
@@ -251,14 +251,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             {
                 ExaminationId = "examination1",
                 Unassigned = true,
-                Completed = false
+                CaseCompleted = false
             };
 
             var examination2 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination2",
                 ReadyForMEScrutiny = true,
-                Completed = false
+                CaseCompleted = false
             };
 
             /*var examination3 = new MedicalExaminer.Models.Examination()
@@ -266,61 +266,61 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 ExaminationId = "examination3",
                 MedicalExaminerOfficeResponsible = "a",
                 ReadyForMEScrutiny = true,
-                Completed = false
+                CaseCompleted = false
             };*/
 
             var examination4 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination4",
-                Completed = true
+                CaseCompleted = true
             };
 
             var examination5 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination5",
-                Completed = false,
+                CaseCompleted = false,
                 UrgencyScore = 3
             };
 
             var examination6 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination6",
-                Completed = false,
+                CaseCompleted = false,
                 AdmissionNotesHaveBeenAdded = true
             };
 
             var examination7 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination7",
-                Completed = false,
+                CaseCompleted = false,
                 PendingDiscussionWithQAP = true
             };
 
             var examination8 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination8",
-                Completed = false,
+                CaseCompleted = false,
                 PendingDiscussionWithRepresentative = true
             };
 
             var examination9 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination9",
-                Completed = false,
-                HaveFinalCaseOutstandingOutcomes = true
+                CaseCompleted = false,
+                HaveFinalCaseOutcomesOutstanding = true
             };
 
             var examination10 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination10",
-                Completed = false,
+                CaseCompleted = false,
                 HaveBeenScrutinisedByME = true
             };
 
             var examination11 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination11",
-                Completed = false,
+                CaseCompleted = false,
                 PendingAdmissionNotes = true
             };
 
@@ -341,7 +341,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
         private IEnumerable<string> PermissedLocations()
         {
-            return new[] {"site1"};
+            return new[] { "site1" };
         }
     }
 }

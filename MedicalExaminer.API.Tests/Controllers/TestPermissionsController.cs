@@ -96,12 +96,12 @@ namespace MedicalExaminer.API.Tests.Controllers
                     new MEUserPermission()
                     {
                         LocationId = expectedSiteId,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     },
                     new MEUserPermission()
                     {
                         LocationId = expectedNationalId,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     },
                 }
             };
@@ -114,7 +114,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                     new MEUserPermission()
                     {
                         LocationId = expectedRegionId,
-                        UserRole = (int) expectedRole,
+                        UserRole = expectedRole,
                     },
                 }
             };
@@ -247,13 +247,13 @@ namespace MedicalExaminer.API.Tests.Controllers
                     {
                         PermissionId = expectedPermissionId,
                         LocationId = expectedSiteId,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     },
                     new MEUserPermission()
                     {
                         PermissionId = "unexpectedPermissionId",
                         LocationId = expectedNationalId,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     },
                 }
             };
@@ -266,7 +266,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                     new MEUserPermission()
                     {
                         LocationId = expectedRegionId,
-                        UserRole = (int) expectedRole,
+                        UserRole = expectedRole,
                     },
                 }
             };
@@ -337,13 +337,13 @@ namespace MedicalExaminer.API.Tests.Controllers
                     {
                         PermissionId = expectedPermissionId,
                         LocationId = expectedSiteId,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     },
                     new MEUserPermission()
                     {
                         PermissionId = "unexpectedPermissionId",
                         LocationId = expectedNationalId,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     },
                 }
             };
@@ -356,7 +356,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                     new MEUserPermission()
                     {
                         LocationId = expectedRegionId,
-                        UserRole = (int) expectedRole,
+                        UserRole = expectedRole,
                     },
                 }
             };
@@ -490,13 +490,13 @@ namespace MedicalExaminer.API.Tests.Controllers
                     {
                         PermissionId = expectedPermissionId,
                         LocationId = expectedSiteId,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     },
                     new MEUserPermission()
                     {
                         PermissionId = "unexpectedPermissionId",
                         LocationId = expectedNationalId,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     },
                 }
             };
@@ -509,7 +509,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                     new MEUserPermission()
                     {
                         LocationId = expectedRegionId,
-                        UserRole = (int) expectedRole,
+                        UserRole = expectedRole,
                     },
                 }
             };
@@ -558,7 +558,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                     {
                         LocationId = "locationId",
                         PermissionId = "permissionId",
-                        UserRole = (int)UserRoles.MedicalExaminer,
+                        UserRole = UserRoles.MedicalExaminer,
                     }
                 }.AsEnumerable()));
 
@@ -612,13 +612,13 @@ namespace MedicalExaminer.API.Tests.Controllers
                     {
                         PermissionId = expectedPermissionId,
                         LocationId = expectedSiteId,
-                        UserRole = (int) expectedRole,
+                        UserRole = expectedRole,
                     },
                     new MEUserPermission()
                     {
                         PermissionId = "unexpectedPermissionId",
                         LocationId = expectedNationalId,
-                        UserRole = (int) expectedRole,
+                        UserRole = expectedRole,
                     },
                 }
             };
@@ -631,7 +631,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                     new MEUserPermission()
                     {
                         LocationId = expectedRegionId,
-                        UserRole = (int) expectedRole,
+                        UserRole = expectedRole,
                     },
                 }
             };
@@ -782,13 +782,13 @@ namespace MedicalExaminer.API.Tests.Controllers
                     {
                         PermissionId = expectedPermissionId,
                         LocationId = expectedSiteId,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     },
                     new MEUserPermission()
                     {
                         PermissionId = "unexpectedPermissionId",
                         LocationId = expectedNationalId,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     },
                 }
             };
@@ -801,7 +801,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                     new MEUserPermission()
                     {
                         LocationId = expectedRegionId,
-                        UserRole = (int) expectedRole,
+                        UserRole = expectedRole,
                     },
                 }
             };
@@ -896,13 +896,13 @@ namespace MedicalExaminer.API.Tests.Controllers
                     {
                         PermissionId = expectedPermissionId,
                         LocationId = expectedSiteId,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     },
                     new MEUserPermission()
                     {
                         PermissionId = "unexpectedPermissionId",
                         LocationId = expectedNationalId,
-                        UserRole = (int)expectedRole,
+                        UserRole = expectedRole,
                     },
                 }
             };
@@ -915,7 +915,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                     new MEUserPermission()
                     {
                         LocationId = expectedRegionId,
-                        UserRole = (int) expectedRole,
+                        UserRole = expectedRole,
                     },
                 }
             };
