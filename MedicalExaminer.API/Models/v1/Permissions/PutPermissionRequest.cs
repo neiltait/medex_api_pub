@@ -1,9 +1,11 @@
-﻿namespace MedicalExaminer.API.Models.v1.Permissions
+﻿using MedicalExaminer.API.Attributes;
+
+namespace MedicalExaminer.API.Models.v1.Permissions
 {
     /// <summary>
     ///     Put Permission Request.
     /// </summary>
-    public class PutPermissionRequest
+    public class PutPermissionRequest : IUserRequest
     {
         /// <summary>
         ///     Gets or sets the permission ID.
@@ -23,6 +25,7 @@
         /// <summary>
         ///     Gets or sets the User Role for the Permission.
         /// </summary>
+        [ValidRolePerUser(nameof(UserId))]
         public int UserRole { get; set; }
     }
 }
