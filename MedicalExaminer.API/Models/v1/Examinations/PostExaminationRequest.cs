@@ -19,7 +19,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         ///     Medical Examiner Office Responsible for dealing with the examination
         ///     377e5b2d-f858-4398-a51c-1892973b6537
         /// </summary>
-        [ValidMedicalExaminerOffice]
+        [ValidLocation]
         public string MedicalExaminerOfficeResponsible { get; set; }
 
         /// <summary>
