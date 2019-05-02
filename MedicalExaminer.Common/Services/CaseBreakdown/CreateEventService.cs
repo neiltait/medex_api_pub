@@ -35,7 +35,9 @@ namespace MedicalExaminer.Common.Services.Examination
 
             examinationToUpdate = examinationToUpdate
                                             .AddEvent(param.Event)
-                                            .UpdateCaseUrgencyScore();
+                                            .UpdateCaseUrgencyScore()
+                                            .UpdateCaseStatus();
+
             examinationToUpdate.LastModifiedBy = param.Event.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);
