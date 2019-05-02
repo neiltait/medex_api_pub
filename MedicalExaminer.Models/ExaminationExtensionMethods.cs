@@ -151,31 +151,32 @@ namespace MedicalExaminer.Models
 
         private static bool CalculateAdmissionNotesPending(Examination examination)
         {
-            if(examination.CaseBreakdown.AdmissionNotes.Latest != null)
+            if (examination.CaseBreakdown.AdmissionNotes.Latest != null)
             {
-                if(examination.MedicalTeam.ConsultantResponsible != null)
+                if (examination.MedicalTeam.ConsultantResponsible != null)
                 {
                     return false;
                 }
             }
+
             return true;
         }
 
         private static bool CalculateReadyForScrutiny(this Examination examination)
         {
-            if(examination.CaseBreakdown.AdmissionNotes.Latest != null)
+            if (examination.CaseBreakdown.AdmissionNotes.Latest != null)
             {
                 return examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral;
             }
             else
             {
-                if(examination.CaseBreakdown.MeoSummary != null)
+                if (examination.CaseBreakdown.MeoSummary != null)
                 {
                     return true;
                 }
             }
+
             return false;
         }
-
     }
 }

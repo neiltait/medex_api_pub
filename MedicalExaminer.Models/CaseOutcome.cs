@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MedicalExaminer.Models.Enums;
-using Newtonsoft.Json;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models

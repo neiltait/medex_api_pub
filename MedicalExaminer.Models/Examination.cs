@@ -358,13 +358,13 @@ namespace MedicalExaminer.Models
         /// has the qap discussion occured
         /// </summary>
         [JsonProperty(PropertyName = "pending_discussion_with_qap")]
-        public bool PendingDiscussionWithQAP { get; set; } //  TODO: What should the default value be????
+        public bool PendingDiscussionWithQAP { get; set; } = true;
 
         /// <summary>
         /// has the discussion with the representative
         /// </summary>
         [JsonProperty(PropertyName = "pending_discussion_with_representative")]
-        public bool PendingDiscussionWithRepresentative { get; set; } //  TODO: What should the default value be????
+        public bool PendingDiscussionWithRepresentative { get; set; } = true;
 
         /// <summary>
         /// have the final case outcomes been determined
@@ -430,6 +430,5 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "case_outcome")]
         public CaseOutcome CaseOutcome { get; set; } = new CaseOutcome();
-
     }
 }
