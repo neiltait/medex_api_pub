@@ -26,6 +26,25 @@ namespace MedicalExaminer.Common.Extensions.MeUser
         }
 
         /// <summary>
+        /// Has Role for Examination.
+        /// </summary>
+        /// <param name="user">The User.</param>
+        /// <param name="examination">The Examination.</param>
+        /// <param name="role">The Role required.</param>
+        /// <returns>True if user has role.</returns>
+        public static bool HasRoleForExamination(
+            this MedicalExaminer.Models.MeUser user,
+            Examination examination,
+            UserRoles role)
+        {
+            var locations = examination.LocationIds();
+
+            var permissions = user.Permissions.Where(p => locations.Contains(p.LocationId)).ToList();
+
+            return permissions.Any(p => p.UserRole == role);
+        }
+
+        /// <summary>
         /// Role For Examination.
         /// </summary>
         /// <param name="user">The user.</param>
