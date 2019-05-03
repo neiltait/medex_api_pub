@@ -163,7 +163,11 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var currentUser = await CurrentUser();
+                // The user is being created so we don't know what their ID is yet. Pass an empty one for now.
+                var currentUser = new MeUser()
+                {
+                    UserId = Guid.Empty.ToString(),
+                };
                 var createdUser = await _userCreationService.Handle(new CreateUserQuery(toCreate, currentUser));
 
                 return createdUser;
