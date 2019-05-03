@@ -30,6 +30,6 @@ namespace MedicalExaminer.API.Models.v1.Account
         /// <summary>
         /// Role.
         /// </summary>
-        public UserRoles Role { get; set; }
+        public UserRoles? Role { get; set; }
     }
 }
