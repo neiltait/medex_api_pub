@@ -86,8 +86,10 @@ namespace MedicalExaminer.API.Controllers
             // Look up their email in the claims
             var emailAddress = User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
 
-            var oktaToken =
-                OktaTokenParser.ParseHttpRequestAuthorisation(Request.Headers["Authorization"].ToString());
+            var oktaToken = OktaTokenParser.ParseHttpRequestAuthorisation(
+                Request
+                    .Headers["Authorization"]
+                    .ToString());
 
             // Try and look them up in our database
             var meUser = await CurrentUser();
@@ -103,7 +105,7 @@ namespace MedicalExaminer.API.Controllers
                 throw new Exception("Failed to create user");
             }
 
-            //Reset token if it has changed
+            // Reset token if it has changed
             if (meUser.OktaToken == null || meUser.OktaToken != oktaToken)
             {
                 var expiryTime = DateTime.Now.AddMinutes(_oktaTokenExpiryMinutes);

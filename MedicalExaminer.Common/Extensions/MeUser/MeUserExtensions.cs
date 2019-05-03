@@ -16,13 +16,13 @@ namespace MedicalExaminer.Common.Extensions.MeUser
         /// </summary>
         /// <param name="user">The user.</param>
         /// <returns>The highest role they have in the system.</returns>
-        public static UserRoles Role(this MedicalExaminer.Models.MeUser user)
+        public static UserRoles? Role(this MedicalExaminer.Models.MeUser user)
         {
             var permissions = user.Permissions;
 
-            var topPermission = permissions.OrderByDescending(p => p.UserRole).First();
+            var topPermission = permissions.OrderByDescending(p => p.UserRole).FirstOrDefault();
 
-            return topPermission.UserRole;
+            return topPermission?.UserRole;
         }
 
         /// <summary>

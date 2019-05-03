@@ -33,7 +33,7 @@ namespace MedicalExaminer.API.Models.v1.Account
         /// Role.
         /// </summary>
         /// <remarks>Best role they have in the system. Used for display purposes only.</remarks>
-        public UserRoles Role { get; set; }
+        public UserRoles? Role { get; set; }
 
         /// <summary>
         /// Permissions.
