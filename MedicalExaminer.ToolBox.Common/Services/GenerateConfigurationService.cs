@@ -13,16 +13,13 @@ namespace MedicalExaminer.ToolBox.Common.Services
     {
         private readonly ICosmosStore<Location> _locationStore;
         private readonly ICosmosStore<MeUser> _userStore;
-        private readonly ICosmosStore<Permission> _permissionStore;
 
         public GenerateConfigurationService(
             ICosmosStore<Location> locationStore,
-            ICosmosStore<MeUser> userStore,
-            ICosmosStore<Permission> permissionStore)
+            ICosmosStore<MeUser> userStore)
         {
             _locationStore = locationStore;
             _userStore = userStore;
-            _permissionStore = permissionStore;
         }
 
         public async Task Generate(GenerateConfiguration configuration)
@@ -83,7 +80,6 @@ namespace MedicalExaminer.ToolBox.Common.Services
 
         private async Task ClearUsers()
         {
-            await _permissionStore.RemoveAsync(p => true);
             await _userStore.RemoveAsync(u => true);
         }
 
@@ -126,15 +122,6 @@ namespace MedicalExaminer.ToolBox.Common.Services
         {
             var id = Guid.NewGuid().ToString();
 
-            var permission = new Permission()
-            {
-                PermissionId = Guid.NewGuid().ToString(),
-                LocationId = location.LocationId,
-                UserRole = role,
-            };
-
-            await _permissionStore.UpsertAsync(permission);
-
             var user = new MeUser()
             {
                 UserId = id,
@@ -146,7 +133,7 @@ namespace MedicalExaminer.ToolBox.Common.Services
                     new MEUserPermission()
                     {
                         LocationId = location.LocationId,
-                        PermissionId = permission.PermissionId,
+                        PermissionId = Guid.NewGuid().ToString(),
                         UserRole = role,
                     }
                 }

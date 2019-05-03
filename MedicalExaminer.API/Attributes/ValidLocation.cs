@@ -5,16 +5,12 @@ using MedicalExaminer.Common;
 namespace MedicalExaminer.API.Attributes
 {
     /// <summary>
-    ///     Validates that a given nhs number has the correct format and passes the check sum.
+    /// Valid Location.
     /// </summary>
-    public class ValidMedicalExaminerOffice : RequiredAttribute
+    /// <remarks>Checks that the location is a valid location in the system.</remarks>
+    public class ValidLocation : RequiredAttribute
     {
-        /// <summary>
-        ///     Runs the validation.
-        /// </summary>
-        /// <param name="value">The object being validated.</param>
-        /// <param name="context">The ValidationContext.</param>
-        /// <returns>ValidationResult.</returns>
+        /// <inheritdoc/>
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
             var locationPersistence = (ILocationPersistence)context.GetService(typeof(ILocationPersistence));

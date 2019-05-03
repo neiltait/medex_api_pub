@@ -26,7 +26,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var serviceProvider = new Mock<IServiceProvider>();
             serviceProvider.Setup(context => context.GetService(It.IsAny<Type>()))
                 .Returns(locationPersistence.Object);
-            var sut = new ValidMedicalExaminerOffice();
+            var sut = new ValidLocation();
 
             // Act
             var result = sut.GetValidationResult(
@@ -50,7 +50,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var serviceProvider = new Mock<IServiceProvider>();
             serviceProvider.Setup(context => context.GetService(It.IsAny<Type>()))
                 .Returns(locationPersistence.Object);
-            var sut = new ValidMedicalExaminerOffice();
+            var sut = new ValidLocation();
 
             // Act
             var result = sut.GetValidationResult(
@@ -74,7 +74,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var serviceProvider = new Mock<IServiceProvider>();
             serviceProvider.Setup(context => context.GetService(It.IsAny<Type>()))
                 .Returns(locationPersistence.Object);
-            var sut = new ValidMedicalExaminerOffice();
+            var sut = new ValidLocation();
 
             // Act
             var result = sut.GetValidationResult(locationId,
@@ -98,7 +98,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var serviceProvider = new Mock<IServiceProvider>();
             serviceProvider.Setup(context => context.GetService(It.IsAny<Type>()))
                 .Returns(locationPersistence.Object);
-            var sut = new ValidMedicalExaminerOffice();
+            var sut = new ValidLocation();
             // Act
             var result = sut.GetValidationResult(locationId,
                 new ValidationContext(new object(), serviceProvider.Object, new Dictionary<object, object>()));
