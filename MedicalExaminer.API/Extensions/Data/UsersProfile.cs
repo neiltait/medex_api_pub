@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MedicalExaminer.API.Models.v1.Users;
+using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Models;
 
 namespace MedicalExaminer.API.Extensions.Data
@@ -16,6 +17,8 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<MeUser, UserItem>()
                 .ForMember(x => x.UserRole, opt => opt.Ignore());
+            CreateMap<MeUser, UserLookup>()
+                .ForMember(x => x.FullName, opt => opt.MapFrom(x => x.FullName()));
             CreateMap<MeUser, GetUserResponse>()
                 .ForMember(x => x.Errors, opt => opt.Ignore())
                 .ForMember(x => x.Lookups, opt => opt.Ignore());

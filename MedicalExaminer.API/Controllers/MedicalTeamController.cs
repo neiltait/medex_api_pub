@@ -5,6 +5,7 @@ using AutoMapper;
 using MedicalExaminer.API.Authorization.ExaminationContext;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
+using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Extensions.MeUser;
@@ -173,13 +174,11 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examination">Examination.</param>
         /// <param name="role">Role.</param>
         /// <returns>A Lookup.</returns>
-        private async Task<IDictionary<string, string>> GetLookupForExamination(Examination examination, UserRoles role)
+        private async Task<IEnumerable<object>> GetLookupForExamination(Examination examination, UserRoles role)
         {
             var users = await GetUsersForExamination(examination, role);
 
-            return users.ToDictionary(
-                u => u.UserId,
-                u => u.FullName());
+            return Mapper.Map<IEnumerable<MeUser>, IEnumerable<UserLookup>>(users);
         }
 
         /// <summary>

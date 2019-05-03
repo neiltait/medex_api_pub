@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
+using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
@@ -374,8 +376,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 },
             };
 
-            var expectedMedicalExaminer = new KeyValuePair<string, string>("user1", "User 1");
-            var expectedMedicalExaminerOfficer = new KeyValuePair<string, string>("user2", "User 2");
+            var expectedMedicalExaminer = new UserLookup {UserId = "user1", FullName = "User 1"};
+            var expectedMedicalExaminerOfficer = new UserLookup { UserId = "user2", FullName = "User 2" };
 
             _usersRetrievalByRoleLocationQueryServiceMock
                 .Setup(service => service.Handle(It.IsAny<UsersRetrievalByRoleLocationQuery>()))
@@ -397,12 +399,12 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             typedResponse.Lookups.ContainsKey(MedicalTeamController.MedicalExaminersLookupKey).Should().BeTrue();
-            typedResponse.Lookups[MedicalTeamController.MedicalExaminersLookupKey].Contains(expectedMedicalExaminer).Should().BeTrue();
+            typedResponse.Lookups[MedicalTeamController.MedicalExaminersLookupKey].Should()
+                .ContainEquivalentOf(expectedMedicalExaminer);
 
             typedResponse.Lookups.ContainsKey(MedicalTeamController.MedicalExaminerOfficersLookupKey).Should().BeTrue();
-            typedResponse.Lookups[MedicalTeamController.MedicalExaminerOfficersLookupKey].Contains(expectedMedicalExaminerOfficer).Should().BeTrue();
+            typedResponse.Lookups[MedicalTeamController.MedicalExaminerOfficersLookupKey].Should()
+                .ContainEquivalentOf(expectedMedicalExaminerOfficer);
         }
-
-
     }
 }
