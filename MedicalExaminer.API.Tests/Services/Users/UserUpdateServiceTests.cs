@@ -28,7 +28,15 @@ namespace MedicalExaminer.API.Tests.Services.Users
                 Email = expectedEmail,
             };
 
-            var query = new UserUpdateQuery(expectedUser);
+            var expectedOurUserId = "userId3";
+            var expectedOurEmail = "email1";
+            var expectedOurUser = new MeUser()
+            {
+                UserId = expectedOurUserId,
+                Email = expectedOurEmail,
+            };
+
+            var query = new UserUpdateQuery(expectedUser, expectedOurUser);
 
             // Act
             var result = await Service.Handle(query);
@@ -51,7 +59,15 @@ namespace MedicalExaminer.API.Tests.Services.Users
                 Email = expectedEmail,
             };
 
-            var query = new UserUpdateQuery(expectedUser);
+            var expectedOurUserId = "userId3";
+            var expectedOurEmail = "email1";
+            var expectedOurUser = new MeUser()
+            {
+                UserId = expectedOurUserId,
+                Email = expectedOurEmail,
+            };
+
+            var query = new UserUpdateQuery(expectedUser, expectedOurUser);
 
             // Act
             Func<Task> act = async () => await Service.Handle(query);

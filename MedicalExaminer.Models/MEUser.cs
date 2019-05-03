@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using MedicalExaminer.Models.Enums;
 using Newtonsoft.Json;
 
 namespace MedicalExaminer.Models
@@ -28,7 +27,7 @@ namespace MedicalExaminer.Models
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "email")]
         public string Email { get; set; }
-        
+
         [Required]
         [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "okta_token")]

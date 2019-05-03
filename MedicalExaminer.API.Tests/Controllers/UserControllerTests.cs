@@ -25,9 +25,9 @@
 //    {
 //        var logger = new Mock<IMELogger>();
 //        var mapper = new Mock<IMapper>();
-//        var createUserQuery = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
-//        var userRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
-//        var usersRetrievalQuery = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
+//        var createUserQuery = new Mock<IAsyncQueryHandler<CreateUserQuery, UserToCreate>>();
+//        var userRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, UserToCreate>>();
+//        var usersRetrievalQuery = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<UserToCreate>>>();
 //
 //        Controller = new UsersController(
 //            logger.Object,
@@ -43,9 +43,9 @@
 //        // Arrange
 //        var logger = new Mock<IMELogger>();
 //        var mapper = new Mock<IMapper>();
-//        var createUserQuery = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
-//        var userRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
-//        var usersRetrievalQuery = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
+//        var createUserQuery = new Mock<IAsyncQueryHandler<CreateUserQuery, UserToCreate>>();
+//        var userRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, UserToCreate>>();
+//        var usersRetrievalQuery = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<UserToCreate>>>();
 //
 //        Controller = new UsersController(
 //            logger.Object,
@@ -54,7 +54,7 @@
 //            userRetrievalQuery.Object,
 //            usersRetrievalQuery.Object);
 //
-//        mapper.Setup(m => m.Map<MeUser>(It.IsAny<PostUserRequest>())).Returns(user);
+//        mapper.Setup(m => m.Map<UserToCreate>(It.IsAny<PostUserRequest>())).Returns(user);
 //
 //        Controller = new UsersController(
 //            logger.Object,
@@ -85,9 +85,9 @@
 //        // Arrange
 //        var logger = new Mock<IMELogger>();
 //        var mapper = new Mock<IMapper>();
-//        var createExaminationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
-//        var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
-//        var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
+//        var createExaminationService = new Mock<IAsyncQueryHandler<CreateUserQuery, UserToCreate>>();
+//        var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, UserToCreate>>();
+//        var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<UserToCreate>>>();
 //
 //        Controller = new UsersController(
 //            logger.Object,
@@ -110,9 +110,9 @@
 //        // Arrange
 //        var logger = new Mock<IMELogger>();
 //        var mapper = new Mock<IMapper>();
-//        var createExaminationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
-//        var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
-//        var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
+//        var createExaminationService = new Mock<IAsyncQueryHandler<CreateUserQuery, UserToCreate>>();
+//        var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, UserToCreate>>();
+//        var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<UserToCreate>>>();
 //
 //        Controller = new UsersController(
 //            logger.Object,
@@ -137,9 +137,9 @@
 //        // Arrange
 //        var logger = new Mock<IMELogger>();
 //        var mapper = new Mock<IMapper>();
-//        var createExaminationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
-//        var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
-//        var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
+//        var createExaminationService = new Mock<IAsyncQueryHandler<CreateUserQuery, UserToCreate>>();
+//        var examinationRetrievalQuery = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, UserToCreate>>();
+//        var examinationsRetrievalQuery = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<UserToCreate>>>();
 //
 //        Controller = new UsersController(
 //            logger.Object,

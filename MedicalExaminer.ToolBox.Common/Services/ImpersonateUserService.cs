@@ -51,7 +51,7 @@ namespace MedicalExaminer.ToolBox.Common.Services
                     user.Email = $"{user.UserId}@example.com";
                 }
 
-                await _userUpdateService.Handle(new UserUpdateQuery(user));
+                await _userUpdateService.Handle(new UserUpdateQuery(user, new MeUser()));
             }
         }
     }
