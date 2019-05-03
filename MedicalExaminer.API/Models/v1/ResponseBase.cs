@@ -17,7 +17,7 @@ namespace MedicalExaminer.API.Models.v1
         /// <summary>
         /// Lookups.
         /// </summary>
-        public IDictionary<string, IDictionary<string, string>> Lookups { get; private set; }
+        public IDictionary<string, IEnumerable<object>> Lookups { get; private set; }
 
         /// <summary>
         ///     Gets a value indicating whether this response is successful.
@@ -49,7 +49,7 @@ namespace MedicalExaminer.API.Models.v1
         /// <param name="lookup">A dictionary of lookups</param>
         /// <exception cref="ArgumentException"></exception>
         /// <returns>Response Base for chainging.</returns>
-        public ResponseBase AddLookup(string key, IDictionary<string, string> lookup)
+        public ResponseBase AddLookup(string key, IEnumerable<object> lookup)
         {
             if (lookup == null)
             {
@@ -58,7 +58,7 @@ namespace MedicalExaminer.API.Models.v1
 
             if (Lookups == null)
             {
-                Lookups = new Dictionary<string, IDictionary<string, string>>();
+                Lookups = new Dictionary<string, IEnumerable<object>>();
             }
 
             if (Lookups.ContainsKey(key))
