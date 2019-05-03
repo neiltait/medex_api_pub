@@ -82,7 +82,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 case CaseStatus.PendingDiscussionWithRepresentative:
                     return examination => examination.PendingDiscussionWithRepresentative;
                 case CaseStatus.HaveFinalCaseOutstandingOutcomes:
-                    return examination => examination.HaveFinalCaseOutcomesOutstanding;
+                    return examination => examination.HaveFinalCaseOutcomesOutstanding && examination.ScrutinyConfirmed;
                 case null:
                     return null;
                 default:
@@ -98,7 +98,7 @@ namespace MedicalExaminer.Common.Services.Examination
 
             var predicate = meOfficePredicate
                 .And(openCasePredicate);
-            predicate.And(userIdPredicate);
+            predicate = predicate.And(userIdPredicate);
             return predicate;
         }
 
