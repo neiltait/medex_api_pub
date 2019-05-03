@@ -217,6 +217,8 @@ namespace MedicalExaminer.API.Controllers
                     return Forbid();
                 }
 
+                var currentUser = await CurrentUser();
+
                 var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(postPermission.UserId));
 
                 if (user == null)
@@ -230,7 +232,7 @@ namespace MedicalExaminer.API.Controllers
 
                 user.Permissions = existingPermissions;
 
-                await _userUpdateService.Handle(new UserUpdateQuery(user));
+                await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
 
                 return Ok(Mapper.Map<MEUserPermission, PostPermissionResponse>(
                     permission,
@@ -265,6 +267,8 @@ namespace MedicalExaminer.API.Controllers
                     return BadRequest(new PutPermissionResponse());
                 }
 
+                var currentUser = await CurrentUser();
+
                 var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(putPermission.UserId));
 
                 if (user == null)
@@ -291,7 +295,7 @@ namespace MedicalExaminer.API.Controllers
                     return Forbid();
                 }
 
-                await _userUpdateService.Handle(new UserUpdateQuery(user));
+                await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
 
                 return Ok(Mapper.Map<MEUserPermission, PutPermissionResponse>(
                     permission,
