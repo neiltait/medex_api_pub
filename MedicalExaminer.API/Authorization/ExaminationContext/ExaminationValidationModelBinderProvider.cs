@@ -28,11 +28,11 @@ namespace MedicalExaminer.API.Authorization.ExaminationContext
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (context.Metadata.ModelType == typeof(IExaminationValidationModel))
+            if (typeof(IExaminationValidationModel).IsAssignableFrom(context.Metadata.ModelType))
             {
-                var originalModelBinderProvider = _originalModelBinderProvider.GetBinder(context);
+                var originalModelBinder = _originalModelBinderProvider.GetBinder(context);
 
-                return new ExaminationValidationModelBinder(originalModelBinderProvider);
+                return new ExaminationValidationModelBinder(originalModelBinder);
             }
 
             return null;

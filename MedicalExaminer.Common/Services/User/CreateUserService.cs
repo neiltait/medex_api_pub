@@ -30,8 +30,12 @@ namespace MedicalExaminer.Common.Services.User
                 throw new ArgumentNullException(nameof(param));
             }
 
-            param.MeUser.UserId = Guid.NewGuid().ToString();
-            var result = await CreateItemAsync(param.MeUser);
+            param.UserToCreate.UserId = Guid.NewGuid().ToString();
+            param.UserToCreate.CreatedAt = DateTime.Now;
+            param.UserToCreate.ModifiedAt = DateTime.Now;
+            param.UserToCreate.CreatedBy = param.CurrentUser.UserId;
+            param.UserToCreate.LastModifiedBy = param.CurrentUser.UserId;
+            var result = await CreateItemAsync(param.UserToCreate);
             return result;
         }
     }

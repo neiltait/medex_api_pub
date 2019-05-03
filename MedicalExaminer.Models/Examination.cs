@@ -402,9 +402,16 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "site_location_id")]
         public string SiteLocationId { get; set; }
 
+        /// <summary>
+        /// Confirmation Of Scrutiny Completed At
+        /// </summary>
+        [JsonProperty(PropertyName = "confirmation_of_scrutiny_completed_at")]
+        public DateTime? ConfirmationOfScrutinyCompletedAt { get; set; }
 
-        public DateTime ConfirmationOfScrutinyCompletedAt { get; set; }
-
+        /// <summary>
+        /// Confirmation Of Scrutiny Completed By
+        /// </summary>
+        [JsonProperty(PropertyName = "confirmation_of_scrutiny_completed_by")]
         public string ConfirmationOfScrutinyCompletedBy { get; set; }
 
         /// <summary>
@@ -431,6 +438,5 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "case_outcome")]
         public CaseOutcome CaseOutcome { get; set; } = new CaseOutcome();
-
     }
 }

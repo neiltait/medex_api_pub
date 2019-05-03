@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using MedicalExaminer.API.Authorization.ExaminationContext;
+using MedicalExaminer.API.Models.v1.MedicalTeams;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Moq;
@@ -57,6 +58,31 @@ namespace MedicalExaminer.API.Tests.Authorization.ExaminationContext
 
             var sut = new ExaminationValidationModelBinderProvider(modelBinderProvider.Object);
             var metadata = new Mock<ModelMetadata>(ModelMetadataIdentity.ForType(typeof(IExaminationValidationModel)));
+            var context = new Mock<ModelBinderProviderContext>();
+
+            context
+                .SetupGet(c => c.Metadata)
+                .Returns(metadata.Object);
+
+            // Act
+            var result = sut.GetBinder(context.Object);
+
+            // Assert
+            result.Should().BeOfType<ExaminationValidationModelBinder>();
+        }
+
+        [Fact]
+        public void GetBinder_ReturnsBinder_WhenConcreteTypeMatches()
+        {
+            // Arrange
+            var modelBinderProvider = new Mock<IModelBinderProvider>(MockBehavior.Strict);
+            modelBinderProvider
+                .Setup(mbp => mbp
+                    .GetBinder(It.IsAny<ModelBinderProviderContext>()))
+                .Returns((IModelBinder)null);
+
+            var sut = new ExaminationValidationModelBinderProvider(modelBinderProvider.Object);
+            var metadata = new Mock<ModelMetadata>(ModelMetadataIdentity.ForType(typeof(PutMedicalTeamRequest)));
             var context = new Mock<ModelBinderProviderContext>();
 
             context

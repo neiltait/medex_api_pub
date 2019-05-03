@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.API.Attributes;
 using MedicalExaminer.Models.Enums;
 
@@ -41,11 +42,13 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// What size page should be returned
         /// </summary>
+        [Range(1, int.MaxValue)]
         public int PageSize { get; set; }
-        
+
         /// <summary>
         /// Page number to begin the results on
         /// </summary>
+        [Range(1, int.MaxValue)]
         public int PageNumber { get; set; }
     }
 }

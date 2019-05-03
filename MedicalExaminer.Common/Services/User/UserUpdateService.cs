@@ -38,6 +38,8 @@ namespace MedicalExaminer.Common.Services.User
 
             userToUpdate.Email = param.Email;
             userToUpdate.Permissions = param.Permissions;
+            userToUpdate.LastModifiedBy = param.CurrentUser.UserId;
+            userToUpdate.ModifiedAt = DateTime.Now;
 
             var result = await UpdateItemAsync(userToUpdate);
             return result;

@@ -40,6 +40,21 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
+        public void CaseCompleted_UrgencyScoreIsZero()
+        {
+            // Arrange
+            var examination = new Examination();
+            examination.CaseCompleted = true;
+
+            // Act
+            examination.UpdateCaseUrgencyScore();
+
+            // Assert
+            Assert.Equal(0, examination.UrgencyScore);
+        }
+
+
+        [Fact]
         public void UpdateDraftEventForUserReturnsDraft()
         {
             // Arrange
