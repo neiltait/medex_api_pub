@@ -81,7 +81,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
         //        CremationFormStatus = CremationFormStatus.No,
         //        GPNotifiedStatus = GPNotified.GPNotified
         //    };
-        //    var query = new SaveOutstandingCaseItemsQuery(examinationId, caseOutcomeItems, new MeUser());
+        //    var query = new SaveOutstandingCaseItemsQuery(examinationId, caseOutcomeItems, new UserToCreate());
         //    var dbAccess = new Mock<IDatabaseAccess>();
 
         //    dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,

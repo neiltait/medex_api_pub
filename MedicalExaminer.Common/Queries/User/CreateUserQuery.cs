@@ -6,11 +6,14 @@ namespace MedicalExaminer.Common.Queries.User
     public class CreateUserQuery : IQuery<MeUser>
     {
         /// <inheritdoc />
-        public CreateUserQuery(MeUser meUser)
+        public CreateUserQuery(MeUser userToCreate, MeUser currentUser)
         {
-            MeUser = meUser;
+            UserToCreate = userToCreate;
+            CurrentUser = currentUser;
         }
 
-        public MeUser MeUser { get; }
+        public MeUser UserToCreate { get; }
+
+        public MeUser CurrentUser { get; }
     }
 }

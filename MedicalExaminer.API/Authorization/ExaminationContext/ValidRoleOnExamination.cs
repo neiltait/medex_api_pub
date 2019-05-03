@@ -61,9 +61,9 @@ namespace MedicalExaminer.API.Authorization.ExaminationContext
                 return new ValidationResult($"The user with id `{userId}` was not found.");
             }
 
-            var role = user.RoleForExamination(examinationValidationContext.Examination);
+            var hasRole = user.HasRoleForExamination(examinationValidationContext.Examination, _requiredRole);
 
-            if (role != _requiredRole)
+            if (!hasRole)
             {
                 return new ValidationResult($"The user is not a `{_requiredRole.GetDescription()}`.");
             }
