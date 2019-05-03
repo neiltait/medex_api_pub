@@ -1,8 +1,8 @@
-﻿using MedicalExaminer.Common.Authorization;
+﻿using System.Collections.Generic;
+using System.Linq;
+using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MedicalExaminer.Common.Extensions.MeUser
 {
@@ -22,7 +22,7 @@ namespace MedicalExaminer.Common.Extensions.MeUser
 
             var topPermission = permissions.OrderByDescending(p => p.UserRole).First();
 
-            return (UserRoles)topPermission.UserRole;
+            return topPermission.UserRole;
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace MedicalExaminer.Common.Extensions.MeUser
             {
                 var topPermission = permissions.OrderByDescending(p => p.UserRole).First();
 
-                return (UserRoles)topPermission.UserRole;
+                return topPermission.UserRole;
             }
 
             return null;
@@ -50,7 +50,12 @@ namespace MedicalExaminer.Common.Extensions.MeUser
         /// <summary>
         /// Get the users examination role part two.
         /// </summary>
-        public static UserRoles? UsersExaminationRole(this MedicalExaminer.Models.MeUser user, IEnumerable<UserRoles> requiredRoles)
+        /// <param name="user">The user.</param>
+        /// <param name="requiredRoles">List of required roles to filter by.</param>
+        /// <returns><see cref="UserRoles"/>.</returns>
+        public static UserRoles? UsersExaminationRole(
+            this MedicalExaminer.Models.MeUser user,
+            IEnumerable<UserRoles> requiredRoles)
         {
             if (requiredRoles == null)
             {
@@ -61,7 +66,7 @@ namespace MedicalExaminer.Common.Extensions.MeUser
             {
                 foreach (var role in requiredRoles)
                 {
-                    if ((user.Permissions.SingleOrDefault(x => x.UserRole == role)) != null)
+                    if (user.Permissions.SingleOrDefault(x => x.UserRole == role) != null)
                     {
                         return role;
                     }
