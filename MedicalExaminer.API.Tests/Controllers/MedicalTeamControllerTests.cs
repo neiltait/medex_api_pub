@@ -399,10 +399,12 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             typedResponse.Lookups.ContainsKey(MedicalTeamController.MedicalExaminersLookupKey).Should().BeTrue();
-            typedResponse.Lookups[MedicalTeamController.MedicalExaminersLookupKey].Contains(expectedMedicalExaminer).Should().BeTrue();
+            typedResponse.Lookups[MedicalTeamController.MedicalExaminersLookupKey].Should()
+                .ContainEquivalentOf(expectedMedicalExaminer);
 
             typedResponse.Lookups.ContainsKey(MedicalTeamController.MedicalExaminerOfficersLookupKey).Should().BeTrue();
-            typedResponse.Lookups[MedicalTeamController.MedicalExaminerOfficersLookupKey].Contains(expectedMedicalExaminerOfficer).Should().BeTrue();
+            typedResponse.Lookups[MedicalTeamController.MedicalExaminerOfficersLookupKey].Should()
+                .ContainEquivalentOf(expectedMedicalExaminerOfficer);
         }
     }
 }
