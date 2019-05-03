@@ -50,9 +50,10 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Confirmation of Scrutiny
         /// </summary>
-        /// <returns></returns>
+        /// <param name="examinationId"> Examination ID</param>
+        /// <returns>PutConfirmationOfScrutinyResponse type</returns>
         [HttpPut]
         [Route("confirmation_of_scrutiny")]
         public async Task<ActionResult<PutConfirmationOfScrutinyResponse>> PutConfirmationOfScrutiny(string examinationId)
@@ -66,9 +67,13 @@ namespace MedicalExaminer.API.Controllers
 
             var result = await _confirmationOfScrutinyService.Handle(new ConfirmationOfScrutinyQuery(examinationId, user));
             return Ok(Mapper.Map<PutConfirmationOfScrutinyResponse>(result));
-
         }
 
+        /// <summary>
+        /// Send Coroner Referral
+        /// </summary>
+        /// <param name="examinationId">Examination Id</param>
+        /// <returns>Response</returns>
         [HttpPut]
         [Route("coroner_referral")]
         public async Task<ActionResult> PutCoronerReferral(string examinationId)
@@ -113,7 +118,7 @@ namespace MedicalExaminer.API.Controllers
             {
                 return new BadRequestObjectResult(nameof(examinationId));
             }
-            
+
             var user = await CurrentUser();
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
 
@@ -156,7 +161,7 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// Get Case Outcome details
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Case Outcome Details</returns>
         [HttpGet]
         [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetCaseOutcomeResponse>> GetCaseOutcome(string examinationId)
