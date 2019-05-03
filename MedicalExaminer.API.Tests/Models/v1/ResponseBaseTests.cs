@@ -20,7 +20,7 @@ namespace MedicalExaminer.API.Tests.Models.v1
         public void Lookup_IsAssigned_WhenFirstLookupIsAdded()
         {
             var sut = new ResponseBase();
-            sut.AddLookup("key", new Dictionary<string, string>());
+            sut.AddLookup("key", new List<object>());
             sut.Lookups.Should().NotBeNull();
         }
 
@@ -30,7 +30,7 @@ namespace MedicalExaminer.API.Tests.Models.v1
             // Arrang
             var sut = new ResponseBase();
             var expectedKey = "expectedKey";
-            var expectedLookup = new Dictionary<string, string>();
+            var expectedLookup = new List<object>();
             sut.AddLookup(expectedKey, expectedLookup);
 
             // Act
