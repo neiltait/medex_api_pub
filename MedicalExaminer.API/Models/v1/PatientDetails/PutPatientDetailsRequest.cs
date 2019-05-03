@@ -47,11 +47,6 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         public string PriorityDetails { get; set; }
 
         /// <summary>
-        ///     Is the case completed?.
-        /// </summary>
-        public bool Completed { get; set; }
-
-        /// <summary>
         ///     The cases coroner status.
         /// </summary>
         public CoronerStatus CoronerStatus { get; set; }

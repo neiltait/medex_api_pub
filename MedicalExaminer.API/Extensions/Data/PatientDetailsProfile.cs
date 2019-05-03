@@ -16,7 +16,7 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<PutPatientDetailsRequest, PatientDetails>()
                 .ForMember(x => x.Id, opt => opt.Ignore())
-                .ForMember(x => x.CaseCompleted, opt => opt.MapFrom(y => y.Completed));
+                .ForMember(x => x.CaseCompleted, opt => opt.Ignore());
             CreateMap<PatientDetails, Examination>()
                 .ForMember(x => x.ExaminationId, opt => opt.Ignore())
                 .ForMember(x => x.MedicalExaminerOfficeResponsibleName, opt => opt.Ignore())
@@ -46,8 +46,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(x => x.CoronerReferralSent, opt => opt.Ignore())
                 .ForMember(x => x.ScrutinyConfirmed, opt => opt.Ignore())
                 .ForMember(x => x.OutstandingCaseItemsCompleted, opt => opt.Ignore())
-                .ForMember(x => x.CaseOutcome, opt => opt.Ignore())
-                .ForMember(x => x.CaseCompleted, opt => opt.MapFrom(y => y.CaseCompleted));
+                .ForMember(x => x.CaseOutcome, opt => opt.Ignore());
         }
     }
 }
