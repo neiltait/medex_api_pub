@@ -84,10 +84,44 @@ namespace MedicalExaminer.API.Tests.Mapper
             }
         };
 
+        private readonly CaseOutcome caseOutcome = new CaseOutcome
+        {
+            ScrutinyConfirmedOn = new DateTime(2019, 5, 1),
+            MCCDIssued = true,
+            CaseCompleted = false,
+            CaseMedicalExaminerFullName = "Danuka Hettiarachchi",
+            OutcomeQapDiscussion = QapDiscussionOutcome.MccdCauseOfDeathProvidedByME,
+            CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
+            GPNotifiedStatus = GPNotified.GPUnabledToBeNotified,
+            OutcomeOfPrescrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
+            CremationFormStatus = CremationFormStatus.Yes,
+            OutcomeOfRepresentativeDiscussion = BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner
+        };
+
         /// <summary>
         ///     Mapper.
         /// </summary>
         private readonly IMapper _mapper;
+
+        [Fact]
+        public void Examination_To_CaseOutcome()
+        {
+            var examination = GenerateExamination();
+
+            var result = _mapper.Map<CaseOutcome>(examination);
+
+            result.ScrutinyConfirmedOn.Should().Be(caseOutcome.ScrutinyConfirmedOn);
+            result.CaseMedicalExaminerFullName.Should().Be(caseOutcome.CaseMedicalExaminerFullName);
+            result.CaseOutcomeSummary.Should().Be(caseOutcome.CaseOutcomeSummary);
+            result.CremationFormStatus.Should().Be(caseOutcome.CremationFormStatus);
+            result.GPNotifiedStatus.Should().Be(caseOutcome.GPNotifiedStatus);
+            result.MCCDIssued.Should().Be(caseOutcome.MCCDIssued);
+            result.OutcomeOfPrescrutiny.Should().Be(caseOutcome.OutcomeOfPrescrutiny);
+            result.OutcomeOfRepresentativeDiscussion.Should().Be(caseOutcome.OutcomeOfRepresentativeDiscussion);
+            result.OutcomeQapDiscussion.Should().Be(caseOutcome.OutcomeQapDiscussion);
+            result.CaseCompleted.Should().Be(caseOutcome.CaseCompleted);
+
+        }
 
         [Fact]
         public void Examination_To_PatientCard_NullAppointments()
@@ -157,8 +191,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
         }
-
-       
 
         public void Examination_To_PatientCard_One_Representative_Appointment_Details()
         {
@@ -366,9 +398,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.Unassigned.Should().Be(true);
         }
 
-
-        
-
         [Fact]
         public void PostNewCaseRequest_To_Examination()
         {
@@ -413,6 +442,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             var examination = new Examination()
             {
                 ExaminationId = ExaminationId,
+                CaseOutcome = caseOutcome,
                 AnyImplants = AnyImplants,
                 AnyPersonalEffects = AnyPersonalEffects,
                 ChildPriority = ChildPriority,

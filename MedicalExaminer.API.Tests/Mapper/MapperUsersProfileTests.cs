@@ -45,7 +45,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         /// <summary>
-        ///     Test Mapping PostUserRequest to UserToCreate.
+        /// Test Mapping PostUserRequest to UserToCreate.
         /// </summary>
         [Fact]
         public void TestPostUserRequest()
