@@ -6,7 +6,9 @@ using AutoMapper;
 using AutoMapper.Configuration;
 using FluentAssertions;
 using MedicalExaminer.API.Extensions.Data;
+using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.API.Models.v1.Examinations;
+using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Xunit;
@@ -30,6 +32,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
         private const string ExaminationId = "expectedExaminationId";
         private const string AltLink = "altLink";
+        private const bool CaseCompleted = true;
         private const bool AnyImplants = true;
         private const bool AnyPersonalEffects = true;
         private const bool ChildPriority = true;
@@ -42,6 +45,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         private readonly DateTime DateOfBirth = new DateTime(1990, 2, 24);
         private readonly DateTime DateOfDeath = new DateTime(2019, 2, 24);
         private const string FuneralDirectors = "funeralDirectors";
+        private const string MedicalExaminerOfficeResponsibleName = "Medical Examiner Office Name";
         private const bool FaithPriority = true;
         private const string GivenNames = "givenNames";
         private readonly ExaminationGender Gender = ExaminationGender.Male;
@@ -102,6 +106,69 @@ namespace MedicalExaminer.API.Tests.Mapper
         ///     Mapper.
         /// </summary>
         private readonly IMapper _mapper;
+
+        [Fact]
+        public void Examination_To_GetPatientDetailsResponse()
+        {
+            var examination = GenerateExamination();
+
+            var response = _mapper.Map<GetPatientDetailsResponse>(examination);
+
+            response.CaseCompleted.Should().Be(CaseCompleted);
+            response.AnyImplants.Should().Be(AnyImplants);
+            response.AnyPersonalEffects.Should().Be(examination.AnyPersonalEffects);
+            response.ChildPriority.Should().Be(examination.ChildPriority);
+            response.CoronerPriority.Should().Be(CoronerPriority);
+            response.CulturalPriority.Should().Be(CulturalPriority);
+            response.FaithPriority.Should().Be(FaithPriority);
+            response.OtherPriority.Should().Be(OtherPriority);
+            response.PriorityDetails.Should().Be(PriorityDetails);
+            response.CoronerStatus.Should().Be(CoronerStatus);
+            response.Gender.Should().Be(Gender);
+            response.County.Should().Be(County);
+            response.Country.Should().Be(Country);
+            response.UrgencyScore.Should().Be(UrgencyScore);
+            response.GenderDetails.Should().Be(GenderDetails);
+            response.PlaceDeathOccured.Should().Be(PlaceDeathOccured);
+            response.MedicalExaminerOfficeResponsible.Should().Be(MedicalExaminerOfficeResponsible);
+            response.MedicalExaminerOfficeResponsibleName.Should().Be(MedicalExaminerOfficeResponsibleName);
+            response.DateOfBirth.Should().Be(DateOfBirth);
+            response.HospitalNumber_1.Should().Be(HospitalNumber_1);
+            response.HospitalNumber_2.Should().Be(HospitalNumber_2);
+            response.HospitalNumber_3.Should().Be(HospitalNumber_3);
+            response.TimeOfDeath.Should().Be(TimeOfDeath);
+            response.GivenNames.Should().Be(GivenNames);
+            response.Surname.Should().Be(Surname);
+            response.PostCode.Should().Be(Postcode);
+            response.HouseNameNumber.Should().Be(HouseNameNumber);
+            response.Street.Should().Be(Street);
+            response.Town.Should().Be(Town);
+            response.LastOccupation.Should().Be(LastOccupation);
+            response.OrganisationCareBeforeDeathLocationId.Should().Be(OrganisationCareBeforeDeathLocationId);
+            response.ImplantDetails.Should().Be(ImplantDetails);
+            response.FuneralDirectors.Should().Be(FuneralDirectors);
+            response.PersonalEffectDetails.Should().Be(PersonalEffectDetails);
+            response.Representatives.Should().AllBeEquivalentTo(Representatives);
+        }
+
+        [Fact]
+        public void Examination_To_GetCaseOutcomeResponse()
+        {
+            var examination = GenerateExamination();
+
+            var response = _mapper.Map<GetCaseOutcomeResponse>(examination);
+
+            response.CaseCompleted.Should().Be(caseOutcome.CaseCompleted);
+            response.CaseMedicalExaminerFullName.Should().Be(caseOutcome.CaseMedicalExaminerFullName);
+            response.CaseOutcomeSummary.Should().Be(caseOutcome.CaseOutcomeSummary);
+            response.CremationFormStatus.Should().Be(caseOutcome.CremationFormStatus);
+            response.GPNotifedStatus.Should().Be(caseOutcome.GPNotifiedStatus);
+            response.MCCDIssued.Should().Be(caseOutcome.MCCDIssued);
+            response.OutcomeOfPrescrutiny.Should().Be(caseOutcome.OutcomeOfPrescrutiny);
+            response.OutcomeOfRepresentativeDiscussion.Should().Be(caseOutcome.OutcomeOfRepresentativeDiscussion);
+            response.OutcomeQapDiscussion.Should().Be(caseOutcome.OutcomeQapDiscussion);
+            response.ScrutinyConfirmedOn.Should().Be(caseOutcome.ScrutinyConfirmedOn);
+        }
 
         [Fact]
         public void Examination_To_CaseOutcome()
@@ -468,6 +535,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 MedicalExaminerOfficeResponsible = MedicalExaminerOfficeResponsible,
                 ModeOfDisposal = ModeOfDisposal,
                 NhsNumber = NhsNumber,
+                MedicalExaminerOfficeResponsibleName = MedicalExaminerOfficeResponsibleName,
                 OrganisationCareBeforeDeathLocationId = OrganisationCareBeforeDeathLocationId,
                 OtherPriority = OtherPriority,
                 PersonalEffectDetails = PersonalEffectDetails,
