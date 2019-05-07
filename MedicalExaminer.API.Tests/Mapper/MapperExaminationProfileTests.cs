@@ -168,9 +168,9 @@ namespace MedicalExaminer.API.Tests.Mapper
             Assert.True(IsEqual(medicalTeam.Qap, response.Qap));
             foreach (var cons in response.ConsultantsOther)
             {
-                Assert.True(IsEqual(medicalTeam.ConsultantsOther[], cons));
+                Assert.True(IsEqual(medicalTeam.ConsultantsOther[0], cons));
             }
-            response.ConsultantsOther.Should().AllBeEquivalentTo(medicalTeam.ConsultantsOther);
+
             response.NursingTeamInformation.Should().Be(medicalTeam.NursingTeamInformation);
             response.MedicalExaminerUserId.Should().Be(medicalTeam.MedicalExaminerUserId);
             response.MedicalExaminerOfficerUserId.Should().Be(medicalTeam.MedicalExaminerOfficerUserId);
