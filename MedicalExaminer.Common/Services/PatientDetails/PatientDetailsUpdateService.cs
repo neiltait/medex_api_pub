@@ -52,7 +52,7 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             caseToReplace.CaseBreakdown.DeathEvent = _mapper.Map(caseToReplace, caseToReplace.CaseBreakdown.DeathEvent);
             caseToReplace.CaseBreakdown.DeathEvent.UserId = param.User.UserId;
             caseToReplace.CaseBreakdown.DeathEvent.UserFullName = param.User.FullName();
-            caseToReplace.CaseBreakdown.DeathEvent.UsersRole = param.User.UsersExaminationRole(new[] { UserRoles.MedicalExaminer, UserRoles.MedicalExaminerOfficer }).ToString();
+            caseToReplace.CaseBreakdown.DeathEvent.UsersRole = param.User.UsersRoleIn(new[] { UserRoles.MedicalExaminer, UserRoles.MedicalExaminerOfficer }).ToString();
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, caseToReplace);
             return result;
         }
