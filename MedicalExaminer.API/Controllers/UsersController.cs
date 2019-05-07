@@ -131,7 +131,7 @@ namespace MedicalExaminer.API.Controllers
         // POST api/users
         [HttpPost]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        [AuthorizePermission(Permission.CreateUser)]
+        [AuthorizePermission(Permission.InviteUser)]
         public async Task<ActionResult<PostUserResponse>> CreateUser([FromBody] PostUserRequest postUser)
         {
             if (!ModelState.IsValid)

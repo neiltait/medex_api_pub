@@ -59,6 +59,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     The medical examiners office responsible for investigating the death.
         /// </summary>
+        [ValidLocation]
         public string MedicalExaminerOfficeResponsible { get; set; }
 
         /// <summary>
