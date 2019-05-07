@@ -83,6 +83,8 @@ namespace MedicalExaminer.API
         {
             var oktaSettings = services.ConfigureSettings<OktaSettings>(Configuration, "Okta");
 
+            var cosmosDbSettings = services.ConfigureSettings<CosmosDbSettings>(Configuration, "CosmosDB");
+
             services.ConfigureSettings<AuthorizationSettings>(Configuration, "Authorization");
 
             ConfigureOktaClient(services);
@@ -181,10 +183,10 @@ namespace MedicalExaminer.API
                 options.AddSecurityRequirement(security);
             });
 
-            // Logger 
+            // Logger.
             services.AddScoped<IMELogger, MELogger>();
 
-            // Database connections  
+            // Database connections.
             services.AddScoped<IDocumentClientFactory, DocumentClientFactory>();
             services.AddScoped<IDatabaseAccess, DatabaseAccess>();
 
