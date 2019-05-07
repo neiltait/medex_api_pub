@@ -280,7 +280,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 qapItem.ParticipantName == qap.ParticipantName &&
                 qapItem.ParticipantOrganisation == qap.ParticipantOrganisation &&
                 qapItem.ParticipantPhoneNumber == qap.ParticipantPhoneNumber &&
-                qapItem.ParticipantRoll == qap.ParticipantRole &&
+                qapItem.ParticipantRole == qap.ParticipantRole &&
                 qapItem.QapDiscussionOutcome == qap.QapDiscussionOutcome &&
                 qapItem.UserId == qap.UserId;
         }
