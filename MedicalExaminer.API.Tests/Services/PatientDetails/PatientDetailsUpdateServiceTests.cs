@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -17,6 +19,31 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
 {
     public class PatientDetailsUpdateServiceTests : BaseServiceTest
     {
+        private IEnumerable<MedicalExaminer.Models.Location> _locationPath;
+
+        public PatientDetailsUpdateServiceTests()
+        {
+            _locationPath = new List<MedicalExaminer.Models.Location>()
+            {
+                new MedicalExaminer.Models.Location()
+                {
+                    LocationId = "NationalId"
+                },
+                new MedicalExaminer.Models.Location()
+                {
+                    LocationId = "RegionId"
+                },
+                new MedicalExaminer.Models.Location()
+                {
+                    LocationId = "TrustId"
+                },
+                new MedicalExaminer.Models.Location()
+                {
+                    LocationId = "SiteId"
+                },
+            };
+        }
+
         [Fact]
         public void PatientDetailsUpdateQueryIsNullThrowsException()
         {
@@ -45,7 +72,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var user = new Mock<MeUser>();
             user.Object.UserId = "a";
-            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object, user.Object, null);
+            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object, user.Object, _locationPath);
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -77,7 +104,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var user = new Mock<MeUser>();
 
-            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object, user.Object, null);
+            var query = new PatientDetailsUpdateQuery("a", patientDetails.Object, user.Object, _locationPath);
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -128,7 +155,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var user = new Mock<MeUser>();
             user.Object.UserId = "a";
-            var query = new PatientDetailsUpdateQuery("a", patientDetails, user.Object, null);
+            var query = new PatientDetailsUpdateQuery("a", patientDetails, user.Object, _locationPath);
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -178,7 +205,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             user.Object.UserId = "a";
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
 
-            var query = new PatientDetailsUpdateQuery("a", patientDetails, user.Object, null);
+            var query = new PatientDetailsUpdateQuery("a", patientDetails, user.Object, _locationPath);
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
