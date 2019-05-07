@@ -10,7 +10,7 @@ namespace MedicalExaminer.API.Extensions.Data
         public CaseBreakdownProfile()
         {
             CreateMap<CaseBreakDown, CaseBreakDownItem>()
-            .ForMember(x=>x.PatientDeathEvent, cbd => cbd.MapFrom(x=>x.DeathEvent))
+            .ForMember(x => x.PatientDeathEvent, cbd => cbd.MapFrom(x => x.DeathEvent))
             .ForMember(x => x.OtherEvents, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
                 return EventContainerMapping(source.OtherEvents, context);

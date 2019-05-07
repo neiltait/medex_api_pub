@@ -6,6 +6,7 @@ using AutoMapper;
 using AutoMapper.Configuration;
 using FluentAssertions;
 using MedicalExaminer.API.Extensions.Data;
+using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
@@ -26,7 +27,11 @@ namespace MedicalExaminer.API.Tests.Mapper
         /// </summary>
         public MapperExaminationProfileTests()
         {
-            var config = new MapperConfiguration(cfg => { cfg.AddProfile<ExaminationProfile>(); });
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<ExaminationProfile>();
+                cfg.AddProfile<CaseBreakdownProfile>();
+            });
 
             _mapper = config.CreateMapper();
         }
@@ -74,7 +79,14 @@ namespace MedicalExaminer.API.Tests.Mapper
         private DateTime LastAdmission = new DateTime(2019, 1, 15);
         private TimeSpan TimeOfDeath = new TimeSpan(11, 30, 00);
         private const string CaseOfficer = "CaseOfficer";
-
+        private const string AdmissionNotes = "admissionNotes";
+        private TimeSpan AdmittedTime = new TimeSpan(12, 30, 01);
+        private MeUser User = new MeUser()
+        {
+            UserId = "userId",
+            Email = "user@email.com",
+        };
+        
         private readonly MedicalTeam medicalTeam = new MedicalTeam
         {
             ConsultantResponsible = new ClinicalProfessional
@@ -156,21 +168,41 @@ namespace MedicalExaminer.API.Tests.Mapper
         /// </summary>
         private readonly IMapper _mapper;
 
+        private DateTime DateOfConversation = new DateTime(1984, 12, 24);
+        private string DiscussionDetails = "discussionDetails";
+
+        private string ParticipantFullName = "participantFullName";
+        private string ParticipantPhoneNumber = "participantPhoneNumber";
+        private string ParticipantRelationship = "participantRelationship";
+
+        private string MedicalHistoryEventText = "medicalHistoryEventText";
+        private string SummaryDetails = "SummaryDetails";
+
+        private string CauseOfDeath2 = "CauseOfDeath2";
+        private string CauseOfDeath1c = "CauseOfDeath1c";
+        private string CauseOfDeath1b = "CauseOfDeath1b";
+        private string CauseOfDeath1a = "CauseOfDeath1a";
+
+        private string ClinicalGovernanceReviewText = "clinicalGovernanceReviewText";
+        private string MedicalExaminerThoughts = "medicalExaminerThoughts";
+
+        private string ParticipantRoll = "participantRoll";
+        private string ParticipantName = "participantName";
+        private string ParticipantOrganisation = "participantOrganisation";
+
         [Fact]
         public void Examination_To_PutMedicalTeamResponse()
         {
             var examination = GenerateExamination();
-
             var response = _mapper.Map<PutMedicalTeamResponse>(examination);
-
             Assert.True(IsEqual(medicalTeam.ConsultantResponsible, response.ConsultantResponsible));
             Assert.True(IsEqual(medicalTeam.GeneralPractitioner, response.GeneralPractitioner));
             Assert.True(IsEqual(medicalTeam.Qap, response.Qap));
             foreach (var cons in response.ConsultantsOther)
             {
-                Assert.True(IsEqual(medicalTeam.ConsultantsOther[], cons));
+                Assert.True(IsEqual(medicalTeam.ConsultantsOther[0], cons));
             }
-            response.ConsultantsOther.Should().AllBeEquivalentTo(medicalTeam.ConsultantsOther);
+
             response.NursingTeamInformation.Should().Be(medicalTeam.NursingTeamInformation);
             response.MedicalExaminerUserId.Should().Be(medicalTeam.MedicalExaminerUserId);
             response.MedicalExaminerOfficerUserId.Should().Be(medicalTeam.MedicalExaminerOfficerUserId);
@@ -184,6 +216,263 @@ namespace MedicalExaminer.API.Tests.Mapper
                     cp.Organisation == cpi.Organisation
                     && cp.Phone == cpi.Phone
                     && cp.Role == cpi.Role);
+        }
+
+        [Fact]
+        public void Examination_To_GetMedicalTeamResponse()
+        {
+            var examination = GenerateExamination();
+
+            var response = _mapper.Map<GetMedicalTeamResponse>(examination);
+
+            Assert.True(IsEqual(examination, response));
+        }
+
+        [Fact]
+        public void Examination_To_GetCaseBreakdowResponse()
+        {
+            var examination = GenerateExamination();
+            var result = _mapper.Map<CaseBreakDownItem>(examination.CaseBreakdown, opt => opt.Items["user"] = User);
+
+            Assert.True(IsEqual(examination.CaseBreakdown, result));
+        }
+
+       
+        private bool IsEqual(CaseBreakDown caseBreakdown, CaseBreakDownItem caseBreakdownItem)
+        {
+            return IsEqual(caseBreakdown.AdmissionNotes, caseBreakdownItem.AdmissionNotes) &&
+                IsEqual(caseBreakdown.BereavedDiscussion, caseBreakdownItem.BereavedDiscussion) &&
+                IsEqual(caseBreakdown.MedicalHistory, caseBreakdownItem.MedicalHistory) &&
+                IsEqual(caseBreakdown.MeoSummary, caseBreakdownItem.MeoSummary) &&
+                IsEqual(caseBreakdown.OtherEvents, caseBreakdownItem.OtherEvents) &&
+                IsEqual(caseBreakdown.PreScrutiny, caseBreakdownItem.PreScrutiny) &&
+                IsEqual(caseBreakdown.QapDiscussion, caseBreakdownItem.QapDiscussion);
+        }
+
+        private bool IsEqual(BaseEventContainter<QapDiscussionEvent> qapDiscussion1, EventContainerItem<QapDiscussionEventItem> qapDiscussion2)
+        {
+            var historyIsEqual = true;
+
+            foreach (var history in qapDiscussion1.History)
+            {
+                var historyItem = qapDiscussion2.History.Single(x => x.EventId == history.EventId);
+                historyIsEqual = IsEqual(history, historyItem);
+                if (!historyIsEqual)
+                {
+                    break;
+                }
+            }
+
+            return historyIsEqual && IsEqual(qapDiscussion1.Latest, qapDiscussion2.Latest);
+        }
+
+        private bool IsEqual(QapDiscussionEvent qap, QapDiscussionEventItem qapItem)
+        {
+            return qapItem.CauseOfDeath1a == qap.CauseOfDeath1a &&
+                qapItem.CauseOfDeath1b == qap.CauseOfDeath1b &&
+                qapItem.CauseOfDeath1c == qap.CauseOfDeath1c &&
+                qapItem.CauseOfDeath2 == qap.CauseOfDeath2 &&
+                qapItem.Created == qap.Created &&
+                qapItem.DateOfConversation == qap.DateOfConversation &&
+                qapItem.DiscussionDetails == qap.DiscussionDetails &&
+                qapItem.DiscussionUnableHappen == qap.DiscussionUnableHappen &&
+                qapItem.IsFinal == qap.IsFinal &&
+                qapItem.ParticipantName == qap.ParticipantName &&
+                qapItem.ParticipantOrganisation == qap.ParticipantOrganisation &&
+                qapItem.ParticipantPhoneNumber == qap.ParticipantPhoneNumber &&
+                qapItem.ParticipantRoll == qap.ParticipantRoll &&
+                qapItem.QapDiscussionOutcome == qap.QapDiscussionOutcome &&
+                qapItem.UserId == qap.UserId;
+        }
+
+        private bool IsEqual(BaseEventContainter<PreScrutinyEvent> preScrutiny1, EventContainerItem<PreScrutinyEventItem> preScrutiny2)
+        {
+            var historyIsEqual = true;
+
+            foreach (var history in preScrutiny1.History)
+            {
+                var historyItem = preScrutiny2.History.Single(x => x.EventId == history.EventId);
+                historyIsEqual = IsEqual(history, historyItem);
+                if (!historyIsEqual)
+                {
+                    break;
+                }
+            }
+
+            return historyIsEqual && IsEqual(preScrutiny1.Latest, preScrutiny2.Latest);
+        }
+
+        private bool IsEqual(PreScrutinyEvent history, PreScrutinyEventItem historyItem)
+        {
+            return historyItem.CauseOfDeath1a == history.CauseOfDeath1a &&
+                historyItem.CauseOfDeath1b == history.CauseOfDeath1b &&
+                historyItem.CauseOfDeath1c == history.CauseOfDeath1c &&
+                historyItem.CauseOfDeath2 == history.CauseOfDeath2 &&
+                historyItem.CircumstancesOfDeath == history.CircumstancesOfDeath &&
+                historyItem.ClinicalGovernanceReview == history.ClinicalGovernanceReview &&
+                historyItem.ClinicalGovernanceReviewText == history.ClinicalGovernanceReviewText &&
+                historyItem.Created == history.Created &&
+                historyItem.IsFinal == history.IsFinal &&
+                historyItem.MedicalExaminerThoughts == history.MedicalExaminerThoughts &&
+                historyItem.OutcomeOfPreScrutiny == history.OutcomeOfPreScrutiny &&
+                historyItem.UserId == history.UserId;
+        }
+
+        private bool IsEqual(BaseEventContainter<OtherEvent> otherEvents1, EventContainerItem<OtherEventItem> otherEvents2)
+        {
+            var historyIsEqual = true;
+
+            foreach (var history in otherEvents1.History)
+            {
+                var historyItem = otherEvents2.History.Single(x => x.EventId == history.EventId);
+                historyIsEqual = IsEqual(history, historyItem);
+                if (!historyIsEqual)
+                {
+                    break;
+                }
+            }
+
+            return historyIsEqual && IsEqual(otherEvents1.Latest, otherEvents2.Latest);
+        }
+
+        private bool IsEqual(OtherEvent history, OtherEventItem historyItem)
+        {
+            if (history == null && historyItem == null)
+            {
+                return true;
+            }
+
+            return historyItem.UserId == history.UserId &&
+                historyItem.Text == history.Text &&
+                historyItem.IsFinal == history.IsFinal;
+        }
+
+        private bool IsEqual(BaseEventContainter<MeoSummaryEvent> meoSummary1, EventContainerItem<MeoSummaryEventItem> meoSummary2)
+        {
+            var historyIsEqual = true;
+
+            foreach (var history in meoSummary1.History)
+            {
+                var historyItem = meoSummary2.History.Single(x => x.EventId == history.EventId);
+                historyIsEqual = IsEqual(history, historyItem);
+                if (!historyIsEqual)
+                {
+                    break;
+                }
+            }
+
+            return historyIsEqual && IsEqual(meoSummary1.Latest, meoSummary2.Latest);
+        }
+
+        private bool IsEqual(MeoSummaryEvent history, MeoSummaryEventItem historyItem)
+        {
+            return historyItem.IsFinal == history.IsFinal &&
+                historyItem.Created == history.Created &&
+                historyItem.SummaryDetails == history.SummaryDetails &&
+                historyItem.UserId == history.UserId;
+        }
+
+        private bool IsEqual(BaseEventContainter<MedicalHistoryEvent> medicalHistory1, EventContainerItem<MedicalHistoryEventItem> medicalHistory2)
+        {
+            var historyIsEqual = true;
+
+            foreach (var history in medicalHistory1.History)
+            {
+                var historyItem = medicalHistory2.History.Single(x => x.EventId == history.EventId);
+                historyIsEqual = IsEqual(history, historyItem);
+                if (!historyIsEqual)
+                {
+                    break;
+                }
+            }
+
+            return historyIsEqual && IsEqual(medicalHistory1.Latest, medicalHistory2.Latest);
+        }
+
+        private bool IsEqual(MedicalHistoryEvent history, MedicalHistoryEventItem historyItem)
+        {
+            return historyItem.Created == history.Created &&
+                historyItem.IsFinal == history.IsFinal &&
+                historyItem.Text == history.Text &&
+                historyItem.UserId == history.UserId;
+        }
+
+        private bool IsEqual(BaseEventContainter<BereavedDiscussionEvent> bereavedDiscussion1, EventContainerItem<BereavedDiscussionEventItem> bereavedDiscussion2)
+        {
+            var historyIsEqual = true;
+
+            foreach (var history in bereavedDiscussion1.History)
+            {
+                var historyItem = bereavedDiscussion2.History.Single(x => x.EventId == history.EventId);
+                historyIsEqual = IsEqual(history, historyItem);
+                if (!historyIsEqual)
+                {
+                    break;
+                }
+            }
+
+            return historyIsEqual && IsEqual(bereavedDiscussion1.Latest, bereavedDiscussion2.Latest);
+        }
+
+        private bool IsEqual(BereavedDiscussionEvent history, BereavedDiscussionEventItem historyItem)
+        {
+            return historyItem.BereavedDiscussionOutcome == history.BereavedDiscussionOutcome &&
+                historyItem.Created == history.Created &&
+                historyItem.DateOfConversation == history.DateOfConversation &&
+                historyItem.DiscussionDetails == history.DiscussionDetails &&
+                historyItem.DiscussionUnableHappen == history.DiscussionUnableHappen &&
+                historyItem.InformedAtDeath == history.InformedAtDeath &&
+                historyItem.IsFinal == history.IsFinal &&
+                historyItem.ParticipantFullName == history.ParticipantFullName &&
+                historyItem.ParticipantPhoneNumber == history.ParticipantPhoneNumber &&
+                historyItem.ParticipantRelationship == history.ParticipantRelationship &&
+                historyItem.PresentAtDeath == history.PresentAtDeath &&
+                historyItem.UserId == history.UserId;
+        }
+
+        private bool IsEqual(BaseEventContainter<AdmissionEvent> admissionNotes1, EventContainerItem<AdmissionEventItem> admissionNotes2)
+        {
+            var historyIsEqual = true;
+
+            foreach (var history in admissionNotes1.History)
+            {
+                var historyItem = admissionNotes2.History.Single(x => x.EventId == history.EventId);
+                historyIsEqual = IsEqual(history, historyItem);
+                if (!historyIsEqual)
+                {
+                    break;
+                }
+            }
+
+            return historyIsEqual && IsEqual(admissionNotes1.Latest, admissionNotes2.Latest);
+        }
+
+        private bool IsEqual(AdmissionEvent history, AdmissionEventItem historyItem)
+        {
+            return historyItem.AdmittedDate == history.AdmittedDate &&
+                historyItem.AdmittedTime == history.AdmittedTime &&
+                historyItem.Created == history.Created &&
+                historyItem.ImmediateCoronerReferral == history.ImmediateCoronerReferral &&
+                historyItem.IsFinal == history.IsFinal &&
+                historyItem.Notes == history.Notes &&
+                historyItem.UserId == history.UserId;
+        }
+
+        private bool IsEqual(Examination examination, PatientDeathEventItem patientDeathEvent)
+        {
+            return patientDeathEvent.TimeOfDeath == examination.TimeOfDeath &&
+                patientDeathEvent.DateOfDeath == examination.DateOfDeath;
+        }
+
+        private bool IsEqual(Examination examination, GetMedicalTeamResponse response)
+        {
+            return IsEqual(examination.MedicalTeam.ConsultantResponsible, response.ConsultantResponsible) &&
+                IsEqual(examination.MedicalTeam.GeneralPractitioner, response.GeneralPractitioner) &&
+                IsEqual(examination.MedicalTeam.Qap, response.Qap) &&
+                response.NursingTeamInformation == examination.MedicalTeam.NursingTeamInformation &&
+                response.MedicalExaminerUserId == examination.MedicalTeam.MedicalExaminerUserId &&
+                response.MedicalExaminerOfficerUserId == examination.MedicalTeam.MedicalExaminerOfficerUserId &&
+                IsEqual(examination.MedicalTeam.ConsultantsOther[0], response.ConsultantsOther[0]);
         }
 
         [Fact]
@@ -588,6 +877,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             var examination = new Examination
             {
                 ExaminationId = ExaminationId,
+                CaseBreakdown = GenerateCaseBreakdown(),
                 CaseOutcome = caseOutcome,
                 AnyImplants = AnyImplants,
                 AnyPersonalEffects = AnyPersonalEffects,
@@ -640,6 +930,214 @@ namespace MedicalExaminer.API.Tests.Mapper
             };
 
             return examination;
+        }
+
+        private CaseBreakDown GenerateCaseBreakdown()
+        {
+            return new CaseBreakDown()
+            {
+                DeathEvent = new DeathEvent()
+                {
+                    DateOfDeath = DateOfDeath,
+                    EventId = "deathEventId",
+                    TimeOfDeath = TimeOfDeath,
+                    UserId = User.UserId
+                },
+                AdmissionNotes = new AdmissionNotesEventContainer()
+                {
+                    Latest = new AdmissionEvent()
+                    {
+                        AdmittedDate = LastAdmission,
+                        EventId = "admissionEventId",
+                        ImmediateCoronerReferral = false,
+                        IsFinal = true,
+                        Notes = AdmissionNotes,
+                        UserId = User.UserId,
+                        AdmittedTime = AdmittedTime,
+                    },
+                    History = new[]
+                    {
+                        new AdmissionEvent()
+                        {
+                            AdmittedDate = LastAdmission,
+                            EventId = "admissionEventId",
+                            ImmediateCoronerReferral = false,
+                            IsFinal = true,
+                            Notes = AdmissionNotes,
+                            UserId = User.UserId,
+                            AdmittedTime = AdmittedTime,
+                        },
+                        new AdmissionEvent()
+                        {
+                            AdmittedDate = LastAdmission,
+                            EventId = "admissionEventId2",
+                            ImmediateCoronerReferral = false,
+                            IsFinal = true,
+                            Notes = AdmissionNotes,
+                            UserId = User.UserId,
+                            AdmittedTime = AdmittedTime,
+                        }
+                    }
+                },
+                BereavedDiscussion = new BereavedDiscussionEventContainer()
+                {
+                    Latest = new BereavedDiscussionEvent()
+                    {
+                        BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                        DateOfConversation = DateOfConversation,
+                        DiscussionDetails = DiscussionDetails,
+                        DiscussionUnableHappen = false,
+                        EventId = "bereavedDiscussionEventId",
+                        InformedAtDeath = InformedAtDeath.Unknown,
+                        IsFinal = true,
+                        UserId = User.UserId,
+                        ParticipantFullName = ParticipantFullName,
+                        ParticipantPhoneNumber = ParticipantPhoneNumber,
+                        ParticipantRelationship = ParticipantRelationship,
+                        PresentAtDeath = PresentAtDeath.No,
+                    },
+                    History = new[]
+                    {
+                        new BereavedDiscussionEvent()
+                        {
+                            BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                            DateOfConversation = DateOfConversation,
+                            DiscussionDetails = DiscussionDetails,
+                            DiscussionUnableHappen = false,
+                            EventId = "bereavedDiscussionEventId",
+                            InformedAtDeath = InformedAtDeath.Unknown,
+                            IsFinal = true,
+                            UserId= User.UserId,
+                            ParticipantFullName = ParticipantFullName,
+                            ParticipantPhoneNumber = ParticipantPhoneNumber,
+                            ParticipantRelationship = ParticipantRelationship,
+                            PresentAtDeath = PresentAtDeath.No,
+                        }
+                    }
+                },
+                MedicalHistory = new MedicalHistoryEventContainer()
+                {
+                    Latest = new MedicalHistoryEvent()
+                    {
+                        EventId = "MedicalHistoryEventId",
+                        IsFinal = true,
+                        UserId = User.UserId,
+                        Text = MedicalHistoryEventText,
+                    },
+                    History = new[]
+                    {
+                        new MedicalHistoryEvent()
+                        {
+                            EventId = "MedicalHistoryEventId",
+                            IsFinal = true,
+                            UserId = User.UserId,
+                            Text = MedicalHistoryEventText,
+                        }
+                    }
+                },
+                MeoSummary = new MeoSummaryEventContainer()
+                {
+                    Latest = new MeoSummaryEvent()
+                    {
+                        EventId = "MeoSummaryEventId",
+                        IsFinal = true,
+                        UserId = User.UserId,
+                        SummaryDetails = SummaryDetails
+                    },
+                    History = new[]
+                    {
+                        new MeoSummaryEvent()
+                        {
+                            EventId = "MeoSummaryEventId",
+                            IsFinal = true,
+                            UserId = User.UserId,
+                            SummaryDetails = SummaryDetails
+                        }
+                    }
+                },
+                OtherEvents = new OtherEventContainer
+                {
+
+                },
+                PreScrutiny = new PreScrutinyEventContainer()
+                {
+                    Latest = new PreScrutinyEvent()
+                    {
+                        CauseOfDeath1a = CauseOfDeath1a,
+                        CauseOfDeath1b = CauseOfDeath1b,
+                        CauseOfDeath1c = CauseOfDeath1c,
+                        CauseOfDeath2 = CauseOfDeath2,
+                        CircumstancesOfDeath = OverallCircumstancesOfDeath.Unexpected,
+                        ClinicalGovernanceReview = ClinicalGovernanceReview.Unknown,
+                        ClinicalGovernanceReviewText = ClinicalGovernanceReviewText,
+                        EventId = "preScrutinyEventId",
+                        IsFinal = true,
+                        MedicalExaminerThoughts = MedicalExaminerThoughts,
+                        OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.ReferToCoroner,
+                        UserId = User.UserId
+                    },
+                    History = new[]
+                    {
+                        new PreScrutinyEvent()
+                        {
+                            CauseOfDeath1a = CauseOfDeath1a,
+                            CauseOfDeath1b = CauseOfDeath1b,
+                            CauseOfDeath1c = CauseOfDeath1c,
+                            CauseOfDeath2 = CauseOfDeath2,
+                            CircumstancesOfDeath = OverallCircumstancesOfDeath.Unexpected,
+                            ClinicalGovernanceReview = ClinicalGovernanceReview.Unknown,
+                            ClinicalGovernanceReviewText = ClinicalGovernanceReviewText,
+                            EventId = "preScrutinyEventId",
+                            IsFinal = true,
+                            MedicalExaminerThoughts = MedicalExaminerThoughts,
+                            OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.ReferToCoroner,
+                            UserId = User.UserId
+                        }
+                    }
+                },
+                QapDiscussion = new QapDiscussionEventContainer()
+                {
+                    Latest = new QapDiscussionEvent()
+                    {
+                        EventId = "QapDiscussionEventId",
+                        IsFinal = true,
+                        UserId = User.UserId,
+                        DiscussionDetails = DiscussionDetails,
+                        CauseOfDeath1a = CauseOfDeath1a,
+                        CauseOfDeath1b = CauseOfDeath1b,
+                        CauseOfDeath1c = CauseOfDeath1c,
+                        CauseOfDeath2 = CauseOfDeath2,
+                        DiscussionUnableHappen = false,
+                        QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                        ParticipantRoll = ParticipantRoll,
+                        DateOfConversation = DateOfConversation,
+                        ParticipantName = ParticipantName,
+                        ParticipantOrganisation = ParticipantOrganisation,
+                        ParticipantPhoneNumber = ParticipantPhoneNumber
+                    },
+                    History = new[]
+                    {
+                        new QapDiscussionEvent()
+                    {
+                        EventId = "QapDiscussionEventId",
+                        IsFinal = true,
+                        UserId = User.UserId,
+                        DiscussionDetails = DiscussionDetails,
+                        CauseOfDeath1a = CauseOfDeath1a,
+                        CauseOfDeath1b = CauseOfDeath1b,
+                        CauseOfDeath1c = CauseOfDeath1c,
+                        CauseOfDeath2 = CauseOfDeath2,
+                        DiscussionUnableHappen = false,
+                        QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                        ParticipantRoll = ParticipantRoll,
+                        DateOfConversation = DateOfConversation,
+                        ParticipantName = ParticipantName,
+                        ParticipantOrganisation = ParticipantOrganisation,
+                        ParticipantPhoneNumber = ParticipantPhoneNumber
+                    }
+                    }
+                }
+            };
         }
 
         /// <summary>
