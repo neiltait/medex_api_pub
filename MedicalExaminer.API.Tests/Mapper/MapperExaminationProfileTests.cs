@@ -280,7 +280,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 qapItem.ParticipantName == qap.ParticipantName &&
                 qapItem.ParticipantOrganisation == qap.ParticipantOrganisation &&
                 qapItem.ParticipantPhoneNumber == qap.ParticipantPhoneNumber &&
-                qapItem.ParticipantRoll == qap.ParticipantRoll &&
+                qapItem.ParticipantRoll == qap.ParticipantRole &&
                 qapItem.QapDiscussionOutcome == qap.QapDiscussionOutcome &&
                 qapItem.UserId == qap.UserId;
         }
@@ -1109,7 +1109,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         CauseOfDeath2 = CauseOfDeath2,
                         DiscussionUnableHappen = false,
                         QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
-                        ParticipantRoll = ParticipantRoll,
+                        ParticipantRole = ParticipantRoll,
                         DateOfConversation = DateOfConversation,
                         ParticipantName = ParticipantName,
                         ParticipantOrganisation = ParticipantOrganisation,
@@ -1129,7 +1129,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         CauseOfDeath2 = CauseOfDeath2,
                         DiscussionUnableHappen = false,
                         QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
-                        ParticipantRoll = ParticipantRoll,
+                        ParticipantRole = ParticipantRoll,
                         DateOfConversation = DateOfConversation,
                         ParticipantName = ParticipantName,
                         ParticipantOrganisation = ParticipantOrganisation,
