@@ -20,7 +20,7 @@ namespace MedicalExaminer.Common.Extensions.MeUser
         {
             var permissions = user.Permissions;
 
-            var topPermission = permissions.OrderByDescending(p => p.UserRole).FirstOrDefault();
+            var topPermission = permissions?.OrderByDescending(p => p.UserRole).FirstOrDefault();
 
             return topPermission?.UserRole;
         }
