@@ -16,32 +16,32 @@ namespace MedicalExaminer.API.Extensions.Data
         public UsersProfile()
         {
             CreateMap<MeUser, UserItem>()
-                .ForMember(x => x.UserRole, opt => opt.Ignore());
+                .ForMember(userItem => userItem.UserRole, opt => opt.Ignore());
             CreateMap<MeUser, UserLookup>()
-                .ForMember(x => x.FullName, opt => opt.MapFrom(x => x.FullName()));
+                .ForMember(userLookup => userLookup.FullName, opt => opt.MapFrom(meUser => meUser.FullName()));
             CreateMap<MeUser, GetUserResponse>()
-                .ForMember(x => x.Errors, opt => opt.Ignore())
-                .ForMember(x => x.Lookups, opt => opt.Ignore());
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<MeUser, PutUserResponse>()
-                .ForMember(x => x.Errors, opt => opt.Ignore())
-                .ForMember(x => x.Lookups, opt => opt.Ignore());
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<MeUser, PostUserResponse>()
-                .ForMember(x => x.Errors, opt => opt.Ignore())
-                .ForMember(x => x.Lookups, opt => opt.Ignore());
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<PostUserRequest, MeUser>()
-                .ForMember(x => x.Email, opt => opt.MapFrom(x => x.Email))
+                .ForMember(meUser => meUser.Email, opt => opt.MapFrom(request => request.Email))
                 .ForAllOtherMembers(x => x.Ignore());
             CreateMap<PutUserRequest, MeUser>()
-                .ForMember(x => x.UserId, opt => opt.MapFrom(x => x.UserId))
-                .ForMember(x => x.FirstName, opt => opt.MapFrom(x => x.FirstName))
-                .ForMember(x => x.LastName, opt => opt.MapFrom(x => x.LastName))
-                .ForMember(x => x.Email, opt => opt.MapFrom(x => x.Email))
-                .ForAllOtherMembers(x => x.Ignore());
+                .ForMember(meUser => meUser.UserId, opt => opt.MapFrom(request => request.UserId))
+                .ForMember(meUser => meUser.FirstName, opt => opt.MapFrom(request => request.FirstName))
+                .ForMember(meUser => meUser.LastName, opt => opt.MapFrom(request => request.LastName))
+                .ForMember(meUser => meUser.Email, opt => opt.MapFrom(request => request.Email))
+                .ForAllOtherMembers(request => request.Ignore());
             CreateMap<MEUserPermission, UserPermission>()
-                .ForMember(x => x.UserRole, opt => opt.MapFrom(x => x.UserRole))
-                .ForMember(x => x.LocationId, opt => opt.MapFrom(x => x.LocationId))
-                .ForMember(x => x.PermissionId, opt => opt.MapFrom(x => x.PermissionId))
-                .ForAllOtherMembers(x => x.Ignore());
+                .ForMember(userPermission => userPermission.UserRole, opt => opt.MapFrom(meUserPermission => meUserPermission.UserRole))
+                .ForMember(userPermission => userPermission.LocationId, opt => opt.MapFrom(meUserPermission => meUserPermission.LocationId))
+                .ForMember(userPermission => userPermission.PermissionId, opt => opt.MapFrom(meUserPermission => meUserPermission.PermissionId))
+                .ForAllOtherMembers(meUserPermission => meUserPermission.Ignore());
         }
     }
 }

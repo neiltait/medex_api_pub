@@ -16,11 +16,11 @@ namespace MedicalExaminer.API.Extensions.Data
         public QapDiscussionEventProfile()
         {
             CreateMap<PutQapDiscussionEventRequest, QapDiscussionEvent>()
-                .ForMember(p => p.EventType, opt => opt.Ignore())
-                .ForMember(p => p.UserId, opt => opt.Ignore())
-                .ForMember(p => p.Created, opt => opt.Ignore())
-                .ForMember(p => p.UserFullName, opt => opt.Ignore())
-                .ForMember(p => p.UsersRole, opt => opt.Ignore());
+                .ForMember(qapDiscussionEvent => qapDiscussionEvent.EventType, opt => opt.Ignore())
+                .ForMember(qapDiscussionEvent => qapDiscussionEvent.UserId, opt => opt.Ignore())
+                .ForMember(qapDiscussionEvent => qapDiscussionEvent.Created, opt => opt.Ignore())
+                .ForMember(qapDiscussionEvent => qapDiscussionEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(qapDiscussionEvent => qapDiscussionEvent.UsersRole, opt => opt.Ignore());
         }
     }
 }

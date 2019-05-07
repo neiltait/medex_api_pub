@@ -16,22 +16,22 @@ namespace MedicalExaminer.API.Extensions.Data
         public PermissionsProfile()
         {
             CreateMap<MEUserPermission, PermissionItem>()
-                .ForMember(x => x.UserId, opt => opt.Ignore());
+                .ForMember(permissionItem => permissionItem.UserId, opt => opt.Ignore());
             CreateMap<MEUserPermission, GetPermissionResponse>()
-                .ForMember(x => x.UserId, opt => opt.Ignore())
-                .ForMember(x => x.Errors, opt => opt.Ignore())
-                .ForMember(x => x.Lookups, opt => opt.Ignore());
+                .ForMember(response => response.UserId, opt => opt.Ignore())
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<MEUserPermission, PostPermissionResponse>()
-                .ForMember(x => x.UserId, opt => opt.Ignore())
-                .ForMember(x => x.Errors, opt => opt.Ignore())
-                .ForMember(x => x.Lookups, opt => opt.Ignore());
+                .ForMember(response => response.UserId, opt => opt.Ignore())
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<MEUserPermission, PutPermissionResponse>()
-                .ForMember(x => x.UserId, opt => opt.Ignore())
-                .ForMember(x => x.Errors, opt => opt.Ignore())
-                .ForMember(x => x.Lookups, opt => opt.Ignore());
+                .ForMember(response => response.UserId, opt => opt.Ignore())
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
 
             CreateMap<PostPermissionRequest, MEUserPermission>()
-                .ForMember(x => x.PermissionId, opt => opt.Ignore());
+                .ForMember(meUserPermission => meUserPermission.PermissionId, opt => opt.Ignore());
             CreateMap<PutPermissionRequest, MEUserPermission>();
         }
     }
