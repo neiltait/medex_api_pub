@@ -15,11 +15,11 @@ namespace MedicalExaminer.API.Extensions.Data
         public AdmissionEventProfile()
         {
             CreateMap<PutAdmissionEventRequest, AdmissionEvent>()
-                .ForMember(p => p.EventType, opt => opt.Ignore())
-                .ForMember(p => p.UserId, opt => opt.Ignore())
-                .ForMember(p => p.Created, opt => opt.Ignore())
-                .ForMember(p => p.UserFullName, opt => opt.Ignore())
-                .ForMember(p => p.UsersRole, opt => opt.Ignore());
+                .ForMember(admissionEvent => admissionEvent.EventType, opt => opt.Ignore())
+                .ForMember(admissionEvent => admissionEvent.UserId, opt => opt.Ignore())
+                .ForMember(admissionEvent => admissionEvent.Created, opt => opt.Ignore())
+                .ForMember(admissionEvent => admissionEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(admissionEvent => admissionEvent.UsersRole, opt => opt.Ignore());
 
             CreateMap<AdmissionEvent, AdmissionEventItem>();
         }

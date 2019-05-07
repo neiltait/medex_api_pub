@@ -15,9 +15,9 @@ namespace MedicalExaminer.API.Extensions.Data
         public NewExaminationProfile()
         {
             CreateMap<PostExaminationRequest, ExaminationItem>()
-                .ForMember(p => p.ExaminationId, opt => opt.Ignore())
-                .ForMember(p => p.MedicalTeam, opt => opt.Ignore())
-                .ForMember(p => p.UrgencyScore, opt => opt.Ignore());
+                .ForMember(examinationItem => examinationItem.ExaminationId, opt => opt.Ignore())
+                .ForMember(examinationItem => examinationItem.MedicalTeam, opt => opt.Ignore())
+                .ForMember(examinationItem => examinationItem.UrgencyScore, opt => opt.Ignore());
         }
     }
 }

@@ -15,10 +15,10 @@ namespace MedicalExaminer.API.Extensions.Data
         public OtherEventProfile()
         {
             CreateMap<PutOtherEventRequest, OtherEvent>()
-                .ForMember(p => p.Created, opt => opt.Ignore())
-                .ForMember(p => p.UserId, opt => opt.Ignore())
-                .ForMember(p => p.UserFullName, opt => opt.Ignore())
-                .ForMember(p => p.UsersRole, opt => opt.Ignore());
+                .ForMember(otherEvent => otherEvent.Created, opt => opt.Ignore())
+                .ForMember(otherEvent => otherEvent.UserId, opt => opt.Ignore())
+                .ForMember(otherEvent => otherEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(otherEvent => otherEvent.UsersRole, opt => opt.Ignore());
         }
     }
 }

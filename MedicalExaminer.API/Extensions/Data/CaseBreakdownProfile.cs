@@ -10,32 +10,32 @@ namespace MedicalExaminer.API.Extensions.Data
         public CaseBreakdownProfile()
         {
             CreateMap<CaseBreakDown, CaseBreakDownItem>()
-            .ForMember(x=>x.PatientDeathEvent, cbd => cbd.MapFrom(x=>x.DeathEvent))
-            .ForMember(x => x.OtherEvents, ev => ev.MapFrom((source, destination, destinationMember, context) =>
+            .ForMember(caseBreakDownItem => caseBreakDownItem.PatientDeathEvent, cbd => cbd.MapFrom(caseBreakDown => caseBreakDown.DeathEvent))
+            .ForMember(caseBreakDownItem => caseBreakDownItem.OtherEvents, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
                 return EventContainerMapping(source.OtherEvents, context);
             }))
-            .ForMember(x => x.MedicalHistory, ev => ev.MapFrom((source, destination, destinationMember, context) =>
+            .ForMember(caseBreakDownItem => caseBreakDownItem.MedicalHistory, ev => ev.MapFrom((source, destination, destinationMember, context) =>
              {
                  return EventContainerMapping(source.MedicalHistory, context);
              }))
-            .ForMember(x => x.AdmissionNotes, ev => ev.MapFrom((source, destination, destinationMember, context) =>
+            .ForMember(caseBreakDownItem => caseBreakDownItem.AdmissionNotes, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
                 return EventContainerMapping(source.AdmissionNotes, context);
             }))
-            .ForMember(x => x.BereavedDiscussion, ev => ev.MapFrom((source, destination, destinationMember, context) =>
+            .ForMember(caseBreakDownItem => caseBreakDownItem.BereavedDiscussion, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
                 return EventContainerMapping(source.BereavedDiscussion, context);
             }))
-            .ForMember(x => x.MeoSummary, ev => ev.MapFrom((source, destination, destinationMember, context) =>
+            .ForMember(caseBreakDownItem => caseBreakDownItem.MeoSummary, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
                 return EventContainerMapping(source.MeoSummary, context);
             }))
-            .ForMember(x => x.PreScrutiny, ev => ev.MapFrom((source, destination, destinationMember, context) =>
+            .ForMember(caseBreakDownItem => caseBreakDownItem.PreScrutiny, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
                 return EventContainerMapping(source.PreScrutiny, context);
             }))
-            .ForMember(x => x.QapDiscussion, ev => ev.MapFrom((source, destination, destinationMember, context) =>
+            .ForMember(caseBreakDownItem => caseBreakDownItem.QapDiscussion, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
                 return EventContainerMapping(source.QapDiscussion, context);
             }));
