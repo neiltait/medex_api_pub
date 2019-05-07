@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.API.Services;
+using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Extensions.Models;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
@@ -134,20 +136,25 @@ namespace MedicalExaminer.API.Controllers
                 }
             }
 
-            var locations = await
-                _locationParentsService.Handle(
-                    new LocationParentsQuery(patientDetails.MedicalExaminerOfficeResponsible));
+            var locations = (await _locationParentsService.Handle(
+                    new LocationParentsQuery(patientDetails.MedicalExaminerOfficeResponsible))).ToList();
 
-            examination.UpdateLocationPath(locations);
+            var locationPath = new LocationPath();
 
-            if (!CanAsync(Permission.UpdateExamination, examination))
+            locationPath.UpdateLocationPath(locations);
+
+            if (!CanAsync(Permission.UpdateExamination, locationPath))
             {
                 return Forbid();
             }
 
             var myUser = await CurrentUser();
 
-            var result = await _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(examinationId, patientDetails, myUser));
+            var result = await _patientDetailsUpdateService.Handle(new PatientDetailsUpdateQuery(
+                examinationId,
+                patientDetails,
+                myUser,
+                locations));
 
             var patientCard = Mapper.Map<PatientCardItem>(result);
 
