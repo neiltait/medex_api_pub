@@ -51,13 +51,16 @@ namespace MedicalExaminer.Common.Authorization
                 result[(Permission)value] = new HashSet<UserRoles>();
             }
 
-            foreach (var role in roles)
+            if (roles != null)
             {
-                var permissions = _roles[role].Granted;
-
-                foreach (var permission in permissions)
+                foreach (var role in roles)
                 {
-                    result[permission].Add(role);
+                    var permissions = _roles[role].Granted;
+
+                    foreach (var permission in permissions)
+                    {
+                        result[permission].Add(role);
+                    }
                 }
             }
 
