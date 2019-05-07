@@ -114,7 +114,6 @@ namespace MedicalExaminer.API.Controllers
                 meUser.OktaTokenExpiry = expiryTime;
 
                 meUser = await UpdateUserOktaToken(meUser);
-
             }
 
             return new PostValidateSessionResponse
@@ -124,7 +123,8 @@ namespace MedicalExaminer.API.Controllers
                 FirstName = meUser.FirstName,
                 LastName = meUser.LastName,
                 Role = meUser.Role(),
-                Permissions = _rolePermissions.PermissionsForRoles(meUser.Permissions.Select(p => (UserRoles)p.UserRole).ToList()),
+                Permissions = _rolePermissions.PermissionsForRoles(
+                    meUser.Permissions?.Select(p => (UserRoles)p.UserRole).ToList()),
             };
         }
 
