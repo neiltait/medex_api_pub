@@ -47,10 +47,10 @@ namespace MedicalExaminer.Models
         public EventType EventType => EventType.QapDiscussion;
 
         /// <summary>
-        /// Participant's roll.
+        /// Participant's role.
         /// </summary>
-        [JsonProperty(PropertyName = "participant_roll")]
-        public string ParticipantRoll { get; set; }
+        [JsonProperty(PropertyName = "participant_role")]
+        public string ParticipantRole { get; set; }
 
         /// <summary>
         /// Participant's organisation.

@@ -15,11 +15,11 @@ namespace MedicalExaminer.API.Extensions.Data
         public PreScrutinyEventProfile()
         {
             CreateMap<PutPreScrutinyEventRequest, PreScrutinyEvent>()
-                .ForMember(p => p.EventType, opt => opt.Ignore())
-                .ForMember(p => p.UserId, opt => opt.Ignore())
-                .ForMember(p => p.Created, opt => opt.Ignore())
-                .ForMember(p => p.UserFullName, opt => opt.Ignore())
-                .ForMember(p => p.UsersRole, opt => opt.Ignore());
+                .ForMember(preScrutinyEvent => preScrutinyEvent.EventType, opt => opt.Ignore())
+                .ForMember(preScrutinyEvent => preScrutinyEvent.UserId, opt => opt.Ignore())
+                .ForMember(preScrutinyEvent => preScrutinyEvent.Created, opt => opt.Ignore())
+                .ForMember(preScrutinyEvent => preScrutinyEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(preScrutinyEvent => preScrutinyEvent.UsersRole, opt => opt.Ignore());
         }
     }
 }

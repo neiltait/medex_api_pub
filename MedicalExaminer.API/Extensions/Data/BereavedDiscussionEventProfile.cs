@@ -15,11 +15,11 @@ namespace MedicalExaminer.API.Extensions.Data
         public BereavedDiscussionEventProfile()
         {
             CreateMap<PutBereavedDiscussionEventRequest, BereavedDiscussionEvent>()
-                .ForMember(p => p.EventType, opt => opt.Ignore())
-                .ForMember(p => p.UserId, opt => opt.Ignore())
-                .ForMember(p => p.Created, opt => opt.Ignore())
-                .ForMember(p => p.UserFullName, opt => opt.Ignore())
-                .ForMember(p => p.UsersRole, opt => opt.Ignore());
+                .ForMember(bereavedDiscussionEvent => bereavedDiscussionEvent.EventType, opt => opt.Ignore())
+                .ForMember(bereavedDiscussionEvent => bereavedDiscussionEvent.UserId, opt => opt.Ignore())
+                .ForMember(bereavedDiscussionEvent => bereavedDiscussionEvent.Created, opt => opt.Ignore())
+                .ForMember(bereavedDiscussionEvent => bereavedDiscussionEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(bereavedDiscussionEvent => bereavedDiscussionEvent.UsersRole, opt => opt.Ignore());
         }
     }
 }

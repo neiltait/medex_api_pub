@@ -15,11 +15,11 @@ namespace MedicalExaminer.API.Extensions.Data
         public MedicalHistoryEventProfile()
         {
             CreateMap<PutMedicalHistoryEventRequest, MedicalHistoryEvent>()
-                .ForMember(p => p.EventType, opt => opt.Ignore())
-                .ForMember(p => p.UserId, opt => opt.Ignore())
-                .ForMember(p => p.Created, opt => opt.Ignore())
-                .ForMember(p => p.UserFullName, opt => opt.Ignore())
-                .ForMember(p => p.UsersRole, opt => opt.Ignore());
+                .ForMember(medicalHistoryEvent => medicalHistoryEvent.EventType, opt => opt.Ignore())
+                .ForMember(medicalHistoryEvent => medicalHistoryEvent.UserId, opt => opt.Ignore())
+                .ForMember(medicalHistoryEvent => medicalHistoryEvent.Created, opt => opt.Ignore())
+                .ForMember(medicalHistoryEvent => medicalHistoryEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(medicalHistoryEvent => medicalHistoryEvent.UsersRole, opt => opt.Ignore());
         }
     }
 }

@@ -15,20 +15,20 @@ namespace MedicalExaminer.API.Extensions.Data
         public CaseOutcomeProfile()
         {
              CreateMap<Examination, PutConfirmationOfScrutinyResponse>()
-                .ForMember(x => x.ScrutinyConfirmedOn, opt => opt.MapFrom(x => x.ConfirmationOfScrutinyCompletedAt))
-                .ForMember(x => x.Errors, opt => opt.Ignore())
-                .ForMember(x => x.Lookups, opt => opt.Ignore());
+                .ForMember(response => response.ScrutinyConfirmedOn, opt => opt.MapFrom(examination => examination.CaseOutcome.ScrutinyConfirmedOn))
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<PutOutstandingCaseItemsRequest, CaseOutcome>()
-                 .ForMember(x => x.MCCDIssued, opt => opt.MapFrom(y => y.MCCDIssued))
-                 .ForMember(x => x.CremationFormStatus, opt => opt.MapFrom(y => y.CremationFormStatus))
-                 .ForMember(x => x.GPNotifiedStatus, opt => opt.MapFrom(y => y.GPNotifiedStatus))
-                 .ForMember(x => x.CaseMedicalExaminerFullName, opt => opt.Ignore())
-                 .ForMember(x => x.CaseCompleted, opt => opt.Ignore())
-                 .ForMember(x => x.CaseOutcomeSummary, opt => opt.Ignore())
-                 .ForMember(x => x.OutcomeOfPrescrutiny, opt => opt.Ignore())
-                 .ForMember(x => x.OutcomeOfRepresentativeDiscussion, opt => opt.Ignore())
-                 .ForMember(x => x.ScrutinyConfirmedOn, opt => opt.Ignore())
-                 .ForMember(x => x.OutcomeQapDiscussion, opt => opt.Ignore());
+                 .ForMember(caseOutcome => caseOutcome.MCCDIssued, opt => opt.MapFrom(request => request.MCCDIssued))
+                 .ForMember(caseOutcome => caseOutcome.CremationFormStatus, opt => opt.MapFrom(request => request.CremationFormStatus))
+                 .ForMember(caseOutcome => caseOutcome.GPNotifiedStatus, opt => opt.MapFrom(request => request.GPNotifiedStatus))
+                 .ForMember(caseOutcome => caseOutcome.CaseMedicalExaminerFullName, opt => opt.Ignore())
+                 .ForMember(caseOutcome => caseOutcome.CaseCompleted, opt => opt.Ignore())
+                 .ForMember(caseOutcome => caseOutcome.CaseOutcomeSummary, opt => opt.Ignore())
+                 .ForMember(caseOutcome => caseOutcome.OutcomeOfPrescrutiny, opt => opt.Ignore())
+                 .ForMember(caseOutcome => caseOutcome.OutcomeOfRepresentativeDiscussion, opt => opt.Ignore())
+                 .ForMember(caseOutcome => caseOutcome.ScrutinyConfirmedOn, opt => opt.Ignore())
+                 .ForMember(caseOutcome => caseOutcome.OutcomeQapDiscussion, opt => opt.Ignore());
         }
     }
 }

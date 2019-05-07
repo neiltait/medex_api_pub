@@ -20,63 +20,63 @@ namespace MedicalExaminer.API.Extensions.Data
         public ExaminationProfile()
         {
             CreateMap<Examination, CaseOutcome>()
-                .ForMember(x => x.CaseMedicalExaminerFullName, opt => opt.MapFrom(y => y.CaseOutcome.CaseMedicalExaminerFullName))
-                .ForMember(x => x.CaseCompleted, opt => opt.MapFrom(y => y.CaseOutcome.CaseCompleted))
-                .ForMember(x => x.CaseOutcomeSummary, opt => opt.MapFrom(y => y.CaseOutcome.CaseOutcomeSummary))
-                .ForMember(x => x.OutcomeOfPrescrutiny, opt => opt.MapFrom(y => y.CaseOutcome.OutcomeOfPrescrutiny))
-                .ForMember(x => x.OutcomeOfRepresentativeDiscussion, opt => opt.MapFrom(y => y.CaseOutcome.OutcomeOfRepresentativeDiscussion))
-                .ForMember(x => x.OutcomeQapDiscussion, opt => opt.MapFrom(y => y.CaseOutcome.OutcomeQapDiscussion))
-                .ForMember(x => x.ScrutinyConfirmedOn, opt => opt.MapFrom(y => y.CaseOutcome.ScrutinyConfirmedOn))
-                .ForMember(x => x.CremationFormStatus, opt => opt.MapFrom(y => y.CaseOutcome.CremationFormStatus))
-                .ForMember(x => x.MCCDIssued, opt => opt.MapFrom(y => y.CaseOutcome.MCCDIssued))
-                .ForMember(x => x.GPNotifiedStatus, opt => opt.MapFrom(y => y.CaseOutcome.GPNotifiedStatus));
+                .ForMember(caseOutcome => caseOutcome.CaseMedicalExaminerFullName, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseMedicalExaminerFullName))
+                .ForMember(caseOutcome => caseOutcome.CaseCompleted, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseCompleted))
+                .ForMember(caseOutcome => caseOutcome.CaseOutcomeSummary, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary))
+                .ForMember(caseOutcome => caseOutcome.OutcomeOfPrescrutiny, opt => opt.MapFrom(examination => examination.CaseOutcome.OutcomeOfPrescrutiny))
+                .ForMember(caseOutcome => caseOutcome.OutcomeOfRepresentativeDiscussion, opt => opt.MapFrom(examination => examination.CaseOutcome.OutcomeOfRepresentativeDiscussion))
+                .ForMember(caseOutcome => caseOutcome.OutcomeQapDiscussion, opt => opt.MapFrom(examination => examination.CaseOutcome.OutcomeQapDiscussion))
+                .ForMember(caseOutcome => caseOutcome.ScrutinyConfirmedOn, opt => opt.MapFrom(examination => examination.CaseOutcome.ScrutinyConfirmedOn))
+                .ForMember(caseOutcome => caseOutcome.CremationFormStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.CremationFormStatus))
+                .ForMember(caseOutcome => caseOutcome.MCCDIssued, opt => opt.MapFrom(examination => examination.CaseOutcome.MCCDIssued))
+                .ForMember(caseOutcome => caseOutcome.GPNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GPNotifiedStatus));
             CreateMap<Examination, GetCaseOutcomeResponse>()
-                .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
-                .ForMember(x => x.CaseMedicalExaminerFullName, opt => opt.MapFrom(x => x.CaseOutcome.CaseMedicalExaminerFullName))
-                .ForMember(x => x.MCCDIssued, opt => opt.MapFrom(y => y.CaseOutcome.MCCDIssued))
-                .ForMember(x => x.CremationFormStatus, opt => opt.MapFrom(y => y.CaseOutcome.CremationFormStatus))
-                .ForMember(x => x.GPNotifedStatus, opt => opt.MapFrom(y => y.CaseOutcome.GPNotifiedStatus))
-                .ForMember(x => x.Errors, opt => opt.Ignore())
-                .ForMember(x => x.Lookups, opt => opt.Ignore())
-                .ForMember(x => x.CaseCompleted, opt => opt.MapFrom(y => y.CaseOutcome.CaseCompleted))
-                .ForMember(x => x.CaseOutcomeSummary, opt => opt.MapFrom(y => y.CaseOutcome.CaseOutcomeSummary))
-                .ForMember(x => x.OutcomeOfPrescrutiny, opt => opt.MapFrom(y => y.CaseOutcome.OutcomeOfPrescrutiny))
-                .ForMember(x => x.OutcomeOfRepresentativeDiscussion, opt => opt.MapFrom(y => y.CaseOutcome.OutcomeOfRepresentativeDiscussion))
-                .ForMember(x => x.OutcomeQapDiscussion, opt => opt.MapFrom(y => y.CaseOutcome.OutcomeQapDiscussion))
-                .ForMember(x => x.ScrutinyConfirmedOn, opt => opt.MapFrom(y => y.CaseOutcome.ScrutinyConfirmedOn));
+                .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
+                .ForMember(response => response.CaseMedicalExaminerFullName, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseMedicalExaminerFullName))
+                .ForMember(response => response.MCCDIssued, opt => opt.MapFrom(examination => examination.CaseOutcome.MCCDIssued))
+                .ForMember(response => response.CremationFormStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.CremationFormStatus))
+                .ForMember(response => response.GPNotifedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GPNotifiedStatus))
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore())
+                .ForMember(response => response.CaseCompleted, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseCompleted))
+                .ForMember(response => response.CaseOutcomeSummary, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary))
+                .ForMember(response => response.OutcomeOfPrescrutiny, opt => opt.MapFrom(examination => examination.CaseOutcome.OutcomeOfPrescrutiny))
+                .ForMember(response => response.OutcomeOfRepresentativeDiscussion, opt => opt.MapFrom(examination => examination.CaseOutcome.OutcomeOfRepresentativeDiscussion))
+                .ForMember(response => response.OutcomeQapDiscussion, opt => opt.MapFrom(examination => examination.CaseOutcome.OutcomeQapDiscussion))
+                .ForMember(response => response.ScrutinyConfirmedOn, opt => opt.MapFrom(examination => examination.CaseOutcome.ScrutinyConfirmedOn));
             CreateMap<Examination, ExaminationItem>();
             CreateMap<Examination, GetPatientDetailsResponse>()
-                .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
-                .ForMember(x => x.Errors, opt => opt.Ignore())
-                .ForMember(x => x.Lookups, opt => opt.Ignore());
+                .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<Examination, PutMedicalTeamResponse>()
-                .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
-                .ForMember(x => x.ConsultantResponsible, opt => opt.MapFrom(x => x.MedicalTeam.ConsultantResponsible))
-                .ForMember(x => x.ConsultantsOther, opt => opt.MapFrom(x => x.MedicalTeam.ConsultantsOther))
-                .ForMember(x => x.GeneralPractitioner, opt => opt.MapFrom(x => x.MedicalTeam.GeneralPractitioner))
-                .ForMember(x => x.MedicalExaminerOfficerUserId, opt => opt.MapFrom(x => x.MedicalTeam.MedicalExaminerOfficerUserId))
-                .ForMember(x => x.MedicalExaminerUserId, opt => opt.MapFrom(x => x.MedicalTeam.MedicalExaminerUserId))
-                .ForMember(x => x.NursingTeamInformation, opt => opt.MapFrom(x => x.MedicalTeam.NursingTeamInformation))
-                .ForMember(x => x.Qap, opt => opt.MapFrom(x => x.MedicalTeam.Qap))
-                .ForMember(x => x.Errors, opt => opt.Ignore())
-                .ForMember(x => x.Lookups, opt => opt.Ignore());
+                .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
+                .ForMember(response => response.ConsultantResponsible, opt => opt.MapFrom(examination => examination.MedicalTeam.ConsultantResponsible))
+                .ForMember(response => response.ConsultantsOther, opt => opt.MapFrom(examination => examination.MedicalTeam.ConsultantsOther))
+                .ForMember(response => response.GeneralPractitioner, opt => opt.MapFrom(examination => examination.MedicalTeam.GeneralPractitioner))
+                .ForMember(response => response.MedicalExaminerOfficerUserId, opt => opt.MapFrom(examination => examination.MedicalTeam.MedicalExaminerOfficerUserId))
+                .ForMember(response => response.MedicalExaminerUserId, opt => opt.MapFrom(examination => examination.MedicalTeam.MedicalExaminerUserId))
+                .ForMember(response => response.NursingTeamInformation, opt => opt.MapFrom(examination => examination.MedicalTeam.NursingTeamInformation))
+                .ForMember(response => response.Qap, opt => opt.MapFrom(examination => examination.MedicalTeam.Qap))
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<Examination, GetMedicalTeamResponse>()
-                .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
-                .ForMember(x => x.ConsultantResponsible, opt => opt.MapFrom(x => x.MedicalTeam.ConsultantResponsible))
-                .ForMember(x => x.ConsultantsOther, opt => opt.MapFrom(x => x.MedicalTeam.ConsultantsOther))
-                .ForMember(x => x.GeneralPractitioner, opt => opt.MapFrom(x => x.MedicalTeam.GeneralPractitioner))
-                .ForMember(x => x.MedicalExaminerOfficerUserId, opt => opt.MapFrom(x => x.MedicalTeam.MedicalExaminerOfficerUserId))
-                .ForMember(x => x.MedicalExaminerUserId, opt => opt.MapFrom(x => x.MedicalTeam.MedicalExaminerUserId))
-                .ForMember(x => x.NursingTeamInformation, opt => opt.MapFrom(x => x.MedicalTeam.NursingTeamInformation))
-                .ForMember(x => x.Qap, opt => opt.MapFrom(x => x.MedicalTeam.Qap))
-                .ForMember(x => x.MedicalExaminerFullName, opt => opt.MapFrom(x => x.MedicalTeam.MedicalExaminerFullName))
-                .ForMember(x => x.MedicalExaminerOfficerFullName, opt => opt.MapFrom(x => x.MedicalTeam.MedicalExaminerOfficerFullName))
-                .ForMember(x => x.Errors, opt => opt.Ignore())
-                .ForMember(x => x.Lookups, opt => opt.Ignore());
+                .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
+                .ForMember(response => response.ConsultantResponsible, opt => opt.MapFrom(examination => examination.MedicalTeam.ConsultantResponsible))
+                .ForMember(response => response.ConsultantsOther, opt => opt.MapFrom(examination => examination.MedicalTeam.ConsultantsOther))
+                .ForMember(response => response.GeneralPractitioner, opt => opt.MapFrom(examination => examination.MedicalTeam.GeneralPractitioner))
+                .ForMember(response => response.MedicalExaminerOfficerUserId, opt => opt.MapFrom(examination => examination.MedicalTeam.MedicalExaminerOfficerUserId))
+                .ForMember(response => response.MedicalExaminerUserId, opt => opt.MapFrom(examination => examination.MedicalTeam.MedicalExaminerUserId))
+                .ForMember(response => response.NursingTeamInformation, opt => opt.MapFrom(examination => examination.MedicalTeam.NursingTeamInformation))
+                .ForMember(response => response.Qap, opt => opt.MapFrom(examination => examination.MedicalTeam.Qap))
+                .ForMember(response => response.MedicalExaminerFullName, opt => opt.MapFrom(examination => examination.MedicalTeam.MedicalExaminerFullName))
+                .ForMember(response => response.MedicalExaminerOfficerFullName, opt => opt.MapFrom(examination => examination.MedicalTeam.MedicalExaminerOfficerFullName))
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<Examination, GetCaseBreakdownResponse>()
-                .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
-                .ForMember(x => x.Errors, opt => opt.Ignore())
-                .ForMember(x => x.Lookups, opt => opt.Ignore());
+                .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<PostExaminationRequest, Examination>()
                 .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
                 .ForMember(examination => examination.HouseNameNumber, opt => opt.Ignore())
@@ -133,19 +133,21 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.CaseOutcome, opt => opt.Ignore())
                 .ForMember(examination => examination.CreatedBy, opt => opt.Ignore());
             CreateMap<Examination, PatientCardItem>()
-                .ForMember(patientCard => patientCard.AppointmentDate,
+                .ForMember(
+                    patientCard => patientCard.AppointmentDate,
                     examination => examination.MapFrom(new AppointmentDateResolver(new AppointmentFinder())))
-                .ForMember(patientCard => patientCard.AppointmentTime,
+                .ForMember(
+                    patientCard => patientCard.AppointmentTime,
                     examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())))
                     .ForMember(patientCard => patientCard.CaseCreatedDate, opt => opt.MapFrom(examination => examination.CreatedAt));
 
             CreateMap<Representative, RepresentativeItem>();
             CreateMap<Examination, DeathEvent>()
-                .ForMember(x => x.Created, opt => opt.Ignore())
-                .ForMember(x => x.UserId, opt => opt.MapFrom(y => y.LastModifiedBy))
-                .ForMember(x => x.EventId, opt => opt.Ignore())
-                .ForMember(x => x.UsersRole, opt => opt.Ignore())
-                .ForMember(x => x.UserFullName, opt => opt.Ignore());
+                .ForMember(deathEvent => deathEvent.Created, opt => opt.Ignore())
+                .ForMember(deathEvent => deathEvent.UserId, opt => opt.MapFrom(examination => examination.LastModifiedBy))
+                .ForMember(deathEvent => deathEvent.EventId, opt => opt.Ignore())
+                .ForMember(deathEvent => deathEvent.UsersRole, opt => opt.Ignore())
+                .ForMember(deathEvent => deathEvent.UserFullName, opt => opt.Ignore());
         }
     }
 
