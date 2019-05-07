@@ -8,6 +8,7 @@ using FluentAssertions;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.API.Models.v1.Examinations;
+using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
@@ -74,6 +75,54 @@ namespace MedicalExaminer.API.Tests.Mapper
         private TimeSpan TimeOfDeath = new TimeSpan(11, 30, 00);
         private const string CaseOfficer = "CaseOfficer";
 
+        private readonly MedicalTeam medicalTeam = new MedicalTeam
+        {
+            ConsultantResponsible = new ClinicalProfessional
+            {
+                GMCNumber = "ConsultantResponsibleGmcNumber",
+                Name = "Consultant Name",
+                Notes = "Notes",
+                Organisation = "Organisation",
+                Phone = "07911110000",
+                Role = "Consultant"
+            },
+            ConsultantsOther = new ClinicalProfessional[]
+            {
+                new ClinicalProfessional
+                {
+                    GMCNumber = "gmcNumber",
+                    Name = "Other Consultant Name",
+                    Notes = "Notes",
+                    Organisation = "Organisation",
+                    Phone = "07911110000",
+                    Role = "Consultant"
+                }
+            },
+            GeneralPractitioner = new ClinicalProfessional
+            {
+                GMCNumber = "GPGmcNumber",
+                Name = "GP Name",
+                Notes = "Notes",
+                Organisation = "Organisation",
+                Phone = "07911110000",
+                Role = "GP"
+            },
+            Qap = new ClinicalProfessional
+            {
+                GMCNumber = "QapGmcNumber",
+                Name = "QAP Name",
+                Notes = "Notes",
+                Organisation = "Organisation",
+                Phone = "07911110000",
+                Role = "QAP"
+            },
+            NursingTeamInformation = "Nursing Team Information",
+            MedicalExaminerUserId = "Medical Examiner User Id",
+            MedicalExaminerFullName = "Medical Examiner Full Name",
+            MedicalExaminerOfficerUserId = "Medical Examiner Officer UserId",
+            MedicalExaminerOfficerFullName = "Medical Examiner Officer FullName"
+        };
+
         private readonly IEnumerable<Representative> Representatives = new List<Representative>
         {
             new Representative
@@ -106,6 +155,36 @@ namespace MedicalExaminer.API.Tests.Mapper
         ///     Mapper.
         /// </summary>
         private readonly IMapper _mapper;
+
+        [Fact]
+        public void Examination_To_PutMedicalTeamResponse()
+        {
+            var examination = GenerateExamination();
+
+            var response = _mapper.Map<PutMedicalTeamResponse>(examination);
+
+            Assert.True(IsEqual(medicalTeam.ConsultantResponsible, response.ConsultantResponsible));
+            Assert.True(IsEqual(medicalTeam.GeneralPractitioner, response.GeneralPractitioner));
+            Assert.True(IsEqual(medicalTeam.Qap, response.Qap));
+            foreach (var cons in response.ConsultantsOther)
+            {
+                Assert.True(IsEqual(medicalTeam.ConsultantsOther[], cons));
+            }
+            response.ConsultantsOther.Should().AllBeEquivalentTo(medicalTeam.ConsultantsOther);
+            response.NursingTeamInformation.Should().Be(medicalTeam.NursingTeamInformation);
+            response.MedicalExaminerUserId.Should().Be(medicalTeam.MedicalExaminerUserId);
+            response.MedicalExaminerOfficerUserId.Should().Be(medicalTeam.MedicalExaminerOfficerUserId);
+        }
+
+        private bool IsEqual(ClinicalProfessional cp, ClinicalProfessionalItem cpi)
+        {
+            return (cp.GMCNumber == cpi.GMCNumber &&
+                    cp.Name == cpi.Name &&
+                    cp.Notes == cpi.Notes &&
+                    cp.Organisation == cpi.Organisation
+                    && cp.Phone == cpi.Phone
+                    && cp.Role == cpi.Role);
+        }
 
         [Fact]
         public void Examination_To_GetPatientDetailsResponse()
@@ -506,7 +585,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
         private Examination GenerateExamination()
         {
-            var examination = new Examination()
+            var examination = new Examination
             {
                 ExaminationId = ExaminationId,
                 CaseOutcome = caseOutcome,
@@ -557,6 +636,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 HaveFinalCaseOutcomesOutstanding = true,
                 ReadyForMEScrutiny = true,
                 Unassigned = true,
+                MedicalTeam = medicalTeam
             };
 
             return examination;

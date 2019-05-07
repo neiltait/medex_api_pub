@@ -46,11 +46,11 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(response => response.ScrutinyConfirmedOn, opt => opt.MapFrom(examination => examination.CaseOutcome.ScrutinyConfirmedOn));
             CreateMap<Examination, ExaminationItem>();
             CreateMap<Examination, GetPatientDetailsResponse>()
-                .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
-                .ForMember(x => x.Errors, opt => opt.Ignore())
-                .ForMember(x => x.Lookups, opt => opt.Ignore());
+                .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<Examination, PutMedicalTeamResponse>()
-                .ForMember(x => x.Header, opt => opt.MapFrom(y => y))
+                .ForMember(x => x.Header, opt => opt.MapFrom(examination => examination))
                 .ForMember(x => x.ConsultantResponsible, opt => opt.MapFrom(x => x.MedicalTeam.ConsultantResponsible))
                 .ForMember(x => x.ConsultantsOther, opt => opt.MapFrom(x => x.MedicalTeam.ConsultantsOther))
                 .ForMember(x => x.GeneralPractitioner, opt => opt.MapFrom(x => x.MedicalTeam.GeneralPractitioner))
