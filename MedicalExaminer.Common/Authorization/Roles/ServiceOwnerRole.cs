@@ -20,6 +20,7 @@ namespace MedicalExaminer.Common.Authorization.Roles
                 Permission.GetUsers,
                 Permission.GetUser,
                 Permission.InviteUser,
+                Permission.UpdateUser,
                 Permission.SuspendUser,
                 Permission.EnableUser,
                 Permission.DeleteUser,
