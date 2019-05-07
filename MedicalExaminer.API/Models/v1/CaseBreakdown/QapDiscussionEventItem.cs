@@ -44,7 +44,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Participant's roll.
         /// </summary>
-        public string ParticipantRoll { get; set; }
+        public string ParticipantRole { get; set; }
 
         /// <summary>
         /// Participant's organisation.
