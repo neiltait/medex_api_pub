@@ -81,11 +81,11 @@ namespace MedicalExaminer.Common.Extensions.MeUser
                 return null;
             }
 
-            if (user != null && user.Permissions != null)
+            if (user?.Permissions != null)
             {
                 foreach (var role in requiredRoles)
                 {
-                    if (user.Permissions.SingleOrDefault(x => x.UserRole == role) != null)
+                    if (user.Permissions.Any(x => x.UserRole == role))
                     {
                         return role;
                     }
