@@ -31,7 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.ToolBox.Com
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.ToolBox.MVC", "MedicalExaminer.ToolBox.MVC\MedicalExaminer.ToolBox.MVC.csproj", "{049CD8D2-49BB-4917-8D84-5E49DDF1C93F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedicalExaminer.Task.UpdateExaminations", "MedicalExaminer.Task.UpdateExaminations\MedicalExaminer.Task.UpdateExaminations.csproj", "{681F26E5-AD68-4733-821C-38C6C96ED6F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.Task.UpdateExaminations", "MedicalExaminer.Task.UpdateExaminations\MedicalExaminer.Task.UpdateExaminations.csproj", "{681F26E5-AD68-4733-821C-38C6C96ED6F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedicalExaminer.Scheduler", "MedicalExaminer.Scheduler\MedicalExaminer.Scheduler.csproj", "{14FB025A-7741-43C1-9346-36D13862D4D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +85,10 @@ Global
 		{681F26E5-AD68-4733-821C-38C6C96ED6F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{681F26E5-AD68-4733-821C-38C6C96ED6F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{681F26E5-AD68-4733-821C-38C6C96ED6F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14FB025A-7741-43C1-9346-36D13862D4D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14FB025A-7741-43C1-9346-36D13862D4D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14FB025A-7741-43C1-9346-36D13862D4D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14FB025A-7741-43C1-9346-36D13862D4D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

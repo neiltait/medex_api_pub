@@ -3,10 +3,11 @@ using System.Linq;
 using Cosmonaut;
 using Cosmonaut.Extensions;
 using MedicalExaminer.Models;
+using Microsoft.Extensions.Hosting;
 
 namespace MedicalExaminer.Task.UpdateExaminations.Services
 {
-    public class UpdateExaminationsService
+    public class UpdateExaminationsService : IHostedService
     {
         private readonly ICosmosStore<Examination> _examinationStore;
 
