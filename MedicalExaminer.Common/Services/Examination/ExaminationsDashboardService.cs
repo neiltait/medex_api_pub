@@ -12,9 +12,15 @@ namespace MedicalExaminer.Common.Services.Examination
 {
     public class ExaminationsDashboardService : QueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>
     {
-        public ExaminationsDashboardService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
+        private ExaminationsQueryExpressionBuilder _baseQueryBuilder;
+
+        public ExaminationsDashboardService(
+            IDatabaseAccess databaseAccess,
+            IExaminationConnectionSettings connectionSettings,
+            ExaminationsQueryExpressionBuilder baseQueryBuilder)
             : base(databaseAccess, connectionSettings)
         {
+            _baseQueryBuilder = baseQueryBuilder;
         }
 
         public override Task<ExaminationsOverview> Handle(ExaminationsRetrievalQuery param)
@@ -92,14 +98,18 @@ namespace MedicalExaminer.Common.Services.Examination
 
         private Expression<Func<Models.Examination, bool>> GetBaseQuery(ExaminationsRetrievalQuery param)
         {
-            var openCasePredicate = GetOpenCasesPredicate(param.FilterOpenCases);
-            var meOfficePredicate = GetCaseMEOfficePredicate(param.FilterLocationId);
-            var userIdPredicate = GetUserIdPredicate(param.FilterUserId);
+            var query = _baseQueryBuilder.GetPredicate(param);
 
-            var predicate = meOfficePredicate
-                .And(openCasePredicate);
-            predicate = predicate.And(userIdPredicate);
-            return predicate;
+            return query;
+
+            //var openCasePredicate = GetOpenCasesPredicate(param.FilterOpenCases);
+            //var meOfficePredicate = GetCaseMEOfficePredicate(param.FilterLocationId);
+            //var userIdPredicate = GetUserIdPredicate(param.FilterUserId);
+
+            //var predicate = meOfficePredicate
+            //    .And(openCasePredicate);
+            //predicate = predicate.And(userIdPredicate);
+            //return predicate;
         }
 
         private Expression<Func<Models.Examination, bool>> GetOpenCasesPredicate(bool paramFilterOpenCases)
