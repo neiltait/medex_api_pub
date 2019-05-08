@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using MedicalExaminer.API.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace MedicalExaminer.API.Authorization
 {
@@ -34,14 +35,17 @@ namespace MedicalExaminer.API.Authorization
         {
             // Only check if no resource was requested;
             // Resource requests should be handled in DocumentPermissionHandler.
-            if (context.Resource == null)
+            if (context.Resource == null || context.Resource is AuthorizationFilterContext)
             {
                 var emailAddress = context.User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value)
                     .FirstOrDefault();
 
-                if (await _permissionService.HasPermission(emailAddress, requirement.Permission))
+                if (emailAddress != null)
                 {
-                    context.Succeed(requirement);
+                    if (await _permissionService.HasPermission(emailAddress, requirement.Permission))
+                    {
+                        context.Succeed(requirement);
+                    }
                 }
             }
         }
