@@ -12,11 +12,11 @@ namespace MedicalExaminer.API.Extensions.Data
         public MeoSummaryEventProfile()
         {
             CreateMap<PutMeoSummaryEventRequest, MeoSummaryEvent>()
-                .ForMember(p => p.EventType, opt => opt.Ignore())
-                .ForMember(p => p.UserId, opt => opt.Ignore())
-                .ForMember(p => p.Created, opt => opt.Ignore())
-                .ForMember(p => p.UserFullName, opt => opt.Ignore())
-                .ForMember(p => p.UsersRole, opt => opt.Ignore());
+                .ForMember(meoSummaryEvent => meoSummaryEvent.EventType, opt => opt.Ignore())
+                .ForMember(meoSummaryEvent => meoSummaryEvent.UserId, opt => opt.Ignore())
+                .ForMember(meoSummaryEvent => meoSummaryEvent.Created, opt => opt.Ignore())
+                .ForMember(meoSummaryEvent => meoSummaryEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(meoSummaryEvent => meoSummaryEvent.UsersRole, opt => opt.Ignore());
         }
     }
 }

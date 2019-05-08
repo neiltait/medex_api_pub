@@ -2,11 +2,6 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using MedicalExaminer.API.Services;
-using MedicalExaminer.Common.Authorization;
-using MedicalExaminer.Common.Queries.User;
-using MedicalExaminer.Common.Services;
-using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalExaminer.API.Authorization
@@ -37,11 +32,17 @@ namespace MedicalExaminer.API.Authorization
             AuthorizationHandlerContext context,
             PermissionRequirement requirement)
         {
-            var emailAddress = context.User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).FirstOrDefault();
-
-            if (await _permissionService.HasPermission(emailAddress, requirement.Permission))
+            // Only check if no resource was requested;
+            // Resource requests should be handled in DocumentPermissionHandler.
+            if (context.Resource == null)
             {
-                context.Succeed(requirement);
+                var emailAddress = context.User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value)
+                    .FirstOrDefault();
+
+                if (await _permissionService.HasPermission(emailAddress, requirement.Permission))
+                {
+                    context.Succeed(requirement);
+                }
             }
         }
     }
