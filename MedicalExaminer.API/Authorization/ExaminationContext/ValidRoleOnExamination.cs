@@ -49,9 +49,9 @@ namespace MedicalExaminer.API.Authorization.ExaminationContext
 
             var userId = value as string;
 
-            if (userId == null)
+            if (string.IsNullOrEmpty(userId))
             {
-                return new ValidationResult($"Item not recognised as of type useritem for `{_requiredRole.GetDescription()}`.");
+                return ValidationResult.Success;
             }
 
             var user = userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(userId)).Result;

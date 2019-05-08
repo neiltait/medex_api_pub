@@ -148,7 +148,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var result = sut.GetValidationResult(new object(), _context);
 
             // Assert
-            Assert.NotNull(result);
+            Assert.Null(result);
             if (result != null)
             {
                 Assert.Equal(expectedResult.ErrorMessage, result.ErrorMessage);
