@@ -12,9 +12,15 @@ namespace MedicalExaminer.Common.Services.Examination
 {
     public class ExaminationsDashboardService : QueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>
     {
-        public ExaminationsDashboardService(IDatabaseAccess databaseAccess, IExaminationConnectionSettings connectionSettings)
+        private readonly ExaminationsQueryExpressionBuilder _baseQueryBuilder;
+
+        public ExaminationsDashboardService(
+            IDatabaseAccess databaseAccess,
+            IExaminationConnectionSettings connectionSettings,
+            ExaminationsQueryExpressionBuilder baseQueryBuilder)
             : base(databaseAccess, connectionSettings)
         {
+            _baseQueryBuilder = baseQueryBuilder;
         }
 
         public override Task<ExaminationsOverview> Handle(ExaminationsRetrievalQuery param)
@@ -92,44 +98,7 @@ namespace MedicalExaminer.Common.Services.Examination
 
         private Expression<Func<Models.Examination, bool>> GetBaseQuery(ExaminationsRetrievalQuery param)
         {
-            var openCasePredicate = GetOpenCasesPredicate(param.FilterOpenCases);
-            var meOfficePredicate = GetCaseMEOfficePredicate(param.FilterLocationId);
-            var userIdPredicate = GetUserIdPredicate(param.FilterUserId);
-
-            var predicate = meOfficePredicate
-                .And(openCasePredicate);
-            predicate = predicate.And(userIdPredicate);
-            return predicate;
-        }
-
-        private Expression<Func<Models.Examination, bool>> GetOpenCasesPredicate(bool paramFilterOpenCases)
-        {
-            return examination => examination.CaseCompleted == !paramFilterOpenCases;
-        }
-
-        private Expression<Func<Models.Examination, bool>> GetCaseMEOfficePredicate(string meOffice)
-        {
-            if (string.IsNullOrEmpty(meOffice))
-            {
-                return null;
-            }
-
-            return examination => examination.MedicalExaminerOfficeResponsible == meOffice;
-        }
-
-        private Expression<Func<Models.Examination, bool>> GetUserIdPredicate(string userId)
-        {
-            if (string.IsNullOrEmpty(userId))
-            {
-                return null;
-            }
-
-            Expression<Func<Models.Examination, bool>> mePredicate = examination => examination.MedicalTeam.MedicalExaminerUserId == userId;
-            Expression<Func<Models.Examination, bool>> meoPredicate = examination => examination.MedicalTeam.MedicalExaminerOfficerUserId == userId;
-
-            var predicate = mePredicate.Or(meoPredicate);
-
-            return predicate;
+            return _baseQueryBuilder.GetPredicate(param);
         }
     }
 }
