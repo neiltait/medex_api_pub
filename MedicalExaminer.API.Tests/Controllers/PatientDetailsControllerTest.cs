@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -5,6 +6,7 @@ using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
@@ -19,9 +21,12 @@ namespace MedicalExaminer.API.Tests.Controllers
 {
     public class PatientDetailsControllerTest : AuthorizedControllerTestsBase<PatientDetailsController>
     {
+        private readonly Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>> _locationParentsQueryServiceMock;
+
         public PatientDetailsControllerTest()
             : base(setupAuthorize: false)
         {
+            _locationParentsQueryServiceMock = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>();
         }
 
         [Fact]
@@ -45,7 +50,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
-                patientDetailsUpdateService.Object);
+                patientDetailsUpdateService.Object,
+                _locationParentsQueryServiceMock.Object);
 
             Controller.ModelState.AddModelError("An", "Error");
 
@@ -75,7 +81,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
-                patientDetailsUpdateService.Object);
+                patientDetailsUpdateService.Object,
+                _locationParentsQueryServiceMock.Object);
 
             // Act
             var response = sut.GetPatientDetails("a").Result;
@@ -108,7 +115,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
-                patientDetailsUpdateService.Object);
+                patientDetailsUpdateService.Object,
+                _locationParentsQueryServiceMock.Object);
 
             // Act
             var response = sut.GetPatientDetails("a").Result;
@@ -135,7 +143,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
-                patientDetailsUpdateService.Object);
+                patientDetailsUpdateService.Object,
+                _locationParentsQueryServiceMock.Object);
 
             // Act
             var response = sut.GetPatientDetails("dfgdfgdfg");
@@ -169,7 +178,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
-                patientDetailsUpdateService.Object);
+                patientDetailsUpdateService.Object,
+                _locationParentsQueryServiceMock.Object);
 
             // Act
             var response = sut.GetPatientDetails("a").Result;
@@ -195,7 +205,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
-                patientDetailsUpdateService.Object);
+                patientDetailsUpdateService.Object,
+                _locationParentsQueryServiceMock.Object);
 
             Controller.ModelState.AddModelError("An", "Error");
 
@@ -229,7 +240,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
-                patientDetailsUpdateService.Object);
+                patientDetailsUpdateService.Object,
+                _locationParentsQueryServiceMock.Object);
 
             var expectedPutPatientDetailsRequest = new PutPatientDetailsRequest();
 
@@ -275,7 +287,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
-                patientDetailsUpdateService.Object);
+                patientDetailsUpdateService.Object,
+                _locationParentsQueryServiceMock.Object);
 
             Controller.ControllerContext = GetContollerContext();
 
