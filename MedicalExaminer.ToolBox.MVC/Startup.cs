@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
+using MedicalExaminer.Common.Extensions;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.User;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
 using MedicalExaminer.ToolBox.Common.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -36,7 +38,9 @@ namespace MedicalExaminer.ToolBox.MVC
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.ConfigureToolBox(Configuration);
+            var cosmosDbSettings = services.ConfigureSettings<CosmosDbSettings>(Configuration, "CosmosDB");
+
+            services.ConfigureToolBox(cosmosDbSettings);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
