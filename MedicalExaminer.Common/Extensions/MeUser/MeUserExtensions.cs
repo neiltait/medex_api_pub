@@ -103,8 +103,12 @@ namespace MedicalExaminer.Common.Extensions.MeUser
         /// <returns>Full name string.</returns>
         public static string FullName(this MedicalExaminer.Models.MeUser meUser)
         {
-            // MVP: Just concat
-            return $"{meUser.FirstName} {meUser.LastName}";
+            if (meUser != null)
+            {
+                return $"{meUser.FirstName} {meUser.LastName}";
+            }
+
+            return string.Empty;
         }
     }
 }
