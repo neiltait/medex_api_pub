@@ -22,20 +22,6 @@ namespace MedicalExaminer.API.Tests.Mapper
     /// </summary>
     public class MapperExaminationProfileTests
     {
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="MapperExaminationProfileTests" /> class.
-        /// </summary>
-        public MapperExaminationProfileTests()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<ExaminationProfile>();
-                cfg.AddProfile<CaseBreakdownProfile>();
-            });
-
-            _mapper = config.CreateMapper();
-        }
-
         private const string ExaminationId = "expectedExaminationId";
         private const string AltLink = "altLink";
         private const bool CaseCompleted = true;
@@ -81,12 +67,18 @@ namespace MedicalExaminer.API.Tests.Mapper
         private const string CaseOfficer = "CaseOfficer";
         private const string AdmissionNotes = "admissionNotes";
         private TimeSpan AdmittedTime = new TimeSpan(12, 30, 01);
-        private MeUser User = new MeUser()
+        private MeUser User0 = new MeUser()
         {
-            UserId = "userId",
+            UserId = "userId0",
             Email = "user@email.com",
         };
-        
+
+        private MeUser User1 = new MeUser()
+        {
+            UserId = "userId1",
+            Email = "user1@email.com",
+        };
+
         private readonly MedicalTeam medicalTeam = new MedicalTeam
         {
             ConsultantResponsible = new ClinicalProfessional
@@ -168,8 +160,8 @@ namespace MedicalExaminer.API.Tests.Mapper
         /// </summary>
         private readonly IMapper _mapper;
 
-        private DateTime DateOfConversation = new DateTime(1984, 12, 24);
-        private string DiscussionDetails = "discussionDetails";
+        private DateTime dateOfConversation = new DateTime(1984, 12, 24);
+        private string discussionDetails = "discussionDetails";
 
         private string ParticipantFullName = "participantFullName";
         private string ParticipantPhoneNumber = "participantPhoneNumber";
@@ -190,9 +182,26 @@ namespace MedicalExaminer.API.Tests.Mapper
         private string ParticipantName = "participantName";
         private string ParticipantOrganisation = "participantOrganisation";
 
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MapperExaminationProfileTests" /> class.
+        /// </summary>
+        public MapperExaminationProfileTests()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<ExaminationProfile>();
+                cfg.AddProfile<CaseBreakdownProfile>();
+            });
+
+            _mapper = config.CreateMapper();
+        }
+
+        
         [Fact]
         public void Examination_To_PutMedicalTeamResponse()
         {
+
             var examination = GenerateExamination();
             var response = _mapper.Map<PutMedicalTeamResponse>(examination);
             Assert.True(IsEqual(medicalTeam.ConsultantResponsible, response.ConsultantResponsible));
@@ -232,7 +241,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         public void Examination_To_GetCaseBreakdowResponse()
         {
             var examination = GenerateExamination();
-            var result = _mapper.Map<CaseBreakDownItem>(examination.CaseBreakdown, opt => opt.Items["user"] = User);
+            var result = _mapper.Map<CaseBreakDownItem>(examination.CaseBreakdown, opt => opt.Items["user"] = User0);
 
             Assert.True(IsEqual(examination.CaseBreakdown, result));
         }
@@ -444,7 +453,9 @@ namespace MedicalExaminer.API.Tests.Mapper
                 }
             }
 
-            return historyIsEqual && IsEqual(admissionNotes1.Latest, admissionNotes2.Latest);
+            var draftIsEqual = IsEqual(admissionNotes1.Drafts.Single(draft => draft.UserId == User0.UserId), admissionNotes2.UsersDraft);
+
+            return draftIsEqual && historyIsEqual && IsEqual(admissionNotes1.Latest, admissionNotes2.Latest);
         }
 
         private bool IsEqual(AdmissionEvent history, AdmissionEventItem historyItem)
@@ -692,7 +703,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 Informed = Informed.Yes,
                 PhoneNumber = "1234",
                 PresentAtDeath = PresentAtDeath.Unknown,
-                Relationship = "milk man"
+                Relationship = "uncle"
             };
 
 
@@ -736,18 +747,18 @@ namespace MedicalExaminer.API.Tests.Mapper
                 Informed = Informed.Yes,
                 PhoneNumber = "1234",
                 PresentAtDeath = PresentAtDeath.Unknown,
-                Relationship = "milk man"
+                Relationship = "uncle"
             };
 
             var representativeTwo = new Representative()
             {
                 AppointmentDate = appointmentDate2,
                 AppointmentTime = appointmentTime,
-                FullName = "bob",
+                FullName = "barry",
                 Informed = Informed.Yes,
                 PhoneNumber = "1234",
                 PresentAtDeath = PresentAtDeath.Unknown,
-                Relationship = "milk man"
+                Relationship = "granddad"
             };
 
 
@@ -941,7 +952,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     DateOfDeath = DateOfDeath,
                     EventId = "deathEventId",
                     TimeOfDeath = TimeOfDeath,
-                    UserId = User.UserId
+                    UserId = User0.UserId
                 },
                 AdmissionNotes = new AdmissionNotesEventContainer()
                 {
@@ -952,7 +963,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         ImmediateCoronerReferral = false,
                         IsFinal = true,
                         Notes = AdmissionNotes,
-                        UserId = User.UserId,
+                        UserId = User0.UserId,
                         AdmittedTime = AdmittedTime,
                     },
                     History = new[]
@@ -964,7 +975,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                             ImmediateCoronerReferral = false,
                             IsFinal = true,
                             Notes = AdmissionNotes,
-                            UserId = User.UserId,
+                            UserId = User0.UserId,
                             AdmittedTime = AdmittedTime,
                         },
                         new AdmissionEvent()
@@ -974,7 +985,30 @@ namespace MedicalExaminer.API.Tests.Mapper
                             ImmediateCoronerReferral = false,
                             IsFinal = true,
                             Notes = AdmissionNotes,
-                            UserId = User.UserId,
+                            UserId = User0.UserId,
+                            AdmittedTime = AdmittedTime,
+                        }
+                    },
+                    Drafts = new[]
+                    {
+                        new AdmissionEvent()
+                        {
+                            AdmittedDate = LastAdmission,
+                            EventId = "admissionEventId2",
+                            ImmediateCoronerReferral = false,
+                            IsFinal = false,
+                            Notes = AdmissionNotes,
+                            UserId = User0.UserId,
+                            AdmittedTime = AdmittedTime,
+                        },
+                        new AdmissionEvent()
+                        {
+                            AdmittedDate = LastAdmission,
+                            EventId = "admissionEventId2",
+                            ImmediateCoronerReferral = false,
+                            IsFinal = false,
+                            Notes = AdmissionNotes,
+                            UserId = User1.UserId,
                             AdmittedTime = AdmittedTime,
                         }
                     }
@@ -984,13 +1018,13 @@ namespace MedicalExaminer.API.Tests.Mapper
                     Latest = new BereavedDiscussionEvent()
                     {
                         BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
-                        DateOfConversation = DateOfConversation,
-                        DiscussionDetails = DiscussionDetails,
+                        DateOfConversation = dateOfConversation,
+                        DiscussionDetails = discussionDetails,
                         DiscussionUnableHappen = false,
                         EventId = "bereavedDiscussionEventId",
                         InformedAtDeath = InformedAtDeath.Unknown,
                         IsFinal = true,
-                        UserId = User.UserId,
+                        UserId = User0.UserId,
                         ParticipantFullName = ParticipantFullName,
                         ParticipantPhoneNumber = ParticipantPhoneNumber,
                         ParticipantRelationship = ParticipantRelationship,
@@ -1001,13 +1035,13 @@ namespace MedicalExaminer.API.Tests.Mapper
                         new BereavedDiscussionEvent()
                         {
                             BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
-                            DateOfConversation = DateOfConversation,
-                            DiscussionDetails = DiscussionDetails,
+                            DateOfConversation = dateOfConversation,
+                            DiscussionDetails = discussionDetails,
                             DiscussionUnableHappen = false,
                             EventId = "bereavedDiscussionEventId",
                             InformedAtDeath = InformedAtDeath.Unknown,
                             IsFinal = true,
-                            UserId= User.UserId,
+                            UserId= User0.UserId,
                             ParticipantFullName = ParticipantFullName,
                             ParticipantPhoneNumber = ParticipantPhoneNumber,
                             ParticipantRelationship = ParticipantRelationship,
@@ -1021,7 +1055,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     {
                         EventId = "MedicalHistoryEventId",
                         IsFinal = true,
-                        UserId = User.UserId,
+                        UserId = User0.UserId,
                         Text = MedicalHistoryEventText,
                     },
                     History = new[]
@@ -1030,7 +1064,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         {
                             EventId = "MedicalHistoryEventId",
                             IsFinal = true,
-                            UserId = User.UserId,
+                            UserId = User0.UserId,
                             Text = MedicalHistoryEventText,
                         }
                     }
@@ -1041,7 +1075,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     {
                         EventId = "MeoSummaryEventId",
                         IsFinal = true,
-                        UserId = User.UserId,
+                        UserId = User0.UserId,
                         SummaryDetails = SummaryDetails
                     },
                     History = new[]
@@ -1050,7 +1084,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         {
                             EventId = "MeoSummaryEventId",
                             IsFinal = true,
-                            UserId = User.UserId,
+                            UserId = User0.UserId,
                             SummaryDetails = SummaryDetails
                         }
                     }
@@ -1074,7 +1108,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         IsFinal = true,
                         MedicalExaminerThoughts = MedicalExaminerThoughts,
                         OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.ReferToCoroner,
-                        UserId = User.UserId
+                        UserId = User0.UserId
                     },
                     History = new[]
                     {
@@ -1091,7 +1125,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                             IsFinal = true,
                             MedicalExaminerThoughts = MedicalExaminerThoughts,
                             OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.ReferToCoroner,
-                            UserId = User.UserId
+                            UserId = User0.UserId
                         }
                     }
                 },
@@ -1101,8 +1135,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                     {
                         EventId = "QapDiscussionEventId",
                         IsFinal = true,
-                        UserId = User.UserId,
-                        DiscussionDetails = DiscussionDetails,
+                        UserId = User0.UserId,
+                        DiscussionDetails = discussionDetails,
                         CauseOfDeath1a = CauseOfDeath1a,
                         CauseOfDeath1b = CauseOfDeath1b,
                         CauseOfDeath1c = CauseOfDeath1c,
@@ -1110,7 +1144,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         DiscussionUnableHappen = false,
                         QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                         ParticipantRole = ParticipantRoll,
-                        DateOfConversation = DateOfConversation,
+                        DateOfConversation = dateOfConversation,
                         ParticipantName = ParticipantName,
                         ParticipantOrganisation = ParticipantOrganisation,
                         ParticipantPhoneNumber = ParticipantPhoneNumber
@@ -1121,8 +1155,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                     {
                         EventId = "QapDiscussionEventId",
                         IsFinal = true,
-                        UserId = User.UserId,
-                        DiscussionDetails = DiscussionDetails,
+                        UserId = User0.UserId,
+                        DiscussionDetails = discussionDetails,
                         CauseOfDeath1a = CauseOfDeath1a,
                         CauseOfDeath1b = CauseOfDeath1b,
                         CauseOfDeath1c = CauseOfDeath1c,
@@ -1130,7 +1164,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         DiscussionUnableHappen = false,
                         QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                         ParticipantRole = ParticipantRoll,
-                        DateOfConversation = DateOfConversation,
+                        DateOfConversation = dateOfConversation,
                         ParticipantName = ParticipantName,
                         ParticipantOrganisation = ParticipantOrganisation,
                         ParticipantPhoneNumber = ParticipantPhoneNumber
