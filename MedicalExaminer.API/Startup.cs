@@ -4,7 +4,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Reflection;
 using AutoMapper;
+using Cosmonaut;
+using Cosmonaut.Extensions.Microsoft.DependencyInjection;
 using MedicalExaminer.API.Authorization;
+using MedicalExaminer.API.Authorization.ExaminationContext;
+using MedicalExaminer.API.Extensions.ApplicationBuilder;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models;
@@ -15,18 +19,22 @@ using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Authorization.Roles;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
+using MedicalExaminer.Common.Extensions;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
+using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
+using MedicalExaminer.Common.Services.CaseOutcome;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.Location;
 using MedicalExaminer.Common.Services.MedicalTeam;
 using MedicalExaminer.Common.Services.PatientDetails;
 using MedicalExaminer.Common.Services.User;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -43,13 +51,6 @@ using Okta.Sdk;
 using Okta.Sdk.Configuration;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using Cosmonaut.Extensions.Microsoft.DependencyInjection;
-using Cosmonaut;
-using MedicalExaminer.API.Authorization.ExaminationContext;
-using MedicalExaminer.API.Extensions;
-using MedicalExaminer.Common.Queries.CaseOutcome;
-using MedicalExaminer.Common.Services.CaseOutcome;
-using MedicalExaminer.API.Extensions.ApplicationBuilder;
 
 namespace MedicalExaminer.API
 {
@@ -83,6 +84,8 @@ namespace MedicalExaminer.API
         {
             var oktaSettings = services.ConfigureSettings<OktaSettings>(Configuration, "Okta");
 
+            var cosmosDbSettings = services.ConfigureSettings<CosmosDbSettings>(Configuration, "CosmosDB");
+
             services.ConfigureSettings<AuthorizationSettings>(Configuration, "Authorization");
 
             ConfigureOktaClient(services);
@@ -96,7 +99,7 @@ namespace MedicalExaminer.API
                     .AllowAnyHeader();
             }));
 
-            ConfigureAuthentication(services, oktaSettings);
+            ConfigureAuthentication(services, oktaSettings, cosmosDbSettings);
 
             ConfigureAuthorization(services);
 
@@ -181,33 +184,33 @@ namespace MedicalExaminer.API
                 options.AddSecurityRequirement(security);
             });
 
-            // Logger 
+            // Logger.
             services.AddScoped<IMELogger, MELogger>();
 
-            // Database connections  
+            // Database connections.
             services.AddScoped<IDocumentClientFactory, DocumentClientFactory>();
             services.AddScoped<IDatabaseAccess, DatabaseAccess>();
 
             services.AddScoped<ControllerActionFilter>();
 
             var cosmosSettings = new CosmosStoreSettings(
-                Configuration["CosmosDB:DatabaseId"],
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"]);
+                cosmosDbSettings.DatabaseId,
+                new Uri(cosmosDbSettings.URL),
+                cosmosDbSettings.PrimaryKey);
 
             services.AddCosmosStore<Examination>(cosmosSettings, "Examinations");
 
-            ConfigureQueries(services);
+            ConfigureQueries(services, cosmosDbSettings);
 
             services.AddScoped<ILocationPersistence>(s => new LocationPersistence(
-               new Uri(Configuration["CosmosDB:URL"]),
-               Configuration["CosmosDB:PrimaryKey"],
-               Configuration["CosmosDB:DatabaseId"]));
+                new Uri(cosmosDbSettings.URL),
+                cosmosDbSettings.PrimaryKey,
+                cosmosDbSettings.DatabaseId));
 
             services.AddScoped<IMeLoggerPersistence>(s => new MeLoggerPersistence(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]));
+                new Uri(cosmosDbSettings.URL),
+                cosmosDbSettings.PrimaryKey,
+                cosmosDbSettings.DatabaseId));
         }
 
         /// <summary>
@@ -266,8 +269,6 @@ namespace MedicalExaminer.API
                     {
                         c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
                     }
-
-                    // c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 });
             }
 
@@ -286,23 +287,23 @@ namespace MedicalExaminer.API
         /// Configure Queries.
         /// </summary>
         /// <param name="services">Services.</param>
-        private void ConfigureQueries(IServiceCollection services)
+        /// <param name="cosmosDbSettings">Cosmos Database Settings.</param>
+        private void ConfigureQueries(IServiceCollection services, CosmosDbSettings cosmosDbSettings)
         {
             services.AddScoped<ILocationConnectionSettings>(s => new LocationConnectionSettings(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]));
+                new Uri(cosmosDbSettings.URL),
+                cosmosDbSettings.PrimaryKey,
+                cosmosDbSettings.DatabaseId));
 
             services.AddScoped<IExaminationConnectionSettings>(s => new ExaminationConnectionSettings(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]));
+                new Uri(cosmosDbSettings.URL),
+                cosmosDbSettings.PrimaryKey,
+                cosmosDbSettings.DatabaseId));
 
             services.AddScoped<IUserConnectionSettings>(s => new UserConnectionSettings(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]));
-
+                new Uri(cosmosDbSettings.URL),
+                cosmosDbSettings.PrimaryKey,
+                cosmosDbSettings.DatabaseId));
 
             // Examination services 
             services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
@@ -350,16 +351,17 @@ namespace MedicalExaminer.API
         /// </summary>
         /// <param name="services">Services.</param>
         /// <param name="oktaSettings">Okta Settings.</param>
-        private void ConfigureAuthentication(IServiceCollection services, OktaSettings oktaSettings)
+        /// <param name="cosmosDbSettings">Cosmos Database Settings.</param>
+        private void ConfigureAuthentication(IServiceCollection services, OktaSettings oktaSettings, CosmosDbSettings cosmosDbSettings)
         {
             var oktaTokenExpiry = Int32.Parse(oktaSettings.LocalTokenExpiryTimeMinutes);
             var provider = services.BuildServiceProvider();
             var tokenService = provider.GetRequiredService<ITokenService>();
 
             var userConnectionSetting = new UserConnectionSettings(
-                new Uri(Configuration["CosmosDB:URL"]),
-                Configuration["CosmosDB:PrimaryKey"],
-                Configuration["CosmosDB:DatabaseId"]);
+                new Uri(cosmosDbSettings.URL),
+                cosmosDbSettings.PrimaryKey,
+                cosmosDbSettings.DatabaseId);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

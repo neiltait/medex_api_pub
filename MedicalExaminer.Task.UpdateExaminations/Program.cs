@@ -2,6 +2,8 @@
 using System.IO;
 using Cosmonaut;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
+using MedicalExaminer.Common.Extensions;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
 using MedicalExaminer.Task.UpdateExaminations.Services;
 using Microsoft.Extensions.Configuration;
@@ -26,10 +28,12 @@ namespace MedicalExaminer.Task.UpdateExaminations
 
             var configuration = builder.Build();
 
+            var cosmosDbSettings = services.ConfigureSettings<CosmosDbSettings>(configuration, "CosmosDB");
+
             var cosmosSettings = new CosmosStoreSettings(
-                configuration["CosmosDB:DatabaseId"],
-                configuration["CosmosDB:URL"],
-                configuration["CosmosDB:PrimaryKey"]);
+                cosmosDbSettings.DatabaseId,
+                cosmosDbSettings.URL,
+                cosmosDbSettings.PrimaryKey);
 
             services.AddCosmosStore<Examination>(cosmosSettings, "Examinations");
 
