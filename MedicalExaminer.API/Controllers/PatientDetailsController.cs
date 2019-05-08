@@ -126,15 +126,16 @@ namespace MedicalExaminer.API.Controllers
 
             var patientDetails = Mapper.Map<PatientDetails>(putPatientDetailsRequest);
 
-            if (patientDetails.MedicalExaminerOfficeResponsible != examination.MedicalExaminerOfficeResponsible)
-            {
-                if (examination.MedicalTeam.MedicalExaminerUserId != null ||
-                    examination.MedicalTeam.MedicalExaminerOfficerUserId != null)
-                {
-                    ModelState.AddModelError(nameof(PutPatientDetailsRequest.MedicalExaminerOfficeResponsible), "The medical examiner office is being changed while users are assigned. First un-assign users before changing the office.");
-                    return BadRequest(new PutPatientDetailsResponse());
-                }
-            }
+            // TODO: Removed for now until we've decided what we want to happen if they change this and users are assigned.
+            //if (patientDetails.MedicalExaminerOfficeResponsible != examination.MedicalExaminerOfficeResponsible)
+            //{
+            //    if (examination.MedicalTeam.MedicalExaminerUserId != null ||
+            //        examination.MedicalTeam.MedicalExaminerOfficerUserId != null)
+            //    {
+            //        ModelState.AddModelError(nameof(PutPatientDetailsRequest.MedicalExaminerOfficeResponsible), "The medical examiner office is being changed while users are assigned. First un-assign users before changing the office.");
+            //        return BadRequest(new PutPatientDetailsResponse());
+            //    }
+            //}
 
             var locations = (await _locationParentsService.Handle(
                     new LocationParentsQuery(patientDetails.MedicalExaminerOfficeResponsible))).ToList();
