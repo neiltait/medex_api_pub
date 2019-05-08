@@ -50,6 +50,7 @@ using MedicalExaminer.API.Extensions;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Services.CaseOutcome;
 using MedicalExaminer.API.Extensions.ApplicationBuilder;
+using MedicalExaminer.BackgroundServices;
 
 namespace MedicalExaminer.API
 {
@@ -208,6 +209,8 @@ namespace MedicalExaminer.API
                 new Uri(Configuration["CosmosDB:URL"]),
                 Configuration["CosmosDB:PrimaryKey"],
                 Configuration["CosmosDB:DatabaseId"]));
+
+            services.AddBackgroundServices();
         }
 
         /// <summary>
