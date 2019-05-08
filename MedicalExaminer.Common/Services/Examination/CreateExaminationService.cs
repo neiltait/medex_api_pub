@@ -49,7 +49,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 DateOfDeath = param.Examination.DateOfDeath,
                 TimeOfDeath = param.Examination.TimeOfDeath,
                 UserId = param.Examination.CreatedBy,
-                UsersRole = param.User.UsersExaminationRole(new[] { UserRoles.MedicalExaminer, UserRoles.MedicalExaminerOfficer }).ToString(),
+                UsersRole = param.User.UsersRoleIn(new[] { UserRoles.MedicalExaminer, UserRoles.MedicalExaminerOfficer }).ToString(),
                 UserFullName = param.User.FullName(),
                 EventId = Guid.NewGuid().ToString()
             };

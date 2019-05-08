@@ -169,7 +169,7 @@ namespace MedicalExaminer.API.Controllers
         {
             theEvent.UserId = user.UserId;
             theEvent.UserFullName = user.FullName();
-            theEvent.UsersRole = user.UsersExaminationRole(new[] { UserRoles.MedicalExaminer, UserRoles.MedicalExaminerOfficer }).ToString();
+            theEvent.UsersRole = user.UsersRoleIn(new[] { UserRoles.MedicalExaminer, UserRoles.MedicalExaminerOfficer }).ToString();
             return theEvent;
         }
 
