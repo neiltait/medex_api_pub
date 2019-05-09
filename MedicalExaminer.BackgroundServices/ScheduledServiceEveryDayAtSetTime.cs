@@ -26,7 +26,7 @@ namespace MedicalExaminer.BackgroundServices
         /// <inheritdoc/>
         public bool CanExecute(DateTime dateTime, DateTime lastExecuted)
         {
-            return dateTime.TimeOfDay > _atTime && (dateTime.Date - lastExecuted.Date).Days >= 1;
+            return dateTime.TimeOfDay >= _atTime && (dateTime.Date - lastExecuted.Date).Days >= 1;
         }
     }
 }

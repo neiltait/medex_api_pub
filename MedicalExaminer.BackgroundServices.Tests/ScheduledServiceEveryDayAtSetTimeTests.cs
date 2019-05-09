@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using FluentAssertions;
 using Xunit;
 
@@ -13,7 +11,7 @@ namespace MedicalExaminer.BackgroundServices.Tests
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Test method names are self documenting.")]
     public class ScheduledServiceEveryDayAtSetTimeTests
     {
-        private TimeSpan _sampleRate;
+        private readonly TimeSpan _sampleRate;
 
         public ScheduledServiceEveryDayAtSetTimeTests()
         {
@@ -21,7 +19,7 @@ namespace MedicalExaminer.BackgroundServices.Tests
         }
 
         [Fact]
-        public void CanExecute_ShouldReturnFalse_WhenTimeLessThanAtTime()
+        public void CanExecute_ShouldReturnFalse_WhenTimeLessThanAtTimeAndLastRunBeforeToday()
         {
             // Arrange
             var sut = new ScheduledServiceEveryDayAtSetTime(TimeSpan.Parse("02:00"), _sampleRate);
@@ -36,11 +34,11 @@ namespace MedicalExaminer.BackgroundServices.Tests
         }
 
         [Fact]
-        public void CanExecute_ShouldReturnTrue_WhenTimeGreaterThanAtTime()
+        public void CanExecute_ShouldReturnTrue_WhenTimeGreaterOrEqualThanAtTimeAndTimeLastRunBeforeToday()
         {
             // Arrange
             var sut = new ScheduledServiceEveryDayAtSetTime(TimeSpan.Parse("02:00"), _sampleRate);
-            var now = DateTime.Parse("05/01/2019 02:00:01");
+            var now = DateTime.Parse("05/01/2019 02:00:00");
             var last = DateTime.Parse("01/01/2019 01:00:00");
 
             // Act
@@ -51,11 +49,11 @@ namespace MedicalExaminer.BackgroundServices.Tests
         }
 
         [Fact]
-        public void CanExecute_ShouldReturnFalse_WhenTimeGreaterThanAtTimeAndLastRunToday()
+        public void CanExecute_ShouldReturnFalse_WhenTimeGreaterOrEqualThanAtTimeAndLastRunToday()
         {
             // Arrange
             var sut = new ScheduledServiceEveryDayAtSetTime(TimeSpan.Parse("02:00"), _sampleRate);
-            var now = DateTime.Parse("05/01/2019 02:00:01");
+            var now = DateTime.Parse("05/01/2019 02:00:00");
             var last = DateTime.Parse("05/01/2019 00:00:01");
 
             // Act
@@ -66,18 +64,18 @@ namespace MedicalExaminer.BackgroundServices.Tests
         }
 
         [Fact]
-        public void CanExecute_ShouldReturnTrue_WhenTimeGreaterThanAtTimeAndLastRunYesterday()
+        public void CanExecute_ShouldReturnTrue_WhenTimeLessThanAtTimeAndLastRunToday()
         {
             // Arrange
             var sut = new ScheduledServiceEveryDayAtSetTime(TimeSpan.Parse("02:00"), _sampleRate);
-            var now = DateTime.Parse("05/01/2019 02:00:01");
-            var last = DateTime.Parse("04/01/2019 23:59:59");
+            var now = DateTime.Parse("05/01/2019 02:00:02");
+            var last = DateTime.Parse("05/01/2019 02:00:01");
 
             // Act
             var result = sut.CanExecute(now, last);
 
             // Assert
-            result.Should().BeTrue();
+            result.Should().BeFalse();
         }
     }
 }
