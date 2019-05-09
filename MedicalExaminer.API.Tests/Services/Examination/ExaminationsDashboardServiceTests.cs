@@ -26,9 +26,11 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             ExaminationConnectionSettings connectionSettings,
             ICosmosStore<MedicalExaminer.Models.Examination> cosmosStore = null)
         {
+            var examinationQueryBuilder = new ExaminationsQueryExpressionBuilder();
             return new ExaminationsDashboardService(
                 databaseAccess,
-                connectionSettings);
+                connectionSettings,
+                examinationQueryBuilder);
         }
 
         [Fact]
@@ -73,7 +75,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             //Assert
             results.Should().NotBeNull();
-            Assert.Equal(0, results.CountOfReadyForMEScrutiny);
+            Assert.Equal(1, results.CountOfReadyForMEScrutiny);
         }
 
         [Fact]

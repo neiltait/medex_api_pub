@@ -67,12 +67,13 @@ namespace MedicalExaminer.Common.Extensions.MeUser
         }
 
         /// <summary>
-        /// Get the users examination role part two.
+        /// Get the users role within the given list of required roles.
         /// </summary>
+        /// <remarks>If the user doesn't have the required role, null is returned. Roles are processed in order first match returns.</remarks>
         /// <param name="user">The user.</param>
-        /// <param name="requiredRoles">List of required roles to filter by.</param>
+        /// <param name="requiredRoles">List of required roles to filter by. Ordered by preference to return.</param>
         /// <returns><see cref="UserRoles"/>.</returns>
-        public static UserRoles? UsersExaminationRole(
+        public static UserRoles? UsersRoleIn(
             this MedicalExaminer.Models.MeUser user,
             IEnumerable<UserRoles> requiredRoles)
         {
@@ -81,11 +82,11 @@ namespace MedicalExaminer.Common.Extensions.MeUser
                 return null;
             }
 
-            if (user != null && user.Permissions != null)
+            if (user?.Permissions != null)
             {
                 foreach (var role in requiredRoles)
                 {
-                    if (user.Permissions.SingleOrDefault(x => x.UserRole == role) != null)
+                    if (user.Permissions.Any(x => x.UserRole == role))
                     {
                         return role;
                     }
@@ -95,7 +96,6 @@ namespace MedicalExaminer.Common.Extensions.MeUser
             return null;
         }
 
-
         /// <summary>
         /// Get the full name, combining last name and first name
         /// </summary>
@@ -103,8 +103,12 @@ namespace MedicalExaminer.Common.Extensions.MeUser
         /// <returns>Full name string.</returns>
         public static string FullName(this MedicalExaminer.Models.MeUser meUser)
         {
-            // MVP: Just concat
-            return $"{meUser.FirstName} {meUser.LastName}";
+            if (meUser != null)
+            {
+                return $"{meUser.FirstName} {meUser.LastName}";
+            }
+
+            return string.Empty;
         }
     }
 }

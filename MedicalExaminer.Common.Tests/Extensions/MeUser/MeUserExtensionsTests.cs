@@ -205,7 +205,7 @@ namespace MedicalExaminer.Common.Tests.Extensions.MeUser
             List<UserRoles> requiredRoles = null;
 
             // Act
-            var role = user.UsersExaminationRole(requiredRoles);
+            var role = user.UsersRoleIn(requiredRoles);
 
             // Assert
             role.Should().BeNull();
@@ -243,7 +243,7 @@ namespace MedicalExaminer.Common.Tests.Extensions.MeUser
             };
 
             // Act
-            var role = user.UsersExaminationRole(requiredRoles);
+            var role = user.UsersRoleIn(requiredRoles);
 
             // Assert
             role.Should().Be(expectedRole);
@@ -275,7 +275,7 @@ namespace MedicalExaminer.Common.Tests.Extensions.MeUser
             };
 
             // Act
-            var role = user.UsersExaminationRole(requiredRoles);
+            var role = user.UsersRoleIn(requiredRoles);
 
             // Assert
             role.Should().BeNull();
@@ -300,7 +300,7 @@ namespace MedicalExaminer.Common.Tests.Extensions.MeUser
             };
 
             // Act
-            var role = user.UsersExaminationRole(requiredRoles);
+            var role = user.UsersRoleIn(requiredRoles);
 
             // Assert
             role.Should().BeNull();

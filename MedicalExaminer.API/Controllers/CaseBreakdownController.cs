@@ -169,13 +169,13 @@ namespace MedicalExaminer.API.Controllers
         {
             theEvent.UserId = user.UserId;
             theEvent.UserFullName = user.FullName();
-            theEvent.UsersRole = user.UsersExaminationRole(new[] { UserRoles.MedicalExaminer, UserRoles.MedicalExaminerOfficer }).ToString();
+            theEvent.UsersRole = user.UsersRoleIn(new[] { UserRoles.MedicalExaminer, UserRoles.MedicalExaminerOfficer }).ToString();
             return theEvent;
         }
 
         private async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertEvent<TEvent, TRequest>(
             string examinationId,
-            [FromBody] TRequest putNewMeoSummaryEventNoteRequest)   //refactor - name change
+            [FromBody] TRequest caseBreakdownEvent)
             where TEvent : IEvent
         {
             if (!ModelState.IsValid)
@@ -183,13 +183,13 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
-            if (putNewMeoSummaryEventNoteRequest == null)
+            if (caseBreakdownEvent == null)
             {
                 return BadRequest(new PutCaseBreakdownEventResponse());
             }
 
             var user = await CurrentUser();
-            var meoSummaryEvent = Mapper.Map<TEvent>(putNewMeoSummaryEventNoteRequest);
+            var meoSummaryEvent = Mapper.Map<TEvent>(caseBreakdownEvent);
             meoSummaryEvent = SetEventUserStatuses(meoSummaryEvent, user);
 
             var examination =
@@ -199,10 +199,9 @@ namespace MedicalExaminer.API.Controllers
             {
                 return Forbid();
             }
-
-            var patientCard = Mapper.Map<PatientCardItem>(examination);
-
+            
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, meoSummaryEvent));
+            var patientCard = Mapper.Map<PatientCardItem>(examination);
 
             if (result == null)
             {

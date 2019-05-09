@@ -1,9 +1,9 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.Models;
-using System;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Mapper
@@ -11,9 +11,11 @@ namespace MedicalExaminer.API.Tests.Mapper
     public class MapperCaseBreakdownProfileTests
     {
         private readonly IMapper _mapper;
+
         public MapperCaseBreakdownProfileTests()
         {
-            var config = new MapperConfiguration(cfg => {
+            var config = new MapperConfiguration(cfg =>
+            {
                 cfg.AddProfile<CaseBreakdownProfile>();
                 cfg.AddProfile<OtherEventProfile>();
                 cfg.AddProfile<AdmissionEventProfile>();
@@ -78,7 +80,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 }
             };
 
-            var result = _mapper.Map<CaseBreakDownItem>(caseBreakdown, opt=>opt.Items["user"] = myUser);
+            var result = _mapper.Map<CaseBreakDownItem>(caseBreakdown, opt => opt.Items["user"] = myUser);
 
             Assert.Equal(latest.EventId, result.OtherEvents.Latest.EventId);
             result.OtherEvents.History.Should().BeEquivalentTo(history);
