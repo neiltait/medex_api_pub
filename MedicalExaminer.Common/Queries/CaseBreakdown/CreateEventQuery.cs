@@ -1,8 +1,9 @@
 ﻿using MedicalExaminer.Models;
+using System;
 
 namespace MedicalExaminer.Common.Queries.CaseBreakdown
 {
-    public class CreateEventQuery : IQuery<string>
+    public class CreateEventQuery : IQuery<Tuple<string, Models.Examination>>
     {
         public IEvent Event { get; }
 

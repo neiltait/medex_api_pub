@@ -225,7 +225,9 @@ namespace MedicalExaminer.Models
                 }
                 else
                 {
-                    if (examination.CaseBreakdown.QapDiscussion.Latest != null && examination.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                    var latest = examination.CaseBreakdown.QapDiscussion.Latest;
+
+                    if (latest != null && !latest.DiscussionUnableHappen)
                     {
                         return false;
                     }
