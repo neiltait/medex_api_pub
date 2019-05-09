@@ -13,11 +13,18 @@ namespace MedicalExaminer.BackgroundServices.Tests
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Test method names are self documenting.")]
     public class ScheduledServiceEveryDayAtSetTimeTests
     {
+        private TimeSpan _sampleRate;
+
+        public ScheduledServiceEveryDayAtSetTimeTests()
+        {
+            _sampleRate = TimeSpan.FromHours(1);
+        }
+
         [Fact]
         public void CanExecute_ShouldReturnFalse_WhenTimeLessThanAtTime()
         {
             // Arrange
-            var sut = new ScheduledServiceEveryDayAtSetTime(TimeSpan.Parse("02:00"));
+            var sut = new ScheduledServiceEveryDayAtSetTime(TimeSpan.Parse("02:00"), _sampleRate);
             var now = DateTime.Parse("05/01/2019 01:00:00");
             var last = DateTime.Parse("01/01/2019 01:00:00");
 
@@ -32,7 +39,7 @@ namespace MedicalExaminer.BackgroundServices.Tests
         public void CanExecute_ShouldReturnTrue_WhenTimeGreaterThanAtTime()
         {
             // Arrange
-            var sut = new ScheduledServiceEveryDayAtSetTime(TimeSpan.Parse("02:00"));
+            var sut = new ScheduledServiceEveryDayAtSetTime(TimeSpan.Parse("02:00"), _sampleRate);
             var now = DateTime.Parse("05/01/2019 02:00:01");
             var last = DateTime.Parse("01/01/2019 01:00:00");
 
@@ -47,7 +54,7 @@ namespace MedicalExaminer.BackgroundServices.Tests
         public void CanExecute_ShouldReturnFalse_WhenTimeGreaterThanAtTimeAndLastRunToday()
         {
             // Arrange
-            var sut = new ScheduledServiceEveryDayAtSetTime(TimeSpan.Parse("02:00"));
+            var sut = new ScheduledServiceEveryDayAtSetTime(TimeSpan.Parse("02:00"), _sampleRate);
             var now = DateTime.Parse("05/01/2019 02:00:01");
             var last = DateTime.Parse("05/01/2019 00:00:01");
 
@@ -62,7 +69,7 @@ namespace MedicalExaminer.BackgroundServices.Tests
         public void CanExecute_ShouldReturnTrue_WhenTimeGreaterThanAtTimeAndLastRunYesterday()
         {
             // Arrange
-            var sut = new ScheduledServiceEveryDayAtSetTime(TimeSpan.Parse("02:00"));
+            var sut = new ScheduledServiceEveryDayAtSetTime(TimeSpan.Parse("02:00"), _sampleRate);
             var now = DateTime.Parse("05/01/2019 02:00:01");
             var last = DateTime.Parse("04/01/2019 23:59:59");
 
