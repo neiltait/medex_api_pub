@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Cosmonaut;
 using Cosmonaut.Extensions;
 using MedicalExaminer.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MedicalExaminer.BackgroundServices.Services
 {
@@ -13,35 +14,40 @@ namespace MedicalExaminer.BackgroundServices.Services
     /// </summary>
     public class UpdateExaminationsService : ScheduledService
     {
-        private readonly ICosmosStore<Examination> _examinationStore;
+        private readonly IServiceProvider _serviceProvider;
+
 
         /// <summary>
         /// Initialise a new instance of <see cref="UpdateExaminationsService"/>.
         /// </summary>
         /// <param name="configuration">Scheduled service configuration.</param>
-        /// <param name="examinationStore">Examination Store.</param>
-        public UpdateExaminationsService(IScheduledServiceConfiguration configuration, ICosmosStore<Examination> examinationStore)
+        /// <param name="serviceProvider">Service provider.</param>
+        public UpdateExaminationsService(IScheduledServiceConfiguration configuration, IServiceProvider serviceProvider)
             : base(configuration)
         {
-            _examinationStore = examinationStore;
+            _serviceProvider = serviceProvider;
         }
 
         /// <inheritdoc/>
-        protected override Task ExecuteAsync(CancellationToken cancellationToken)
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            Console.WriteLine("Running!!");
-
-            return Task.CompletedTask;
-
-            /*var examinations = await _examinationStore.Query().Where(e => !e.CaseCompleted).ToListAsync();
-
-            foreach (var examination in examinations)
+            using (var scope = _serviceProvider.CreateScope())
             {
-                examination.UpdateCaseUrgencyScore();
-            }
+                var examinationStore =
+                    (ICosmosStore<Examination>) scope.ServiceProvider.GetService(typeof(ICosmosStore<Examination>));
 
-            Console.WriteLine($"Updated {examinations.Count}");
-            await _examinationStore.UpdateRangeAsync(examinations);*/
+                Console.WriteLine("Running!!");
+
+                var examinations = await examinationStore.Query().Where(e => !e.CaseCompleted).ToListAsync(cancellationToken);
+
+                foreach (var examination in examinations)
+                {
+                    examination.UpdateCaseUrgencyScore();
+                }
+
+                Console.WriteLine($"Updated {examinations.Count}");
+                await examinationStore.UpdateRangeAsync(examinations, null, cancellationToken);
+            }
         }
     }
 }
