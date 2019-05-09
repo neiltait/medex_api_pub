@@ -13,14 +13,15 @@ namespace MedicalExaminer.BackgroundServices
         /// Initialise a new instance of <see cref="ScheduledServiceEveryDayAtSetTime"/>.
         /// </summary>
         /// <param name="atTime">The Time at which every day to run.</param>
-        public ScheduledServiceEveryDayAtSetTime(TimeSpan atTime)
+        /// <param name="sampleRate">The interval at which to check if we can execute.</param>
+        public ScheduledServiceEveryDayAtSetTime(TimeSpan atTime, TimeSpan sampleRate)
         {
             _atTime = atTime;
+            SampleRate = sampleRate;
         }
 
-        // TODO: Work this out as a multiple of the at time.
         /// <inheritdoc/>
-        public TimeSpan SampleRate => TimeSpan.FromSeconds(30);
+        public TimeSpan SampleRate { get; }
 
         /// <inheritdoc/>
         public bool CanExecute(DateTime dateTime, DateTime lastExecuted)

@@ -17,7 +17,9 @@ namespace MedicalExaminer.BackgroundServices
         public static IServiceCollection AddBackgroundServices(this IServiceCollection services)
         {
             services.AddSingleton<IScheduledServiceConfiguration, ScheduledServiceEveryDayAtSetTime>(
-                serviceProvider => new ScheduledServiceEveryDayAtSetTime(TimeSpan.Parse("02:00")));
+                serviceProvider => new ScheduledServiceEveryDayAtSetTime(
+                    TimeSpan.Parse("02:00"), 
+                    TimeSpan.FromSeconds(30)));
             services.AddHostedService<UpdateExaminationsService>();
 
             return services;
