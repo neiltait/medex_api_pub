@@ -87,6 +87,8 @@ namespace MedicalExaminer.API
 
             var cosmosDbSettings = services.ConfigureSettings<CosmosDbSettings>(Configuration, "CosmosDB");
 
+            var backgroundServicesSettings = services.ConfigureSettings<BackgroundServicesSettings>(Configuration, "BackgroundServices");
+
             services.ConfigureSettings<AuthorizationSettings>(Configuration, "Authorization");
 
             ConfigureOktaClient(services);
@@ -213,7 +215,7 @@ namespace MedicalExaminer.API
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
-            services.AddBackgroundServices();
+            services.AddBackgroundServices(backgroundServicesSettings);
         }
 
         /// <summary>
