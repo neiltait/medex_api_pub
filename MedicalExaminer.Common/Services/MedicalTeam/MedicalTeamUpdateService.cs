@@ -40,6 +40,8 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
             examination = examination.UpdateCaseUrgencyScore();
             examination = examination.UpdateCaseStatus();
             examination.LastModifiedBy = userId;
+            examination.ModifiedAt = DateTime.Now;
+
             var returnedDocument = await _databaseAccess.UpdateItemAsync(_connectionSettings, examination);
 
             return returnedDocument;

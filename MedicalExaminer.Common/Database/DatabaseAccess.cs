@@ -36,7 +36,21 @@ namespace MedicalExaminer.Common.Database
                     connectionSettings.DatabaseId,
                     connectionSettings.Collection),
                     item);
+            AddAuditEntry(connectionSettings, item);
             return (T)(dynamic)resourceResponse.Resource;
+        }
+
+        private void AddAuditEntry<T>(IConnectionSettings connectionSettings, T item)
+        {
+            var auditConnectionSettings = connectionSettings.ToAuditSettings();
+            var auditClient = _documentClientFactory.CreateClient(auditConnectionSettings);
+
+            var auditEntry = new AuditEntry<T>(item);
+            auditClient.CreateDocumentAsync(
+                UriFactory.CreateDocumentCollectionUri(
+                    auditConnectionSettings.DatabaseId,
+                    auditConnectionSettings.Collection),
+                    auditEntry);
         }
 
         public async Task<T> GetItemAsync<T>(
@@ -145,7 +159,7 @@ namespace MedicalExaminer.Common.Database
             var updateItemAsync = await client.UpsertDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
                 item);
-
+            AddAuditEntry(connectionSettings, item);
             return (T)(dynamic)updateItemAsync.Resource;
         }
     }

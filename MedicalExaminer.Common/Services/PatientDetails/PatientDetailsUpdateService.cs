@@ -65,6 +65,7 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             caseToReplace.MedicalExaminerOfficeResponsibleName = _locationHandler.Handle(
                 new LocationRetrievalByIdQuery(caseToReplace.MedicalExaminerOfficeResponsible)).Result.Name;
             caseToReplace.LastModifiedBy = param.User.UserId;
+            caseToReplace.ModifiedAt = DateTime.Now;
 
             caseToReplace = caseToReplace.UpdateCaseUrgencyScore();
             caseToReplace = caseToReplace.UpdateCaseStatus();
