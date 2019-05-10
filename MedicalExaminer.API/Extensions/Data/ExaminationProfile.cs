@@ -139,7 +139,10 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(
                     patientCard => patientCard.AppointmentTime,
                     examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())))
-                    .ForMember(patientCard => patientCard.CaseCreatedDate, opt => opt.MapFrom(examination => examination.CreatedAt));
+                .ForMember(patientCard => patientCard.CaseCreatedDate,
+                    opt => opt.MapFrom(examination => examination.CreatedAt))
+                .ForMember(patientCard => patientCard.LastAdmission,
+                    opt => opt.MapFrom(new AdmissionDateResolver()));
 
             CreateMap<Representative, RepresentativeItem>();
             CreateMap<Examination, DeathEvent>()
@@ -148,6 +151,15 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(deathEvent => deathEvent.EventId, opt => opt.Ignore())
                 .ForMember(deathEvent => deathEvent.UsersRole, opt => opt.Ignore())
                 .ForMember(deathEvent => deathEvent.UserFullName, opt => opt.Ignore());
+        }
+    }
+
+    public class AdmissionDateResolver
+        : IValueResolver<Examination, PatientCardItem, DateTime?>
+    {
+        public DateTime? Resolve(Examination source, PatientCardItem destination, DateTime? destMember, ResolutionContext context)
+        {
+            return source.CaseBreakdown.AdmissionNotes?.Latest?.AdmittedDate;
         }
     }
 
