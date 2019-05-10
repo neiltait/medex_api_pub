@@ -201,7 +201,10 @@ namespace MedicalExaminer.Models
                 }
                 else
                 {
-                    if (examination.CaseBreakdown.BereavedDiscussion.Latest != null && !examination.CaseBreakdown.BereavedDiscussion.Latest.DiscussionUnableHappen)
+
+                    var latest = examination.CaseBreakdown.BereavedDiscussion.Latest;
+
+                    if (latest != null && !latest.DiscussionUnableHappen)
                     {
                         return false;
                     }
