@@ -19,6 +19,21 @@ namespace MedicalExaminer.BackgroundServices.Tests
         }
 
         [Fact]
+        public void GetSampleRate_ReturnsConstructedSampleRate()
+        {
+            // Arrange
+            var expectedAtTime = TimeSpan.FromHours(1);
+            var expectedSampleRate = TimeSpan.FromHours(2);
+            var sut = new ScheduledServiceEveryDayAtSetTime(expectedAtTime, expectedSampleRate);
+
+            // Act
+            var sampleRate = sut.SampleRate;
+
+            // Assert
+            sampleRate.Should().Be(expectedSampleRate);
+        }
+
+        [Fact]
         public void CanExecute_ShouldReturnFalse_WhenTimeLessThanAtTimeAndLastRunBeforeToday()
         {
             // Arrange
