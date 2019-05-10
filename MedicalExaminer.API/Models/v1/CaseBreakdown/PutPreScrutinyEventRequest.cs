@@ -54,12 +54,12 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Dictionary for Clinical Governance Review radio button.
         /// </summary>
-        public ClinicalGovernanceReview ClinicalGovernanceReview { get; set; }
+        public ClinicalGovernanceReview? ClinicalGovernanceReview { get; set; }
 
         /// <summary>
         /// Details of Clinical Governance Review if said yes for Clinical Governance Review radio button.
         /// </summary>
-        [RequiredIfAttributesMatch(nameof(ClinicalGovernanceReview), ClinicalGovernanceReview.Yes)]
+        [RequiredIfAttributesMatch(nameof(ClinicalGovernanceReview), MedicalExaminer.Models.Enums.ClinicalGovernanceReview.Yes)]
         public string ClinicalGovernanceReviewText { get; set; }
     }
 }
