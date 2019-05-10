@@ -1,5 +1,4 @@
-﻿using System;
-using MedicalExaminer.BackgroundServices.Services;
+﻿using MedicalExaminer.BackgroundServices.Services;
 using MedicalExaminer.Common.Settings;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +15,9 @@ namespace MedicalExaminer.BackgroundServices
         /// <param name="services">The Service Collection.</param>
         /// <param name="backgroundServicesSettings">The background services settings.</param>
         /// <returns>The Service Collection.</returns>
-        public static IServiceCollection AddBackgroundServices(this IServiceCollection services, BackgroundServicesSettings backgroundServicesSettings)
+        public static IServiceCollection AddBackgroundServices(
+            this IServiceCollection services, 
+            BackgroundServicesSettings backgroundServicesSettings)
         {
             // All hosted services will use this same configuration unless different interfaces are used.
             services.AddSingleton<IScheduledServiceConfiguration, ScheduledServiceEveryDayAtSetTime>(
