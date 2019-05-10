@@ -3,18 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
+using Microsoft.Azure.CosmosDB.BulkExecutor;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 
 namespace MedicalExaminer.Common.Database
 {
+    /// <summary>
+    /// Database Access.
+    /// </summary>
+    /// <seealso cref="MedicalExaminer.Common.Database.IDatabaseAccess" />
     public class DatabaseAccess : IDatabaseAccess
     {
         private readonly IDocumentClientFactory _documentClientFactory;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseAccess"/> class.
+        /// </summary>
+        /// <param name="documentClientFactory">The document client factory.</param>
         public DatabaseAccess(IDocumentClientFactory documentClientFactory)
         {
             _documentClientFactory = documentClientFactory;
@@ -139,6 +149,28 @@ namespace MedicalExaminer.Common.Database
                 item);
 
             return (T)(dynamic)updateItemAsync.Resource;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<T>> UpdateItemsAsync<T>(IConnectionSettings connectionSettings, IEnumerable<T> items)
+        {
+            var client = _documentClientFactory.CreateClient(connectionSettings);
+            var collectionUrl = UriFactory.CreateDocumentCollectionUri(
+                connectionSettings.DatabaseId,
+                connectionSettings.Collection);
+
+            var result = new List<T>();
+
+            foreach (var item in items)
+            {
+                var updateItemAsync = await client.UpsertDocumentAsync(
+                    collectionUrl,
+                    item);
+
+                result.Add((T)(dynamic)updateItemAsync.Resource);
+            }
+
+            return result;
         }
     }
 }
