@@ -199,7 +199,7 @@ namespace MedicalExaminer.API.Controllers
             {
                 return Forbid();
             }
-            
+
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, meoSummaryEvent));
             var patientCard = Mapper.Map<PatientCardItem>(examination);
 
