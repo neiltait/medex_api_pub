@@ -4,8 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cosmonaut;
 using Cosmonaut.Extensions;
-using MedicalExaminer.Common.Queries.Examination;
-using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,11 +16,12 @@ namespace MedicalExaminer.BackgroundServices.Services
     {
         private readonly IServiceProvider _serviceProvider;
 
+
         /// <summary>
         /// Initialise a new instance of <see cref="UpdateExaminationsService"/>.
         /// </summary>
         /// <param name="configuration">Scheduled service configuration.</param>
-        /// <param name="serviceProvider"></param>
+        /// <param name="serviceProvider">Service provider.</param>
         public UpdateExaminationsService(IScheduledServiceConfiguration configuration, IServiceProvider serviceProvider)
             : base(configuration)
         {
@@ -34,21 +33,20 @@ namespace MedicalExaminer.BackgroundServices.Services
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                try
+                var examinationStore =
+                    (ICosmosStore<Examination>) scope.ServiceProvider.GetService(typeof(ICosmosStore<Examination>));
+
+                Console.WriteLine("Running!!");
+
+                var examinations = await examinationStore.Query().Where(e => !e.CaseCompleted).ToListAsync(cancellationToken);
+
+                foreach (var examination in examinations)
                 {
-                    var examinationsUpdateCaseUrgencyScoreService = scope.ServiceProvider.GetRequiredService<IAsyncQueryHandler<ExaminationsUpdateCaseUrgencyScoreQuery, int>>();
-
-                    Console.WriteLine("Running!!");
-
-                    var result = await examinationsUpdateCaseUrgencyScoreService.Handle(
-                        new ExaminationsUpdateCaseUrgencyScoreQuery(new MeUser()));
-
-                    Console.WriteLine($"Records updated: {result}");
+                    examination.UpdateCaseUrgencyScore();
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"oops: {e}");
-                }
+
+                Console.WriteLine($"Updated {examinations.Count}");
+                await examinationStore.UpdateRangeAsync(examinations, null, cancellationToken);
             }
         }
     }

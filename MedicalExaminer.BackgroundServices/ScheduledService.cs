@@ -91,6 +91,7 @@ namespace MedicalExaminer.BackgroundServices
             }
         }
 
+
         /// <summary>
         /// Dispose
         /// </summary>
