@@ -63,7 +63,7 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "participant_phone_number")]
         public string ParticipantPhoneNumber { get; set; }
-        
+
         /// <summary>
         /// Date of Conversation.
         /// </summary>
@@ -86,10 +86,10 @@ namespace MedicalExaminer.Models
         ///// Outcome of the Bereaved Discussion.
         ///// </summary>
         [JsonProperty(PropertyName = "bereaved_discussion_outcome")]
-        public QapDiscussionOutcome QapDiscussionOutcome { get; set; }
+        public QapDiscussionOutcome? QapDiscussionOutcome { get; set; }
 
         ///// <summary>
-        ///// Qap particpant name
+        ///// Qap participant name
         ///// </summary>
         [JsonProperty(PropertyName = "participant_name")]
         public string ParticipantName { get; set; }

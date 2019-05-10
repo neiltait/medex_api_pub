@@ -74,7 +74,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         ///// <summary>
         ///// Outcome of the Bereaved Discussion.
         ///// </summary>
-        public QapDiscussionOutcome QapDiscussionOutcome { get; set; }
+        public QapDiscussionOutcome? QapDiscussionOutcome { get; set; }
 
         ///// <summary>
         ///// Qap particpant name
