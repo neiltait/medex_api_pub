@@ -19,15 +19,6 @@ namespace MedicalExaminer.Common.Database
 
         Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item);
 
-        /// <summary>
-        /// Updates the list of items.
-        /// </summary>
-        /// <typeparam name="T">Type of item.</typeparam>
-        /// <param name="connectionSettings">The connection settings.</param>
-        /// <param name="items">The items.</param>
-        /// <returns>The list of updated items.</returns>
-        Task<IEnumerable<T>> UpdateItemsAsync<T>(IConnectionSettings connectionSettings, IEnumerable<T> items);
-
         Task<T> GetItemAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate);
 
         Task<IEnumerable<T>> GetItemsAsync<T>(

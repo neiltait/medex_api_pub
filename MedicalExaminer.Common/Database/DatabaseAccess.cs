@@ -148,27 +148,5 @@ namespace MedicalExaminer.Common.Database
 
             return (T)(dynamic)updateItemAsync.Resource;
         }
-
-        /// <inheritdoc/>
-        public async Task<IEnumerable<T>> UpdateItemsAsync<T>(IConnectionSettings connectionSettings, IEnumerable<T> items)
-        {
-            var client = _documentClientFactory.CreateClient(connectionSettings);
-            var collectionUrl = UriFactory.CreateDocumentCollectionUri(
-                connectionSettings.DatabaseId,
-                connectionSettings.Collection);
-
-            var result = new List<T>();
-
-            foreach (var item in items)
-            {
-                var updateItemAsync = await client.UpsertDocumentAsync(
-                    collectionUrl,
-                    item);
-
-                result.Add((T)(dynamic)updateItemAsync.Resource);
-            }
-
-            return result;
-        }
     }
 }
