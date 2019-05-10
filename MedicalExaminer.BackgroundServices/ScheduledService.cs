@@ -18,6 +18,11 @@ namespace MedicalExaminer.BackgroundServices
         private readonly IScheduledServiceConfiguration _configuration;
 
         /// <summary>
+        /// The scheduler.
+        /// </summary>
+        private readonly IScheduler _scheduler;
+
+        /// <summary>
         /// When did the service last run its execute.
         /// </summary>
         private DateTime _lastExecuted;
@@ -36,10 +41,12 @@ namespace MedicalExaminer.BackgroundServices
         /// Initialise a new instance of <see cref="ScheduledService"/>.
         /// </summary>
         /// <param name="configuration">Scheduled Service Configuration.</param>
-        protected ScheduledService(IScheduledServiceConfiguration configuration)
+        /// <param name="scheduler">The scheduler.</param>
+        protected ScheduledService(IScheduledServiceConfiguration configuration, IScheduler scheduler)
         {
             _configuration = configuration;
-            _lastExecuted = DateTime.MinValue;
+            _scheduler = scheduler;
+            _lastExecuted = _scheduler.LastExecuted;
         }
 
         /// <inheritdoc/>
@@ -62,7 +69,7 @@ namespace MedicalExaminer.BackgroundServices
 
             _cancellationTokenSource.Cancel();
 
-            await Task.WhenAny(_task, Task.Delay(-1, cancellationToken));
+            await Task.WhenAny(_task, _scheduler.Delay(-1, cancellationToken));
 
             cancellationToken.ThrowIfCancellationRequested();
         }
@@ -78,7 +85,9 @@ namespace MedicalExaminer.BackgroundServices
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                var dateTimeNow = DateTime.UtcNow;
+                var dateTimeNow = _scheduler.UtcNow;
+
+                Console.WriteLine("Loop");
 
                 if (_configuration.CanExecute(dateTimeNow, _lastExecuted))
                 {
@@ -87,7 +96,7 @@ namespace MedicalExaminer.BackgroundServices
                     await ExecuteAsync(cancellationToken);
                 }
 
-                await Task.Delay(_configuration.SampleRate, cancellationToken);
+                await _scheduler.Delay(_configuration.SampleRate, cancellationToken);
             }
         }
 

@@ -19,6 +19,8 @@ namespace MedicalExaminer.BackgroundServices
             this IServiceCollection services, 
             BackgroundServicesSettings backgroundServicesSettings)
         {
+            services.AddSingleton<IScheduler, Scheduler>();
+
             // All hosted services will use this same configuration unless different interfaces are used.
             services.AddSingleton<IScheduledServiceConfiguration, ScheduledServiceEveryDayAtSetTime>(
                 serviceProvider => new ScheduledServiceEveryDayAtSetTime(

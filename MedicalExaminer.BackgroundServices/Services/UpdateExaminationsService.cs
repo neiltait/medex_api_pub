@@ -25,9 +25,10 @@ namespace MedicalExaminer.BackgroundServices.Services
         /// Initialise a new instance of <see cref="UpdateExaminationsService"/>.
         /// </summary>
         /// <param name="configuration">Scheduled service configuration.</param>
+        /// <param name="scheduler">The scheduler.</param>
         /// <param name="serviceProvider">Service provider.</param>
-        public UpdateExaminationsService(IScheduledServiceConfiguration configuration, IServiceProvider serviceProvider)
-            : base(configuration)
+        public UpdateExaminationsService(IScheduledServiceConfiguration configuration, IScheduler scheduler, IServiceProvider serviceProvider)
+            : base(configuration, scheduler)
         {
             _serviceProvider = serviceProvider;
         }
