@@ -10,10 +10,8 @@ namespace MedicalExaminer.Common.ConnectionSettings
             EndPointUri = endPointUri;
             PrimaryKey = primaryKey;
             DatabaseId = databaseId;
-            Collection = collection + Postfix;
+            Collection = collection.AuditCollection();
         }
-
-        private const string Postfix = "-Audit";
 
         public Uri EndPointUri { get; private set; }
 
