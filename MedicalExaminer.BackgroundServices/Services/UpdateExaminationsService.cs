@@ -14,8 +14,10 @@ namespace MedicalExaminer.BackgroundServices.Services
     /// </summary>
     public class UpdateExaminationsService : ScheduledService
     {
+        /// <summary>
+        /// The service provider.
+        /// </summary>
         private readonly IServiceProvider _serviceProvider;
-
 
         /// <summary>
         /// Initialise a new instance of <see cref="UpdateExaminationsService"/>.
@@ -36,13 +38,16 @@ namespace MedicalExaminer.BackgroundServices.Services
                 var examinationStore =
                     (ICosmosStore<Examination>) scope.ServiceProvider.GetService(typeof(ICosmosStore<Examination>));
 
-                Console.WriteLine("Running!!");
-
-                var examinations = await examinationStore.Query().Where(e => !e.CaseCompleted).ToListAsync(cancellationToken);
+                var examinations = await examinationStore
+                    .Query()
+                    .Where(e => !e.CaseCompleted)
+                    .ToListAsync(cancellationToken);
 
                 foreach (var examination in examinations)
                 {
                     examination.UpdateCaseUrgencyScore();
+                    examination.LastModifiedBy = "UpdateExaminationService";
+                    examination.ModifiedAt = DateTimeOffset.UtcNow;
                 }
 
                 Console.WriteLine($"Updated {examinations.Count}");
