@@ -1,5 +1,6 @@
 ﻿using System;
 using MedicalExaminer.BackgroundServices.Services;
+using MedicalExaminer.Common.Settings;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MedicalExaminer.BackgroundServices
@@ -13,13 +14,16 @@ namespace MedicalExaminer.BackgroundServices
         /// Add Background Services.
         /// </summary>
         /// <param name="services">The Service Collection.</param>
+        /// <param name="backgroundServicesSettings">The background services settings.</param>
         /// <returns>The Service Collection.</returns>
-        public static IServiceCollection AddBackgroundServices(this IServiceCollection services)
+        public static IServiceCollection AddBackgroundServices(this IServiceCollection services, BackgroundServicesSettings backgroundServicesSettings)
         {
+            // All hosted services will use this same configuration unless different interfaces are used.
             services.AddSingleton<IScheduledServiceConfiguration, ScheduledServiceEveryDayAtSetTime>(
                 serviceProvider => new ScheduledServiceEveryDayAtSetTime(
-                    TimeSpan.Parse("02:00"), 
-                    TimeSpan.FromSeconds(30)));
+                    backgroundServicesSettings.TimeToRunEachDay,
+                    backgroundServicesSettings.SampleRate));
+
             services.AddHostedService<UpdateExaminationsService>();
 
             return services;
