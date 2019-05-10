@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Cosmonaut;
 using Cosmonaut.Extensions;
+using MedicalExaminer.Common.Database;
 using MedicalExaminer.Models;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -35,23 +37,30 @@ namespace MedicalExaminer.BackgroundServices.Services
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                var examinationStore =
-                    (ICosmosStore<Examination>) scope.ServiceProvider.GetService(typeof(ICosmosStore<Examination>));
+                var examinationStore = scope.ServiceProvider.GetRequiredService<ICosmosStore<Examination>>();
+
+                var examinationAuditStore = scope.ServiceProvider.GetRequiredService<ICosmosStore<AuditEntry<Examination>>>();
 
                 var examinations = await examinationStore
                     .Query()
                     .Where(e => !e.CaseCompleted)
                     .ToListAsync(cancellationToken);
 
+                var examinationAudits = new List<AuditEntry<Examination>>();
+
                 foreach (var examination in examinations)
                 {
                     examination.UpdateCaseUrgencyScore();
                     examination.LastModifiedBy = "UpdateExaminationService";
                     examination.ModifiedAt = DateTimeOffset.UtcNow;
+
+                    examinationAudits.Add(new AuditEntry<Examination>(examination));
                 }
 
                 Console.WriteLine($"Updated {examinations.Count}");
                 await examinationStore.UpdateRangeAsync(examinations, null, cancellationToken);
+
+                await examinationAuditStore.AddRangeAsync(examinationAudits, null, cancellationToken);
             }
         }
     }
