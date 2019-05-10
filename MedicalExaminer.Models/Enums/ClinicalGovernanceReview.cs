@@ -6,8 +6,8 @@ namespace MedicalExaminer.Models.Enums
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ClinicalGovernanceReview
     {
-        Yes = 1,
-        No = 2,
-        Unknown = 3
+        Unknown = 1,
+        Yes = 2,
+        No = 3
     }
 }
