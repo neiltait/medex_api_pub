@@ -68,13 +68,13 @@ namespace MedicalExaminer.Models
         /// Participant Present At Death.
         /// </summary>
         [JsonProperty(PropertyName = "present_at_death")]
-        public PresentAtDeath PresentAtDeath { get; set; }
+        public PresentAtDeath? PresentAtDeath { get; set; }
 
         /// <summary>
         /// Participant Informed At Death.
         /// </summary>
         [JsonProperty(PropertyName = "informed_at_death")]
-        public InformedAtDeath InformedAtDeath { get; set; }
+        public InformedAtDeath? InformedAtDeath { get; set; }
 
         /// <summary>
         /// Date of Conversation.
@@ -98,6 +98,6 @@ namespace MedicalExaminer.Models
         ///// Outcome of the Bereaved Discussion.
         ///// </summary>
         [JsonProperty(PropertyName = "bereaved_discussion_outcome")]
-        public BereavedDiscussionOutcome BereavedDiscussionOutcome { get; set; }
+        public BereavedDiscussionOutcome? BereavedDiscussionOutcome { get; set; }
     }
 }

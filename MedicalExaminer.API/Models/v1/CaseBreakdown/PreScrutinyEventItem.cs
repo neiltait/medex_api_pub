@@ -51,7 +51,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Dictionary for circumstances of death radio button.
         /// </summary>
-        public OverallCircumstancesOfDeath CircumstancesOfDeath { get; set; }
+        public OverallCircumstancesOfDeath? CircumstancesOfDeath { get; set; }
 
         /// <summary>
         /// Possible cause of death established during scrutiny by Medical Examiner 1a
@@ -76,12 +76,12 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Dictionary for Outcome Of Pre-Scrutiny radio button.
         /// </summary>
-        public OverallOutcomeOfPreScrutiny OutcomeOfPreScrutiny { get; set; }
+        public OverallOutcomeOfPreScrutiny? OutcomeOfPreScrutiny { get; set; }
 
         /// <summary>
         /// Dictionary for Clinical Governance Review radio button.
         /// </summary>
-        public ClinicalGovernanceReview ClinicalGovernanceReview { get; set; }
+        public ClinicalGovernanceReview? ClinicalGovernanceReview { get; set; }
 
         /// <summary>
         /// Details of Clinical Governance Review if said yes for Clinical Governance Review radio button.

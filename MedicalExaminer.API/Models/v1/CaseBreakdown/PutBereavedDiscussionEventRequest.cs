@@ -33,12 +33,12 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Participant Present At Death.
         /// </summary>
-        public PresentAtDeath PresentAtDeath { get; set; }
+        public PresentAtDeath? PresentAtDeath { get; set; }
 
         /// <summary>
         /// Participant Informed At Death.
         /// </summary>
-        public InformedAtDeath InformedAtDeath { get; set; }
+        public InformedAtDeath? InformedAtDeath { get; set; }
 
         /// <summary>
         /// Date of Conversation.
@@ -58,6 +58,6 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         ///// <summary>
         ///// Outcome of the Bereaved Discussion.
         ///// </summary>
-        public BereavedDiscussionOutcome BereavedDiscussionOutcome { get; set; }
+        public BereavedDiscussionOutcome? BereavedDiscussionOutcome { get; set; }
     }
 }
