@@ -201,7 +201,9 @@ namespace MedicalExaminer.API
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey);
 
-            services.AddCosmosStore<Examination>(cosmosSettings, "Examinations");
+            const string examinationsCollection = "Examinations";
+            services.AddCosmosStore<Examination>(cosmosSettings, examinationsCollection);
+            services.AddCosmosStore<AuditEntry<Examination>>(cosmosSettings, examinationsCollection.AuditCollection());
 
             ConfigureQueries(services, cosmosDbSettings);
 
