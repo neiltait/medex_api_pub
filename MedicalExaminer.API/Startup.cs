@@ -308,12 +308,10 @@ namespace MedicalExaminer.API
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
-            // Examination services 
+            // Examination services
             services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>, ExaminationsDashboardService>();
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, Examination>, CreateExaminationService>();
-            services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
-            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<CreateEventQuery, string>, CreateEventService>();
