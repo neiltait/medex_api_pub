@@ -149,6 +149,7 @@ namespace MedicalExaminer.Models
             examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
 
             examination.ScrutinyConfirmed = CalculateScrutinyComplete(examination);
+            examination.CaseOutcome.CaseOutcomeSummary = CalculateScrutinyOutcome(examination);
 
             return examination;
         }
@@ -209,6 +210,33 @@ namespace MedicalExaminer.Models
             }
 
             return true;
+        }
+
+        private static CaseOutcomeSummary CalculateScrutinyOutcome(Examination examination)
+        {
+            if (examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoroner)
+            {
+                return CaseOutcomeSummary.ReferToCoroner;
+            }
+
+            if (examination.CaseBreakdown.PreScrutiny?.Latest?.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoroner 
+                && examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoroner)
+            {
+                return CaseOutcomeSummary.ReferToCoroner;
+            }
+
+            if (examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome == BereavedDiscussionOutcome.ConcernsCoronerInvestigation)
+            {
+                return CaseOutcomeSummary.ReferToCoroner;
+            }
+            else if (examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome == BereavedDiscussionOutcome.ConcernsRequires100a)
+            {
+                return CaseOutcomeSummary.IssueMCCDWith100a;
+            }
+            else
+            {
+                return CaseOutcomeSummary.IssueMCCD;
+            }
         }
 
         private static bool CalculatePendingQAPDiscussion(Examination examination)
