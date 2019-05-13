@@ -29,17 +29,21 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
                         _connectionSettings,
                         examination => examination.ExaminationId == param.ExaminationId);
 
-            examinationToUpdate.ConfirmationOfScrutinyCompletedAt = DateTime.Now;
-            examinationToUpdate.ConfirmationOfScrutinyCompletedBy = param.User.UserId;
-            examinationToUpdate.ModifiedAt = DateTimeOffset.Now;
-            examinationToUpdate.LastModifiedBy = param.User.UserId;
-            examinationToUpdate.ScrutinyConfirmed = true;
+            if (examinationToUpdate.HaveBeenScrutinisedByME)
+            {
+                examinationToUpdate.ConfirmationOfScrutinyCompletedAt = DateTime.Now;
+                examinationToUpdate.ConfirmationOfScrutinyCompletedBy = param.User.UserId;
+                examinationToUpdate.ModifiedAt = DateTimeOffset.Now;
+                examinationToUpdate.LastModifiedBy = param.User.UserId;
+                examinationToUpdate.ScrutinyConfirmed = true;
 
-            examinationToUpdate.UpdateCaseStatus();
-            examinationToUpdate.UpdateCaseUrgencyScore();
+                examinationToUpdate.UpdateCaseStatus();
+                examinationToUpdate.UpdateCaseUrgencyScore();
 
-            var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);
-            return result;
+                var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);
+                return result;
+            }
+            return null;
         }
     }
 }
