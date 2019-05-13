@@ -14,6 +14,7 @@ using MedicalExaminer.Common.Database;
 using MedicalExaminer.Models;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -25,6 +26,8 @@ namespace MedicalExaminer.BackgroundServices.Tests.Services
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Test method names are self documenting.")]
     public class UpdateExaminationsServiceTests
     {
+        private readonly Mock<ILogger<UpdateExaminationsService>> _logger;
+
         private readonly Mock<IScheduledServiceConfiguration> _configurationMock;
 
         private readonly Mock<IScheduler> _schedulerMock;
@@ -35,6 +38,7 @@ namespace MedicalExaminer.BackgroundServices.Tests.Services
 
         public UpdateExaminationsServiceTests()
         {
+            _logger = new Mock<ILogger<UpdateExaminationsService>>(MockBehavior.Strict);
             _configurationMock = new Mock<IScheduledServiceConfiguration>(MockBehavior.Strict);
             _schedulerMock = new Mock<IScheduler>(MockBehavior.Strict);
             _serviceProviderMock = new Mock<IServiceProvider>(MockBehavior.Strict);
@@ -44,6 +48,7 @@ namespace MedicalExaminer.BackgroundServices.Tests.Services
                 .Returns(DateTime.Parse("01/01/2019 00:00:00"));
 
             _sut = new UpdateExaminationsService(
+                _logger.Object,
                 _configurationMock.Object,
                 _schedulerMock.Object,
                 _serviceProviderMock.Object);

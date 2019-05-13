@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace MedicalExaminer.BackgroundServices
 {
@@ -12,6 +13,8 @@ namespace MedicalExaminer.BackgroundServices
     /// <inheritdoc cref="IDisposable"/>
     public abstract class ScheduledService : IHostedService, IDisposable
     {
+        private readonly ILogger<ScheduledService> _logger;
+
         /// <summary>
         /// Configuration for scheduling
         /// </summary>
@@ -40,10 +43,12 @@ namespace MedicalExaminer.BackgroundServices
         /// <summary>
         /// Initialise a new instance of <see cref="ScheduledService"/>.
         /// </summary>
+        /// <param name="logger">Logger.</param>
         /// <param name="configuration">Scheduled Service Configuration.</param>
         /// <param name="scheduler">The scheduler.</param>
-        protected ScheduledService(IScheduledServiceConfiguration configuration, IScheduler scheduler)
+        protected ScheduledService(ILogger<ScheduledService> logger, IScheduledServiceConfiguration configuration, IScheduler scheduler)
         {
+            _logger = logger;
             _configuration = configuration;
             _scheduler = scheduler;
             _lastExecuted = _scheduler.LastExecuted;
@@ -87,13 +92,18 @@ namespace MedicalExaminer.BackgroundServices
             {
                 var dateTimeNow = _scheduler.UtcNow;
 
-                Console.WriteLine("Loop");
-
                 if (_configuration.CanExecute(dateTimeNow, _lastExecuted))
                 {
                     _lastExecuted = dateTimeNow;
 
-                    await ExecuteAsync(cancellationToken);
+                    try
+                    {
+                        await ExecuteAsync(cancellationToken);
+                    }
+                    catch(Exception e)
+                    {
+                        _logger.LogCritical(e, "Exception occurred while running scheduled service.");
+                    }
                 }
 
                 await _scheduler.Delay(_configuration.SampleRate, cancellationToken);

@@ -8,6 +8,7 @@ using Cosmonaut.Extensions;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace MedicalExaminer.BackgroundServices.Services
 {
@@ -24,11 +25,12 @@ namespace MedicalExaminer.BackgroundServices.Services
         /// <summary>
         /// Initialise a new instance of <see cref="UpdateExaminationsService"/>.
         /// </summary>
+        /// <param name="logger">The Logger.</param>
         /// <param name="configuration">Scheduled service configuration.</param>
         /// <param name="scheduler">The scheduler.</param>
         /// <param name="serviceProvider">Service provider.</param>
-        public UpdateExaminationsService(IScheduledServiceConfiguration configuration, IScheduler scheduler, IServiceProvider serviceProvider)
-            : base(configuration, scheduler)
+        public UpdateExaminationsService(ILogger<UpdateExaminationsService> logger, IScheduledServiceConfiguration configuration, IScheduler scheduler, IServiceProvider serviceProvider)
+            : base(logger, configuration, scheduler)
         {
             _serviceProvider = serviceProvider;
         }
