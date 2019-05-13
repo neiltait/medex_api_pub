@@ -1,9 +1,6 @@
-﻿using MedicalExaminer.Models;
+﻿using System;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
