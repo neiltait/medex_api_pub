@@ -19,6 +19,11 @@ namespace MedicalExaminer.BackgroundServices
             this IServiceCollection services, 
             BackgroundServicesSettings backgroundServicesSettings)
         {
+            if (backgroundServicesSettings == null)
+            {
+                return services;
+            }
+
             services.AddSingleton<IScheduler, Scheduler>();
 
             // All hosted services will use this same configuration unless different interfaces are used.
