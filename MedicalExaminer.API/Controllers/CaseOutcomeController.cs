@@ -64,6 +64,12 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var user = await CurrentUser();
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+
+            if (!examination.HaveBeenScrutinisedByME)
+            {
+                return Forbid();
+            }
 
             var result = await _confirmationOfScrutinyService.Handle(new ConfirmationOfScrutinyQuery(examinationId, user));
             return Ok(Mapper.Map<PutConfirmationOfScrutinyResponse>(result));
@@ -90,7 +96,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var user = await CurrentUser();
-            var result = await _coronerReferralService.Handle(new CoronerReferralQuery(examinationId, user));
+            await _coronerReferralService.Handle(new CoronerReferralQuery(examinationId, user));
 
             return Ok();
         }
@@ -127,8 +133,13 @@ namespace MedicalExaminer.API.Controllers
                 return new NotFoundResult();
             }
 
+            if (!examination.ScrutinyConfirmed)
+            {
+                return Forbid();
+            }
+
             var outstandingCaseItems = Mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
-            var result = await _saveOutstandingCaseItemsService.Handle(new SaveOutstandingCaseItemsQuery(examinationId, outstandingCaseItems, user));
+            await _saveOutstandingCaseItemsService.Handle(new SaveOutstandingCaseItemsQuery(examinationId, outstandingCaseItems, user));
             return Ok();
         }
 
@@ -153,7 +164,19 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var user = await CurrentUser();
-            var result = await _closeCaseService.Handle(new CloseCaseQuery(examinationId, user));
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+
+            if (examination == null)
+            {
+                return new NotFoundResult();
+            }
+
+            if (!examination.OutstandingCaseItemsCompleted)
+            {
+                return Forbid();
+            }
+
+            await _closeCaseService.Handle(new CloseCaseQuery(examinationId, user));
 
             return Ok();
         }
