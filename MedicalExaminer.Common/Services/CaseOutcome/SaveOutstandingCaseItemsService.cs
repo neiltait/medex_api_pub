@@ -39,6 +39,11 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
                         _connectionSettings,
                         examination => examination.ExaminationId == param.ExaminationId);
 
+            if (!examinationToUpdate.ScrutinyConfirmed)
+            {
+                return null;
+            }
+
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
 
