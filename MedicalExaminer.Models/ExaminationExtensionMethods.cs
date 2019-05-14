@@ -141,6 +141,7 @@ namespace MedicalExaminer.Models
 
         public static Examination UpdateCaseStatus(this Examination examination)
         {
+
             examination.Unassigned = !(examination.MedicalTeam.MedicalExaminerOfficerUserId != null && examination.MedicalTeam.MedicalExaminerUserId != null);
             examination.PendingAdmissionNotes = CalculateAdmissionNotesPending(examination);
             examination.AdmissionNotesHaveBeenAdded = !examination.PendingAdmissionNotes;
@@ -150,7 +151,7 @@ namespace MedicalExaminer.Models
 
             examination.ScrutinyConfirmed = CalculateScrutinyComplete(examination);
             examination.CaseOutcome.CaseOutcomeSummary = CalculateScrutinyOutcome(examination);
-
+            
             return examination;
         }
 
@@ -212,8 +213,15 @@ namespace MedicalExaminer.Models
             return true;
         }
 
-        private static CaseOutcomeSummary CalculateScrutinyOutcome(Examination examination)
+        private static CaseOutcomeSummary? CalculateScrutinyOutcome(Examination examination)
         {
+            if (examination.CaseBreakdown.PreScrutiny.Latest == null
+                && examination.CaseBreakdown.QapDiscussion.Latest == null
+                && examination.CaseBreakdown.BereavedDiscussion.Latest == null)
+            {
+                return null;
+            }
+
             if (examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoroner)
             {
                 return CaseOutcomeSummary.ReferToCoroner;
