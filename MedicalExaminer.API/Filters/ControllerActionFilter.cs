@@ -37,7 +37,7 @@ namespace MedicalExaminer.API.Filters
             var logger = controller.Logger;
 
             var identity = context.HttpContext.User.Identity;
-            var username = ((ClaimsPrincipal)identity).Claims.Single(x => x.Type == "userId").Value;
+            var userId = ((ClaimsIdentity)identity).Claims.SingleOrDefault(x => x.Type == Authorization.MEClaimTypes.UserId)?.Value;
             var userAuthenticationType = identity.AuthenticationType ?? "Unknown";
             var userIsAuthenticated = identity.IsAuthenticated;
             var routeDataValues = context.RouteData.Values.Values;
@@ -54,7 +54,7 @@ namespace MedicalExaminer.API.Filters
             var remoteIpAddress = context.HttpContext.Connection.RemoteIpAddress;
             var remoteIp = remoteIpAddress == null ? "Unknown" : remoteIpAddress.ToString();
             var timeStamp = DateTime.UtcNow;
-            logger.Log(username, userAuthenticationType, userIsAuthenticated, controllerName, controllerAction,
+            logger.Log(userId, userAuthenticationType, userIsAuthenticated, controllerName, controllerAction,
                 parameters, remoteIp, timeStamp);
         }
     }

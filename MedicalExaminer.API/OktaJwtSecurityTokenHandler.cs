@@ -138,7 +138,7 @@ namespace MedicalExaminer.API
                 {
                     var meUser = meUserReturned.Result;
                     meUser.OktaToken = oktaToken;
-                    claimsPrincipal.Identities.First().AddClaim(new Claim("userId", meUser.UserId));
+                    claimsPrincipal.Identities.First().AddClaim(new Claim(Authorization.MEClaimTypes.UserId, meUser.UserId));
                     meUser.OktaTokenExpiry = DateTimeOffset.Now.AddMinutes(_oktaTokenExpiryTime);
                     _userUpdateOktaTokenService.Handle(new UsersUpdateOktaTokenQuery(meUser));
                 }

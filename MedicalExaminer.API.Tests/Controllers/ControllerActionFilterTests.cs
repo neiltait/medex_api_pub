@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Services;
@@ -176,6 +177,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var controllerActionFilter = new ControllerActionFilter();
             var actionContext = new ActionContext { HttpContext = new MockHttpContext() };
             var identity = new ClaimsIdentity();
+            identity.AddClaim(new Claim(MEClaimTypes.UserId, "UserId"));
             actionContext.HttpContext.User.AddIdentity(identity);
             actionContext.RouteData = new RouteData();
             actionContext.RouteData.Values.Add("Action", "MyAction");
@@ -192,7 +194,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                                    logEntry.UserIsAuthenticated + " " + logEntry.ControllerName + " " +
                                    logEntry.ControllerMethod + " " + logEntry.RemoteIP;
 
-            const string expectedMessage = "Unknown Unknown False MyMethod MyAction Unknown";
+            const string expectedMessage = "UserId Unknown False MyMethod MyAction Unknown";
             Assert.Equal(expectedMessage, logEntryContents);
         }
     }
