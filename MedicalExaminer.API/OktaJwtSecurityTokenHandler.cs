@@ -2,16 +2,11 @@
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
-using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
-using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Okta.Sdk;
 
 namespace MedicalExaminer.API
 {
@@ -63,7 +58,7 @@ namespace MedicalExaminer.API
             _userUpdateOktaTokenService = userUpdateOktaTokenService;
             _userRetrieveOktaTokenService = userRetrieveOktaTokenService;
             _usersRetrievalByEmailService = usersRetrievalByEmailService;
-            _oktaTokenExpiryTime = oktaTokenExpiryTime; 
+            _oktaTokenExpiryTime = oktaTokenExpiryTime;
         }
 
         /// <inheritdoc />
@@ -143,6 +138,7 @@ namespace MedicalExaminer.API
                 {
                     var meUser = meUserReturned.Result;
                     meUser.OktaToken = oktaToken;
+                    claimsPrincipal.Identities.First().AddClaim(new Claim("userId", meUser.UserId));
                     meUser.OktaTokenExpiry = DateTimeOffset.Now.AddMinutes(_oktaTokenExpiryTime);
                     _userUpdateOktaTokenService.Handle(new UsersUpdateOktaTokenQuery(meUser));
                 }

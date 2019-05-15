@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using MedicalExaminer.API.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -36,7 +37,7 @@ namespace MedicalExaminer.API.Filters
             var logger = controller.Logger;
 
             var identity = context.HttpContext.User.Identity;
-            var userName = identity.Name ?? "Unknown";
+            var username = ((ClaimsPrincipal)identity).Claims.Single(x => x.Type == "userId").Value;
             var userAuthenticationType = identity.AuthenticationType ?? "Unknown";
             var userIsAuthenticated = identity.IsAuthenticated;
             var routeDataValues = context.RouteData.Values.Values;
@@ -53,7 +54,7 @@ namespace MedicalExaminer.API.Filters
             var remoteIpAddress = context.HttpContext.Connection.RemoteIpAddress;
             var remoteIp = remoteIpAddress == null ? "Unknown" : remoteIpAddress.ToString();
             var timeStamp = DateTime.UtcNow;
-            logger.Log(userName, userAuthenticationType, userIsAuthenticated, controllerName, controllerAction,
+            logger.Log(username, userAuthenticationType, userIsAuthenticated, controllerName, controllerAction,
                 parameters, remoteIp, timeStamp);
         }
     }
