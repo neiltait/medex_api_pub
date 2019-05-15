@@ -1,4 +1,7 @@
-﻿namespace MedicalExaminer.ReferenceDataLoader.Loaders
+﻿using System.Linq;
+using MedicalExaminer.Models.Enums;
+
+namespace MedicalExaminer.ReferenceDataLoader.Loaders
 {
     using System;
     using System.Collections.Generic;
@@ -50,6 +53,7 @@
             await CreateCollection();
             LoadImportFile();
             ValidateLocations();
+            UpdateLocationPaths();
             await LoadLocations();
         }
 
@@ -86,6 +90,65 @@
         {
             var locationsChecker = new LocationsChecker(locations);
             locationsChecker.RunAllChecks();
+        }
+
+
+        private void UpdateLocationPaths()
+        {
+            var parents = new Dictionary<string,Location>();
+
+            var loadCount = 0;
+            foreach (var location in locations)
+            {
+                var loop = location;
+                while (loop != null)
+                {
+                    if (loop.Type == LocationType.National)
+                    {
+                        location.NationalLocationId = loop.LocationId;
+                    }
+
+                    if (loop.Type == LocationType.Region)
+                    {
+                        location.RegionLocationId = loop.LocationId;
+                    }
+
+                    if (loop.Type == LocationType.Trust)
+                    {
+                        location.TrustLocationId = loop.LocationId;
+                    }
+
+                    if (loop.Type == LocationType.Site)
+                    {
+                        location.SiteLocationId = loop.LocationId;
+                    }
+
+                    var key = loop.ParentId;
+                    if (key == null)
+                    {
+                        break;
+                    }
+
+                    {
+                        if (parents.ContainsKey(key))
+                        {
+                            loop = parents[key];
+                        }
+                        else
+                        {
+                            loop = locations.FirstOrDefault(l => l.LocationId == key);
+
+                            parents.Add(key, loop);
+                        }
+                    }
+                }
+
+                loadCount++;
+                if (loadCount % 1000 == 0)
+                {
+                    Console.WriteLine($"updated location path {loadCount} locations out of {locations.Count}...");
+                }
+            }
         }
 
         /// <summary>
