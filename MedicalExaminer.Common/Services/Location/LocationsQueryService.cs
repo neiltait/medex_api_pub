@@ -38,7 +38,13 @@ namespace MedicalExaminer.Common.Services.Location
 
             if (param.PermissedLocations != null)
             {
-                Expression<Func<Models.Location, bool>> idFilter = l => param.PermissedLocations.Contains(l.LocationId);
+                Expression<Func<Models.Location, bool>> idFilter = l =>
+                    param.PermissedLocations.Contains(l.LocationId)
+                    || param.PermissedLocations.Contains(l.NationalLocationId)
+                    || param.PermissedLocations.Contains(l.RegionLocationId)
+                    || param.PermissedLocations.Contains(l.TrustLocationId)
+                    || param.PermissedLocations.Contains(l.SiteLocationId)
+                    ;
 
                 predicate = predicate.And(idFilter);
             }

@@ -105,11 +105,25 @@ namespace MedicalExaminer.ToolBox.Common.Services
 
         private async Task<Location> GenerateLocation(Location parent, LocationType locationType, int index)
         {
+            var locationId = Guid.NewGuid().ToString();
             var location = new Location()
             {
+                LocationId = locationId,
                 Name = NameForLocation(locationType, parent, index),
                 ParentId = parent?.LocationId,
                 Type = locationType,
+                NationalLocationId = locationType == LocationType.National
+                    ? locationId
+                    : parent?.NationalLocationId,
+                RegionLocationId = locationType == LocationType.Region
+                    ? locationId
+                    : parent?.RegionLocationId,
+                TrustLocationId = locationType == LocationType.Trust
+                    ? locationId
+                    : parent?.TrustLocationId,
+                SiteLocationId = locationType == LocationType.Site
+                    ? locationId
+                    : null,
             };
 
             var result = await _locationStore.UpsertAsync(location);
