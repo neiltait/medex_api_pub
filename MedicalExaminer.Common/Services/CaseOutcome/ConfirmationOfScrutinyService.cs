@@ -34,6 +34,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.ModifiedAt = DateTimeOffset.Now;
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ScrutinyConfirmed = true;
+            examinationToUpdate.CaseOutcome.ScrutinyConfirmedOn = DateTime.Now;
 
             examinationToUpdate.UpdateCaseStatus();
             examinationToUpdate.UpdateCaseUrgencyScore();
