@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -63,6 +64,11 @@ namespace MedicalExaminer.API.Tests.Controllers
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>>();
             var locationParentsService = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>();
 
+            var locationRetrievalByQueryHandlerMock =
+                new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>();
+            var usersRetrievalByRoleLocationQueryServiceMock =
+                new Mock<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>>();
+
             examinationsRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationsRetrievalQuery>()))
                 .Returns(Task.FromResult(examinationsResult));
             var sut = new ExaminationsController(
@@ -74,7 +80,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 createExaminationService.Object,
                 examinationsRetrievalQueryService.Object,
                 examinationsDashboardService.Object,
-                locationParentsService.Object);
+                locationParentsService.Object,
+                locationRetrievalByQueryHandlerMock.Object,
+                usersRetrievalByRoleLocationQueryServiceMock.Object);
 
             // Act
             var response = sut.GetExaminations(null).Result;
@@ -96,6 +104,10 @@ namespace MedicalExaminer.API.Tests.Controllers
                 new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>>();
             var examinationId = Guid.NewGuid();
             var locationParentsService = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>();
+            var locationRetrievalByQueryHandlerMock =
+                new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>();
+            var usersRetrievalByRoleLocationQueryServiceMock =
+                new Mock<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>>();
 
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
@@ -109,7 +121,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 createExaminationService.Object,
                 examinationsRetrievalQueryService.Object,
                 examinationsDashboardService.Object,
-                locationParentsService.Object);
+                locationParentsService.Object,
+                locationRetrievalByQueryHandlerMock.Object,
+                usersRetrievalByRoleLocationQueryServiceMock.Object);
 
             sut.ModelState.AddModelError("test", "test");
 
@@ -139,6 +153,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var locationParentsService = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>();
+            var locationRetrievalByQueryHandlerMock =
+                new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>();
+            var usersRetrievalByRoleLocationQueryServiceMock =
+                new Mock<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>>();
 
             createExaminationService.Setup(ecs => ecs.Handle(It.IsAny<CreateExaminationQuery>()))
                 .Returns(Task.FromResult(examination));
@@ -160,7 +178,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 createExaminationService.Object,
                 examinationsRetrievalQueryService.Object,
                 examinationsDashboardService.Object,
-                locationParentsService.Object);
+                locationParentsService.Object,
+                locationRetrievalByQueryHandlerMock.Object,
+                usersRetrievalByRoleLocationQueryServiceMock.Object);
 
             sut.ControllerContext = GetContollerContext();
 
