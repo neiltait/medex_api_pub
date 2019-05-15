@@ -88,6 +88,12 @@ namespace MedicalExaminer.ToolBox.Common.Services
             await _userStore.RemoveAsync(u => true);
         }
 
+        /// <summary>
+        /// Generates the examinations.
+        /// </summary>
+        /// <remarks>Must be called after the location that it resides in.</remarks>
+        /// <param name="parent">The parent.</param>
+        /// <returns></returns>
         private async Task GenerateExaminations(Location parent)
         {
             var examinations = 5;
@@ -97,6 +103,12 @@ namespace MedicalExaminer.ToolBox.Common.Services
                 var examination = new Examination()
                 {
                     MedicalExaminerOfficeResponsible = parent.LocationId,
+
+                    // Populate these or else nobody will be able to see them.
+                    NationalLocationId = parent.NationalLocationId,
+                    RegionLocationId = parent.RegionLocationId,
+                    TrustLocationId = parent.TrustLocationId,
+                    SiteLocationId = parent.SiteLocationId,
                 };
 
                 await _examinationStore.UpsertAsync(examination);
