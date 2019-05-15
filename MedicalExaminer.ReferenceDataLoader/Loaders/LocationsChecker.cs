@@ -1,24 +1,28 @@
-﻿namespace MedicalExaminer.ReferenceDataLoader.Loaders
-{
-    using System;
-    using System.Collections.Generic;
-    using Models;
-    using Models.Enums;
+﻿using System;
+using System.Collections.Generic;
+using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 
+namespace MedicalExaminer.ReferenceDataLoader.Loaders
+{
     /// <summary>
-    ///     Check that locations are in concsistent state
+    /// Check that locations are in consistent state
     /// </summary>
     public class LocationsChecker
     {
         private readonly List<Location> _locations;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LocationsChecker"/> class.
+        /// </summary>
+        /// <param name="locations">The locations.</param>
         public LocationsChecker(List<Location> locations)
         {
             _locations = locations;
         }
 
         /// <summary>
-        ///     Run all check methods
+        /// Run all check methods
         /// </summary>
         /// <returns>Boolean representing all checks have passed</returns>
         public bool RunAllChecks()
@@ -27,8 +31,8 @@
         }
 
         /// <summary>
-        ///     Check that every location has a parentId links to another location, except the national loaction where parentD
-        ///     should be null
+        /// Check that every location has a parentId links to another location, except the national location where parentD
+        /// should be null
         /// </summary>
         /// <returns>bool</returns>
         public bool CheckParentIdsValid()
@@ -57,7 +61,7 @@
         }
 
         /// <summary>
-        ///     Check LocationId is unique for each location
+        /// Check LocationId is unique for each location
         /// </summary>
         /// <returns>Boolean Check all location IDs are unique</returns>
         public bool CheckAllLocationIdsAreUnique()
@@ -74,7 +78,7 @@
         }
 
         /// <summary>
-        ///     Check that no locationId value is null
+        /// Check that no locationId value is null
         /// </summary>
         /// <returns>Boolean Location IDs are not null</returns>
         public bool CheckLocationIdsNotNull()
