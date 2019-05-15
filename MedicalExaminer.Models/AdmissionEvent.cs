@@ -62,7 +62,7 @@ namespace MedicalExaminer.Models
         /// date of last admission - Unknown or not
         /// </summary>
         [JsonProperty(PropertyName = "admitted_date_unknown")]
-        public bool? AdmittedDateUnknown { get; set; }
+        public bool? AdmittedDateUnknown { get; set; } = false;
 
         /// <summary>
         /// time of last admission
@@ -74,7 +74,7 @@ namespace MedicalExaminer.Models
         /// time of last admission - Unknown or not
         /// </summary>
         [JsonProperty(PropertyName = "admitted_time_unknown")]
-        public bool? AdmittedTimeUnknown { get; set; }
+        public bool? AdmittedTimeUnknown { get; set; } = false;
 
         /// <summary>
         /// Do you suspect this case may need Immediate Coroner Referral Yes = true, No = false
