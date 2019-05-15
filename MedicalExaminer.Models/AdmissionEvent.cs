@@ -59,10 +59,22 @@ namespace MedicalExaminer.Models
         public DateTime? AdmittedDate { get; set; }
 
         /// <summary>
+        /// date of last admission - Unknown or not
+        /// </summary>
+        [JsonProperty(PropertyName = "admitted_date_unknown")]
+        public bool? AdmittedDateUnknown { get; set; }
+
+        /// <summary>
         /// time of last admission
         /// </summary>
         [JsonProperty(PropertyName = "admitted_time")]
         public TimeSpan? AdmittedTime { get; set; }
+
+        /// <summary>
+        /// time of last admission - Unknown or not
+        /// </summary>
+        [JsonProperty(PropertyName = "admitted_time_unknown")]
+        public bool? AdmittedTimeUnknown { get; set; }
 
         /// <summary>
         /// Do you suspect this case may need Immediate Coroner Referral Yes = true, No = false

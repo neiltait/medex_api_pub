@@ -466,7 +466,9 @@ namespace MedicalExaminer.API.Tests.Mapper
                 historyItem.ImmediateCoronerReferral == history.ImmediateCoronerReferral &&
                 historyItem.IsFinal == history.IsFinal &&
                 historyItem.Notes == history.Notes &&
-                historyItem.UserId == history.UserId;
+                historyItem.UserId == history.UserId &&
+                historyItem.AdmittedDateUnknown == history.AdmittedDateUnknown &&
+                historyItem.AdmittedTimeUnknown == history.AdmittedTimeUnknown;
         }
 
         private bool IsEqual(Examination examination, PatientDeathEventItem patientDeathEvent)
@@ -959,34 +961,40 @@ namespace MedicalExaminer.API.Tests.Mapper
                     Latest = new AdmissionEvent()
                     {
                         AdmittedDate = LastAdmission,
+                        AdmittedDateUnknown = false,
                         EventId = "admissionEventId",
                         ImmediateCoronerReferral = false,
                         IsFinal = true,
                         Notes = AdmissionNotes,
                         UserId = User0.UserId,
                         AdmittedTime = AdmittedTime,
+                        AdmittedTimeUnknown = false
                     },
                     History = new[]
                     {
                         new AdmissionEvent()
                         {
                             AdmittedDate = LastAdmission,
+                            AdmittedDateUnknown = false,
                             EventId = "admissionEventId",
                             ImmediateCoronerReferral = false,
                             IsFinal = true,
                             Notes = AdmissionNotes,
                             UserId = User0.UserId,
                             AdmittedTime = AdmittedTime,
+                            AdmittedTimeUnknown = false
                         },
                         new AdmissionEvent()
                         {
                             AdmittedDate = LastAdmission,
+                            AdmittedDateUnknown = false,
                             EventId = "admissionEventId2",
                             ImmediateCoronerReferral = false,
                             IsFinal = true,
                             Notes = AdmissionNotes,
                             UserId = User0.UserId,
                             AdmittedTime = AdmittedTime,
+                            AdmittedTimeUnknown = false
                         }
                     },
                     Drafts = new[]
@@ -994,22 +1002,26 @@ namespace MedicalExaminer.API.Tests.Mapper
                         new AdmissionEvent()
                         {
                             AdmittedDate = LastAdmission,
+                            AdmittedDateUnknown = false,
                             EventId = "admissionEventId2",
                             ImmediateCoronerReferral = false,
                             IsFinal = false,
                             Notes = AdmissionNotes,
                             UserId = User0.UserId,
                             AdmittedTime = AdmittedTime,
+                            AdmittedTimeUnknown = false
                         },
                         new AdmissionEvent()
                         {
                             AdmittedDate = LastAdmission,
+                            AdmittedDateUnknown = false,
                             EventId = "admissionEventId2",
                             ImmediateCoronerReferral = false,
                             IsFinal = false,
                             Notes = AdmissionNotes,
                             UserId = User1.UserId,
                             AdmittedTime = AdmittedTime,
+                            AdmittedTimeUnknown = false
                         }
                     }
                 },
