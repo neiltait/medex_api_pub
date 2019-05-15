@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
+using MedicalExaminer.API.Models.v1.Locations;
+using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Extensions.Models;
 using MedicalExaminer.Common.Loggers;
@@ -30,10 +32,17 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class ExaminationsController : AuthorizedBaseController
     {
+        private const string LocationFilterLookupKey = "LocationFilterLookup";
+        private const string UserFilterLookupKey = "UserFilterLookup";
+
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> _examinationsDashboardService;
         private readonly IAsyncQueryHandler<CreateExaminationQuery, Examination> _examinationCreationService;
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
         private readonly IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> _locationParentsService;
+
+        private readonly IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> _locationRetrievalByQueryHandler;
+
+        private readonly IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>> _usersRetrievalByRoleLocationQueryService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExaminationsController"/> class.
@@ -47,6 +56,8 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationsRetrievalService">examinationsRetrievalService.</param>
         /// <param name="examinationsDashboardService">Examination Dashboard Service.</param>
         /// <param name="locationParentsService">Location Parents Service.</param>
+        /// <param name="locationRetrievalByQueryHandler">Location Retrieval by Query Handler.</param>
+        /// <param name="usersRetrievalByRoleLocationQueryService">Users Retrieval By Role Location Query Service.</param>
         public ExaminationsController(
             IMELogger logger,
             IMapper mapper,
@@ -56,13 +67,17 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
             IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> examinationsDashboardService,
-            IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService)
+            IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService,
+            IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler,
+            IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>> usersRetrievalByRoleLocationQueryService)
             : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
             _examinationCreationService = examinationCreationService;
             _examinationsRetrievalService = examinationsRetrievalService;
             _examinationsDashboardService = examinationsDashboardService;
             _locationParentsService = locationParentsService;
+            _locationRetrievalByQueryHandler = locationRetrievalByQueryHandler;
+            _usersRetrievalByRoleLocationQueryService = usersRetrievalByRoleLocationQueryService;
         }
 
         /// <summary>
@@ -79,7 +94,7 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetExaminationsResponse());
             }
 
-            var permissedLocations = await LocationsWithPermission(Permission.GetExaminations);
+            var permissedLocations = (await LocationsWithPermission(Permission.GetExaminations)).ToList();
 
             var examinationsQuery = new ExaminationsRetrievalQuery(
                 permissedLocations,
@@ -95,7 +110,7 @@ namespace MedicalExaminer.API.Controllers
 
             var dashboardOverview = await _examinationsDashboardService.Handle(examinationsQuery);
 
-            return Ok(new GetExaminationsResponse
+            var response = new GetExaminationsResponse
             {
                 CountOfTotalCases = dashboardOverview.TotalCases,
                 CountOfUrgentCases = dashboardOverview.CountOfUrgentCases,
@@ -108,7 +123,16 @@ namespace MedicalExaminer.API.Controllers
                 CountOfCasesPendingDiscussionWithRepresentative = dashboardOverview.CountOfPendingDiscussionWithRepresentative,
                 CountOfCasesReadyForMEScrutiny = dashboardOverview.CountOfReadyForMEScrutiny,
                 Examinations = examinations.Select(e => Mapper.Map<PatientCardItem>(e)).ToList()
-            });
+            };
+
+            var locations = (await _locationRetrievalByQueryHandler.Handle(
+                    new LocationsRetrievalByQuery(null, null, permissedLocations))).ToList();
+
+            response.AddLookup(LocationFilterLookupKey, Mapper.Map<IEnumerable<Location>, IEnumerable<LocationLookup>>(locations));
+
+            response.AddLookup(UserFilterLookupKey, await GetUserLookupForLocations(locations));
+
+            return Ok(response);
         }
 
         /// <summary>
@@ -162,6 +186,30 @@ namespace MedicalExaminer.API.Controllers
             {
                 return NotFound(new PostExaminationRequest());
             }
+        }
+
+        /// <summary>
+        /// Gets the user lookup for locations.
+        /// </summary>
+        /// <param name="locations">The locations.</param>
+        /// <returns>User Lookup</returns>
+        private async Task<IEnumerable<object>> GetUserLookupForLocations(IEnumerable<Location> locations)
+        {
+            var users = await GetUsersForLocations(locations.Select(l => l.LocationId));
+
+            return Mapper.Map<IEnumerable<MeUser>, IEnumerable<UserLookup>>(users);
+        }
+
+        /// <summary>
+        /// Gets the users for locations.
+        /// </summary>
+        /// <param name="locations">The locations.</param>
+        /// <returns>List of users.</returns>
+        private async Task<IEnumerable<MeUser>> GetUsersForLocations(IEnumerable<string> locations)
+        {
+            var users = await _usersRetrievalByRoleLocationQueryService.Handle(new UsersRetrievalByRoleLocationQuery(locations, null));
+
+            return users;
         }
     }
 }
