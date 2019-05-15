@@ -32,8 +32,15 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class ExaminationsController : AuthorizedBaseController
     {
-        private const string LocationFilterLookupKey = "LocationFilterLookup";
-        private const string UserFilterLookupKey = "UserFilterLookup";
+        /// <summary>
+        /// The location filter lookup key
+        /// </summary>
+        public const string LocationFilterLookupKey = "LocationFilterLookup";
+
+        /// <summary>
+        /// The user filter lookup key
+        /// </summary>
+        public const string UserFilterLookupKey = "UserFilterLookup";
 
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> _examinationsDashboardService;
         private readonly IAsyncQueryHandler<CreateExaminationQuery, Examination> _examinationCreationService;
@@ -195,7 +202,9 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>User Lookup</returns>
         private async Task<IEnumerable<object>> GetUserLookupForLocations(IEnumerable<Location> locations)
         {
-            var users = await GetUsersForLocations(locations.Select(l => l.LocationId));
+            var locationIds = locations.Select(l => l.LocationId).ToList();
+
+            var users = await GetUsersForLocations(locationIds);
 
             return Mapper.Map<IEnumerable<MeUser>, IEnumerable<UserLookup>>(users);
         }
