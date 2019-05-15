@@ -33,7 +33,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.ConfirmationOfScrutinyCompletedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTimeOffset.Now;
             examinationToUpdate.LastModifiedBy = param.User.UserId;
-            examinationToUpdate.ScrutinyConfirmed = true;
+            examinationToUpdate.HaveBeenScrutinisedByME = true;
             examinationToUpdate.CaseOutcome.ScrutinyConfirmedOn = DateTime.Now;
 
             examinationToUpdate.UpdateCaseStatus();
