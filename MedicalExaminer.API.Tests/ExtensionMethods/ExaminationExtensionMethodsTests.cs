@@ -513,7 +513,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
             examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent() { DiscussionUnableHappen = false };
             examination = examination.UpdateCaseStatus();
-            Assert.True(examination.PendingDiscussionWithQAP);
+            Assert.False(examination.PendingDiscussionWithQAP);
         }
 
         [Fact]
@@ -524,7 +524,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
             examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent() { DiscussionUnableHappen = true };
             examination = examination.UpdateCaseStatus();
-            Assert.False(examination.PendingDiscussionWithQAP);
+            Assert.True(examination.PendingDiscussionWithQAP);
         }
 
         [Fact]
