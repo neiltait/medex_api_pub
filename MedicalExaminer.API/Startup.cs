@@ -14,6 +14,7 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
+using MedicalExaminer.BackgroundServices;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Authorization.Roles;
@@ -85,6 +86,8 @@ namespace MedicalExaminer.API
             var oktaSettings = services.ConfigureSettings<OktaSettings>(Configuration, "Okta");
 
             var cosmosDbSettings = services.ConfigureSettings<CosmosDbSettings>(Configuration, "CosmosDB");
+
+            var backgroundServicesSettings = services.ConfigureSettings<BackgroundServicesSettings>(Configuration, "BackgroundServices");
 
             services.ConfigureSettings<AuthorizationSettings>(Configuration, "Authorization");
 
@@ -200,7 +203,9 @@ namespace MedicalExaminer.API
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey);
 
-            services.AddCosmosStore<Examination>(cosmosSettings, "Examinations");
+            const string examinationsCollection = "Examinations";
+            services.AddCosmosStore<Examination>(cosmosSettings, examinationsCollection);
+            services.AddCosmosStore<AuditEntry<Examination>>(cosmosSettings, examinationsCollection.AuditCollection());
 
             ConfigureQueries(services, cosmosDbSettings);
 
@@ -213,6 +218,8 @@ namespace MedicalExaminer.API
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
+
+            services.AddBackgroundServices(backgroundServicesSettings);
         }
 
         /// <summary>
@@ -307,12 +314,13 @@ namespace MedicalExaminer.API
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
-            // Examination services 
+            // Examination services
             services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>, ExaminationsDashboardService>();
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, Examination>, CreateExaminationService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
+
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>, CreateEventService>();
