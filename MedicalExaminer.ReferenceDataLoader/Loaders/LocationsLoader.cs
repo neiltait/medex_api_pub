@@ -1,30 +1,32 @@
-﻿namespace MedicalExaminer.ReferenceDataLoader.Loaders
-{
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Threading.Tasks;
-    using Models;
-    using Microsoft.Azure.Documents;
-    using Microsoft.Azure.Documents.Client;
-    using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
+using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
+using Newtonsoft.Json;
 
+namespace MedicalExaminer.ReferenceDataLoader.Loaders
+{
     /// <summary>
     ///     Create collection in CosmosDB and load with locations extracted from input file
     /// </summary>
     public class LocationsLoader
     {
-        private static Uri endpointUri;
-        private static string primaryKey;
-        private static string databaseId;
-        private static string importFile;
-        private static string _containerId;
-        private static DocumentClient client;
-        private static Uri documentCollectionUri;
-        private static List<Location> locations;
+        private readonly Uri _endpointUri;
+        private readonly string _primaryKey;
+        private readonly string _databaseId;
+        private readonly string _importFile;
+        private readonly string _containerId;
+        private DocumentClient _client;
+        private Uri _documentCollectionUri;
+        private List<Location> _locations;
 
         /// <summary>
-        ///     Constructor
+        /// Initializes a new instance of the <see cref="LocationsLoader"/> class.
         /// </summary>
         /// <param name="args">0: endpoint; 1: primary key; 3: databaseId; 4: import file; 5: container id</param>
         /// <remarks>Set up details of Cosmos DB and connection to write to</remarks>
@@ -32,10 +34,10 @@
         {
             Console.WriteLine("Setting up parameters for LocationsLoader...");
 
-            endpointUri = new Uri(args[0]);
-            primaryKey = args[1];
-            databaseId = args[2];
-            importFile = args[3];
+            _endpointUri = new Uri(args[0]);
+            _primaryKey = args[1];
+            _databaseId = args[2];
+            _importFile = args[3];
             _containerId = args[4];
 
             Console.WriteLine("Parameters read OK for LocationsLoader...");
@@ -50,7 +52,40 @@
             await CreateCollection();
             LoadImportFile();
             ValidateLocations();
+            UpdateLocationPaths();
             await LoadLocations();
+        }
+
+        /// <summary>
+        /// Load each location in import file into container on Cosmos DB
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <remarks>Report progress to Console every time 1000 locations loaded</remarks>
+        private async Task LoadLocations()
+        {
+            Console.WriteLine("Loading locations ...");
+
+            var startTime = DateTime.Now;
+
+            var loadCount = 0;
+            foreach (var location in _locations)
+            {
+                await _client.UpsertDocumentAsync(_documentCollectionUri, location);
+
+                loadCount++;
+                if (loadCount % 1000 == 0)
+                {
+                    Console.WriteLine($"loaded {loadCount} locations out of {_locations.Count}...");
+                }
+            }
+
+            var endTime = DateTime.Now;
+            var processingTime = endTime - startTime;
+
+            Console.WriteLine($"{_locations.Count} locations loaded");
+            Console.WriteLine(
+                $"Processing time: {processingTime.Hours} Hours;  {processingTime.Minutes} Minutes; {processingTime.Seconds} Seconds");
+            Console.ReadKey();
         }
 
         /// <summary>
@@ -59,12 +94,12 @@
         /// <returns>Task</returns>
         private async Task CreateCollection()
         {
-            client = new DocumentClient(endpointUri, primaryKey);
+            _client = new DocumentClient(_endpointUri, _primaryKey);
             var documentCollection = new DocumentCollection { Id = _containerId };
-            var databaseResult = await client.CreateDatabaseIfNotExistsAsync(new Database { Id = databaseId });
-            var databaseUri = UriFactory.CreateDatabaseUri(databaseId);
-            documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, _containerId);
-            await client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection);
+            await _client.CreateDatabaseIfNotExistsAsync(new Database { Id = _databaseId });
+            var databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
+            _documentCollectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, _containerId);
+            await _client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection);
         }
 
         /// <summary>
@@ -72,52 +107,69 @@
         /// </summary>
         private void LoadImportFile()
         {
-            var json = File.ReadAllText(importFile);
-            locations = JsonConvert.DeserializeObject<List<Location>>(json);
+            var json = File.ReadAllText(_importFile);
+            _locations = JsonConvert.DeserializeObject<List<Location>>(json);
 
             Console.WriteLine("Locations passed validation ...");
         }
 
         /// <summary>
-        ///     Validate that all locations are consistenet and correct
+        ///     Validate that all locations are consistent and correct
         /// </summary>
-        /// <remarks>Expect this to throw an excpetion if locations are not valid. This exception will be handled by calling code</remarks>
+        /// <remarks>Expect this to throw an exception if locations are not valid. This exception will be handled by calling code</remarks>
         private void ValidateLocations()
         {
-            var locationsChecker = new LocationsChecker(locations);
+            var locationsChecker = new LocationsChecker(_locations);
             locationsChecker.RunAllChecks();
         }
 
-        /// <summary>
-        ///     Load each location in import file into container on Cosmos DB
-        /// </summary>
-        /// <returns></returns>
-        /// <remarks>Report progress to Console evertytime 1000 locations loaded</remarks>
-        private static async Task LoadLocations()
+        private void UpdateLocationPaths()
         {
-            Console.WriteLine("Loading locations ...");
+            var parents = new Dictionary<string, Location>();
 
-            var startTime = DateTime.Now;
-
-            var loadCount = 0;
-            foreach (var location in locations)
+            foreach (var location in _locations)
             {
-                await client.UpsertDocumentAsync(documentCollectionUri, location);
-
-                loadCount++;
-                if (loadCount % 1000 == 0)
+                var loop = location;
+                while (loop != null)
                 {
-                    Console.WriteLine($"loaded {loadCount} locations out of {locations.Count}...");
+                    if (loop.Type == LocationType.National)
+                    {
+                        location.NationalLocationId = loop.LocationId;
+                    }
+
+                    if (loop.Type == LocationType.Region)
+                    {
+                        location.RegionLocationId = loop.LocationId;
+                    }
+
+                    if (loop.Type == LocationType.Trust)
+                    {
+                        location.TrustLocationId = loop.LocationId;
+                    }
+
+                    if (loop.Type == LocationType.Site)
+                    {
+                        location.SiteLocationId = loop.LocationId;
+                    }
+
+                    var key = loop.ParentId;
+                    if (key == null)
+                    {
+                        break;
+                    }
+
+                    if (parents.ContainsKey(key))
+                    {
+                        loop = parents[key];
+                    }
+                    else
+                    {
+                        loop = _locations.FirstOrDefault(l => l.LocationId == key);
+
+                        parents.Add(key, loop);
+                    }
                 }
             }
-
-            var endTime = DateTime.Now;
-            var processingTime = endTime - startTime;
-
-            Console.WriteLine($"{locations.Count} locations loaded");
-            Console.WriteLine(
-                $"Processing time: {processingTime.Hours} Hours;  {processingTime.Minutes} Minutes; {processingTime.Seconds} Seconds");
-            Console.ReadKey();
         }
     }
 }
