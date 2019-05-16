@@ -35,8 +35,16 @@ namespace MedicalExaminer.Common.Services.User
                 throw new ArgumentNullException(nameof(param));
             }
 
-            Expression<Func<MeUser, bool>> predicate = mu =>
-                mu.Permissions.Any(p => p.UserRole == param.Role && param.Locations.Contains(p.LocationId));
+            Expression<Func<MeUser, bool>> predicate;
+
+            if (param.Roles != null)
+            {
+                predicate = mu => mu.Permissions.Any(p => param.Roles.Contains(p.UserRole) && param.Locations.Contains(p.LocationId));
+            }
+            else
+            {
+                predicate = mu => mu.Permissions.Any(p => param.Locations.Contains(p.LocationId));
+            }
 
             return GetItemsAsync(predicate);
         }

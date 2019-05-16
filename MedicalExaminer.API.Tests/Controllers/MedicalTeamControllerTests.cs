@@ -381,7 +381,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             _usersRetrievalByRoleLocationQueryServiceMock
                 .Setup(service => service.Handle(It.IsAny<UsersRetrievalByRoleLocationQuery>()))
-                .Returns((UsersRetrievalByRoleLocationQuery query) => Task.FromResult(query.Role == UserRoles.MedicalExaminer
+                .Returns((UsersRetrievalByRoleLocationQuery query) => Task.FromResult(query.Roles.Contains(UserRoles.MedicalExaminer)
                     ? expectedMedicalExaminers
                     : expectedMedicalExaminerOfficers));
 

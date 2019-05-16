@@ -28,7 +28,7 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class CaseBreakdownController : AuthorizedBaseController
     {
-        private readonly IAsyncQueryHandler<CreateEventQuery, string> _eventCreationService;
+        private readonly IAsyncQueryHandler<CreateEventQuery, EventCreationResult> _eventCreationService;
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService,
-            IAsyncQueryHandler<CreateEventQuery, string> eventCreationService,
+            IAsyncQueryHandler<CreateEventQuery, EventCreationResult> eventCreationService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService)
             : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
@@ -195,6 +195,11 @@ namespace MedicalExaminer.API.Controllers
             var examination =
                 await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
 
+            if (examination == null)
+            {
+                return NotFound(new PutCaseBreakdownEventResponse());
+            }
+
             if (!CanAsync(Permission.UpdateExamination, examination))
             {
                 return Forbid();
@@ -211,7 +216,7 @@ namespace MedicalExaminer.API.Controllers
             var res = new PutCaseBreakdownEventResponse
             {
                 Header = patientCard,
-                EventId = result
+                EventId = result.EventId
             };
 
             return Ok(res);
