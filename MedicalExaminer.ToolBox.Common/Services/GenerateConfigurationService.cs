@@ -13,13 +13,16 @@ namespace MedicalExaminer.ToolBox.Common.Services
     {
         private readonly ICosmosStore<Location> _locationStore;
         private readonly ICosmosStore<MeUser> _userStore;
+        private readonly ICosmosStore<Examination> _examinationStore;
 
         public GenerateConfigurationService(
             ICosmosStore<Location> locationStore,
-            ICosmosStore<MeUser> userStore)
+            ICosmosStore<MeUser> userStore,
+            ICosmosStore<Examination> examinationStore)
         {
             _locationStore = locationStore;
             _userStore = userStore;
+            _examinationStore = examinationStore;
         }
 
         public async Task Generate(GenerateConfiguration configuration)
@@ -68,6 +71,8 @@ namespace MedicalExaminer.ToolBox.Common.Services
                             0,
                             configuration.NumberOfMedicalExaminersPerSite,
                             configuration.NumberOfMedicalExaminerOfficersPerSite);
+
+                        await GenerateExaminations(sl);
                     }
                 }
             }
@@ -81,6 +86,33 @@ namespace MedicalExaminer.ToolBox.Common.Services
         private async Task ClearUsers()
         {
             await _userStore.RemoveAsync(u => true);
+        }
+
+        /// <summary>
+        /// Generates the examinations.
+        /// </summary>
+        /// <remarks>Must be called after the location that it resides in.</remarks>
+        /// <param name="parent">The parent.</param>
+        /// <returns></returns>
+        private async Task GenerateExaminations(Location parent)
+        {
+            var examinations = 5;
+
+            for (int i = 0; i < examinations; i++)
+            {
+                var examination = new Examination()
+                {
+                    MedicalExaminerOfficeResponsible = parent.LocationId,
+
+                    // Populate these or else nobody will be able to see them.
+                    NationalLocationId = parent.NationalLocationId,
+                    RegionLocationId = parent.RegionLocationId,
+                    TrustLocationId = parent.TrustLocationId,
+                    SiteLocationId = parent.SiteLocationId,
+                };
+
+                await _examinationStore.UpsertAsync(examination);
+            }
         }
 
         private async Task<Location> GenerateLocation(Location parent, LocationType locationType, int index)

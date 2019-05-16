@@ -191,7 +191,7 @@ namespace MedicalExaminer.API.Controllers
         {
             var locations = examination.LocationIds();
 
-            var users = await _usersRetrievalByRoleLocationQueryService.Handle(new UsersRetrievalByRoleLocationQuery(locations, role));
+            var users = await _usersRetrievalByRoleLocationQueryService.Handle(new UsersRetrievalByRoleLocationQuery(locations, new[] { role }));
 
             return users;
         }

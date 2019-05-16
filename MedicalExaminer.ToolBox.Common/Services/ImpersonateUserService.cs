@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cosmonaut;
+using Cosmonaut.Extensions;
 using MedicalExaminer.Common.Extensions.MeUser;
-using MedicalExaminer.Common.Queries.User;
-using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.ToolBox.Common.Dtos;
 
@@ -11,23 +11,16 @@ namespace MedicalExaminer.ToolBox.Common.Services
 {
     public class ImpersonateUserService
     {
-        private IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> _userRetrievalByIdService;
-        private IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> _usersRetrievalService;
-        private IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
+        private readonly ICosmosStore<MeUser> _userStore;
 
-        public ImpersonateUserService(
-            IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
-            IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
-            IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService)
+        public ImpersonateUserService(ICosmosStore<MeUser> userStore)
         {
-            _userRetrievalByIdService = userRetrievalByIdService;
-            _usersRetrievalService = usersRetrievalService;
-            _userUpdateService = userUpdateService;
+            _userStore = userStore;
         }
 
         public async Task<IEnumerable<MeUserItem>> GetUsers()
         {
-            var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery(null));
+            var users = await _userStore.Query().ToListAsync();
 
             return users.Select(u => new MeUserItem
             {
@@ -38,7 +31,7 @@ namespace MedicalExaminer.ToolBox.Common.Services
 
         public async Task Update(string selectedId, string email)
         {
-            var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery(null));
+            var users = await _userStore.Query().ToListAsync();
 
             foreach (var user in users)
             {
@@ -50,9 +43,9 @@ namespace MedicalExaminer.ToolBox.Common.Services
                 {
                     user.Email = $"{user.UserId}@example.com";
                 }
-
-                await _userUpdateService.Handle(new UserUpdateQuery(user, new MeUser()));
             }
+
+            await _userStore.UpdateRangeAsync(users);
         }
     }
 }

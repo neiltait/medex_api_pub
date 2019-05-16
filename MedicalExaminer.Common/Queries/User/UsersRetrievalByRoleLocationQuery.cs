@@ -15,11 +15,21 @@ namespace MedicalExaminer.Common.Queries.User
         /// Initialise a new instance of <see cref="UsersRetrievalByRoleLocationQuery"/>.
         /// </summary>
         /// <param name="locations">Locations to query on.</param>
-        /// <param name="role">Role to query.</param>
-        public UsersRetrievalByRoleLocationQuery(IEnumerable<string> locations, UserRoles role)
+        /// <param name="roles">Roles to query. Or none.</param>
+        public UsersRetrievalByRoleLocationQuery(IEnumerable<string> locations, IEnumerable<UserRoles> roles)
         {
             Locations = locations;
-            Role = role;
+            Roles = roles;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UsersRetrievalByRoleLocationQuery"/> class.
+        /// </summary>
+        /// <param name="locations">The locations.</param>
+        /// <param name="role">The role.</param>
+        public UsersRetrievalByRoleLocationQuery(IEnumerable<string> locations, UserRoles role)
+            : this(locations, new[] { role })
+        {
         }
 
         /// <summary>
@@ -30,6 +40,6 @@ namespace MedicalExaminer.Common.Queries.User
         /// <summary>
         /// Role to query on.
         /// </summary>
-        public UserRoles Role { get; }
+        public IEnumerable<UserRoles> Roles { get; }
     }
 }
