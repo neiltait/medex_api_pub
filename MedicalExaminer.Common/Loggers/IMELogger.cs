@@ -20,7 +20,7 @@ namespace MedicalExaminer.Common.Loggers
         /// <param name="remoteIP">IP address of client</param>
         /// <param name="timeStamp">timestamp when method called</param>
         void Log(
-            string userName,
+            string userId,
             string userAuthenticationType,
             bool userIsAuthenticated,
             string controllerName,

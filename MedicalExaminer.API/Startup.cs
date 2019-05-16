@@ -117,6 +117,7 @@ namespace MedicalExaminer.API
             {
                 options.UseExaminationContextModelBindingProvider();
                 options.Filters.Add<GlobalExceptionFilter>();
+                options.Filters.Add<ControllerActionFilter>();
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddExaminationValidation();
@@ -172,7 +173,8 @@ namespace MedicalExaminer.API
                     },
                 });
 
-                options.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                options.AddSecurityDefinition("Bearer", 
+                    new ApiKeyScheme
                 {
                     Description =
                         "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -354,7 +356,7 @@ namespace MedicalExaminer.API
         /// <param name="cosmosDbSettings">Cosmos Database Settings.</param>
         private void ConfigureAuthentication(IServiceCollection services, OktaSettings oktaSettings, CosmosDbSettings cosmosDbSettings)
         {
-            var oktaTokenExpiry = Int32.Parse(oktaSettings.LocalTokenExpiryTimeMinutes);
+            var oktaTokenExpiry = int.Parse(oktaSettings.LocalTokenExpiryTimeMinutes);
             var provider = services.BuildServiceProvider();
             var tokenService = provider.GetRequiredService<ITokenService>();
 
@@ -373,12 +375,9 @@ namespace MedicalExaminer.API
                         new OktaJwtSecurityTokenHandler(
                             tokenService,
                             new JwtSecurityTokenHandler(),
-                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
-                                userConnectionSetting),
-                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
-                                userConnectionSetting),
-                            new UserRetrievalByEmailService(new DatabaseAccess(new DocumentClientFactory()),
-                                userConnectionSetting),
+                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
+                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
+                            new UserRetrievalByEmailService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
                             oktaTokenExpiry));
                 });
         }
@@ -390,7 +389,7 @@ namespace MedicalExaminer.API
         private void ConfigureOktaClient(IServiceCollection services)
         {
             // Configure okta client
-            services.AddScoped<OktaClientConfiguration>(context =>
+            services.AddScoped(context =>
             {
                 var settings = context.GetRequiredService<IOptions<OktaSettings>>();
                 return new OktaClientConfiguration
@@ -444,7 +443,7 @@ namespace MedicalExaminer.API
 
             services.AddAuthorization(options =>
             {
-                foreach (var permission in (Common.Authorization.Permission[])Enum.GetValues(typeof(Common.Authorization.Permission)))
+                foreach (var permission in (Permission[])Enum.GetValues(typeof(Permission)))
                 {
                     options.AddPolicy($"HasPermission={permission}", policy =>
                     {
