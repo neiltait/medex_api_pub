@@ -22,21 +22,22 @@ namespace MedicalExaminer.API.Tests.Mapper
         [Fact]
         public void Examination_To_PutConfirmationOfScrutinyResponse()
         {
-            var scrutinyConfirmedOn = new DateTime(2019, 5, 3);
+            var scrutinyConfirmedDate = new DateTime(2019, 5, 3);
 
             var caseOutcome = new CaseOutcome
             {
-                ScrutinyConfirmedOn = scrutinyConfirmedOn
+                ScrutinyConfirmedOn = scrutinyConfirmedDate
             };
 
             var examination = new Examination
             {
-                CaseOutcome = caseOutcome
+                CaseOutcome = caseOutcome,
+                ConfirmationOfScrutinyCompletedAt = scrutinyConfirmedDate
             };
 
             var result = _mapper.Map<PutConfirmationOfScrutinyResponse>(examination);
 
-            result.ScrutinyConfirmedOn.Should().Be(scrutinyConfirmedOn);
+            result.ScrutinyConfirmedOn.Should().Be(scrutinyConfirmedDate);
         }
 
         [Fact]

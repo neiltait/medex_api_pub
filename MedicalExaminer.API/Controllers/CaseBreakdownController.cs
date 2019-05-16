@@ -28,7 +28,7 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class CaseBreakdownController : AuthorizedBaseController
     {
-        private readonly IAsyncQueryHandler<CreateEventQuery, string> _eventCreationService;
+        private readonly IAsyncQueryHandler<CreateEventQuery, EventCreationResult> _eventCreationService;
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService,
-            IAsyncQueryHandler<CreateEventQuery, string> eventCreationService,
+            IAsyncQueryHandler<CreateEventQuery, EventCreationResult> eventCreationService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService)
             : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
         {
@@ -189,18 +189,23 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var user = await CurrentUser();
-            var meoSummaryEvent = Mapper.Map<TEvent>(caseBreakdownEvent);
-            meoSummaryEvent = SetEventUserStatuses(meoSummaryEvent, user);
+            var theEvent = Mapper.Map<TEvent>(caseBreakdownEvent);
+            theEvent = SetEventUserStatuses(theEvent, user);
 
             var examination =
                 await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+
+            if (examination == null)
+            {
+                return NotFound(new PutCaseBreakdownEventResponse());
+            }
 
             if (!CanAsync(Permission.UpdateExamination, examination))
             {
                 return Forbid();
             }
-            
-            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, meoSummaryEvent));
+
+            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, theEvent));
             var patientCard = Mapper.Map<PatientCardItem>(examination);
 
             if (result == null)
@@ -211,7 +216,7 @@ namespace MedicalExaminer.API.Controllers
             var res = new PutCaseBreakdownEventResponse
             {
                 Header = patientCard,
-                EventId = result
+                EventId = result.EventId
             };
 
             return Ok(res);

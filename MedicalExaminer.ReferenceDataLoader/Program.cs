@@ -3,6 +3,9 @@ using MedicalExaminer.ReferenceDataLoader.Loaders;
 
 namespace MedicalExaminer.ReferenceDataLoader
 {
+    /// <summary>
+    /// Program Entry Point.
+    /// </summary>
     public class Program
     {
         private static void Main(string[] args)

@@ -61,7 +61,7 @@ namespace MedicalExaminer.Models
         /// </summary>
         [Required]
         [JsonProperty(PropertyName = "circumstances_of_death")]
-        public OverallCircumstancesOfDeath CircumstancesOfDeath { get; set; }
+        public OverallCircumstancesOfDeath? CircumstancesOfDeath { get; set; }
 
         /// <summary>
         /// Possible cause of death established during scrutiny by Medical Examiner 1a
@@ -92,14 +92,14 @@ namespace MedicalExaminer.Models
         /// </summary>
         [Required]
         [JsonProperty(PropertyName = "outcome_of_pre_scrutiny")]
-        public OverallOutcomeOfPreScrutiny OutcomeOfPreScrutiny { get; set; }
+        public OverallOutcomeOfPreScrutiny? OutcomeOfPreScrutiny { get; set; }
 
         /// <summary>
         /// Dictionary for Clinical Governance Review radio button.
         /// </summary>
         [Required]
         [JsonProperty(PropertyName = "clinical_governance_review")]
-        public ClinicalGovernanceReview ClinicalGovernanceReview { get; set; }
+        public ClinicalGovernanceReview? ClinicalGovernanceReview { get; set; }
 
         /// <summary>
         /// Details of Clinical Governance Review if said yes for Clinical Governance Review radio button.

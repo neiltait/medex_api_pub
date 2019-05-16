@@ -6,6 +6,9 @@ using MedicalExaminer.Common.ConnectionSettings;
 
 namespace MedicalExaminer.Common.Database
 {
+    /// <summary>
+    /// Database Access Interface.
+    /// </summary>
     public interface IDatabaseAccess
     {
         Task<T> CreateItemAsync<T>(

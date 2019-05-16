@@ -15,7 +15,7 @@ namespace MedicalExaminer.API.Extensions.Data
         public CaseOutcomeProfile()
         {
              CreateMap<Examination, PutConfirmationOfScrutinyResponse>()
-                .ForMember(response => response.ScrutinyConfirmedOn, opt => opt.MapFrom(examination => examination.CaseOutcome.ScrutinyConfirmedOn))
+                .ForMember(response => response.ScrutinyConfirmedOn, opt => opt.MapFrom(examination => examination.ConfirmationOfScrutinyCompletedAt))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<PutOutstandingCaseItemsRequest, CaseOutcome>()

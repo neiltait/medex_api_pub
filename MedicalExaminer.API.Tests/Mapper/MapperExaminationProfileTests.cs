@@ -146,7 +146,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             ScrutinyConfirmedOn = new DateTime(2019, 5, 1),
             MCCDIssued = true,
             CaseCompleted = false,
-            CaseMedicalExaminerFullName = "Danuka Hettiarachchi",
+            CaseMedicalExaminerFullName = "Medical Examiner Full Name",
             OutcomeQapDiscussion = QapDiscussionOutcome.MccdCauseOfDeathProvidedByME,
             CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
             GPNotifiedStatus = GPNotified.GPUnabledToBeNotified,
@@ -466,7 +466,9 @@ namespace MedicalExaminer.API.Tests.Mapper
                 historyItem.ImmediateCoronerReferral == history.ImmediateCoronerReferral &&
                 historyItem.IsFinal == history.IsFinal &&
                 historyItem.Notes == history.Notes &&
-                historyItem.UserId == history.UserId;
+                historyItem.UserId == history.UserId &&
+                historyItem.AdmittedDateUnknown == history.AdmittedDateUnknown &&
+                historyItem.AdmittedTimeUnknown == history.AdmittedTimeUnknown;
         }
 
         private bool IsEqual(Examination examination, PatientDeathEventItem patientDeathEvent)
@@ -493,7 +495,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var response = _mapper.Map<GetPatientDetailsResponse>(examination);
 
-            response.CaseCompleted.Should().Be(CaseCompleted);
+            response.CaseCompleted.Should().Be(Completed);
             response.AnyImplants.Should().Be(AnyImplants);
             response.AnyPersonalEffects.Should().Be(examination.AnyPersonalEffects);
             response.ChildPriority.Should().Be(examination.ChildPriority);
@@ -537,15 +539,15 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var response = _mapper.Map<GetCaseOutcomeResponse>(examination);
 
-            response.CaseCompleted.Should().Be(caseOutcome.CaseCompleted);
+            response.CaseCompleted.Should().Be(Completed);
             response.CaseMedicalExaminerFullName.Should().Be(caseOutcome.CaseMedicalExaminerFullName);
             response.CaseOutcomeSummary.Should().Be(caseOutcome.CaseOutcomeSummary);
             response.CremationFormStatus.Should().Be(caseOutcome.CremationFormStatus);
             response.GPNotifedStatus.Should().Be(caseOutcome.GPNotifiedStatus);
             response.MCCDIssued.Should().Be(caseOutcome.MCCDIssued);
-            response.OutcomeOfPrescrutiny.Should().Be(caseOutcome.OutcomeOfPrescrutiny);
-            response.OutcomeOfRepresentativeDiscussion.Should().Be(caseOutcome.OutcomeOfRepresentativeDiscussion);
-            response.OutcomeQapDiscussion.Should().Be(caseOutcome.OutcomeQapDiscussion);
+            response.OutcomeOfPrescrutiny.Should().Be(examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny);
+            response.OutcomeOfRepresentativeDiscussion.Should().Be(examination.CaseBreakdown.BereavedDiscussion.Latest.BereavedDiscussionOutcome);
+            response.OutcomeQapDiscussion.Should().Be(examination.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome);
             response.ScrutinyConfirmedOn.Should().Be(caseOutcome.ScrutinyConfirmedOn);
         }
 
@@ -565,7 +567,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.OutcomeOfPrescrutiny.Should().Be(caseOutcome.OutcomeOfPrescrutiny);
             result.OutcomeOfRepresentativeDiscussion.Should().Be(caseOutcome.OutcomeOfRepresentativeDiscussion);
             result.OutcomeQapDiscussion.Should().Be(caseOutcome.OutcomeQapDiscussion);
-            result.CaseCompleted.Should().Be(caseOutcome.CaseCompleted);
+            result.CaseCompleted.Should().Be(Completed);
 
         }
 
@@ -959,34 +961,40 @@ namespace MedicalExaminer.API.Tests.Mapper
                     Latest = new AdmissionEvent()
                     {
                         AdmittedDate = LastAdmission,
+                        AdmittedDateUnknown = false,
                         EventId = "admissionEventId",
                         ImmediateCoronerReferral = false,
                         IsFinal = true,
                         Notes = AdmissionNotes,
                         UserId = User0.UserId,
                         AdmittedTime = AdmittedTime,
+                        AdmittedTimeUnknown = false
                     },
                     History = new[]
                     {
                         new AdmissionEvent()
                         {
                             AdmittedDate = LastAdmission,
+                            AdmittedDateUnknown = false,
                             EventId = "admissionEventId",
                             ImmediateCoronerReferral = false,
                             IsFinal = true,
                             Notes = AdmissionNotes,
                             UserId = User0.UserId,
                             AdmittedTime = AdmittedTime,
+                            AdmittedTimeUnknown = false
                         },
                         new AdmissionEvent()
                         {
                             AdmittedDate = LastAdmission,
+                            AdmittedDateUnknown = false,
                             EventId = "admissionEventId2",
                             ImmediateCoronerReferral = false,
                             IsFinal = true,
                             Notes = AdmissionNotes,
                             UserId = User0.UserId,
                             AdmittedTime = AdmittedTime,
+                            AdmittedTimeUnknown = false
                         }
                     },
                     Drafts = new[]
@@ -994,22 +1002,26 @@ namespace MedicalExaminer.API.Tests.Mapper
                         new AdmissionEvent()
                         {
                             AdmittedDate = LastAdmission,
+                            AdmittedDateUnknown = false,
                             EventId = "admissionEventId2",
                             ImmediateCoronerReferral = false,
                             IsFinal = false,
                             Notes = AdmissionNotes,
                             UserId = User0.UserId,
                             AdmittedTime = AdmittedTime,
+                            AdmittedTimeUnknown = false
                         },
                         new AdmissionEvent()
                         {
                             AdmittedDate = LastAdmission,
+                            AdmittedDateUnknown = false,
                             EventId = "admissionEventId2",
                             ImmediateCoronerReferral = false,
                             IsFinal = false,
                             Notes = AdmissionNotes,
                             UserId = User1.UserId,
                             AdmittedTime = AdmittedTime,
+                            AdmittedTimeUnknown = false
                         }
                     }
                 },

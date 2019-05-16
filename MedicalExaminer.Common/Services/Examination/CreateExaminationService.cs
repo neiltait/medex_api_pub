@@ -55,6 +55,8 @@ namespace MedicalExaminer.Common.Services.Examination
             };
             param.Examination.UpdateCaseUrgencyScore();
             param.Examination.LastModifiedBy = param.User.UserId;
+            param.Examination.ModifiedAt = DateTime.Now;
+
             return await _databaseAccess.CreateItemAsync(_connectionSettings, param.Examination);
         }
     }

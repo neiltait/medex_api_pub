@@ -30,9 +30,19 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         public DateTime? AdmittedDate { get; set; }
 
         /// <summary>
+        /// date of last admission - Unknown or not
+        /// </summary>
+        public bool? AdmittedDateUnknown { get; set; }
+
+        /// <summary>
         /// time of last admission, if known
         /// </summary>
         public TimeSpan? AdmittedTime { get; set; }
+
+        /// <summary>
+        /// time of last admission - Unknown or not
+        /// </summary>
+        public bool? AdmittedTimeUnknown { get; set; }
 
         /// <summary>
         /// Do you suspect this case may need Immediate Coroner Referral Yes = true, No = false

@@ -141,6 +141,7 @@ namespace MedicalExaminer.Models
 
         public static Examination UpdateCaseStatus(this Examination examination)
         {
+
             examination.Unassigned = !(examination.MedicalTeam.MedicalExaminerOfficerUserId != null && examination.MedicalTeam.MedicalExaminerUserId != null);
             examination.PendingAdmissionNotes = CalculateAdmissionNotesPending(examination);
             examination.AdmissionNotesHaveBeenAdded = !examination.PendingAdmissionNotes;
@@ -149,7 +150,8 @@ namespace MedicalExaminer.Models
             examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
 
             examination.ScrutinyConfirmed = CalculateScrutinyComplete(examination);
-
+            examination.CaseOutcome.CaseOutcomeSummary = CalculateScrutinyOutcome(examination);
+            
             return examination;
         }
 
@@ -201,7 +203,10 @@ namespace MedicalExaminer.Models
                 }
                 else
                 {
-                    if (examination.CaseBreakdown.BereavedDiscussion.Latest != null && !examination.CaseBreakdown.BereavedDiscussion.Latest.DiscussionUnableHappen)
+
+                    var latest = examination.CaseBreakdown.BereavedDiscussion.Latest;
+
+                    if (latest != null && !latest.DiscussionUnableHappen)
                     {
                         return false;
                     }
@@ -209,6 +214,40 @@ namespace MedicalExaminer.Models
             }
 
             return true;
+        }
+
+        private static CaseOutcomeSummary? CalculateScrutinyOutcome(Examination examination)
+        {
+            if (examination.CaseBreakdown.PreScrutiny.Latest == null
+                && examination.CaseBreakdown.QapDiscussion.Latest == null
+                && examination.CaseBreakdown.BereavedDiscussion.Latest == null)
+            {
+                return null;
+            }
+
+            if (examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoroner)
+            {
+                return CaseOutcomeSummary.ReferToCoroner;
+            }
+
+            if (examination.CaseBreakdown.PreScrutiny?.Latest?.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoroner 
+                && examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoroner)
+            {
+                return CaseOutcomeSummary.ReferToCoroner;
+            }
+
+            if (examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome == BereavedDiscussionOutcome.ConcernsCoronerInvestigation)
+            {
+                return CaseOutcomeSummary.ReferToCoroner;
+            }
+            else if (examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome == BereavedDiscussionOutcome.ConcernsRequires100a)
+            {
+                return CaseOutcomeSummary.IssueMCCDWith100a;
+            }
+            else
+            {
+                return CaseOutcomeSummary.IssueMCCD;
+            }
         }
 
         private static bool CalculatePendingQAPDiscussion(Examination examination)
@@ -225,7 +264,9 @@ namespace MedicalExaminer.Models
                 }
                 else
                 {
-                    if (examination.CaseBreakdown.QapDiscussion.Latest != null && examination.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                    var latest = examination.CaseBreakdown.QapDiscussion.Latest;
+
+                    if (latest != null && !latest.DiscussionUnableHappen)
                     {
                         return false;
                     }

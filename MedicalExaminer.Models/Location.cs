@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace MedicalExaminer.Models
 {
-    public class Location
+    public class Location : ILocationPath
     {
         [JsonProperty(PropertyName = "id")]
         public string LocationId { get; set; }
@@ -22,5 +22,21 @@ namespace MedicalExaminer.Models
 
         [JsonProperty(PropertyName = "type")]
         public LocationType Type { get; set; }
+
+        /// <inheritdoc/>
+        [JsonProperty(PropertyName = "national_location_id")]
+        public string NationalLocationId { get; set; }
+
+        /// <inheritdoc/>
+        [JsonProperty(PropertyName = "region_location_id")]
+        public string RegionLocationId { get; set; }
+
+        /// <inheritdoc/>
+        [JsonProperty(PropertyName = "trust_location_id")]
+        public string TrustLocationId { get; set; }
+
+        /// <inheritdoc/>
+        [JsonProperty(PropertyName = "site_location_id")]
+        public string SiteLocationId { get; set; }
     }
 }

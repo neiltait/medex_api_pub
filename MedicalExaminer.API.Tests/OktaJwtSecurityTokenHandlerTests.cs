@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using FluentAssertions;
 using FluentAssertions.Common;
@@ -206,6 +207,7 @@ namespace MedicalExaminer.API.Tests
             var expectedTokenValidationParameters = new TokenValidationParameters();
             var meUserExisting = new MeUser
             {
+                UserId = "mockUserId",
                 OktaToken = securityToken,
                 OktaTokenExpiry = tokenExpiryTime
             };
@@ -218,8 +220,11 @@ namespace MedicalExaminer.API.Tests
             var claims = new List<Claim>();
             var claim = new Claim(ClaimTypes.Email, "joe.doe@nhs.co.uk");
             claims.Add(claim);
+            var identities = new List<ClaimsIdentity>();
+            var identity = new ClaimsIdentity();
+            identities.Add(identity);
             claimsPrincipal.Setup(cp => cp.Claims).Returns(claims);
-
+            claimsPrincipal.Setup(cp => cp.Identities).Returns(identities);
             _mockUserRetrieveOktaTokenService.Setup(ts => ts.Handle(It.IsAny<UserRetrievalByOktaTokenQuery>()))
                 .Returns(Task.FromResult(meUserExisting));
             _mockTokenService.Setup(ts => ts.IntrospectToken(securityToken, It.IsAny<HttpClient>())).Returns(Task.FromResult(introspectResponse));

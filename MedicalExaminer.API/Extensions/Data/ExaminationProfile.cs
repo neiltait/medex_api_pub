@@ -6,6 +6,7 @@ using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Models;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -21,7 +22,7 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<Examination, CaseOutcome>()
                 .ForMember(caseOutcome => caseOutcome.CaseMedicalExaminerFullName, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseMedicalExaminerFullName))
-                .ForMember(caseOutcome => caseOutcome.CaseCompleted, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseCompleted))
+                .ForMember(caseOutcome => caseOutcome.CaseCompleted, opt => opt.MapFrom(examination => examination.CaseCompleted))
                 .ForMember(caseOutcome => caseOutcome.CaseOutcomeSummary, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary))
                 .ForMember(caseOutcome => caseOutcome.OutcomeOfPrescrutiny, opt => opt.MapFrom(examination => examination.CaseOutcome.OutcomeOfPrescrutiny))
                 .ForMember(caseOutcome => caseOutcome.OutcomeOfRepresentativeDiscussion, opt => opt.MapFrom(examination => examination.CaseOutcome.OutcomeOfRepresentativeDiscussion))
@@ -32,17 +33,17 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(caseOutcome => caseOutcome.GPNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GPNotifiedStatus));
             CreateMap<Examination, GetCaseOutcomeResponse>()
                 .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
-                .ForMember(response => response.CaseMedicalExaminerFullName, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseMedicalExaminerFullName))
+                .ForMember(response => response.CaseMedicalExaminerFullName, opt => opt.MapFrom(new MedicalExaminerFullNameResolver()))
                 .ForMember(response => response.MCCDIssued, opt => opt.MapFrom(examination => examination.CaseOutcome.MCCDIssued))
                 .ForMember(response => response.CremationFormStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.CremationFormStatus))
                 .ForMember(response => response.GPNotifedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GPNotifiedStatus))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore())
-                .ForMember(response => response.CaseCompleted, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseCompleted))
+                .ForMember(response => response.CaseCompleted, opt => opt.MapFrom(examination => examination.CaseCompleted))
                 .ForMember(response => response.CaseOutcomeSummary, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary))
-                .ForMember(response => response.OutcomeOfPrescrutiny, opt => opt.MapFrom(examination => examination.CaseOutcome.OutcomeOfPrescrutiny))
-                .ForMember(response => response.OutcomeOfRepresentativeDiscussion, opt => opt.MapFrom(examination => examination.CaseOutcome.OutcomeOfRepresentativeDiscussion))
-                .ForMember(response => response.OutcomeQapDiscussion, opt => opt.MapFrom(examination => examination.CaseOutcome.OutcomeQapDiscussion))
+                .ForMember(response => response.OutcomeOfPrescrutiny, opt => opt.MapFrom(new PreScrutinyOutcomeResolver()))
+                .ForMember(response => response.OutcomeOfRepresentativeDiscussion, opt => opt.MapFrom(new RepresentativeDiscussionOutcomeResolver()))
+                .ForMember(response => response.OutcomeQapDiscussion, opt => opt.MapFrom(new QAPDiscussionOutcomeResolver()))
                 .ForMember(response => response.ScrutinyConfirmedOn, opt => opt.MapFrom(examination => examination.CaseOutcome.ScrutinyConfirmedOn));
             CreateMap<Examination, ExaminationItem>();
             CreateMap<Examination, GetPatientDetailsResponse>()
@@ -139,7 +140,12 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(
                     patientCard => patientCard.AppointmentTime,
                     examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())))
-                    .ForMember(patientCard => patientCard.CaseCreatedDate, opt => opt.MapFrom(examination => examination.CreatedAt));
+                .ForMember(
+                    patientCard => patientCard.CaseCreatedDate,
+                    opt => opt.MapFrom(examination => examination.CreatedAt))
+                .ForMember(
+                    patientCard => patientCard.LastAdmission,
+                    opt => opt.MapFrom(new AdmissionDateResolver()));
 
             CreateMap<Representative, RepresentativeItem>();
             CreateMap<Examination, DeathEvent>()
@@ -151,46 +157,70 @@ namespace MedicalExaminer.API.Extensions.Data
         }
     }
 
-    /// <summary>
-    /// Appointment Date Resolver.
-    /// </summary>
-    public class AppointmentDateResolver : IValueResolver<Examination, PatientCardItem, DateTime?>
+    internal class QAPDiscussionOutcomeResolver : IValueResolver<Examination, GetCaseOutcomeResponse, QapDiscussionOutcome?>
+    {
+        public QapDiscussionOutcome? Resolve(Examination source, GetCaseOutcomeResponse destination, QapDiscussionOutcome? destMember, ResolutionContext context)
+        {
+            return source.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome;
+        }
+    }
+
+    internal class RepresentativeDiscussionOutcomeResolver : IValueResolver<Examination, GetCaseOutcomeResponse, BereavedDiscussionOutcome?>
+    {
+        public BereavedDiscussionOutcome? Resolve(Examination source, GetCaseOutcomeResponse destination, BereavedDiscussionOutcome? destMember, ResolutionContext context)
+        {
+            return source.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome;
+        }
+    }
+
+    internal class PreScrutinyOutcomeResolver : IValueResolver<Examination, GetCaseOutcomeResponse, OverallOutcomeOfPreScrutiny?>
+    {
+        public OverallOutcomeOfPreScrutiny? Resolve(Examination source, GetCaseOutcomeResponse destination, OverallOutcomeOfPreScrutiny? destMember, ResolutionContext context)
+        {
+            return source.CaseBreakdown.PreScrutiny?.Latest?.OutcomeOfPreScrutiny;
+        }
+    }
+
+    internal class AdmissionDateResolver : IValueResolver<Examination, PatientCardItem, DateTime?>
+    {
+        public DateTime? Resolve(Examination source, PatientCardItem destination, DateTime? destMember, ResolutionContext context)
+        {
+            return source.CaseBreakdown.AdmissionNotes?.Latest?.AdmittedDate;
+        }
+    }
+
+    internal class MedicalExaminerFullNameResolver : IValueResolver<Examination, GetCaseOutcomeResponse, string>
+    {
+        public string Resolve(Examination source, GetCaseOutcomeResponse destination, string destMember, ResolutionContext context)
+        {
+            return source.MedicalTeam.MedicalExaminerFullName;
+        }
+    }
+
+    internal class AppointmentDateResolver : IValueResolver<Examination, PatientCardItem, DateTime?>
     {
         private readonly AppointmentFinder _appointmentFinder;
 
-        /// <summary>
-        /// Initialise a new instance of <see cref="AppointmentDateResolver"/>.
-        /// </summary>
-        /// <param name="appointmentFinder">Appointment Finder.</param>
         public AppointmentDateResolver(AppointmentFinder appointmentFinder)
         {
             _appointmentFinder = appointmentFinder;
         }
 
-        /// <inheritdoc/>
         public DateTime? Resolve(Examination source, PatientCardItem destination, DateTime? destMember, ResolutionContext context)
         {
             return _appointmentFinder.FindAppointment(source.Representatives)?.AppointmentDate;
         }
     }
 
-    /// <summary>
-    /// Appointment Time Resolver.
-    /// </summary>
-    public class AppointmentTimeResolver : IValueResolver<Examination, PatientCardItem, TimeSpan?>
+    internal class AppointmentTimeResolver : IValueResolver<Examination, PatientCardItem, TimeSpan?>
     {
         private AppointmentFinder _appointmentFinder;
 
-        /// <summary>
-        /// Initialise a new instance of <see cref="AppointmentTimeResolver"/>.
-        /// </summary>
-        /// <param name="appointmentFinder">Appointment Filder.</param>
         public AppointmentTimeResolver(AppointmentFinder appointmentFinder)
         {
             _appointmentFinder = appointmentFinder;
         }
 
-        /// <inheritdoc/>
         public TimeSpan? Resolve(Examination source, PatientCardItem destination, TimeSpan? destMember, ResolutionContext context)
         {
             return _appointmentFinder.FindAppointment(source.Representatives)?.AppointmentTime;

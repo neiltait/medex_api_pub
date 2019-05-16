@@ -257,7 +257,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             var examination = new Examination
             {
-                ExaminationId = Guid.NewGuid().ToString()
+                ExaminationId = Guid.NewGuid().ToString(),
+                ScrutinyConfirmed = true
             };
 
             var mockMeUser = new Mock<MeUser>();
@@ -525,7 +526,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             var examination = new Examination
             {
-                ExaminationId = Guid.NewGuid().ToString()
+                ExaminationId = Guid.NewGuid().ToString(),
+                OutstandingCaseItemsCompleted = true
             };
 
             var mockMeUser = new Mock<MeUser>();
@@ -545,7 +547,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-
 
             var authorizationService = new Mock<IAuthorizationService>();
             var permissionService = new Mock<IPermissionService>();

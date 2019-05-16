@@ -14,6 +14,7 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
+using MedicalExaminer.BackgroundServices;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Authorization.Roles;
@@ -86,6 +87,8 @@ namespace MedicalExaminer.API
 
             var cosmosDbSettings = services.ConfigureSettings<CosmosDbSettings>(Configuration, "CosmosDB");
 
+            var backgroundServicesSettings = services.ConfigureSettings<BackgroundServicesSettings>(Configuration, "BackgroundServices");
+
             services.ConfigureSettings<AuthorizationSettings>(Configuration, "Authorization");
 
             ConfigureOktaClient(services);
@@ -117,6 +120,7 @@ namespace MedicalExaminer.API
             {
                 options.UseExaminationContextModelBindingProvider();
                 options.Filters.Add<GlobalExceptionFilter>();
+                options.Filters.Add<ControllerActionFilter>();
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddExaminationValidation();
@@ -172,7 +176,8 @@ namespace MedicalExaminer.API
                     },
                 });
 
-                options.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                options.AddSecurityDefinition("Bearer", 
+                    new ApiKeyScheme
                 {
                     Description =
                         "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -198,7 +203,9 @@ namespace MedicalExaminer.API
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey);
 
-            services.AddCosmosStore<Examination>(cosmosSettings, "Examinations");
+            const string examinationsCollection = "Examinations";
+            services.AddCosmosStore<Examination>(cosmosSettings, examinationsCollection);
+            services.AddCosmosStore<AuditEntry<Examination>>(cosmosSettings, examinationsCollection.AuditCollection());
 
             ConfigureQueries(services, cosmosDbSettings);
 
@@ -211,6 +218,8 @@ namespace MedicalExaminer.API
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
+
+            services.AddBackgroundServices(backgroundServicesSettings);
         }
 
         /// <summary>
@@ -305,15 +314,16 @@ namespace MedicalExaminer.API
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
-            // Examination services 
+            // Examination services
             services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>, ExaminationsDashboardService>();
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, Examination>, CreateExaminationService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
+
             services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
-            services.AddScoped<IAsyncQueryHandler<CreateEventQuery, string>, CreateEventService>();
+            services.AddScoped<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>, CreateEventService>();
 
             // Medical team services
             services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
@@ -354,7 +364,7 @@ namespace MedicalExaminer.API
         /// <param name="cosmosDbSettings">Cosmos Database Settings.</param>
         private void ConfigureAuthentication(IServiceCollection services, OktaSettings oktaSettings, CosmosDbSettings cosmosDbSettings)
         {
-            var oktaTokenExpiry = Int32.Parse(oktaSettings.LocalTokenExpiryTimeMinutes);
+            var oktaTokenExpiry = int.Parse(oktaSettings.LocalTokenExpiryTimeMinutes);
             var provider = services.BuildServiceProvider();
             var tokenService = provider.GetRequiredService<ITokenService>();
 
@@ -373,12 +383,9 @@ namespace MedicalExaminer.API
                         new OktaJwtSecurityTokenHandler(
                             tokenService,
                             new JwtSecurityTokenHandler(),
-                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
-                                userConnectionSetting),
-                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
-                                userConnectionSetting),
-                            new UserRetrievalByEmailService(new DatabaseAccess(new DocumentClientFactory()),
-                                userConnectionSetting),
+                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
+                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
+                            new UserRetrievalByEmailService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
                             oktaTokenExpiry));
                 });
         }
@@ -390,7 +397,7 @@ namespace MedicalExaminer.API
         private void ConfigureOktaClient(IServiceCollection services)
         {
             // Configure okta client
-            services.AddScoped<OktaClientConfiguration>(context =>
+            services.AddScoped(context =>
             {
                 var settings = context.GetRequiredService<IOptions<OktaSettings>>();
                 return new OktaClientConfiguration
@@ -444,7 +451,7 @@ namespace MedicalExaminer.API
 
             services.AddAuthorization(options =>
             {
-                foreach (var permission in (Common.Authorization.Permission[])Enum.GetValues(typeof(Common.Authorization.Permission)))
+                foreach (var permission in (Permission[])Enum.GetValues(typeof(Permission)))
                 {
                     options.AddPolicy($"HasPermission={permission}", policy =>
                     {
