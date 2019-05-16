@@ -3,7 +3,7 @@ using System;
 
 namespace MedicalExaminer.Common.Queries.CaseBreakdown
 {
-    public class CreateEventQuery : IQuery<Tuple<string, Models.Examination>>
+    public class CreateEventQuery : IQuery<EventCreationResult>
     {
         public IEvent Event { get; }
 

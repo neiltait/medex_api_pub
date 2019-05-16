@@ -7,7 +7,7 @@ using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
-    public class CreateEventService : IAsyncQueryHandler<CreateEventQuery, Tuple<string, Models.Examination>>
+    public class CreateEventService : IAsyncQueryHandler<CreateEventQuery, EventCreationResult>
     {
         private readonly IConnectionSettings _connectionSettings;
         private readonly IDatabaseAccess _databaseAccess;
@@ -20,7 +20,7 @@ namespace MedicalExaminer.Common.Services.Examination
             _connectionSettings = connectionSettings;
         }
 
-        public async Task<Tuple<string, Models.Examination>> Handle(CreateEventQuery param)
+        public async Task<EventCreationResult> Handle(CreateEventQuery param)
         {
             if (param == null)
             {
@@ -41,7 +41,7 @@ namespace MedicalExaminer.Common.Services.Examination
             examinationToUpdate.LastModifiedBy = param.Event.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);
-            return new Tuple<string, Models.Examination>(param.Event.EventId, result);
+            return new EventCreationResult(param.Event.EventId, result);
         }
     }
 }

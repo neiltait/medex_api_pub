@@ -29,7 +29,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
 
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var sut = new CaseBreakdownController(
@@ -57,7 +57,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -90,7 +90,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var examinationId = "7E5D50CE-05BF-4A1F-AA6E-25418A723A7F";
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
 
             var mockMeUser = new Mock<MeUser>();
             usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
@@ -152,7 +152,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
                 .Returns(Task.FromResult(mockMeUser.Object));
 
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -188,7 +188,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var medicalHistoryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var medicalHistoryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -223,7 +223,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var medicalHistoryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var medicalHistoryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -268,7 +268,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var medicalHistoryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var medicalHistoryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -319,7 +319,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var examination = new Mock<Examination>();
-            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
@@ -336,7 +336,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 Text = "Hello Planet"
             };
             eventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
-                .Returns(Task.FromResult(new Tuple<string, Examination>("hi mark", null))).Verifiable();
+                .Returns(Task.FromResult(new EventCreationResult("hi mark", null))).Verifiable();
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
@@ -374,7 +374,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
 
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
@@ -408,7 +408,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
 
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
@@ -454,7 +454,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var otherEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -506,7 +506,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var examination = new Mock<Examination>();
-            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
@@ -517,7 +517,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 Text = "Hello Planet"
             };
             eventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
-                .Returns(Task.FromResult(new Tuple<string, Examination>("hi mark", null))).Verifiable();
+                .Returns(Task.FromResult(new EventCreationResult("hi mark", null))).Verifiable();
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
@@ -562,7 +562,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var admissionEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var admissionEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -596,7 +596,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var admissionEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var admissionEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -637,8 +637,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var admissionEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
-            var result = new Tuple<string, Examination>("eventId", default(Examination));
+            var admissionEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
+            var result = new EventCreationResult("eventId", default(Examination));
 
             admissionEventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>())).Returns(Task.FromResult(result));
 
@@ -688,7 +688,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var examination = new Mock<Examination>();
-            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
@@ -707,7 +707,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var admissionEvent = new Mock<AdmissionEvent>();
 
             eventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
-                .Returns(Task.FromResult(new Tuple<string, Examination>("hi mark", null))).Verifiable();
+                .Returns(Task.FromResult(new EventCreationResult("hi mark", null))).Verifiable();
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
@@ -743,7 +743,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
-            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(default(Examination))).Verifiable();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
@@ -772,7 +772,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
 
@@ -816,7 +816,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
@@ -868,7 +868,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var examination = new Mock<Examination>();
-            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
@@ -879,7 +879,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 MedicalExaminerThoughts = "Hello Planet"
             };
             eventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
-                .Returns(Task.FromResult(new Tuple<string, Examination>("hi mark", null))).Verifiable();
+                .Returns(Task.FromResult(new EventCreationResult("hi mark", null))).Verifiable();
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
@@ -923,7 +923,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -957,7 +957,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -998,7 +998,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -1046,7 +1046,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var examination = new Mock<Examination>();
-            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var eventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
@@ -1067,7 +1067,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             mapper.Setup(m => m.Map<BereavedDiscussionEvent>(validRequest)).Returns(bereavedDiscussionEvent.Object);
 
             eventCreationService.Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
-                .Returns(Task.FromResult(new Tuple<string, Examination>("hi mark", null))).Verifiable();
+                .Returns(Task.FromResult(new EventCreationResult("hi mark", null))).Verifiable();
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
@@ -1101,7 +1101,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var qapDiscussionEventCreationService =
-                new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+                new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -1136,7 +1136,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var qapDiscussionEventCreationService =
-                new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+                new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -1178,7 +1178,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var qapDiscussionEventCreationService =
-                new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+                new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
@@ -1230,7 +1230,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             var examination = new Mock<Examination>();
             var qapDiscussionEventCreationService =
-                new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+                new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService =
                 new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
@@ -1242,7 +1242,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             qapDiscussionEventCreationService
                 .Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
-                .Returns(Task.FromResult(new Tuple<string, Examination>("hi mark", null))).Verifiable();
+                .Returns(Task.FromResult(new EventCreationResult("hi mark", null))).Verifiable();
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination.Object)).Verifiable();
@@ -1288,7 +1288,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var meoSummaryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var meoSummaryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
 
@@ -1321,7 +1321,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var meoSummaryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var meoSummaryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
             var invalidRequest = new PutMeoSummaryEventRequest
@@ -1362,7 +1362,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var meoSummaryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var meoSummaryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
             var validRequest = new PutMeoSummaryEventRequest
@@ -1413,7 +1413,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var mapper = new Mock<IMapper>();
             var examination = new Mock<Examination>();
             var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            var meoSummaryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, Tuple<string, Examination>>>();
+            var meoSummaryEventCreationService = new Mock<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>>();
             var examinationRetrievalQueryService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
 
             var validRequest = new PutMeoSummaryEventRequest
@@ -1424,7 +1424,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             meoSummaryEventCreationService
                 .Setup(service => service.Handle(It.IsAny<CreateEventQuery>()))
-                .Returns(Task.FromResult(new Tuple<string, Examination>("hi mark", null))).Verifiable();
+                .Returns(Task.FromResult(new EventCreationResult("hi mark", null))).Verifiable();
 
             examinationRetrievalQueryService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                .Returns(Task.FromResult(examination.Object)).Verifiable();
