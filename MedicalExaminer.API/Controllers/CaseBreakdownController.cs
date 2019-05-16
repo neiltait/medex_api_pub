@@ -189,8 +189,8 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var user = await CurrentUser();
-            var meoSummaryEvent = Mapper.Map<TEvent>(caseBreakdownEvent);
-            meoSummaryEvent = SetEventUserStatuses(meoSummaryEvent, user);
+            var theEvent = Mapper.Map<TEvent>(caseBreakdownEvent);
+            theEvent = SetEventUserStatuses(theEvent, user);
 
             var examination =
                 await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
@@ -205,8 +205,8 @@ namespace MedicalExaminer.API.Controllers
                 return Forbid();
             }
 
-            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, meoSummaryEvent));
-            var patientCard = Mapper.Map<PatientCardItem>(result.Examination);
+            var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, theEvent));
+            var patientCard = Mapper.Map<PatientCardItem>(examination);
 
             if (result == null)
             {
