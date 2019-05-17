@@ -776,5 +776,52 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             return examination;
         }
+
+
+        [Fact]
+        private void Something()
+        {
+            var examination = new Examination()
+            {
+                MedicalTeam = new MedicalTeam()
+                {
+                    MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId",
+                    MedicalExaminerUserId = "MedicalExaminerUserId",
+                },
+                CaseBreakdown = new CaseBreakDown()
+                {
+                    PreScrutiny = new PreScrutinyEventContainer()
+                    {
+                        Latest = new PreScrutinyEvent()
+                        {
+                            CauseOfDeath1a = "CauseOfDeath1a",
+                            CauseOfDeath1b = "CauseOfDeath1b",
+                            CauseOfDeath1c = "CauseOfDeath1c",
+                            CauseOfDeath2 = "CauseOfDeath2",
+                            CircumstancesOfDeath = MedicalExaminer.Models.Enums.OverallCircumstancesOfDeath.Expected,
+                            ClinicalGovernanceReview = MedicalExaminer.Models.Enums.ClinicalGovernanceReview.No,
+                            ClinicalGovernanceReviewText = "ClinicalGovernanceReviewText",
+                            Created = DateTime.Now,
+                            EventId = "1",
+                            IsFinal = true,
+                            MedicalExaminerThoughts = "MedicalExaminerThoughts",
+                            OutcomeOfPreScrutiny = MedicalExaminer.Models.Enums.OverallOutcomeOfPreScrutiny.IssueAnMccd,
+                            UserFullName = "UserFullName",
+                            UserId = "userId",
+                            UsersRole = "UsersRole"
+                        }
+                    },
+                    AdmissionNotes = new AdmissionNotesEventContainer()
+                    {
+                        Latest = new AdmissionEvent()
+                        {
+                            AdmittedDate = DateTime.Now,
+                            A
+
+                        }
+                    }
+                }
+            }
+        }
     }
 }
