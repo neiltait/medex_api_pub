@@ -66,7 +66,7 @@ namespace MedicalExaminer.API.Controllers
             var user = await CurrentUser();
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
 
-            if (!examination.ReadyForMEScrutiny)
+            if (!examination.CalculateCanCompleteScrutiny())
             {
                 return Forbid();
             }

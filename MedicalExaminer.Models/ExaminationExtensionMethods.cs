@@ -155,6 +155,37 @@ namespace MedicalExaminer.Models
             return examination;
         }
 
+        public static bool CalculateCanCompleteScrutiny(this Examination examination)
+        {
+            examination = examination.UpdateCaseStatus();
+            if (examination.Unassigned)
+            {
+                return false;
+            }
+
+            if (examination.CaseBreakdown.PreScrutiny.Latest == null)
+            {
+                return false;
+            }
+
+            if(examination.CaseBreakdown.AdmissionNotes.Latest == null)
+            {
+                return false;
+            }
+
+            if (examination.CaseBreakdown.QapDiscussion.Latest == null)
+            {
+                return false;
+            }
+
+            if (examination.CaseBreakdown.BereavedDiscussion.Latest == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private static bool CalculateScrutinyComplete(Examination examination)
         {
             if (examination.Unassigned)

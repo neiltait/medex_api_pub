@@ -39,6 +39,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.UpdateCaseStatus();
             examinationToUpdate.UpdateCaseUrgencyScore();
 
+
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);
             return result;
         }
