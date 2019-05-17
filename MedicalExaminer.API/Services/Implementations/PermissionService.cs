@@ -102,6 +102,7 @@ namespace MedicalExaminer.API.Services.Implementations
         {
             var locations = user
                 .Permissions
+                .Where(up => up.LocationId != null)
                 .Where(up => _rolePermissions.Can((UserRoles)up.UserRole, permission))
                 .Select(up => up.LocationId);
 
