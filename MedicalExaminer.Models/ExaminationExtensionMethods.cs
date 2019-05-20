@@ -149,9 +149,11 @@ namespace MedicalExaminer.Models
             examination.PendingDiscussionWithQAP = CalculatePendingQAPDiscussion(examination);
             examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
 
-            examination.ScrutinyConfirmed = CalculateScrutinyComplete(examination);
+            // For review:  In my opinion, this is not needed because ScrutinyConfirmed is set to true in Put Confirmation of Scrutiny call.
+            //              But before setting ScrutinyConfirmed to true it checks CalculateCanCompleteScrutiny.
+            // examination.ScrutinyConfirmed = CalculateScrutinyComplete(examination);
             examination.CaseOutcome.CaseOutcomeSummary = CalculateScrutinyOutcome(examination);
-            
+
             return examination;
         }
 
@@ -168,57 +170,56 @@ namespace MedicalExaminer.Models
                 return false;
             }
 
-            if(examination.CaseBreakdown.AdmissionNotes.Latest == null)
+            if (examination.CaseBreakdown.AdmissionNotes.Latest == null)
             {
                 return false;
             }
 
-            if (examination.CaseBreakdown.QapDiscussion.Latest == null)
+            if (examination.PendingDiscussionWithQAP)
             {
-                return false;
-            }
-
-            if (examination.CaseBreakdown.BereavedDiscussion.Latest == null)
-            {
-                return false;
+                if (examination.PendingDiscussionWithRepresentative)
+                {
+                    return false;
+                }
             }
 
             return true;
         }
 
-        private static bool CalculateScrutinyComplete(Examination examination)
-        {
-            if (examination.Unassigned)
-            {
-                return false;
-            }
 
-            if (examination.CaseBreakdown.PreScrutiny.Latest != null
-                && examination.AdmissionNotesHaveBeenAdded
-                && examination.PendingDiscussionWithQAP
-                && examination.PendingDiscussionWithRepresentative)
-            {
-                return false;
-            }
+        //private static bool CalculateScrutinyComplete(Examination examination)
+        //{
+        //    if (examination.Unassigned)
+        //    {
+        //        return false;
+        //    }
 
-            if (examination.CaseBreakdown.PreScrutiny.Latest != null
-                && examination.AdmissionNotesHaveBeenAdded
-                && !examination.PendingDiscussionWithQAP
-                && examination.HaveFinalCaseOutcomesOutstanding)
-            {
-                return false;
-            }
+        //    if (examination.CaseBreakdown.PreScrutiny.Latest != null
+        //        && examination.AdmissionNotesHaveBeenAdded
+        //        && examination.PendingDiscussionWithQAP
+        //        && examination.PendingDiscussionWithRepresentative)
+        //    {
+        //        return false;
+        //    }
 
-            if (examination.CaseBreakdown.PreScrutiny.Latest != null
-                && examination.AdmissionNotesHaveBeenAdded
-                && !examination.PendingDiscussionWithQAP
-                && !examination.HaveFinalCaseOutcomesOutstanding)
-            {
-                return true;
-            }
+        //    if (examination.CaseBreakdown.PreScrutiny.Latest != null
+        //        && examination.AdmissionNotesHaveBeenAdded
+        //        && !examination.PendingDiscussionWithQAP
+        //        && examination.HaveFinalCaseOutcomesOutstanding)
+        //    {
+        //        return false;
+        //    }
 
-            return false;
-        }
+        //    if (examination.CaseBreakdown.PreScrutiny.Latest != null
+        //        && examination.AdmissionNotesHaveBeenAdded
+        //        && !examination.PendingDiscussionWithQAP
+        //        && !examination.HaveFinalCaseOutcomesOutstanding)
+        //    {
+        //        return true;
+        //    }
+
+        //    return false;
+        //}
 
         private static bool CalculatePendingDiscussionWithRepresentative(Examination examination)
         {
