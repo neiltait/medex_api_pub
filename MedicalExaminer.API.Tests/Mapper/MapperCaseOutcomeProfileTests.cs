@@ -50,11 +50,11 @@ namespace MedicalExaminer.API.Tests.Mapper
                 GPNotifiedStatus = GPNotified.GPNotified
             };
 
-            var outstandingCaseItems = _mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
+            var outstandingCaseItems = _mapper.Map<OutstandingCaseItems>(putOutstandingCaseItemsRequest);
 
-            outstandingCaseItems.OutstandingCaseItems.MCCDIssued.Should().Be(true);
-            outstandingCaseItems.OutstandingCaseItems.CremationFormStatus.Should().Be(CremationFormStatus.Yes);
-            outstandingCaseItems.OutstandingCaseItems.GPNotifiedStatus.Should().Be(GPNotified.GPNotified);
+            outstandingCaseItems.MCCDIssued.Should().Be(true);
+            outstandingCaseItems.CremationFormStatus.Should().Be(CremationFormStatus.Yes);
+            outstandingCaseItems.GPNotifiedStatus.Should().Be(GPNotified.GPNotified);
         }
     }
 }
