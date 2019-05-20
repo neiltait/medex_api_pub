@@ -52,9 +52,9 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var outstandingCaseItems = _mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
 
-            outstandingCaseItems.MCCDIssued.Should().Be(true);
-            outstandingCaseItems.CremationFormStatus.Should().Be(CremationFormStatus.Yes);
-            outstandingCaseItems.GPNotifiedStatus.Should().Be(GPNotified.GPNotified);
+            outstandingCaseItems.OutstandingCaseItems.MCCDIssued.Should().Be(true);
+            outstandingCaseItems.OutstandingCaseItems.CremationFormStatus.Should().Be(CremationFormStatus.Yes);
+            outstandingCaseItems.OutstandingCaseItems.GPNotifiedStatus.Should().Be(GPNotified.GPNotified);
         }
     }
 }

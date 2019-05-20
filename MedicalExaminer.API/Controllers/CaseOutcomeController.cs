@@ -13,6 +13,7 @@ using MedicalExaminer.Models;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -96,6 +97,18 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var user = await CurrentUser();
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+
+            if (examination == null)
+            {
+                return new NotFoundResult();
+            }
+
+            if (examination.CaseOutcome.CaseOutcomeSummary != CaseOutcomeSummary.ReferToCoroner)
+            {
+                return Forbid();
+            }
+
             await _coronerReferralService.Handle(new CoronerReferralQuery(examinationId, user));
 
             return Ok();
@@ -138,7 +151,7 @@ namespace MedicalExaminer.API.Controllers
                 return Forbid();
             }
 
-            var outstandingCaseItems = Mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
+            var outstandingCaseItems = Mapper.Map<OutstandingCaseItems>(putOutstandingCaseItemsRequest);
             await _saveOutstandingCaseItemsService.Handle(new SaveOutstandingCaseItemsQuery(examinationId, outstandingCaseItems, user));
             return Ok();
         }

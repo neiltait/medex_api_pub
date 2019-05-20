@@ -1,6 +1,7 @@
 ﻿using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Models.Enums;
 using System;
+using MedicalExaminer.Models;
 
 namespace MedicalExaminer.API.Models.v1.CaseOutcome
 {
@@ -22,10 +23,6 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
 
         public string CaseMedicalExaminerFullName { get; set; }
 
-        public bool? MCCDIssued { get; set; }
-
-        public CremationFormStatus? CremationFormStatus { get; set; }
-
-        public GPNotified? GPNotifedStatus { get; set; }
+        public OutstandingCaseItems OutstandingCaseItems { get; set; }
     }
 }

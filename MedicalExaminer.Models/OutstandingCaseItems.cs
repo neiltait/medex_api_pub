@@ -1,8 +1,8 @@
 ﻿using MedicalExaminer.Models.Enums;
 
-namespace MedicalExaminer.API.Models.v1.CaseOutcome
+namespace MedicalExaminer.Models
 {
-    public class PutOutstandingCaseItemsRequest
+    public class OutstandingCaseItems
     {
         public bool? MCCDIssued { get; set; }
 
