@@ -9,24 +9,19 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
 {
     public class ConfirmationOfScrutinyService : QueryHandler<ConfirmationOfScrutinyQuery, Models.Examination>
     {
-        private readonly IConnectionSettings _connectionSettings;
-        private readonly IDatabaseAccess _databaseAccess;
-
         public ConfirmationOfScrutinyService(
             IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings)
-        : base(databaseAccess, connectionSettings)
+            : base(databaseAccess, connectionSettings)
         {
-            _connectionSettings = connectionSettings;
-            _databaseAccess = databaseAccess;
         }
 
         public override async Task<Models.Examination> Handle(ConfirmationOfScrutinyQuery param)
         {
             var examinationToUpdate = await
-                _databaseAccess
+                DatabaseAccess
                     .GetItemAsync<Models.Examination>(
-                        _connectionSettings,
+                        ConnectionSettings,
                         examination => examination.ExaminationId == param.ExaminationId);
 
             examinationToUpdate.ConfirmationOfScrutinyCompletedAt = DateTime.Now;
@@ -40,7 +35,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.UpdateCaseUrgencyScore();
 
 
-            var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);
+            var result = await DatabaseAccess.UpdateItemAsync(ConnectionSettings, examinationToUpdate);
             return result;
         }
     }
