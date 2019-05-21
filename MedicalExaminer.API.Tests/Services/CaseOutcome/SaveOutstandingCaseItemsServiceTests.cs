@@ -30,9 +30,9 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var outstandingCaseItems = new OutstandingCaseItems
             {
-                MCCDIssued = true,
+                MccdIssued = true,
                 CremationFormStatus = CremationFormStatus.No,
-                GPNotifiedStatus = GPNotified.GPNotified
+                GpNotifiedStatus = GPNotified.GPNotified
             };
             var query = new SaveOutstandingCaseItemsQuery(examinationId, outstandingCaseItems, new MeUser());
             var dbAccess = new Mock<IDatabaseAccess>();
@@ -76,9 +76,9 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var outstandingCaseItems = new OutstandingCaseItems
             {
-                MCCDIssued = true,
+                MccdIssued = true,
                 CremationFormStatus = CremationFormStatus.No,
-                GPNotifiedStatus = GPNotified.GPNotified
+                GpNotifiedStatus = GPNotified.GPNotified
             };
             var query = new SaveOutstandingCaseItemsQuery(examinationId, outstandingCaseItems, new MeUser());
             var dbAccess = new Mock<IDatabaseAccess>();

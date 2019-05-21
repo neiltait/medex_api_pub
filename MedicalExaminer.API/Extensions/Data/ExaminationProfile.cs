@@ -31,8 +31,8 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(caseOutcome => caseOutcome.OutstandingCaseItems, opt => opt.MapFrom(examination => examination.CaseOutcome.OutstandingCaseItems));
             CreateMap<Examination, OutstandingCaseItems>()
                 .ForMember(outstandingCaseItems => outstandingCaseItems.CremationFormStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.OutstandingCaseItems.CremationFormStatus))
-                .ForMember(outstandingCaseItems => outstandingCaseItems.MCCDIssued, opt => opt.MapFrom(examination => examination.CaseOutcome.OutstandingCaseItems.MCCDIssued))
-                .ForMember(outstandingCaseItems => outstandingCaseItems.GPNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.OutstandingCaseItems.GPNotifiedStatus));
+                .ForMember(outstandingCaseItems => outstandingCaseItems.MccdIssued, opt => opt.MapFrom(examination => examination.CaseOutcome.OutstandingCaseItems.MccdIssued))
+                .ForMember(outstandingCaseItems => outstandingCaseItems.GpNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.OutstandingCaseItems.GpNotifiedStatus));
             CreateMap<Examination, GetCaseOutcomeResponse>()
                 .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
                 .ForMember(response => response.CaseMedicalExaminerFullName, opt => opt.MapFrom(new MedicalExaminerFullNameResolver()))

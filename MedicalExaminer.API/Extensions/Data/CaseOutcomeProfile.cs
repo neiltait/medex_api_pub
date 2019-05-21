@@ -19,9 +19,9 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<PutOutstandingCaseItemsRequest, OutstandingCaseItems>()
-                 .ForMember(outstandingCaseItems => outstandingCaseItems.MCCDIssued, opt => opt.MapFrom(request => request.MCCDIssued))
+                 .ForMember(outstandingCaseItems => outstandingCaseItems.MccdIssued, opt => opt.MapFrom(request => request.MccdIssued))
                  .ForMember(outstandingCaseItems => outstandingCaseItems.CremationFormStatus, opt => opt.MapFrom(request => request.CremationFormStatus))
-                 .ForMember(outstandingCaseItems => outstandingCaseItems.GPNotifiedStatus, opt => opt.MapFrom(request => request.GPNotifiedStatus));
+                 .ForMember(outstandingCaseItems => outstandingCaseItems.GpNotifiedStatus, opt => opt.MapFrom(request => request.GpNotifiedStatus));
         }
     }
 }

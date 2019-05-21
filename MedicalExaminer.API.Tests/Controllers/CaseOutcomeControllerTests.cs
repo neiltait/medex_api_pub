@@ -193,9 +193,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var putOutstandingCaseItemsRequest = new PutOutstandingCaseItemsRequest
             {
-                MCCDIssued = true,
+                MccdIssued = true,
                 CremationFormStatus = CremationFormStatus.Yes,
-                GPNotifiedStatus = GPNotified.GPNotified
+                GpNotifiedStatus = GPNotified.GPNotified
             };
 
             // Act
@@ -237,9 +237,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var putOutstandingCaseItemsRequest = new PutOutstandingCaseItemsRequest
             {
-                MCCDIssued = true,
+                MccdIssued = true,
                 CremationFormStatus = CremationFormStatus.Yes,
-                GPNotifiedStatus = GPNotified.GPNotified
+                GpNotifiedStatus = GPNotified.GPNotified
             };
 
             // Act
@@ -301,9 +301,9 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var putOutstandingCaseItemsRequest = new PutOutstandingCaseItemsRequest
             {
-                MCCDIssued = true,
+                MccdIssued = true,
                 CremationFormStatus = CremationFormStatus.Yes,
-                GPNotifiedStatus = GPNotified.GPNotified
+                GpNotifiedStatus = GPNotified.GPNotified
             };
 
             // Act

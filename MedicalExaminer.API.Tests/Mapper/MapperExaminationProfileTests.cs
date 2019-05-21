@@ -143,8 +143,8 @@ namespace MedicalExaminer.API.Tests.Mapper
 
         private static readonly OutstandingCaseItems outstandingCaseItems = new OutstandingCaseItems
         {
-            MCCDIssued = true,
-            GPNotifiedStatus = GPNotified.GPUnabledToBeNotified,
+            MccdIssued = true,
+            GpNotifiedStatus = GPNotified.GPUnabledToBeNotified,
             CremationFormStatus = CremationFormStatus.Yes
         };
 
@@ -548,8 +548,8 @@ namespace MedicalExaminer.API.Tests.Mapper
             response.CaseMedicalExaminerFullName.Should().Be(caseOutcome.CaseMedicalExaminerFullName);
             response.CaseOutcomeSummary.Should().Be(caseOutcome.CaseOutcomeSummary);
             response.OutstandingCaseItems.CremationFormStatus.Should().Be(caseOutcome.OutstandingCaseItems.CremationFormStatus);
-            response.OutstandingCaseItems.GPNotifiedStatus.Should().Be(caseOutcome.OutstandingCaseItems.GPNotifiedStatus);
-            response.OutstandingCaseItems.MCCDIssued.Should().Be(caseOutcome.OutstandingCaseItems.MCCDIssued);
+            response.OutstandingCaseItems.GpNotifiedStatus.Should().Be(caseOutcome.OutstandingCaseItems.GpNotifiedStatus);
+            response.OutstandingCaseItems.MccdIssued.Should().Be(caseOutcome.OutstandingCaseItems.MccdIssued);
             response.OutcomeOfPrescrutiny.Should().Be(examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny);
             response.OutcomeOfRepresentativeDiscussion.Should().Be(examination.CaseBreakdown.BereavedDiscussion.Latest.BereavedDiscussionOutcome);
             response.OutcomeQapDiscussion.Should().Be(examination.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome);
@@ -567,8 +567,8 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.CaseMedicalExaminerFullName.Should().Be(caseOutcome.CaseMedicalExaminerFullName);
             result.CaseOutcomeSummary.Should().Be(caseOutcome.CaseOutcomeSummary);
             result.OutstandingCaseItems.CremationFormStatus.Should().Be(caseOutcome.OutstandingCaseItems.CremationFormStatus);
-            result.OutstandingCaseItems.GPNotifiedStatus.Should().Be(caseOutcome.OutstandingCaseItems.GPNotifiedStatus);
-            result.OutstandingCaseItems.MCCDIssued.Should().Be(caseOutcome.OutstandingCaseItems.MCCDIssued);
+            result.OutstandingCaseItems.GpNotifiedStatus.Should().Be(caseOutcome.OutstandingCaseItems.GpNotifiedStatus);
+            result.OutstandingCaseItems.MccdIssued.Should().Be(caseOutcome.OutstandingCaseItems.MccdIssued);
             result.OutcomeOfPrescrutiny.Should().Be(caseOutcome.OutcomeOfPrescrutiny);
             result.OutcomeOfRepresentativeDiscussion.Should().Be(caseOutcome.OutcomeOfRepresentativeDiscussion);
             result.OutcomeQapDiscussion.Should().Be(caseOutcome.OutcomeQapDiscussion);

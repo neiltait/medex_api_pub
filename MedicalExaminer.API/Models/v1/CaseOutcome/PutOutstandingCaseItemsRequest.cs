@@ -4,10 +4,10 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
 {
     public class PutOutstandingCaseItemsRequest
     {
-        public bool? MCCDIssued { get; set; }
+        public bool? MccdIssued { get; set; }
 
         public CremationFormStatus? CremationFormStatus { get; set; }
 
-        public GPNotified? GPNotifiedStatus { get; set; }
+        public GPNotified? GpNotifiedStatus { get; set; }
     }
 }
