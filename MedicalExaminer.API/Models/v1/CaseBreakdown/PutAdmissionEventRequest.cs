@@ -1,5 +1,4 @@
 ﻿using System;
-using MedicalExaminer.API.Attributes;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
@@ -16,7 +15,6 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Event Text (Length to be confirmed).
         /// </summary>
-        [RequiredIfAttributesMatch(nameof(IsFinal), true)]
         public string Notes { get; set; }
 
         /// <summary>
