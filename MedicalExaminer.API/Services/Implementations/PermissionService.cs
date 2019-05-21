@@ -86,7 +86,7 @@ namespace MedicalExaminer.API.Services.Implementations
             if (meUser.Permissions != null)
             {
                 var hasPermission = meUser.Permissions.Any(
-                    p => _rolePermissions.Can((UserRoles)p.UserRole, permission));
+                    p => _rolePermissions.Can((UserRoles)p.UserRole, permission) && p.LocationId != null);
 
                 if (hasPermission)
                 {
