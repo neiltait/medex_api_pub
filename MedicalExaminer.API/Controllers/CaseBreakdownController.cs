@@ -206,7 +206,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, theEvent));
-            var patientCard = Mapper.Map<PatientCardItem>(examination);
+            var patientCard = Mapper.Map<PatientCardItem>(result.Examination);
 
             if (result == null)
             {

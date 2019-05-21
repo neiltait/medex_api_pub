@@ -45,7 +45,7 @@ namespace MedicalExaminer.Common.Services.Examination
 
             param.Examination.CaseBreakdown.DeathEvent = new DeathEvent()
             {
-                Created = param.Examination.CreatedAt.Date,
+                Created = param.Examination.CreatedAt.DateTime,
                 DateOfDeath = param.Examination.DateOfDeath,
                 TimeOfDeath = param.Examination.TimeOfDeath,
                 UserId = param.Examination.CreatedBy,
