@@ -148,11 +148,6 @@ namespace MedicalExaminer.Models
             examination.PendingDiscussionWithQAP = CalculatePendingQAPDiscussion(examination);
             examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
             examination.HaveFinalCaseOutcomesOutstanding = !examination.OutstandingCaseItemsCompleted;
-
-            // For review:  In my opinion, this is not needed because ScrutinyConfirmed is set to true in Put Confirmation of Scrutiny call.
-            //              But before setting ScrutinyConfirmed to true it checks CalculateCanCompleteScrutiny.
-            // examination.ScrutinyConfirmed = CalculateScrutinyComplete(examination);
-
             examination.CaseOutcome.CaseOutcomeSummary = CalculateScrutinyOutcome(examination);
 
             return examination;
@@ -186,40 +181,6 @@ namespace MedicalExaminer.Models
 
             return true;
         }
-
-        //private static bool CalculateScrutinyComplete(Examination examination)
-        //{
-        //    if (examination.Unassigned)
-        //    {
-        //        return false;
-        //    }
-
-        //    if (examination.CaseBreakdown.PreScrutiny.Latest != null
-        //        && examination.AdmissionNotesHaveBeenAdded
-        //        && examination.PendingDiscussionWithQAP
-        //        && examination.PendingDiscussionWithRepresentative)
-        //    {
-        //        return false;
-        //    }
-
-        //    if (examination.CaseBreakdown.PreScrutiny.Latest != null
-        //        && examination.AdmissionNotesHaveBeenAdded
-        //        && !examination.PendingDiscussionWithQAP
-        //        && examination.HaveFinalCaseOutcomesOutstanding)
-        //    {
-        //        return false;
-        //    }
-
-        //    if (examination.CaseBreakdown.PreScrutiny.Latest != null
-        //        && examination.AdmissionNotesHaveBeenAdded
-        //        && !examination.PendingDiscussionWithQAP
-        //        && !examination.HaveFinalCaseOutcomesOutstanding)
-        //    {
-        //        return true;
-        //    }
-
-        //    return false;
-        //}
 
         private static bool CalculatePendingDiscussionWithRepresentative(Examination examination)
         {
