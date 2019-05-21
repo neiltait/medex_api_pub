@@ -69,7 +69,7 @@ namespace MedicalExaminer.API.Controllers
 
             if (!examination.CalculateCanCompleteScrutiny())
             {
-                return Forbid();
+                return BadRequest();
             }
 
             var result = await _confirmationOfScrutinyService.Handle(new ConfirmationOfScrutinyQuery(examinationId, user));
@@ -106,7 +106,7 @@ namespace MedicalExaminer.API.Controllers
 
             if (examination.CaseOutcome.CaseOutcomeSummary != CaseOutcomeSummary.ReferToCoroner)
             {
-                return Forbid();
+                return BadRequest();
             }
 
             await _coronerReferralService.Handle(new CoronerReferralQuery(examinationId, user));
@@ -148,7 +148,7 @@ namespace MedicalExaminer.API.Controllers
 
             if (!examination.ScrutinyConfirmed)
             {
-                return Forbid();
+                return BadRequest();
             }
 
             var outstandingCaseItems = Mapper.Map<OutstandingCaseItems>(putOutstandingCaseItemsRequest);
@@ -186,7 +186,7 @@ namespace MedicalExaminer.API.Controllers
 
             if (!examination.OutstandingCaseItemsCompleted)
             {
-                return Forbid();
+                return BadRequest();
             }
 
             await _closeCaseService.Handle(new CloseCaseQuery(examinationId, user));
