@@ -166,6 +166,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         private readonly IMapper _mapper;
 
         private DateTime dateOfConversation = new DateTime(1984, 12, 24);
+        private TimeSpan timeOfConversation = new TimeSpan(10, 30, 00);
         private string discussionDetails = "discussionDetails";
 
         private string ParticipantFullName = "participantFullName";
@@ -288,6 +289,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 qapItem.CauseOfDeath2 == qap.CauseOfDeath2 &&
                 qapItem.Created == qap.Created &&
                 qapItem.DateOfConversation == qap.DateOfConversation &&
+                qapItem.TimeOfConversation == qap.TimeOfConversation &&
                 qapItem.DiscussionDetails == qap.DiscussionDetails &&
                 qapItem.DiscussionUnableHappen == qap.DiscussionUnableHappen &&
                 qapItem.IsFinal == qap.IsFinal &&
@@ -1162,6 +1164,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                         ParticipantRole = ParticipantRoll,
                         DateOfConversation = dateOfConversation,
+                        TimeOfConversation = timeOfConversation,
                         ParticipantName = ParticipantName,
                         ParticipantOrganisation = ParticipantOrganisation,
                         ParticipantPhoneNumber = ParticipantPhoneNumber
@@ -1182,6 +1185,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                         ParticipantRole = ParticipantRoll,
                         DateOfConversation = dateOfConversation,
+                        TimeOfConversation = timeOfConversation,
                         ParticipantName = ParticipantName,
                         ParticipantOrganisation = ParticipantOrganisation,
                         ParticipantPhoneNumber = ParticipantPhoneNumber
