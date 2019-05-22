@@ -9,11 +9,13 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Users full name
         /// </summary>
+        [JsonProperty(PropertyName = "users_full_name")]
         public string UserFullName { get; set; }
 
         /// <summary>
         /// Users Role
         /// </summary>
+        [JsonProperty(PropertyName = "users_role")]
         public string UsersRole { get; set; }
 
         /// <summary>
@@ -80,6 +82,6 @@ namespace MedicalExaminer.Models
         /// Do you suspect this case may need Immediate Coroner Referral Yes = true, No = false
         /// </summary>
         [JsonProperty(PropertyName = "immediate_coroner_referral")]
-        public bool ImmediateCoronerReferral { get; set; }
+        public bool? ImmediateCoronerReferral { get; set; }
     }
 }

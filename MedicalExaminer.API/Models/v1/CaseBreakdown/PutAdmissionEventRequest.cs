@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MedicalExaminer.API.Attributes;
+using System;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
@@ -45,6 +46,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Do you suspect this case may need Immediate Coroner Referral Yes = true, No = false
         /// </summary>
-        public bool ImmediateCoronerReferral { get; set; }
+        [RequiredIfAttributesMatch(nameof(IsFinal), true)]
+        public bool? ImmediateCoronerReferral { get; set; }
     }
 }

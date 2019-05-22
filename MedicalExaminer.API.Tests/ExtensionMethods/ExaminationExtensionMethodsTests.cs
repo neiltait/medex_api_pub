@@ -296,7 +296,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var examination = new Examination();
             var caseBreakDown = new CaseBreakDown();
             var admissionNotes = new AdmissionNotesEventContainer();
-            admissionNotes.Latest = new AdmissionEvent();
+            admissionNotes.Latest = new AdmissionEvent()
+            {
+                ImmediateCoronerReferral = false
+            };
             caseBreakDown.AdmissionNotes = admissionNotes;
             examination.CaseBreakdown = caseBreakDown;
 
@@ -347,7 +350,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var examination = new Examination();
             var caseBreakDown = new CaseBreakDown();
             var admissionNotes = new AdmissionNotesEventContainer();
-            admissionNotes.Latest = new AdmissionEvent();
+            admissionNotes.Latest = new AdmissionEvent()
+            {
+                ImmediateCoronerReferral = false
+            };
             caseBreakDown.AdmissionNotes = admissionNotes;
             examination.CaseBreakdown = caseBreakDown;
 
@@ -368,7 +374,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination.MedicalTeam = medicalTeam;
             var caseBreakDown = new CaseBreakDown();
             var admissionNotes = new AdmissionNotesEventContainer();
-            admissionNotes.Latest = new AdmissionEvent();
+            admissionNotes.Latest = new AdmissionEvent()
+            {
+                ImmediateCoronerReferral = false,
+            };
             caseBreakDown.AdmissionNotes = admissionNotes;
             examination.CaseBreakdown = caseBreakDown;
 
@@ -481,7 +490,9 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             var examination = new Examination();
             examination.ReadyForMEScrutiny = false;
-            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent();
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() {
+                ImmediateCoronerReferral = false
+            };
             examination = examination.UpdateCaseStatus();
             Assert.True(examination.PendingDiscussionWithQAP);
         }
@@ -560,7 +571,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             var examination = new Examination();
             examination = SetNotReadyForMeScrutiny(examination);
-            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent();
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent()
+            {
+                ImmediateCoronerReferral = false
+            };
             examination = examination.UpdateCaseStatus();
             Assert.True(examination.PendingDiscussionWithRepresentative);
         }
