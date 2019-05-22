@@ -34,6 +34,7 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<Examination, GetCaseOutcomeResponse>()
                 .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
                 .ForMember(response => response.CaseMedicalExaminerFullName, opt => opt.MapFrom(new MedicalExaminerFullNameResolver()))
+                .ForMember(response => response.CaseMedicalExaminerId, opt => opt.MapFrom(new MedicalExaminerIdResolver()))
                 .ForMember(response => response.MCCDIssued, opt => opt.MapFrom(examination => examination.CaseOutcome.MCCDIssued))
                 .ForMember(response => response.CremationFormStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.CremationFormStatus))
                 .ForMember(response => response.GPNotifedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GPNotifiedStatus))
@@ -194,6 +195,14 @@ namespace MedicalExaminer.API.Extensions.Data
         public string Resolve(Examination source, GetCaseOutcomeResponse destination, string destMember, ResolutionContext context)
         {
             return source.MedicalTeam.MedicalExaminerFullName;
+        }
+    }
+
+    internal class MedicalExaminerIdResolver : IValueResolver<Examination, GetCaseOutcomeResponse, string>
+    {
+        public string Resolve(Examination source, GetCaseOutcomeResponse destination, string destMember, ResolutionContext context)
+        {
+            return source.MedicalTeam.MedicalExaminerUserId;
         }
     }
 
