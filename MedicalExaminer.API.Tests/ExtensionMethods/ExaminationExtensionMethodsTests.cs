@@ -607,6 +607,23 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
+        public void NewExamination_PendingScrutinyNotes_True()
+        {
+            var examination = new Examination();
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingScrutinyNotes);
+        }
+
+        [Fact]
+        public void PendingScrutinyNotes_MEScrutiny_False()
+        {
+            var examination = new Examination();
+            examination.CaseBreakdown.PreScrutiny.Latest = new PreScrutinyEventItem();
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.PendingScrutinyNotes);
+        }
+
+        [Fact]
         public void NewExamination_ScrutinyComplete_False()
         {
             var examination = new Examination();
