@@ -12,12 +12,14 @@ namespace MedicalExaminer.Common.Services.Examination
     {
         public Expression<Func<Models.Examination, bool>> GetPredicate(ExaminationsRetrievalQuery queryObject)
         {
-            var locationFilter = GetLocationPredicate(queryObject.PermissedLocations);
+            var permissedLocationFilter = GetPermissedLocationPredicate(queryObject.PermissedLocations);
+            var locationFilter = GetLocationPredicate(queryObject.FilterLocationId);
             var caseStatusFilter = GetCaseStatusPredicate(queryObject.FilterCaseStatus);
             var userIdFilter = GetUserIdPredicate(queryObject.FilterUserId);
             var openCases = GetOpenCasesPredicate(queryObject.FilterOpenCases);
 
-            var predicate = locationFilter
+            var predicate = permissedLocationFilter
+                .And(locationFilter)
                 .And(caseStatusFilter)
                 .And(userIdFilter)
                 .And(openCases);
@@ -25,7 +27,21 @@ namespace MedicalExaminer.Common.Services.Examination
             return predicate;
         }
 
-        private Expression<Func<Models.Examination, bool>> GetLocationPredicate(IEnumerable<string> permissedLocations)
+        private Expression<Func<Models.Examination, bool>> GetLocationPredicate(string locationId)
+        {
+            if (string.IsNullOrEmpty(locationId))
+            {
+                return null;
+            }
+
+            return examination =>
+                examination.NationalLocationId == locationId
+                || examination.RegionLocationId == locationId
+                || examination.TrustLocationId == locationId
+                || examination.SiteLocationId == locationId;
+        }
+
+        private Expression<Func<Models.Examination, bool>> GetPermissedLocationPredicate(IEnumerable<string> permissedLocations)
         {
             var locationList = permissedLocations.ToList();
 
