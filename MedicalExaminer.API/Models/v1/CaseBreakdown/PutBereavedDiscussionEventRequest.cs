@@ -43,7 +43,12 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Date of Conversation.
         /// </summary>
-        public DateTime DateOfConversation { get; set; }
+        public DateTime? DateOfConversation { get; set; }
+
+        /// <summary>
+        /// Time of Conversation.
+        /// </summary>
+        public TimeSpan? TimeOfConversation { get; set; }
 
         /// <summary>
         /// Unable to happen.

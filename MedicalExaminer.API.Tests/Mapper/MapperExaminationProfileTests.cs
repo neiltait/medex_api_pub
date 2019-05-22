@@ -430,20 +430,21 @@ namespace MedicalExaminer.API.Tests.Mapper
             return historyIsEqual && IsEqual(bereavedDiscussion1.Latest, bereavedDiscussion2.Latest);
         }
 
-        private bool IsEqual(BereavedDiscussionEvent history, BereavedDiscussionEventItem historyItem)
+        private bool IsEqual(BereavedDiscussionEvent bereavedDiscussion, BereavedDiscussionEventItem bereavedDiscussionItem)
         {
-            return historyItem.BereavedDiscussionOutcome == history.BereavedDiscussionOutcome &&
-                historyItem.Created == history.Created &&
-                historyItem.DateOfConversation == history.DateOfConversation &&
-                historyItem.DiscussionDetails == history.DiscussionDetails &&
-                historyItem.DiscussionUnableHappen == history.DiscussionUnableHappen &&
-                historyItem.InformedAtDeath == history.InformedAtDeath &&
-                historyItem.IsFinal == history.IsFinal &&
-                historyItem.ParticipantFullName == history.ParticipantFullName &&
-                historyItem.ParticipantPhoneNumber == history.ParticipantPhoneNumber &&
-                historyItem.ParticipantRelationship == history.ParticipantRelationship &&
-                historyItem.PresentAtDeath == history.PresentAtDeath &&
-                historyItem.UserId == history.UserId;
+            return bereavedDiscussionItem.BereavedDiscussionOutcome == bereavedDiscussion.BereavedDiscussionOutcome &&
+                   bereavedDiscussionItem.Created == bereavedDiscussion.Created &&
+                   bereavedDiscussionItem.DateOfConversation == bereavedDiscussion.DateOfConversation &&
+                   bereavedDiscussionItem.TimeOfConversation == bereavedDiscussion.TimeOfConversation &&
+                   bereavedDiscussionItem.DiscussionDetails == bereavedDiscussion.DiscussionDetails &&
+                   bereavedDiscussionItem.DiscussionUnableHappen == bereavedDiscussion.DiscussionUnableHappen &&
+                   bereavedDiscussionItem.InformedAtDeath == bereavedDiscussion.InformedAtDeath &&
+                   bereavedDiscussionItem.IsFinal == bereavedDiscussion.IsFinal &&
+                   bereavedDiscussionItem.ParticipantFullName == bereavedDiscussion.ParticipantFullName &&
+                   bereavedDiscussionItem.ParticipantPhoneNumber == bereavedDiscussion.ParticipantPhoneNumber &&
+                   bereavedDiscussionItem.ParticipantRelationship == bereavedDiscussion.ParticipantRelationship &&
+                   bereavedDiscussionItem.PresentAtDeath == bereavedDiscussion.PresentAtDeath &&
+                   bereavedDiscussionItem.UserId == bereavedDiscussion.UserId;
         }
 
         private bool IsEqual(BaseEventContainter<AdmissionEvent> admissionNotes1, EventContainerItem<AdmissionEventItem> admissionNotes2)
@@ -1038,6 +1039,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     {
                         BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
                         DateOfConversation = dateOfConversation,
+                        TimeOfConversation = timeOfConversation,
                         DiscussionDetails = discussionDetails,
                         DiscussionUnableHappen = false,
                         EventId = "bereavedDiscussionEventId",
@@ -1055,6 +1057,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         {
                             BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
                             DateOfConversation = dateOfConversation,
+                            TimeOfConversation = timeOfConversation,
                             DiscussionDetails = discussionDetails,
                             DiscussionUnableHappen = false,
                             EventId = "bereavedDiscussionEventId",
