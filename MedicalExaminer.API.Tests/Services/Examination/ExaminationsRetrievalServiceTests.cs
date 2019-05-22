@@ -70,14 +70,22 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public virtual async Task ReadyForMEScrutinyAndLocationCasesReturnsCorrectCount()
         {
-            //Arrange
-            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.ReadyForMEScrutiny,
-                "a", null, 1, 10, "", true);
+            // Arrange
+            var permissedLocations = new[] { "expectedLocation" };
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(
+                permissedLocations,
+                CaseStatus.ReadyForMEScrutiny,
+                "expectedLocation",
+                null,
+                1,
+                10,
+                string.Empty,
+                true);
 
-            //Act
-            var results = await Service.Handle(examinationsDashboardQuery);
+            // Act
+            var results = (await Service.Handle(examinationsDashboardQuery)).ToList();
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Single(results);
         }
@@ -244,6 +252,52 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             Assert.Equal(9, results.Count());
         }
 
+        [Fact]
+        public virtual async Task FilterByLocationsReturnsCorrectCases()
+        {
+            // Arrange
+            const string expectedLocationId = "expectedLocation";
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(
+                PermissedLocations(),
+                null,
+                expectedLocationId,
+                null,
+                1,
+                10,
+                string.Empty,
+                true);
+
+            // Act
+            var results = (await Service.Handle(examinationsDashboardQuery)).ToList();
+
+            // Assert
+            results.Should().NotBeNull();
+            Assert.Equal(4, results.Count());
+        }
+
+        [Fact]
+        public virtual async Task FilterByLocationsReturnsCorrectCasesWhenNoFilter()
+        {
+            // Arrange
+            const string expectedLocationId = "";
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(
+                PermissedLocations(),
+                null,
+                expectedLocationId,
+                null,
+                1,
+                10,
+                string.Empty,
+                true);
+
+            // Act
+            var results = (await Service.Handle(examinationsDashboardQuery)).ToList();
+
+            // Assert
+            results.Should().NotBeNull();
+            Assert.Equal(9, results.Count());
+        }
+
         /// <inheritdoc/>
         protected override MedicalExaminer.Models.Examination[] GetExamples()
         {
@@ -251,14 +305,16 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             {
                 ExaminationId = "examination1",
                 Unassigned = true,
-                CaseCompleted = false
+                CaseCompleted = false,
+                NationalLocationId = "expectedLocation",
             };
 
             var examination2 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination2",
                 ReadyForMEScrutiny = true,
-                CaseCompleted = false
+                CaseCompleted = false,
+                RegionLocationId = "expectedLocation",
             };
 
             /*var examination3 = new MedicalExaminer.Models.Examination()
@@ -272,21 +328,23 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var examination4 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination4",
-                CaseCompleted = true
+                CaseCompleted = true,
             };
 
             var examination5 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination5",
                 CaseCompleted = false,
-                UrgencyScore = 3
+                UrgencyScore = 3,
+                TrustLocationId = "expectedLocation",
             };
 
             var examination6 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination6",
                 CaseCompleted = false,
-                AdmissionNotesHaveBeenAdded = true
+                AdmissionNotesHaveBeenAdded = true,
+                SiteLocationId = "expectedLocation",
             };
 
             var examination7 = new MedicalExaminer.Models.Examination()
@@ -333,7 +391,10 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             foreach (var examination in examinations)
             {
-                examination.SiteLocationId = "site1";
+                if (examination.SiteLocationId == null)
+                {
+                    examination.SiteLocationId = "site1";
+                }
             }
 
             return examinations;
@@ -341,7 +402,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
         private IEnumerable<string> PermissedLocations()
         {
-            return new[] { "site1" };
+            return new[] { "site1", "expectedLocation" };
         }
     }
 }

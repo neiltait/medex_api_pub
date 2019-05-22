@@ -51,14 +51,21 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public virtual async Task ReadyForMEScrutinyCasesReturnsCorrectCount()
         {
-            //Arrange
-            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), MedicalExaminer.Models.Enums.CaseStatus.ReadyForMEScrutiny,
-                "", null, 0, 0, "", true);
+            // Arrange
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(
+                PermissedLocations(),
+                MedicalExaminer.Models.Enums.CaseStatus.ReadyForMEScrutiny,
+                string.Empty,
+                null,
+                0,
+                0,
+                string.Empty,
+                true);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Equal(1, results.CountOfReadyForMEScrutiny);
         }
@@ -66,14 +73,22 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public virtual async Task ReadyForMEScrutinyAndLocationCasesReturnsCorrectCount()
         {
-            //Arrange
-            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), MedicalExaminer.Models.Enums.CaseStatus.ReadyForMEScrutiny,
-                "a", null, 0, 0, "", true);
+            // Arrange
+            var permissedLocations = new[] { "expectedLocation" };
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(
+                permissedLocations,
+                MedicalExaminer.Models.Enums.CaseStatus.ReadyForMEScrutiny,
+                "expectedLocation",
+                null,
+                0,
+                0,
+                string.Empty,
+                true);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Equal(1, results.CountOfReadyForMEScrutiny);
         }
@@ -228,7 +243,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             {
                 ExaminationId = "examination2",
                 ReadyForMEScrutiny = true,
-                CaseCompleted = false
+                CaseCompleted = false,
+                SiteLocationId = "expectedLocation"
             };
 
             /*var examination3 = new MedicalExaminer.Models.Examination()
@@ -303,7 +319,10 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             foreach (var examination in examinations)
             {
-                examination.SiteLocationId = "site1";
+                if (examination.SiteLocationId == null)
+                {
+                    examination.SiteLocationId = "site1";
+                }
             }
 
             return examinations;
@@ -311,7 +330,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
         private IEnumerable<string> PermissedLocations()
         {
-            return new[] { "site1" };
+            return new[] { "site1", "expectedLocation" };
         }
     }
 }
