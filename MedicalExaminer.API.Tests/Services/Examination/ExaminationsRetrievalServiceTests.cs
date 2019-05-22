@@ -127,33 +127,6 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             Assert.Single(results);
         }
 
-        // TODO: Previously worked in test but had no way to run via the builder.
-        //[Fact]
-        //public async virtual Task UrgentQueryReturnsCorrectCount()
-        //{
-        //    //Arrange
-        //   // Expression<Func<MedicalExaminer.Models.Examination, bool>> predicate = t => t.UrgencyScore > 0;
-        //    var client = CosmosMocker.CreateDocumentClient(GenerateExaminations());
-        //    var clientFactory = CosmosMocker.CreateClientFactory(client);
-
-        //    var connectionSettings = CosmosMocker.CreateExaminationConnectionSettings();
-
-        //    var dataAccess = new DatabaseAccess(clientFactory.Object);
-
-        //    var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), null,
-        //        "", null, 0, 0, "", true);
-
-        //    var examinationQueryBuilder = new ExaminationsQueryExpressionBuilder();
-        //    var sut = new ExaminationsRetrievalService(dataAccess, connectionSettings.Object, examinationQueryBuilder);
-
-        //    //Act
-
-        //    var results = await sut.Handle(examinationsDashboardQuery);
-        //    //Assert
-        //    results.Should().NotBeNull();
-        //    Assert.Single(results);
-        //}
-
         [Fact]
         public virtual async Task AdmissionNotesHaveBeenAddedQueryReturnsCorrectCount()
         {
@@ -261,14 +234,6 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CaseCompleted = false
             };
 
-            /*var examination3 = new MedicalExaminer.Models.Examination()
-            {
-                ExaminationId = "examination3",
-                MedicalExaminerOfficeResponsible = "a",
-                ReadyForMEScrutiny = true,
-                CaseCompleted = false
-            };*/
-
             var examination4 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination4",
@@ -324,7 +289,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 PendingAdmissionNotes = true
             };
 
-            return SetLocationCache(new[] { examination1, examination2, /*examination3,*/ examination4, examination5,
+            return SetLocationCache(new[] { examination1, examination2, examination4, examination5,
                            examination6, examination7, examination8, examination9, examination10,
                            examination11});
         }

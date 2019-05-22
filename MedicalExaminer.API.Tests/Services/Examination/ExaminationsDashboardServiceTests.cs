@@ -108,21 +108,20 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             Assert.Equal(1, results.TotalCases);
         }
 
-        // TODO: Urgency not queryable from current interface.
-        //[Fact]
-        //public virtual async Task UrgentQueryReturnsCorrectCount()
-        //{
-        //    //Arrange
-        //    var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(),null,
-        //        "", null, 0, 0, "", true);
+        [Fact]
+        public virtual async Task UrgentQueryReturnsCorrectCount()
+        {
+            //Arrange
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), null,
+                "", null, 0, 0, "", true);
 
-        //    //Act
-        //    var results = await Service.Handle(examinationsDashboardQuery);
+            //Act
+            var results = await Service.Handle(examinationsDashboardQuery);
 
-        //    //Assert
-        //    results.Should().NotBeNull();
-        //    Assert.Equal(1, results.CountOfUrgentCases);
-        //}
+            //Assert
+            results.Should().NotBeNull();
+            Assert.Equal(1, results.CountOfUrgentCases);
+        }
 
         [Fact]
         public virtual async Task AdmissionNotesHaveBeenAddedQueryReturnsCorrectCount()
@@ -231,14 +230,6 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CaseCompleted = false
             };
 
-            /*var examination3 = new MedicalExaminer.Models.Examination()
-            {
-                ExaminationId = "examination3",
-                MedicalExaminerOfficeResponsible = "a",
-                ReadyForMEScrutiny = true,
-                CaseCompleted = false
-            };*/
-
             var examination4 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination4",
@@ -294,7 +285,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 PendingAdmissionNotes = true
             };
 
-            return SetLocationCache(new[] { examination1, examination2, /*examination3,*/ examination4, examination5,
+            return SetLocationCache(new[] { examination1, examination2, examination4, examination5,
                            examination6, examination7, examination8, examination9, examination10,
                            examination11});
         }
