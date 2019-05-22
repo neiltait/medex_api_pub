@@ -44,6 +44,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.CoronerReferralSent = true;
 
             examinationToUpdate = examinationToUpdate.UpdateCaseUrgencyScore();
+            examinationToUpdate = examinationToUpdate.UpdateCaseStatus();
 
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);
             return result.ExaminationId;
