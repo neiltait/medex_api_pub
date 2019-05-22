@@ -2,6 +2,7 @@
 using System.Linq;
 using FluentAssertions;
 using MedicalExaminer.Models;
+using Moq;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.ExtensionMethods
@@ -835,6 +836,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             CauseOfDeath1c = "CauseOfDeath1c",
                             CauseOfDeath2 = "CauseOfDeath2",
                             DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(10, 00, 00),
                             DiscussionDetails = "Discussion Details",
                             DiscussionUnableHappen = false,
                             ParticipantName = "ParticipantName",
@@ -937,6 +939,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             CauseOfDeath1c = "CauseOfDeath1c",
                             CauseOfDeath2 = "CauseOfDeath2",
                             DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(10, 00, 00),
                             DiscussionDetails = "Discussion Details",
                             DiscussionUnableHappen = false,
                             ParticipantName = "ParticipantName",
@@ -1039,6 +1042,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             CauseOfDeath1c = "CauseOfDeath1c",
                             CauseOfDeath2 = "CauseOfDeath2",
                             DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(10, 00, 00),
                             DiscussionDetails = "Discussion Details",
                             DiscussionUnableHappen = false,
                             ParticipantName = "ParticipantName",
@@ -1182,6 +1186,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             CauseOfDeath1c = "CauseOfDeath1c",
                             CauseOfDeath2 = "CauseOfDeath2",
                             DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(10, 00, 00),
                             DiscussionDetails = "Discussion Details",
                             DiscussionUnableHappen = false,
                             ParticipantName = "ParticipantName",
@@ -1263,6 +1268,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             CauseOfDeath1c = "CauseOfDeath1c",
                             CauseOfDeath2 = "CauseOfDeath2",
                             DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(10, 00, 00),
                             DiscussionDetails = "Discussion Details",
                             DiscussionUnableHappen = false,
                             ParticipantName = "ParticipantName",
