@@ -124,7 +124,7 @@ namespace MedicalExaminer.Models
         /// <summary>
         ///     Does the patient have any implants that may impact on cremation
         /// </summary>
-        public bool AnyImplants { get; set; }
+        public bool? AnyImplants { get; set; }
 
         /// <summary>
         ///     Free text for the implant details

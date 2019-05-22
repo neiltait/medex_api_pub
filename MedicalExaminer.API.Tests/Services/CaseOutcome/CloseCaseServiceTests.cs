@@ -24,7 +24,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             var examination = new MedicalExaminer.Models.Examination
             {
                 ExaminationId = examinationId,
-                ScrutinyConfirmed = false,
+                ScrutinyConfirmed = true,
                 OutstandingCaseItemsCompleted = false
             };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();

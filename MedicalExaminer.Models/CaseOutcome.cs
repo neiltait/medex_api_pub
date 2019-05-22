@@ -19,10 +19,6 @@ namespace MedicalExaminer.Models
 
         public string CaseMedicalExaminerFullName { get; set; }
 
-        public bool? MCCDIssued { get; set; }
-
-        public CremationFormStatus? CremationFormStatus { get; set; }
-
-        public GPNotified? GPNotifiedStatus { get; set; }
+        public OutstandingCaseItems OutstandingCaseItems { get; set; }
     }
 }
