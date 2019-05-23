@@ -49,7 +49,7 @@ namespace MedicalExaminer.API.Attributes
 
             if (IsTargetRole(role))
             {
-                if (existingPermissions.Permissions.Any(p => IsTargetRole((UserRoles)p.UserRole)))
+                if (existingPermissions != null && existingPermissions.Permissions.Any(p => IsTargetRole((UserRoles)p.UserRole)))
                 {
                     var permission = existingPermissions.Permissions.First(p => IsTargetRole((UserRoles)p.UserRole));
 
@@ -57,7 +57,7 @@ namespace MedicalExaminer.API.Attributes
                 }
             }
 
-            return ValidationResult.Success;
+            return base.IsValid(value, context);
         }
 
         private bool IsTargetRole(UserRoles role)

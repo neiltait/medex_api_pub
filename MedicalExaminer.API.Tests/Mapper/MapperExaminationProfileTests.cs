@@ -141,18 +141,23 @@ namespace MedicalExaminer.API.Tests.Mapper
             }
         };
 
+        private static readonly OutstandingCaseItems outstandingCaseItems = new OutstandingCaseItems
+        {
+            MccdIssued = true,
+            GpNotifiedStatus = GPNotified.GPUnabledToBeNotified,
+            CremationFormStatus = CremationFormStatus.Yes
+        };
+
         private readonly CaseOutcome caseOutcome = new CaseOutcome
         {
             ScrutinyConfirmedOn = new DateTime(2019, 5, 1),
-            MCCDIssued = true,
             CaseCompleted = false,
             CaseMedicalExaminerFullName = "Medical Examiner Full Name",
             OutcomeQapDiscussion = QapDiscussionOutcome.MccdCauseOfDeathProvidedByME,
             CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
-            GPNotifiedStatus = GPNotified.GPUnabledToBeNotified,
             OutcomeOfPrescrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
-            CremationFormStatus = CremationFormStatus.Yes,
-            OutcomeOfRepresentativeDiscussion = BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner
+            OutcomeOfRepresentativeDiscussion = BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner,
+            OutstandingCaseItems = outstandingCaseItems
         };
 
         /// <summary>
@@ -161,6 +166,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         private readonly IMapper _mapper;
 
         private DateTime dateOfConversation = new DateTime(1984, 12, 24);
+        private TimeSpan timeOfConversation = new TimeSpan(10, 30, 00);
         private string discussionDetails = "discussionDetails";
 
         private string ParticipantFullName = "participantFullName";
@@ -283,6 +289,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 qapItem.CauseOfDeath2 == qap.CauseOfDeath2 &&
                 qapItem.Created == qap.Created &&
                 qapItem.DateOfConversation == qap.DateOfConversation &&
+                qapItem.TimeOfConversation == qap.TimeOfConversation &&
                 qapItem.DiscussionDetails == qap.DiscussionDetails &&
                 qapItem.DiscussionUnableHappen == qap.DiscussionUnableHappen &&
                 qapItem.IsFinal == qap.IsFinal &&
@@ -423,20 +430,21 @@ namespace MedicalExaminer.API.Tests.Mapper
             return historyIsEqual && IsEqual(bereavedDiscussion1.Latest, bereavedDiscussion2.Latest);
         }
 
-        private bool IsEqual(BereavedDiscussionEvent history, BereavedDiscussionEventItem historyItem)
+        private bool IsEqual(BereavedDiscussionEvent bereavedDiscussion, BereavedDiscussionEventItem bereavedDiscussionItem)
         {
-            return historyItem.BereavedDiscussionOutcome == history.BereavedDiscussionOutcome &&
-                historyItem.Created == history.Created &&
-                historyItem.DateOfConversation == history.DateOfConversation &&
-                historyItem.DiscussionDetails == history.DiscussionDetails &&
-                historyItem.DiscussionUnableHappen == history.DiscussionUnableHappen &&
-                historyItem.InformedAtDeath == history.InformedAtDeath &&
-                historyItem.IsFinal == history.IsFinal &&
-                historyItem.ParticipantFullName == history.ParticipantFullName &&
-                historyItem.ParticipantPhoneNumber == history.ParticipantPhoneNumber &&
-                historyItem.ParticipantRelationship == history.ParticipantRelationship &&
-                historyItem.PresentAtDeath == history.PresentAtDeath &&
-                historyItem.UserId == history.UserId;
+            return bereavedDiscussionItem.BereavedDiscussionOutcome == bereavedDiscussion.BereavedDiscussionOutcome &&
+                   bereavedDiscussionItem.Created == bereavedDiscussion.Created &&
+                   bereavedDiscussionItem.DateOfConversation == bereavedDiscussion.DateOfConversation &&
+                   bereavedDiscussionItem.TimeOfConversation == bereavedDiscussion.TimeOfConversation &&
+                   bereavedDiscussionItem.DiscussionDetails == bereavedDiscussion.DiscussionDetails &&
+                   bereavedDiscussionItem.DiscussionUnableHappen == bereavedDiscussion.DiscussionUnableHappen &&
+                   bereavedDiscussionItem.InformedAtDeath == bereavedDiscussion.InformedAtDeath &&
+                   bereavedDiscussionItem.IsFinal == bereavedDiscussion.IsFinal &&
+                   bereavedDiscussionItem.ParticipantFullName == bereavedDiscussion.ParticipantFullName &&
+                   bereavedDiscussionItem.ParticipantPhoneNumber == bereavedDiscussion.ParticipantPhoneNumber &&
+                   bereavedDiscussionItem.ParticipantRelationship == bereavedDiscussion.ParticipantRelationship &&
+                   bereavedDiscussionItem.PresentAtDeath == bereavedDiscussion.PresentAtDeath &&
+                   bereavedDiscussionItem.UserId == bereavedDiscussion.UserId;
         }
 
         private bool IsEqual(BaseEventContainter<AdmissionEvent> admissionNotes1, EventContainerItem<AdmissionEventItem> admissionNotes2)
@@ -542,9 +550,9 @@ namespace MedicalExaminer.API.Tests.Mapper
             response.CaseCompleted.Should().Be(Completed);
             response.CaseMedicalExaminerFullName.Should().Be(caseOutcome.CaseMedicalExaminerFullName);
             response.CaseOutcomeSummary.Should().Be(caseOutcome.CaseOutcomeSummary);
-            response.CremationFormStatus.Should().Be(caseOutcome.CremationFormStatus);
-            response.GPNotifedStatus.Should().Be(caseOutcome.GPNotifiedStatus);
-            response.MCCDIssued.Should().Be(caseOutcome.MCCDIssued);
+            response.OutstandingCaseItems.CremationFormStatus.Should().Be(caseOutcome.OutstandingCaseItems.CremationFormStatus);
+            response.OutstandingCaseItems.GpNotifiedStatus.Should().Be(caseOutcome.OutstandingCaseItems.GpNotifiedStatus);
+            response.OutstandingCaseItems.MccdIssued.Should().Be(caseOutcome.OutstandingCaseItems.MccdIssued);
             response.OutcomeOfPrescrutiny.Should().Be(examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny);
             response.OutcomeOfRepresentativeDiscussion.Should().Be(examination.CaseBreakdown.BereavedDiscussion.Latest.BereavedDiscussionOutcome);
             response.OutcomeQapDiscussion.Should().Be(examination.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome);
@@ -561,9 +569,9 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.ScrutinyConfirmedOn.Should().Be(caseOutcome.ScrutinyConfirmedOn);
             result.CaseMedicalExaminerFullName.Should().Be(caseOutcome.CaseMedicalExaminerFullName);
             result.CaseOutcomeSummary.Should().Be(caseOutcome.CaseOutcomeSummary);
-            result.CremationFormStatus.Should().Be(caseOutcome.CremationFormStatus);
-            result.GPNotifiedStatus.Should().Be(caseOutcome.GPNotifiedStatus);
-            result.MCCDIssued.Should().Be(caseOutcome.MCCDIssued);
+            result.OutstandingCaseItems.CremationFormStatus.Should().Be(caseOutcome.OutstandingCaseItems.CremationFormStatus);
+            result.OutstandingCaseItems.GpNotifiedStatus.Should().Be(caseOutcome.OutstandingCaseItems.GpNotifiedStatus);
+            result.OutstandingCaseItems.MccdIssued.Should().Be(caseOutcome.OutstandingCaseItems.MccdIssued);
             result.OutcomeOfPrescrutiny.Should().Be(caseOutcome.OutcomeOfPrescrutiny);
             result.OutcomeOfRepresentativeDiscussion.Should().Be(caseOutcome.OutcomeOfRepresentativeDiscussion);
             result.OutcomeQapDiscussion.Should().Be(caseOutcome.OutcomeQapDiscussion);
@@ -1031,6 +1039,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     {
                         BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
                         DateOfConversation = dateOfConversation,
+                        TimeOfConversation = timeOfConversation,
                         DiscussionDetails = discussionDetails,
                         DiscussionUnableHappen = false,
                         EventId = "bereavedDiscussionEventId",
@@ -1048,6 +1057,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         {
                             BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
                             DateOfConversation = dateOfConversation,
+                            TimeOfConversation = timeOfConversation,
                             DiscussionDetails = discussionDetails,
                             DiscussionUnableHappen = false,
                             EventId = "bereavedDiscussionEventId",
@@ -1157,6 +1167,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                         ParticipantRole = ParticipantRoll,
                         DateOfConversation = dateOfConversation,
+                        TimeOfConversation = timeOfConversation,
                         ParticipantName = ParticipantName,
                         ParticipantOrganisation = ParticipantOrganisation,
                         ParticipantPhoneNumber = ParticipantPhoneNumber
@@ -1177,6 +1188,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                         ParticipantRole = ParticipantRoll,
                         DateOfConversation = dateOfConversation,
+                        TimeOfConversation = timeOfConversation,
                         ParticipantName = ParticipantName,
                         ParticipantOrganisation = ParticipantOrganisation,
                         ParticipantPhoneNumber = ParticipantPhoneNumber

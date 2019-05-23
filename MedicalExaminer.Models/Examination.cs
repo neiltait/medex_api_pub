@@ -284,9 +284,8 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Does the patient have any implants that may effect mode of disposal?.
         /// </summary>
-        [Required]
         [JsonProperty(PropertyName = "any_implants")]
-        public bool AnyImplants { get; set; }
+        public bool? AnyImplants { get; set; }
 
         /// <summary>
         /// Implant details if has implants.

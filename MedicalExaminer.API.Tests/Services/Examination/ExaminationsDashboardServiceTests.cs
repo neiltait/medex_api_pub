@@ -51,14 +51,21 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public virtual async Task ReadyForMEScrutinyCasesReturnsCorrectCount()
         {
-            //Arrange
-            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), MedicalExaminer.Models.Enums.CaseStatus.ReadyForMEScrutiny,
-                "", null, 0, 0, "", true);
+            // Arrange
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(
+                PermissedLocations(),
+                MedicalExaminer.Models.Enums.CaseStatus.ReadyForMEScrutiny,
+                string.Empty,
+                null,
+                0,
+                0,
+                string.Empty,
+                true);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Equal(1, results.CountOfReadyForMEScrutiny);
         }
@@ -66,14 +73,22 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public virtual async Task ReadyForMEScrutinyAndLocationCasesReturnsCorrectCount()
         {
-            //Arrange
-            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), MedicalExaminer.Models.Enums.CaseStatus.ReadyForMEScrutiny,
-                "a", null, 0, 0, "", true);
+            // Arrange
+            var permissedLocations = new[] { "expectedLocation" };
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(
+                permissedLocations,
+                MedicalExaminer.Models.Enums.CaseStatus.ReadyForMEScrutiny,
+                "expectedLocation",
+                null,
+                0,
+                0,
+                string.Empty,
+                true);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Equal(1, results.CountOfReadyForMEScrutiny);
         }
@@ -108,21 +123,20 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             Assert.Equal(1, results.TotalCases);
         }
 
-        // TODO: Urgency not queryable from current interface.
-        //[Fact]
-        //public virtual async Task UrgentQueryReturnsCorrectCount()
-        //{
-        //    //Arrange
-        //    var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(),null,
-        //        "", null, 0, 0, "", true);
+        [Fact]
+        public virtual async Task UrgentQueryReturnsCorrectCount()
+        {
+            //Arrange
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), null,
+                "", null, 0, 0, "", true);
 
-        //    //Act
-        //    var results = await Service.Handle(examinationsDashboardQuery);
+            //Act
+            var results = await Service.Handle(examinationsDashboardQuery);
 
-        //    //Assert
-        //    results.Should().NotBeNull();
-        //    Assert.Equal(1, results.CountOfUrgentCases);
-        //}
+            //Assert
+            results.Should().NotBeNull();
+            Assert.Equal(1, results.CountOfUrgentCases);
+        }
 
         [Fact]
         public virtual async Task AdmissionNotesHaveBeenAddedQueryReturnsCorrectCount()
@@ -228,16 +242,9 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             {
                 ExaminationId = "examination2",
                 ReadyForMEScrutiny = true,
-                CaseCompleted = false
+                CaseCompleted = false,
+                SiteLocationId = "expectedLocation"
             };
-
-            /*var examination3 = new MedicalExaminer.Models.Examination()
-            {
-                ExaminationId = "examination3",
-                MedicalExaminerOfficeResponsible = "a",
-                ReadyForMEScrutiny = true,
-                CaseCompleted = false
-            };*/
 
             var examination4 = new MedicalExaminer.Models.Examination()
             {
@@ -294,7 +301,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 PendingAdmissionNotes = true
             };
 
-            return SetLocationCache(new[] { examination1, examination2, /*examination3,*/ examination4, examination5,
+            return SetLocationCache(new[] { examination1, examination2, examination4, examination5,
                            examination6, examination7, examination8, examination9, examination10,
                            examination11});
         }
@@ -303,7 +310,10 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             foreach (var examination in examinations)
             {
-                examination.SiteLocationId = "site1";
+                if (examination.SiteLocationId == null)
+                {
+                    examination.SiteLocationId = "site1";
+                }
             }
 
             return examinations;
@@ -311,7 +321,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
         private IEnumerable<string> PermissedLocations()
         {
-            return new[] { "site1" };
+            return new[] { "site1", "expectedLocation" };
         }
     }
 }

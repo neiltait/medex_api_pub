@@ -7,9 +7,10 @@ namespace MedicalExaminer.Models.Enums
 
     public enum ModeOfDisposal
     {
-        Cremation = 0,
-        Burial = 1,
-        BuriedAtSea = 2,
-        Repatriation = 3
+        Unknown = 0,
+        Cremation = 1,
+        Burial = 2,
+        BuriedAtSea = 3,
+        Repatriation = 4,
     }
 }

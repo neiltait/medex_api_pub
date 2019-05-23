@@ -141,7 +141,6 @@ namespace MedicalExaminer.Models
 
         public static Examination UpdateCaseStatus(this Examination examination)
         {
-
             examination.Unassigned = !(examination.MedicalTeam.MedicalExaminerOfficerUserId != null && examination.MedicalTeam.MedicalExaminerUserId != null);
             examination.PendingAdmissionNotes = CalculateAdmissionNotesPending(examination);
             examination.AdmissionNotesHaveBeenAdded = !examination.PendingAdmissionNotes;
@@ -149,45 +148,39 @@ namespace MedicalExaminer.Models
             examination.PendingDiscussionWithQAP = CalculatePendingQAPDiscussion(examination);
             examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
             examination.PendingScrutinyNotes = CalculateScrutinyNotesPending(examination);
-
-            examination.ScrutinyConfirmed = CalculateScrutinyComplete(examination);
+            examination.HaveFinalCaseOutcomesOutstanding = !examination.OutstandingCaseItemsCompleted;
             examination.CaseOutcome.CaseOutcomeSummary = CalculateScrutinyOutcome(examination);
-            
+
             return examination;
         }
 
-        private static bool CalculateScrutinyComplete(Examination examination)
+        public static bool CalculateCanCompleteScrutiny(this Examination examination)
         {
+            examination = examination.UpdateCaseStatus();
             if (examination.Unassigned)
             {
                 return false;
             }
 
-            if (examination.CaseBreakdown.PreScrutiny.Latest != null
-                && examination.AdmissionNotesHaveBeenAdded
-                && examination.PendingDiscussionWithQAP
-                && examination.PendingDiscussionWithRepresentative)
+            if (examination.PendingScrutinyNotes)
             {
                 return false;
             }
 
-            if (examination.CaseBreakdown.PreScrutiny.Latest != null
-                && examination.AdmissionNotesHaveBeenAdded
-                && !examination.PendingDiscussionWithQAP
-                && examination.HaveFinalCaseOutcomesOutstanding)
+            if (examination.PendingAdmissionNotes)
             {
                 return false;
             }
 
-            if (examination.CaseBreakdown.PreScrutiny.Latest != null
-                && examination.AdmissionNotesHaveBeenAdded
-                && !examination.PendingDiscussionWithQAP
-                && !examination.HaveFinalCaseOutcomesOutstanding)
+            if (examination.PendingDiscussionWithQAP)
             {
-                return true;
+                if (examination.PendingDiscussionWithRepresentative)
+                {
+                    return false;
+                }
             }
 
-            return false;
+            return true;
         }
 
         private static bool CalculatePendingDiscussionWithRepresentative(Examination examination)
@@ -198,7 +191,7 @@ namespace MedicalExaminer.Models
             }
             else
             {
-                if (examination.CaseBreakdown.AdmissionNotes.Latest != null && examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral)
+                if (examination.CaseBreakdown.AdmissionNotes.Latest != null && examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral.Value)
                 {
                     return false;
                 }
@@ -259,7 +252,7 @@ namespace MedicalExaminer.Models
             }
             else
             {
-                if (examination.CaseBreakdown.AdmissionNotes.Latest != null && examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral)
+                if (examination.CaseBreakdown.AdmissionNotes.Latest != null && examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral.Value)
                 {
                     return false;
                 }
@@ -294,7 +287,7 @@ namespace MedicalExaminer.Models
         {
             if (examination.CaseBreakdown.AdmissionNotes.Latest != null)
             {
-                if (examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral)
+                if (examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral.Value)
                 {
                     return true;
                 }

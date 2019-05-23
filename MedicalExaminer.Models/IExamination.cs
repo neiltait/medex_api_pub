@@ -74,7 +74,7 @@ namespace MedicalExaminer.Models
 
         CoronerStatus CoronerStatus { get; set; }
 
-        bool AnyImplants { get; set; }
+        bool? AnyImplants { get; set; }
 
         string ImplantDetails { get; set; }
 

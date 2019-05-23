@@ -9,11 +9,13 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Users full name
         /// </summary>
+        [JsonProperty(PropertyName = "user_full_name")]
         public string UserFullName { get; set; }
 
         /// <summary>
         /// Users Role
         /// </summary>
+        [JsonProperty(PropertyName = "users_role")]
         public string UsersRole { get; set; }
 
         /// <summary>
@@ -68,7 +70,13 @@ namespace MedicalExaminer.Models
         /// Date of Conversation.
         /// </summary>
         [JsonProperty(PropertyName = "date_of_conversation")]
-        public DateTime DateOfConversation { get; set; }
+        public DateTime? DateOfConversation { get; set; }
+
+        /// <summary>
+        /// time of Conversation.
+        /// </summary>
+        [JsonProperty(PropertyName = "time_of_conversation")]
+        public TimeSpan? TimeOfConversation { get; set; }
 
         /// <summary>
         /// Unable to happen.
