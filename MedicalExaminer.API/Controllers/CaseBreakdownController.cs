@@ -78,6 +78,11 @@ namespace MedicalExaminer.API.Controllers
                 return new NotFoundObjectResult(new GetCaseBreakdownResponse());
             }
 
+            if (!CanAsync(Permission.GetExamination, examination))
+            {
+                return Forbid();
+            }
+
             var result = Mapper.Map<CaseBreakDownItem>(examination.CaseBreakdown, opt => opt.Items["user"] = user);
 
             return Ok(new GetCaseBreakdownResponse
