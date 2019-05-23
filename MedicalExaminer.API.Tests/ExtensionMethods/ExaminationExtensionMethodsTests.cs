@@ -618,7 +618,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         public void PendingScrutinyNotes_MEScrutiny_False()
         {
             var examination = new Examination();
-            examination.CaseBreakdown.PreScrutiny.Latest = new PreScrutinyEventItem();
+            examination.CaseBreakdown.PreScrutiny.Latest = new PreScrutinyEvent();
             examination = examination.UpdateCaseStatus();
             Assert.False(examination.PendingScrutinyNotes);
         }
