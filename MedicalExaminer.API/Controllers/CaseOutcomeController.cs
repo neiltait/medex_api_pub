@@ -67,12 +67,7 @@ namespace MedicalExaminer.API.Controllers
             var user = await CurrentUser();
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
 
-<<<<<<< HEAD
-            if (!examination.HaveBeenScrutinisedByME || examination.PendingDiscussionWithQAP || 
-                examination.PendingDiscussionWithRepresentative || !examination.AdmissionNotesHaveBeenAdded)
-=======
             if (!examination.CalculateCanCompleteScrutiny())
->>>>>>> development
             {
                 return BadRequest();
             }
