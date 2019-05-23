@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using MedicalExaminer.API.Authorization.ExaminationContext;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Authorization;
-using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
@@ -43,7 +40,6 @@ namespace MedicalExaminer.API.Controllers
 
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncUpdateDocumentHandler _medicalTeamUpdateService;
-        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _usersRetrievalByEmailService;
 
         private readonly IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>
             _usersRetrievalByRoleLocationQueryService;
@@ -73,7 +69,6 @@ namespace MedicalExaminer.API.Controllers
             _examinationRetrievalService = examinationRetrievalService;
             _medicalTeamUpdateService = medicalTeamUpdateService;
             _usersRetrievalByRoleLocationQueryService = usersRetrievalByRoleLocationQueryService;
-            _usersRetrievalByEmailService = usersRetrievalByEmailService;
         }
 
         /// <summary>
@@ -103,7 +98,7 @@ namespace MedicalExaminer.API.Controllers
                 return Forbid();
             }
 
-            var getMedicalTeamResponse = examination?.MedicalTeam != null
+            var getMedicalTeamResponse = examination.MedicalTeam != null
                 ? Mapper.Map<GetMedicalTeamResponse>(examination)
                 : new GetMedicalTeamResponse
                 {
