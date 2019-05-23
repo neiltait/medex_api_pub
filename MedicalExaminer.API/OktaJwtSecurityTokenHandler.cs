@@ -42,7 +42,7 @@ namespace MedicalExaminer.API
         private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _usersRetrievalByEmailService;
 
         /// <summary>
-        /// Time in miutes before Okta token expires and has to be resubmitted to Okta
+        /// Time in minutes before Okta token expires and has to be resubmitted to Okta
         /// </summary>
         private readonly int _oktaTokenExpiryTime;
 
@@ -51,7 +51,17 @@ namespace MedicalExaminer.API
         /// </summary>
         /// <param name="tokenService">The Token Service.</param>
         /// <param name="tokenValidator">Token validator.</param>
-        public OktaJwtSecurityTokenHandler(ITokenService tokenService, ISecurityTokenValidator tokenValidator, IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService, IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser> userRetrieveOktaTokenService, IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService, int oktaTokenExpiryTime)
+        /// <param name="userUpdateOktaTokenService">User update okta token service.</param>
+        /// <param name="userRetrieveOktaTokenService">User retrieval okta token service.</param>
+        /// <param name="usersRetrievalByEmailService">Users retrieval by email service.</param>
+        /// <param name="oktaTokenExpiryTime">Okta token expiry time.</param>
+        public OktaJwtSecurityTokenHandler(
+            ITokenService tokenService,
+            ISecurityTokenValidator tokenValidator,
+            IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService,
+            IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser> userRetrieveOktaTokenService,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            int oktaTokenExpiryTime)
         {
             _tokenHandler = tokenValidator;
             _tokenService = tokenService;
@@ -68,7 +78,7 @@ namespace MedicalExaminer.API
         public int MaximumTokenSizeInBytes
         {
             get => TokenValidationParameters.DefaultMaximumTokenSizeInBytes;
-            set => throw new NotImplementedException();
+            set => throw new InvalidOperationException();
         }
 
         /// <inheritdoc />
@@ -83,14 +93,12 @@ namespace MedicalExaminer.API
             TokenValidationParameters validationParameters,
             out SecurityToken validatedToken)
         {
-            ClaimsPrincipal claimsPrincipal = null;
-
             var meUserWithToken = new MeUser
             {
                 OktaToken = securityToken
             };
 
-            //Attempt to retrieve user based on token. If it can be retrieved and token not expired then can bypass call to Okta
+            // Attempt to retrieve user based on token. If it can be retrieved and token not expired then can bypass call to Okta
             var result = _userRetrieveOktaTokenService.Handle(new UserRetrievalByOktaTokenQuery(meUserWithToken));
 
             MeUser meUserReturned = null;
@@ -98,7 +106,7 @@ namespace MedicalExaminer.API
             if (result?.Result != null)
                 meUserReturned = result.Result;
 
-            //Cannot find user by token or token has expired so go to Okta
+            // Cannot find user by token or token has expired so go to Okta
             if (meUserReturned == null || meUserReturned.OktaTokenExpiry < DateTimeOffset.Now)
             {
                 var response = _tokenService.IntrospectToken(securityToken, new HttpClient()).Result;
@@ -110,21 +118,25 @@ namespace MedicalExaminer.API
                 }
             }
 
-            //use tokenhandler to deserialize oken onto claimsprincipal. Note that the token carries an expiry internally
-            //If it has expired then we would expect SecurityTokenExpiredException to be thrown and authentication fails
-            claimsPrincipal = _tokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
+            // use _tokenhandler to deserialize token onto claimsprincipal. Note that the token carries an expiry internally
+            // If it has expired then we would expect SecurityTokenExpiredException to be thrown and authentication fails
+            var claimsPrincipal = _tokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
 
-            //Update user record with okta settings if not found originally or if token had expired
-            if ((meUserReturned == null || meUserReturned.OktaTokenExpiry < DateTimeOffset.Now) && claimsPrincipal != null)
+            // Update user record with okta settings if not found originally or if token had expired
+            if ((meUserReturned == null || meUserReturned.OktaTokenExpiry < DateTimeOffset.Now) &&
+                claimsPrincipal != null)
+            {
                 UpdateOktaTokenForUser(securityToken, claimsPrincipal);
+            }
 
             return claimsPrincipal;
         }
 
         /// <summary>
-        /// Update user's Okta token 
+        /// Update user's Okta token.
         /// </summary>
         /// <param name="oktaToken">Okta token</param>
+        /// <param name="claimsPrincipal">Claims principal.</param>
         /// <remarks>Attempts to find user DB record based on email address. If user is found then update oktea token</remarks>
         private void UpdateOktaTokenForUser(string oktaToken, ClaimsPrincipal claimsPrincipal)
         {
