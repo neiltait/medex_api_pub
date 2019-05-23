@@ -218,12 +218,10 @@ namespace MedicalExaminer.API.Controllers
         private async Task<IEnumerable<MeUser>> GetUsersForLocations(IEnumerable<string> locations)
         {
             var allUsers = new List<MeUser>();
-            List<MeUser> TempData = new List<MeUser>();
 
-            for (int counter = 0; counter < locations.Count(); counter = counter + 100)
+            for (var counter = 0; counter < locations.Count(); counter += 100)
             {
-                TempData = (await _usersRetrievalByRoleLocationQueryService.Handle(new UsersRetrievalByRoleLocationQuery(locations.Skip(counter).Take(100), null))).ToList();
-                allUsers.AddRange(TempData);
+                allUsers.AddRange((await _usersRetrievalByRoleLocationQueryService.Handle(new UsersRetrievalByRoleLocationQuery(locations.Skip(counter).Take(100), null))).ToList());
             }
 
             return allUsers;
