@@ -17,6 +17,7 @@ using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Azure.Documents;
 using Permission = MedicalExaminer.Common.Authorization.Permission;
 
@@ -216,9 +217,16 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>List of users.</returns>
         private async Task<IEnumerable<MeUser>> GetUsersForLocations(IEnumerable<string> locations)
         {
-            var users = await _usersRetrievalByRoleLocationQueryService.Handle(new UsersRetrievalByRoleLocationQuery(locations, null));
+            var allUsers = new List<MeUser>();
+            List<MeUser> TempData = new List<MeUser>();
 
-            return users;
+            for (int counter = 0; counter < locations.Count(); counter = counter + 100)
+            {
+                TempData = (await _usersRetrievalByRoleLocationQueryService.Handle(new UsersRetrievalByRoleLocationQuery(locations.Skip(counter).Take(100), null))).ToList();
+                allUsers.AddRange(TempData);
+            }
+
+            return allUsers;
         }
     }
 }
