@@ -43,7 +43,7 @@ namespace MedicalExaminer.API.Controllers
         /// <remarks>Adds model errors from the model state to the default error list in the base response.</remarks>
         /// <typeparam name="TResponse">The response type, must be a subclass of <see cref="ResponseBase" />.</typeparam>
         /// <param name="response">The response.</param>
-        /// <returns>A bad request object result with the resposne set as the object.</returns>
+        /// <returns>A bad request object result with the response set as the object.</returns>
         protected BadRequestObjectResult BadRequest<TResponse>(TResponse response)
             where TResponse : ResponseBase
         {
