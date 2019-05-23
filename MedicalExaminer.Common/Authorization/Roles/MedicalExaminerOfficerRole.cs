@@ -35,14 +35,10 @@ namespace MedicalExaminer.Common.Authorization.Roles
                 Permission.UpdateProfile,
                 Permission.GetProfilePermissions,
 
-                // TODO: Discuss which ones MEO has
-                Permission.BereavedDiscussionEvent,
                 Permission.MeoSummaryEvent,
-                Permission.QapDiscussionEvent,
                 Permission.OtherEvent,
                 Permission.AdmissionEvent,
-                Permission.MedicalHistoryEvent,
-                Permission.PreScrutinyEvent);
+                Permission.MedicalHistoryEvent);
         }
     }
 }
