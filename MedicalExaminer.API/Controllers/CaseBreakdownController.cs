@@ -205,6 +205,7 @@ namespace MedicalExaminer.API.Controllers
                 return NotFound(new PutCaseBreakdownEventResponse());
             }
 
+            // TODO: Create permission for each type of event and check that.
             if (!CanAsync(Permission.UpdateExamination, examination))
             {
                 return Forbid();
