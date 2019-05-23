@@ -17,7 +17,6 @@ using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Azure.Documents;
 using Permission = MedicalExaminer.Common.Authorization.Permission;
 
