@@ -151,8 +151,8 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest();
             }
 
-            var outstandingCaseItems = Mapper.Map<OutstandingCaseItems>(putOutstandingCaseItemsRequest);
-            await _saveOutstandingCaseItemsService.Handle(new SaveOutstandingCaseItemsQuery(examinationId, outstandingCaseItems, user));
+            var caseOutcome = Mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
+            await _saveOutstandingCaseItemsService.Handle(new SaveOutstandingCaseItemsQuery(examinationId, caseOutcome, user));
             return Ok();
         }
 

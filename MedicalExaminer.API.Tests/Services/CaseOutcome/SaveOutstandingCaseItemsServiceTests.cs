@@ -28,13 +28,13 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
                 ScrutinyConfirmed = false
             };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var outstandingCaseItems = new OutstandingCaseItems
+            var caseOutcome = new MedicalExaminer.Models.CaseOutcome
             {
                 MccdIssued = true,
                 CremationFormStatus = CremationFormStatus.No,
                 GpNotifiedStatus = GPNotified.GPNotified
             };
-            var query = new SaveOutstandingCaseItemsQuery(examinationId, outstandingCaseItems, new MeUser());
+            var query = new SaveOutstandingCaseItemsQuery(examinationId, caseOutcome, new MeUser());
             var dbAccess = new Mock<IDatabaseAccess>();
 
             dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
@@ -74,13 +74,13 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
                 ScrutinyConfirmed = true
             };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var outstandingCaseItems = new OutstandingCaseItems
+            var caseOutcome = new MedicalExaminer.Models.CaseOutcome
             {
                 MccdIssued = true,
                 CremationFormStatus = CremationFormStatus.No,
                 GpNotifiedStatus = GPNotified.GPNotified
             };
-            var query = new SaveOutstandingCaseItemsQuery(examinationId, outstandingCaseItems, new MeUser());
+            var query = new SaveOutstandingCaseItemsQuery(examinationId, caseOutcome, new MeUser());
             var dbAccess = new Mock<IDatabaseAccess>();
 
             dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,

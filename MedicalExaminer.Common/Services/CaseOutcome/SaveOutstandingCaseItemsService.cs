@@ -5,6 +5,7 @@ using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Common.Services.CaseOutcome
 {
@@ -23,9 +24,9 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
 
         public async Task<string> Handle(SaveOutstandingCaseItemsQuery param)
         {
-            if (string.IsNullOrEmpty(param.OutstandingCaseItems.ToString()))
+            if (string.IsNullOrEmpty(param.CaseOutcome.ToString()))
             {
-                throw new ArgumentNullException(nameof(param.OutstandingCaseItems.ToString));
+                throw new ArgumentNullException(nameof(param.CaseOutcome.ToString));
             }
 
             if (param.User == null)
@@ -47,8 +48,16 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
 
-            examinationToUpdate.CaseOutcome.OutstandingCaseItems = param.OutstandingCaseItems;
-            examinationToUpdate.OutstandingCaseItemsCompleted = true;
+            examinationToUpdate.CaseOutcome.MccdIssued = param.CaseOutcome.MccdIssued;
+            examinationToUpdate.CaseOutcome.CremationFormStatus = param.CaseOutcome.CremationFormStatus;
+            examinationToUpdate.CaseOutcome.GpNotifiedStatus = param.CaseOutcome.GpNotifiedStatus;
+
+            if ((examinationToUpdate.CaseOutcome.MccdIssued != null && examinationToUpdate.CaseOutcome.MccdIssued.Value)
+                && examinationToUpdate.CaseOutcome.CremationFormStatus == CremationFormStatus.Yes
+                && examinationToUpdate.CaseOutcome.GpNotifiedStatus == GPNotified.GPNotified)
+            {
+                examinationToUpdate.OutstandingCaseItemsCompleted = true;
+            }
 
             examinationToUpdate = examinationToUpdate.UpdateCaseUrgencyScore();
             examinationToUpdate = examinationToUpdate.UpdateCaseStatus();
