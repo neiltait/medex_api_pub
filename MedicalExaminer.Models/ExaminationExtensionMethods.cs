@@ -145,6 +145,7 @@ namespace MedicalExaminer.Models
             examination.PendingAdmissionNotes = CalculateAdmissionNotesPending(examination);
             examination.AdmissionNotesHaveBeenAdded = !examination.PendingAdmissionNotes;
             examination.ReadyForMEScrutiny = CalculateReadyForScrutiny(examination);
+            examination.HaveBeenScrutinisedByME = examination.ScrutinyConfirmed;
             examination.PendingDiscussionWithQAP = CalculatePendingQAPDiscussion(examination);
             examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
             examination.PendingScrutinyNotes = CalculateScrutinyNotesPending(examination);
@@ -157,6 +158,12 @@ namespace MedicalExaminer.Models
         public static bool CalculateCanCompleteScrutiny(this Examination examination)
         {
             examination = examination.UpdateCaseStatus();
+
+            if (!examination.ReadyForMEScrutiny)
+            {
+                return false;
+            }
+
             if (examination.Unassigned)
             {
                 return false;

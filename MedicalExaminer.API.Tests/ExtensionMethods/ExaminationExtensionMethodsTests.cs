@@ -867,6 +867,19 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             UserFullName = "usersFullName"
                         }
                     },
+                    MeoSummary = new MeoSummaryEventContainer
+                    {
+                        Latest = new MeoSummaryEvent
+                        {
+                            UserFullName = "UserFullName",
+                            UsersRole = "UsersRole",
+                            EventId = "EventId",
+                            UserId = "UserId",
+                            IsFinal = true,
+                            SummaryDetails = null,
+                            Created = DateTime.Now
+                        }
+                    },
                     QapDiscussion = new QapDiscussionEventContainer()
                     {
                         Latest = new QapDiscussionEvent()
@@ -969,6 +982,19 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             UserId = "userId",
                             UsersRole = "usersRole",
                             UserFullName = "usersFullName"
+                        }
+                    },
+                    MeoSummary = new MeoSummaryEventContainer
+                    {
+                        Latest = new MeoSummaryEvent
+                        {
+                            UserFullName = "UserFullName",
+                            UsersRole = "UsersRole",
+                            EventId = "EventId",
+                            UserId = "UserId",
+                            IsFinal = true,
+                            SummaryDetails = null,
+                            Created = DateTime.Now
                         }
                     },
                     QapDiscussion = new QapDiscussionEventContainer()
@@ -1084,6 +1110,19 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             UserFullName = "usersFullName"
                         }
                     },
+                    MeoSummary = new MeoSummaryEventContainer
+                    {
+                        Latest = new MeoSummaryEvent
+                        {
+                            UserFullName = "UserFullName",
+                            UsersRole = "UsersRole",
+                            EventId = "EventId",
+                            UserId = "UserId",
+                            IsFinal = true,
+                            SummaryDetails = null,
+                            Created = DateTime.Now
+                        }
+                    },
                     QapDiscussion = new QapDiscussionEventContainer()
                     {
                         Latest = new QapDiscussionEvent()
@@ -1175,6 +1214,19 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             UserFullName = "usersFullName"
                         }
                     },
+                    MeoSummary = new MeoSummaryEventContainer
+                    {
+                        Latest = new MeoSummaryEvent
+                        {
+                            UserFullName = "UserFullName",
+                            UsersRole = "UsersRole",
+                            EventId = "EventId",
+                            UserId = "UserId",
+                            IsFinal = true,
+                            SummaryDetails = null,
+                            Created = DateTime.Now
+                        }
+                    },
                     BereavedDiscussion = new BereavedDiscussionEventContainer()
                     {
                         Latest = new BereavedDiscussionEvent()
@@ -1245,6 +1297,19 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             UserFullName = "UserFullName",
                             UserId = "userId",
                             UsersRole = "UsersRole"
+                        }
+                    },
+                    MeoSummary = new MeoSummaryEventContainer
+                    {
+                        Latest = new MeoSummaryEvent
+                        {
+                            UserFullName = "UserFullName",
+                            UsersRole = "UsersRole",
+                            EventId = "EventId",
+                            UserId = "UserId",
+                            IsFinal = true,
+                            SummaryDetails = null,
+                            Created = DateTime.Now
                         }
                     },
                     QapDiscussion = new QapDiscussionEventContainer()
@@ -1323,6 +1388,123 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 },
                 CaseBreakdown = new CaseBreakDown()
                 {
+                    AdmissionNotes = new AdmissionNotesEventContainer()
+                    {
+                        Latest = new AdmissionEvent()
+                        {
+                            AdmittedDate = DateTime.Now,
+                            AdmittedTime = new TimeSpan(12, 12, 12),
+                            Created = DateTime.Now,
+                            EventId = "2",
+                            ImmediateCoronerReferral = false,
+                            IsFinal = true,
+                            Notes = "Notes",
+                            UserId = "userId",
+                            UsersRole = "usersRole",
+                            UserFullName = "usersFullName"
+                        }
+                    },
+                    MeoSummary = new MeoSummaryEventContainer
+                    {
+                        Latest = new MeoSummaryEvent
+                        {
+                            UserFullName = "UserFullName",
+                            UsersRole = "UsersRole",
+                            EventId = "EventId",
+                            UserId = "UserId",
+                            IsFinal = true,
+                            SummaryDetails = null,
+                            Created = DateTime.Now
+                        }
+                    },
+                    QapDiscussion = new QapDiscussionEventContainer()
+                    {
+                        Latest = new QapDiscussionEvent()
+                        {
+                            CauseOfDeath1a = "CauseOfDeath1a",
+                            CauseOfDeath1b = "CauseOfDeath1b",
+                            CauseOfDeath1c = "CauseOfDeath1c",
+                            CauseOfDeath2 = "CauseOfDeath2",
+                            DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(10, 00, 00),
+                            DiscussionDetails = "Discussion Details",
+                            DiscussionUnableHappen = false,
+                            ParticipantName = "ParticipantName",
+                            ParticipantOrganisation = "ParticipantOrganisation",
+                            ParticipantPhoneNumber = "ParticipantPhoneNumber",
+                            ParticipantRole = "ParticipantRole",
+                            EventId = "3",
+                            IsFinal = true,
+                            Created = DateTime.Now,
+                            QapDiscussionOutcome = MedicalExaminer.Models.Enums.QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                            UserFullName = "user full name",
+                            UserId = "userId",
+                            UsersRole = "user role"
+                        }
+                    },
+                    BereavedDiscussion = new BereavedDiscussionEventContainer()
+                    {
+                        Latest = new BereavedDiscussionEvent()
+                        {
+                            BereavedDiscussionOutcome = MedicalExaminer.Models.Enums.BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                            Created = DateTime.Now,
+                            DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(10, 00, 00),
+                            DiscussionDetails = "Discussion details",
+                            DiscussionUnableHappen = false,
+                            EventId = "4",
+                            InformedAtDeath = MedicalExaminer.Models.Enums.InformedAtDeath.Yes,
+                            IsFinal = true,
+                            UserId = "userId",
+                            UserFullName = "user full name",
+                            UsersRole = "users role",
+                            ParticipantFullName = "ParticipantFullName",
+                            ParticipantPhoneNumber = "ParticipantPhoneNumber",
+                            ParticipantRelationship = "ParticipantRelationship",
+                            PresentAtDeath = MedicalExaminer.Models.Enums.PresentAtDeath.No
+                        }
+                    }
+                }
+            };
+
+            examination = examination.UpdateCaseStatus();
+
+            Assert.False(examination.CalculateCanCompleteScrutiny());
+        }
+
+        [Fact]
+        private void CalculateScrutinyCanBeConfirmed_NoMEOSummary_Returns_False()
+        {
+            var examination = new Examination()
+            {
+                MedicalTeam = new MedicalTeam()
+                {
+                    MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId",
+                    MedicalExaminerUserId = "MedicalExaminerUserId",
+                },
+                CaseBreakdown = new CaseBreakDown()
+                {
+                    PreScrutiny = new PreScrutinyEventContainer()
+                    {
+                        Latest = new PreScrutinyEvent()
+                        {
+                            CauseOfDeath1a = "CauseOfDeath1a",
+                            CauseOfDeath1b = "CauseOfDeath1b",
+                            CauseOfDeath1c = "CauseOfDeath1c",
+                            CauseOfDeath2 = "CauseOfDeath2",
+                            CircumstancesOfDeath = MedicalExaminer.Models.Enums.OverallCircumstancesOfDeath.Expected,
+                            ClinicalGovernanceReview = MedicalExaminer.Models.Enums.ClinicalGovernanceReview.No,
+                            ClinicalGovernanceReviewText = "ClinicalGovernanceReviewText",
+                            Created = DateTime.Now,
+                            EventId = "1",
+                            IsFinal = true,
+                            MedicalExaminerThoughts = "MedicalExaminerThoughts",
+                            OutcomeOfPreScrutiny = MedicalExaminer.Models.Enums.OverallOutcomeOfPreScrutiny.IssueAnMccd,
+                            UserFullName = "UserFullName",
+                            UserId = "userId",
+                            UsersRole = "UsersRole"
+                        }
+                    },
                     AdmissionNotes = new AdmissionNotesEventContainer()
                     {
                         Latest = new AdmissionEvent()
