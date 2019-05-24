@@ -1,0 +1,99 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2016
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{03BE65AC-3442-48F9-9C0A-857D428FDD2A}"
+	ProjectSection(SolutionItems) = preProject
+		Analyzers\Analyzers.ruleset = Analyzers\Analyzers.ruleset
+		azure-pipelines.yml = azure-pipelines.yml
+		README.md = README.md
+		Analyzers\stylecop.json = Analyzers\stylecop.json
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.Models", "MedicalExaminer.Models\MedicalExaminer.Models.csproj", "{27D7A04D-333C-4167-8302-5B4E85951E7B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.Common", "MedicalExaminer.Common\MedicalExaminer.Common.csproj", "{3B616225-3238-4052-A052-2496BF471116}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.API", "MedicalExaminer.API\MedicalExaminer.API.csproj", "{E6E003D0-C32B-4443-87D1-364688A4FC4D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.API.Tests", "MedicalExaminer.API.Tests\MedicalExaminer.API.Tests.csproj", "{2A14EDD9-B416-45EE-B6F0-46084CEC9F16}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.ReferenceDataLoader", "MedicalExaminer.ReferenceDataLoader\MedicalExaminer.ReferenceDataLoader.csproj", "{759CEDF6-1FC0-4055-970B-ED32AFC39669}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminers.ReferenceDataLoader.Tests", "MedicalExaminers.ReferenceDataLoader.Tests\MedicalExaminers.ReferenceDataLoader.Tests.csproj", "{5275B933-602B-4B71-B63B-B8505AF6F3E7}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{69F0E2A7-E0AD-4F6F-804C-180F76B29E31}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.Common.Tests", "MedicalExaminer.Common.Tests\MedicalExaminer.Common.Tests.csproj", "{A4AA0B98-3460-442A-8D09-56E026FE1AC6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.ToolBox.Common", "MedicalExaminer.ToolBox.Common\MedicalExaminer.ToolBox.Common.csproj", "{1081E6E5-9668-4C8E-932B-B265003CBD17}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.ToolBox.MVC", "MedicalExaminer.ToolBox.MVC\MedicalExaminer.ToolBox.MVC.csproj", "{049CD8D2-49BB-4917-8D84-5E49DDF1C93F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedicalExaminer.BackgroundServices", "MedicalExaminer.BackgroundServices\MedicalExaminer.BackgroundServices.csproj", "{F63ED94B-7122-4B02-85D7-F4AA59061DBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedicalExaminer.BackgroundServices.Tests", "MedicalExaminer.BackgroundServices.Tests\MedicalExaminer.BackgroundServices.Tests.csproj", "{9FB0BDE0-3713-41E3-BFF3-4B31067F0A2D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{27D7A04D-333C-4167-8302-5B4E85951E7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27D7A04D-333C-4167-8302-5B4E85951E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27D7A04D-333C-4167-8302-5B4E85951E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27D7A04D-333C-4167-8302-5B4E85951E7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B616225-3238-4052-A052-2496BF471116}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B616225-3238-4052-A052-2496BF471116}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B616225-3238-4052-A052-2496BF471116}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B616225-3238-4052-A052-2496BF471116}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6E003D0-C32B-4443-87D1-364688A4FC4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6E003D0-C32B-4443-87D1-364688A4FC4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6E003D0-C32B-4443-87D1-364688A4FC4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6E003D0-C32B-4443-87D1-364688A4FC4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A14EDD9-B416-45EE-B6F0-46084CEC9F16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A14EDD9-B416-45EE-B6F0-46084CEC9F16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A14EDD9-B416-45EE-B6F0-46084CEC9F16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A14EDD9-B416-45EE-B6F0-46084CEC9F16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{759CEDF6-1FC0-4055-970B-ED32AFC39669}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{759CEDF6-1FC0-4055-970B-ED32AFC39669}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{759CEDF6-1FC0-4055-970B-ED32AFC39669}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{759CEDF6-1FC0-4055-970B-ED32AFC39669}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5275B933-602B-4B71-B63B-B8505AF6F3E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5275B933-602B-4B71-B63B-B8505AF6F3E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5275B933-602B-4B71-B63B-B8505AF6F3E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5275B933-602B-4B71-B63B-B8505AF6F3E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69F0E2A7-E0AD-4F6F-804C-180F76B29E31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69F0E2A7-E0AD-4F6F-804C-180F76B29E31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69F0E2A7-E0AD-4F6F-804C-180F76B29E31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69F0E2A7-E0AD-4F6F-804C-180F76B29E31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4AA0B98-3460-442A-8D09-56E026FE1AC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4AA0B98-3460-442A-8D09-56E026FE1AC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4AA0B98-3460-442A-8D09-56E026FE1AC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4AA0B98-3460-442A-8D09-56E026FE1AC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1081E6E5-9668-4C8E-932B-B265003CBD17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1081E6E5-9668-4C8E-932B-B265003CBD17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1081E6E5-9668-4C8E-932B-B265003CBD17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1081E6E5-9668-4C8E-932B-B265003CBD17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{049CD8D2-49BB-4917-8D84-5E49DDF1C93F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{049CD8D2-49BB-4917-8D84-5E49DDF1C93F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{049CD8D2-49BB-4917-8D84-5E49DDF1C93F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{049CD8D2-49BB-4917-8D84-5E49DDF1C93F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F63ED94B-7122-4B02-85D7-F4AA59061DBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F63ED94B-7122-4B02-85D7-F4AA59061DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F63ED94B-7122-4B02-85D7-F4AA59061DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F63ED94B-7122-4B02-85D7-F4AA59061DBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FB0BDE0-3713-41E3-BFF3-4B31067F0A2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FB0BDE0-3713-41E3-BFF3-4B31067F0A2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FB0BDE0-3713-41E3-BFF3-4B31067F0A2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FB0BDE0-3713-41E3-BFF3-4B31067F0A2D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A0BDC707-75A0-4303-9480-6DE12D31358A}
+	EndGlobalSection
+EndGlobal
