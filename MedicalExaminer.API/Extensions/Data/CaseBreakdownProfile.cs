@@ -11,6 +11,7 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<CaseBreakDown, CaseBreakDownItem>()
             .ForMember(caseBreakDownItem => caseBreakDownItem.PatientDeathEvent, cbd => cbd.MapFrom(caseBreakDown => caseBreakDown.DeathEvent))
+            .ForMember(caseBreakDownItem => caseBreakDownItem.CaseClosed, cbd => cbd.MapFrom(caseBreakDown => caseBreakDown.CaseClosedEvent))
             .ForMember(caseBreakDownItem => caseBreakDownItem.OtherEvents, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
                 return EventContainerMapping(source.OtherEvents, context);

@@ -11,5 +11,5 @@ namespace MedicalExaminer.Models
         IList<TEvent> Drafts { get; set; }
 
         IList<TEvent> History { get; set; }
-    }    
+    }
 }
