@@ -786,7 +786,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await Controller.CreatePermission(expectedUserId, new PostPermissionRequest()
             {
                 LocationId = expectedSiteId,
-                //UserId = expectedUserId,
                 UserRole = expectedRole,
             });
 
@@ -870,7 +869,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await Controller.CreatePermission(expectedUserId, new PostPermissionRequest()
             {
                 LocationId = expectedSiteId,
-                //UserId = expectedUserId,
                 UserRole = expectedRole,
             });
 
@@ -973,7 +971,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var response = await Controller.CreatePermission(expectedUserId, new PostPermissionRequest()
             {
                 LocationId = expectedSiteId,
-                //UserId = expectedUserId,
                 UserRole = expectedRole,
             });
 
@@ -1131,7 +1128,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             {
                 PermissionId = expectedPermissionId,
                 LocationId = expectedSiteId,
-                //UserId = expectedUserId,
                 UserRole = expectedRole,
             });
 
@@ -1265,7 +1261,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             {
                 PermissionId = expectedPermissionId,
                 LocationId = expectedSiteId,
-                //UserId = expectedUserId,
                 UserRole = expectedRole,
             });
 
@@ -1355,7 +1350,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             {
                 PermissionId = expectedPermissionId,
                 LocationId = expectedSiteId,
-                //UserId = expectedUserId,
                 UserRole = expectedRole,
             });
 

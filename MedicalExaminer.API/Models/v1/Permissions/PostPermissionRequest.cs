@@ -8,14 +8,8 @@ namespace MedicalExaminer.API.Models.v1.Permissions
     /// <summary>
     ///     Post Permission Request.
     /// </summary>
-    public class PostPermissionRequest : IUserRequest
+    public class PostPermissionRequest
     {
-        /// <summary>
-        ///     Gets or sets the User identifier.
-        /// </summary>
-        //[Required]
-        //public string UserId { get; set; }
-
         /// <summary>
         ///     Gets or sets the location ID.
         /// </summary>
