@@ -23,6 +23,8 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
 
         public string CaseMedicalExaminerFullName { get; set; }
 
+        public string CaseMedicalExaminerId { get; set; }
+
         public bool? MccdIssued { get; set; }
 
         public CremationFormStatus? CremationFormStatus { get; set; }

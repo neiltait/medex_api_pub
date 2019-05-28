@@ -622,6 +622,23 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
+        public void NewExamination_PendingScrutinyNotes_True()
+        {
+            var examination = new Examination();
+            examination = examination.UpdateCaseStatus();
+            Assert.True(examination.PendingScrutinyNotes);
+        }
+
+        [Fact]
+        public void PendingScrutinyNotes_MEScrutiny_False()
+        {
+            var examination = new Examination();
+            examination.CaseBreakdown.PreScrutiny.Latest = new PreScrutinyEvent();
+            examination = examination.UpdateCaseStatus();
+            Assert.False(examination.PendingScrutinyNotes);
+        }
+
+        [Fact]
         public void NewExamination_ScrutinyComplete_False()
         {
             var examination = new Examination();
@@ -801,6 +818,15 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 {
                     MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId",
                     MedicalExaminerUserId = "MedicalExaminerUserId",
+                    ConsultantResponsible = new ClinicalProfessional
+                    {
+                        Name = "Name",
+                        Role = "Role",
+                        Organisation = "Organisation",
+                        Phone = "011249837843",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber"
+                    }
                 },
                 CaseBreakdown = new CaseBreakDown()
                 {
@@ -917,7 +943,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 MedicalTeam = new MedicalTeam()
                 {
                     MedicalExaminerOfficerUserId = null,
-                    MedicalExaminerUserId = null,
+                    MedicalExaminerUserId = null
                 },
                 CaseBreakdown = new CaseBreakDown()
                 {
@@ -1035,6 +1061,15 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 {
                     MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId",
                     MedicalExaminerUserId = "MedicalExaminerUserId",
+                    ConsultantResponsible = new ClinicalProfessional
+                    {
+                        Name = "Name",
+                        Role = "Role",
+                        Organisation = "Organisation",
+                        Phone = "011249837843",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber"
+                    }
                 },
                 CaseBreakdown = new CaseBreakDown()
                 {
@@ -1130,6 +1165,15 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 {
                     MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId",
                     MedicalExaminerUserId = "MedicalExaminerUserId",
+                    ConsultantResponsible = new ClinicalProfessional
+                    {
+                        Name = "Name",
+                        Role = "Role",
+                        Organisation = "Organisation",
+                        Phone = "011249837843",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber"
+                    }
                 },
                 CaseBreakdown = new CaseBreakDown()
                 {
@@ -1222,6 +1266,15 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 {
                     MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId",
                     MedicalExaminerUserId = "MedicalExaminerUserId",
+                    ConsultantResponsible = new ClinicalProfessional
+                    {
+                        Name = "Name",
+                        Role = "Role",
+                        Organisation = "Organisation",
+                        Phone = "011249837843",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber"
+                    }
                 },
                 CaseBreakdown = new CaseBreakDown()
                 {
@@ -1323,6 +1376,15 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 {
                     MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId",
                     MedicalExaminerUserId = "MedicalExaminerUserId",
+                    ConsultantResponsible = new ClinicalProfessional
+                    {
+                        Name = "Name",
+                        Role = "Role",
+                        Organisation = "Organisation",
+                        Phone = "011249837843",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber"
+                    }
                 },
                 CaseBreakdown = new CaseBreakDown()
                 {

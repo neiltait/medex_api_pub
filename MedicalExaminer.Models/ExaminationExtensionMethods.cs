@@ -148,6 +148,7 @@ namespace MedicalExaminer.Models
             examination.HaveBeenScrutinisedByME = examination.ScrutinyConfirmed;
             examination.PendingDiscussionWithQAP = CalculatePendingQAPDiscussion(examination);
             examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
+            examination.PendingScrutinyNotes = CalculateScrutinyNotesPending(examination);
             examination.HaveFinalCaseOutcomesOutstanding = !examination.OutstandingCaseItemsCompleted;
             examination.CaseOutcome.CaseOutcomeSummary = CalculateScrutinyOutcome(examination);
 
@@ -168,12 +169,12 @@ namespace MedicalExaminer.Models
                 return false;
             }
 
-            if (examination.CaseBreakdown.PreScrutiny.Latest == null)
+            if (examination.PendingScrutinyNotes)
             {
                 return false;
             }
 
-            if (examination.CaseBreakdown.AdmissionNotes.Latest == null)
+            if (examination.PendingAdmissionNotes)
             {
                 return false;
             }
@@ -305,6 +306,16 @@ namespace MedicalExaminer.Models
             }
 
             return false;
+        }
+
+        private static bool CalculateScrutinyNotesPending(Examination examination)
+        {
+            if (examination.CaseBreakdown.PreScrutiny.Latest != null)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

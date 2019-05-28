@@ -34,6 +34,7 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<Examination, GetCaseOutcomeResponse>()
                 .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
                 .ForMember(response => response.CaseMedicalExaminerFullName, opt => opt.MapFrom(new MedicalExaminerFullNameResolver()))
+                .ForMember(response => response.CaseMedicalExaminerId, opt => opt.MapFrom(new MedicalExaminerIdResolver()))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore())
                 .ForMember(response => response.CaseCompleted, opt => opt.MapFrom(examination => examination.CaseCompleted))
@@ -112,6 +113,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.PendingAdmissionNotes, opt => opt.Ignore())
                 .ForMember(examination => examination.PendingDiscussionWithQAP, opt => opt.Ignore())
                 .ForMember(examination => examination.PendingDiscussionWithRepresentative, opt => opt.Ignore())
+                .ForMember(examination => examination.PendingScrutinyNotes, opt => opt.Ignore())
                 .ForMember(examination => examination.HaveFinalCaseOutcomesOutstanding, opt => opt.Ignore())
                 .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
                 .ForMember(examination => examination.LastModifiedBy, opt => opt.Ignore())
@@ -194,6 +196,14 @@ namespace MedicalExaminer.API.Extensions.Data
         public string Resolve(Examination source, GetCaseOutcomeResponse destination, string destMember, ResolutionContext context)
         {
             return source.MedicalTeam.MedicalExaminerFullName;
+        }
+    }
+
+    internal class MedicalExaminerIdResolver : IValueResolver<Examination, GetCaseOutcomeResponse, string>
+    {
+        public string Resolve(Examination source, GetCaseOutcomeResponse destination, string destMember, ResolutionContext context)
+        {
+            return source.MedicalTeam.MedicalExaminerUserId;
         }
     }
 
