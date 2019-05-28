@@ -783,10 +783,10 @@ namespace MedicalExaminer.API.Tests.Controllers
                 }));
 
             // Act
-            var response = await Controller.CreatePermission(new PostPermissionRequest()
+            var response = await Controller.CreatePermission(expectedUserId, new PostPermissionRequest()
             {
                 LocationId = expectedSiteId,
-                UserId = expectedUserId,
+                //UserId = expectedUserId,
                 UserRole = expectedRole,
             });
 
@@ -867,10 +867,10 @@ namespace MedicalExaminer.API.Tests.Controllers
                 }));
 
             // Act
-            var response = await Controller.CreatePermission(new PostPermissionRequest()
+            var response = await Controller.CreatePermission(expectedUserId, new PostPermissionRequest()
             {
                 LocationId = expectedSiteId,
-                UserId = expectedUserId,
+                //UserId = expectedUserId,
                 UserRole = expectedRole,
             });
 
@@ -970,10 +970,10 @@ namespace MedicalExaminer.API.Tests.Controllers
                 }));
 
             // Act
-            var response = await Controller.CreatePermission(new PostPermissionRequest()
+            var response = await Controller.CreatePermission(expectedUserId, new PostPermissionRequest()
             {
                 LocationId = expectedSiteId,
-                UserId = expectedUserId,
+                //UserId = expectedUserId,
                 UserRole = expectedRole,
             });
 
@@ -988,7 +988,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller.ModelState.AddModelError("test", "test");
 
             // Act
-            var response = await Controller.CreatePermission(new PostPermissionRequest());
+            var response = await Controller.CreatePermission(string.Empty, new PostPermissionRequest());
 
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
@@ -1008,7 +1008,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Throws<ArgumentException>();
 
             // Act
-            var response = await Controller.CreatePermission(new PostPermissionRequest());
+            var response = await Controller.CreatePermission(string.Empty, new PostPermissionRequest());
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -1030,7 +1030,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Throws(CreateDocumentClientExceptionForTesting());
 
             // Act
-            var response = await Controller.CreatePermission(new PostPermissionRequest());
+            var response = await Controller.CreatePermission(string.Empty, new PostPermissionRequest());
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -1127,11 +1127,11 @@ namespace MedicalExaminer.API.Tests.Controllers
                 }));
 
             // Act
-            var response = await Controller.UpdatePermission(new PutPermissionRequest()
+            var response = await Controller.UpdatePermission(expectedUserId, new PutPermissionRequest()
             {
                 PermissionId = expectedPermissionId,
                 LocationId = expectedSiteId,
-                UserId = expectedUserId,
+                //UserId = expectedUserId,
                 UserRole = expectedRole,
             });
 
@@ -1233,11 +1233,11 @@ namespace MedicalExaminer.API.Tests.Controllers
                 }));
 
             // Act
-            var response = await Controller.UpdatePermission(new PutPermissionRequest()
+            var response = await Controller.UpdatePermission(expectedUserId, new PutPermissionRequest()
             {
                 PermissionId = expectedPermissionId,
                 LocationId = expectedSiteId,
-                UserId = expectedUserId,
+               // UserId = expectedUserId,
                 UserRole = expectedRole,
             });
 
@@ -1262,11 +1262,11 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(expectedUser));
 
             // Act
-            var response = await Controller.UpdatePermission(new PutPermissionRequest()
+            var response = await Controller.UpdatePermission(expectedUserId, new PutPermissionRequest()
             {
                 PermissionId = expectedPermissionId,
                 LocationId = expectedSiteId,
-                UserId = expectedUserId,
+                //UserId = expectedUserId,
                 UserRole = expectedRole,
             });
 
@@ -1352,11 +1352,11 @@ namespace MedicalExaminer.API.Tests.Controllers
                 }));
 
             // Act
-            var response = await Controller.UpdatePermission(new PutPermissionRequest()
+            var response = await Controller.UpdatePermission(expectedUserId, new PutPermissionRequest()
             {
                 PermissionId = expectedPermissionId,
                 LocationId = expectedSiteId,
-                UserId = expectedUserId,
+                //UserId = expectedUserId,
                 UserRole = expectedRole,
             });
 
@@ -1371,7 +1371,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller.ModelState.AddModelError("test", "test");
 
             // Act
-            var response = await Controller.UpdatePermission(new PutPermissionRequest());
+            var response = await Controller.UpdatePermission(string.Empty, new PutPermissionRequest());
 
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
@@ -1391,7 +1391,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Throws<ArgumentException>();
 
             // Act
-            var response = await Controller.UpdatePermission(new PutPermissionRequest());
+            var response = await Controller.UpdatePermission(string.Empty, new PutPermissionRequest());
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -1413,7 +1413,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Throws(CreateDocumentClientExceptionForTesting());
 
             // Act
-            var response = await Controller.UpdatePermission(new PutPermissionRequest());
+            var response = await Controller.UpdatePermission(string.Empty, new PutPermissionRequest());
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();

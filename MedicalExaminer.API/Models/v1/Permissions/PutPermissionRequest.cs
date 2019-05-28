@@ -16,7 +16,7 @@ namespace MedicalExaminer.API.Models.v1.Permissions
         /// <summary>
         ///     Gets or sets the User identifier.
         /// </summary>
-        public string UserId { get; set; }
+       // public string UserId { get; set; }
 
         /// <summary>
         ///     Gets or sets the location ID.

@@ -193,7 +193,7 @@ namespace MedicalExaminer.API.Controllers
         [HttpPost]
         [AuthorizePermission(Common.Authorization.Permission.CreateUserPermission)]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PostPermissionResponse>> CreatePermission(
+        public async Task<ActionResult<PostPermissionResponse>> CreatePermission(string meUserId,
             [FromBody]
             PostPermissionRequest postPermission)
         {
@@ -219,7 +219,7 @@ namespace MedicalExaminer.API.Controllers
 
                 var currentUser = await CurrentUser();
 
-                var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(postPermission.UserId));
+                var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
 
                 if (user == null)
                 {
@@ -228,15 +228,29 @@ namespace MedicalExaminer.API.Controllers
 
                 var existingPermissions = user.Permissions != null ? user.Permissions.ToList() : new List<MEUserPermission>();
 
-                existingPermissions.Add(permission);
+                var possiblePermission = existingPermissions.SingleOrDefault(ep => ep.LocationId == postPermission.LocationId
+                && ep.UserRole == postPermission.UserRole);
+                PostPermissionResponse result = null;
+                if (possiblePermission == null)
+                {
+                    existingPermissions.Add(permission);
 
-                user.Permissions = existingPermissions;
+                    user.Permissions = existingPermissions;
 
-                await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
-
-                return Ok(Mapper.Map<MEUserPermission, PostPermissionResponse>(
+                    await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
+                    result = Mapper.Map<MEUserPermission, PostPermissionResponse>(
                     permission,
-                    opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; })));
+                    opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; }));
+
+                }
+                else
+                {
+                    result = Mapper.Map<MEUserPermission, PostPermissionResponse>(
+                    possiblePermission,
+                    opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; }));
+                }
+
+                return Ok(result);
             }
             catch (DocumentClientException)
             {
@@ -256,7 +270,7 @@ namespace MedicalExaminer.API.Controllers
         [HttpPut("{permissionId}")]
         [AuthorizePermission(Common.Authorization.Permission.UpdateUserPermission)]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(
+        public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(string meUserId,
             [FromBody]
             PutPermissionRequest putPermission)
         {
@@ -269,7 +283,7 @@ namespace MedicalExaminer.API.Controllers
 
                 var currentUser = await CurrentUser();
 
-                var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(putPermission.UserId));
+                var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
 
                 if (user == null)
                 {

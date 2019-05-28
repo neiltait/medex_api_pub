@@ -13,6 +13,6 @@ namespace MedicalExaminer.API.Models.v1
         /// <summary>
         /// User Identifier.
         /// </summary>
-        string UserId { get; set; }
+       // string UserId { get; set; }
     }
 }
