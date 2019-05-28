@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using MedicalExaminer.API.Models.v1;
@@ -46,14 +47,23 @@ namespace MedicalExaminer.API.Attributes
             var userIdValue = (string)type.GetProperty(UserIdField).GetValue(instance, null);
 
             var existingPermissions = uerRetrievalByIdService.Handle(new UserRetrievalByIdQuery(userIdValue)).Result;
-
-            if (IsTargetRole(role))
+            if (existingPermissions != null)
             {
-                if (existingPermissions != null && existingPermissions.Permissions.Any(p => IsTargetRole((UserRoles)p.UserRole)))
+                if (IsTargetRole(role))
                 {
-                    var permission = existingPermissions.Permissions.First(p => IsTargetRole((UserRoles)p.UserRole));
+                    if (existingPermissions.Permissions == null)
+                    {
+                        existingPermissions.Permissions = new List<MEUserPermission>();
+                    }
 
-                    return new ValidationResult($"Cannot add Role `{role}`, user is already `{(UserRoles)permission.UserRole}` elsewhere in the system.");
+                    if (existingPermissions.Permissions.Any(p => IsTargetRole((UserRoles) p.UserRole)))
+                    {
+                        var permission =
+                            existingPermissions.Permissions.First(p => IsTargetRole((UserRoles) p.UserRole));
+
+                        return new ValidationResult(
+                            $"Cannot add Role `{role}`, user is already `{(UserRoles) permission.UserRole}` elsewhere in the system.");
+                    }
                 }
             }
 
