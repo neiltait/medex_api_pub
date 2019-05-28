@@ -26,7 +26,6 @@ namespace MedicalExaminer.API.Models.v1.Permissions
         /// <summary>
         ///     Gets or sets the User Role for the Permission.
         /// </summary>
-        [ValidRolePerUser(nameof(UserId))]
         public UserRoles UserRole { get; set; }
     }
 }
