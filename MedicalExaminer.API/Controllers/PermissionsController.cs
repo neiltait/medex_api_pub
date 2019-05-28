@@ -270,7 +270,9 @@ namespace MedicalExaminer.API.Controllers
         [HttpPut("{permissionId}")]
         [AuthorizePermission(Common.Authorization.Permission.UpdateUserPermission)]
         [ServiceFilter(typeof(ControllerActionFilter))]
-        public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(string meUserId,
+        public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(
+            string meUserId, 
+            string permissionId,
             [FromBody]
             PutPermissionRequest putPermission)
         {
@@ -290,7 +292,7 @@ namespace MedicalExaminer.API.Controllers
                     return NotFound(new PutPermissionResponse());
                 }
 
-                var permissionToUpdate = user.Permissions.FirstOrDefault(p => p.PermissionId == putPermission.PermissionId);
+                var permissionToUpdate = user.Permissions.FirstOrDefault(p => p.PermissionId == permissionId);
 
                 if (permissionToUpdate == null)
                 {

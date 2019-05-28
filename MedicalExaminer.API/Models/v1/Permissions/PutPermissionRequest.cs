@@ -8,11 +8,6 @@ namespace MedicalExaminer.API.Models.v1.Permissions
     public class PutPermissionRequest
     {
         /// <summary>
-        ///     Gets or sets the permission ID.
-        /// </summary>
-        public string PermissionId { get; set; }
-
-        /// <summary>
         ///     Gets or sets the location ID.
         /// </summary>
         public string LocationId { get; set; }
