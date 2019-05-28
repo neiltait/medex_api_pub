@@ -1237,7 +1237,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             {
                 PermissionId = expectedPermissionId,
                 LocationId = expectedSiteId,
-               // UserId = expectedUserId,
                 UserRole = expectedRole,
             });
 

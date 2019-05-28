@@ -292,16 +292,6 @@ namespace MedicalExaminer.API.Controllers
 
                 var permissionToUpdate = user.Permissions.FirstOrDefault(p => p.PermissionId == putPermission.PermissionId);
 
-                var possiblePermission = user.Permissions.SingleOrDefault(ep => ep.LocationId == putPermission.LocationId
-                && ep.UserRole == putPermission.UserRole);
-
-                if (possiblePermission != null)
-                {
-                    return Ok(Mapper.Map<MEUserPermission, PutPermissionResponse>(
-                    possiblePermission,
-                    opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; })));
-                }
-
                 if (permissionToUpdate == null)
                 {
                     return NotFound(new PutPermissionResponse());
@@ -317,6 +307,16 @@ namespace MedicalExaminer.API.Controllers
                 if (!CanAsync(Common.Authorization.Permission.CreateUserPermission, locationDocument))
                 {
                     return Forbid();
+                }
+
+                var possiblePermission = user.Permissions.SingleOrDefault(ep => ep.LocationId == putPermission.LocationId
+                                                                                && ep.UserRole == putPermission.UserRole);
+
+                if (possiblePermission != null)
+                {
+                    return Ok(Mapper.Map<MEUserPermission, PutPermissionResponse>(
+                        possiblePermission,
+                        opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; })));
                 }
 
                 await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
