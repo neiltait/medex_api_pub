@@ -74,12 +74,6 @@ namespace MedicalExaminer.API.Controllers
             if (request.AccessOnly)
             {
                 permissedLocations = await LocationsWithPermission(Permission.GetExaminations);
-
-                // get current user
-                // does user have access to this location directly or by having access
-                // to its parent
-                // if so include it in the list;
-                // otherwise ignore it.
             }
 
             var locations =
