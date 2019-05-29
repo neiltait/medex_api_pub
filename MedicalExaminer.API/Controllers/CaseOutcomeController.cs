@@ -80,11 +80,17 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var user = await CurrentUser();
+
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
 
             if (!CanAsync(Permission.UpdateExamination, examination))
             {
                 return Forbid();
+            }
+            
+            if (user.UserId != examination.MedicalTeam.MedicalExaminerUserId)
+            {
+                return BadRequest();
             }
 
             if (!examination.CalculateCanCompleteScrutiny())
@@ -179,8 +185,8 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest();
             }
 
-            var outstandingCaseItems = Mapper.Map<OutstandingCaseItems>(putOutstandingCaseItemsRequest);
-            await _saveOutstandingCaseItemsService.Handle(new SaveOutstandingCaseItemsQuery(examinationId, outstandingCaseItems, user));
+            var caseOutcome = Mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
+            await _saveOutstandingCaseItemsService.Handle(new SaveOutstandingCaseItemsQuery(examinationId, caseOutcome, user));
             return Ok();
         }
 
