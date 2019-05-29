@@ -32,7 +32,8 @@ namespace MedicalExaminer.API.Extensions.Data
 
             CreateMap<PostPermissionRequest, MEUserPermission>()
                 .ForMember(meUserPermission => meUserPermission.PermissionId, opt => opt.Ignore());
-            CreateMap<PutPermissionRequest, MEUserPermission>();
+            CreateMap<PutPermissionRequest, MEUserPermission>()
+                .ForMember(request => request.PermissionId, opt => opt.Ignore());
         }
     }
 }
