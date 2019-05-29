@@ -19,7 +19,7 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
 {
-    public class CaseOutcomeControllerTests : AuthorizedControllerTestsBase<CaseBreakdownController>
+    public class CaseOutcomeControllerTests : AuthorizedControllerTestsBase<CaseOutcomeController>
     {
         [Fact]
         public async void GetCaseOutcome_When_Called_With_Id_Not_Found_Returns_NotFound()
