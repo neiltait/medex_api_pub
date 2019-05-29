@@ -33,7 +33,12 @@ namespace MedicalExaminer.Common.Authorization.Roles
 
                 Permission.GetProfile,
                 Permission.UpdateProfile,
-                Permission.GetProfilePermissions);
+                Permission.GetProfilePermissions,
+
+                Permission.MeoSummaryEvent,
+                Permission.OtherEvent,
+                Permission.AdmissionEvent,
+                Permission.MedicalHistoryEvent);
         }
     }
 }

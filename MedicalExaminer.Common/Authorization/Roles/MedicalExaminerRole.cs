@@ -24,7 +24,12 @@ namespace MedicalExaminer.Common.Authorization.Roles
                 Permission.GetExaminationEvents,
                 Permission.GetExaminationEvent,
                 Permission.GetProfile,
-                Permission.UpdateProfile);
+                Permission.UpdateProfile,
+
+                Permission.BereavedDiscussionEvent,
+                Permission.QapDiscussionEvent,
+                Permission.OtherEvent,
+                Permission.PreScrutinyEvent);
         }
     }
 }

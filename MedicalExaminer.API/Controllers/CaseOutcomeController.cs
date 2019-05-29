@@ -4,12 +4,10 @@ using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.API.Services;
+using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
-using MedicalExaminer.Common.Queries.User;
-using MedicalExaminer.Common.Services;
-using MedicalExaminer.Models;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -19,6 +17,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalExaminer.API.Controllers
 {
+    /// <summary>
+    /// Case Outcome Controller.
+    /// </summary>
+    /// <seealso cref="MedicalExaminer.API.Controllers.AuthorizedBaseController" />
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/examinations/{examinationId}")]
     [ApiController]
@@ -30,6 +32,19 @@ namespace MedicalExaminer.API.Controllers
         private IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> _saveOutstandingCaseItemsService;
         private IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> _confirmationOfScrutinyService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CaseOutcomeController"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="mapper">The mapper.</param>
+        /// <param name="coronerReferralService">The coroner referral service.</param>
+        /// <param name="closeCaseService">The close case service.</param>
+        /// <param name="examinationRetrievalService">The examination retrieval service.</param>
+        /// <param name="saveOutstandingCaseItemsService">The save outstanding case items service.</param>
+        /// <param name="confirmationOfScrutinyService">The confirmation of scrutiny service.</param>
+        /// <param name="usersRetrievalByEmailService">The users retrieval by email service.</param>
+        /// <param name="authorizationService">The authorization service.</param>
+        /// <param name="permissionService">The permission service.</param>
         public CaseOutcomeController(
             IMELogger logger,
             IMapper mapper,
@@ -68,6 +83,11 @@ namespace MedicalExaminer.API.Controllers
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
 
+            if (!CanAsync(Permission.UpdateExamination, examination))
+            {
+                return Forbid();
+            }
+            
             if (user.UserId != examination.MedicalTeam.MedicalExaminerUserId)
             {
                 return BadRequest();
@@ -96,8 +116,7 @@ namespace MedicalExaminer.API.Controllers
                 return new BadRequestObjectResult(nameof(examinationId));
             }
 
-            Guid examinationGuid;
-            if (!Guid.TryParse(examinationId, out examinationGuid))
+            if (!Guid.TryParse(examinationId, out _))
             {
                 return new BadRequestObjectResult(nameof(examinationId));
             }
@@ -108,6 +127,11 @@ namespace MedicalExaminer.API.Controllers
             if (examination == null)
             {
                 return new NotFoundResult();
+            }
+
+            if (!CanAsync(Permission.UpdateExamination, examination))
+            {
+                return Forbid();
             }
 
             if (examination.CaseOutcome.CaseOutcomeSummary != CaseOutcomeSummary.ReferToCoroner)
@@ -138,8 +162,7 @@ namespace MedicalExaminer.API.Controllers
                 return new BadRequestObjectResult(nameof(examinationId));
             }
 
-            Guid examinationGuid;
-            if (!Guid.TryParse(examinationId, out examinationGuid))
+            if (!Guid.TryParse(examinationId, out _))
             {
                 return new BadRequestObjectResult(nameof(examinationId));
             }
@@ -150,6 +173,11 @@ namespace MedicalExaminer.API.Controllers
             if (examination == null)
             {
                 return new NotFoundResult();
+            }
+
+            if (!CanAsync(Permission.UpdateExamination, examination))
+            {
+                return Forbid();
             }
 
             if (!examination.ScrutinyConfirmed)
@@ -176,8 +204,7 @@ namespace MedicalExaminer.API.Controllers
                 return new BadRequestObjectResult(nameof(examinationId));
             }
 
-            Guid examinationGuid;
-            if (!Guid.TryParse(examinationId, out examinationGuid))
+            if (!Guid.TryParse(examinationId, out _))
             {
                 return new BadRequestObjectResult(nameof(examinationId));
             }
@@ -188,6 +215,11 @@ namespace MedicalExaminer.API.Controllers
             if (examination == null)
             {
                 return new NotFoundResult();
+            }
+
+            if (!CanAsync(Permission.UpdateExamination, examination))
+            {
+                return Forbid();
             }
 
             if (!examination.OutstandingCaseItemsCompleted)
@@ -213,19 +245,25 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new GetCaseOutcomeResponse());
             }
 
-            Guid examinationGuid;
-            if (!Guid.TryParse(examinationId, out examinationGuid))
+            if (!Guid.TryParse(examinationId, out _))
             {
                 return BadRequest(new GetCaseOutcomeResponse());
             }
 
             var user = await CurrentUser();
 
+            
+
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
 
             if (examination == null)
             {
                 return NotFound(new GetCaseOutcomeResponse());
+            }
+
+            if (!CanAsync(Permission.GetExamination, examination))
+            {
+                return Forbid();
             }
 
             var result = Mapper.Map<GetCaseOutcomeResponse>(examination);

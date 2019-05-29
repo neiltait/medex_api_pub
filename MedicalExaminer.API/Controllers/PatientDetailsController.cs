@@ -6,7 +6,6 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.API.Services;
-using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Extensions.Models;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;

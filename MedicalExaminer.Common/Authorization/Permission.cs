@@ -36,5 +36,13 @@
         GetProfile,
         UpdateProfile,
         GetProfilePermissions,
+
+        BereavedDiscussionEvent,
+        MeoSummaryEvent,
+        QapDiscussionEvent,
+        OtherEvent,
+        AdmissionEvent,
+        MedicalHistoryEvent,
+        PreScrutinyEvent
     }
 }
