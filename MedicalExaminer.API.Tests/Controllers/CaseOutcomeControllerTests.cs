@@ -5,7 +5,6 @@ using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
-using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
@@ -13,7 +12,6 @@ using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -21,7 +19,7 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
 {
-    public class CaseOutcomeControllerTests : ControllerTestsBase<CaseOutcomeController>
+    public class CaseOutcomeControllerTests : AuthorizedControllerTestsBase<CaseOutcomeController>
     {
         [Fact]
         public async void GetCaseOutcome_When_Called_With_Id_Not_Found_Returns_NotFound()
@@ -38,10 +36,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
 
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -51,8 +45,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -80,10 +74,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
 
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -93,8 +83,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -133,10 +123,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -146,8 +132,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -173,10 +159,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -186,8 +168,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -218,9 +200,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -230,8 +209,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -279,10 +258,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -292,8 +267,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -327,10 +302,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -340,8 +311,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
             sut.ControllerContext = GetControllerContext();
 
             // Act
@@ -364,10 +335,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -377,8 +344,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -423,10 +390,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -436,8 +399,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -461,10 +424,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -474,8 +433,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -499,10 +458,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -512,8 +467,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
             // Act
@@ -553,9 +508,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -565,8 +517,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
