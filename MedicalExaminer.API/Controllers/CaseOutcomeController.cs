@@ -134,7 +134,7 @@ namespace MedicalExaminer.API.Controllers
                 return Forbid();
             }
 
-            if (examination.CaseOutcome.CaseOutcomeSummary != CaseOutcomeSummary.ReferToCoroner)
+            if (!examination.CalculateRequiresCoronerReferral())
             {
                 return BadRequest();
             }

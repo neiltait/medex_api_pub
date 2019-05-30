@@ -190,6 +190,12 @@ namespace MedicalExaminer.Models
             return true;
         }
 
+        public static bool CalculateRequiresCoronerReferral(this Examination examination)
+        {
+            return examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner || 
+                examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.IssueMCCDWith100a;
+        }
+
         private static bool CalculatePendingDiscussionWithRepresentative(Examination examination)
         {
             if (examination.ReadyForMEScrutiny)
