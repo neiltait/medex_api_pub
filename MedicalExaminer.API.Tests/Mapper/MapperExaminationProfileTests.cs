@@ -1124,7 +1124,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                         EventId = "preScrutinyEventId",
                         IsFinal = true,
                         MedicalExaminerThoughts = MedicalExaminerThoughts,
-                        OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.ReferToCoroner,
+                        OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a,
                         UserId = User0.UserId
                     },
                     History = new[]
@@ -1141,7 +1141,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                             EventId = "preScrutinyEventId",
                             IsFinal = true,
                             MedicalExaminerThoughts = MedicalExaminerThoughts,
-                            OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.ReferToCoroner,
+                            OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a,
                             UserId = User0.UserId
                         }
                     }
