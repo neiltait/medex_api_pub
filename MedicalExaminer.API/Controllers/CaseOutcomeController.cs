@@ -11,7 +11,6 @@ using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -95,7 +94,7 @@ namespace MedicalExaminer.API.Controllers
 
             if (!examination.CalculateCanCompleteScrutiny())
             {
-                return BadRequest();
+                return new BadRequestObjectResult("Scrutiny needs to be performed before confirming scrutiny is complete.");
             }
 
             var result = await _confirmationOfScrutinyService.Handle(new ConfirmationOfScrutinyQuery(examinationId, user));
@@ -182,7 +181,7 @@ namespace MedicalExaminer.API.Controllers
 
             if (!examination.ScrutinyConfirmed)
             {
-                return BadRequest();
+                return new BadRequestObjectResult("Scrutiny has not yet been confirmed.");
             }
 
             var caseOutcome = Mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
@@ -230,13 +229,10 @@ namespace MedicalExaminer.API.Controllers
 
             if (!examination.OutstandingCaseItemsCompleted)
             {
-                return BadRequest();
+                return new BadRequestObjectResult("examination still has outstanding case items that need to be completed.");
             }
 
             return BadRequest();
-            //await _closeCaseService.Handle(new CloseCaseQuery(examinationId, user));
-
-            //return Ok();
         }
 
         /// <summary>
@@ -258,8 +254,6 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var user = await CurrentUser();
-
-            
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
 
