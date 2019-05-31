@@ -3,9 +3,7 @@ using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.CaseOutcome;
-using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Common.Services.CaseOutcome
 {
@@ -52,13 +50,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.CaseOutcome.CremationFormStatus = param.CaseOutcome.CremationFormStatus;
             examinationToUpdate.CaseOutcome.GpNotifiedStatus = param.CaseOutcome.GpNotifiedStatus;
 
-            if ((examinationToUpdate.CaseOutcome.MccdIssued != null && examinationToUpdate.CaseOutcome.MccdIssued.Value)
-                && examinationToUpdate.CaseOutcome.CremationFormStatus == CremationFormStatus.Yes
-                && examinationToUpdate.CaseOutcome.GpNotifiedStatus == GPNotified.GPNotified)
-            {
-                examinationToUpdate.OutstandingCaseItemsCompleted = true;
-            }
-
+            examinationToUpdate.OutstandingCaseItemsCompleted = examinationToUpdate.CalculateOutstandingCaseOutcomesCompleted();
             examinationToUpdate = examinationToUpdate.UpdateCaseUrgencyScore();
             examinationToUpdate = examinationToUpdate.UpdateCaseStatus();
 

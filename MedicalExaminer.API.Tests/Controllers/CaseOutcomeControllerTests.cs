@@ -484,10 +484,19 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
+            var caseOutcome = new CaseOutcome
+            {
+                CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
+                MccdIssued = true,
+                CremationFormStatus = CremationFormStatus.Yes,
+                GpNotifiedStatus = GPNotified.GPNotified
+            };
+
             var examination = new Examination
             {
                 ExaminationId = Guid.NewGuid().ToString(),
-                OutstandingCaseItemsCompleted = true
+                OutstandingCaseItemsCompleted = true,
+                CaseOutcome = caseOutcome
             };
 
             var mockMeUser = new Mock<MeUser>();

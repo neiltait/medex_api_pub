@@ -87,7 +87,7 @@ namespace MedicalExaminer.API.Controllers
             {
                 return Forbid();
             }
-            
+
             if (user.UserId != examination.MedicalTeam.MedicalExaminerUserId)
             {
                 return BadRequest();
@@ -222,14 +222,21 @@ namespace MedicalExaminer.API.Controllers
                 return Forbid();
             }
 
+            if (examination.CalculateOutstandingCaseOutcomesCompleted())
+            {
+                await _closeCaseService.Handle(new CloseCaseQuery(examinationId, user));
+                return Ok();
+            }
+
             if (!examination.OutstandingCaseItemsCompleted)
             {
                 return BadRequest();
             }
 
-            await _closeCaseService.Handle(new CloseCaseQuery(examinationId, user));
+            return BadRequest();
+            //await _closeCaseService.Handle(new CloseCaseQuery(examinationId, user));
 
-            return Ok();
+            //return Ok();
         }
 
         /// <summary>
