@@ -21,6 +21,8 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
 
         public DateTime? ScrutinyConfirmedOn { get; set; }
 
+        public bool CoronerReferralSent { get; set; }
+
         public string CaseMedicalExaminerFullName { get; set; }
 
         public string CaseMedicalExaminerId { get; set; }
