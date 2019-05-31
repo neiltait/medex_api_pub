@@ -7,6 +7,7 @@ namespace MedicalExaminer.Models.Enums
     public enum OverallOutcomeOfPreScrutiny
     {
         IssueAnMccd,
-        ReferToCoroner
+        ReferToCoronerFor100a,
+        ReferToCoronerInvestigation
     }
 }
