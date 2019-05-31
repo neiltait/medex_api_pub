@@ -155,6 +155,30 @@ namespace MedicalExaminer.Models
             return examination;
         }
 
+        public static bool CalculateOutstandingCaseOutcomesCompleted(this Examination examination)
+        {
+            if (examination.CaseOutcome.MccdIssued != null && examination.CaseOutcome.MccdIssued.Value)
+            {
+                if (examination.CaseOutcome.CremationFormStatus == CremationFormStatus.No ||
+                    examination.CaseOutcome.CremationFormStatus == CremationFormStatus.Unknown)
+                {
+                    return true;
+                }
+                else if (examination.CaseOutcome.GpNotifiedStatus == GPNotified.GPNotified ||
+                        examination.CaseOutcome.GpNotifiedStatus == GPNotified.NA)
+                {
+                    return true;
+                }
+            }
+
+            if (examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool CalculateCanCompleteScrutiny(this Examination examination)
         {
             examination = examination.UpdateCaseStatus();
@@ -188,6 +212,12 @@ namespace MedicalExaminer.Models
             }
 
             return true;
+        }
+
+        public static bool CalculateRequiresCoronerReferral(this Examination examination)
+        {
+            return examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner || 
+                examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.IssueMCCDWith100a;
         }
 
         private static bool CalculatePendingDiscussionWithRepresentative(Examination examination)
@@ -226,13 +256,13 @@ namespace MedicalExaminer.Models
                 return null;
             }
 
-            if (examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoroner)
+            if (examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoronerFor100a)
             {
                 return CaseOutcomeSummary.ReferToCoroner;
             }
 
-            if (examination.CaseBreakdown.PreScrutiny?.Latest?.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoroner 
-                && examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoroner)
+            if (examination.CaseBreakdown.PreScrutiny?.Latest?.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a 
+                && examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoronerFor100a)
             {
                 return CaseOutcomeSummary.ReferToCoroner;
             }
