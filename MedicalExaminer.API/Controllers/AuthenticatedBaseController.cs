@@ -18,6 +18,7 @@ namespace MedicalExaminer.API.Controllers
     public abstract class AuthenticatedBaseController : BaseController
     {
         private readonly IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> _usersRetrievalByOktaIdService;
+
         /// <summary>
         /// Initialise a new instance of <see cref="AuthenticatedBaseController"/>.
         /// </summary>
