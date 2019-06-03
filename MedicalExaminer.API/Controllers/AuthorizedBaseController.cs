@@ -23,16 +23,16 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="mapper">Mapper.</param>
-        /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
+        /// <param name="usersRetrievalByOktaIdService">User Retrieval By Okta Id Service.</param>
         /// <param name="authorizationService">Authorization Service.</param>
         /// <param name="permissionService">Permission Service.</param>
         protected AuthorizedBaseController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService)
-            : base(logger, mapper, usersRetrievalByEmailService)
+            : base(logger, mapper, usersRetrievalByOktaIdService)
         {
             AuthorizationService = authorizationService;
             PermissionService = permissionService;

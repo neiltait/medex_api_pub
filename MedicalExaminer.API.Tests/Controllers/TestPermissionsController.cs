@@ -47,7 +47,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new PermissionsController(
                 LoggerMock.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 _userRetrievalByIdServiceMock.Object,
@@ -130,7 +130,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
@@ -270,7 +270,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
@@ -342,7 +342,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
@@ -427,7 +427,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
@@ -517,7 +517,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
@@ -661,7 +661,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
@@ -749,7 +749,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
@@ -833,7 +833,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
@@ -935,7 +935,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(urbes =>
                     urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
@@ -1093,7 +1093,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
@@ -1199,7 +1199,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
@@ -1318,7 +1318,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 

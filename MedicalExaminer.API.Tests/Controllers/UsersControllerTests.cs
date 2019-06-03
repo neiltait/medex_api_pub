@@ -48,7 +48,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new UsersController(
                 logger.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 createUserService.Object,

@@ -28,7 +28,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new LocationsController(
                 LoggerMock.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 _locationRetrievalByIdMock.Object,

@@ -55,7 +55,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="mapper">The Mapper.</param>
         /// <param name="oktaClient">Okta client.</param>
         /// <param name="userCreationService">User Creation Service.</param>
-        /// <param name="usersRetrievalByEmailService">User Retrieval By Email Service.</param>
+        /// <param name="usersRetrievalByOktaIdService">User Retrieval By Okta Id Service.</param>
         /// <param name="userUpdateOktaTokenService">User Update Okta Token Service</param>
         /// <param name="oktaSettings">Okta Settings</param>
         /// <param name="rolePermissions">Role Permissions.</param>
@@ -64,11 +64,11 @@ namespace MedicalExaminer.API.Controllers
             IMapper mapper,
             OktaClient oktaClient,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
-            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService,
             IOptions<OktaSettings> oktaSettings,
             IRolePermissions rolePermissions)
-            : base(logger, mapper, usersRetrievalByEmailService)
+            : base(logger, mapper, usersRetrievalByOktaIdService)
         {
             _oktaClient = oktaClient;
             _userCreationService = userCreationService;

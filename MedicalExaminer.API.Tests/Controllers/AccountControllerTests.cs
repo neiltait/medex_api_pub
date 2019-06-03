@@ -41,11 +41,11 @@ namespace MedicalExaminer.API.Tests.Controllers
                 IMapper mapper,
                 OktaClient oktaClient,
                 IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
-                IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByEmailService,
+                IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
                 IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService,
                 IOptions<OktaSettings> oktaSettings,
                 IRolePermissions rolePermissions)
-                : base(logger, mapper, oktaClient, userCreationService, usersRetrievalByEmailService,
+                : base(logger, mapper, oktaClient, userCreationService, usersRetrievalByOktaIdService,
                     userUpdateOktaTokenService, oktaSettings, rolePermissions)
             {
 
@@ -72,7 +72,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
         private readonly Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>> _mockUserCreationService;
 
-        private readonly Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>> _mockUsersRetrievalByEmailService;
+        private readonly Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>> _mockUsersRetrievalByOktaIdService;
 
         private readonly Mock<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>> _mockUserUpdateOktaTokenService;
 
@@ -95,7 +95,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 Token = "Token1",
             };
             _mockUserCreationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
-            _mockUsersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
+            _mockUsersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             _mockUserUpdateOktaTokenService = new Mock<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>>();
 
 
@@ -119,7 +119,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var rolePermissionsMock = new Mock<IRolePermissions>();
 
-            _accountController = new AccountControllerProxy(_mockLogger.Object, _mockMapper.Object, oktaClient, _mockUserCreationService.Object, _mockUsersRetrievalByEmailService.Object, _mockUserUpdateOktaTokenService.Object, oktaSettings, rolePermissionsMock.Object)
+            _accountController = new AccountControllerProxy(_mockLogger.Object, _mockMapper.Object, oktaClient, _mockUserCreationService.Object, _mockUsersRetrievalByOktaIdService.Object, _mockUserUpdateOktaTokenService.Object, oktaSettings, rolePermissionsMock.Object)
             {
                 ControllerContext = context
             };
@@ -131,7 +131,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             //Arrange
             var meUser = new MeUser();
-            _mockUsersRetrievalByEmailService.Setup(es => es.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
+            _mockUsersRetrievalByOktaIdService.Setup(es => es.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
 
             //Act
@@ -146,7 +146,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             //Arrange
             MeUser meUser = null;
-            _mockUsersRetrievalByEmailService.Setup(es => es.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
+            _mockUsersRetrievalByOktaIdService.Setup(es => es.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
 
             //Act

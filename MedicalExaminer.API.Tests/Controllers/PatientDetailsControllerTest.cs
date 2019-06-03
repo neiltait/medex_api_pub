@@ -46,7 +46,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new PatientDetailsController(
                 LoggerMock.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
@@ -77,7 +77,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var sut = new PatientDetailsController(
                 LoggerMock.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
@@ -111,7 +111,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var sut = new PatientDetailsController(
                 LoggerMock.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
@@ -139,7 +139,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var sut = new PatientDetailsController(
                 LoggerMock.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
@@ -174,7 +174,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var sut = new PatientDetailsController(
                 LoggerMock.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
@@ -201,7 +201,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new PatientDetailsController(
                 LoggerMock.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
@@ -236,7 +236,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new PatientDetailsController(
                 LoggerMock.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,
@@ -268,7 +268,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var patientDetailsUpdateService = new Mock<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>>();
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(AuthorizedUser));
 
@@ -283,7 +283,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new PatientDetailsController(
                 LoggerMock.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 examinationRetrievalService.Object,

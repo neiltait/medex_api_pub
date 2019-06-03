@@ -54,7 +54,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new ExaminationsController(
                 LoggerMock.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 _createExaminationServiceMock.Object,
@@ -242,7 +242,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var parentLocations = new List<Location>();
 
-            UsersRetrievalByEmailServiceMock.Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
+            UsersRetrievalByOktaIdServiceMock.Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(mockMeUser));
 
             _locationParentsServiceMock.Setup(lps => lps.Handle(It.IsAny<LocationParentsQuery>()))
@@ -278,7 +278,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var parentLocations = new List<Location>();
 
-            UsersRetrievalByEmailServiceMock.Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
+            UsersRetrievalByOktaIdServiceMock.Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(mockMeUser));
 
             _locationParentsServiceMock.Setup(lps => lps.Handle(It.IsAny<LocationParentsQuery>()))

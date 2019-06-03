@@ -44,7 +44,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new MedicalTeamController(
                 LoggerMock.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 _examinationRetrievalServiceMock.Object,
@@ -239,7 +239,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             const Examination nullExamination = (Examination)null;
             var putMedicalTeamRequest = new PutMedicalTeamRequest();
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(AuthorizedUser));
 
@@ -277,7 +277,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 NursingTeamInformation = expectedNursingTeamInformation,
             };
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(AuthorizedUser));
 

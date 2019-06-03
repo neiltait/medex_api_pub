@@ -33,11 +33,11 @@ namespace MedicalExaminer.API.Tests
 
             _mockUserRetrieveOktaTokenService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>>();
 
-            _mockUsersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
+            _mockUsersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
 
             var tokenExpiryTime = 30;
 
-            sut = new OktaJwtSecurityTokenHandler(_mockTokenService.Object, _mockSecurityTokenValidator.Object, _mockUserUpdateOktaTokenService.Object, _mockUserRetrieveOktaTokenService.Object, _mockUsersRetrievalByEmailService.Object, tokenExpiryTime);
+            sut = new OktaJwtSecurityTokenHandler(_mockTokenService.Object, _mockSecurityTokenValidator.Object, _mockUserUpdateOktaTokenService.Object, _mockUserRetrieveOktaTokenService.Object, _mockUsersRetrievalByOktaIdService.Object, tokenExpiryTime);
         }
 
         private readonly Mock<ITokenService> _mockTokenService;
@@ -49,7 +49,7 @@ namespace MedicalExaminer.API.Tests
         private readonly Mock<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>>
             _mockUserRetrieveOktaTokenService;
 
-        private readonly Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>> _mockUsersRetrievalByEmailService;
+        private readonly Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>> _mockUsersRetrievalByOktaIdService;
 
         private readonly OktaJwtSecurityTokenHandler sut;
 
@@ -231,7 +231,7 @@ namespace MedicalExaminer.API.Tests
             _mockTokenService.Setup(ts => ts.IntrospectToken(securityToken, It.IsAny<HttpClient>())).Returns(Task.FromResult(introspectResponse));
             _mockUserUpdateOktaTokenService.Setup(ts => ts.Handle(It.IsAny<UsersUpdateOktaTokenQuery>()));
             _mockSecurityTokenValidator.Setup(tv => tv.ValidateToken(securityToken, expectedTokenValidationParameters, out expectedValidatedToken)).Returns(claimsPrincipal.Object);
-            _mockUsersRetrievalByEmailService.Setup(es => es.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
+            _mockUsersRetrievalByOktaIdService.Setup(es => es.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUserExisting));
 
             //Act

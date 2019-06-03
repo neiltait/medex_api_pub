@@ -17,20 +17,20 @@ namespace MedicalExaminer.API.Controllers
     /// <remarks>Provides access to the Current User record.</remarks>
     public abstract class AuthenticatedBaseController : BaseController
     {
-        private readonly IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> _usersRetrievalByEmailService;
+        private readonly IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> _usersRetrievalByOktaIdService;
         /// <summary>
         /// Initialise a new instance of <see cref="AuthenticatedBaseController"/>.
         /// </summary>
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
-        /// <param name="usersRetrievalByEmailService">User Retrieval By Email Service.</param>
+        /// <param name="usersRetrievalByOktaIdService">User Retrieval By Okta Id Service.</param>
         protected AuthenticatedBaseController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByEmailService)
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService)
             : base(logger, mapper)
         {
-            _usersRetrievalByEmailService = usersRetrievalByEmailService;
+            _usersRetrievalByOktaIdService = usersRetrievalByOktaIdService;
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var user = await _usersRetrievalByEmailService.Handle(new UserRetrievalByOktaIdQuery(oktaUserId));
+                var user = await _usersRetrievalByOktaIdService.Handle(new UserRetrievalByOktaIdQuery(oktaUserId));
 
                 return user;
             }
