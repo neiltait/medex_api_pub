@@ -269,7 +269,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var patientDetailsUpdateService = new Mock<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>>();
 
             UsersRetrievalByEmailServiceMock
-                .Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(AuthorizedUser));
 
             examinationRetrievalService
@@ -290,7 +290,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 patientDetailsUpdateService.Object,
                 _locationParentsQueryServiceMock.Object);
 
-            Controller.ControllerContext = GetContollerContext();
+            Controller.ControllerContext = GetControllerContext();
 
             var expectedPutPatientDetailsRequest = new PutPatientDetailsRequest();
 
@@ -303,17 +303,5 @@ namespace MedicalExaminer.API.Tests.Controllers
             var okObjectResultValue = okObjectResult.Value.Should().BeAssignableTo<PutPatientDetailsResponse>().Subject;
             okObjectResultValue.Header.Should().NotBeNull();
         }
-
-        private ControllerContext GetContollerContext() =>
-            new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(ClaimTypes.Email, "username")
-                    }, "someAuthTypeName"))
-                }
-            };
     }
 }

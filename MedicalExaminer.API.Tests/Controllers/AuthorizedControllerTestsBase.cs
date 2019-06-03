@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 
 namespace MedicalExaminer.API.Tests.Controllers
@@ -19,7 +22,7 @@ namespace MedicalExaminer.API.Tests.Controllers
     {
         public AuthorizedControllerTestsBase(bool setupAuthorize = true)
         {
-            UsersRetrievalByEmailServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            UsersRetrievalByEmailServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
 
             AuthorizationServiceMock = new Mock<IAuthorizationService>();
 
@@ -51,7 +54,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(result));
         }
 
-        protected Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>> UsersRetrievalByEmailServiceMock { get; }
+        protected Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>> UsersRetrievalByEmailServiceMock { get; }
 
         protected Mock<IAuthorizationService> AuthorizationServiceMock { get; }
 

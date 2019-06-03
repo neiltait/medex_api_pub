@@ -16,14 +16,14 @@ namespace MedicalExaminer.Common.Services.Examination
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
         private readonly IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location> _locationHandler;
-        //private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, UserToCreate> _usersRetrievalByEmailService;
+        //private readonly IAsyncQueryHandler<UserRetrievalByOktaIdQuery, UserToCreate> _usersRetrievalByEmailService;
 
 
         public CreateExaminationService(
             IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings,
             IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location> locationHandler)
-      //      IAsyncQueryHandler<UserRetrievalByEmailQuery, UserToCreate> usersRetrievalByEmailService)
+      //      IAsyncQueryHandler<UserRetrievalByOktaIdQuery, UserToCreate> usersRetrievalByEmailService)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;

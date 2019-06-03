@@ -52,7 +52,7 @@ namespace MedicalExaminer.API.Controllers
         public PatientDetailsController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByEmailService,
             IAuthorizationService authorizationService, 
             IPermissionService permissionService, 
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
+using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
@@ -37,9 +38,9 @@ namespace MedicalExaminer.API
         private readonly IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser> _userRetrieveOktaTokenService;
 
         /// <summary>
-        /// User Retrieval By Email Service
+        /// User Retrieval By Okta Id Service
         /// </summary>
-        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _usersRetrievalByEmailService;
+        private readonly IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> _usersRetrievalByOktaIdService;
 
         /// <summary>
         /// Time in minutes before Okta token expires and has to be resubmitted to Okta
@@ -53,21 +54,21 @@ namespace MedicalExaminer.API
         /// <param name="tokenValidator">Token validator.</param>
         /// <param name="userUpdateOktaTokenService">User update okta token service.</param>
         /// <param name="userRetrieveOktaTokenService">User retrieval okta token service.</param>
-        /// <param name="usersRetrievalByEmailService">Users retrieval by email service.</param>
+        /// <param name="usersRetrievalByOktaIdService">Users retrieval by okta id service.</param>
         /// <param name="oktaTokenExpiryTime">Okta token expiry time.</param>
         public OktaJwtSecurityTokenHandler(
             ITokenService tokenService,
             ISecurityTokenValidator tokenValidator,
             IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService,
             IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser> userRetrieveOktaTokenService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             int oktaTokenExpiryTime)
         {
             _tokenHandler = tokenValidator;
             _tokenService = tokenService;
             _userUpdateOktaTokenService = userUpdateOktaTokenService;
             _userRetrieveOktaTokenService = userRetrieveOktaTokenService;
-            _usersRetrievalByEmailService = usersRetrievalByEmailService;
+            _usersRetrievalByOktaIdService = usersRetrievalByOktaIdService;
             _oktaTokenExpiryTime = oktaTokenExpiryTime;
         }
 
@@ -104,7 +105,9 @@ namespace MedicalExaminer.API
             MeUser meUserReturned = null;
 
             if (result?.Result != null)
+            {
                 meUserReturned = result.Result;
+            }
 
             // Cannot find user by token or token has expired so go to Okta
             if (meUserReturned == null || meUserReturned.OktaTokenExpiry < DateTimeOffset.Now)
@@ -140,11 +143,11 @@ namespace MedicalExaminer.API
         /// <remarks>Attempts to find user DB record based on email address. If user is found then update oktea token</remarks>
         private void UpdateOktaTokenForUser(string oktaToken, ClaimsPrincipal claimsPrincipal)
         {
-            var email = claimsPrincipal.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
+            var oktaId = claimsPrincipal.Claims.Where(c => c.Type == MEClaimTypes.OktaUserId).Select(c => c.Value).First();
 
-            if (email != null)
+            if (oktaId != null)
             {
-                var meUserReturned = _usersRetrievalByEmailService.Handle(new UserRetrievalByEmailQuery(email));
+                var meUserReturned = _usersRetrievalByOktaIdService.Handle(new UserRetrievalByOktaIdQuery(oktaId));
 
                 if (meUserReturned?.Result != null)
                 {

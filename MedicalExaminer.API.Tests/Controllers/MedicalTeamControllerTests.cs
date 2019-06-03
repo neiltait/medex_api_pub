@@ -86,7 +86,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
 
-            Controller.ControllerContext = GetContollerContext();
+            Controller.ControllerContext = GetControllerContext();
 
             // Act
             var response = Controller.GetMedicalTeam(examinationId).Result;
@@ -120,21 +120,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             taskResult.Result.Should().BeAssignableTo<NotFoundObjectResult>();
         }
 
-        private ControllerContext GetContollerContext()
-        {
-            return new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = new ClaimsPrincipal(new ClaimsIdentity(
-                        new[]
-                        {
-                            new Claim(ClaimTypes.Email, "username")
-                        }, "someAuthTypeName"))
-                }
-            };
-        }
-
         [Fact]
         public void GetMedicalTeam_Ok()
         {
@@ -154,7 +139,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             _examinationRetrievalServiceMock.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
 
-            Controller.ControllerContext = GetContollerContext();
+            Controller.ControllerContext = GetControllerContext();
             // Act
             var response = Controller.GetMedicalTeam(examinationId).Result;
 
@@ -185,7 +170,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
                 .Returns(Task.FromResult(examination));
 
-            Controller.ControllerContext = GetContollerContext();
+            Controller.ControllerContext = GetControllerContext();
 
             // Act
             var response = Controller.GetMedicalTeam(examinationId).Result;
@@ -202,7 +187,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationId = "examinationId";
             var request = new PutMedicalTeamRequest();
 
-            Controller.ControllerContext = GetContollerContext();
+            Controller.ControllerContext = GetControllerContext();
             Controller.ModelState.AddModelError("An", "Error");
 
             // Act
@@ -231,7 +216,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             _medicalTeamUpdateServiceMock.Setup(u => u.Handle(It.IsAny<Examination>(), "a"))
                 .Returns(Task.FromResult(examination));
 
-            Controller.ControllerContext = GetContollerContext();
+            Controller.ControllerContext = GetControllerContext();
 
             // Act
             var response = Controller.PutMedicalTeam(examinationId, postMedicalTeamRequest).Result;
@@ -255,7 +240,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var putMedicalTeamRequest = new PutMedicalTeamRequest();
 
             UsersRetrievalByEmailServiceMock
-                .Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(AuthorizedUser));
 
             _examinationRetrievalServiceMock
@@ -266,7 +251,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(u => u.Handle(It.IsAny<Examination>(), "a"))
                 .Returns(Task.FromResult(nullExamination));
 
-            Controller.ControllerContext = GetContollerContext();
+            Controller.ControllerContext = GetControllerContext();
 
             // Act
             var response = Controller.PutMedicalTeam(examinationId, putMedicalTeamRequest).Result;
@@ -293,7 +278,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
 
             UsersRetrievalByEmailServiceMock
-                .Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(AuthorizedUser));
 
             _examinationRetrievalServiceMock
@@ -304,7 +289,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(u => u.Handle(It.IsAny<Examination>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(examination));
 
-            Controller.ControllerContext = GetContollerContext();
+            Controller.ControllerContext = GetControllerContext();
 
             // Act
             var response = Controller.PutMedicalTeam(examinationId, postMedicalTeamRequest).Result;
@@ -337,7 +322,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             _medicalTeamUpdateServiceMock.Setup(u => u.Handle(It.IsAny<Examination>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(examination));
 
-            Controller.ControllerContext = GetContollerContext();
+            Controller.ControllerContext = GetControllerContext();
+
             // Act
             var response = Controller.PutMedicalTeam(examinationId, postMedicalTeamRequest).Result;
 

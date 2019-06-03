@@ -29,7 +29,7 @@ namespace MedicalExaminer.API.Controllers
         protected AuthorizedBaseController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByEmailService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService)
             : base(logger, mapper, usersRetrievalByEmailService)

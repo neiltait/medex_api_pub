@@ -19,6 +19,7 @@ using Microsoft.Extensions.Options;
 using Okta.Sdk;
 using Permission = MedicalExaminer.Common.Authorization.Permission;
 using MedicalExaminer.Common.Extensions.MeUser;
+using MedicalExaminer.API.Authorization;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -63,7 +64,7 @@ namespace MedicalExaminer.API.Controllers
             IMapper mapper,
             OktaClient oktaClient,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByEmailService,
             IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService,
             IOptions<OktaSettings> oktaSettings,
             IRolePermissions rolePermissions)
@@ -84,7 +85,7 @@ namespace MedicalExaminer.API.Controllers
         public async Task<PostValidateSessionResponse> ValidateSession()
         {
             // Look up their email in the claims
-            var emailAddress = User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
+            var oktaId = User.Claims.Where(c => c.Type == MEClaimTypes.OktaUserId).Select(c => c.Value).First();
 
             var oktaToken = OktaTokenParser.ParseHttpRequestAuthorisation(
                 Request
@@ -97,7 +98,7 @@ namespace MedicalExaminer.API.Controllers
             // Create the user if it doesn't already exist
             if (meUser == null)
             {
-                meUser = await CreateNewUser(emailAddress, oktaToken);
+                meUser = await CreateNewUser(oktaId, oktaToken);
             }
 
             if (meUser == null)
@@ -135,10 +136,10 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="oktaToken">Okta token</param>
         /// <returns>UserToCreate</returns>
         /// <remarks>virtual so that it can be unit tested via proxy class</remarks>
-        protected virtual async  Task<MeUser> CreateNewUser(string emailAddress, string oktaToken)
+        protected virtual async  Task<MeUser> CreateNewUser(string oktaId, string oktaToken)
         {
             // Get everything that Okta knows about this user
-            var oktaUser = await _oktaClient.Users.GetUserAsync(emailAddress);
+            var oktaUser = await _oktaClient.Users.GetUserAsync(oktaId);
 
             var expiryTime = DateTime.Now.AddMinutes(_oktaTokenExpiryMinutes);
 
@@ -150,6 +151,7 @@ namespace MedicalExaminer.API.Controllers
                 LastModifiedBy = null,
                 ModifiedAt = DateTimeOffset.Now,
                 CreatedAt = DateTimeOffset.Now,
+                OktaId = oktaUser.Id,
                 OktaToken = oktaToken,
                 OktaTokenExpiry = expiryTime
             });

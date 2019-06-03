@@ -3,6 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedicalExaminer.API.Authorization;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
@@ -16,7 +17,7 @@ namespace MedicalExaminer.API.Controllers
     /// <remarks>Provides access to the Current User record.</remarks>
     public abstract class AuthenticatedBaseController : BaseController
     {
-        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _usersRetrievalByEmailService;
+        private readonly IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> _usersRetrievalByEmailService;
         /// <summary>
         /// Initialise a new instance of <see cref="AuthenticatedBaseController"/>.
         /// </summary>
@@ -26,7 +27,7 @@ namespace MedicalExaminer.API.Controllers
         protected AuthenticatedBaseController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService)
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByEmailService)
             : base(logger, mapper)
         {
             _usersRetrievalByEmailService = usersRetrievalByEmailService;
@@ -38,11 +39,11 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>Current User.</returns>
         protected async Task<MeUser> CurrentUser()
         {
-            var emailAddress = User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
+            var oktaUserId = User.Claims.Where(c => c.Type == MEClaimTypes.OktaUserId).Select(c => c.Value).First();
 
             try
             {
-                var user = await _usersRetrievalByEmailService.Handle(new UserRetrievalByEmailQuery(emailAddress));
+                var user = await _usersRetrievalByEmailService.Handle(new UserRetrievalByOktaIdQuery(oktaUserId));
 
                 return user;
             }

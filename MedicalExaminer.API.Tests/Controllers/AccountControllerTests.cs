@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models;
 using MedicalExaminer.Common.Authorization;
@@ -40,7 +41,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 IMapper mapper,
                 OktaClient oktaClient,
                 IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
-                IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+                IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByEmailService,
                 IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService,
                 IOptions<OktaSettings> oktaSettings,
                 IRolePermissions rolePermissions)
@@ -71,7 +72,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
         private readonly Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>> _mockUserCreationService;
 
-        private readonly Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>> _mockUsersRetrievalByEmailService;
+        private readonly Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>> _mockUsersRetrievalByEmailService;
 
         private readonly Mock<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>> _mockUserUpdateOktaTokenService;
 
@@ -94,12 +95,12 @@ namespace MedicalExaminer.API.Tests.Controllers
                 Token = "Token1",
             };
             _mockUserCreationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
-            _mockUsersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            _mockUsersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             _mockUserUpdateOktaTokenService = new Mock<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>>();
 
 
             var claims = new List<Claim>();
-            var claim = new Claim(ClaimTypes.Email, "joe.doe@nhs.co.uk");
+            var claim = new Claim(MEClaimTypes.OktaUserId, "oktaId");
             claims.Add(claim);
             var mockClaimsPrincipal = new Mock<ClaimsPrincipal>();
             mockClaimsPrincipal.Setup(cp => cp.Claims).Returns(claims);
@@ -130,7 +131,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             //Arrange
             var meUser = new MeUser();
-            _mockUsersRetrievalByEmailService.Setup(es => es.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+            _mockUsersRetrievalByEmailService.Setup(es => es.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
 
             //Act
@@ -145,7 +146,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             //Arrange
             MeUser meUser = null;
-            _mockUsersRetrievalByEmailService.Setup(es => es.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+            _mockUsersRetrievalByEmailService.Setup(es => es.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
 
             //Act

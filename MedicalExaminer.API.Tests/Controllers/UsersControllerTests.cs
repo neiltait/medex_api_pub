@@ -447,20 +447,5 @@ namespace MedicalExaminer.API.Tests.Controllers
             model.Errors.Count.Should().Be(1);
             model.Success.Should().BeFalse();
         }
-
-        private ControllerContext GetControllerContext()
-        {
-            return new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = new ClaimsPrincipal(new ClaimsIdentity(
-                        new Claim[]
-            {
-                new Claim(ClaimTypes.Email, "username")
-            }, "someAuthTypeName"))
-                }
-            };
-        }
     }
 }
