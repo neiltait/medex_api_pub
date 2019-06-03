@@ -7,6 +7,7 @@ namespace MedicalExaminer.Models.Enums
     public enum GPNotified
     {
         GPUnabledToBeNotified,
-        GPNotified
+        GPNotified,
+        NA
     }
 }

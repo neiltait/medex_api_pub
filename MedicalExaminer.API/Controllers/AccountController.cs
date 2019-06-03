@@ -1,31 +1,28 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedicalExaminer.API.Authorization;
+using MedicalExaminer.API.Helpers;
+using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Models.v1.Account;
+using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
-using MedicalExaminer.API.Helpers;
-using MedicalExaminer.API.Models;
-using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Microsoft.Extensions.Options;
 using Okta.Sdk;
-using Permission = MedicalExaminer.Common.Authorization.Permission;
-using MedicalExaminer.Common.Extensions.MeUser;
-using MedicalExaminer.API.Authorization;
 
 namespace MedicalExaminer.API.Controllers
 {
     /// <summary>
     ///     Accounts controller, handler for authentication and token verification.
     /// </summary>
+    /// <inheritdoc />
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/auth")]
     [ApiController]
@@ -74,7 +71,7 @@ namespace MedicalExaminer.API.Controllers
             _userCreationService = userCreationService;
             _userUpdateOktaTokenService = userUpdateOktaTokenService;
             _rolePermissions = rolePermissions;
-            _oktaTokenExpiryMinutes = Int32.Parse(oktaSettings.Value.LocalTokenExpiryTimeMinutes);
+            _oktaTokenExpiryMinutes = int.Parse(oktaSettings.Value.LocalTokenExpiryTimeMinutes);
         }
 
         /// <summary>
@@ -123,9 +120,9 @@ namespace MedicalExaminer.API.Controllers
                 EmailAddress = meUser.Email,
                 FirstName = meUser.FirstName,
                 LastName = meUser.LastName,
-                Role = meUser.Role(),
+                Role = meUser.Permissions?.Select(p => p.UserRole).ToArray(),
                 Permissions = _rolePermissions.PermissionsForRoles(
-                    meUser.Permissions?.Select(p => (UserRoles)p.UserRole).ToList()),
+                    meUser.Permissions?.Select(p => p.UserRole).ToList()),
             };
         }
 
@@ -136,7 +133,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="oktaToken">Okta token</param>
         /// <returns>UserToCreate</returns>
         /// <remarks>virtual so that it can be unit tested via proxy class</remarks>
-        protected virtual async  Task<MeUser> CreateNewUser(string oktaId, string oktaToken)
+        protected virtual async Task<MeUser> CreateNewUser(string oktaId, string oktaToken)
         {
             // Get everything that Okta knows about this user
             var oktaUser = await _oktaClient.Users.GetUserAsync(oktaId);
@@ -158,7 +155,6 @@ namespace MedicalExaminer.API.Controllers
             var meUser = createdMeUser;
 
             return meUser;
-
         }
 
         private async Task<MeUser> CreateUser(MeUser toCreate)
