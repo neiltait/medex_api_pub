@@ -73,7 +73,7 @@ namespace MedicalExaminer.API.Controllers
             _examinationRetrievalService = examinationRetrievalService;
             _medicalTeamUpdateService = medicalTeamUpdateService;
             _usersRetrievalByRoleLocationQueryService = usersRetrievalByRoleLocationQueryService;
-            _UsersRetrievalByOktaIdService = UsersRetrievalByOktaIdService;
+            _UsersRetrievalByOktaIdService = usersRetrievalByOktaIdService;
         }
 
         /// <summary>
