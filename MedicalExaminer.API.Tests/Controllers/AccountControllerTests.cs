@@ -43,12 +43,12 @@ namespace MedicalExaminer.API.Tests.Controllers
                 IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
                 IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
                 IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService,
+                IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService,
+                IAsyncQueryHandler<UserUpdateOktaQuery, MeUser> userUpdateOktaService,
                 IOptions<OktaSettings> oktaSettings,
                 IRolePermissions rolePermissions)
-                : base(logger, mapper, oktaClient, userCreationService, usersRetrievalByOktaIdService,
-                    userUpdateOktaTokenService, oktaSettings, rolePermissions)
+                : base(logger, mapper, oktaClient, userCreationService, usersRetrievalByOktaIdService, userUpdateOktaTokenService, userRetrievalByEmailService, userUpdateOktaService, oktaSettings, rolePermissions)
             {
-
             }
 
             /// <summary>
