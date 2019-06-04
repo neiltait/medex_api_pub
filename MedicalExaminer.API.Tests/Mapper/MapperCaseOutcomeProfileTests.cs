@@ -50,7 +50,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 GpNotifiedStatus = GPNotified.GPNotified
             };
 
-            var outstandingCaseItems = _mapper.Map<OutstandingCaseItems>(putOutstandingCaseItemsRequest);
+            var outstandingCaseItems = _mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
 
             outstandingCaseItems.MccdIssued.Should().Be(true);
             outstandingCaseItems.CremationFormStatus.Should().Be(CremationFormStatus.Yes);

@@ -366,6 +366,12 @@ namespace MedicalExaminer.Models
         public bool PendingDiscussionWithRepresentative { get; set; } = true;
 
         /// <summary>
+        /// has the ME added scrutiny notes
+        /// </summary>
+        [JsonProperty(PropertyName = "pending_scrutiny_notes")]
+        public bool PendingScrutinyNotes { get; set; } = true;
+
+        /// <summary>
         /// have the final case outcomes been determined
         /// </summary>
         [JsonProperty(PropertyName = "have_final_case_outcomes_outstanding")]

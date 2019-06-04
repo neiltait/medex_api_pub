@@ -32,8 +32,8 @@ namespace MedicalExaminer.API.Models.v1.Account
         /// <summary>
         /// Role.
         /// </summary>
-        /// <remarks>Best role they have in the system. Used for display purposes only.</remarks>
-        public UserRoles? Role { get; set; }
+        /// <remarks>All roles the user has, for display purposes</remarks>
+        public IEnumerable<UserRoles> Role { get; set; }
 
         /// <summary>
         /// Permissions.
