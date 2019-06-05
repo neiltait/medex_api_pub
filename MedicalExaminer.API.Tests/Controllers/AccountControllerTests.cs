@@ -105,6 +105,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             _mockUsersRetrievalByOktaIdService.Setup(es => es.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
 
+            _mockUserUpdateOktaTokenService.Setup(uuots => uuots.Handle(It.IsAny<UsersUpdateOktaTokenQuery>()))
+                .Returns(Task.FromResult(meUser));
+
             // Act
             await _accountController.ValidateSession();
 
@@ -119,6 +122,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             MeUser meUser = null;
             _mockUsersRetrievalByOktaIdService.Setup(es => es.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
+
+            // Return a new object; but not null.
+            _mockUserUpdateOktaTokenService.Setup(uuots => uuots.Handle(It.IsAny<UsersUpdateOktaTokenQuery>()))
+                .Returns(Task.FromResult(new MeUser()));
 
             // Act
             await _accountController.ValidateSession();
@@ -175,7 +182,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             protected override Task<MeUser> CreateNewUser(string emailAddress, string oktaToken)
             {
                 CreateNewUserCalled = true;
-                return null;
+
+                // Return something
+                return Task.FromResult(new MeUser());
             }
         }
     }
