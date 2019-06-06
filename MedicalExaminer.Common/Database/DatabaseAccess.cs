@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -19,6 +20,8 @@ namespace MedicalExaminer.Common.Database
     {
         private readonly IDocumentClientFactory _documentClientFactory;
 
+        private IDocumentClient _client;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseAccess"/> class.
         /// </summary>
@@ -28,9 +31,32 @@ namespace MedicalExaminer.Common.Database
             _documentClientFactory = documentClientFactory;
         }
 
+        private IDocumentClient Client(IConnectionSettings connectionSettings)
+        {
+            if (_client == null)
+            {
+                _client = _documentClientFactory.CreateClient(connectionSettings);
+            }
+
+            // TODO: I think this should be performed at startup rather than for every request
+            _client.CreateDatabaseIfNotExistsAsync(
+                new Microsoft.Azure.Documents.Database
+                {
+                    Id = connectionSettings.DatabaseId
+                }).Wait();
+
+            var databaseUri = UriFactory.CreateDatabaseUri(connectionSettings.DatabaseId);
+
+            _client.CreateDocumentCollectionIfNotExistsAsync(
+                databaseUri,
+                new DocumentCollection {Id = connectionSettings.Collection}).Wait();
+
+            return _client;
+        }
+
         public async Task<T> CreateItemAsync<T>(IConnectionSettings connectionSettings, T item, bool disableAutomaticIdGeneration = false)
         {
-            var client = _documentClientFactory.CreateClient(connectionSettings);
+            var client = Client(connectionSettings);
             var resourceResponse = await client.CreateDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(
                     connectionSettings.DatabaseId,
@@ -53,23 +79,48 @@ namespace MedicalExaminer.Common.Database
                     auditEntry);
         }
 
+        // TODO: Document lookup by ID apparently uses less RUIs
+        public async Task<T> GetItemByIdAsync<T>(IConnectionSettings connectionSettings, string id)
+        {
+            try
+            {
+                var client = Client(connectionSettings);
+                var documentUri = UriFactory.CreateDocumentUri(
+                    connectionSettings.DatabaseId,
+                    connectionSettings.Collection,
+                    id);
+
+                var response = await client.ReadDocumentAsync(documentUri);
+
+                return (T)(dynamic)response.Resource;
+            }
+            catch (DocumentClientException documentClientException)
+            {
+                if (documentClientException.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return default(T);
+                }
+
+                throw;
+            }
+        }
+
         public async Task<T> GetItemAsync<T>(
             IConnectionSettings connectionSettings,
             Expression<Func<T, bool>> predicate)
         {
             try
             {
-                var client = _documentClientFactory.CreateClient(connectionSettings);
-                var feedOptions = new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true };
+                var client = Client(connectionSettings);
+                var feedOptions = new FeedOptions { MaxItemCount = 1, EnableCrossPartitionQuery = true };
                 var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection);
-                var queryable = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions);
-                IQueryable<T> filter = queryable.Where(predicate);
-                IDocumentQuery<T> query = filter.AsDocumentQuery();
 
-                var results = new List<T>();
-                results.AddRange(await query.ExecuteNextAsync<T>());
+                var result = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions)
+                    .Where(predicate)
+                    .AsEnumerable()
+                    .FirstOrDefault();
 
-                return results.FirstOrDefault();
+                return result;
             }
             catch (DocumentClientException documentClientException)
             {
@@ -87,7 +138,7 @@ namespace MedicalExaminer.Common.Database
             Expression<Func<T, bool>> predicate)
             where T : class
         {
-            var client = _documentClientFactory.CreateClient(connectionSettings);
+            var client = Client(connectionSettings);
 
             var query = client.CreateDocumentQuery<T>(
                     UriFactory.CreateDocumentCollectionUri(
@@ -115,7 +166,7 @@ namespace MedicalExaminer.Common.Database
             Expression<Func<T, TKey>> orderBy)
             where T : class
         {
-            var client = _documentClientFactory.CreateClient(connectionSettings);
+            var client = Client(connectionSettings);
             FeedOptions feedOptions = new FeedOptions
             {
                 MaxItemCount = -1,
@@ -141,7 +192,7 @@ namespace MedicalExaminer.Common.Database
 
         public async Task<int> GetCountAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
         {
-            var client = _documentClientFactory.CreateClient(connectionSettings);
+            var client = Client(connectionSettings);
             var feedOptions = new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true };
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection);
             var queryable = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions);
@@ -155,7 +206,7 @@ namespace MedicalExaminer.Common.Database
 
         public async Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item)
         {
-            var client = _documentClientFactory.CreateClient(connectionSettings);
+            var client = Client(connectionSettings);
             var updateItemAsync = await client.UpsertDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
                 item);
