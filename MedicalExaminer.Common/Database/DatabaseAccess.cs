@@ -119,16 +119,17 @@ namespace MedicalExaminer.Common.Database
         {
             try
             {
-                var client = GetClient(connectionSettings);
-                var feedOptions = new FeedOptions { MaxItemCount = 1, EnableCrossPartitionQuery = true };
+                var client = _documentClientFactory.CreateClient(connectionSettings);
+                var feedOptions = new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true };
                 var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection);
+                var queryable = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions);
+                IQueryable<T> filter = queryable.Where(predicate);
+                IDocumentQuery<T> query = filter.AsDocumentQuery();
 
-                var result = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions)
-                    .Where(predicate)
-                    .AsEnumerable()
-                    .FirstOrDefault();
+                var results = new List<T>();
+                results.AddRange(await query.ExecuteNextAsync<T>());
 
-                return result;
+                return results.FirstOrDefault();
             }
             catch (DocumentClientException documentClientException)
             {
