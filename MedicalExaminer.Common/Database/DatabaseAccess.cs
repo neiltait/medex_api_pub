@@ -31,15 +31,15 @@ namespace MedicalExaminer.Common.Database
             _documentClientFactory = documentClientFactory;
         }
 
-        private IDocumentClient Client(IConnectionSettings connectionSettings)
+        /// <summary>
+        /// Ensures the collection is available.
+        /// </summary>
+        /// <param name="connectionSettings">Connection settings.</param>
+        public void EnsureCollectionAvailable(IConnectionSettings connectionSettings)
         {
-            if (_client == null)
-            {
-                _client = _documentClientFactory.CreateClient(connectionSettings);
-            }
+            var client = GetClient(connectionSettings);
 
-            // TODO: I think this should be performed at startup rather than for every request
-            _client.CreateDatabaseIfNotExistsAsync(
+            client.CreateDatabaseIfNotExistsAsync(
                 new Microsoft.Azure.Documents.Database
                 {
                     Id = connectionSettings.DatabaseId
@@ -47,16 +47,24 @@ namespace MedicalExaminer.Common.Database
 
             var databaseUri = UriFactory.CreateDatabaseUri(connectionSettings.DatabaseId);
 
-            _client.CreateDocumentCollectionIfNotExistsAsync(
+            client.CreateDocumentCollectionIfNotExistsAsync(
                 databaseUri,
                 new DocumentCollection {Id = connectionSettings.Collection}).Wait();
+        }
+
+        private IDocumentClient GetClient(IClientSettings connectionSettings)
+        {
+            if (_client == null)
+            {
+                _client = _documentClientFactory.CreateClient(connectionSettings);
+            }
 
             return _client;
         }
 
         public async Task<T> CreateItemAsync<T>(IConnectionSettings connectionSettings, T item, bool disableAutomaticIdGeneration = false)
         {
-            var client = Client(connectionSettings);
+            var client = GetClient(connectionSettings);
             var resourceResponse = await client.CreateDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(
                     connectionSettings.DatabaseId,
@@ -84,7 +92,7 @@ namespace MedicalExaminer.Common.Database
         {
             try
             {
-                var client = Client(connectionSettings);
+                var client = GetClient(connectionSettings);
                 var documentUri = UriFactory.CreateDocumentUri(
                     connectionSettings.DatabaseId,
                     connectionSettings.Collection,
@@ -111,7 +119,7 @@ namespace MedicalExaminer.Common.Database
         {
             try
             {
-                var client = Client(connectionSettings);
+                var client = GetClient(connectionSettings);
                 var feedOptions = new FeedOptions { MaxItemCount = 1, EnableCrossPartitionQuery = true };
                 var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection);
 
@@ -138,7 +146,7 @@ namespace MedicalExaminer.Common.Database
             Expression<Func<T, bool>> predicate)
             where T : class
         {
-            var client = Client(connectionSettings);
+            var client = GetClient(connectionSettings);
 
             var query = client.CreateDocumentQuery<T>(
                     UriFactory.CreateDocumentCollectionUri(
@@ -166,7 +174,7 @@ namespace MedicalExaminer.Common.Database
             Expression<Func<T, TKey>> orderBy)
             where T : class
         {
-            var client = Client(connectionSettings);
+            var client = GetClient(connectionSettings);
             FeedOptions feedOptions = new FeedOptions
             {
                 MaxItemCount = -1,
@@ -192,7 +200,7 @@ namespace MedicalExaminer.Common.Database
 
         public async Task<int> GetCountAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
         {
-            var client = Client(connectionSettings);
+            var client = GetClient(connectionSettings);
             var feedOptions = new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true };
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection);
             var queryable = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions);
@@ -206,7 +214,7 @@ namespace MedicalExaminer.Common.Database
 
         public async Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item)
         {
-            var client = Client(connectionSettings);
+            var client = GetClient(connectionSettings);
             var updateItemAsync = await client.UpsertDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
                 item);
