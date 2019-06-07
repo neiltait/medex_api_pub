@@ -87,7 +87,7 @@ namespace MedicalExaminer.Common.Database
                     auditEntry);
         }
 
-        // TODO: Document lookup by ID apparently uses less RUIs
+        /// <inheritdoc/>
         public async Task<T> GetItemByIdAsync<T>(IConnectionSettings connectionSettings, string id)
         {
             try
