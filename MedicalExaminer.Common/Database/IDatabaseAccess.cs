@@ -20,6 +20,8 @@ namespace MedicalExaminer.Common.Database
 
         Task<T> GetItemAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate);
 
+        void EnsureCollectionAvailable(IConnectionSettings connectionSettings);
+
         Task<IEnumerable<T>> GetItemsAsync<T>(
             IConnectionSettings connectionSettings,
             Expression<Func<T, bool>> predicate)
