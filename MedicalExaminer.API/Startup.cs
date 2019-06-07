@@ -253,7 +253,7 @@ namespace MedicalExaminer.API
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            if (env.IsDevelopment() || env.IsStaging())
+            if (env.IsDevelopment() || env.IsStaging() || env.IsEnvironment("UAT"))
             {
                 app.UseSwagger();
 
