@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -204,7 +205,7 @@ namespace MedicalExaminer.API.Controllers
         {
             var locationIds = locations.Select(l => l.LocationId).ToList();
 
-            var users = await GetUsersForLocations(locationIds);
+            var users = (await GetUsersForLocations(locationIds)).ToList();
 
             return Mapper.Map<IEnumerable<MeUser>, IEnumerable<UserLookup>>(users);
         }
