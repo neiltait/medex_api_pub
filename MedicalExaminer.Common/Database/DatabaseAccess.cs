@@ -126,12 +126,17 @@ namespace MedicalExaminer.Common.Database
                         connectionSettings.DatabaseId,
                         connectionSettings.Collection);
 
-                var result = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions)
+                var query = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions)
                     .Where(predicate)
-                    .AsEnumerable()
-                    .FirstOrDefault();
+                    .AsDocumentQuery();
 
-                return result;
+                var results = new List<T>();
+                while (query.HasMoreResults)
+                {
+                    results.AddRange(await query.ExecuteNextAsync<T>());
+                }
+
+                return results.FirstOrDefault();
             }
             catch (DocumentClientException documentClientException)
             {
@@ -151,14 +156,19 @@ namespace MedicalExaminer.Common.Database
         {
             var client = GetClient(connectionSettings);
 
-
-            var results = client.CreateDocumentQuery<T>(
+            var query = client.CreateDocumentQuery<T>(
                     UriFactory.CreateDocumentCollectionUri(
                         connectionSettings.DatabaseId,
                         connectionSettings.Collection),
                     new FeedOptions {MaxItemCount = -1})
                 .Where(predicate)
-                .AsEnumerable();
+                .AsDocumentQuery();
+
+            var results = new List<T>();
+            while (query.HasMoreResults)
+            {
+                results.AddRange(await query.ExecuteNextAsync<T>());
+            }
 
             return results;
         }
@@ -174,13 +184,20 @@ namespace MedicalExaminer.Common.Database
             {
                 MaxItemCount = -1,
             };
-            var results = client.CreateDocumentQuery<T>(
+
+            var query = client.CreateDocumentQuery<T>(
                     UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
                         connectionSettings.Collection),
                     feedOptions)
                 .Where(predicate)
                 .OrderBy(orderBy)
-                .AsEnumerable();
+                .AsDocumentQuery();
+
+            var results = new List<T>();
+            while (query.HasMoreResults)
+            {
+                results.AddRange(await query.ExecuteNextAsync<T>());
+            }
 
             return results;
         }
@@ -191,12 +208,17 @@ namespace MedicalExaminer.Common.Database
             var feedOptions = new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true };
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection);
 
-            var count = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions)
+            var query = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions)
                 .Where(predicate)
-                .AsEnumerable()
-                .Count();
+                .AsDocumentQuery();
 
-            return count;
+            var results = new List<T>();
+            while (query.HasMoreResults)
+            {
+                results.AddRange(await query.ExecuteNextAsync<T>());
+            }
+
+            return results.Count();
         }
 
         public async Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item)
