@@ -249,6 +249,12 @@ namespace MedicalExaminer.API
                 });
             }
 
+            // Ensure collections available
+            var databaseAccess = app.ApplicationServices.GetRequiredService<IDatabaseAccess>();
+            databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<ILocationConnectionSettings>());
+            databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IExaminationConnectionSettings>());
+            databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserConnectionSettings>());
+
             app.UseMiddleware<ResponseTimeMiddleware>();
 
             // TODO: Not using HTTPS while we join front to back end
@@ -303,17 +309,17 @@ namespace MedicalExaminer.API
         /// <param name="cosmosDbSettings">Cosmos Database Settings.</param>
         private void ConfigureQueries(IServiceCollection services, CosmosDbSettings cosmosDbSettings)
         {
-            services.AddScoped<ILocationConnectionSettings>(s => new LocationConnectionSettings(
+            services.AddSingleton<ILocationConnectionSettings>(s => new LocationConnectionSettings(
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
-            services.AddScoped<IExaminationConnectionSettings>(s => new ExaminationConnectionSettings(
+            services.AddSingleton<IExaminationConnectionSettings>(s => new ExaminationConnectionSettings(
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
-            services.AddScoped<IUserConnectionSettings>(s => new UserConnectionSettings(
+            services.AddSingleton<IUserConnectionSettings>(s => new UserConnectionSettings(
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
