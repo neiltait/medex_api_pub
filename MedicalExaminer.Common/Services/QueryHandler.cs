@@ -69,6 +69,16 @@ namespace MedicalExaminer.Common.Services
         }
 
         /// <summary>
+        /// Get Item By Id Async.
+        /// </summary>
+        /// <param name="id">The Document Id.</param>
+        /// <returns>A <see cref="Task{TResult}"/>.</returns>
+        protected Task<TResult> GetItemByIdAsync(string id)
+        {
+            return DatabaseAccess.GetItemByIdAsync<TResult>(ConnectionSettings, id);
+        }
+
+        /// <summary>
         /// Get Item Async.
         /// </summary>
         /// <param name="predicate">Predicate.</param>
