@@ -210,12 +210,6 @@ namespace MedicalExaminer.API
             services.AddCosmosStore<Examination>(cosmosSettings, examinationsCollection);
             services.AddCosmosStore<AuditEntry<Examination>>(cosmosSettings, examinationsCollection.AuditCollection());
 
-
-            services.AddScoped<ILocationPersistence>(s => new LocationPersistence(
-                new Uri(cosmosDbSettings.URL),
-                cosmosDbSettings.PrimaryKey,
-                cosmosDbSettings.DatabaseId));
-
             services.AddScoped<IMeLoggerPersistence>(s => new MeLoggerPersistence(
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey,
