@@ -112,36 +112,6 @@ namespace MedicalExaminer.Common.Database
                 throw;
             }
         }
-        /*
-        public async Task<T> GetItemAsync<T>(
-            IConnectionSettings connectionSettings,
-            Expression<Func<T, bool>> predicate)
-        {
-            try
-            {
-                var client = _documentClientFactory.CreateClient(connectionSettings);
-                var feedOptions = new FeedOptions { MaxItemCount = 1, EnableCrossPartitionQuery = true };
-                var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection);
-                var queryable = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions);
-                IQueryable<T> filter = queryable.Where(predicate);
-                IDocumentQuery<T> query = filter.AsDocumentQuery();
-
-                var results = new List<T>();
-                results.AddRange(await query.ExecuteNextAsync<T>());
-
-                return results.FirstOrDefault();
-            }
-            catch (DocumentClientException documentClientException)
-            {
-                if (documentClientException.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return default(T);
-                }
-
-                throw;
-            }
-        }
-        */
 
         public async Task<T> GetItemAsync<T>(
             IConnectionSettings connectionSettings,
@@ -180,6 +150,7 @@ namespace MedicalExaminer.Common.Database
             where T : class
         {
             var client = GetClient(connectionSettings);
+
 
             var results = client.CreateDocumentQuery<T>(
                     UriFactory.CreateDocumentCollectionUri(
