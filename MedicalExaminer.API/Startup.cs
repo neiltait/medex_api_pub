@@ -87,7 +87,8 @@ namespace MedicalExaminer.API
 
             var cosmosDbSettings = services.ConfigureSettings<CosmosDbSettings>(Configuration, "CosmosDB");
 
-            var backgroundServicesSettings = services.ConfigureSettings<BackgroundServicesSettings>(Configuration, "BackgroundServices");
+            var backgroundServicesSettings =
+                services.ConfigureSettings<BackgroundServicesSettings>(Configuration, "BackgroundServices");
 
             services.ConfigureSettings<AuthorizationSettings>(Configuration, "Authorization");
 
@@ -142,7 +143,8 @@ namespace MedicalExaminer.API
                 // add a swagger document for each discovered API version
                 foreach (var description in provider.ApiVersionDescriptions)
                 {
-                    options.SwaggerDoc(description.GroupName, CreateInfoForApiVersion(description, ApiTitle, ApiDescription));
+                    options.SwaggerDoc(description.GroupName,
+                        CreateInfoForApiVersion(description, ApiTitle, ApiDescription));
                 }
 
                 // add a custom operation filter which sets default values
@@ -176,15 +178,15 @@ namespace MedicalExaminer.API
                     },
                 });
 
-                options.AddSecurityDefinition("Bearer", 
+                options.AddSecurityDefinition("Bearer",
                     new ApiKeyScheme
-                {
-                    Description =
-                        "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-                    Name = "Authorization",
-                    In = "header",
-                    Type = "apiKey"
-                });
+                    {
+                        Description =
+                            "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        Name = "Authorization",
+                        In = "header",
+                        Type = "apiKey"
+                    });
 
                 options.AddSecurityRequirement(security);
             });
@@ -229,7 +231,11 @@ namespace MedicalExaminer.API
         /// <param name="env">The Environment.</param>
         /// <param name="loggerFactory">The Logger Factory.</param>
         /// <param name="provider">API Version Description Privider.</param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApiVersionDescriptionProvider provider)
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env,
+            ILoggerFactory loggerFactory,
+            IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment())
             {
@@ -253,33 +259,33 @@ namespace MedicalExaminer.API
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            if (env.IsDevelopment() || env.IsStaging() || env.IsEnvironment("UAT") || env.IsProduction())
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
             {
-                app.UseSwagger();
+                // Use a bespoke Index that has OpenID/CustomJS to handle OKTA
+                c.IndexStream = () =>
+                    GetType().GetTypeInfo().Assembly
+                        .GetManifestResourceStream("MedicalExaminer.API.SwaggerIndex.html");
 
-                app.UseSwaggerUI(c =>
+                var oktaSettings = app.ApplicationServices.GetRequiredService<IOptions<OktaSettings>>();
+
+                c.OAuthConfigObject = new OAuthConfigObject
                 {
-                    // Use a bespoke Index that has OpenID/CustomJS to handle OKTA
-                    c.IndexStream = () =>
-                        GetType().GetTypeInfo().Assembly
-                            .GetManifestResourceStream("MedicalExaminer.API.SwaggerIndex.html");
+                    ClientId = oktaSettings.Value.ClientId,
+                    ClientSecret = oktaSettings.Value.ClientSecret
+                };
+                c.OAuthAdditionalQueryStringParams(new Dictionary<string, string>
+                    { { "nonce", Guid.NewGuid().ToString() } });
 
-                    var oktaSettings = app.ApplicationServices.GetRequiredService<IOptions<OktaSettings>>();
+                foreach (var description in provider.ApiVersionDescriptions)
+                {
+                    c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                        description.GroupName.ToUpperInvariant());
+                }
+            });
 
-                    c.OAuthConfigObject = new OAuthConfigObject
-                    {
-                        ClientId = oktaSettings.Value.ClientId,
-                        ClientSecret = oktaSettings.Value.ClientSecret
-                    };
-                    c.OAuthAdditionalQueryStringParams(new Dictionary<string, string>
-                        { { "nonce", Guid.NewGuid().ToString() } });
-
-                    foreach (var description in provider.ApiVersionDescriptions)
-                    {
-                        c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
-                    }
-                });
-            }
 
             // Must be above UseMvc
             app.UseProductVersionInAllResponseHeaders();
@@ -316,13 +322,21 @@ namespace MedicalExaminer.API
 
             // Examination services
             services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
-            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>, ExaminationsDashboardService>();
+            services
+                .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>,
+                    ExaminationsDashboardService>();
             services.AddScoped<IAsyncQueryHandler<CreateExaminationQuery, Examination>, CreateExaminationService>();
-            services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
-            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
+            services
+                .AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
+            services
+                .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
+                    ExaminationsRetrievalService>();
 
-            services.AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
-            services.AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>, ExaminationsRetrievalService>();
+            services
+                .AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
+            services
+                .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
+                    ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>, CreateEventService>();
 
             // Medical team services
@@ -331,11 +345,16 @@ namespace MedicalExaminer.API
             // Case Outcome Services
             services.AddScoped<IAsyncQueryHandler<CloseCaseQuery, string>, CloseCaseService>();
             services.AddScoped<IAsyncQueryHandler<CoronerReferralQuery, string>, CoronerReferralService>();
-            services.AddScoped<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>, SaveOutstandingCaseItemsService>();
-            services.AddScoped<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>, ConfirmationOfScrutinyService>();
+            services
+                .AddScoped<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>, SaveOutstandingCaseItemsService
+                >();
+            services
+                .AddScoped<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>, ConfirmationOfScrutinyService
+                >();
 
             // Patient details services
-            services.AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
+            services
+                .AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
 
             // User services
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
@@ -346,13 +365,21 @@ namespace MedicalExaminer.API
 
             // Used for roles; but is being abused to pass null and get all users.
             services.AddScoped<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>, UsersRetrievalService>();
-            services.AddScoped<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>, UsersRetrievalByRoleLocationQueryService>();
+            services
+                .AddScoped<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>,
+                    UsersRetrievalByRoleLocationQueryService>();
 
             // Location Services
             services.AddScoped<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>, LocationIdService>();
-            services.AddScoped<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>, LocationsQueryService>();
-            services.AddScoped<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>, LocationParentsQueryService>();
-            services.AddScoped<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>, LocationsParentsQueryService>();
+            services
+                .AddScoped<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>, LocationsQueryService
+                >();
+            services
+                .AddScoped<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>, LocationParentsQueryService
+                >();
+            services
+                .AddScoped<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>,
+                    LocationsParentsQueryService>();
         }
 
         /// <summary>
@@ -362,7 +389,10 @@ namespace MedicalExaminer.API
         /// <param name="services">Services.</param>
         /// <param name="oktaSettings">Okta Settings.</param>
         /// <param name="cosmosDbSettings">Cosmos Database Settings.</param>
-        private void ConfigureAuthentication(IServiceCollection services, OktaSettings oktaSettings, CosmosDbSettings cosmosDbSettings)
+        private void ConfigureAuthentication(
+            IServiceCollection services,
+            OktaSettings oktaSettings,
+            CosmosDbSettings cosmosDbSettings)
         {
             var oktaTokenExpiry = int.Parse(oktaSettings.LocalTokenExpiryTimeMinutes);
             var provider = services.BuildServiceProvider();
@@ -383,9 +413,12 @@ namespace MedicalExaminer.API
                         new OktaJwtSecurityTokenHandler(
                             tokenService,
                             new JwtSecurityTokenHandler(),
-                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
-                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
-                            new UserRetrievalByEmailService(new DatabaseAccess(new DocumentClientFactory()), userConnectionSetting),
+                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
+                                userConnectionSetting),
+                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
+                                userConnectionSetting),
+                            new UserRetrievalByEmailService(new DatabaseAccess(new DocumentClientFactory()),
+                                userConnectionSetting),
                             oktaTokenExpiry));
                 });
         }
@@ -416,7 +449,10 @@ namespace MedicalExaminer.API
         /// <param name="apiTitle">The API Title</param>
         /// <param name="apiDescription">The API Description</param>
         /// <returns>Info for Swagger</returns>
-        private static Info CreateInfoForApiVersion(ApiVersionDescription description, string apiTitle, string apiDescription)
+        private static Info CreateInfoForApiVersion(
+            ApiVersionDescription description,
+            string apiTitle,
+            string apiDescription)
         {
             var info = new Info
             {
@@ -451,12 +487,10 @@ namespace MedicalExaminer.API
 
             services.AddAuthorization(options =>
             {
-                foreach (var permission in (Permission[])Enum.GetValues(typeof(Permission)))
+                foreach (var permission in(Permission[]) Enum.GetValues(typeof(Permission)))
                 {
-                    options.AddPolicy($"HasPermission={permission}", policy =>
-                    {
-                        policy.Requirements.Add(new PermissionRequirement(permission));
-                    });
+                    options.AddPolicy($"HasPermission={permission}",
+                        policy => { policy.Requirements.Add(new PermissionRequirement(permission)); });
                 }
             });
 
