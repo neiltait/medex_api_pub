@@ -14,42 +14,6 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
     public class CloseCaseServiceTests
     {
         /// <summary>
-        /// Close Case When Outstanding Case Items Are Not CaseCompleted
-        /// </summary>
-        [Fact]
-        public void Close_Case_When_Outstanding_Case_Items_Are_Not_Completed_Returns_Null()
-        {
-            // Arrange
-            var examinationId = Guid.NewGuid().ToString();
-            var examination = new MedicalExaminer.Models.Examination
-            {
-                ExaminationId = examinationId,
-                ScrutinyConfirmed = true,
-                OutstandingCaseItemsCompleted = false
-            };
-            var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var query = new CloseCaseQuery(examinationId, new MeUser());
-            var dbAccess = new Mock<IDatabaseAccess>();
-
-            dbAccess.Setup(db => db.GetItemAsync(
-                connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
-                .Returns(Task.FromResult(examination)).Verifiable();
-
-            dbAccess.Setup(db => db.UpdateItemAsync(
-                connectionSettings.Object,
-                It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
-
-            var sut = new CloseCaseService(dbAccess.Object, connectionSettings.Object);
-
-            // Act
-            var result = sut.Handle(query);
-
-            // Assert
-            Assert.Null(result.Result);
-        }
-
-        /// <summary>
         /// Close Case When Outstanding Case Items Are CaseCompleted
         /// </summary>
         [Fact]
