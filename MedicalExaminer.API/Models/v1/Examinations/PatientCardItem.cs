@@ -106,6 +106,11 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public bool PendingDiscussionWithRepresentative { get; set; }
 
         /// <summary>
+        /// The case is awaiting scrutiny notes from the ME
+        /// </summary>
+        public bool PendingScrutinyNotes { get; set; }
+
+        /// <summary>
         /// Awaiting the final outcome of the case
         /// </summary>
         public bool HaveFinalCaseOutcomesOutstanding { get; set; }
