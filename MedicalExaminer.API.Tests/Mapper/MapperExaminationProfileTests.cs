@@ -134,7 +134,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 AppointmentDate = new DateTime(2019, 2, 24),
                 AppointmentTime = new TimeSpan(11, 30, 0),
                 FullName = "fullName",
-                Informed = Informed.Yes,
+                Informed = InformedAtDeath.Yes,
                 PhoneNumber = "123456789",
                 PresentAtDeath = PresentAtDeath.Yes,
                 Relationship = "relationship"
@@ -198,7 +198,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             _mapper = config.CreateMapper();
         }
 
-        
         [Fact]
         public void Examination_To_PutMedicalTeamResponse()
         {
@@ -247,7 +246,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             Assert.True(IsEqual(examination.CaseBreakdown, result));
         }
 
-       
         private bool IsEqual(CaseBreakDown caseBreakdown, CaseBreakDownItem caseBreakdownItem)
         {
             return IsEqual(caseBreakdown.AdmissionNotes, caseBreakdownItem.AdmissionNotes) &&
@@ -610,7 +608,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 AppointmentDate = null,
                 AppointmentTime = null,
                 FullName = "bob",
-                Informed = Informed.Yes,
+                Informed = InformedAtDeath.Yes,
                 PhoneNumber = "1234",
                 PresentAtDeath = PresentAtDeath.Unknown,
                 Relationship = "milk man"
@@ -652,7 +650,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 AppointmentDate = appointmentDate,
                 AppointmentTime = appointmentTime,
                 FullName = "bob",
-                Informed = Informed.Yes,
+                Informed = InformedAtDeath.Yes,
                 PhoneNumber = "1234",
                 PresentAtDeath = PresentAtDeath.Unknown,
                 Relationship = "milk man"
@@ -694,7 +692,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 AppointmentDate = appointmentDate,
                 AppointmentTime = appointmentTime,
                 FullName = "bob",
-                Informed = Informed.Yes,
+                Informed = InformedAtDeath.Yes,
                 PhoneNumber = "1234",
                 PresentAtDeath = PresentAtDeath.Unknown,
                 Relationship = "milk man"
@@ -705,7 +703,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 AppointmentDate = null,
                 AppointmentTime = null,
                 FullName = "bob",
-                Informed = Informed.Yes,
+                Informed = InformedAtDeath.Yes,
                 PhoneNumber = "1234",
                 PresentAtDeath = PresentAtDeath.Unknown,
                 Relationship = "uncle"
@@ -749,7 +747,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 AppointmentDate = appointmentDate1,
                 AppointmentTime = appointmentTime,
                 FullName = "bob",
-                Informed = Informed.Yes,
+                Informed = InformedAtDeath.Yes,
                 PhoneNumber = "1234",
                 PresentAtDeath = PresentAtDeath.Unknown,
                 Relationship = "uncle"
@@ -760,7 +758,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 AppointmentDate = appointmentDate2,
                 AppointmentTime = appointmentTime,
                 FullName = "barry",
-                Informed = Informed.Yes,
+                Informed = InformedAtDeath.Yes,
                 PhoneNumber = "1234",
                 PresentAtDeath = PresentAtDeath.Unknown,
                 Relationship = "granddad"
@@ -805,7 +803,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 AppointmentDate = appointmentDate1,
                 AppointmentTime = appointmentTime,
                 FullName = "bob",
-                Informed = Informed.Yes,
+                Informed = InformedAtDeath.Unknown,
                 PhoneNumber = "1234",
                 PresentAtDeath = PresentAtDeath.Unknown,
                 Relationship = "milk man"
@@ -816,12 +814,11 @@ namespace MedicalExaminer.API.Tests.Mapper
                 AppointmentDate = appointmentDate2,
                 AppointmentTime = appointmentTime,
                 FullName = "bob",
-                Informed = Informed.Yes,
+                Informed = InformedAtDeath.Yes,
                 PhoneNumber = "1234",
                 PresentAtDeath = PresentAtDeath.Unknown,
                 Relationship = "milk man"
             };
-
 
             var examination = GenerateExamination();
             examination.Representatives = new[] { representativeTwo, representativeOne };
