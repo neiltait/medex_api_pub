@@ -110,23 +110,36 @@ namespace MedicalExaminer.API
                 }
             }
 
-            //use tokenhandler to deserialize oken onto claimsprincipal. Note that the token carries an expiry internally
-            //If it has expired then we would expect SecurityTokenExpiredException to be thrown and authentication fails
+            // Use _tokenHandler to deserialize Okta onto claimsPrincipal. Note that the token carries an expiry internally
+            // If it has expired then we would expect SecurityTokenExpiredException to be thrown and authentication fails
             claimsPrincipal = _tokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
 
-            //Update user record with okta settings if not found originally or if token had expired
-            if ((meUserReturned == null || meUserReturned.OktaTokenExpiry < DateTimeOffset.Now) && claimsPrincipal != null)
-                UpdateOktaTokenForUser(securityToken, claimsPrincipal);
+            // Update user record with okta settings if not found originally or if token had expired
+            if ((meUserReturned == null || meUserReturned.OktaTokenExpiry < DateTimeOffset.Now) &&
+                claimsPrincipal != null)
+            {
+                meUserReturned = UpdateOktaTokenForUser(securityToken, claimsPrincipal);
+            }
+
+            if (meUserReturned != null)
+            {
+                claimsPrincipal?.Identities.First().AddClaim(
+                    new Claim(
+                        Authorization.MEClaimTypes.UserId,
+                        meUserReturned.UserId));
+            }
 
             return claimsPrincipal;
         }
 
         /// <summary>
-        /// Update user's Okta token 
+        /// Update user's Okta token.
         /// </summary>
         /// <param name="oktaToken">Okta token</param>
-        /// <remarks>Attempts to find user DB record based on email address. If user is found then update oktea token</remarks>
-        private void UpdateOktaTokenForUser(string oktaToken, ClaimsPrincipal claimsPrincipal)
+        /// <param name="claimsPrincipal">Claims principal.</param>
+        /// <remarks>Attempts to find user DB record based on email address. If user is found then update okta token</remarks>
+        /// <returns>User if found by email.</returns>
+        private MeUser UpdateOktaTokenForUser(string oktaToken, ClaimsPrincipal claimsPrincipal)
         {
             var email = claimsPrincipal.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
 
@@ -138,11 +151,14 @@ namespace MedicalExaminer.API
                 {
                     var meUser = meUserReturned.Result;
                     meUser.OktaToken = oktaToken;
-                    claimsPrincipal.Identities.First().AddClaim(new Claim(Authorization.MEClaimTypes.UserId, meUser.UserId));
                     meUser.OktaTokenExpiry = DateTimeOffset.Now.AddMinutes(_oktaTokenExpiryTime);
                     _userUpdateOktaTokenService.Handle(new UsersUpdateOktaTokenQuery(meUser));
+
+                    return meUser;
                 }
             }
+
+            return null;
         }
     }
 }
