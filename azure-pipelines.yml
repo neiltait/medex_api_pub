@@ -37,7 +37,7 @@ steps:
   inputs:
     command: test
     projects: 'MedicalExaminer.API.Tests/MedicalExaminer.API.Tests.csproj'
-    arguments: '--configuration $(BuildConfiguration) --collect "Code coverage"'
+    arguments: '--configuration $(BuildConfiguration)'
     publishTestResults: true
 
 - task: DotNetCoreCLI@2
