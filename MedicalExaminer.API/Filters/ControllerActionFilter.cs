@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using MedicalExaminer.API.Controllers;
+using MedicalExaminer.Common.Loggers;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -13,6 +14,20 @@ namespace MedicalExaminer.API.Filters
     /// </summary>
     public class ControllerActionFilter : IActionFilter
     {
+        /// <summary>
+        /// Logger.
+        /// </summary>
+        private readonly IMELogger _logger;
+
+        /// <summary>
+        /// Initialise a new instance of <see cref="ControllerActionFilter"/>.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        public ControllerActionFilter(IMELogger logger)
+        {
+            _logger = logger;
+        }
+
         /// <summary>
         ///     Called after method executed
         /// </summary>
@@ -28,13 +43,6 @@ namespace MedicalExaminer.API.Filters
         /// <param name="context">action context</param>
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            var controller = context.Controller as BaseController;
-
-            if (controller == null)
-            {
-                return;
-            }
-
             string controllerName = null;
             string controllerAction = null;
 
@@ -43,8 +51,6 @@ namespace MedicalExaminer.API.Filters
                 controllerName = controllerActionDescriptor.ControllerName;
                 controllerAction = controllerActionDescriptor.ActionName;
             }
-
-            var logger = controller.Logger;
 
             var identity = context.HttpContext.User.Identity;
             var userId = ((ClaimsIdentity)identity).Claims.SingleOrDefault(x => x.Type == Authorization.MEClaimTypes.UserId)?.Value;
@@ -60,7 +66,7 @@ namespace MedicalExaminer.API.Filters
             var remoteIpAddress = context.HttpContext.Connection.RemoteIpAddress;
             var remoteIp = remoteIpAddress == null ? "Unknown" : remoteIpAddress.ToString();
             var timeStamp = DateTime.UtcNow;
-            logger.Log(
+            _logger.Log(
                 userId,
                 userAuthenticationType,
                 userIsAuthenticated,
