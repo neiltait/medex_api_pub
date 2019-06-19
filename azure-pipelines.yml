@@ -45,7 +45,7 @@ steps:
   inputs:
     command: test
     projects: 'MedicalExaminer.Common.Tests/MedicalExaminer.Common.Tests.csproj'
-    arguments: '--configuration $(BuildConfiguration) --collect "Code coverage"'
+    arguments: '--configuration $(BuildConfiguration)'
     publishTestResults: true
 
 - task: DotNetCoreCLI@2
@@ -53,7 +53,7 @@ steps:
   inputs:
     command: test
     projects: 'MedicalExaminer.BackgroundServices.Tests/MedicalExaminer.BackgroundServices.Tests.csproj'
-    arguments: '--configuration $(BuildConfiguration) --collect "Code coverage"'
+    arguments: '--configuration $(BuildConfiguration)'
     publishTestResults: true
 
 - task: DotNetCoreCLI@2
