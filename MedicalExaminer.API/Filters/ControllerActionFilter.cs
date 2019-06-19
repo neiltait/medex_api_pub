@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using MedicalExaminer.API.Controllers;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace MedicalExaminer.API.Filters
@@ -34,6 +35,22 @@ namespace MedicalExaminer.API.Filters
                 return;
             }
 
+            var controllerName = "Unknown";
+            var controllerAction = "Unknown";
+
+            if (context.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
+            {
+                controllerName = controllerActionDescriptor.ControllerName;
+                controllerAction = controllerActionDescriptor.ActionName;
+            }
+            else
+            {
+                controllerName =
+                    context.ActionDescriptor.RouteValues.ElementAt(context.ActionDescriptor.RouteValues.Count - 0).Value;
+                controllerAction =
+                    context.ActionDescriptor.RouteValues.ElementAt(context.ActionDescriptor.RouteValues.Count - 1).Value;
+            }
+
             var logger = controller.Logger;
 
             var identity = context.HttpContext.User.Identity;
@@ -41,16 +58,13 @@ namespace MedicalExaminer.API.Filters
             var userAuthenticationType = identity.AuthenticationType ?? "Unknown";
             var userIsAuthenticated = identity.IsAuthenticated;
             var routeDataValues = context.RouteData.Values.Values;
-            var controllerName = routeDataValues.Count >= 2 ? routeDataValues.ElementAt(1).ToString() : "Unknown";
-            var parameters = new List<string>();
+            var parameters = new Dictionary<string, object>();
 
             foreach (var parameter in context.ActionArguments)
             {
-                var paramterItem = $"{parameter.Key}: {parameter.Value}";
-                parameters.Add(paramterItem);
+                parameters.Add(parameter.Key, parameter.Value);
             }
 
-            var controllerAction = routeDataValues.Count >= 1 ? routeDataValues.ElementAt(0).ToString() : "Unknown";
             var remoteIpAddress = context.HttpContext.Connection.RemoteIpAddress;
             var remoteIp = remoteIpAddress == null ? "Unknown" : remoteIpAddress.ToString();
             var timeStamp = DateTime.UtcNow;
