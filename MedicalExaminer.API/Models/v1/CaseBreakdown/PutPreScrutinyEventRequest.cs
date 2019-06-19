@@ -21,7 +21,6 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         ///// </summary>
         public bool IsFinal { get; set; }
 
-
         /// <summary>
         /// Dictionary for circumstances of death radio button.
         /// </summary>
@@ -67,7 +66,6 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Details of Clinical Governance Review if said yes for Clinical Governance Review radio button.
         /// </summary>
-        //[RequiredIfAttributesMatch(nameof(ClinicalGovernanceReview), MedicalExaminer.Models.Enums.ClinicalGovernanceReview.Yes)]
         [RequiredIfAttributesMatch(nameof(IsFinalAndClinicalGovernanceReview), true)]
         public string ClinicalGovernanceReviewText { get; set; }
     }
