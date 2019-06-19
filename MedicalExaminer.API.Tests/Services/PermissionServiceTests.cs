@@ -23,7 +23,7 @@ namespace MedicalExaminer.API.Tests.Services
 {
     public class PermissionServiceTests
     {
-        private readonly Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>> _userRetrievalServiceMock;
+        private readonly Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>> _userRetrievalServiceMock;
 
         private readonly Mock<IRolePermissions> _rolePermissionsMock;
 
@@ -35,7 +35,7 @@ namespace MedicalExaminer.API.Tests.Services
         {
             _rolePermissionsMock = new Mock<IRolePermissions>();
 
-            _userRetrievalServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            _userRetrievalServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
 
             _optionAuthorizationSettingsMock = new Mock<IOptions<AuthorizationSettings>>();
             _optionAuthorizationSettingsMock
@@ -82,7 +82,7 @@ namespace MedicalExaminer.API.Tests.Services
                 .Returns(true);
 
             _userRetrievalServiceMock
-                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
 
             // Act
@@ -123,7 +123,7 @@ namespace MedicalExaminer.API.Tests.Services
                 .Returns(false);
 
             _userRetrievalServiceMock
-                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
 
             // Act
@@ -149,7 +149,7 @@ namespace MedicalExaminer.API.Tests.Services
             };
 
             _userRetrievalServiceMock
-                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
 
             // Act
@@ -185,7 +185,7 @@ namespace MedicalExaminer.API.Tests.Services
                 .Returns(true);
 
             _userRetrievalServiceMock
-                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
 
             // Act
@@ -221,7 +221,7 @@ namespace MedicalExaminer.API.Tests.Services
                 .Returns(false);
 
             _userRetrievalServiceMock
-                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
 
             // Act
@@ -245,7 +245,7 @@ namespace MedicalExaminer.API.Tests.Services
             };
 
             _userRetrievalServiceMock
-                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
 
             // Act
@@ -292,7 +292,7 @@ namespace MedicalExaminer.API.Tests.Services
                 .Returns(false);
 
             _userRetrievalServiceMock
-                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Setup(urs => urs.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
 
             // Act

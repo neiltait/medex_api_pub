@@ -37,12 +37,12 @@ namespace MedicalExaminer.API.Authorization
             // Resource requests should be handled in DocumentPermissionHandler.
             if (context.Resource == null || context.Resource is AuthorizationFilterContext)
             {
-                var emailAddress = context.User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value)
+                var oktaId = context.User.Claims.Where(c => c.Type == MEClaimTypes.OktaUserId).Select(c => c.Value)
                     .FirstOrDefault();
 
-                if (emailAddress != null)
+                if (oktaId != null)
                 {
-                    if (await _permissionService.HasPermission(emailAddress, requirement.Permission))
+                    if (await _permissionService.HasPermission(oktaId, requirement.Permission))
                     {
                         context.Succeed(requirement);
                     }

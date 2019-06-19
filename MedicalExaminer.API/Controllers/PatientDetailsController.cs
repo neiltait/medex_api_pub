@@ -42,7 +42,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
-        /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
+        /// <param name="usersRetrievalByOktaIdService">User Retrieval By Okta Id Service.</param>
         /// <param name="authorizationService">Authorization Service.</param>
         /// <param name="permissionService">Permission Service.</param>
         /// <param name="examinationRetrievalService">Examination Retrieval Service.</param>
@@ -51,13 +51,13 @@ namespace MedicalExaminer.API.Controllers
         public PatientDetailsController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService, 
             IPermissionService permissionService, 
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination> patientDetailsUpdateService,
             IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService)
-            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
+            : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _examinationRetrievalService = examinationRetrievalService;
             _patientDetailsUpdateService = patientDetailsUpdateService;
