@@ -190,7 +190,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             controllerActionFilter.OnActionExecuting(actionExecutingContext);
             var logEntry = _mockLogger.LogEntry;
 
-            var logEntryContents = logEntry.UserName + " " + logEntry.UserAuthenticationType + " " +
+            var logEntryContents = logEntry.UserId + " " + logEntry.UserAuthenticationType + " " +
                                    logEntry.UserIsAuthenticated + " " + logEntry.ControllerName + " " +
                                    logEntry.ControllerMethod + " " + logEntry.RemoteIP;
 
