@@ -47,7 +47,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new PermissionsController(
                 LoggerMock.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 _userRetrievalByIdServiceMock.Object,
@@ -56,21 +56,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 _locationsParentsServiceMock.Object
             );
 
-            Controller.ControllerContext = GetContollerContext();
-        }
-
-        private ControllerContext GetContollerContext()
-        {
-            return new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(ClaimTypes.Email, "test@example.com")
-                    }))
-                }
-            };
+            Controller.ControllerContext = GetControllerContext();
         }
 
         [Fact]
@@ -84,7 +70,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedCurrentUserEmail = "test@example.com";
+            var expectedCurrentUserOktaId = "oktaId";
             var expectedUser = new MeUser()
             {
                 UserId = expectedUserId,
@@ -105,7 +91,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedCurrentUser = new MeUser()
             {
                 UserId = expectedCurrentUserId,
-                Email = expectedCurrentUserEmail,
+                OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
                     new MEUserPermission()
@@ -144,8 +130,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
-                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedCurrentUserEmail)))
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
             PermissionServiceMock
@@ -234,7 +220,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedCurrentUserEmail = "test@example.com";
+            var expectedCurrentUserOktaId = "oktaId";
             var expectedUser = new MeUser()
             {
                 UserId = expectedUserId,
@@ -257,7 +243,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedCurrentUser = new MeUser()
             {
                 UserId = expectedCurrentUserId,
-                Email = expectedCurrentUserEmail,
+                OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
                     new MEUserPermission()
@@ -284,8 +270,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
-                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedCurrentUserEmail)))
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
             PermissionServiceMock
@@ -324,12 +310,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedCurrentUserEmail = "test@example.com";
+            var expectedCurrentUserOktaId = "oktaId";
             const MeUser expectedUser = null;
             var expectedCurrentUser = new MeUser()
             {
                 UserId = expectedCurrentUserId,
-                Email = expectedCurrentUserEmail,
+                OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
                     new MEUserPermission()
@@ -356,8 +342,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
-                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedCurrentUserEmail)))
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
             PermissionServiceMock
@@ -397,7 +383,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedCurrentUserEmail = "test@example.com";
+            var expectedCurrentUserOktaId = "oktaId";
             var expectedUser = new MeUser()
             {
                 UserId = expectedUserId,
@@ -414,7 +400,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedCurrentUser = new MeUser()
             {
                 UserId = expectedCurrentUserId,
-                Email = expectedCurrentUserEmail,
+                OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
                     new MEUserPermission()
@@ -441,8 +427,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
-                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedCurrentUserEmail)))
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
             PermissionServiceMock
@@ -481,7 +467,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedCurrentUserEmail = "test@example.com";
+            var expectedCurrentUserOktaId = "oktaId";
             var expectedUser = new MeUser()
             {
                 UserId = expectedUserId,
@@ -504,7 +490,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedCurrentUser = new MeUser()
             {
                 UserId = expectedCurrentUserId,
-                Email = expectedCurrentUserEmail,
+                OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
                     new MEUserPermission()
@@ -531,8 +517,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
-                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedCurrentUserEmail)))
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
             PermissionServiceMock
@@ -631,12 +617,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedCurrentUserEmail = "test@example.com";
+            var expectedCurrentUserOktaId = "oktaId";
             const MeUser expectedUser = null;
             var expectedCurrentUser = new MeUser()
             {
                 UserId = expectedCurrentUserId,
-                Email = expectedCurrentUserEmail,
+                OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
                     new MEUserPermission()
@@ -675,8 +661,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
-                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedCurrentUserEmail)))
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
             PermissionServiceMock
@@ -713,7 +699,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedCurrentUserEmail = "test@example.com";
+            var expectedCurrentUserOktaId = "oktaId";
             var expectedUser = new MeUser()
             {
                 UserId = expectedUserId,
@@ -736,7 +722,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedCurrentUser = new MeUser()
             {
                 UserId = expectedCurrentUserId,
-                Email = expectedCurrentUserEmail,
+                OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
                     new MEUserPermission()
@@ -763,8 +749,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
-                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedCurrentUserEmail)))
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
             PermissionServiceMock
@@ -814,12 +800,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedCurrentUserEmail = "test@example.com";
+            var expectedCurrentUserOktaId = "oktaId";
             const MeUser expectedUser = null;
             var expectedCurrentUser = new MeUser()
             {
                 UserId = expectedCurrentUserId,
-                Email = expectedCurrentUserEmail,
+                OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
                     new MEUserPermission()
@@ -846,8 +832,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
-                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedCurrentUserEmail)))
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
             PermissionServiceMock
@@ -897,7 +883,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedCurrentUserEmail = "test@example.com";
+            var expectedCurrentUserOktaId = "oktaId";
             var expectedUser = new MeUser()
             {
                 UserId = expectedUserId,
@@ -920,7 +906,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedCurrentUser = new MeUser()
             {
                 UserId = expectedCurrentUserId,
-                Email = expectedCurrentUserEmail,
+                OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
                     new MEUserPermission()
@@ -947,9 +933,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
+            UsersRetrievalByOktaIdServiceMock
                 .Setup(urbes =>
-                    urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedCurrentUserEmail)))
+                    urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
             PermissionServiceMock
@@ -1054,7 +1040,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedCurrentUserEmail = "test@example.com";
+            var expectedCurrentUserOktaId = "oktaId";
             var expectedUser = new MeUser()
             {
                 UserId = expectedUserId,
@@ -1077,7 +1063,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedCurrentUser = new MeUser()
             {
                 UserId = expectedCurrentUserId,
-                Email = expectedCurrentUserEmail,
+                OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
                     new MEUserPermission()
@@ -1104,8 +1090,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
-                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedCurrentUserEmail)))
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
             PermissionServiceMock
@@ -1158,7 +1144,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedCurrentUserEmail = "test@example.com";
+            var expectedCurrentUserOktaId = "oktaId";
             var expectedUser = new MeUser()
             {
                 UserId = expectedUserId,
@@ -1181,7 +1167,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedCurrentUser = new MeUser()
             {
                 UserId = expectedCurrentUserId,
-                Email = expectedCurrentUserEmail,
+                OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
                     new MEUserPermission()
@@ -1208,8 +1194,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
-                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedCurrentUserEmail)))
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
             PermissionServiceMock
@@ -1279,7 +1265,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedCurrentUserEmail = "test@example.com";
+            var expectedCurrentUserOktaId = "oktaId";
             var expectedUser = new MeUser()
             {
                 UserId = expectedUserId,
@@ -1296,7 +1282,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedCurrentUser = new MeUser()
             {
                 UserId = expectedCurrentUserId,
-                Email = expectedCurrentUserEmail,
+                OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
                     new MEUserPermission()
@@ -1323,8 +1309,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByEmailServiceMock
-                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByEmailQuery>(q => q.Email == expectedCurrentUserEmail)))
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
                 .Returns(Task.FromResult(expectedCurrentUser));
 
             PermissionServiceMock

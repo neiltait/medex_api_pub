@@ -36,7 +36,8 @@ namespace MedicalExaminer.API.Tests.Controllers
 
         private readonly Mock<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>> _usersRetrievalByRoleLocationQueryServiceMock;
 
-        public ExaminationControllerTests() : base(setupAuthorize: false)
+        public ExaminationControllerTests()
+            : base(setupAuthorize: false)
         {
             _createExaminationServiceMock = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>(MockBehavior.Strict);
 
@@ -53,7 +54,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new ExaminationsController(
                 LoggerMock.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 _createExaminationServiceMock.Object,
@@ -62,7 +63,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 _locationParentsServiceMock.Object,
                 _locationRetrievalByQueryHandlerMock.Object,
                 _usersRetrievalByRoleLocationQueryServiceMock.Object);
-            Controller.ControllerContext = GetContollerContext();
+            Controller.ControllerContext = GetControllerContext();
         }
 
         [Fact]
@@ -241,7 +242,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var parentLocations = new List<Location>();
 
-            UsersRetrievalByEmailServiceMock.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+            UsersRetrievalByOktaIdServiceMock.Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(mockMeUser));
 
             _locationParentsServiceMock.Setup(lps => lps.Handle(It.IsAny<LocationParentsQuery>()))
@@ -277,7 +278,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var parentLocations = new List<Location>();
 
-            UsersRetrievalByEmailServiceMock.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+            UsersRetrievalByOktaIdServiceMock.Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(mockMeUser));
 
             _locationParentsServiceMock.Setup(lps => lps.Handle(It.IsAny<LocationParentsQuery>()))
@@ -310,20 +311,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 GivenNames = "Barry"
             };
             return examination;
-        }
-
-        private ControllerContext GetContollerContext()
-        {
-            return new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Email, "username")
-            }, "someAuthTypeName"))
-                }
-            };
         }
     }
 }

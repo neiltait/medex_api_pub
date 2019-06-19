@@ -41,7 +41,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="mapper">Mapper.</param>
-        /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
+        /// <param name="usersRetrievalByOktaIdService">User Retrieval By Okta Id Service.</param>
         /// <param name="authorizationService">Authorization Service.</param>
         /// <param name="permissionService">Permission Service.</param>
         /// <param name="locationRetrievalByIdQueryHandler">Location Retrieval By Id Query Handler.</param>
@@ -49,12 +49,12 @@ namespace MedicalExaminer.API.Controllers
         public LocationsController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService,
             IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> locationRetrievalByIdQueryHandler,
             IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler)
-            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
+            : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _locationRetrievalByIdQueryHandler = locationRetrievalByIdQueryHandler;
             _locationRetrievalByQueryHandler = locationRetrievalByQueryHandler;

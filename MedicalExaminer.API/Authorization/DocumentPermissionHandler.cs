@@ -34,11 +34,14 @@ namespace MedicalExaminer.API.Authorization
             PermissionRequirement requirement,
             ILocationPath document)
         {
-            var emailAddress = context.User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).First();
+            var oktaId = context.User.Claims.Where(c => c.Type == MEClaimTypes.OktaUserId).Select(c => c.Value).First();
 
-            if (await _permissionService.HasPermission(emailAddress, document, requirement.Permission))
+            if (oktaId != null)
             {
-                context.Succeed(requirement);
+                if (await _permissionService.HasPermission(oktaId, document, requirement.Permission))
+                {
+                    context.Succeed(requirement);
+                }
             }
         }
     }

@@ -37,12 +37,12 @@ namespace MedicalExaminer.API.Controllers
         public CaseBreakdownController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService,
             IAsyncQueryHandler<CreateEventQuery, EventCreationResult> eventCreationService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService)
-            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
+            : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _eventCreationService = eventCreationService;
             _examinationRetrievalService = examinationRetrievalService;
