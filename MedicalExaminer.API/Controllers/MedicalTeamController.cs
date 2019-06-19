@@ -80,7 +80,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationId">The ID of the examination.</param>
         /// <returns>A GetMedicalTeamResponse.</returns>
         [HttpGet("medical_team/")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetMedicalTeamResponse>> GetMedicalTeam(string examinationId)
         {
             if (!ModelState.IsValid)
@@ -127,7 +126,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="putMedicalTeamRequest">The PutMedicalTeamRequest.</param>
         /// <returns>A PutExaminationResponse.</returns>
         [HttpPut("medical_team/")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutMedicalTeamResponse>> PutMedicalTeam(
             string examinationId,
             [FromBody] [ModelBinder(Name = "examinationId")] PutMedicalTeamRequest putMedicalTeamRequest)

@@ -121,7 +121,7 @@ namespace MedicalExaminer.API
                 }
             }
 
-            // use _tokenhandler to deserialize token onto claimsprincipal. Note that the token carries an expiry internally
+            // Use _tokenHandler to deserialize Okta onto claimsPrincipal. Note that the token carries an expiry internally
             // If it has expired then we would expect SecurityTokenExpiredException to be thrown and authentication fails
             var claimsPrincipal = _tokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
 
@@ -129,7 +129,15 @@ namespace MedicalExaminer.API
             if ((meUserReturned == null || meUserReturned.OktaTokenExpiry < DateTimeOffset.Now) &&
                 claimsPrincipal != null)
             {
-                UpdateOktaTokenForUser(securityToken, claimsPrincipal);
+                meUserReturned = UpdateOktaTokenForUser(securityToken, claimsPrincipal);
+            }
+
+            if (meUserReturned != null)
+            {
+                claimsPrincipal?.Identities.First().AddClaim(
+                    new Claim(
+                        Authorization.MEClaimTypes.UserId,
+                        meUserReturned.UserId));
             }
 
             return claimsPrincipal;
@@ -141,7 +149,8 @@ namespace MedicalExaminer.API
         /// <param name="oktaToken">Okta token</param>
         /// <param name="claimsPrincipal">Claims principal.</param>
         /// <remarks>Attempts to find user DB record based on email address. If user is found then update oktea token</remarks>
-        private void UpdateOktaTokenForUser(string oktaToken, ClaimsPrincipal claimsPrincipal)
+        /// <returns>User if found by email.</returns>
+        private MeUser UpdateOktaTokenForUser(string oktaToken, ClaimsPrincipal claimsPrincipal)
         {
             var oktaId = claimsPrincipal.Claims.Where(c => c.Type == MEClaimTypes.OktaUserId).Select(c => c.Value).First();
 
@@ -153,11 +162,14 @@ namespace MedicalExaminer.API
                 {
                     var meUser = meUserReturned.Result;
                     meUser.OktaToken = oktaToken;
-                    claimsPrincipal.Identities.First().AddClaim(new Claim(Authorization.MEClaimTypes.UserId, meUser.UserId));
                     meUser.OktaTokenExpiry = DateTimeOffset.Now.AddMinutes(_oktaTokenExpiryTime);
                     _userUpdateOktaTokenService.Handle(new UsersUpdateOktaTokenQuery(meUser));
+
+                    return meUser;
                 }
             }
+
+            return null;
         }
     }
 }
