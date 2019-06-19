@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Moq;
@@ -140,7 +141,6 @@ namespace MedicalExaminer.API.Tests.Controllers
     {
         public ControllerActionFilterTests()
         {
-            
             _mockLogger = new MELoggerMocker();
             _mapper = new Mock<IMapper>();
             var createUserService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
@@ -175,7 +175,16 @@ namespace MedicalExaminer.API.Tests.Controllers
         public void CheckCallToLogger()
         {
             var controllerActionFilter = new ControllerActionFilter();
-            var actionContext = new ActionContext { HttpContext = new MockHttpContext() };
+            var actionContext = new ActionContext
+            {
+                HttpContext = new MockHttpContext(),
+                ActionDescriptor = new ControllerActionDescriptor()
+                {
+                    ControllerName = "MyAction",
+                    ActionName = "MyMethod"
+                }
+            };
+
             var identity = new ClaimsIdentity();
             identity.AddClaim(new Claim(MEClaimTypes.UserId, "UserId"));
             actionContext.HttpContext.User.AddIdentity(identity);
@@ -187,6 +196,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var actionArguments = new Dictionary<string, object>();
             var actionExecutingContext =
                 new ActionExecutingContext(actionContext, filters, actionArguments, _controller);
+
             controllerActionFilter.OnActionExecuting(actionExecutingContext);
             var logEntry = _mockLogger.LogEntry;
 

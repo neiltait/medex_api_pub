@@ -35,20 +35,20 @@ namespace MedicalExaminer.API.Filters
                 return;
             }
 
-            var controllerName = "Unknown";
-            var controllerAction = "Unknown";
+            string controllerName = null;
+            string controllerAction = null;
 
             if (context.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
             {
                 controllerName = controllerActionDescriptor.ControllerName;
                 controllerAction = controllerActionDescriptor.ActionName;
             }
-            else
+            else if (context.ActionDescriptor.RouteValues.Count >= 2)
             {
                 controllerName =
-                    context.ActionDescriptor.RouteValues.ElementAt(context.ActionDescriptor.RouteValues.Count - 0).Value;
-                controllerAction =
                     context.ActionDescriptor.RouteValues.ElementAt(context.ActionDescriptor.RouteValues.Count - 1).Value;
+                controllerAction =
+                    context.ActionDescriptor.RouteValues.ElementAt(context.ActionDescriptor.RouteValues.Count - 2).Value;
             }
 
             var logger = controller.Logger;
@@ -57,7 +57,6 @@ namespace MedicalExaminer.API.Filters
             var userId = ((ClaimsIdentity)identity).Claims.SingleOrDefault(x => x.Type == Authorization.MEClaimTypes.UserId)?.Value;
             var userAuthenticationType = identity.AuthenticationType ?? "Unknown";
             var userIsAuthenticated = identity.IsAuthenticated;
-            var routeDataValues = context.RouteData.Values.Values;
             var parameters = new Dictionary<string, object>();
 
             foreach (var parameter in context.ActionArguments)
@@ -68,8 +67,15 @@ namespace MedicalExaminer.API.Filters
             var remoteIpAddress = context.HttpContext.Connection.RemoteIpAddress;
             var remoteIp = remoteIpAddress == null ? "Unknown" : remoteIpAddress.ToString();
             var timeStamp = DateTime.UtcNow;
-            logger.Log(userId, userAuthenticationType, userIsAuthenticated, controllerName, controllerAction,
-                parameters, remoteIp, timeStamp);
+            logger.Log(
+                userId,
+                userAuthenticationType,
+                userIsAuthenticated,
+                controllerName,
+                controllerAction,
+                parameters,
+                remoteIp,
+                timeStamp);
         }
     }
 }
