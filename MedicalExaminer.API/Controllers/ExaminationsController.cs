@@ -93,7 +93,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="filter">Filter.</param>
         /// <returns>A list of examinations.</returns>
         [HttpGet]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetExaminationsResponse>> GetExaminations([FromQuery]GetExaminationsRequest filter)
         {
             if (filter == null)
@@ -148,7 +147,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="postExaminationRequest">The PostExaminationRequest.</param>
         /// <returns>A PostExaminationResponse.</returns>
         [HttpPost]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutExaminationResponse>> CreateExamination(
             [FromBody] PostExaminationRequest postExaminationRequest)
         {
