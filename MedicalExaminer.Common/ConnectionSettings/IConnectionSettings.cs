@@ -1,18 +1,19 @@
-﻿using System;
-
-namespace MedicalExaminer.Common.ConnectionSettings
+﻿namespace MedicalExaminer.Common.ConnectionSettings
 {
     /// <summary>
-    ///     Connection Settings Interface
+    /// Connection Settings Interface
     /// </summary>
-    public interface IConnectionSettings
+    /// <see cref="IClientSettings"/>
+    public interface IConnectionSettings : IClientSettings
     {
-        Uri EndPointUri { get; }
-
-        string PrimaryKey { get; }
-
+        /// <summary>
+        /// Database name.
+        /// </summary>
         string DatabaseId { get; }
 
+        /// <summary>
+        /// Collection name within database.
+        /// </summary>
         string Collection { get; }
     }
 }
