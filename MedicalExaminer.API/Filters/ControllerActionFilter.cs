@@ -43,13 +43,6 @@ namespace MedicalExaminer.API.Filters
                 controllerName = controllerActionDescriptor.ControllerName;
                 controllerAction = controllerActionDescriptor.ActionName;
             }
-            else if (context.ActionDescriptor.RouteValues.Count >= 2)
-            {
-                controllerName =
-                    context.ActionDescriptor.RouteValues.ElementAt(context.ActionDescriptor.RouteValues.Count - 1).Value;
-                controllerAction =
-                    context.ActionDescriptor.RouteValues.ElementAt(context.ActionDescriptor.RouteValues.Count - 2).Value;
-            }
 
             var logger = controller.Logger;
 
