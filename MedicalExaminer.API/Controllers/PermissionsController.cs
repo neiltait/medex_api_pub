@@ -88,7 +88,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A GetPermissionsResponse.</returns>
         [HttpGet]
         [AuthorizePermission(Common.Authorization.Permission.GetUserPermissions)]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetPermissionsResponse>> GetPermissions(string meUserId)
         {
             try
@@ -139,7 +138,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A GetPermissionResponse.</returns>
         [HttpGet("{permissionId}")]
         [AuthorizePermission(Common.Authorization.Permission.GetUserPermission)]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetPermissionResponse>> GetPermission(string meUserId, string permissionId)
         {
             if (!ModelState.IsValid)
@@ -192,7 +190,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PostPermissionResponse.</returns>
         [HttpPost]
         [AuthorizePermission(Common.Authorization.Permission.CreateUserPermission)]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PostPermissionResponse>> CreatePermission(string meUserId,
             [FromBody]
             PostPermissionRequest postPermission)
@@ -269,7 +266,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutPermissionResponse.</returns>
         [HttpPut("{permissionId}")]
         [AuthorizePermission(Common.Authorization.Permission.UpdateUserPermission)]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(
             string meUserId, 
             string permissionId,

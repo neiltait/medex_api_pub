@@ -71,7 +71,6 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <returns>A GetUsersResponse.</returns>
         [HttpGet]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         [AuthorizePermission(Permission.GetUsers)]
         public async Task<ActionResult<GetUsersResponse>> GetUsers()
         {
@@ -99,7 +98,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="meUserId">The User Identifier.</param>
         /// <returns>A GetUserResponse.</returns>
         [HttpGet("{meUserId}")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         [AuthorizePermission(Permission.GetUser)]
         public async Task<ActionResult<GetUserResponse>> GetUser(string meUserId)
         {
@@ -130,7 +128,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PostUserResponse.</returns>
         // POST api/users
         [HttpPost]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         [AuthorizePermission(Permission.InviteUser)]
         public async Task<ActionResult<PostUserResponse>> CreateUser([FromBody] PostUserRequest postUser)
         {
@@ -162,7 +159,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="putUser">The PutUserRequest.</param>
         /// <returns>A PutUserResponse.</returns>
         [HttpPut("{meUserId}")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         [AuthorizePermission(Permission.UpdateUser)]
         public async Task<ActionResult<PutUserResponse>> UpdateUser([FromBody] PutUserRequest putUser)
         {

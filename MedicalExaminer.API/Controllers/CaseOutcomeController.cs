@@ -240,7 +240,6 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <returns>Case Outcome Details</returns>
         [HttpGet]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetCaseOutcomeResponse>> GetCaseOutcome(string examinationId)
         {
             if (string.IsNullOrEmpty(examinationId))

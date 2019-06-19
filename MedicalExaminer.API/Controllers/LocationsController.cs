@@ -66,7 +66,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="request">The request.</param>
         /// <returns>A list of locations.</returns>
         [HttpGet]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationsResponse>> GetLocations([FromQuery] GetLocationsRequest request)
         {
             IEnumerable<string> permissedLocations = null;
@@ -92,7 +91,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="locationId">The Location Id.</param>
         /// <returns>A GetLocationsResponse.</returns>
         [HttpGet("{locationId}")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationResponse>> GetLocation(string locationId)
         {
             try

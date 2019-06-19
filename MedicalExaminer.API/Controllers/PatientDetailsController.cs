@@ -70,7 +70,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationId">Examination Id.</param>
         /// <returns>Get Patient Details Response.</returns>
         [HttpGet]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetPatientDetailsResponse>> GetPatientDetails(string examinationId)
         {
             if (!ModelState.IsValid)
@@ -102,7 +101,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="putPatientDetailsRequest">Put Patient Details Request.</param>
         /// <returns>PutPatientDetailsResponse</returns>
         [HttpPut]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutPatientDetailsResponse>> UpdatePatientDetails(string examinationId, [FromBody]PutPatientDetailsRequest putPatientDetailsRequest)
         {
             if (!ModelState.IsValid)

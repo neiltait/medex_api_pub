@@ -55,7 +55,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{examinationId}/casebreakdown")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetCaseBreakdownResponse>> GetCaseBreakdown(string examinationId)
         {
             if (string.IsNullOrEmpty(examinationId))
@@ -100,7 +99,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/bereaved_discussion")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewBereavedDiscussionEvent(
             string examinationId,
             [FromBody] PutBereavedDiscussionEventRequest putNewBereavedDiscussionEventNoteRequest)
