@@ -37,12 +37,12 @@ namespace MedicalExaminer.API.Controllers
         public CaseBreakdownController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService,
             IAsyncQueryHandler<CreateEventQuery, EventCreationResult> eventCreationService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService)
-            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
+            : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _eventCreationService = eventCreationService;
             _examinationRetrievalService = examinationRetrievalService;
@@ -55,7 +55,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{examinationId}/casebreakdown")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetCaseBreakdownResponse>> GetCaseBreakdown(string examinationId)
         {
             if (string.IsNullOrEmpty(examinationId))
@@ -100,7 +99,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/bereaved_discussion")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewBereavedDiscussionEvent(
             string examinationId,
             [FromBody] PutBereavedDiscussionEventRequest putNewBereavedDiscussionEventNoteRequest)
@@ -119,7 +117,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/prescrutiny")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewPreScrutinyEvent(
             string examinationId,
             [FromBody]
@@ -139,7 +136,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/medical_history")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewMedicalHistoryEvent(
             string examinationId,
             [FromBody] PutMedicalHistoryEventRequest putMedicalHistoryEventRequest)
@@ -158,7 +154,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/admission")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewAdmissionEvent(
             string examinationId,
             [FromBody] PutAdmissionEventRequest putNewAdmissionEventNoteRequest)
@@ -177,7 +172,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/other")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewOtherEvent(
             string examinationId,
             [FromBody] PutOtherEventRequest putNewOtherEventNoteRequest)
@@ -196,7 +190,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/qap_discussion")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewQapDiscussionEvent(
             string examinationId,
             [FromBody] PutQapDiscussionEventRequest putNewQapDiscussionEventNoteRequest)
@@ -215,7 +208,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/meo_summary")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewMeoSummaryEvent(
             string examinationId,
             [FromBody] PutMeoSummaryEventRequest putNewMeoSummaryEventNoteRequest)

@@ -30,12 +30,11 @@ namespace MedicalExaminer.Common.Services.User
                 throw new ArgumentNullException(nameof(userUpdate));
             }
 
-
             var userToUpdate =
                 _databaseAccess
                     .GetItemAsync<Models.MeUser>(
                         _connectionSettings,
-                        meUser => meUser.Email == userUpdate.Email).Result;
+                        meUser => meUser.UserId == userUpdate.UserId).Result;
 
             if (userToUpdate == null)
             {

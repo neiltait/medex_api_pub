@@ -41,7 +41,7 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "informed")]
         [Required]
-        public Informed Informed { get; set; }
+        public InformedAtDeath Informed { get; set; }
 
         /// <summary>
         /// appointment date

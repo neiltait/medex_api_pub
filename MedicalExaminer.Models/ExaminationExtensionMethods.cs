@@ -130,7 +130,7 @@ namespace MedicalExaminer.Models
                 score = score + defaultScoreWeighting;
             }
 
-            if (DateTime.Now.AddDays(-4) > examination.CreatedAt)
+            if (DateTime.Now.Date.AddDays(-4) > examination.CreatedAt.Date)
             {
                 score = score + overdueScoreWeighting;
             }
@@ -149,7 +149,7 @@ namespace MedicalExaminer.Models
             examination.PendingDiscussionWithQAP = CalculatePendingQAPDiscussion(examination);
             examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
             examination.PendingScrutinyNotes = CalculateScrutinyNotesPending(examination);
-            examination.HaveFinalCaseOutcomesOutstanding = !examination.OutstandingCaseItemsCompleted;
+            examination.HaveFinalCaseOutcomesOutstanding = !CalculateOutstandingCaseOutcomesCompleted(examination);
             examination.CaseOutcome.CaseOutcomeSummary = CalculateScrutinyOutcome(examination);
 
             return examination;
@@ -228,7 +228,8 @@ namespace MedicalExaminer.Models
             }
             else
             {
-                if (examination.CaseBreakdown.AdmissionNotes.Latest != null && examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral.Value)
+                if (examination.CaseBreakdown.AdmissionNotes.Latest != null && 
+                    examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral.Value)
                 {
                     return false;
                 }
@@ -289,7 +290,8 @@ namespace MedicalExaminer.Models
             }
             else
             {
-                if (examination.CaseBreakdown.AdmissionNotes.Latest != null && examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral.Value)
+                if (examination.CaseBreakdown.AdmissionNotes.Latest != null && 
+                    examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral.Value)
                 {
                     return false;
                 }

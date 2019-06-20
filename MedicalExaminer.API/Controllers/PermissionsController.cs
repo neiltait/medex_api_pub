@@ -56,7 +56,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
-        /// <param name="usersRetrievalByEmailService">Users Retrieval by Email Service.</param>
+        /// <param name="usersRetrievalByOktaIdService">User Retrieval By Okta Id Service.</param>
         /// <param name="authorizationService">Authorization Service.</param>
         /// <param name="permissionService">Permission Service.</param>
         /// <param name="userRetrievalByIdService">User retrieval by id service.</param>
@@ -66,14 +66,14 @@ namespace MedicalExaminer.API.Controllers
         public PermissionsController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService,
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
             IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService,
             IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>> locationsParentsService)
-            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
+            : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _userRetrievalByIdService = userRetrievalByIdService;
             _userUpdateService = userUpdateService;
@@ -88,7 +88,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A GetPermissionsResponse.</returns>
         [HttpGet]
         [AuthorizePermission(Common.Authorization.Permission.GetUserPermissions)]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetPermissionsResponse>> GetPermissions(string meUserId)
         {
             try
@@ -139,7 +138,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A GetPermissionResponse.</returns>
         [HttpGet("{permissionId}")]
         [AuthorizePermission(Common.Authorization.Permission.GetUserPermission)]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetPermissionResponse>> GetPermission(string meUserId, string permissionId)
         {
             if (!ModelState.IsValid)
@@ -192,7 +190,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PostPermissionResponse.</returns>
         [HttpPost]
         [AuthorizePermission(Common.Authorization.Permission.CreateUserPermission)]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PostPermissionResponse>> CreatePermission(string meUserId,
             [FromBody]
             PostPermissionRequest postPermission)
@@ -269,7 +266,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutPermissionResponse.</returns>
         [HttpPut("{permissionId}")]
         [AuthorizePermission(Common.Authorization.Permission.UpdateUserPermission)]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(
             string meUserId, 
             string permissionId,

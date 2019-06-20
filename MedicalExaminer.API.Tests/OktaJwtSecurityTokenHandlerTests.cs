@@ -6,6 +6,7 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using FluentAssertions;
 using FluentAssertions.Common;
+using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
@@ -32,11 +33,11 @@ namespace MedicalExaminer.API.Tests
 
             _mockUserRetrieveOktaTokenService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>>();
 
-            _mockUsersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            _mockUsersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
 
             var tokenExpiryTime = 30;
 
-            sut = new OktaJwtSecurityTokenHandler(_mockTokenService.Object, _mockSecurityTokenValidator.Object, _mockUserUpdateOktaTokenService.Object, _mockUserRetrieveOktaTokenService.Object, _mockUsersRetrievalByEmailService.Object, tokenExpiryTime);
+            sut = new OktaJwtSecurityTokenHandler(_mockTokenService.Object, _mockSecurityTokenValidator.Object, _mockUserUpdateOktaTokenService.Object, _mockUserRetrieveOktaTokenService.Object, _mockUsersRetrievalByOktaIdService.Object, tokenExpiryTime);
         }
 
         private readonly Mock<ITokenService> _mockTokenService;
@@ -48,7 +49,7 @@ namespace MedicalExaminer.API.Tests
         private readonly Mock<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>>
             _mockUserRetrieveOktaTokenService;
 
-        private readonly Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>> _mockUsersRetrievalByEmailService;
+        private readonly Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>> _mockUsersRetrievalByOktaIdService;
 
         private readonly OktaJwtSecurityTokenHandler sut;
 
@@ -78,7 +79,7 @@ namespace MedicalExaminer.API.Tests
         public void MaximumTokenSizeInBytesSet_ShouldThrowException()
         {
             Action act = () => sut.MaximumTokenSizeInBytes = 23;
-            act.Should().Throw<NotImplementedException>();
+            act.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -93,7 +94,7 @@ namespace MedicalExaminer.API.Tests
             };
             var mockExpectedClaims = new Mock<ClaimsPrincipal>();
             var claims = new List<Claim>();
-            var claim = new Claim(ClaimTypes.Email, "joe.doe@nhs.co.uk");
+            var claim = new Claim(MEClaimTypes.OktaUserId, "oktaId");
             claims.Add(claim);
             mockExpectedClaims.Setup(cp => cp.Claims).Returns(claims);
 
@@ -218,7 +219,7 @@ namespace MedicalExaminer.API.Tests
             };
             var claimsPrincipal = new Mock<ClaimsPrincipal>();
             var claims = new List<Claim>();
-            var claim = new Claim(ClaimTypes.Email, "joe.doe@nhs.co.uk");
+            var claim = new Claim(MEClaimTypes.OktaUserId, "oktaId");
             claims.Add(claim);
             var identities = new List<ClaimsIdentity>();
             var identity = new ClaimsIdentity();
@@ -230,7 +231,7 @@ namespace MedicalExaminer.API.Tests
             _mockTokenService.Setup(ts => ts.IntrospectToken(securityToken, It.IsAny<HttpClient>())).Returns(Task.FromResult(introspectResponse));
             _mockUserUpdateOktaTokenService.Setup(ts => ts.Handle(It.IsAny<UsersUpdateOktaTokenQuery>()));
             _mockSecurityTokenValidator.Setup(tv => tv.ValidateToken(securityToken, expectedTokenValidationParameters, out expectedValidatedToken)).Returns(claimsPrincipal.Object);
-            _mockUsersRetrievalByEmailService.Setup(es => es.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+            _mockUsersRetrievalByOktaIdService.Setup(es => es.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUserExisting));
 
             //Act

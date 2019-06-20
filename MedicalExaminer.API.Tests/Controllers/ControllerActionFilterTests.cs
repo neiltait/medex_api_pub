@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using FluentAssertions;
 using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Filters;
@@ -19,6 +20,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Moq;
@@ -138,9 +140,12 @@ namespace MedicalExaminer.API.Tests.Controllers
 
     public class ControllerActionFilterTests
     {
+        private readonly MELoggerMocker _mockLogger;
+        private readonly UsersController _controller;
+        private readonly Mock<IMapper> _mapper;
+
         public ControllerActionFilterTests()
         {
-            
             _mockLogger = new MELoggerMocker();
             _mapper = new Mock<IMapper>();
             var createUserService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
@@ -149,7 +154,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
             var userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
 
-            var usersRetrievalByEmailServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var usersRetrievalByOktaIdServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
 
             var authorizationServiceMock = new Mock<IAuthorizationService>();
 
@@ -158,7 +163,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             _controller = new UsersController(
                 _mockLogger,
                 _mapper.Object,
-                usersRetrievalByEmailServiceMock.Object,
+                usersRetrievalByOktaIdServiceMock.Object,
                 authorizationServiceMock.Object,
                 permissionServiceMock.Object,
                 createUserService.Object,
@@ -167,35 +172,70 @@ namespace MedicalExaminer.API.Tests.Controllers
                 userUpdateService.Object);
         }
 
-        private readonly MELoggerMocker _mockLogger;
-        private readonly UsersController _controller;
-        private readonly Mock<IMapper> _mapper;
-
         [Fact]
-        public void CheckCallToLogger()
+        public void OnActionExecuted_DoesNothing()
         {
-            var controllerActionFilter = new ControllerActionFilter();
-            var actionContext = new ActionContext { HttpContext = new MockHttpContext() };
+            var controllerActionFilter = new ControllerActionFilter(_mockLogger);
+            var actionContext = new ActionContext
+            {
+                HttpContext = new MockHttpContext(),
+                ActionDescriptor = new ControllerActionDescriptor()
+                {
+                    ControllerName = "MyMethod",
+                    ActionName = "MyAction"
+                },
+            };
+
             var identity = new ClaimsIdentity();
             identity.AddClaim(new Claim(MEClaimTypes.UserId, "UserId"));
             actionContext.HttpContext.User.AddIdentity(identity);
             actionContext.RouteData = new RouteData();
-            actionContext.RouteData.Values.Add("Action", "MyAction");
-            actionContext.RouteData.Values.Add("Method", "MyMethod");
-            actionContext.ActionDescriptor = new ActionDescriptor();
+            var filters = new List<IFilterMetadata>();
+            var actionExecutedContext =
+                new ActionExecutedContext(actionContext, filters, _controller);
+
+            controllerActionFilter.OnActionExecuted(actionExecutedContext);
+        }
+
+        [Fact]
+        public void OnActionExecuting_WritesLog()
+        {
+            var expectedUnknown = "Unknown";
+            var expectedUserId = "expectedUserId";
+            var expectedControllerName = "expectedControllerName";
+            var expectedActionName = "expectedActionName";
+            var controllerActionFilter = new ControllerActionFilter(_mockLogger);
+            var actionContext = new ActionContext
+            {
+                HttpContext = new MockHttpContext(),
+                ActionDescriptor = new ControllerActionDescriptor()
+                {
+                    ControllerName = expectedControllerName,
+                    ActionName = expectedActionName
+                }
+            };
+
+            var identity = new ClaimsIdentity();
+            identity.AddClaim(new Claim(MEClaimTypes.UserId, expectedUserId));
+            actionContext.HttpContext.User.AddIdentity(identity);
+            actionContext.RouteData = new RouteData();
             var filters = new List<IFilterMetadata>();
             var actionArguments = new Dictionary<string, object>();
             var actionExecutingContext =
                 new ActionExecutingContext(actionContext, filters, actionArguments, _controller);
+
+            actionExecutingContext.ActionArguments.Add("filter", new { Property = "value" });
+
             controllerActionFilter.OnActionExecuting(actionExecutingContext);
             var logEntry = _mockLogger.LogEntry;
 
-            var logEntryContents = logEntry.UserName + " " + logEntry.UserAuthenticationType + " " +
-                                   logEntry.UserIsAuthenticated + " " + logEntry.ControllerName + " " +
-                                   logEntry.ControllerMethod + " " + logEntry.RemoteIP;
-
-            const string expectedMessage = "UserId Unknown False MyMethod MyAction Unknown";
-            Assert.Equal(expectedMessage, logEntryContents);
+            logEntry.UserId.Should().Be(expectedUserId);
+            logEntry.UserIsAuthenticated.Should().BeFalse();
+            logEntry.ControllerName.Should().Be(expectedControllerName);
+            logEntry.ControllerMethod.Should().Be(expectedActionName);
+            logEntry.RemoteIP.Should().Be(expectedUnknown);
+            logEntry.UserAuthenticationType.Should().Be(expectedUnknown);
+            logEntry.Parameters.Keys.Should().Contain("filter");
         }
     }
 }
