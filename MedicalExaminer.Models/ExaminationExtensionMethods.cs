@@ -378,6 +378,8 @@ namespace MedicalExaminer.Models
                 }
             }
 
+            // Old version
+
             //if (examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoronerFor100a)
             //{
             //    return CaseOutcomeSummary.ReferToCoroner;
