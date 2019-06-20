@@ -80,7 +80,7 @@ namespace MedicalExaminer.API.Tests.Services
                 .Setup(_ => _.CreateQuery<T>(It.IsAny<Expression>()))
                 .Returns((Expression expression) =>
                 {
-                    var mockDocumentQuery = new Mock<IFakeDocumentQuery<T>>();
+                    var mockDocumentQuery = new Mock<IFakeDocumentQuery<T>>(MockBehavior.Strict);
                     var query = new EnumerableQuery<T>(expression);
                     var response = new FeedResponse<T>(query);
 
@@ -92,6 +92,10 @@ namespace MedicalExaminer.API.Tests.Services
                     mockDocumentQuery
                         .Setup(_ => _.ExecuteNextAsync<T>(It.IsAny<CancellationToken>()))
                         .ReturnsAsync(response);
+
+                    mockDocumentQuery
+                        .Setup(_ => _.GetEnumerator())
+                        .Returns(query.AsEnumerable().GetEnumerator());
 
                     return mockDocumentQuery.Object;
                 });

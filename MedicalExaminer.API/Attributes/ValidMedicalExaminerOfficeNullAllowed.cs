@@ -1,5 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.Common;
+using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 
 namespace MedicalExaminer.API.Attributes
 {
@@ -11,16 +15,23 @@ namespace MedicalExaminer.API.Attributes
         /// <inheritdoc/>
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
-            var locationPersistence = (ILocationPersistence)context.GetService(typeof(ILocationPersistence));
             var locationString = value as string;
             if (string.IsNullOrEmpty(locationString))
             {
                 return ValidationResult.Success;
             }
 
-            var validatedLocation = locationPersistence.GetLocationAsync(locationString).Result;
+            var locationPersistence = (IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>)context.GetService(typeof(IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>));
+            if (locationPersistence == null)
+            {
+                throw new NullReferenceException("locationPersistence is null");
+            }
 
-            return validatedLocation == null ? new ValidationResult("The location Id has not been found") : ValidationResult.Success;
+            var validatedLocation = locationPersistence.Handle(new LocationRetrievalByIdQuery(locationString)).Result;
+
+            return validatedLocation == null
+                ? new ValidationResult("The location Id has not been found")
+                : ValidationResult.Success;
         }
     }
 }

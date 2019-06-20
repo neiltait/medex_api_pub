@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -19,6 +20,8 @@ namespace MedicalExaminer.Common.Database
     {
         private readonly IDocumentClientFactory _documentClientFactory;
 
+        private IDocumentClient _client;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseAccess"/> class.
         /// </summary>
@@ -28,9 +31,40 @@ namespace MedicalExaminer.Common.Database
             _documentClientFactory = documentClientFactory;
         }
 
+        /// <summary>
+        /// Ensures the collection is available.
+        /// </summary>
+        /// <param name="connectionSettings">Connection settings.</param>
+        public void EnsureCollectionAvailable(IConnectionSettings connectionSettings)
+        {
+            var client = GetClient(connectionSettings);
+
+            client.CreateDatabaseIfNotExistsAsync(
+                new Microsoft.Azure.Documents.Database
+                {
+                    Id = connectionSettings.DatabaseId
+                }).Wait();
+
+            var databaseUri = UriFactory.CreateDatabaseUri(connectionSettings.DatabaseId);
+
+            client.CreateDocumentCollectionIfNotExistsAsync(
+                databaseUri,
+                new DocumentCollection {Id = connectionSettings.Collection}).Wait();
+        }
+
+        private IDocumentClient GetClient(IClientSettings connectionSettings)
+        {
+            if (_client == null)
+            {
+                _client = _documentClientFactory.CreateClient(connectionSettings);
+            }
+
+            return _client;
+        }
+
         public async Task<T> CreateItemAsync<T>(IConnectionSettings connectionSettings, T item, bool disableAutomaticIdGeneration = false)
         {
-            var client = _documentClientFactory.CreateClient(connectionSettings);
+            var client = GetClient(connectionSettings);
             var resourceResponse = await client.CreateDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(
                     connectionSettings.DatabaseId,
@@ -53,21 +87,54 @@ namespace MedicalExaminer.Common.Database
                     auditEntry);
         }
 
+        /// <inheritdoc/>
+        public async Task<T> GetItemByIdAsync<T>(IConnectionSettings connectionSettings, string id)
+        {
+            try
+            {
+                var client = GetClient(connectionSettings);
+                var documentUri = UriFactory.CreateDocumentUri(
+                    connectionSettings.DatabaseId,
+                    connectionSettings.Collection,
+                    id);
+
+                var response = await client.ReadDocumentAsync(documentUri);
+
+                return (T)(dynamic)response.Resource;
+            }
+            catch (DocumentClientException documentClientException)
+            {
+                if (documentClientException.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return default(T);
+                }
+
+                throw;
+            }
+        }
+
         public async Task<T> GetItemAsync<T>(
             IConnectionSettings connectionSettings,
             Expression<Func<T, bool>> predicate)
         {
             try
             {
-                var client = _documentClientFactory.CreateClient(connectionSettings);
-                var feedOptions = new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true };
-                var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection);
-                var queryable = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions);
-                IQueryable<T> filter = queryable.Where(predicate);
-                IDocumentQuery<T> query = filter.AsDocumentQuery();
+                var client = GetClient(connectionSettings);
+                var feedOptions = new FeedOptions { MaxItemCount = 1, EnableCrossPartitionQuery = true };
+                var documentCollectionUri =
+                    UriFactory.CreateDocumentCollectionUri(
+                        connectionSettings.DatabaseId,
+                        connectionSettings.Collection);
+
+                var query = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions)
+                    .Where(predicate)
+                    .AsDocumentQuery();
 
                 var results = new List<T>();
-                results.AddRange(await query.ExecuteNextAsync<T>());
+                while (query.HasMoreResults)
+                {
+                    results.AddRange(await query.ExecuteNextAsync<T>());
+                }
 
                 return results.FirstOrDefault();
             }
@@ -87,23 +154,20 @@ namespace MedicalExaminer.Common.Database
             Expression<Func<T, bool>> predicate)
             where T : class
         {
-            var client = _documentClientFactory.CreateClient(connectionSettings);
+            var client = GetClient(connectionSettings);
 
             var query = client.CreateDocumentQuery<T>(
                     UriFactory.CreateDocumentCollectionUri(
                         connectionSettings.DatabaseId,
                         connectionSettings.Collection),
-                        new FeedOptions { MaxItemCount = -1 })
-                    .Where(predicate)
-                    .AsDocumentQuery();
-
-            FeedResponse<T> response = await query.ExecuteNextAsync<T>();
+                    new FeedOptions {MaxItemCount = -1})
+                .Where(predicate)
+                .AsDocumentQuery();
 
             var results = new List<T>();
-
-            foreach (var t in response)
+            while (query.HasMoreResults)
             {
-                results.Add(t);
+                results.AddRange(await query.ExecuteNextAsync<T>());
             }
 
             return results;
@@ -115,25 +179,24 @@ namespace MedicalExaminer.Common.Database
             Expression<Func<T, TKey>> orderBy)
             where T : class
         {
-            var client = _documentClientFactory.CreateClient(connectionSettings);
+            var client = GetClient(connectionSettings);
             FeedOptions feedOptions = new FeedOptions
             {
                 MaxItemCount = -1,
             };
-            var query = client.CreateDocumentQuery<T>(
-                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
-                    feedOptions)
-                    .Where(predicate)
-                    .OrderBy(orderBy)
-                    .AsDocumentQuery();
 
-            FeedResponse<T> response = await query.ExecuteNextAsync<T>();
+            var query = client.CreateDocumentQuery<T>(
+                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId,
+                        connectionSettings.Collection),
+                    feedOptions)
+                .Where(predicate)
+                .OrderBy(orderBy)
+                .AsDocumentQuery();
 
             var results = new List<T>();
-
-            foreach (var t in response)
+            while (query.HasMoreResults)
             {
-                results.Add(t);
+                results.AddRange(await query.ExecuteNextAsync<T>());
             }
 
             return results;
@@ -141,21 +204,26 @@ namespace MedicalExaminer.Common.Database
 
         public async Task<int> GetCountAsync<T>(IConnectionSettings connectionSettings, Expression<Func<T, bool>> predicate)
         {
-            var client = _documentClientFactory.CreateClient(connectionSettings);
+            var client = GetClient(connectionSettings);
             var feedOptions = new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true };
             var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection);
-            var queryable = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions);
-            IQueryable<T> filter = queryable.Where(predicate);
-            IDocumentQuery<T> query = filter.AsDocumentQuery();
-            var results = new List<T>();
 
-            results.AddRange(await query.ExecuteNextAsync<T>());
-            return results.Count;
+            var query = client.CreateDocumentQuery<T>(documentCollectionUri, feedOptions)
+                .Where(predicate)
+                .AsDocumentQuery();
+
+            var results = new List<T>();
+            while (query.HasMoreResults)
+            {
+                results.AddRange(await query.ExecuteNextAsync<T>());
+            }
+
+            return results.Count();
         }
 
         public async Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item)
         {
-            var client = _documentClientFactory.CreateClient(connectionSettings);
+            var client = GetClient(connectionSettings);
             var updateItemAsync = await client.UpsertDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
                 item);

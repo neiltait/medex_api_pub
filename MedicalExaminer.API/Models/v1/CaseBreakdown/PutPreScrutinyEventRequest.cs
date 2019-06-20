@@ -1,4 +1,5 @@
-﻿using MedicalExaminer.API.Attributes;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using MedicalExaminer.API.Attributes;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
@@ -19,7 +20,6 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         ///// IsFinal true for final, false for draft
         ///// </summary>
         public bool IsFinal { get; set; }
-
 
         /// <summary>
         /// Dictionary for circumstances of death radio button.
@@ -57,9 +57,16 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         public ClinicalGovernanceReview? ClinicalGovernanceReview { get; set; }
 
         /// <summary>
+        /// To validate Clinical Governance Review Text
+        /// </summary>
+        [NotMapped]
+        public bool IsFinalAndClinicalGovernanceReview => IsFinal &&
+                       ClinicalGovernanceReview.Equals(MedicalExaminer.Models.Enums.ClinicalGovernanceReview.Yes);
+
+        /// <summary>
         /// Details of Clinical Governance Review if said yes for Clinical Governance Review radio button.
         /// </summary>
-        [RequiredIfAttributesMatch(nameof(ClinicalGovernanceReview), MedicalExaminer.Models.Enums.ClinicalGovernanceReview.Yes)]
+        [RequiredIfAttributesMatch(nameof(IsFinalAndClinicalGovernanceReview), true)]
         public string ClinicalGovernanceReviewText { get; set; }
     }
 }

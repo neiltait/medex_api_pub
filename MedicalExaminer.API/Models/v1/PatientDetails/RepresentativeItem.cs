@@ -31,7 +31,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     Has the representative been informed?
         /// </summary>
-        public Informed Informed { get; set; }
+        public InformedAtDeath Informed { get; set; }
 
         /// <summary>
         ///     The appointment date

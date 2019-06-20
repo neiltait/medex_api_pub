@@ -30,6 +30,11 @@ namespace MedicalExaminer.Models
 
         [Required]
         [DataType(DataType.Text)]
+        [JsonProperty(PropertyName = "okta_id")]
+        public string OktaId { get; set; }
+
+        [Required]
+        [DataType(DataType.Text)]
         [JsonProperty(PropertyName = "okta_token")]
         public string OktaToken { get; set; }
 
