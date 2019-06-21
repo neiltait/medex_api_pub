@@ -56,3 +56,4 @@ Thumbs.db
 .idea/vcs.xml
 MedicalExaminer.API/appsettings.Staging.json
 MedicalExaminer.ToolBox.SeedDatabase/Properties/launchSettings.json
+MedicalExaminer.ToolBox.SeedDatabase.AssertTests/Properties/launchSettings.json
