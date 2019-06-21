@@ -9,5 +9,6 @@ namespace MedicalExaminer.Models.Enums
     {
         No,
         Yes,
+        Unknown
     }
 }

@@ -36,14 +36,14 @@ namespace MedicalExaminer.API.Tests.Authorization
         public async void HandleRequirementAsync_Succeeded()
         {
             // Arrange
-            var expectedEmail = "test@example.com";
+            var expectedOktaId = "oktaId";
             var expectedPermission = Permission.AddEventToExamination;
             var expectedLocation = "expectedLocation";
             var requirements = new List<IAuthorizationRequirement>()
             {
                 new PermissionRequirement(expectedPermission)
             };
-            var claim = new Claim(ClaimTypes.Email, expectedEmail);
+            var claim = new Claim(MEClaimTypes.OktaUserId, expectedOktaId);
             var user = new TestPrincipal(claim);
             var resource = new TestDocument()
             {
@@ -52,7 +52,7 @@ namespace MedicalExaminer.API.Tests.Authorization
             var context = new AuthorizationHandlerContext(requirements, user, resource);
 
             _permissionServiceMock
-                .Setup(ps => ps.HasPermission(expectedEmail, resource, expectedPermission))
+                .Setup(ps => ps.HasPermission(expectedOktaId, resource, expectedPermission))
                 .Returns(Task.FromResult(true));
 
             // Act
@@ -66,14 +66,14 @@ namespace MedicalExaminer.API.Tests.Authorization
         public async void HandleRequirementAsync_WithNoPermissions_Failed()
         {
             // Arrange
-            var expectedEmail = "test@example.com";
+            var expectedOktaId = "oktaId";
             var expectedPermission = Permission.AddEventToExamination;
             var expectedLocation = "expectedLocation";
             var requirements = new List<IAuthorizationRequirement>()
             {
                 new PermissionRequirement(expectedPermission)
             };
-            var claim = new Claim(ClaimTypes.Email, expectedEmail);
+            var claim = new Claim(MEClaimTypes.OktaUserId, expectedOktaId);
             var user = new TestPrincipal(claim);
             var resource = new TestDocument()
             {
@@ -82,7 +82,7 @@ namespace MedicalExaminer.API.Tests.Authorization
             var context = new AuthorizationHandlerContext(requirements, user, resource);
 
             _permissionServiceMock
-                .Setup(ps => ps.HasPermission(expectedEmail, resource, expectedPermission))
+                .Setup(ps => ps.HasPermission(expectedOktaId, resource, expectedPermission))
                 .Returns(Task.FromResult(false));
 
             // Act

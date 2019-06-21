@@ -37,12 +37,12 @@ namespace MedicalExaminer.API.Controllers
         public CaseBreakdownController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService,
             IAsyncQueryHandler<CreateEventQuery, EventCreationResult> eventCreationService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService)
-            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
+            : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _eventCreationService = eventCreationService;
             _examinationRetrievalService = examinationRetrievalService;
@@ -55,7 +55,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{examinationId}/casebreakdown")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetCaseBreakdownResponse>> GetCaseBreakdown(string examinationId)
         {
             if (string.IsNullOrEmpty(examinationId))
@@ -78,6 +77,11 @@ namespace MedicalExaminer.API.Controllers
                 return new NotFoundObjectResult(new GetCaseBreakdownResponse());
             }
 
+            if (!CanAsync(Permission.GetExamination, examination))
+            {
+                return Forbid();
+            }
+
             var result = Mapper.Map<CaseBreakDownItem>(examination.CaseBreakdown, opt => opt.Items["user"] = user);
 
             return Ok(new GetCaseBreakdownResponse
@@ -87,80 +91,130 @@ namespace MedicalExaminer.API.Controllers
             });
         }
 
+        /// <summary>
+        /// Upserts the new bereaved discussion event.
+        /// </summary>
+        /// <param name="examinationId">The examination identifier.</param>
+        /// <param name="putNewBereavedDiscussionEventNoteRequest">The put new bereaved discussion event note request.</param>
+        /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/bereaved_discussion")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewBereavedDiscussionEvent(
             string examinationId,
             [FromBody] PutBereavedDiscussionEventRequest putNewBereavedDiscussionEventNoteRequest)
         {
-            return await UpsertEvent<BereavedDiscussionEvent, PutBereavedDiscussionEventRequest>(examinationId,
+            return await UpsertEvent<BereavedDiscussionEvent, PutBereavedDiscussionEventRequest>(
+                examinationId,
+                Permission.BereavedDiscussionEvent,
                 putNewBereavedDiscussionEventNoteRequest);
         }
 
+        /// <summary>
+        /// Upserts the new pre scrutiny event.
+        /// </summary>
+        /// <param name="examinationId">The examination identifier.</param>
+        /// <param name="putNewPreScrutinyEventNoteRequest">The put new pre scrutiny event note request.</param>
+        /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/prescrutiny")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewPreScrutinyEvent(
             string examinationId,
             [FromBody]
             PutPreScrutinyEventRequest putNewPreScrutinyEventNoteRequest)
         {
-            return await UpsertEvent<PreScrutinyEvent, PutPreScrutinyEventRequest>(examinationId,
+            return await UpsertEvent<PreScrutinyEvent, PutPreScrutinyEventRequest>(
+                examinationId,
+                Permission.PreScrutinyEvent,
                 putNewPreScrutinyEventNoteRequest);
         }
 
+        /// <summary>
+        /// Upserts the new medical history event.
+        /// </summary>
+        /// <param name="examinationId">The examination identifier.</param>
+        /// <param name="putMedicalHistoryEventRequest">The put medical history event request.</param>
+        /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/medical_history")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewMedicalHistoryEvent(
             string examinationId,
             [FromBody] PutMedicalHistoryEventRequest putMedicalHistoryEventRequest)
         {
-            return await UpsertEvent<MedicalHistoryEvent, PutMedicalHistoryEventRequest>(examinationId,
+            return await UpsertEvent<MedicalHistoryEvent, PutMedicalHistoryEventRequest>(
+                examinationId,
+                Permission.MedicalHistoryEvent,
                 putMedicalHistoryEventRequest);
         }
 
+        /// <summary>
+        /// Upserts the new admission event.
+        /// </summary>
+        /// <param name="examinationId">The examination identifier.</param>
+        /// <param name="putNewAdmissionEventNoteRequest">The put new admission event note request.</param>
+        /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/admission")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewAdmissionEvent(
             string examinationId,
             [FromBody] PutAdmissionEventRequest putNewAdmissionEventNoteRequest)
         {
-            return await UpsertEvent<AdmissionEvent, PutAdmissionEventRequest>(examinationId,
+            return await UpsertEvent<AdmissionEvent, PutAdmissionEventRequest>(
+                examinationId,
+                Permission.AdmissionEvent,
                 putNewAdmissionEventNoteRequest);
         }
 
+        /// <summary>
+        /// Upserts the new other event.
+        /// </summary>
+        /// <param name="examinationId">The examination identifier.</param>
+        /// <param name="putNewOtherEventNoteRequest">The put new other event note request.</param>
+        /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/other")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewOtherEvent(
             string examinationId,
             [FromBody] PutOtherEventRequest putNewOtherEventNoteRequest)
         {
-            return await UpsertEvent<OtherEvent, PutOtherEventRequest>(examinationId, putNewOtherEventNoteRequest);
+            return await UpsertEvent<OtherEvent, PutOtherEventRequest>(
+                examinationId, 
+                Permission.OtherEvent,
+                putNewOtherEventNoteRequest);
         }
 
+        /// <summary>
+        /// Upserts the new qap discussion event.
+        /// </summary>
+        /// <param name="examinationId">The examination identifier.</param>
+        /// <param name="putNewQapDiscussionEventNoteRequest">The put new qap discussion event note request.</param>
+        /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/qap_discussion")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewQapDiscussionEvent(
             string examinationId,
             [FromBody] PutQapDiscussionEventRequest putNewQapDiscussionEventNoteRequest)
         {
-            return await UpsertEvent<QapDiscussionEvent, PutQapDiscussionEventRequest>(examinationId,
+            return await UpsertEvent<QapDiscussionEvent, PutQapDiscussionEventRequest>(
+                examinationId,
+                Permission.QapDiscussionEvent,
                 putNewQapDiscussionEventNoteRequest);
         }
 
+        /// <summary>
+        /// Upserts the new meo summary event.
+        /// </summary>
+        /// <param name="examinationId">The examination identifier.</param>
+        /// <param name="putNewMeoSummaryEventNoteRequest">The put new meo summary event note request.</param>
+        /// <returns>Response.</returns>
         [HttpPut]
         [Route("{examinationId}/meo_summary")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertNewMeoSummaryEvent(
             string examinationId,
             [FromBody] PutMeoSummaryEventRequest putNewMeoSummaryEventNoteRequest)
         {
-            return await UpsertEvent<MeoSummaryEvent, PutMeoSummaryEventRequest>(examinationId,
+            return await UpsertEvent<MeoSummaryEvent, PutMeoSummaryEventRequest>(
+                examinationId,
+                Permission.MeoSummaryEvent,
                 putNewMeoSummaryEventNoteRequest);
         }
 
@@ -175,6 +229,7 @@ namespace MedicalExaminer.API.Controllers
 
         private async Task<ActionResult<PutCaseBreakdownEventResponse>> UpsertEvent<TEvent, TRequest>(
             string examinationId,
+            Permission permission,
             [FromBody] TRequest caseBreakdownEvent)
             where TEvent : IEvent
         {
@@ -200,18 +255,19 @@ namespace MedicalExaminer.API.Controllers
                 return NotFound(new PutCaseBreakdownEventResponse());
             }
 
-            if (!CanAsync(Permission.UpdateExamination, examination))
+            if (!CanAsync(permission, examination))
             {
                 return Forbid();
             }
 
             var result = await _eventCreationService.Handle(new CreateEventQuery(examinationId, theEvent));
-            var patientCard = Mapper.Map<PatientCardItem>(result.Examination);
 
             if (result == null)
             {
                 return NotFound(new PutCaseBreakdownEventResponse());
             }
+
+            var patientCard = Mapper.Map<PatientCardItem>(result.Examination);
 
             var res = new PutCaseBreakdownEventResponse
             {

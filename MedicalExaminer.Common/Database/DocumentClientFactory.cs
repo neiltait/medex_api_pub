@@ -15,21 +15,18 @@ namespace MedicalExaminer.Common.Database
         /// </summary>
         /// <param name="connectionSettings">Connection Settings.</param>
         /// <returns><see cref="IDocumentClient"/>.</returns>
-        public IDocumentClient CreateClient(IConnectionSettings connectionSettings)
+        public IDocumentClient CreateClient(IClientSettings connectionSettings)
         {
-            var client = new DocumentClient(connectionSettings.EndPointUri, connectionSettings.PrimaryKey);
+            var connectionPolicy = new ConnectionPolicy
+            {
+                ConnectionMode = ConnectionMode.Direct,
+                ConnectionProtocol = Protocol.Tcp
+            };
 
-            client.CreateDatabaseIfNotExistsAsync(
-                new Microsoft.Azure.Documents.Database
-                {
-                    Id = connectionSettings.DatabaseId
-                }).Wait();
-
-            var databaseUri = UriFactory.CreateDatabaseUri(connectionSettings.DatabaseId);
-
-            client.CreateDocumentCollectionIfNotExistsAsync(
-                databaseUri,
-                new DocumentCollection { Id = connectionSettings.Collection }).Wait();
+            var client = new DocumentClient(
+                connectionSettings.EndPointUri,
+                connectionSettings.PrimaryKey,
+                connectionPolicy);
 
             return client;
         }

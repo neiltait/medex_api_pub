@@ -43,6 +43,12 @@ namespace MedicalExaminer.Models
         public DateTime? ScrutinyConfirmedOn { get; set; }
 
         /// <summary>
+        /// has the coroners referral been sent?
+        /// </summary>
+        [JsonProperty(PropertyName = "coroner_referral_sent")]
+        public bool CoronerReferralSent { get; set; }
+
+        /// <summary>
         /// Case Medical Examiner Full Name
         /// </summary>
         [JsonProperty(PropertyName = "case_medical_examiner_fullName")]

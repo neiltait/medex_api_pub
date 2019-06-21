@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Net;
 using System.Reflection;
+using System.Security.Claims;
 using AutoMapper;
+using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.Common.Loggers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
 using Moq;
 
@@ -84,5 +88,20 @@ namespace MedicalExaminer.API.Tests.Controllers
             return (DocumentClientException)documentClientExceptionInstance;
         }
 
+        protected ControllerContext GetControllerContext()
+        {
+            return new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(
+                        new ClaimsIdentity(
+                            new Claim[]
+                            {
+                                new Claim(MEClaimTypes.OktaUserId, "oktaId")
+                            }, "someAuthTypeName"))
+                }
+            };
+        }
     }
 }

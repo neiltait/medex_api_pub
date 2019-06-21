@@ -8,26 +8,26 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Services.Users
 {
-    public class UserRetrievalByEmailServiceTests : ServiceTestsBase<
-        UserRetrievalByEmailQuery,
+    public class UserRetrievalByOktaIdServiceTests : ServiceTestsBase<
+        UserRetrievalByOktaIdQuery,
         UserConnectionSettings,
         MeUser,
         MeUser,
-        UserRetrievalByEmailService>
+        UserRetrievalByOktaIdService>
     {
         [Fact]
         public async Task Handle_ReturnsOnlyUser1()
         {
             // Arrange
-            const string expectedEmail = "email1";
-            var query = new UserRetrievalByEmailQuery(expectedEmail);
+            const string expectedOktaId = "okta1";
+            var query = new UserRetrievalByOktaIdQuery(expectedOktaId);
 
             // Act
             var result = await Service.Handle(query);
 
             // Assert
             result.Should().NotBeNull();
-            result.Email.Should().Be(expectedEmail);
+            result.OktaId.Should().Be(expectedOktaId);
         }
 
         protected override MeUser[] GetExamples()
@@ -36,11 +36,11 @@ namespace MedicalExaminer.API.Tests.Services.Users
             {
                 new MeUser()
                 {
-                    Email = "email1",
+                    OktaId = "okta1",
                 },
                 new MeUser()
                 {
-                    Email = "email2",
+                    OktaId = "okta2",
                 },
             };
         }

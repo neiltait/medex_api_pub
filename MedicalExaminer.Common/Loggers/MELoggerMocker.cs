@@ -20,7 +20,7 @@ namespace MedicalExaminer.Common.Loggers
             bool userIsAuthenticated,
             string controllerName,
             string controllerMethod,
-            IList<string> parameters,
+            IDictionary<string, object> parameters,
             string remoteIP,
             DateTime timeStamp)
         {

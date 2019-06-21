@@ -20,7 +20,7 @@ namespace MedicalExaminer.API.Services.Implementations
         /// <summary>
         /// User Retrieval Service.
         /// </summary>
-        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _userRetrievalService;
+        private readonly IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> _userRetrievalService;
 
         /// <summary>
         /// Role Permissions.
@@ -40,7 +40,7 @@ namespace MedicalExaminer.API.Services.Implementations
         /// <param name="authorizationSettings">Authorization Settings.</param>
         public PermissionService(
             IRolePermissions rolePermissions,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> userRetrievalService,
             IOptions<AuthorizationSettings> authorizationSettings)
         {
             _rolePermissions = rolePermissions;
@@ -56,7 +56,7 @@ namespace MedicalExaminer.API.Services.Implementations
                 return true;
             }
 
-            var meUser = await _userRetrievalService.Handle(new UserRetrievalByEmailQuery(emailAddress));
+            var meUser = await _userRetrievalService.Handle(new UserRetrievalByOktaIdQuery(emailAddress));
 
             if (meUser.Permissions != null)
             {
@@ -74,14 +74,14 @@ namespace MedicalExaminer.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<bool> HasPermission(string emailAddress, Permission permission)
+        public async Task<bool> HasPermission(string oktaId, Permission permission)
         {
             if (_authorizationSettings.Value.Disable)
             {
                 return true;
             }
 
-            var meUser = await _userRetrievalService.Handle(new UserRetrievalByEmailQuery(emailAddress));
+            var meUser = await _userRetrievalService.Handle(new UserRetrievalByOktaIdQuery(oktaId));
 
             if (meUser.Permissions != null)
             {

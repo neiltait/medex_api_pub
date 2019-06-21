@@ -2,13 +2,24 @@ using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Queries.User
 {
+    /// <summary>
+    /// User Retrieval By Email Query.
+    /// </summary>
+    /// <seealso cref="IQuery{MeUser}" />
     public class UserRetrievalByEmailQuery : IQuery<MeUser>
     {
-        public UserRetrievalByEmailQuery(string email)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserRetrievalByEmailQuery"/> class.
+        /// </summary>
+        /// <param name="emailAddress">The email address.</param>
+        public UserRetrievalByEmailQuery(string emailAddress)
         {
-            Email = email;
+            EmailAddress = emailAddress;
         }
 
-        public string Email { get; }
+        /// <summary>
+        /// Gets the email address.
+        /// </summary>
+        public string EmailAddress { get; }
     }
 }

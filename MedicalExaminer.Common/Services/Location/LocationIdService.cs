@@ -31,7 +31,7 @@ namespace MedicalExaminer.Common.Services.Location
                 throw new ArgumentNullException(nameof(param));
             }
 
-            return GetItemAsync(location => location.LocationId == param.LocationId);
+            return GetItemByIdAsync(param.LocationId);
         }
     }
 }

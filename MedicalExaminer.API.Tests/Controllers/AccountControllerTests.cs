@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using FluentAssertions;
+using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models;
 using MedicalExaminer.Common.Authorization;
@@ -19,67 +19,29 @@ using Okta.Sdk;
 using Okta.Sdk.Configuration;
 using Xunit;
 
-
 namespace MedicalExaminer.API.Tests.Controllers
 {
     public class AccountControllerTests
     {
-        /// <summary>
-        /// Use proxy class for AccountController as not possible to Mock OktaClient
-        /// Override CreateNewUser and flag if it has been called or not
-        /// </summary>
-        internal class AccountControllerProxy : AccountController
-        {
-            /// <summary>
-            /// Flag to indicate if CreateNewUser method has been called
-            /// </summary>
-            internal bool CreateNewUserCalled { get; set; }
-
-            internal AccountControllerProxy(
-                IMELogger logger,
-                IMapper mapper,
-                OktaClient oktaClient,
-                IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
-                IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
-                IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService,
-                IOptions<OktaSettings> oktaSettings,
-                IRolePermissions rolePermissions)
-                : base(logger, mapper, oktaClient, userCreationService, usersRetrievalByEmailService,
-                    userUpdateOktaTokenService, oktaSettings, rolePermissions)
-            {
-
-            }
-
-            /// <summary>
-            /// Overrides method in AccountController and sets CreateNewUserCalled to indicate it has been called
-            /// </summary>
-            /// <param name="emailAddress">Email address</param>
-            /// <param name="oktaToken">Okta token</param>
-            /// <returns>Always will return null</returns>
-            protected override async Task<MeUser> CreateNewUser(string emailAddress, string oktaToken)
-            {
-                CreateNewUserCalled = true;
-                return null;
-            }
-
-        }
-
-
         private readonly Mock<IMELogger> _mockLogger;
 
         private readonly Mock<IMapper> _mockMapper;
 
         private readonly Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>> _mockUserCreationService;
 
-        private readonly Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>> _mockUsersRetrievalByEmailService;
+        private readonly Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>> _mockUsersRetrievalByOktaIdService;
 
         private readonly Mock<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>> _mockUserUpdateOktaTokenService;
 
+        private readonly Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>> _mockUserRetrievalByEmailService;
+
+        private readonly Mock<IAsyncQueryHandler<UserUpdateOktaQuery, MeUser>> _mockUserUpdateOktaService;
+
         private readonly Mock<IOptions<OktaSettings>> _mockOktaSettings;
 
-        private AccountControllerProxy _accountController;
-
         private readonly ControllerContext _controllerContext;
+
+        private AccountControllerProxy _accountController;
 
         public AccountControllerTests()
         {
@@ -94,12 +56,13 @@ namespace MedicalExaminer.API.Tests.Controllers
                 Token = "Token1",
             };
             _mockUserCreationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
-            _mockUsersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            _mockUsersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             _mockUserUpdateOktaTokenService = new Mock<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>>();
-
+            _mockUserRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            _mockUserUpdateOktaService = new Mock<IAsyncQueryHandler<UserUpdateOktaQuery, MeUser>>();
 
             var claims = new List<Claim>();
-            var claim = new Claim(ClaimTypes.Email, "joe.doe@nhs.co.uk");
+            var claim = new Claim(MEClaimTypes.OktaUserId, "oktaId");
             claims.Add(claim);
             var mockClaimsPrincipal = new Mock<ClaimsPrincipal>();
             mockClaimsPrincipal.Setup(cp => cp.Claims).Returns(claims);
@@ -118,41 +81,111 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var rolePermissionsMock = new Mock<IRolePermissions>();
 
-            _accountController = new AccountControllerProxy(_mockLogger.Object, _mockMapper.Object, oktaClient, _mockUserCreationService.Object, _mockUsersRetrievalByEmailService.Object, _mockUserUpdateOktaTokenService.Object, oktaSettings, rolePermissionsMock.Object)
+            _accountController = new AccountControllerProxy(
+                _mockLogger.Object,
+                _mockMapper.Object,
+                oktaClient,
+                _mockUserCreationService.Object,
+                _mockUsersRetrievalByOktaIdService.Object,
+                _mockUserUpdateOktaTokenService.Object,
+                _mockUserRetrievalByEmailService.Object,
+                _mockUserUpdateOktaService.Object,
+                oktaSettings,
+                rolePermissionsMock.Object)
             {
                 ControllerContext = context
             };
-
         }
 
         [Fact]
-        public void ValidateSession_UserFoundNoNeedToRetrieveDetailsFromOkta()
+        public async void ValidateSession_UserFoundNoNeedToRetrieveDetailsFromOkta()
         {
-            //Arrange
+            // Arrange
             var meUser = new MeUser();
-            _mockUsersRetrievalByEmailService.Setup(es => es.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+            _mockUsersRetrievalByOktaIdService.Setup(es => es.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
 
-            //Act
-            _accountController.ValidateSession();
+            _mockUserUpdateOktaTokenService.Setup(uuots => uuots.Handle(It.IsAny<UsersUpdateOktaTokenQuery>()))
+                .Returns(Task.FromResult(meUser));
 
-            //Assert
-            Assert.Equal(false, _accountController.CreateNewUserCalled);
+            // Act
+            await _accountController.ValidateSession();
+
+            // Assert
+            _accountController.CreateNewUserCalled.Should().BeFalse();
         }
 
         [Fact]
-        public void ValidateSession_UserNotFoundRetrieveDetailsFromOkta()
+        public async void ValidateSession_UserNotFoundRetrieveDetailsFromOkta()
         {
-            //Arrange
+            // Arrange
             MeUser meUser = null;
-            _mockUsersRetrievalByEmailService.Setup(es => es.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+            _mockUsersRetrievalByOktaIdService.Setup(es => es.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(meUser));
 
-            //Act
-            _accountController.ValidateSession();
+            // Return a new object; but not null.
+            _mockUserUpdateOktaTokenService.Setup(uuots => uuots.Handle(It.IsAny<UsersUpdateOktaTokenQuery>()))
+                .Returns(Task.FromResult(new MeUser()));
 
-            //Assert
-            Assert.Equal(true, _accountController.CreateNewUserCalled);
+            // Act
+            await _accountController.ValidateSession();
+
+            // Assert
+            _accountController.CreateNewUserCalled.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Use proxy class for AccountController as not possible to Mock OktaClient
+        /// Override CreateNewUser and flag if it has been called or not
+        /// </summary>
+        internal class AccountControllerProxy : AccountController
+        {
+            /// <summary>
+            /// Initialise a new instance of <see cref="AccountControllerProxy"/>.
+            /// </summary>
+            /// <param name="logger">Initialise with IMELogger instance.</param>
+            /// <param name="mapper">The Mapper.</param>
+            /// <param name="oktaClient">Okta client.</param>
+            /// <param name="userCreationService">User Creation Service.</param>
+            /// <param name="usersRetrievalByOktaIdService">User Retrieval By Okta Id Service.</param>
+            /// <param name="userUpdateOktaTokenService">User Update Okta Token Service.</param>
+            /// <param name="userRetrievalByEmailService">User Retrieval by Email Service.</param>
+            /// <param name="userUpdateOktaService">User Update Okta Service.</param>
+            /// <param name="oktaSettings">Okta Settings.</param>
+            /// <param name="rolePermissions">Role Permissions.</param>
+            internal AccountControllerProxy(
+                IMELogger logger,
+                IMapper mapper,
+                OktaClient oktaClient,
+                IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
+                IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
+                IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser> userUpdateOktaTokenService,
+                IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService,
+                IAsyncQueryHandler<UserUpdateOktaQuery, MeUser> userUpdateOktaService,
+                IOptions<OktaSettings> oktaSettings,
+                IRolePermissions rolePermissions)
+                : base(logger, mapper, oktaClient, userCreationService, usersRetrievalByOktaIdService, userUpdateOktaTokenService, userRetrievalByEmailService, userUpdateOktaService, oktaSettings, rolePermissions)
+            {
+            }
+
+            /// <summary>
+            /// Flag to indicate if CreateNewUser method has been called
+            /// </summary>
+            internal bool CreateNewUserCalled { get; set; }
+
+            /// <summary>
+            /// Overrides method in AccountController and sets CreateNewUserCalled to indicate it has been called
+            /// </summary>
+            /// <param name="emailAddress">Email address</param>
+            /// <param name="oktaToken">Okta token</param>
+            /// <returns>Always will return null</returns>
+            protected override Task<MeUser> CreateNewUser(string emailAddress, string oktaToken)
+            {
+                CreateNewUserCalled = true;
+
+                // Return something
+                return Task.FromResult(new MeUser());
+            }
         }
     }
 }

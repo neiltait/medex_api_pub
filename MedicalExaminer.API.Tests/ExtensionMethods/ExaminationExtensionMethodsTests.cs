@@ -2,6 +2,7 @@
 using System.Linq;
 using FluentAssertions;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 using Moq;
 using Xunit;
 
@@ -1574,6 +1575,112 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination = examination.UpdateCaseStatus();
 
             Assert.False(examination.CalculateCanCompleteScrutiny());
+        }
+
+        [Fact]
+        private void CalculateOutstandingCaseOutcomesCompleted_With_ReferToCoroner_Returns_True()
+        {
+            var caseOutcome = new CaseOutcome
+            {
+                CaseOutcomeSummary = CaseOutcomeSummary.ReferToCoroner
+            };
+
+            var examination = new Examination
+            {
+                CaseOutcome = caseOutcome
+            };
+
+            Assert.True(examination.CalculateOutstandingCaseOutcomesCompleted());
+        }
+
+        [Fact]
+        private void CalculateOutstandingCaseOutcomesCompleted_With_IssueMCCD_Returns_False()
+        {
+            var caseOutcome = new CaseOutcome
+            {
+                CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD
+            };
+
+            var examination = new Examination
+            {
+                CaseOutcome = caseOutcome
+            };
+
+            Assert.False(examination.CalculateOutstandingCaseOutcomesCompleted());
+        }
+
+        [Fact]
+        private void CalculateOutstandingCaseOutcomesCompleted_With_No_CremationFormStatus_Returns_True()
+        {
+            var caseOutcome = new CaseOutcome
+            {
+                CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
+                MccdIssued = true,
+                CremationFormStatus = CremationFormStatus.No
+            };
+
+            var examination = new Examination
+            {
+                CaseOutcome = caseOutcome
+            };
+
+            Assert.True(examination.CalculateOutstandingCaseOutcomesCompleted());
+        }
+
+        [Fact]
+        private void CalculateOutstandingCaseOutcomesCompleted_With_Unknown_CremationFormStatus_Returns_True()
+        {
+            var caseOutcome = new CaseOutcome
+            {
+                CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
+                MccdIssued = true,
+                CremationFormStatus = CremationFormStatus.Unknown
+            };
+
+            var examination = new Examination
+            {
+                CaseOutcome = caseOutcome
+            };
+
+            Assert.True(examination.CalculateOutstandingCaseOutcomesCompleted());
+        }
+
+        [Fact]
+        private void CalculateOutstandingCaseOutcomesCompleted_With_CremationFormStatus_But_GP_Not_Notified_Returns_False()
+        {
+            var caseOutcome = new CaseOutcome
+            {
+                CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
+                MccdIssued = true,
+                CremationFormStatus = CremationFormStatus.Yes,
+                GpNotifiedStatus = GPNotified.GPUnabledToBeNotified
+            };
+
+            var examination = new Examination
+            {
+                CaseOutcome = caseOutcome
+            };
+
+            Assert.False(examination.CalculateOutstandingCaseOutcomesCompleted());
+        }
+
+        [Fact]
+        private void CalculateOutstandingCaseOutcomesCompleted_With_CremationFormStatus_But_GP_Notified_NA_Returns_True()
+        {
+            var caseOutcome = new CaseOutcome
+            {
+                CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
+                MccdIssued = true,
+                CremationFormStatus = CremationFormStatus.Yes,
+                GpNotifiedStatus = GPNotified.NA
+            };
+
+            var examination = new Examination
+            {
+                CaseOutcome = caseOutcome
+            };
+
+            Assert.True(examination.CalculateOutstandingCaseOutcomesCompleted());
         }
     }
 }

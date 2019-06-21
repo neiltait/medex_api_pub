@@ -41,7 +41,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="mapper">Mapper.</param>
-        /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
+        /// <param name="usersRetrievalByOktaIdService">User Retrieval By Okta Id Service.</param>
         /// <param name="authorizationService">Authorization Service.</param>
         /// <param name="permissionService">Permission Service.</param>
         /// <param name="locationRetrievalByIdQueryHandler">Location Retrieval By Id Query Handler.</param>
@@ -49,12 +49,12 @@ namespace MedicalExaminer.API.Controllers
         public LocationsController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService,
             IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> locationRetrievalByIdQueryHandler,
             IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler)
-            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
+            : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _locationRetrievalByIdQueryHandler = locationRetrievalByIdQueryHandler;
             _locationRetrievalByQueryHandler = locationRetrievalByQueryHandler;
@@ -66,7 +66,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="request">The request.</param>
         /// <returns>A list of locations.</returns>
         [HttpGet]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationsResponse>> GetLocations([FromQuery] GetLocationsRequest request)
         {
             IEnumerable<string> permissedLocations = null;
@@ -74,12 +73,6 @@ namespace MedicalExaminer.API.Controllers
             if (request.AccessOnly)
             {
                 permissedLocations = await LocationsWithPermission(Permission.GetExaminations);
-
-                // get current user
-                // does user have access to this location directly or by having access
-                // to its parent
-                // if so include it in the list;
-                // otherwise ignore it.
             }
 
             var locations =
@@ -98,7 +91,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="locationId">The Location Id.</param>
         /// <returns>A GetLocationsResponse.</returns>
         [HttpGet("{locationId}")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetLocationResponse>> GetLocation(string locationId)
         {
             try

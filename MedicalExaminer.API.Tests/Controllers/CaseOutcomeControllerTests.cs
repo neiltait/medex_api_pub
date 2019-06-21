@@ -5,7 +5,6 @@ using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
-using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
@@ -13,7 +12,6 @@ using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -21,7 +19,7 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
 {
-    public class CaseOutcomeControllerTests : ControllerTestsBase<CaseOutcomeController>
+    public class CaseOutcomeControllerTests : AuthorizedControllerTestsBase<CaseOutcomeController>
     {
         [Fact]
         public async void GetCaseOutcome_When_Called_With_Id_Not_Found_Returns_NotFound()
@@ -29,7 +27,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
@@ -37,10 +35,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
-
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -50,9 +44,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
-                usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                usersRetrievalByOktaIdService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -71,7 +65,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
@@ -79,10 +73,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
-
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -92,9 +82,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
-                usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                usersRetrievalByOktaIdService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -118,9 +108,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 ExaminationId = Guid.NewGuid().ToString()
             };
 
-            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var mockMeUser = new Mock<MeUser>();
-            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+            usersRetrievalByOktaIdService.Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(mockMeUser.Object));
 
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
@@ -133,10 +123,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -145,9 +131,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
-                usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                usersRetrievalByOktaIdService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -165,17 +151,13 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
 
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -185,9 +167,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
-                usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                usersRetrievalByOktaIdService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -211,15 +193,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -229,9 +208,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
-                usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                usersRetrievalByOktaIdService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -262,8 +241,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
 
             var mockMeUser = new Mock<MeUser>();
-            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+            var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
+            usersRetrievalByOktaIdService.Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(mockMeUser.Object));
 
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
@@ -279,10 +258,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -291,9 +266,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
-                usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                usersRetrievalByOktaIdService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -319,17 +294,13 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
 
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -339,9 +310,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
-                usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                usersRetrievalByOktaIdService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
             sut.ControllerContext = GetControllerContext();
 
             // Act
@@ -357,16 +328,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -376,9 +343,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
-                usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                usersRetrievalByOktaIdService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -406,8 +373,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
 
             var mockMeUser = new Mock<MeUser>();
-            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+            var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
+            usersRetrievalByOktaIdService.Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(mockMeUser.Object));
 
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
@@ -423,10 +390,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -435,9 +398,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
-                usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                usersRetrievalByOktaIdService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -454,16 +417,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -473,9 +432,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
-                usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                usersRetrievalByOktaIdService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -492,16 +451,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
-            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-
-
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -511,9 +466,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
-                usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                usersRetrievalByOktaIdService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
             // Act
@@ -529,15 +484,24 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             var logger = new Mock<IMELogger>();
             var mapper = new Mock<IMapper>();
+            var caseOutcome = new CaseOutcome
+            {
+                CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
+                MccdIssued = true,
+                CremationFormStatus = CremationFormStatus.Yes,
+                GpNotifiedStatus = GPNotified.GPNotified
+            };
+
             var examination = new Examination
             {
                 ExaminationId = Guid.NewGuid().ToString(),
-                OutstandingCaseItemsCompleted = true
+                OutstandingCaseItemsCompleted = true,
+                CaseOutcome = caseOutcome
             };
 
             var mockMeUser = new Mock<MeUser>();
-            var usersRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            usersRetrievalByEmailService.Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+            var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
+            usersRetrievalByOktaIdService.Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
                 .Returns(Task.FromResult(mockMeUser.Object));
 
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
@@ -553,9 +517,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
 
-            var authorizationService = new Mock<IAuthorizationService>();
-            var permissionService = new Mock<IPermissionService>();
-
             var sut = new CaseOutcomeController(
                 logger.Object,
                 mapper.Object,
@@ -564,9 +525,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 examinationRetrievalService.Object,
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
-                usersRetrievalByEmailService.Object,
-                authorizationService.Object,
-                permissionService.Object);
+                usersRetrievalByOktaIdService.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object);
 
             sut.ControllerContext = GetControllerContext();
 
@@ -575,21 +536,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             var okResult = response.Should().BeAssignableTo<OkResult>().Subject;
-        }
-
-        private ControllerContext GetControllerContext()
-        {
-            return new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = new ClaimsPrincipal(new ClaimsIdentity(
-                        new Claim[]
-            {
-                new Claim(ClaimTypes.Email, "username")
-            }, "someAuthTypeName"))
-                }
-            };
         }
     }
 }
