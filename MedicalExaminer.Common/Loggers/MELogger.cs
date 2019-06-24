@@ -21,17 +21,17 @@ namespace MedicalExaminer.Common.Loggers
 
         /// <inheritdoc />
         public async void Log(
-            string userName,
+            string userId,
             string userAuthenticationType,
             bool userIsAuthenticated,
             string controllerName,
             string controllerMethod,
-            IList<string> parameters,
+            IDictionary<string, object> parameters,
             string remoteIP,
             DateTime timeStamp)
         {
             var logEntry = new LogMessageActionDefault(
-                userName,
+                userId,
                 userAuthenticationType,
                 userIsAuthenticated,
                 controllerName,

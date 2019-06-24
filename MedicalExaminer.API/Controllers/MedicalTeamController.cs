@@ -40,6 +40,7 @@ namespace MedicalExaminer.API.Controllers
 
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncUpdateDocumentHandler _medicalTeamUpdateService;
+        private readonly IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> _UsersRetrievalByOktaIdService;
 
         private readonly IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>
             _usersRetrievalByRoleLocationQueryService;
@@ -49,7 +50,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="mapper">Mapper.</param>
-        /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
+        /// <param name="usersRetrievalByOktaIdService">User Retrieval By Okta Id Service.</param>
         /// <param name="authorizationService">Authorization Service.</param>
         /// <param name="permissionService">Permission Service.</param>
         /// <param name="examinationRetrievalService">Examination Retrieval Service.</param>
@@ -58,17 +59,18 @@ namespace MedicalExaminer.API.Controllers
         public MedicalTeamController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService,
             IAsyncQueryHandler<ExaminationRetrievalQuery,Examination> examinationRetrievalService,
             IAsyncUpdateDocumentHandler medicalTeamUpdateService,
             IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>> usersRetrievalByRoleLocationQueryService)
-            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
+            : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _examinationRetrievalService = examinationRetrievalService;
             _medicalTeamUpdateService = medicalTeamUpdateService;
             _usersRetrievalByRoleLocationQueryService = usersRetrievalByRoleLocationQueryService;
+            _UsersRetrievalByOktaIdService = usersRetrievalByOktaIdService;
         }
 
         /// <summary>
@@ -78,7 +80,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationId">The ID of the examination.</param>
         /// <returns>A GetMedicalTeamResponse.</returns>
         [HttpGet("medical_team/")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetMedicalTeamResponse>> GetMedicalTeam(string examinationId)
         {
             if (!ModelState.IsValid)
@@ -125,7 +126,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="putMedicalTeamRequest">The PutMedicalTeamRequest.</param>
         /// <returns>A PutExaminationResponse.</returns>
         [HttpPut("medical_team/")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutMedicalTeamResponse>> PutMedicalTeam(
             string examinationId,
             [FromBody] [ModelBinder(Name = "examinationId")] PutMedicalTeamRequest putMedicalTeamRequest)

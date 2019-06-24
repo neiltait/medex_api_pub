@@ -103,6 +103,12 @@ namespace MedicalExaminer.API
                     .AllowAnyHeader();
             }));
 
+            // Database connections.
+            services.AddSingleton<IDocumentClientFactory, DocumentClientFactory>();
+            services.AddSingleton<IDatabaseAccess, DatabaseAccess>();
+
+            ConfigureQueries(services, cosmosDbSettings);
+
             ConfigureAuthentication(services, oktaSettings, cosmosDbSettings);
 
             ConfigureAuthorization(services);
@@ -194,10 +200,7 @@ namespace MedicalExaminer.API
             // Logger.
             services.AddScoped<IMELogger, MELogger>();
 
-            // Database connections.
-            services.AddScoped<IDocumentClientFactory, DocumentClientFactory>();
-            services.AddScoped<IDatabaseAccess, DatabaseAccess>();
-
+ 
             services.AddScoped<ControllerActionFilter>();
 
             var cosmosSettings = new CosmosStoreSettings(
@@ -208,13 +211,6 @@ namespace MedicalExaminer.API
             const string examinationsCollection = "Examinations";
             services.AddCosmosStore<Examination>(cosmosSettings, examinationsCollection);
             services.AddCosmosStore<AuditEntry<Examination>>(cosmosSettings, examinationsCollection.AuditCollection());
-
-            ConfigureQueries(services, cosmosDbSettings);
-
-            services.AddScoped<ILocationPersistence>(s => new LocationPersistence(
-                new Uri(cosmosDbSettings.URL),
-                cosmosDbSettings.PrimaryKey,
-                cosmosDbSettings.DatabaseId));
 
             services.AddScoped<IMeLoggerPersistence>(s => new MeLoggerPersistence(
                 new Uri(cosmosDbSettings.URL),
@@ -252,6 +248,14 @@ namespace MedicalExaminer.API
                     });
                 });
             }
+
+            // Ensure collections available
+            var databaseAccess = app.ApplicationServices.GetRequiredService<IDatabaseAccess>();
+            databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<ILocationConnectionSettings>());
+            databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IExaminationConnectionSettings>());
+            databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserConnectionSettings>());
+
+            app.UseMiddleware<ResponseTimeMiddleware>();
 
             // TODO: Not using HTTPS while we join front to back end
             //app.UseHttpsRedirection();
@@ -305,17 +309,17 @@ namespace MedicalExaminer.API
         /// <param name="cosmosDbSettings">Cosmos Database Settings.</param>
         private void ConfigureQueries(IServiceCollection services, CosmosDbSettings cosmosDbSettings)
         {
-            services.AddScoped<ILocationConnectionSettings>(s => new LocationConnectionSettings(
+            services.AddSingleton<ILocationConnectionSettings>(s => new LocationConnectionSettings(
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
-            services.AddScoped<IExaminationConnectionSettings>(s => new ExaminationConnectionSettings(
+            services.AddSingleton<IExaminationConnectionSettings>(s => new ExaminationConnectionSettings(
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
-            services.AddScoped<IUserConnectionSettings>(s => new UserConnectionSettings(
+            services.AddSingleton<IUserConnectionSettings>(s => new UserConnectionSettings(
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
@@ -359,9 +363,12 @@ namespace MedicalExaminer.API
             // User services
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>, UserRetrievalByEmailService>();
+            services.AddScoped<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>, UserRetrievalByOktaIdService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>, UserRetrievalByIdService>();
             services.AddScoped<IAsyncQueryHandler<UserUpdateQuery, MeUser>, UserUpdateService>();
             services.AddScoped<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>, UserUpdateOktaTokenService>();
+            services.AddScoped<IAsyncQueryHandler<UserUpdateOktaQuery, MeUser>, UserUpdateOktaService>();
+            services.AddScoped<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>, UsersRetrievalByOktaTokenService>();
 
             // Used for roles; but is being abused to pass null and get all users.
             services.AddScoped<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>, UsersRetrievalService>();
@@ -398,11 +405,6 @@ namespace MedicalExaminer.API
             var provider = services.BuildServiceProvider();
             var tokenService = provider.GetRequiredService<ITokenService>();
 
-            var userConnectionSetting = new UserConnectionSettings(
-                new Uri(cosmosDbSettings.URL),
-                cosmosDbSettings.PrimaryKey,
-                cosmosDbSettings.DatabaseId);
-
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -413,12 +415,9 @@ namespace MedicalExaminer.API
                         new OktaJwtSecurityTokenHandler(
                             tokenService,
                             new JwtSecurityTokenHandler(),
-                            new UserUpdateOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
-                                userConnectionSetting),
-                            new UsersRetrievalByOktaTokenService(new DatabaseAccess(new DocumentClientFactory()),
-                                userConnectionSetting),
-                            new UserRetrievalByEmailService(new DatabaseAccess(new DocumentClientFactory()),
-                                userConnectionSetting),
+                            provider.GetRequiredService<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>(),
                             oktaTokenExpiry));
                 });
         }

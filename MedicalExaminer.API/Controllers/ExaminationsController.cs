@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -56,7 +57,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
-        /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
+        /// <param name="usersRetrievalByOktaIdService">User Retrieval By Okta Id Service.</param>
         /// <param name="authorizationService">Authorization Service.</param>
         /// <param name="permissionService">Permission Service.</param>
         /// <param name="examinationCreationService">examinationCreationService.</param>
@@ -68,7 +69,7 @@ namespace MedicalExaminer.API.Controllers
         public ExaminationsController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService,
             IAsyncQueryHandler<CreateExaminationQuery, Examination> examinationCreationService,
@@ -77,7 +78,7 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService,
             IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler,
             IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>> usersRetrievalByRoleLocationQueryService)
-            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
+            : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _examinationCreationService = examinationCreationService;
             _examinationsRetrievalService = examinationsRetrievalService;
@@ -93,7 +94,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="filter">Filter.</param>
         /// <returns>A list of examinations.</returns>
         [HttpGet]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<GetExaminationsResponse>> GetExaminations([FromQuery]GetExaminationsRequest filter)
         {
             if (filter == null)
@@ -148,7 +148,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="postExaminationRequest">The PostExaminationRequest.</param>
         /// <returns>A PostExaminationResponse.</returns>
         [HttpPost]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         public async Task<ActionResult<PutExaminationResponse>> CreateExamination(
             [FromBody] PostExaminationRequest postExaminationRequest)
         {
@@ -204,7 +203,7 @@ namespace MedicalExaminer.API.Controllers
         {
             var locationIds = locations.Select(l => l.LocationId).ToList();
 
-            var users = await GetUsersForLocations(locationIds);
+            var users = (await GetUsersForLocations(locationIds)).ToList();
 
             return Mapper.Map<IEnumerable<MeUser>, IEnumerable<UserLookup>>(users);
         }

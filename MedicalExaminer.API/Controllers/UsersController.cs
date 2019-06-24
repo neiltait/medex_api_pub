@@ -41,7 +41,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="logger">The Logger.</param>
         /// <param name="mapper">The Mapper.</param>
-        /// <param name="usersRetrievalByEmailService">Users Retrieval By Email Service.</param>
+        /// <param name="usersRetrievalByOktaIdService">User Retrieval By Okta Id Service.</param>
         /// <param name="authorizationService">Authorization Service.</param>
         /// <param name="permissionService">Permission Service.</param>
         /// <param name="userCreationService">User creation service.</param>
@@ -51,14 +51,14 @@ namespace MedicalExaminer.API.Controllers
         public UsersController(
             IMELogger logger,
             IMapper mapper,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> usersRetrievalByEmailService,
+            IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService)
-            : base(logger, mapper, usersRetrievalByEmailService, authorizationService, permissionService)
+            : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _userCreationService = userCreationService;
             _userRetrievalByIdService = userRetrievalByIdService;
@@ -71,7 +71,6 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <returns>A GetUsersResponse.</returns>
         [HttpGet]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         [AuthorizePermission(Permission.GetUsers)]
         public async Task<ActionResult<GetUsersResponse>> GetUsers()
         {
@@ -99,7 +98,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="meUserId">The User Identifier.</param>
         /// <returns>A GetUserResponse.</returns>
         [HttpGet("{meUserId}")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         [AuthorizePermission(Permission.GetUser)]
         public async Task<ActionResult<GetUserResponse>> GetUser(string meUserId)
         {
@@ -130,7 +128,6 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PostUserResponse.</returns>
         // POST api/users
         [HttpPost]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         [AuthorizePermission(Permission.InviteUser)]
         public async Task<ActionResult<PostUserResponse>> CreateUser([FromBody] PostUserRequest postUser)
         {
@@ -162,7 +159,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="putUser">The PutUserRequest.</param>
         /// <returns>A PutUserResponse.</returns>
         [HttpPut("{meUserId}")]
-        [ServiceFilter(typeof(ControllerActionFilter))]
         [AuthorizePermission(Permission.UpdateUser)]
         public async Task<ActionResult<PutUserResponse>> UpdateUser([FromBody] PutUserRequest putUser)
         {

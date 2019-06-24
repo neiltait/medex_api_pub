@@ -48,7 +48,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller = new UsersController(
                 logger.Object,
                 Mapper,
-                UsersRetrievalByEmailServiceMock.Object,
+                UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 createUserService.Object,
@@ -446,21 +446,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var model = (PutUserResponse) result.Value;
             model.Errors.Count.Should().Be(1);
             model.Success.Should().BeFalse();
-        }
-
-        private ControllerContext GetControllerContext()
-        {
-            return new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = new ClaimsPrincipal(new ClaimsIdentity(
-                        new Claim[]
-            {
-                new Claim(ClaimTypes.Email, "username")
-            }, "someAuthTypeName"))
-                }
-            };
         }
     }
 }

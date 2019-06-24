@@ -6,7 +6,7 @@ namespace MedicalExaminer.Common.Database
 {
     public interface IDocumentClientFactory
     {
-        IDocumentClient CreateClient(IConnectionSettings connectionSettings);
+        IDocumentClient CreateClient(IClientSettings connectionSettings);
         ICosmosStore<TEntity> CreateCosmosStore<TEntity>(IConnectionSettings connectionSettings)
             where TEntity : class;
     }
