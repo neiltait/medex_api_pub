@@ -76,7 +76,17 @@ namespace MedicalExaminer.API.Tests.Services.Location
         public async Task Handle_ReturnsAllParents_FromNational()
         {
             // Arrange
-            var query = new LocationParentsQuery("national");
+            var locationId = "national";
+            var location = new Mock<MedicalExaminer.Models.Location>();
+            var query = new LocationParentsQuery(locationId);
+
+            var connectionSettings = new Mock<IExaminationConnectionSettings>();
+            var dbAccess = new Mock<IDatabaseAccess>();
+
+            dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Location>(
+                    connectionSettings.Object,
+                    It.IsAny<string>()))
+                .Returns(Task.FromResult(location.Object)).Verifiable();
 
             // Act
             var results = (await Service.Handle(query)).ToList();

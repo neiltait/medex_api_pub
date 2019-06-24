@@ -20,9 +20,9 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
         {
             var examinationToUpdate = await
                 DatabaseAccess
-                    .GetItemAsync<Models.Examination>(
+                    .GetItemByIdAsync<Models.Examination>(
                         ConnectionSettings,
-                        examination => examination.ExaminationId == param.ExaminationId);
+                        param.ExaminationId);
 
             examinationToUpdate.ConfirmationOfScrutinyCompletedAt = DateTime.Now;
             examinationToUpdate.ConfirmationOfScrutinyCompletedBy = param.User.UserId;
@@ -33,7 +33,6 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
 
             examinationToUpdate.UpdateCaseStatus();
             examinationToUpdate.UpdateCaseUrgencyScore();
-
 
             var result = await DatabaseAccess.UpdateItemAsync(ConnectionSettings, examinationToUpdate);
             return result;

@@ -21,13 +21,13 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public async Task ExaminationIdFoundReturnsExpectedExamination()
         {
-            //Arrange
+            // Arrange
             const string id = "a";
 
-            //Act
+            // Act
             var result = await Service.Handle(new ExaminationRetrievalQuery(id, new Mock<MeUser>().Object));
 
-            //Assert
+            // Assert
             result.Should().NotBeNull();
             Assert.Equal("a", result.ExaminationId);
         }
@@ -38,12 +38,13 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             // Arrange
             const string examinationId = "c";
 
-            //Act
+            // Act
             var results = await Service.Handle(new ExaminationRetrievalQuery(examinationId, null));
 
-            //Assert
+            // Assert
             results.Should().BeNull();
         }
+
         [Fact]
         public void ExaminationQueryIsNullThrowsException()
         {
