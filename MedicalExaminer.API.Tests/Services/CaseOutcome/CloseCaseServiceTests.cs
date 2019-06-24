@@ -6,6 +6,7 @@ using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Services.CaseOutcome;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 using Moq;
 using Xunit;
 
@@ -21,11 +22,26 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
         {
             // Arrange
             var examinationId = Guid.NewGuid().ToString();
+            var caseOutcome = new MedicalExaminer.Models.CaseOutcome
+            {
+                CaseMedicalExaminerFullName = "ME Full Name",
+                ScrutinyConfirmedOn = new DateTime(2019, 6, 20),
+                OutcomeQapDiscussion = QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP,
+                OutcomeOfPrescrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
+                OutcomeOfRepresentativeDiscussion = BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                CaseCompleted = false,
+                CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
+                MccdIssued = true,
+                CremationFormStatus = CremationFormStatus.Yes,
+                GpNotifiedStatus = GPNotified.GPNotified,
+                CoronerReferralSent = false
+            };
             var examination = new MedicalExaminer.Models.Examination
             {
                 ExaminationId = examinationId,
                 ScrutinyConfirmed = false,
-                OutstandingCaseItemsCompleted = true
+                OutstandingCaseItemsCompleted = true,
+                CaseOutcome = caseOutcome
             };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var query = new CloseCaseQuery(examinationId, new MeUser());
