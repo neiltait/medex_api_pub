@@ -115,5 +115,9 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// </summary>
         public bool HaveFinalCaseOutcomesOutstanding { get; set; }
 
+        /// <summary>
+        /// Case Outcome
+        /// </summary>
+        public CaseOutcomeSummary? CaseOutcome { get; set; }
     }
 }

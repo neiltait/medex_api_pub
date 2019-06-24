@@ -216,6 +216,11 @@ namespace MedicalExaminer.API.Controllers
                 return new NotFoundResult();
             }
 
+            if (examination.CaseCompleted)
+            {
+                return BadRequest();
+            }
+
             if (!CanAsync(Permission.UpdateExamination, examination))
             {
                 return Forbid();

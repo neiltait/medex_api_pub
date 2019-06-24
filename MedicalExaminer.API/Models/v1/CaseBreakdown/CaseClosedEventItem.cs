@@ -45,5 +45,10 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// Users Role
         /// </summary>
         public string UsersRole { get; set; }
+
+        /// <summary>
+        /// Case Outcome
+        /// </summary>
+        public CaseOutcomeSummary CaseOutcome { get; set; }
     }
 }
