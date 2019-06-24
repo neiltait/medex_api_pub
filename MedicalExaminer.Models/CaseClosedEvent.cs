@@ -53,5 +53,11 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "user_role")]
         public string UsersRole { get; set; }
+
+        /// <summary>
+        /// Case Outcome
+        /// </summary>
+        [JsonProperty(PropertyName = "case_outcome")]
+        public CaseOutcomeSummary CaseOutcome { get; set; }
     }
 }

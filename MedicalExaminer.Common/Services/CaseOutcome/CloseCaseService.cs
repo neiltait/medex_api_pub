@@ -46,6 +46,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
 
             examinationToUpdate.CaseBreakdown.CaseClosedEvent = new CaseClosedEvent()
             {
+                CaseOutcome = examinationToUpdate.CaseOutcome.CaseOutcomeSummary.Value,
                 Created = DateTime.Now,
                 DateCaseClosed = DateTime.Now,
                 EventId = Guid.NewGuid().ToString(),
