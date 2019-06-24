@@ -126,7 +126,7 @@ namespace MedicalExaminer.API.Tests.Services
                     It.IsAny<string>(),
                     null,
                     default(CancellationToken)))
-                .Returns((string id, RequestOptions ro, bool b, CancellationToken ct) => GetDocumentForItem(id));
+                .Returns((string itemId, RequestOptions ro, CancellationToken ct) => GetDocumentForItem<MedicalExaminer.Models.Examination>(itemId));
 
 
             client.Setup(c => c.UpsertDocumentAsync(
@@ -154,6 +154,28 @@ namespace MedicalExaminer.API.Tests.Services
 
                     var jsonProperty =
                         (JsonPropertyAttribute) propertyInfo.GetCustomAttribute(typeof(JsonPropertyAttribute));
+
+                    document.SetPropertyValue(jsonProperty?.PropertyName ?? propertyInfo.Name, value);
+                }
+            }
+
+            return Task.FromResult(new ResourceResponse<Document>(document));
+        }
+
+        private static Task<ResourceResponse<Document>> GetDocumentForItem<T>(string item)
+        {
+            var document = new Document();
+
+            // Attempt to provide something close to cosmos and pass the object through using its json property
+            // names instead (to catch when ID is named differently)
+            foreach (PropertyInfo propertyInfo in item.GetType().GetProperties())
+            {
+                if (propertyInfo.CanRead)
+                {
+                    var value = propertyInfo.GetValue(item, null);
+
+                    var jsonProperty =
+                        (JsonPropertyAttribute)propertyInfo.GetCustomAttribute(typeof(JsonPropertyAttribute));
 
                     document.SetPropertyValue(jsonProperty?.PropertyName ?? propertyInfo.Name, value);
                 }
