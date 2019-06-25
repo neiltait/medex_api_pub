@@ -45,8 +45,8 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             theEvent.Object.UserId = "a";
             var dbAccess = new Mock<IDatabaseAccess>();
 
-            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+            dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
+                    It.IsAny<string>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
 
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
@@ -88,8 +88,8 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             theEvent.Object.UserId = "a";
             var dbAccess = new Mock<IDatabaseAccess>();
 
-            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+            dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
+                    It.IsAny<string>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
 
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
@@ -128,8 +128,8 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             var query = new CreateEventQuery("1", theEvent.Object);
             var dbAccess = new Mock<IDatabaseAccess>();
 
-            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+            dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
+                    It.IsAny<string>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
 
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,

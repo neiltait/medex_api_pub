@@ -32,9 +32,9 @@ namespace MedicalExaminer.Common.Services.User
 
             var userToUpdate =
                 _databaseAccess
-                    .GetItemAsync<Models.MeUser>(
+                    .GetItemByIdAsync<Models.MeUser>(
                         _connectionSettings,
-                        meUser => meUser.UserId == userUpdate.UserId).Result;
+                        userUpdate.UserId).Result;
 
             if (userToUpdate == null)
             {

@@ -47,9 +47,9 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             var query = new CloseCaseQuery(examinationId, new MeUser());
             var dbAccess = new Mock<IDatabaseAccess>();
 
-            dbAccess.Setup(db => db.GetItemAsync(
+            dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(
                 connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+                    It.IsAny<string>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
 
             dbAccess.Setup(db => db.UpdateItemAsync(

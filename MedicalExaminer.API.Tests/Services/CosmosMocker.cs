@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Cosmonaut;
+using MedicalExaminer.API.Tests.Helpers;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using Microsoft.Azure.Documents;
@@ -60,7 +62,6 @@ namespace MedicalExaminer.API.Tests.Services
 
                     return mockDocumentQuery.Object;
                 });
-
             mockOrderedQueryable.Setup(x => x.Provider).Returns(provider.Object);
             mockOrderedQueryable.Setup(x => x.Expression).Returns(() => dataSource.Expression);
 
@@ -123,6 +124,13 @@ namespace MedicalExaminer.API.Tests.Services
                 .Returns((Uri uri, AuditEntry<T> item, RequestOptions ro, bool b, CancellationToken ct) => GetDocumentForItem(item));
 
 
+            mockOrderedQueryable
+                       .Setup(_ => _.GetEnumerator())
+                       .Returns(dataSource.AsEnumerable().GetEnumerator());
+
+            client.Setup(c => c.ReadDocumentAsync(It.IsAny<Uri>(),
+                null,
+                default(CancellationToken))).Returns((Uri item, RequestOptions ro, CancellationToken ct) => GetDocumentByIdForItem(item, mockOrderedQueryable.Object));
 
             client.Setup(c => c.UpsertDocumentAsync(
                     It.IsAny<Uri>(),
@@ -133,6 +141,32 @@ namespace MedicalExaminer.API.Tests.Services
                 .Returns((Uri uri, T item, RequestOptions ro, bool b, CancellationToken ct) => GetDocumentForItem(item));
 
             return client;
+        }
+
+        private static Task<ResourceResponse<Document>> GetDocumentByIdForItem<T>(Uri uri, IOrderedQueryable<T> mockOrderedQueryable)
+        {
+            if (uri != null)
+            {
+                var id = uri.ToString().Split("/").Last();
+                foreach (var item in mockOrderedQueryable)
+                {
+                    var itemAsDocument = GetDocumentForItem(item);
+                    if (itemAsDocument.Result.Resource.Id == id)
+                    {
+                        return itemAsDocument;
+                    }
+                }
+            }
+
+            var error = new Error
+            {
+                Id = Guid.NewGuid().ToString(),
+                Code = "404",
+                Message = "Error Message"
+            };
+
+            throw CosmosExceptionThrowerHelper.CreateDocumentClientExceptionForTesting(error,
+                                               HttpStatusCode.NotFound);
         }
 
         private static Task<ResourceResponse<Document>> GetDocumentForItem<T>(T item)
@@ -153,7 +187,6 @@ namespace MedicalExaminer.API.Tests.Services
                     document.SetPropertyValue(jsonProperty?.PropertyName ?? propertyInfo.Name, value);
                 }
             }
-
             return Task.FromResult(new ResourceResponse<Document>(document));
         }
     }

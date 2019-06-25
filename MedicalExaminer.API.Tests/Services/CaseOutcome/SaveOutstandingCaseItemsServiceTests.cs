@@ -37,11 +37,13 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             var query = new SaveOutstandingCaseItemsQuery(examinationId, caseOutcome, new MeUser());
             var dbAccess = new Mock<IDatabaseAccess>();
 
-            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+            dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(
+                connectionSettings.Object,
+                    It.IsAny<string>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
 
-            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
+            dbAccess.Setup(db => db.UpdateItemAsync(
+                connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
             var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
@@ -83,11 +85,13 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             var query = new SaveOutstandingCaseItemsQuery(examinationId, caseOutcome, new MeUser());
             var dbAccess = new Mock<IDatabaseAccess>();
 
-            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+            dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(
+                    connectionSettings.Object,
+                    It.IsAny<string>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
 
-            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
+            dbAccess.Setup(db => db.UpdateItemAsync(
+                connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
             var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
@@ -129,11 +133,13 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             var query = new SaveOutstandingCaseItemsQuery(examinationId, caseOutcome, new MeUser());
             var dbAccess = new Mock<IDatabaseAccess>();
 
-            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+            dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(
+                    connectionSettings.Object,
+                    It.IsAny<string>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
 
-            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
+            dbAccess.Setup(db => db.UpdateItemAsync(
+                connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
             var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
@@ -175,11 +181,13 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             var query = new SaveOutstandingCaseItemsQuery(examinationId, caseOutcome, new MeUser());
             var dbAccess = new Mock<IDatabaseAccess>();
 
-            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+            dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(
+                    connectionSettings.Object,
+                    It.IsAny<string>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
 
-            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
+            dbAccess.Setup(db => db.UpdateItemAsync(
+                connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
             var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
@@ -221,11 +229,13 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             var query = new SaveOutstandingCaseItemsQuery(examinationId, caseOutcome, new MeUser());
             var dbAccess = new Mock<IDatabaseAccess>();
 
-            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+            dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(
+                    connectionSettings.Object,
+                    It.IsAny<string>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
 
-            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
+            dbAccess.Setup(db => db.UpdateItemAsync(
+                connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
             var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
@@ -267,11 +277,13 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             var query = new SaveOutstandingCaseItemsQuery(examinationId, caseOutcome, new MeUser());
             var dbAccess = new Mock<IDatabaseAccess>();
 
-            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+            dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(
+                    connectionSettings.Object,
+                    It.IsAny<string>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
 
-            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
+            dbAccess.Setup(db => db.UpdateItemAsync(
+                connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
             var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
@@ -313,11 +325,13 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             var query = new SaveOutstandingCaseItemsQuery(examinationId, caseOutcome, new MeUser());
             var dbAccess = new Mock<IDatabaseAccess>();
 
-            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+            dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(
+                    connectionSettings.Object,
+                    It.IsAny<string>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
 
-            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
+            dbAccess.Setup(db => db.UpdateItemAsync(
+                connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
             var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
@@ -359,11 +373,13 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             var query = new SaveOutstandingCaseItemsQuery(examinationId, caseOutcome, new MeUser());
             var dbAccess = new Mock<IDatabaseAccess>();
 
-            dbAccess.Setup(db => db.GetItemAsync(connectionSettings.Object,
-                    It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
+            dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(
+                    connectionSettings.Object,
+                    It.IsAny<string>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
 
-            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
+            dbAccess.Setup(db => db.UpdateItemAsync(
+                connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
             var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
