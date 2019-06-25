@@ -29,7 +29,7 @@ namespace MedicalExaminer.Common.Services.User
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var userToUpdate = await GetItemAsync(meUser => meUser.UserId == param.UserId);
+            var userToUpdate = await GetItemByIdAsync(param.UserId);
 
             if (userToUpdate == null)
             {

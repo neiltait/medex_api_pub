@@ -45,9 +45,11 @@ namespace MedicalExaminer.Common.Services.Location
 
             while (locationId != null && (maxLoops--) > 0)
             {
-                var item = await DatabaseAccess.GetItemByIdAsync<Models.Location>(
+                var id = locationId;
+
+                var item = await DatabaseAccess.GetItemAsync(
                     ConnectionSettings,
-                    locationId);
+                    (Models.Location location) => location.LocationId == id);
 
                 if (item == null)
                 {
