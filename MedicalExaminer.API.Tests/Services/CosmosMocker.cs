@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Cosmonaut;
+using MedicalExaminer.API.Tests.Helpers;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using Microsoft.Azure.Documents;
@@ -143,17 +143,17 @@ namespace MedicalExaminer.API.Tests.Services
             return client;
         }
 
-        private static Task<ResourceResponse<Document>> GetDocumentByIdForItem<T>(Uri item, IOrderedQueryable<T> mockOrderedQueryable)
+        private static Task<ResourceResponse<Document>> GetDocumentByIdForItem<T>(Uri uri, IOrderedQueryable<T> mockOrderedQueryable)
         {
-            if (item != null)
+            if (uri != null)
             {
-                var id = item.ToString().Substring(item.ToString().LastIndexOf("/") + 1);
-                foreach (var x in mockOrderedQueryable)
+                var id = uri.ToString().Split("/").Last();
+                foreach (var item in mockOrderedQueryable)
                 {
-                    var test = GetDocumentForItem(x);
-                    if (test.Result.Resource.Id == id)
+                    var itemAsDocument = GetDocumentForItem(item);
+                    if (itemAsDocument.Result.Resource.Id == id)
                     {
-                        return test;
+                        return itemAsDocument;
                     }
                 }
             }
@@ -162,26 +162,11 @@ namespace MedicalExaminer.API.Tests.Services
             {
                 Id = Guid.NewGuid().ToString(),
                 Code = "404",
-                Message = "FUDGE"
+                Message = "Error Message"
             };
 
-            throw CreateDocumentClientExceptionForTesting(error,
+            throw CosmosExceptionThrowerHelper.CreateDocumentClientExceptionForTesting(error,
                                                HttpStatusCode.NotFound);
-        }
-
-        private static DocumentClientException CreateDocumentClientExceptionForTesting(
-                                          Error error, HttpStatusCode httpStatusCode)
-        {
-            var type = typeof(DocumentClientException);
-
-            // we are using the overload with 3 parameters (error, responseheaders, statuscode)
-            // use any one appropriate for you.
-
-            var documentClientExceptionInstance = type.Assembly.CreateInstance(type.FullName,
-                false, BindingFlags.Instance | BindingFlags.NonPublic, null,
-                new object[] { error, (HttpResponseHeaders)null, httpStatusCode }, null, null);
-
-            return (DocumentClientException)documentClientExceptionInstance;
         }
 
         private static Task<ResourceResponse<Document>> GetDocumentForItem<T>(T item)
@@ -202,28 +187,6 @@ namespace MedicalExaminer.API.Tests.Services
                     document.SetPropertyValue(jsonProperty?.PropertyName ?? propertyInfo.Name, value);
                 }
             }
-            return Task.FromResult(new ResourceResponse<Document>(document));
-        }
-
-        private static Task<ResourceResponse<Document>> GetDocumentForItem<T>(string item)
-        {
-            var document = new Document();
-            
-            // Attempt to provide something close to cosmos and pass the object through using its json property
-            // names instead (to catch when ID is named differently)
-            foreach (PropertyInfo propertyInfo in item.GetType().GetProperties())
-            {
-                if (propertyInfo.CanRead)
-                {
-                    var value = propertyInfo.GetValue(item, null);
-
-                    var jsonProperty =
-                        (JsonPropertyAttribute)propertyInfo.GetCustomAttribute(typeof(JsonPropertyAttribute));
-
-                    document.SetPropertyValue(jsonProperty?.PropertyName ?? propertyInfo.Name, value);
-                }
-            }
-
             return Task.FromResult(new ResourceResponse<Document>(document));
         }
     }
