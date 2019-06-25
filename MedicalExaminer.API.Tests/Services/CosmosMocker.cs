@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,7 +62,6 @@ namespace MedicalExaminer.API.Tests.Services
 
                     return mockDocumentQuery.Object;
                 });
-
             mockOrderedQueryable.Setup(x => x.Provider).Returns(provider.Object);
             mockOrderedQueryable.Setup(x => x.Expression).Returns(() => dataSource.Expression);
 
@@ -122,18 +123,14 @@ namespace MedicalExaminer.API.Tests.Services
                     default(CancellationToken)))
                 .Returns((Uri uri, AuditEntry<T> item, RequestOptions ro, bool b, CancellationToken ct) => GetDocumentForItem(item));
 
-            //client.Setup(c => c.ReadDocumentAsync(
-            //        It.IsAny<string>(),
-            //        null,
-            //        default(CancellationToken)))
-            //    .Returns((string itemId, RequestOptions ro, CancellationToken ct) => GetDocumentForItem<MedicalExaminer.Models.Examination>(itemId));
 
-            //client.Setup(c => c.ReadDocumentAsync(
-            //        It.IsAny<string>(),
-            //        null,
-            //        default(CancellationToken)))
-            //    .Returns((string itemId, RequestOptions ro, CancellationToken ct) => GetDocumentForItem<MedicalExaminer.Models.Location>(itemId));
+            mockOrderedQueryable
+                       .Setup(_ => _.GetEnumerator())
+                       .Returns(dataSource.AsEnumerable().GetEnumerator());
 
+            client.Setup(c => c.ReadDocumentAsync(It.IsAny<Uri>(),
+                null,
+                default(CancellationToken))).Returns((Uri item, RequestOptions ro, CancellationToken ct) => GetDocumentByIdForItem(item, mockOrderedQueryable.Object));
 
             client.Setup(c => c.UpsertDocumentAsync(
                     It.IsAny<Uri>(),
@@ -144,6 +141,47 @@ namespace MedicalExaminer.API.Tests.Services
                 .Returns((Uri uri, T item, RequestOptions ro, bool b, CancellationToken ct) => GetDocumentForItem(item));
 
             return client;
+        }
+
+        private static Task<ResourceResponse<Document>> GetDocumentByIdForItem<T>(Uri item, IOrderedQueryable<T> mockOrderedQueryable)
+        {
+            if (item != null)
+            {
+                var id = item.ToString().Substring(item.ToString().LastIndexOf("/") + 1);
+                foreach (var x in mockOrderedQueryable)
+                {
+                    var test = GetDocumentForItem(x);
+                    if (test.Result.Resource.Id == id)
+                    {
+                        return test;
+                    }
+                }
+            }
+
+            var error = new Error
+            {
+                Id = Guid.NewGuid().ToString(),
+                Code = "404",
+                Message = "FUDGE"
+            };
+
+            throw CreateDocumentClientExceptionForTesting(error,
+                                               HttpStatusCode.NotFound);
+        }
+
+        private static DocumentClientException CreateDocumentClientExceptionForTesting(
+                                          Error error, HttpStatusCode httpStatusCode)
+        {
+            var type = typeof(DocumentClientException);
+
+            // we are using the overload with 3 parameters (error, responseheaders, statuscode)
+            // use any one appropriate for you.
+
+            var documentClientExceptionInstance = type.Assembly.CreateInstance(type.FullName,
+                false, BindingFlags.Instance | BindingFlags.NonPublic, null,
+                new object[] { error, (HttpResponseHeaders)null, httpStatusCode }, null, null);
+
+            return (DocumentClientException)documentClientExceptionInstance;
         }
 
         private static Task<ResourceResponse<Document>> GetDocumentForItem<T>(T item)
@@ -164,14 +202,13 @@ namespace MedicalExaminer.API.Tests.Services
                     document.SetPropertyValue(jsonProperty?.PropertyName ?? propertyInfo.Name, value);
                 }
             }
-
             return Task.FromResult(new ResourceResponse<Document>(document));
         }
 
         private static Task<ResourceResponse<Document>> GetDocumentForItem<T>(string item)
         {
             var document = new Document();
-
+            
             // Attempt to provide something close to cosmos and pass the object through using its json property
             // names instead (to catch when ID is named differently)
             foreach (PropertyInfo propertyInfo in item.GetType().GetProperties())
