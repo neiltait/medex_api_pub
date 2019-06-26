@@ -4,6 +4,7 @@ using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries;
+using MedicalExaminer.Common.Reporting;
 using MedicalExaminer.Common.Services;
 using Moq;
 using Xunit;
@@ -38,7 +39,7 @@ namespace MedicalExaminer.API.Tests.Services
             // Make sure you don't access the sub class inside this method since its being called in constructor.
             var client = CosmosMocker.CreateDocumentClient(GetExamples());
             var clientFactory = CosmosMocker.CreateClientFactory(client);
-            var dataAccess = new DatabaseAccess(clientFactory.Object);
+            var dataAccess = new DatabaseAccess(clientFactory.Object, new RequestChargeService());
             var connectionSettings = CosmosMocker.CreateConnectionSettings<TConnectionSettings>();
             Service = GetService(dataAccess, connectionSettings.Object);
         }

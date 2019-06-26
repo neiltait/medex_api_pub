@@ -13,6 +13,7 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Reporting;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -175,7 +176,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         [Fact]
         public void OnActionExecuted_DoesNothing()
         {
-            var controllerActionFilter = new ControllerActionFilter(_mockLogger);
+            var controllerActionFilter = new ControllerActionFilter(_mockLogger, new RequestChargeService());
             var actionContext = new ActionContext
             {
                 HttpContext = new MockHttpContext(),
@@ -204,7 +205,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedUserId = "expectedUserId";
             var expectedControllerName = "expectedControllerName";
             var expectedActionName = "expectedActionName";
-            var controllerActionFilter = new ControllerActionFilter(_mockLogger);
+            var controllerActionFilter = new ControllerActionFilter(_mockLogger, new RequestChargeService());
             var actionContext = new ActionContext
             {
                 HttpContext = new MockHttpContext(),
