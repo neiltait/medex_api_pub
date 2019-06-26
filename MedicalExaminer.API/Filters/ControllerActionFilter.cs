@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Reporting;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -19,13 +20,20 @@ namespace MedicalExaminer.API.Filters
         /// </summary>
         private readonly IMELogger _logger;
 
+        private readonly RequestChargeService _requestChargeService;
+
+        private DateTime _timestamp;
+
+        private Dictionary<string, object> _parameters;
+
         /// <summary>
         /// Initialise a new instance of <see cref="ControllerActionFilter"/>.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        public ControllerActionFilter(IMELogger logger)
+        public ControllerActionFilter(IMELogger logger, RequestChargeService requestChargeService)
         {
             _logger = logger;
+            _requestChargeService = requestChargeService;
         }
 
         /// <summary>
@@ -34,14 +42,6 @@ namespace MedicalExaminer.API.Filters
         /// <remarks>Required by interface. Not intended to be used</remarks>
         /// <param name="context">action context</param>
         public void OnActionExecuted(ActionExecutedContext context)
-        {
-        }
-
-        /// <summary>
-        ///     Called before method executes
-        /// </summary>
-        /// <param name="context">action context</param>
-        public void OnActionExecuting(ActionExecutingContext context)
         {
             string controllerName = null;
             string controllerAction = null;
@@ -56,25 +56,36 @@ namespace MedicalExaminer.API.Filters
             var userId = ((ClaimsIdentity)identity).Claims.SingleOrDefault(x => x.Type == Authorization.MEClaimTypes.UserId)?.Value;
             var userAuthenticationType = identity.AuthenticationType ?? "Unknown";
             var userIsAuthenticated = identity.IsAuthenticated;
-            var parameters = new Dictionary<string, object>();
-
-            foreach (var parameter in context.ActionArguments)
-            {
-                parameters.Add(parameter.Key, parameter.Value);
-            }
 
             var remoteIpAddress = context.HttpContext.Connection.RemoteIpAddress;
             var remoteIp = remoteIpAddress == null ? "Unknown" : remoteIpAddress.ToString();
-            var timeStamp = DateTime.UtcNow;
+            var totalRus = _requestChargeService.RequestCharges.Sum(i => i.Charge);
+
             _logger.Log(
                 userId,
                 userAuthenticationType,
                 userIsAuthenticated,
                 controllerName,
                 controllerAction,
-                parameters,
+                _parameters,
                 remoteIp,
-                timeStamp);
+                _timestamp,
+                totalRus);
+        }
+
+        /// <summary>
+        ///     Called before method executes
+        /// </summary>
+        /// <param name="context">action context</param>
+        public void OnActionExecuting(ActionExecutingContext context)
+        {
+            _timestamp = DateTime.UtcNow;
+            var _parameters = new Dictionary<string, object>();
+
+            foreach (var parameter in context.ActionArguments)
+            {
+                _parameters.Add(parameter.Key, parameter.Value);
+            }
         }
     }
 }
