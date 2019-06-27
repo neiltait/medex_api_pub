@@ -47,8 +47,16 @@ namespace MedicalExaminer.API
                 var i = 0;
                 foreach (var request in requestChargeService.RequestCharges)
                 {
-                    context.Response.Headers[$"{ResponseHeader}-{i}"] = JsonConvert.SerializeObject(request);
+                    var requestString = JsonConvert.SerializeObject(request);
+
+                    context.Response.Headers[$"{ResponseHeader}-{i}"] = requestString;
                     i++;
+
+                    if (i >= 10)
+                    {
+                        context.Response.Headers[$"{ResponseHeader}-{i}"] = "Too many headers. Stopped.";
+                        break;
+                    }
                 }
 
                 context.Response.Headers[ResponseTotalHeader] = requestChargeService.RequestCharges.Sum(s => s.Charge).ToString();
