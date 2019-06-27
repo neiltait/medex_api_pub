@@ -281,25 +281,9 @@ namespace MedicalExaminer.API.Controllers
 
                 var currentUser = await CurrentUser();
 
-                var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
-
-                if (user == null)
-                {
-                    return NotFound(new PutPermissionResponse());
-                }
-
-                var permissionToUpdate = user.Permissions.FirstOrDefault(p => p.PermissionId == permissionId);
-
-                if (permissionToUpdate == null)
-                {
-                    return NotFound(new PutPermissionResponse());
-                }
-
-                var permission = Mapper.Map(putPermission, permissionToUpdate);
-
                 var locationDocument = (await
                         _locationParentsService.Handle(
-                            new LocationParentsQuery(permission.LocationId)))
+                            new LocationParentsQuery(putPermission.LocationId)))
                     .ToLocationPath();
 
                 if (!CanAsync(Common.Authorization.Permission.CreateUserPermission, locationDocument))
@@ -307,20 +291,26 @@ namespace MedicalExaminer.API.Controllers
                     return Forbid();
                 }
 
-                var possiblePermission = user.Permissions.SingleOrDefault(ep => ep.LocationId == putPermission.LocationId
-                                                                                && ep.UserRole == putPermission.UserRole);
+                var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
 
-                if (possiblePermission != null)
+                if (user == null)
                 {
-                    return Ok(Mapper.Map<MEUserPermission, PutPermissionResponse>(
-                        possiblePermission,
-                        opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; })));
+                    return NotFound(new PutPermissionResponse());
                 }
+
+                var permissionToUpdate = user.Permissions.SingleOrDefault(p => p.PermissionId == permissionId);
+
+                if (permissionToUpdate == null)
+                {
+                    return NotFound(new PutPermissionResponse());
+                }
+
+                permissionToUpdate = Mapper.Map(putPermission, permissionToUpdate);
 
                 await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
 
                 return Ok(Mapper.Map<MEUserPermission, PutPermissionResponse>(
-                    permission,
+                    permissionToUpdate,
                     opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; })));
             }
             catch (DocumentClientException)
