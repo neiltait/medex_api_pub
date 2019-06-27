@@ -262,9 +262,9 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// Updates a Permission.
         /// </summary>
-        /// <param name="putPermission">The PutPermissionRequest.</param>
+        /// <param name="deletePermission">The DeletePermissionRequest.</param>
         /// <returns>A PutPermissionResponse.</returns>
-        [HttpPut("{permissionId}")]
+        [HttpDelete("{permissionId}")]
         [AuthorizePermission(Common.Authorization.Permission.UpdateUserPermission)]
         public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(
             string meUserId, 
@@ -332,5 +332,69 @@ namespace MedicalExaminer.API.Controllers
                 return NotFound(new PutPermissionResponse());
             }
         }
+
+        ///// <summary>
+        ///// Updates a Permission.
+        ///// </summary>
+        ///// <param name="putPermission">The PutPermissionRequest.</param>
+        ///// <returns>A PutPermissionResponse.</returns>
+        //[HttpPut("{permissionId}")]
+        //[AuthorizePermission(Common.Authorization.Permission.DeleteUserPermission)]
+        //public async Task<ActionResult<PutPermissionResponse>> DeletePermission(
+        //    string meUserId,
+        //    string permissionId)
+        //{
+        //    try
+        //    {
+        //        var currentUser = await CurrentUser();
+
+        //        var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
+
+        //        if (user == null)
+        //        {
+        //            return NotFound(new PutPermissionResponse());
+        //        }
+
+        //        var permissionToRemove = user.Permissions.Single(p => p.PermissionId == permissionId);
+
+        //        if (permissionToRemove == null)
+        //        {
+        //            return NotFound();
+        //        }
+
+        //        user.Permissions.ToList().Remove(permissionToRemove);
+
+        //        if(!CanAsync(Common.Authorization.Permission.UpdateUserPermission, ))
+
+        //        if (!CanAsync(Common.Authorization.Permission.CreateUserPermission, locationDocument))
+        //        {
+        //            return Forbid();
+        //        }
+
+        //        var possiblePermission = user.Permissions.SingleOrDefault(ep => ep.LocationId == putPermission.LocationId
+        //                                                                        && ep.UserRole == putPermission.UserRole);
+
+        //        if (possiblePermission != null)
+        //        {
+        //            return Ok(Mapper.Map<MEUserPermission, PutPermissionResponse>(
+        //                possiblePermission,
+        //                opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; })));
+        //        }
+
+        //        await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
+
+        //        return Ok(Mapper.Map<MEUserPermission, PutPermissionResponse>(
+        //            permission,
+        //            opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; })));
+        //    }
+        //    catch (DocumentClientException)
+        //    {
+        //        return NotFound(new PutPermissionResponse());
+        //    }
+        //    catch (ArgumentException)
+        //    {
+        //        return NotFound(new PutPermissionResponse());
+        //    }
+        //}
     }
 }
