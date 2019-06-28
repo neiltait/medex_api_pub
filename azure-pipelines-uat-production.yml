@@ -57,6 +57,7 @@ steps:
       publishTestResults: true
 
   - task: SdtReport@1
+    displayName: Secure Development Tools (preview)
     inputs:
       AllTools: true
       BinSkimBreakOn: 'Error'
