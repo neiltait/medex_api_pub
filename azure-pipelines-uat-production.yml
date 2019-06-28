@@ -57,17 +57,6 @@ steps:
       arguments: '--configuration $(BuildConfiguration)'
       publishTestResults: true
 
-  - task: AntiMalware@3
-    inputs:
-      InputType: 'Basic'
-      ScanType: 'CustomScan'
-      FileDirPath: '$(Build.StagingDirectory)'
-      EnableServices: false
-      SupportLogOnError: false
-      TreatSignatureUpdateFailureAs: 'Warning'
-      SignatureFreshness: 'UpToDate'
-      TreatStaleSignatureAs: 'Error'
-
   - task: BinSkim@3
     inputs:
       InputType: 'Basic'
