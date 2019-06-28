@@ -133,6 +133,8 @@ namespace MedicalExaminer.API
             services.AddExaminationValidation();
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
 
+            //AddAutomapperProfiles();
+
             Mapper.Initialize(config => { config.AddMedicalExaminerProfiles(); });
             Mapper.AssertConfigurationIsValid();
             services.AddAutoMapper();
@@ -218,6 +220,12 @@ namespace MedicalExaminer.API
                 cosmosDbSettings.DatabaseId));
 
             services.AddBackgroundServices(backgroundServicesSettings);
+        }
+
+        private void AddAutomapperProfiles()
+        {
+            
+
         }
 
         /// <summary>

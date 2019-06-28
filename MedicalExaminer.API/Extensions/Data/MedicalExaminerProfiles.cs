@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -13,6 +14,7 @@ namespace MedicalExaminer.API.Extensions.Data
         /// <param name="config">The mapper configuration.</param>
         public static void AddMedicalExaminerProfiles(this IMapperConfigurationExpression config)
         {
+            //config.ConstructServicesUsing(ObjectFactory.GetInstance);
             config.AddProfile<ExaminationProfile>();
             config.AddProfile<UsersProfile>();
             config.AddProfile<PermissionsProfile>();
