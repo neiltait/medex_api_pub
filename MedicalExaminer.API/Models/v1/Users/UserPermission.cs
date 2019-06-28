@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MedicalExaminer.Models.Enums;
+﻿using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.Users
 {
@@ -20,6 +16,11 @@ namespace MedicalExaminer.API.Models.v1.Users
         /// Location Id.
         /// </summary>
         public string LocationId { get; set; }
+
+        /// <summary>
+        /// Location Name.
+        /// </summary>
+        public string LocationName { get; set; }
 
         /// <summary>
         /// User Role.

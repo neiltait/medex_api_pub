@@ -16,17 +16,21 @@ namespace MedicalExaminer.API.Extensions.Data
         public PermissionsProfile()
         {
             CreateMap<MEUserPermission, PermissionItem>()
+                .ForMember(permissionItem => permissionItem.LocationName, opt => opt.Ignore())
                 .ForMember(permissionItem => permissionItem.UserId, opt => opt.Ignore());
             CreateMap<MEUserPermission, GetPermissionResponse>()
                 .ForMember(response => response.UserId, opt => opt.Ignore())
+                .ForMember(response => response.LocationName, opt => opt.Ignore())
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<MEUserPermission, PostPermissionResponse>()
                 .ForMember(response => response.UserId, opt => opt.Ignore())
+                .ForMember(response => response.LocationName, opt => opt.Ignore())
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<MEUserPermission, PutPermissionResponse>()
                 .ForMember(response => response.UserId, opt => opt.Ignore())
+                .ForMember(response => response.LocationName, opt => opt.Ignore())
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore());
 
