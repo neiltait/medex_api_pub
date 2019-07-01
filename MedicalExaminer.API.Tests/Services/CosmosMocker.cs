@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -70,12 +71,46 @@ namespace MedicalExaminer.API.Tests.Services
         }
 
         public static Mock<IDocumentClient> CreateDocumentClient<T>(T[] collectionDocuments)
+            where T : class, new()
         {
             var client = new Mock<IDocumentClient>(MockBehavior.Strict);
             var mockOrderedQueryable = new Mock<IOrderedQueryable<T>>(MockBehavior.Strict);
             var provider = new Mock<IQueryProvider>(MockBehavior.Strict);
             var dataSource = collectionDocuments.AsQueryable();
 
+            // Dynamic query for the "select" calls that filter by field names
+            provider
+                .Setup(_ => _.CreateQuery<object>(It.IsAny<Expression>()))
+                .Returns((Expression expression) =>
+                {
+                    var mockDocumentQuery = new Mock<IFakeDocumentQuery<object>>(MockBehavior.Strict);
+                    var query = new EnumerableQuery<object>(expression);
+                    // This converts the anonymous types back to typed values.
+                    var result = query.Select(item => GetItemFromDynamic<T>(item)).ToList();
+                    var response = new FeedResponse<T>(result);
+
+                    mockDocumentQuery.Setup(_ => _.Provider)
+                        .Returns(provider.Object);
+                    mockDocumentQuery.Setup(_ => _.Expression)
+                        .Returns(expression);
+
+                    mockDocumentQuery
+                        .SetupSequence(_ => _.HasMoreResults)
+                        .Returns(true)
+                        .Returns(false);
+
+                    mockDocumentQuery
+                        .Setup(_ => _.ExecuteNextAsync<T>(It.IsAny<CancellationToken>()))
+                        .ReturnsAsync(response);
+
+                    mockDocumentQuery
+                        .Setup(_ => _.GetEnumerator())
+                        .Returns(query.AsEnumerable().GetEnumerator());
+
+                    return mockDocumentQuery.Object;
+                });
+
+            // Typed query for the initial "where clauses"
             provider
                 .Setup(_ => _.CreateQuery<T>(It.IsAny<Expression>()))
                 .Returns((Expression expression) =>
@@ -83,6 +118,12 @@ namespace MedicalExaminer.API.Tests.Services
                     var mockDocumentQuery = new Mock<IFakeDocumentQuery<T>>(MockBehavior.Strict);
                     var query = new EnumerableQuery<T>(expression);
                     var response = new FeedResponse<T>(query);
+
+                    // Required for selects to pass to the above more generic version
+                    mockDocumentQuery.Setup(_ => _.Provider)
+                        .Returns(provider.Object);
+                    mockDocumentQuery.Setup(_ => _.Expression)
+                        .Returns(expression);
 
                     mockDocumentQuery
                         .SetupSequence(_ => _.HasMoreResults)
@@ -122,8 +163,6 @@ namespace MedicalExaminer.API.Tests.Services
                     default(CancellationToken)))
                 .Returns((Uri uri, AuditEntry<T> item, RequestOptions ro, bool b, CancellationToken ct) => GetDocumentForItem(item));
 
-
-
             client.Setup(c => c.UpsertDocumentAsync(
                     It.IsAny<Uri>(),
                     It.IsAny<T>(),
@@ -155,6 +194,52 @@ namespace MedicalExaminer.API.Tests.Services
             }
 
             return Task.FromResult(new ResourceResponse<Document>(document));
+        }
+
+        /// <summary>
+        /// Get Item from Dynamic.
+        /// </summary>
+        /// <remarks>Uses both the property names or the json names (json first) to query the dynamic object.</remarks>
+        /// <typeparam name="T">The type of item you want back.</typeparam>
+        /// <param name="raw">A dynamic object to query.</param>
+        /// <returns>An typed object populated with fields from the dynamic object</returns>
+        private static T GetItemFromDynamic<T>(dynamic raw)
+            where T : class, new()
+        {
+            var result = new T();
+
+            foreach (var propertyInfo in typeof(T).GetProperties())
+            {
+                if (propertyInfo.CanWrite)
+                {
+                    Type type = raw.GetType();
+                    PropertyInfo property = null;
+
+                    var jsonProperty = (JsonPropertyAttribute)propertyInfo
+                        .GetCustomAttribute(typeof(JsonPropertyAttribute));
+
+                    // Try the json property string in the dunamic object first
+                    if (jsonProperty != null)
+                    {
+                        property = type.GetProperties().FirstOrDefault(p => p.Name.Equals(jsonProperty.PropertyName));
+                    }
+
+                    // Otherwise fall back to the c# property name.
+                    if (property == null)
+                    {
+                        property = type.GetProperties().FirstOrDefault(p => p.Name.Equals(propertyInfo.Name));
+                    }
+
+                    // Only if we found something should we set.
+                    if (property != null)
+                    {
+                        var rawValue = property.GetValue(raw);
+                        propertyInfo.SetValue(result, rawValue);
+                    }
+                }
+            }
+
+            return result;
         }
     }
 
