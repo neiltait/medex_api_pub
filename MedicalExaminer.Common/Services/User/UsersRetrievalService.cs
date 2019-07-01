@@ -35,11 +35,13 @@ namespace MedicalExaminer.Common.Services.User
 
             if (param.ForLookup)
             {
+                // Need to include permissions to ensure lookups can be filtered.
                 result = await GetItemsAsync<MeUser>(x => true, user => new
                 {
                     id = user.UserId,
                     user.FirstName,
                     user.LastName,
+                    user.Permissions,
                 });
             }
             else
