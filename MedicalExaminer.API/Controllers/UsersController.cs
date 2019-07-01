@@ -76,7 +76,7 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery(null));
+                var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery(false, null));
                 return Ok(new GetUsersResponse
                 {
                     Users = users.Select(u => Mapper.Map<UserItem>(u)),
