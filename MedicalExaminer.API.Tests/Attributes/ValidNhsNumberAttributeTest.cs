@@ -45,7 +45,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         public void ExcessDigitsInNumberReturnsErrors()
         {
             // Arrange
-            var nhsNumberString = "0123456789101234";
+            var nhsNumberString = "012345678910123456";
             var validationContext = new Mock<IServiceProvider>().Object;
             var expectedError = "Invalid NHS Number";
             var sut = new ValidNhsNumberNullAllowedAttribute();
