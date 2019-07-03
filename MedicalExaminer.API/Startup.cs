@@ -498,5 +498,23 @@ namespace MedicalExaminer.API
             services.AddScoped<IAuthorizationHandler, DocumentPermissionHandler>();
             services.AddScoped<IPermissionService, PermissionService>();
         }
+
+
+        private void UpdateInvalidOrNullUserPermissionIds()
+        {
+            // want a service to update them
+            //var updateInvalidUserPermissionIdService = new UpdateInvalidUserPermissionService();
+
+            ////  want to run the server to update them
+
+            //updateInvalidUserPermissionIdService.Handle(new InvalidUserPermissionQuery());
+
+            ////  want to log that we done it
+
+            //Logger.Log("Done");
+            //  return home safely
+
+            //  job well done!
+        }
     }
 }
