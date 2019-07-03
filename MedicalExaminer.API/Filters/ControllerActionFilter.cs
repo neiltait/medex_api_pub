@@ -80,7 +80,7 @@ namespace MedicalExaminer.API.Filters
         public void OnActionExecuting(ActionExecutingContext context)
         {
             _timestamp = DateTime.UtcNow;
-            var _parameters = new Dictionary<string, object>();
+            _parameters = new Dictionary<string, object>();
 
             foreach (var parameter in context.ActionArguments)
             {
