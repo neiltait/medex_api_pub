@@ -13,6 +13,7 @@ namespace MedicalExaminer.API.Attributes
     {
         private readonly int[] factors = { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
         private readonly string oldWelshNhsNumber = "^[a-zA-Z0-9]{10,13}$";
+
         /// <summary>
         /// Executes the validation.
         /// </summary>
