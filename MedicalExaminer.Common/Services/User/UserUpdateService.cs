@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.User;
@@ -29,15 +30,17 @@ namespace MedicalExaminer.Common.Services.User
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var userToUpdate = await GetItemByIdAsync(param.UserId);
+            var userToUpdate = await GetItemByIdAsync(param.UserUpdate.UserId);
 
             if (userToUpdate == null)
             {
-                throw new InvalidOperationException($"User with id `{param.UserId}` not found.");
+                throw new InvalidOperationException($"User with id `{param.UserUpdate.UserId}` not found.");
             }
 
-            userToUpdate.Email = param.Email;
-            userToUpdate.Permissions = param.Permissions;
+            Mapper.Map(param.UserUpdate, userToUpdate);
+
+            //userToUpdate.Email = param.Email;
+            //userToUpdate.Permissions = param.Permissions;
             userToUpdate.LastModifiedBy = param.CurrentUser.UserId;
             userToUpdate.ModifiedAt = DateTime.Now;
 
