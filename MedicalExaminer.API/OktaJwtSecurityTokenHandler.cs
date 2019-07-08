@@ -198,56 +198,58 @@ namespace MedicalExaminer.API
                 .Where(c => c.Type == MEClaimTypes.OktaUserId).Select(c => c.Value)
                 .First();
 
-            if (oktaId != null)
+            if (oktaId == null)
             {
-                // Assume by default it did change.
-                var tokenDidChange = true;
-
-                if (meUserSession == null)
-                {
-
-                    // no session so check user record
-                    var userTask = _userRetrievalByOktaId.Handle(new UserRetrievalByOktaIdQuery(oktaId));
-
-                    var user = userTask?.Result;
-
-                    // User doesn't exist in the system yet linked to an okta id.
-                    if (user == null)
-                    {
-                        var newUserTask = CreateNewUser(oktaId, oktaToken);
-
-                        var newUser = newUserTask?.Result;
-
-                        user = newUser ?? throw new Exception("Unable to create user");
-                    }
-
-                    meUserSession = new MeUserSession
-                    {
-                        UserId = user.UserId,
-                        OktaId = oktaId,
-                    };
-                }
-                else
-                {
-                    tokenDidChange = meUserSession.OktaToken.Equals(oktaToken);
-                }
-
-                meUserSession.OktaToken = oktaToken;
-                meUserSession.OktaTokenExpiry = DateTimeOffset.Now.AddMinutes(_oktaTokenExpiryTime);
-
-                // Awaitable, but don't wait.
-                _userSessionUpdateOktaTokenService.Handle(new UserSessionUpdateOktaTokenQuery(meUserSession));
-
-                // If token did change; assume login happened.
-                if (tokenDidChange)
-                {
-                    UpdateUserFromOktaClient(meUserSession.UserId, meUserSession.OktaId);
-                }
-
-                return meUserSession;
+                return null;
             }
 
-            return null;
+            // Assume by default it did change.
+            var tokenDidChange = true;
+
+            if (meUserSession == null)
+            {
+                // no session so check user record
+                var userTask = _userRetrievalByOktaId.Handle(new UserRetrievalByOktaIdQuery(oktaId));
+
+                var user = userTask?.Result;
+
+                // User doesn't exist in the system yet linked to an okta id.
+                if (user == null)
+                {
+                    // We create them from okta anyway so don't do it again at the end
+                    tokenDidChange = false;
+
+                    var newUserTask = CreateNewUser(oktaId, oktaToken);
+
+                    var newUser = newUserTask?.Result;
+
+                    user = newUser ?? throw new Exception("Unable to create user");
+                }
+
+                meUserSession = new MeUserSession
+                {
+                    UserId = user.UserId,
+                    OktaId = oktaId,
+                };
+            }
+            else
+            {
+                tokenDidChange = meUserSession.OktaToken.Equals(oktaToken);
+            }
+
+            meUserSession.OktaToken = oktaToken;
+            meUserSession.OktaTokenExpiry = DateTimeOffset.Now.AddMinutes(_oktaTokenExpiryTime);
+
+            // Awaitable, but don't wait.
+            _userSessionUpdateOktaTokenService.Handle(new UserSessionUpdateOktaTokenQuery(meUserSession));
+
+            // If token did change; assume login happened.
+            if (tokenDidChange)
+            {
+                UpdateUserFromOktaClient(meUserSession.UserId, meUserSession.OktaId);
+            }
+
+            return meUserSession;
         }
 
         /// <summary>
@@ -257,7 +259,7 @@ namespace MedicalExaminer.API
         /// <param name="oktaToken">Okta token</param>
         /// <returns>UserToCreate</returns>
         /// <remarks>virtual so that it can be unit tested via proxy class</remarks>
-        protected virtual async Task<MeUser> CreateNewUser(string oktaId, string oktaToken)
+        private async Task<MeUser> CreateNewUser(string oktaId, string oktaToken)
         {
             // Get everything that Okta knows about this user
             var oktaUser = await _oktaClient.Users.GetUserAsync(oktaId);
@@ -321,7 +323,6 @@ namespace MedicalExaminer.API
             {
                 return null;
             }
-
         }
 
         private async void UpdateUserFromOktaClient(string userId, string oktaId)
