@@ -181,7 +181,7 @@ namespace MedicalExaminer.Models
 
         public static bool CalculateCanCompleteScrutiny(this Examination examination)
         {
-            examination = examination.UpdateCaseStatus();
+            //examination = examination.UpdateCaseStatus();
 
             if (!examination.ReadyForMEScrutiny)
             {
@@ -244,15 +244,12 @@ namespace MedicalExaminer.Models
                     }
                 }
             }
-
             return true;
         }
 
         public static CaseOutcomeSummary? CalculateScrutinyOutcome(this Examination examination)
         {
-            if (examination.CaseBreakdown.PreScrutiny.Latest == null
-                && examination.CaseBreakdown.QapDiscussion.Latest == null
-                && examination.CaseBreakdown.BereavedDiscussion.Latest == null)
+            if (!examination.CalculateCanCompleteScrutiny())
             {
                 return null;
             }
