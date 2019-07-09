@@ -181,8 +181,6 @@ namespace MedicalExaminer.Models
 
         public static bool CalculateCanCompleteScrutiny(this Examination examination)
         {
-            examination = examination.UpdateCaseStatus();
-
             if (!examination.ReadyForMEScrutiny)
             {
                 return false;
@@ -250,9 +248,7 @@ namespace MedicalExaminer.Models
 
         public static CaseOutcomeSummary? CalculateScrutinyOutcome(this Examination examination)
         {
-            if (examination.CaseBreakdown.PreScrutiny.Latest == null
-                && examination.CaseBreakdown.QapDiscussion.Latest == null
-                && examination.CaseBreakdown.BereavedDiscussion.Latest == null)
+            if (!examination.CalculateCanCompleteScrutiny())
             {
                 return null;
             }
@@ -268,6 +264,7 @@ namespace MedicalExaminer.Models
                     return CaseOutcomeSummary.IssueMCCDWith100a;
                 }
             }
+
             if (examination.CaseBreakdown.QapDiscussion.Latest != null)
             {
                 if (!examination.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
@@ -282,18 +279,18 @@ namespace MedicalExaminer.Models
                         return CaseOutcomeSummary.IssueMCCDWith100a;
                     }
                 }
-            }
-            else
-            {
-                if (examination.CaseBreakdown.PreScrutiny.Latest != null)
+                else
                 {
-                    if (examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation)
+                    if (examination.CaseBreakdown.PreScrutiny.Latest != null)
                     {
-                        return CaseOutcomeSummary.ReferToCoroner;
-                    }
-                    if (examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a)
-                    {
-                        return CaseOutcomeSummary.IssueMCCDWith100a;
+                        if (examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation)
+                        {
+                            return CaseOutcomeSummary.ReferToCoroner;
+                        }
+                        if (examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a)
+                        {
+                            return CaseOutcomeSummary.IssueMCCDWith100a;
+                        }
                     }
                 }
             }

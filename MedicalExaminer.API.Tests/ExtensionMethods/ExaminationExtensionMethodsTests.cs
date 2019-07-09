@@ -1785,34 +1785,36 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             var examination = new Examination();
 
+            examination.ReadyForMEScrutiny = true;
+            examination.Unassigned = false;
+            examination.PendingScrutinyNotes = false;
+            examination.PendingAdmissionNotes = false;
+            examination.PendingDiscussionWithQAP = false;
+
+
             examination.CaseBreakdown.PreScrutiny.Add(new PreScrutinyEvent
             {
                 IsFinal = true,
                 OutcomeOfPreScrutiny = overallOutcomeOfPreScrutiny
             });
 
-            if (!qapDiscussionUnableToHappen)
+            examination.CaseBreakdown.QapDiscussion.Add(new QapDiscussionEvent
             {
-                examination.CaseBreakdown.QapDiscussion.Add(new QapDiscussionEvent
-                {
-                    IsFinal = true,
-                    QapDiscussionOutcome = qapDiscussionOutcome
-                });
-            }
+                IsFinal = true,
+                QapDiscussionOutcome = qapDiscussionOutcome,
+                DiscussionUnableHappen = qapDiscussionUnableToHappen
+            });
 
-            if (!bereavedDiscussionUnableToHappen)
+            examination.CaseBreakdown.BereavedDiscussion.Add(new BereavedDiscussionEvent
             {
-                examination.CaseBreakdown.BereavedDiscussion.Add(new BereavedDiscussionEvent
-                {
-                    IsFinal = true,
-                    BereavedDiscussionOutcome = bereavedDiscussionOutcome
-                });
-            }
+                IsFinal = true,
+                BereavedDiscussionOutcome = bereavedDiscussionOutcome,
+                DiscussionUnableHappen = bereavedDiscussionUnableToHappen
+            });
 
             var actualCaseOutcomeSummary = examination.CalculateScrutinyOutcome();
 
             actualCaseOutcomeSummary.Should().Be(caseOutcomeSummary);
         }
-
     }
 }
