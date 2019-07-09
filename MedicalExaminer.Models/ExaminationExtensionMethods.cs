@@ -268,6 +268,7 @@ namespace MedicalExaminer.Models
                 return CaseOutcomeSummary.ReferToCoroner;
             }
 
+<<<<<<< Updated upstream
             if (examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome == BereavedDiscussionOutcome.ConcernsCoronerInvestigation)
             {
                 return CaseOutcomeSummary.ReferToCoroner;
@@ -280,6 +281,30 @@ namespace MedicalExaminer.Models
             {
                 return CaseOutcomeSummary.IssueMCCD;
             }
+=======
+                    if (examination.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoronerFor100a)
+                    {
+                        return CaseOutcomeSummary.IssueMCCDWith100a;
+                    }
+                }
+                else
+                {
+                    if (examination.CaseBreakdown.PreScrutiny.Latest != null)
+                    {
+                        if (examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation)
+                        {
+                            return CaseOutcomeSummary.ReferToCoroner;
+                        }
+                        if (examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a)
+                        {
+                            return CaseOutcomeSummary.IssueMCCDWith100a;
+                        }
+                    }
+                }
+            }
+            
+            return CaseOutcomeSummary.IssueMCCD;
+>>>>>>> Stashed changes
         }
 
         private static bool CalculatePendingQAPDiscussion(Examination examination)
