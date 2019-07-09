@@ -181,8 +181,6 @@ namespace MedicalExaminer.Models
 
         public static bool CalculateCanCompleteScrutiny(this Examination examination)
         {
-            //examination = examination.UpdateCaseStatus();
-
             if (!examination.ReadyForMEScrutiny)
             {
                 return false;
@@ -244,6 +242,7 @@ namespace MedicalExaminer.Models
                     }
                 }
             }
+
             return true;
         }
 
