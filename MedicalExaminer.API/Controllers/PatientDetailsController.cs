@@ -101,7 +101,8 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="putPatientDetailsRequest">Put Patient Details Request.</param>
         /// <returns>PutPatientDetailsResponse</returns>
         [HttpPut]
-        public async Task<ActionResult<PutPatientDetailsResponse>> UpdatePatientDetails(string examinationId, [FromBody]PutPatientDetailsRequest putPatientDetailsRequest)
+        public async Task<ActionResult<PutPatientDetailsResponse>> UpdatePatientDetails(string examinationId,
+            [FromBody] [ModelBinder(Name = "examinationId")]PutPatientDetailsRequest putPatientDetailsRequest)
         {
             if (!ModelState.IsValid)
             {

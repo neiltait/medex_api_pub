@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.API.Attributes;
+using MedicalExaminer.API.Authorization.ExaminationContext;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.PatientDetails
@@ -9,7 +10,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
     /// <summary>
     ///     Put Patient Details Request Object.
     /// </summary>
-    public class PutPatientDetailsRequest
+    public class PutPatientDetailsRequest : IExaminationValidationModel
     {
         /// <summary>
         ///     Is the case a cultural priority?.
@@ -81,6 +82,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         ///     Patients NHS Number.
         /// </summary>
         [ValidNhsNumberNullAllowed]
+        [PutUniqueNhsNumber]
         public string NhsNumber { get; set; }
 
         /// <summary>

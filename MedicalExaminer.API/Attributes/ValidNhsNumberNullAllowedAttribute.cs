@@ -26,9 +26,16 @@ namespace MedicalExaminer.API.Attributes
                 return ValidationResult.Success;
             }
 
-            nhsNumber = nhsNumber.Replace(" ", string.Empty);
-            nhsNumber = nhsNumber.Replace("-", string.Empty);
+            if(nhsNumber.Contains(" "))
+            {
+                return new ValidationResult("Invalid NHS Number - cannot contain whitespace");
+            }
 
+            if (nhsNumber.Contains("-"))
+            {
+                return new ValidationResult("Invalid NHS Number - cannot contain '-'");
+            }
+            
             if (CheckStandardNhsNumber(nhsNumber))
             {
                 return ValidationResult.Success;
