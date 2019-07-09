@@ -54,6 +54,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         ///     Patients NHS Number 943 476 5919
         /// </summary>
         [ValidNhsNumberNullAllowed]
+        [PostUniqueNhsNumberAttribute]
         public string NhsNumber { get; set; }
 
         /// <summary>
