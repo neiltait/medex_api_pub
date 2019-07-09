@@ -35,6 +35,7 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> _userRetrievalByIdService;
         private readonly IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> _usersRetrievalService;
         private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
+        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _userRetrievalByEmailService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
@@ -57,13 +58,15 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
-            IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService)
+            IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _userCreationService = userCreationService;
             _userRetrievalByIdService = userRetrievalByIdService;
             _usersRetrievalService = usersRetrievalService;
             _userUpdateService = userUpdateService;
+            _userRetrievalByEmailService = userRetrievalByEmailService;
         }
 
         /// <summary>
@@ -93,7 +96,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        ///     Get a User by its Identifier.
+        ///     Get a User by their Identifier.
         /// </summary>
         /// <param name="meUserId">The User Identifier.</param>
         /// <returns>A GetUserResponse.</returns>
@@ -140,6 +143,14 @@ namespace MedicalExaminer.API.Controllers
             {
                 var userToCreate = Mapper.Map<MeUser>(postUser);
                 var currentUser = await CurrentUser();
+                var possibleUser =
+                    await _userRetrievalByEmailService.Handle(new UserRetrievalByEmailQuery(postUser.Email));
+
+                if (possibleUser != null)
+                {
+                    return Ok(Mapper.Map<PostUserResponse>(possibleUser));
+                }
+
                 var createdUser = await _userCreationService.Handle(new CreateUserQuery(userToCreate, currentUser));
                 return Ok(Mapper.Map<PostUserResponse>(createdUser));
             }
