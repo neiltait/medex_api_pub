@@ -115,9 +115,16 @@ namespace MedicalExaminer.API.Controllers
                     .Where(p => locationPaths[p.LocationId]
                         .Any(l => permissedLocations.Contains(l.LocationId)));
 
+                var mappedPermissions = permissions.Select(p => Mapper.Map<PermissionItem>(p)).ToArray();
+
+                foreach(var mp in mappedPermissions)
+                {
+                    mp.UserId = meUserId;
+                }
+
                 return Ok(new GetPermissionsResponse
                 {
-                    Permissions = permissions.Select(p => Mapper.Map<PermissionItem>(p))
+                    Permissions = mappedPermissions
                 });
             }
             catch (DocumentClientException)
@@ -171,7 +178,9 @@ namespace MedicalExaminer.API.Controllers
                     return Forbid();
                 }
 
-                return Ok(Mapper.Map<GetPermissionResponse>(permission));
+                var result = Mapper.Map<GetPermissionResponse>(permission);
+                result.UserId = meUserId;
+                return Ok(result);
             }
             catch (ArgumentException)
             {
