@@ -252,7 +252,6 @@ namespace MedicalExaminer.Models
             {
                 return null;
             }
-
             if (examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome != null)
             {
                 if (examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome.Value == BereavedDiscussionOutcome.ConcernsCoronerInvestigation)
@@ -298,6 +297,7 @@ namespace MedicalExaminer.Models
 
             return CaseOutcomeSummary.IssueMCCD;
         }
+
 
         private static bool CalculatePendingQAPDiscussion(Examination examination)
         {
