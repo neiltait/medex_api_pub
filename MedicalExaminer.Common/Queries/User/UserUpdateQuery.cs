@@ -10,8 +10,7 @@ namespace MedicalExaminer.Common.Queries.User
         /// <summary>
         /// Initialise a new instance of <see cref="UserUpdateQuery"/>.
         /// </summary>
-        /// <param name="userId">Id of user to update</param>
-        /// <param name="userEmail">Email to set.</param>
+        /// <param name="userUpdate">User update</param>
         /// <param name="currentUser">Current user.</param>
         public UserUpdateQuery(IUserUpdate userUpdate, MeUser currentUser)
         {

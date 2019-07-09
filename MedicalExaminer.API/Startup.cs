@@ -418,9 +418,14 @@ namespace MedicalExaminer.API
                         new OktaJwtSecurityTokenHandler(
                             tokenService,
                             new JwtSecurityTokenHandler(),
-                            provider.GetRequiredService<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>>(),
-                            provider.GetRequiredService<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserSessionUpdateOktaTokenQuery, MeUserSession>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserSessionRetrievalByOktaIdQuery, MeUserSession>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>(),
                             provider.GetRequiredService<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserUpdateQuery, MeUser>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<CreateUserQuery, MeUser>>(),
+                            provider.GetRequiredService<OktaClient>(),
                             oktaTokenExpiry));
                 });
         }

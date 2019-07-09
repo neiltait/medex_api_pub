@@ -1,10 +1,14 @@
 ﻿using System;
+using AutoMapper;
 using Cosmonaut;
 using FluentAssertions;
+using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Services;
+using Microsoft.AspNetCore.Hosting.Internal;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
 // ReSharper disable VirtualMemberCallInConstructor
@@ -18,7 +22,7 @@ namespace MedicalExaminer.API.Tests.Services
     /// <typeparam name="TConnectionSettings">The Connection String class.</typeparam>
     /// <typeparam name="TItem">The Item being returned.</typeparam>
     /// <typeparam name="TType">The Type of item being returned. May be same as TItem if not a collection.</typeparam>
-    /// <typeparam name="TService">Finalyl the Service.</typeparam>
+    /// <typeparam name="TService">Finally the Service.</typeparam>
     public abstract class ServiceTestsBase<TQuery, TConnectionSettings, TItem, TType, TService>
         where TQuery : class, IQuery<TItem>
         where TConnectionSettings : class, IConnectionSettings
@@ -30,19 +34,52 @@ namespace MedicalExaminer.API.Tests.Services
         /// </summary>
         protected TService Service { get; }
 
+        protected IServiceProvider _serviceProvider;
+
         /// <summary>
         /// Initialise a new instance of <see cref="ServiceTestsBase{TQuery,TConnectionSettings,TItem,TType,TService}"/>.
         /// </summary>
         protected ServiceTestsBase()
         {
+            IServiceCollection serviceCollection = new ServiceCollection();
+
+            // Init mapper
+            var mapperConfiguration = new MapperConfiguration(config => { config.AddMedicalExaminerProfiles(); });
+            mapperConfiguration.AssertConfigurationIsValid();
+            var mapper = mapperConfiguration.CreateMapper();
+
             // Make sure you don't access the sub class inside this method since its being called in constructor.
             var client = CosmosMocker.CreateDocumentClient(GetExamples());
             var clientFactory = CosmosMocker.CreateClientFactory(client);
             var dataAccess = new DatabaseAccess(clientFactory.Object);
             var connectionSettings = CosmosMocker.CreateConnectionSettings<TConnectionSettings>();
-            Service = GetService(dataAccess, connectionSettings.Object);
+
+            serviceCollection.AddTransient<IMapper>(s => mapper);
+
+            serviceCollection.AddTransient<IDatabaseAccess>(s => dataAccess);
+            //serviceCollection.AddTransient<IConnectionSettings>(s => connectionSettings.Object);
+            serviceCollection.AddTransient(s => (IUserConnectionSettings)connectionSettings.Object);
+            serviceCollection.AddTransient(s => (IExaminationConnectionSettings)connectionSettings.Object);
+            serviceCollection.AddTransient(s => (ILocationConnectionSettings)connectionSettings.Object);
+
+            ConfigureServices(serviceCollection);
+
+            _serviceProvider = serviceCollection.BuildServiceProvider();
+
+            Service = GetService();
         }
 
+        protected virtual void ConfigureServices(IServiceCollection services)
+        {
+            services.AddTransient<TService>();
+        }
+
+        protected TService GetService()
+        {
+            return _serviceProvider.GetRequiredService<TService>();
+        }
+
+        /*
         /// <summary>
         /// Base method to construct simple services. Override if you need to pass in other defaults.
         /// </summary>
@@ -57,7 +94,7 @@ namespace MedicalExaminer.API.Tests.Services
             }
 
             return (TService)Activator.CreateInstance(typeof(TService), databaseAccess, connectionSettings);
-        }
+        }*/
 
         /// <summary>
         /// Query is null throws an exception.
@@ -66,10 +103,7 @@ namespace MedicalExaminer.API.Tests.Services
         public void QueryIsNullThrowsException()
         {
             // Arrange
-            var connectionSettings = CosmosMocker.CreateConnectionSettings<TConnectionSettings>();
-            var dbAccess = new Mock<IDatabaseAccess>();
-
-            var sut = GetService(dbAccess.Object, connectionSettings.Object);
+            var sut = GetService();
 
             // Act
             Action act = () => sut.Handle(null).GetAwaiter().GetResult();

@@ -321,7 +321,13 @@ namespace MedicalExaminer.API.Controllers
                         opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; })));
                 }
 
-                await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
+                var updateUser = new UserUpdatePermissions
+                {
+                    UserId = user.UserId,
+                    Permissions = user.Permissions,
+                };
+
+                await _userUpdateService.Handle(new UserUpdateQuery(updateUser, currentUser));
 
                 return Ok(Mapper.Map<MEUserPermission, PutPermissionResponse>(
                     permission,

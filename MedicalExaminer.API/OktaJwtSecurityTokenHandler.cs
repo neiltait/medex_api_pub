@@ -8,7 +8,6 @@ using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
-using Microsoft.Azure.Documents;
 using Microsoft.IdentityModel.Tokens;
 using Okta.Sdk;
 
@@ -20,6 +19,8 @@ namespace MedicalExaminer.API
     /// <inheritdoc />
     public class OktaJwtSecurityTokenHandler : ISecurityTokenValidator
     {
+        private readonly MeUser _systemUser = new MeUser { UserId = "SystemService" };
+
         /// <summary>
         ///     Standard handler.
         /// </summary>
@@ -36,12 +37,6 @@ namespace MedicalExaminer.API
         private readonly IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> _userRetrievalById;
 
         /// <summary>
-        /// User Session Retrieval By Okta Id Service
-        /// </summary>
-        private readonly IAsyncQueryHandler<UserSessionRetrievalByOktaIdQuery, MeUserSession>
-            _userSessionRetrievalByOktaIdService;
-
-        /// <summary>
         /// Token Update Service
         /// </summary>
         private readonly IAsyncQueryHandler<UserSessionUpdateOktaTokenQuery, MeUserSession>
@@ -50,8 +45,8 @@ namespace MedicalExaminer.API
         /// <summary>
         /// Token Retrieval Service
         /// </summary>
-        private readonly IAsyncQueryHandler<UserSessionRetrievalByOktaTokenQuery, MeUserSession>
-            _userSessionRetrievalByOktaTokenService;
+        private readonly IAsyncQueryHandler<UserSessionRetrievalByOktaIdQuery, MeUserSession>
+            _userSessionRetrievalByOktaIdService;
 
         /// <summary>
         /// User Update Service.
@@ -59,8 +54,6 @@ namespace MedicalExaminer.API
         private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
 
         private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _userRetrievalByEmailService;
-
-        private readonly IAsyncQueryHandler<UserUpdateOktaQuery, MeUser> _userUpdateOktaService;
 
         private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> _userCreationService;
 
@@ -82,39 +75,33 @@ namespace MedicalExaminer.API
         /// <param name="tokenService">The Token Service.</param>
         /// <param name="tokenValidator">Token validator.</param>
         /// <param name="userSessionUpdateOktaTokenService">User update okta token service.</param>
-        /// <param name="userSessionRetrievalByOktaTokenService">User retrieval okta token service.</param>
-        /// <param name="userSessionRetrievalByOktaIdService">Users retrieval by okta id service.</param>
+        /// <param name="userSessionRetrievalByOktaIdService">User retrieval by okta id service.</param>
         /// <param name="userRetrievalById">User retrieval by id service.</param>
+        /// <param name="userRetrievalByEmailService">User retrieval by email service.</param>
+        /// <param name="userRetrievalByOktaId">User retrieval by okta id.</param>
         /// <param name="userUpdateService">Update user service.</param>
-        /// <param name="userRetrievalByEmailService"></param>
-        /// <param name="userUpdateOktaService"></param>
-        /// <param name="userCreationService"></param>
-        /// <param name="userRetrievalByOktaId"></param>
+        /// <param name="userCreationService">User creation service.</param>
         /// <param name="oktaClient">Okta client.</param>
         /// <param name="oktaTokenExpiryTime">Okta token expiry time.</param>
         public OktaJwtSecurityTokenHandler(
             ITokenService tokenService,
             ISecurityTokenValidator tokenValidator,
             IAsyncQueryHandler<UserSessionUpdateOktaTokenQuery, MeUserSession> userSessionUpdateOktaTokenService,
-            IAsyncQueryHandler<UserSessionRetrievalByOktaTokenQuery, MeUserSession> userSessionRetrievalByOktaTokenService,
             IAsyncQueryHandler<UserSessionRetrievalByOktaIdQuery, MeUserSession> userSessionRetrievalByOktaIdService,
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalById,
-            IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService,
-            IAsyncQueryHandler<UserUpdateOktaQuery, MeUser> userUpdateOktaService,
-            IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> userRetrievalByOktaId,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService,
+            IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
+            IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
             OktaClient oktaClient,
             int oktaTokenExpiryTime)
         {
             _tokenHandler = tokenValidator;
             _tokenService = tokenService;
             _userSessionUpdateOktaTokenService = userSessionUpdateOktaTokenService;
-            _userSessionRetrievalByOktaTokenService = userSessionRetrievalByOktaTokenService;
-            _userSessionRetrievalByOktaIdService = userSessionRetrievalByOktaIdService;
             _oktaTokenExpiryTime = oktaTokenExpiryTime;
+            _userSessionRetrievalByOktaIdService = userSessionRetrievalByOktaIdService;
             _userRetrievalByEmailService = userRetrievalByEmailService;
-            _userUpdateOktaService = userUpdateOktaService;
             _userCreationService = userCreationService;
             _userRetrievalByOktaId = userRetrievalByOktaId;
             _userRetrievalById = userRetrievalById;
@@ -144,17 +131,37 @@ namespace MedicalExaminer.API
             TokenValidationParameters validationParameters,
             out SecurityToken validatedToken)
         {
-            // Attempt to retrieve user session based on token. If it can be retrieved and token not expired then can bypass call to Okta
-            var userSessionTask =
-                _userSessionRetrievalByOktaTokenService.Handle(new UserSessionRetrievalByOktaTokenQuery(securityToken));
+            // Use _tokenHandler to deserialize Okta onto claimsPrincipal. Note that the token carries an expiry internally
+            // If it has expired then we would expect SecurityTokenExpiredException to be thrown and authentication fails
+            var claimsPrincipal = _tokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
 
+            // If above didn't already throw exception, catch null being returned.
+            if (claimsPrincipal == null)
+            {
+                return null;
+            }
+
+            var oktaId = claimsPrincipal
+                .Claims
+                .Where(c => c.Type == MEClaimTypes.OktaUserId).Select(c => c.Value)
+                .First();
+
+            // No point continuing if we don't have any idea who it is.
+            if (oktaId == null)
+            {
+                throw new SecurityTokenValidationException();
+            }
+
+            // Attempt to retrieve user session based on okta id in the token.
+            var userSessionTask = _userSessionRetrievalByOktaIdService.Handle(new UserSessionRetrievalByOktaIdQuery(oktaId));
             var userSession = userSessionTask?.Result;
 
-            // Cannot find user by token or token has expired so go to Okta
+            // Cannot find user by id or token has expired so check with Okta its valid.
             if (userSession == null || userSession.OktaTokenExpiry < DateTimeOffset.Now)
             {
                 var introspectTokenResponse = _tokenService.IntrospectToken(securityToken, new HttpClient()).Result;
 
+                // Token is invalid or has been recalled; can't continue.
                 if (!introspectTokenResponse.Active)
                 {
                     validatedToken = null;
@@ -162,18 +169,9 @@ namespace MedicalExaminer.API
                 }
             }
 
-            // Use _tokenHandler to deserialize Okta onto claimsPrincipal. Note that the token carries an expiry internally
-            // If it has expired then we would expect SecurityTokenExpiredException to be thrown and authentication fails
-            var claimsPrincipal = _tokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
+            userSession = CreateOrUpdateSession(userSession, oktaId, securityToken);
 
-            // Update user record with okta settings if not found originally or if token had expired
-            if ((userSession == null || userSession.OktaTokenExpiry < DateTimeOffset.Now) &&
-                claimsPrincipal != null)
-            {
-                userSession = UpdateOktaTokenForUser(securityToken, claimsPrincipal, userSession);
-            }
-
-            if (userSession != null)
+            if (userSession.UserId != null)
             {
                 claimsPrincipal?.Identities.First().AddClaim(
                     new Claim(
@@ -185,173 +183,151 @@ namespace MedicalExaminer.API
         }
 
         /// <summary>
-        /// Update user's Okta token.
+        /// Create or update session.
         /// </summary>
-        /// <param name="oktaToken">Okta token</param>
-        /// <param name="claimsPrincipal">Claims principal.</param>
-        /// <remarks>Attempts to find user DB record based on email address. If user is found then update oktea token</remarks>
-        /// <returns>User if found by email.</returns>
-        private MeUserSession UpdateOktaTokenForUser(string oktaToken, ClaimsPrincipal claimsPrincipal, MeUserSession meUserSession)
+        /// <param name="userSession">Existing session or null if not created yet.</param>
+        /// <param name="oktaId">Okta id of the user from the token.</param>
+        /// <param name="oktaToken">The current token being used.</param>
+        /// <returns>The active session for this user.</returns>
+        private MeUserSession CreateOrUpdateSession(MeUserSession userSession, string oktaId, string oktaToken)
         {
-            var oktaId = claimsPrincipal
-                .Claims
-                .Where(c => c.Type == MEClaimTypes.OktaUserId).Select(c => c.Value)
-                .First();
+            var didChangeSession = false;
 
-            if (oktaId == null)
+            if (userSession == null)
             {
-                return null;
-            }
-
-            // Assume by default it did change.
-            var tokenDidChange = true;
-
-            if (meUserSession == null)
-            {
-                // no session so check user record
+                // User has never had a session so go see if the user exists.
                 var userTask = _userRetrievalByOktaId.Handle(new UserRetrievalByOktaIdQuery(oktaId));
-
                 var user = userTask?.Result;
 
-                // User doesn't exist in the system yet linked to an okta id.
+                // A user doesn't exist in the system yet who's linked to an okta id.
                 if (user == null)
                 {
-                    // We create them from okta anyway so don't do it again at the end
-                    tokenDidChange = false;
+                    var newUserTask = CreateOrBindUser(oktaId);
+                    var newUser = newUserTask.Result;
 
-                    var newUserTask = CreateNewUser(oktaId, oktaToken);
-
-                    var newUser = newUserTask?.Result;
-
-                    user = newUser ?? throw new Exception("Unable to create user");
+                    user = newUser;
                 }
 
-                meUserSession = new MeUserSession
+                didChangeSession = true;
+                userSession = new MeUserSession
                 {
                     UserId = user.UserId,
-                    OktaId = oktaId,
+                    OktaId = oktaId
                 };
             }
-            else
+
+            // User has previously had a session but token doesn't match
+            else if (userSession.OktaToken != oktaToken)
             {
-                tokenDidChange = meUserSession.OktaToken.Equals(oktaToken);
+                didChangeSession = true;
+                userSession.OktaToken = oktaToken;
+
+                // If the token changed; assume a "login" is happening so pull okta details again
+                UpdateUserFromOktaClient(userSession.UserId, userSession.OktaId);
             }
 
-            meUserSession.OktaToken = oktaToken;
-            meUserSession.OktaTokenExpiry = DateTimeOffset.Now.AddMinutes(_oktaTokenExpiryTime);
-
-            // Awaitable, but don't wait.
-            _userSessionUpdateOktaTokenService.Handle(new UserSessionUpdateOktaTokenQuery(meUserSession));
-
-            // If token did change; assume login happened.
-            if (tokenDidChange)
+            // Only update the expiry after its expired.
+            if (userSession.OktaTokenExpiry < DateTimeOffset.Now)
             {
-                UpdateUserFromOktaClient(meUserSession.UserId, meUserSession.OktaId);
+                didChangeSession = true;
+                userSession.OktaTokenExpiry = DateTimeOffset.Now.AddMinutes(_oktaTokenExpiryTime);
             }
 
-            return meUserSession;
+            // Finally update the session with whatever we've changed.
+            if (didChangeSession)
+            {
+                _userSessionUpdateOktaTokenService.Handle(new UserSessionUpdateOktaTokenQuery(userSession));
+            }
+
+            return userSession;
         }
 
         /// <summary>
-        /// Create new user with details from Okta if does not already exist
+        /// Create or bind existing user to okta Id.
         /// </summary>
         /// <param name="oktaId">Okta ID of user from token.</param>
-        /// <param name="oktaToken">Okta token</param>
-        /// <returns>UserToCreate</returns>
-        /// <remarks>virtual so that it can be unit tested via proxy class</remarks>
-        private async Task<MeUser> CreateNewUser(string oktaId, string oktaToken)
+        /// <returns>A new user or the existing user after being updated.</returns>
+        private async Task<MeUser> CreateOrBindUser(string oktaId)
         {
-            // Get everything that Okta knows about this user
             var oktaUser = await _oktaClient.Users.GetUserAsync(oktaId);
 
-            // See if they exist using their email
-            var existingUser = await _userRetrievalByEmailService.Handle(new UserRetrievalByEmailQuery(oktaUser.Profile.Email));
+            var existingUserWithMatchingEmail =
+                await _userRetrievalByEmailService.Handle(new UserRetrievalByEmailQuery(oktaUser.Profile.Email));
 
-            // User exists already
-            if (existingUser != null)
+            if (existingUserWithMatchingEmail == null)
             {
-                // Just update them and set their okta ID.
-                var updatedUser = await _userUpdateOktaService.Handle(new UserUpdateOktaQuery(existingUser.UserId, oktaId));
-
-                return updatedUser;
-            }
-            else
-            {
-                var expiryTime = DateTime.Now.AddMinutes(_oktaTokenExpiryTime);
-
-                var createdMeUser = await CreateUser(new MeUser
+                var toCreate = new MeUser
                 {
+                    OktaId = oktaUser.Id,
                     FirstName = oktaUser.Profile.FirstName,
                     LastName = oktaUser.Profile.LastName,
                     Email = oktaUser.Profile.Email,
-                    LastModifiedBy = null,
-                    ModifiedAt = DateTimeOffset.Now,
-                    CreatedAt = DateTimeOffset.Now,
-                    OktaId = oktaUser.Id,
-                });
-
-                var meUserSession = new MeUserSession()
-                {
-                    UserId = createdMeUser.UserId,
-                    OktaId = oktaId,
-                    OktaToken = oktaToken,
-                    OktaTokenExpiry = expiryTime
                 };
 
-                await _userSessionUpdateOktaTokenService.Handle(new UserSessionUpdateOktaTokenQuery(meUserSession));
-
-                var meUser = createdMeUser;
-
-                return meUser;
-            }
-        }
-
-        private async Task<MeUser> CreateUser(MeUser toCreate)
-        {
-            try
-            {
-                // The user is being created so we don't know what their ID is yet. Pass an empty one for now.
-                var currentUser = new MeUser()
-                {
-                    UserId = Guid.Empty.ToString(),
-                };
-                var createdUser = await _userCreationService.Handle(new CreateUserQuery(toCreate, currentUser));
+                var createdUser = await _userCreationService.Handle(new CreateUserQuery(toCreate, _systemUser));
 
                 return createdUser;
             }
-            catch (DocumentClientException)
+
+            return await BindUser(existingUserWithMatchingEmail, oktaUser);
+        }
+
+        private async Task<MeUser> BindUser(MeUser existingUser, IUser oktaUser)
+        {
+            if (existingUser.OktaId != null)
             {
-                return null;
+                throw new Exception("User already bound to an existing okta id.");
             }
+
+            var updateUser = new UserUpdateFull()
+            {
+                UserId = existingUser.UserId,
+                OktaId = oktaUser.Id,
+                FirstName = oktaUser.Profile.FirstName,
+                LastName = oktaUser.Profile.LastName,
+                Email = oktaUser.Profile.Email,
+            };
+
+            var updatedUser =
+                await _userUpdateService.Handle(new UserUpdateQuery(
+                    updateUser,
+                    _systemUser));
+
+            return updatedUser;
         }
 
         private async void UpdateUserFromOktaClient(string userId, string oktaId)
         {
             var meUser = await _userRetrievalById.Handle(new UserRetrievalByIdQuery(userId));
 
-            if (meUser != null)
+            if (meUser == null)
             {
-                var oktaUser = await _oktaClient.Users.GetUserAsync(oktaId);
-
-                var different = false;
-
-                different |= oktaUser.Profile.FirstName != meUser.FirstName;
-                different |= oktaUser.Profile.LastName != meUser.LastName;
-                different |= oktaUser.Profile.Email != meUser.Email;
-
-                if (different)
-                {
-                    var updatedUser = new UserUpdateDetails()
-                    {
-                        UserId = meUser.UserId,
-                        FirstName = oktaUser.Profile.FirstName,
-                        LastName = oktaUser.Profile.LastName,
-                        Email = oktaUser.Profile.Email,
-                    };
-
-                    await _userUpdateService.Handle(new UserUpdateQuery(updatedUser, new MeUser{ UserId = "SystemService" }));
-                }
+                return;
             }
+
+            var oktaUser = await _oktaClient.Users.GetUserAsync(oktaId);
+
+            var different = false;
+
+            // If any of the fields differ; we update the whole record again.
+            different |= oktaUser.Profile.FirstName != meUser.FirstName;
+            different |= oktaUser.Profile.LastName != meUser.LastName;
+            different |= oktaUser.Profile.Email != meUser.Email;
+
+            if (!different)
+            {
+                return;
+            }
+
+            var updatedUser = new UserUpdateDetails()
+            {
+                UserId = meUser.UserId,
+                FirstName = oktaUser.Profile.FirstName,
+                LastName = oktaUser.Profile.LastName,
+                Email = oktaUser.Profile.Email,
+            };
+
+            await _userUpdateService.Handle(new UserUpdateQuery(updatedUser, _systemUser));
         }
     }
 }
