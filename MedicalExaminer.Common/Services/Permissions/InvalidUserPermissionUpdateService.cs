@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MedicalExaminer.Common.Services;
+using System.Threading.Tasks;
+using MedicalExaminer.Common.Queries.Permissions;
 
 namespace MedicalExaminer.Common.Services.Permissions
 {
-    public class InvalidUserPermissionUpdateService : IAsyncQueryHandler<InvalidUserPermissionQuery>
+    public class InvalidUserPermissionUpdateService : IAsyncQueryHandler<InvalidUserPermissionQuery, bool>
     {
+        public Task<bool> Handle(InvalidUserPermissionQuery param)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

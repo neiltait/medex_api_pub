@@ -227,7 +227,17 @@ namespace MedicalExaminer.API.Controllers
 
                 var possiblePermission = existingPermissions.SingleOrDefault(ep => ep.LocationId == postPermission.LocationId
                 && ep.UserRole == postPermission.UserRole);
+
+                foreach (var usersPermissions in user.Permissions)
+                {
+                    if (usersPermissions.IsSame(permission))
+                    {
+                        return BadRequest();
+                    }
+                }
+
                 PostPermissionResponse result = null;
+
                 if (possiblePermission == null)
                 {
                     existingPermissions.Add(permission);
@@ -238,7 +248,6 @@ namespace MedicalExaminer.API.Controllers
                     result = Mapper.Map<MEUserPermission, PostPermissionResponse>(
                     permission,
                     opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; }));
-
                 }
                 else
                 {
@@ -296,6 +305,14 @@ namespace MedicalExaminer.API.Controllers
                 }
 
                 var permission = Mapper.Map(putPermission, permissionToUpdate);
+
+                foreach (var usersPermissions in user.Permissions)
+                {
+                    if (usersPermissions.IsSame(permission))
+                    {
+                        return BadRequest();
+                    }
+                }
 
                 var locationDocument = (await
                         _locationParentsService.Handle(
