@@ -4,6 +4,7 @@ using MedicalExaminer.API.Authorization.ExaminationContext;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Attributes
 {
@@ -27,7 +28,7 @@ namespace MedicalExaminer.API.Attributes
             var possibleExamination = examinationPersistence.Handle(new ExaminationByNhsNumberRetrievalQuery(nhsNumber)).Result;
 
             return possibleExamination != null && examinationValidationContext.Examination.ExaminationId != possibleExamination.ExaminationId
-                ? new ValidationResult("There is already an Examination for this patient")
+                ? new ValidationResult(SystemValidationErrors.DuplicateNhsNumber.ToString())
                 : ValidationResult.Success;
         }
     }

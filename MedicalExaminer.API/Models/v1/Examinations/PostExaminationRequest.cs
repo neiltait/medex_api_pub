@@ -12,7 +12,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         ///     Where the death occured
         /// </summary>
-        [Required]
+        [Required(AllowEmptyStrings = false, ErrorMessage = nameof(SystemValidationErrors.Required))]
         public string PlaceDeathOccured { get; set; }
 
         /// <summary>
@@ -25,29 +25,29 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         ///     Patients surname
         /// </summary>
-        [Required]
-        [MinLength(1)]
-        [MaxLength(150)]
+        [Required(AllowEmptyStrings = false, ErrorMessage = nameof(SystemValidationErrors.Required))]
+        [MinLength(1, ErrorMessage = nameof(SystemValidationErrors.MinimumLengthOf1))]
+        [MaxLength(150, ErrorMessage = nameof(SystemValidationErrors.MaximumLength150))]
         public string Surname { get; set; }
 
         /// <summary>
         ///     Patients given names
         /// </summary>
-        [Required]
-        [MinLength(1)]
-        [MaxLength(150)]
+        [Required(AllowEmptyStrings = false, ErrorMessage = nameof(SystemValidationErrors.Required))]
+        [MinLength(1, ErrorMessage = nameof(SystemValidationErrors.MinimumLengthOf1))]
+        [MaxLength(150, ErrorMessage = nameof(SystemValidationErrors.MaximumLength150))]
         public string GivenNames { get; set; }
 
         /// <summary>
         ///     Gender patient identifies as
         /// </summary>
-        [Required]
+        [Required(AllowEmptyStrings = false, ErrorMessage = nameof(SystemValidationErrors.Required))]
         public ExaminationGender? Gender { get; set; }
 
         /// <summary>
         ///     Comments regarding the patients gender identification
         /// </summary>
-        [RequiredIfAttributesMatch(nameof(Gender), ExaminationGender.Other)]
+        [RequiredIfAttributesMatch(nameof(Gender), ExaminationGender.Other, ErrorMessage = nameof(SystemValidationErrors.RequiredIfOtherSelected))]
         public string GenderDetails { get; set; }
 
         /// <summary>

@@ -108,17 +108,17 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     Patients surname
         /// </summary>
-        [Required]
-        [MinLength(1)]
-        [MaxLength(150)]
+        [Required(AllowEmptyStrings = false, ErrorMessage = nameof(SystemValidationErrors.Required))]
+        [MinLength(1, ErrorMessage = nameof(SystemValidationErrors.MinimumLengthOf1))]
+        [MaxLength(150, ErrorMessage = nameof(SystemValidationErrors.MaximumLength150))]
         public string Surname { get; set; }
 
         /// <summary>
         ///     Patients given names
         /// </summary>
-        [Required]
-        [MinLength(1)]
-        [MaxLength(150)]
+        [Required(AllowEmptyStrings = false, ErrorMessage = nameof(SystemValidationErrors.Required))]
+        [MinLength(1, ErrorMessage = nameof(SystemValidationErrors.MinimumLengthOf1))]
+        [MaxLength(150, ErrorMessage = nameof(SystemValidationErrors.MaximumLength150))]
         public string GivenNames { get; set; }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     Patients funeral arrangements.
         /// </summary>
-        [Required]
+        [Required(AllowEmptyStrings = false, ErrorMessage = nameof(SystemValidationErrors.Required))]
         public ModeOfDisposal ModeOfDisposal { get; set; }
 
         /// <summary>
@@ -175,7 +175,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     Free text for the implant details.
         /// </summary>
-        [RequiredIfAttributesMatch(nameof(AnyImplants), true)]
+        [RequiredIfAttributesMatch(nameof(AnyImplants), true, ErrorMessage = nameof(SystemValidationErrors.RequiredIfAnyImplants))]
         public string ImplantDetails { get; set; }
 
         /// <summary>

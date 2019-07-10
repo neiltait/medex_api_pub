@@ -7,6 +7,7 @@ using MedicalExaminer.Common;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 using Moq;
 using Xunit;
 
@@ -19,7 +20,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         {
             // Arrange
             var locationId = string.Empty;
-            var expectedResult = "The location Id must be supplied";
+            var expectedResult = nameof(SystemValidationErrors.LocationIdMustBeProvided);
 
             var locationPersistence = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>();
             locationPersistence
@@ -46,7 +47,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             // Arrange
             var locationId = "bad location";
             var locationPersistence = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>();
-            var expectedResult = "The location Id has not been found";
+            var expectedResult = nameof(SystemValidationErrors.LocationIdNotFound);
             locationPersistence
                 .Setup(persistence => persistence.Handle(It.Is<LocationRetrievalByIdQuery>(o => o.LocationId == "bad location")))
                 .Returns(Task.FromResult<Location>(null));
@@ -69,7 +70,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         {
             // Arrange
             object locationId = null;
-            var expectedResult = "The location Id must be supplied";
+            var expectedResult = nameof(SystemValidationErrors.LocationIdMustBeProvided);
 
             var locationPersistence = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>();
             locationPersistence

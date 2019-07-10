@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using MedicalExaminer.API.Models.v1;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Services;
@@ -19,7 +20,7 @@ namespace MedicalExaminer.API.Attributes
             var locationString = value as string;
             if (string.IsNullOrEmpty(locationString))
             {
-                return new ValidationResult("The location Id must be supplied");
+                return new ValidationResultEnumCodes(MedicalExaminer.Models.Enums.SystemValidationErrors.LocationIdMustBeProvided);
             }
 
             var locationPersistence = (IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>)context.GetService(typeof(IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>));
@@ -31,7 +32,7 @@ namespace MedicalExaminer.API.Attributes
             var validatedLocation = locationPersistence.Handle(new LocationRetrievalByIdQuery(locationString)).Result;
 
             return validatedLocation == null
-                ? new ValidationResult("The location Id has not been found")
+                ? new ValidationResultEnumCodes(MedicalExaminer.Models.Enums.SystemValidationErrors.LocationIdNotFound)
                 : ValidationResult.Success;
         }
     }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using MedicalExaminer.API.Models.v1;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Attributes
 {
@@ -25,7 +27,7 @@ namespace MedicalExaminer.API.Attributes
             var existingExamination = examinationPersistence.Handle(new ExaminationByNhsNumberRetrievalQuery(nhsNumber)).Result;
 
             return existingExamination != null
-                ? new ValidationResult("There is already an Examination for this patient")
+                ? new ValidationResultEnumCodes(SystemValidationErrors.DuplicateNhsNumber)
                 : ValidationResult.Success;
         }
     }

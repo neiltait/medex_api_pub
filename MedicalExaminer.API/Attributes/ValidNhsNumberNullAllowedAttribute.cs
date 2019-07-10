@@ -1,7 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
+using MedicalExaminer.API.Models.v1;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Attributes
 {
@@ -28,12 +29,13 @@ namespace MedicalExaminer.API.Attributes
 
             if(nhsNumber.Contains(" "))
             {
-                return new ValidationResult("Invalid NHS Number - cannot contain whitespace");
+                return new ValidationResultEnumCodes(SystemValidationErrors.ContainsWhitespace);
+
             }
 
             if (nhsNumber.Contains("-"))
             {
-                return new ValidationResult("Invalid NHS Number - cannot contain '-'");
+                return new ValidationResultEnumCodes(SystemValidationErrors.ContainsInvalidCharacters);
             }
             
             if (CheckStandardNhsNumber(nhsNumber))
@@ -46,7 +48,7 @@ namespace MedicalExaminer.API.Attributes
                 return ValidationResult.Success;
             }
 
-            return new ValidationResult("Invalid NHS Number");
+            return new ValidationResultEnumCodes(SystemValidationErrors.InvalidNhsNumber);
         }
 
         private bool CheckOldWelshNhsNumber(string nhsNumber)
