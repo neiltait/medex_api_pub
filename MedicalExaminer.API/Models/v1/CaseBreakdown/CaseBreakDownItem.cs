@@ -39,5 +39,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// case breakdown admission notes
         /// </summary>
         public EventContainerItem<AdmissionEventItem> AdmissionNotes { get; set; }
+
+        public CaseClosedEventItem CaseClosed { get; set; }
     }
 }
