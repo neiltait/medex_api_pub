@@ -220,7 +220,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             identity.AddClaim(new Claim(MEClaimTypes.UserId, expectedUserId));
             actionContext.HttpContext.User.AddIdentity(identity);
             actionContext.RouteData = new RouteData();
-            var filters = new List<IFilterMetadata>();
+
             var executingFilters = new List<IFilterMetadata>();
             var actionArguments = new Dictionary<string, object>();
             var actionExecutingContext =
