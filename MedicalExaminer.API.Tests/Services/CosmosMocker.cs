@@ -228,6 +228,7 @@ namespace MedicalExaminer.API.Tests.Services
             return resourceResponse;
         }
 
+
         public static FeedResponse<T> ToFeedResponse<T>(this IQueryable<T> resource, IDictionary<string, string> responseHeaders = null)
         {
             var feedResponseType = Type.GetType("Microsoft.Azure.Documents.Client.FeedResponse`1, Microsoft.Azure.DocumentDB.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
