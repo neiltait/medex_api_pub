@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MedicalExaminer.Models.Enums;
+﻿using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Common.Authorization.Roles
 {
