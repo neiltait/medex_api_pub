@@ -8,6 +8,10 @@ namespace MedicalExaminer.API.Controllers
     [ApiController]
     public class HealthCheckController : ControllerBase
     {
+        /// <summary>
+        /// Endpoint to health check the API
+        /// </summary>
+        /// <returns> Ok </returns>
         [HttpGet]
         public async Task<ActionResult> Check()
         {
