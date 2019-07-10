@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using MedicalExaminer.API.Models;
 using MedicalExaminer.Common.Reporting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace MedicalExaminer.API
@@ -44,18 +46,23 @@ namespace MedicalExaminer.API
 
             context.Response.OnStarting(() =>
             {
-                var i = 0;
-                foreach (var request in requestChargeService.RequestCharges)
+                var requestChargeSettings = context.RequestServices.GetRequiredService<IOptions<RequestChargeSettings>>();
+
+                if (requestChargeSettings?.Value != null && requestChargeSettings.Value.ShowFullBreakdownInHeader)
                 {
-                    var requestString = JsonConvert.SerializeObject(request);
-
-                    context.Response.Headers[$"{ResponseHeader}-{i}"] = requestString;
-                    i++;
-
-                    if (i >= 10)
+                    var i = 0;
+                    foreach (var request in requestChargeService.RequestCharges)
                     {
-                        context.Response.Headers[$"{ResponseHeader}-{i}"] = "Too many headers. Stopped.";
-                        break;
+                        var requestString = JsonConvert.SerializeObject(request);
+
+                        context.Response.Headers[$"{ResponseHeader}-{i}"] = requestString;
+                        i++;
+
+                        if (i >= 10)
+                        {
+                            context.Response.Headers[$"{ResponseHeader}-{i}"] = "Too many headers. Stopped.";
+                            break;
+                        }
                     }
                 }
 

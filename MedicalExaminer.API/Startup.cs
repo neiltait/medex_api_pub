@@ -93,6 +93,8 @@ namespace MedicalExaminer.API
 
             services.ConfigureSettings<AuthorizationSettings>(Configuration, "Authorization");
 
+            services.ConfigureSettings<RequestChargeSettings>(Configuration, "RequestCharge");
+
             ConfigureOktaClient(services);
 
             services.AddSingleton<ITokenService, OktaTokenService>();
