@@ -199,7 +199,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public void OnActionExecuting_WritesLog()
+        public void OnActionExecuted_WritesLog()
         {
             var expectedUnknown = "Unknown";
             var expectedUserId = "expectedUserId";
@@ -221,13 +221,20 @@ namespace MedicalExaminer.API.Tests.Controllers
             actionContext.HttpContext.User.AddIdentity(identity);
             actionContext.RouteData = new RouteData();
             var filters = new List<IFilterMetadata>();
+            var executingFilters = new List<IFilterMetadata>();
             var actionArguments = new Dictionary<string, object>();
             var actionExecutingContext =
-                new ActionExecutingContext(actionContext, filters, actionArguments, _controller);
+                new ActionExecutingContext(actionContext, executingFilters, actionArguments, _controller);
 
             actionExecutingContext.ActionArguments.Add("filter", new { Property = "value" });
 
+            var filters = new List<IFilterMetadata>();
+            var actionExecutedContext =
+                new ActionExecutedContext(actionContext, filters, _controller);
+
             controllerActionFilter.OnActionExecuting(actionExecutingContext);
+
+            controllerActionFilter.OnActionExecuted(actionExecutedContext);
             var logEntry = _mockLogger.LogEntry;
 
             logEntry.UserId.Should().Be(expectedUserId);

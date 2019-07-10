@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -187,9 +190,54 @@ namespace MedicalExaminer.API.Tests.Services
                     document.SetPropertyValue(jsonProperty?.PropertyName ?? propertyInfo.Name, value);
                 }
             }
-            return Task.FromResult(new ResourceResponse<Document>(document));
+
+            var response = ToResourceResponse(document, HttpStatusCode.Accepted);
+
+            return Task.FromResult(response);
+        }
+
+        public static ResourceResponse<T> ToResourceResponse<T>(this T resource, HttpStatusCode statusCode, IDictionary<string, string> responseHeaders = null)
+            where T : Resource, new()
+        {
+            var resourceResponse = new ResourceResponse<T>(resource);
+            var documentServiceResponseType =
+                Type.GetType(
+                    "Microsoft.Azure.Documents.DocumentServiceResponse, Microsoft.Azure.DocumentDB.Core, Version=2.2.2, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+
+            var flags = BindingFlags.NonPublic | BindingFlags.Instance;
+            var headers = new NameValueCollection { { "x-ms-request-charge", "0" } };
+            if (responseHeaders != null)
+            {
+                foreach (var responseHeader in responseHeaders)
+                {
+                    headers[responseHeader.Key] = responseHeader.Value;
+                }
+            }
+
+            var arguments = new object[] { Stream.Null, headers, statusCode, (JsonSerializerSettings)null };
+            var documentServiceResponse = Activator.CreateInstance(documentServiceResponseType ?? throw new InvalidOperationException(), flags, null, arguments, null);
+            var responseField = typeof(ResourceResponse<T>).GetField("response", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (responseField != null)
+            {
+                responseField.SetValue(resourceResponse, documentServiceResponse);
+            }
+
+            return resourceResponse;
         }
     }
+
+
+
+    /*public class MockResourceResponse<TResource> : ResourceResponse<TResource>
+        where TResource : Resource, new()
+    {
+        public MockResourceResponse(TResource resource)
+            : base(resource)
+        {
+        }
+
+        public new double RequestCharge => 1.0;
+    }*/
 
     public interface IFakeDocumentQuery<T> : IDocumentQuery<T>, IOrderedQueryable<T>
     {
