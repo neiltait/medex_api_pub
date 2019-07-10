@@ -62,7 +62,7 @@ namespace MedicalExaminer.API
         /// <summary>
         ///     Okta Client.
         /// </summary>
-        private readonly OktaClient _oktaClient;
+        private readonly IOktaClient _oktaClient;
 
         /// <summary>
         /// Time in minutes before Okta token expires and has to be resubmitted to Okta
@@ -93,7 +93,7 @@ namespace MedicalExaminer.API
             IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
-            OktaClient oktaClient,
+            IOktaClient oktaClient,
             int oktaTokenExpiryTime)
         {
             _tokenHandler = tokenValidator;
@@ -138,17 +138,20 @@ namespace MedicalExaminer.API
             // If above didn't already throw exception, catch null being returned.
             if (claimsPrincipal == null)
             {
-                return null;
+                validatedToken = null;
+                throw new SecurityTokenValidationException();
             }
 
             var oktaId = claimsPrincipal
                 .Claims
-                .Where(c => c.Type == MEClaimTypes.OktaUserId).Select(c => c.Value)
-                .First();
+                .Where(c => c.Type == MEClaimTypes.OktaUserId)
+                .Select(c => c.Value)
+                .FirstOrDefault();
 
             // No point continuing if we don't have any idea who it is.
             if (oktaId == null)
             {
+                validatedToken = null;
                 throw new SecurityTokenValidationException();
             }
 
@@ -156,8 +159,11 @@ namespace MedicalExaminer.API
             var userSessionTask = _userSessionRetrievalByOktaIdService.Handle(new UserSessionRetrievalByOktaIdQuery(oktaId));
             var userSession = userSessionTask?.Result;
 
-            // Cannot find user by id or token has expired so check with Okta its valid.
-            if (userSession == null || userSession.OktaTokenExpiry < DateTimeOffset.Now)
+            var shouldCheckToken = userSession == null
+                                   || userSession.OktaTokenExpiry < DateTimeOffset.Now
+                                   || userSession.OktaToken != securityToken;
+
+            if (shouldCheckToken)
             {
                 var introspectTokenResponse = _tokenService.IntrospectToken(securityToken, new HttpClient()).Result;
 
@@ -169,11 +175,19 @@ namespace MedicalExaminer.API
                 }
             }
 
-            userSession = CreateOrUpdateSession(userSession, oktaId, securityToken);
+            try
+            {
+                userSession = CreateOrUpdateSession(userSession, oktaId, securityToken);
+            }
+            catch
+            {
+                validatedToken = null;
+                throw new SecurityTokenValidationException();
+            }
 
             if (userSession.UserId != null)
             {
-                claimsPrincipal?.Identities.First().AddClaim(
+                claimsPrincipal.Identities.First().AddClaim(
                     new Claim(
                         MEClaimTypes.UserId,
                         userSession.UserId));
@@ -296,38 +310,44 @@ namespace MedicalExaminer.API
             return updatedUser;
         }
 
-        private async void UpdateUserFromOktaClient(string userId, string oktaId)
+        private void UpdateUserFromOktaClient(string userId, string oktaId)
         {
-            var meUser = await _userRetrievalById.Handle(new UserRetrievalByIdQuery(userId));
+            var meUserTask = _userRetrievalById.Handle(new UserRetrievalByIdQuery(userId));
+            var meUser = meUserTask?.Result;
 
             if (meUser == null)
             {
-                return;
+                throw new Exception("User record missing");
             }
 
-            var oktaUser = await _oktaClient.Users.GetUserAsync(oktaId);
+            var oktaUserTask = _oktaClient.Users.GetUserAsync(oktaId);
+            var oktaUser = oktaUserTask?.Result;
 
-            var different = false;
-
-            // If any of the fields differ; we update the whole record again.
-            different |= oktaUser.Profile.FirstName != meUser.FirstName;
-            different |= oktaUser.Profile.LastName != meUser.LastName;
-            different |= oktaUser.Profile.Email != meUser.Email;
-
-            if (!different)
+            if (oktaUser != null)
             {
-                return;
+                var different = false;
+
+                // If any of the fields differ; we update the whole record again.
+                different |= oktaUser.Profile.FirstName != meUser.FirstName;
+                different |= oktaUser.Profile.LastName != meUser.LastName;
+                different |= oktaUser.Profile.Email != meUser.Email;
+
+                if (!different)
+                {
+                    return;
+                }
+
+                var updatedUser = new UserUpdateDetails()
+                {
+                    UserId = meUser.UserId,
+                    FirstName = oktaUser.Profile.FirstName,
+                    LastName = oktaUser.Profile.LastName,
+                    Email = oktaUser.Profile.Email,
+                };
+
+                var updateUserTask = _userUpdateService.Handle(new UserUpdateQuery(updatedUser, _systemUser));
+                updateUserTask.Wait();
             }
-
-            var updatedUser = new UserUpdateDetails()
-            {
-                UserId = meUser.UserId,
-                FirstName = oktaUser.Profile.FirstName,
-                LastName = oktaUser.Profile.LastName,
-                Email = oktaUser.Profile.Email,
-            };
-
-            await _userUpdateService.Handle(new UserUpdateQuery(updatedUser, _systemUser));
         }
     }
 }
