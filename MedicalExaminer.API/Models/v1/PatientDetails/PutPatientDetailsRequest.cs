@@ -175,7 +175,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     Free text for the implant details.
         /// </summary>
-        [RequiredIfAttributesMatch(nameof(AnyImplants), true, ErrorMessage = nameof(SystemValidationErrors.RequiredIfAnyImplants))]
+        [RequiredIfAttributesMatch(nameof(AnyImplants), true, ErrorMessage = nameof(SystemValidationErrors.Required))]
         public string ImplantDetails { get; set; }
 
         /// <summary>

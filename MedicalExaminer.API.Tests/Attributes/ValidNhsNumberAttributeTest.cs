@@ -47,7 +47,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             // Arrange
             var nhsNumberString = "0123456789101234";
             var validationContext = new Mock<IServiceProvider>().Object;
-            var expectedError = nameof(SystemValidationErrors.InvalidNhsNumber);
+            var expectedError = nameof(SystemValidationErrors.Invalid);
             var sut = new ValidNhsNumberNullAllowedAttribute();
 
             // Act
@@ -80,7 +80,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var nhsNumberString = "12345";
             var validationContext = new Mock<IServiceProvider>().Object;
 
-            var expectedError = nameof(SystemValidationErrors.InvalidNhsNumber);
+            var expectedError = nameof(SystemValidationErrors.Invalid);
             var sut = new ValidNhsNumberNullAllowedAttribute();
 
             // Act

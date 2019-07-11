@@ -43,7 +43,7 @@ namespace MedicalExaminer.API.Attributes
             }
             catch (Exception)
             {
-                return new ValidationResultEnumCodes(SystemValidationErrors.InvalidDateFormat);
+                return new ValidationResultEnumCodes(SystemValidationErrors.InvalidFormat);
             }
 
             try
@@ -63,7 +63,7 @@ namespace MedicalExaminer.API.Attributes
             catch (Exception ex)
             {
                 var e = ex;
-                return new ValidationResultEnumCodes(SystemValidationErrors.InvalidDateFormat);
+                return new ValidationResultEnumCodes(SystemValidationErrors.InvalidFormat);
             }
 
             return endDate < startDate

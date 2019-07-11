@@ -20,7 +20,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         {
             // Arrange
             var locationId = string.Empty;
-            var expectedResult = nameof(SystemValidationErrors.LocationIdMustBeProvided);
+            var expectedResult = nameof(SystemValidationErrors.Required);
 
             var locationPersistence = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>();
             locationPersistence
@@ -47,7 +47,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             // Arrange
             var locationId = "bad location";
             var locationPersistence = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>();
-            var expectedResult = nameof(SystemValidationErrors.LocationIdNotFound);
+            var expectedResult = nameof(SystemValidationErrors.IdNotFound);
             locationPersistence
                 .Setup(persistence => persistence.Handle(It.Is<LocationRetrievalByIdQuery>(o => o.LocationId == "bad location")))
                 .Returns(Task.FromResult<Location>(null));
@@ -70,7 +70,7 @@ namespace MedicalExaminer.API.Tests.Attributes
         {
             // Arrange
             object locationId = null;
-            var expectedResult = nameof(SystemValidationErrors.LocationIdMustBeProvided);
+            var expectedResult = nameof(SystemValidationErrors.Required);
 
             var locationPersistence = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>();
             locationPersistence

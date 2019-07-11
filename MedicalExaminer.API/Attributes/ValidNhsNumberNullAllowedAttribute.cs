@@ -48,7 +48,7 @@ namespace MedicalExaminer.API.Attributes
                 return ValidationResult.Success;
             }
 
-            return new ValidationResultEnumCodes(SystemValidationErrors.InvalidNhsNumber);
+            return new ValidationResultEnumCodes(SystemValidationErrors.Invalid);
         }
 
         private bool CheckOldWelshNhsNumber(string nhsNumber)

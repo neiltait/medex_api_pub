@@ -207,7 +207,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             // Arrange
             SetupAuthorize(AuthorizationResult.Success());
-            Controller.ModelState.AddModelError("test", nameof(SystemValidationErrors.RequiredIfOtherSelected));
+            Controller.ModelState.AddModelError("test", nameof(SystemValidationErrors.Required));
 
             // Act
             var response = Controller.CreateExamination(CreateValidNewCaseRequest()).Result;

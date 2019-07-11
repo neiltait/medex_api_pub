@@ -37,7 +37,7 @@ namespace MedicalExaminer.API.Attributes
             var existingExamination = examinationPersistence.Handle(new ExaminationByNhsNumberRetrievalQuery(nhsNumber)).Result;
 
             return existingExamination != null
-                ? new ValidationResultEnumCodes(SystemValidationErrors.DuplicateNhsNumber)
+                ? new ValidationResultEnumCodes(SystemValidationErrors.Duplicate)
                 : ValidationResult.Success;
         }
     }

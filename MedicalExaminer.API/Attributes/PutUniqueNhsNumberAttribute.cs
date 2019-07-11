@@ -39,7 +39,7 @@ namespace MedicalExaminer.API.Attributes
             var possibleExamination = examinationPersistence.Handle(new ExaminationByNhsNumberRetrievalQuery(nhsNumber)).Result;
 
             return possibleExamination != null && examinationValidationContext.Examination.ExaminationId != possibleExamination.ExaminationId
-                ? new ValidationResult(SystemValidationErrors.DuplicateNhsNumber.ToString())
+                ? new ValidationResult(SystemValidationErrors.Duplicate.ToString())
                 : ValidationResult.Success;
         }
     }

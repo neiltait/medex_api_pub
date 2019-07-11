@@ -6,19 +6,16 @@ namespace MedicalExaminer.Models.Enums
     [JsonConverter(typeof(StringEnumConverter))]
     public enum SystemValidationErrors
     {
-        DuplicateNhsNumber,
+        Duplicate,
         ContainsWhitespace,
         ContainsInvalidCharacters,
-        InvalidNhsNumber,
+        Invalid,
         Required,
         MaximumLength150,
         MinimumLengthOf1,
-        InvalidDateFormat,
+        InvalidFormat,
         EndDateNotFound,
         EndDateBeforeStartDate,
-        RequiredIfOtherSelected,
-        RequiredIfAnyImplants,
-        LocationIdMustBeProvided,
-        LocationIdNotFound,
+        IdNotFound,
     }
 }

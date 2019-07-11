@@ -209,7 +209,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 patientDetailsUpdateService.Object,
                 _locationParentsQueryServiceMock.Object);
 
-            Controller.ModelState.AddModelError("An", nameof(SystemValidationErrors.DuplicateNhsNumber));
+            Controller.ModelState.AddModelError("An", nameof(SystemValidationErrors.Duplicate));
 
             var expectedPutPatientDetailsRequest = new PutPatientDetailsRequest();
 
