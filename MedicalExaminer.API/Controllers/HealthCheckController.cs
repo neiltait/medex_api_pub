@@ -7,7 +7,7 @@ namespace MedicalExaminer.API.Controllers
     /// Health Check Controller
     /// </summary>
     [ApiVersion("1.0")]
-    [Route("/v{api-version:apiVersion}/health-check")]
+    [Route("/v{api-version:apiVersion}/health_check")]
     [ApiController]
     public class HealthCheckController : ControllerBase
     {
