@@ -320,8 +320,6 @@ namespace MedicalExaminer.API.Controllers
 
                 //var permission = Mapper.Map(putPermission, permissionToUpdate);
 
-                
-
                 var permissionToUpdate = user.Permissions.SingleOrDefault(p => p.PermissionId == permissionId);
 
                 if (permissionToUpdate == null)

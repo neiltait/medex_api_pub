@@ -27,6 +27,7 @@ using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.PatientDetails;
+using MedicalExaminer.Common.Queries.Permissions;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.CaseOutcome;
@@ -34,6 +35,7 @@ using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.Location;
 using MedicalExaminer.Common.Services.MedicalTeam;
 using MedicalExaminer.Common.Services.PatientDetails;
+using MedicalExaminer.Common.Services.Permissions;
 using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
@@ -222,9 +224,9 @@ namespace MedicalExaminer.API
             services.AddBackgroundServices(backgroundServicesSettings);
         }
 
-        private void AddAutomapperProfiles()
+        private void AddAutomapperProfiles(IServiceCollection services)
         {
-            
+            //services.Add<>();
 
         }
 
@@ -507,15 +509,16 @@ namespace MedicalExaminer.API
             services.AddScoped<IPermissionService, PermissionService>();
         }
 
-
         private void UpdateInvalidOrNullUserPermissionIds()
         {
+            
+
             // want a service to update them
-            //var updateInvalidUserPermissionIdService = new UpdateInvalidUserPermissionService();
+            var updateInvalidUserPermissionIdService = new InvalidUserPermissionUpdateService();
 
             ////  want to run the server to update them
 
-            //updateInvalidUserPermissionIdService.Handle(new InvalidUserPermissionQuery());
+            updateInvalidUserPermissionIdService.Handle(new InvalidUserPermissionQuery());
 
             ////  want to log that we done it
 
