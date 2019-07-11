@@ -6,10 +6,13 @@ namespace MedicalExaminer.Common.Queries.User
 {
     public class UsersRetrievalQuery : IQuery<IEnumerable<MeUser>>
     {
-        public UsersRetrievalQuery(UserRoles? userRole)
+        public UsersRetrievalQuery(bool forLookup, UserRoles? userRole)
         {
             role = userRole;
+            ForLookup = forLookup;
         }
+
+        public bool ForLookup { get; }
 
         public UserRoles? role { get; }
     }

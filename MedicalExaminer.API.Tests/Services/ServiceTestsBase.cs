@@ -23,7 +23,7 @@ namespace MedicalExaminer.API.Tests.Services
         where TQuery : class, IQuery<TItem>
         where TConnectionSettings : class, IConnectionSettings
         where TService : QueryHandler<TQuery, TItem>
-        where TType : class
+        where TType : class, new()
     {
         /// <summary>
         /// The Service under test.
