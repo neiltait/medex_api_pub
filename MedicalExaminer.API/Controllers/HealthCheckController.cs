@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalExaminer.API.Controllers
 {
+    /// <summary>
+    /// Health Check Controller
+    /// </summary>
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/health-check")]
     [ApiController]
