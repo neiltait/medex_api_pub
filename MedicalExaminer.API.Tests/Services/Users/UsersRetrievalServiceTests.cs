@@ -18,11 +18,13 @@ namespace MedicalExaminer.API.Tests.Services.Users
         MeUser,
         UsersRetrievalService>
     {
-        [Fact]
-        public async Task Handle_ReturnsOnlyUser1()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task Handle_ReturnsOnlyUser1(bool forLookup)
         {
             // Arrange
-            var query = new UsersRetrievalQuery(null);
+            var query = new UsersRetrievalQuery(forLookup, null);
 
             // Act
             var results = (await Service.Handle(query)).ToList();
@@ -32,6 +34,11 @@ namespace MedicalExaminer.API.Tests.Services.Users
             results.Count.Should().Be(2);
             results.Any(u => u.UserId == "userId1").Should().BeTrue();
             results.Any(u => u.UserId == "userId2").Should().BeTrue();
+
+            if (!forLookup)
+            {
+                results.First(u => u.UserId == "userId1").Email.Should().Be("email1");
+            }
         }
 
         protected override MeUser[] GetExamples()
