@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MedicalExaminer.Common.Queries.Permissions
+﻿namespace MedicalExaminer.Common.Queries.Permissions
 {
+    /// <summary>
+    /// Invalid User Permission Query
+    /// </summary>
     public class InvalidUserPermissionQuery : IQuery<bool>
     {
-        public string InvalidId { get; private set; }
+        public string InvalidId { get; }
 
         public InvalidUserPermissionQuery()
         {

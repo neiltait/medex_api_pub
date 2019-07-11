@@ -222,6 +222,8 @@ namespace MedicalExaminer.API
                 cosmosDbSettings.DatabaseId));
 
             services.AddBackgroundServices(backgroundServicesSettings);
+
+            UpdateInvalidOrNullUserPermissionIds(services);
         }
 
         private void AddAutomapperProfiles(IServiceCollection services)
@@ -379,6 +381,7 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>, UserUpdateOktaTokenService>();
             services.AddScoped<IAsyncQueryHandler<UserUpdateOktaQuery, MeUser>, UserUpdateOktaService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>, UsersRetrievalByOktaTokenService>();
+            services.AddScoped<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>, InvalidUserPermissionUpdateService>();
 
             // Used for roles; but is being abused to pass null and get all users.
             services.AddScoped<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>, UsersRetrievalService>();
@@ -509,23 +512,13 @@ namespace MedicalExaminer.API
             services.AddScoped<IPermissionService, PermissionService>();
         }
 
-        private void UpdateInvalidOrNullUserPermissionIds()
+        private void UpdateInvalidOrNullUserPermissionIds(IServiceCollection services)
         {
-            
+            IServiceProvider provider = services.BuildServiceProvider();
 
-            // want a service to update them
-            var updateInvalidUserPermissionIdService = new InvalidUserPermissionUpdateService();
+            IAsyncQueryHandler<InvalidUserPermissionQuery, bool> instance = provider.GetService<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>>();
 
-            ////  want to run the server to update them
-
-            updateInvalidUserPermissionIdService.Handle(new InvalidUserPermissionQuery());
-
-            ////  want to log that we done it
-
-            //Logger.Log("Done");
-            //  return home safely
-
-            //  job well done!
+            instance.Handle(new InvalidUserPermissionQuery());
         }
     }
 }
