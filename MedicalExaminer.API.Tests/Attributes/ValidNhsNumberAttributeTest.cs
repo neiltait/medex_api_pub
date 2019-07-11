@@ -40,12 +40,11 @@ namespace MedicalExaminer.API.Tests.Attributes
             Assert.Equal(expectedResult, result);
         }
 
-
         [Fact]
         public void ExcessDigitsInNumberReturnsErrors()
         {
             // Arrange
-            var nhsNumberString = "0123456789101234";
+            var nhsNumberString = "012345678910123456";
             var validationContext = new Mock<IServiceProvider>().Object;
             var expectedError = "Invalid NHS Number";
             var sut = new ValidNhsNumberNullAllowedAttribute();
@@ -86,7 +85,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             // Act
             var result = sut.GetValidationResult(nhsNumberString, new ValidationContext(validationContext));
 
-            //Assert
+            // Assert
             Assert.Equal(expectedError, result.ErrorMessage);
         }
 
@@ -103,7 +102,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             // Act
             var result = sut.GetValidationResult(nhsNumberString, new ValidationContext(validationContext));
 
-            //Assert
+            // Assert
             Assert.Equal(expectedResult, result);
         }
     }
