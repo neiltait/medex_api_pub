@@ -8,8 +8,19 @@ using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Attributes
 {
+    /// <summary>
+    /// This validates that the nhs number is unique when a new examination is created.
+    /// </summary>
     public class PutUniqueNhsNumberAttribute : ExaminationValidationAttribute
     {
+        /// <summary>
+        /// returns if the nhs number provided is valid.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="examinationValidationContext"></param>
+        /// <param name="validationContext"></param>
+        /// <returns cref="ValidationResult"></returns>
+        /// <exception cref="NullReferenceException"></exception>
         protected override ValidationResult IsValid(object value, ExaminationValidationContext examinationValidationContext, ValidationContext validationContext)
         {
             var thing = examinationValidationContext.Examination;
