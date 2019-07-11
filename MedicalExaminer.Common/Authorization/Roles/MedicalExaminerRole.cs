@@ -25,7 +25,6 @@ namespace MedicalExaminer.Common.Authorization.Roles
                 Permission.GetExaminationEvent,
                 Permission.GetProfile,
                 Permission.UpdateProfile,
-
                 Permission.BereavedDiscussionEvent,
                 Permission.QapDiscussionEvent,
                 Permission.OtherEvent,
