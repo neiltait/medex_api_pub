@@ -4,13 +4,14 @@ using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.User
 {
     /// <summary>
     /// Users Retrieval Service.
     /// </summary>
-    public class UsersRetrievalService : QueryHandler<UsersRetrievalQuery, IEnumerable<Models.MeUser>>
+    public class UsersRetrievalService : QueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>
     {
         /// <summary>
         /// Initialise a new instance of <see cref="UsersRetrievalService"/>.
@@ -23,15 +24,30 @@ namespace MedicalExaminer.Common.Services.User
         }
 
         /// <inheritdoc/>
-        public override async Task<IEnumerable<Models.MeUser>> Handle(UsersRetrievalQuery param)
+        public override async Task<IEnumerable<MeUser>> Handle(UsersRetrievalQuery param)
         {
             if (param == null)
             {
                 throw new ArgumentNullException(nameof(param));
             }
 
-            // can put whatever filters in the param, just empty for now
-            var result = await GetItemsAsync<Models.MeUser>(x => true);
+            IEnumerable<MeUser> result;
+
+            if (param.ForLookup)
+            {
+                // Need to include permissions to ensure lookups can be filtered.
+                result = await GetItemsAsync<MeUser>(x => true, user => new
+                {
+                    id = user.UserId,
+                    user.FirstName,
+                    user.LastName,
+                    user.Permissions,
+                });
+            }
+            else
+            {
+                result = await GetItemsAsync<MeUser>(x => true);
+            }
 
             return result;
         }

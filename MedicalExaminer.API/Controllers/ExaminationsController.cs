@@ -50,7 +50,7 @@ namespace MedicalExaminer.API.Controllers
 
         private readonly IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> _locationRetrievalByQueryHandler;
 
-        private readonly IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>> _usersRetrievalByRoleLocationQueryService;
+        private readonly IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> _usersRetrievalService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExaminationsController"/> class.
@@ -65,7 +65,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationsDashboardService">Examination Dashboard Service.</param>
         /// <param name="locationParentsService">Location Parents Service.</param>
         /// <param name="locationRetrievalByQueryHandler">Location Retrieval by Query Handler.</param>
-        /// <param name="usersRetrievalByRoleLocationQueryService">Users Retrieval By Role Location Query Service.</param>
+        /// <param name="usersRetrievalService">User retrieval service.</param>
         public ExaminationsController(
             IMELogger logger,
             IMapper mapper,
@@ -77,7 +77,7 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> examinationsDashboardService,
             IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService,
             IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler,
-            IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>> usersRetrievalByRoleLocationQueryService)
+            IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _examinationCreationService = examinationCreationService;
@@ -85,7 +85,7 @@ namespace MedicalExaminer.API.Controllers
             _examinationsDashboardService = examinationsDashboardService;
             _locationParentsService = locationParentsService;
             _locationRetrievalByQueryHandler = locationRetrievalByQueryHandler;
-            _usersRetrievalByRoleLocationQueryService = usersRetrievalByRoleLocationQueryService;
+            _usersRetrievalService = usersRetrievalService;
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace MedicalExaminer.API.Controllers
             };
 
             var locations = (await _locationRetrievalByQueryHandler.Handle(
-                    new LocationsRetrievalByQuery(null, null, permissedLocations))).ToList();
+                    new LocationsRetrievalByQuery(null, null, true, permissedLocations))).ToList();
 
             response.AddLookup(LocationFilterLookupKey, Mapper.Map<IEnumerable<Location>, IEnumerable<LocationLookup>>(locations));
 
@@ -215,14 +215,11 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>List of users.</returns>
         private async Task<IEnumerable<MeUser>> GetUsersForLocations(IEnumerable<string> locations)
         {
-            var allUsers = new List<MeUser>();
+            var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery(true, null));
 
-            for (var counter = 0; counter < locations.Count(); counter += 100)
-            {
-                allUsers.AddRange((await _usersRetrievalByRoleLocationQueryService.Handle(new UsersRetrievalByRoleLocationQuery(locations.Skip(counter).Take(100), null))).ToList());
-            }
+            var usersForLocations = users.Where(u => u.Permissions != null && u.Permissions.Any(p => locations.Contains(p.LocationId)));
 
-            return allUsers;
+            return usersForLocations;
         }
     }
 }
