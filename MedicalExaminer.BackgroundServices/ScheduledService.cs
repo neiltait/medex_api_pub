@@ -41,6 +41,11 @@ namespace MedicalExaminer.BackgroundServices
         private CancellationTokenSource _cancellationTokenSource;
 
         /// <summary>
+        /// Logger
+        /// </summary>
+        public ILogger Logger => _logger;
+
+        /// <summary>
         /// Initialise a new instance of <see cref="ScheduledService"/>.
         /// </summary>
         /// <param name="logger">Logger.</param>
