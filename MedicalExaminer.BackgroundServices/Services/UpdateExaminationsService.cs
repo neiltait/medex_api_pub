@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cosmonaut;
 using Cosmonaut.Extensions;
+using Cosmonaut.Testing;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,10 +47,12 @@ namespace MedicalExaminer.BackgroundServices.Services
 
                 var examinationAuditStore = scope.ServiceProvider.GetRequiredService<ICosmosStore<AuditEntry<Examination>>>();
 
-                var examinations = await examinationStore
+                var examinations = examinationStore
                     .Query()
                     .Where(e => !e.CaseCompleted)
-                    .ToListAsync(cancellationToken);
+                    .ToFeedResponse();
+
+                var initialQueryCharge = examinations.RequestCharge;
 
                 var examinationAudits = new List<AuditEntry<Examination>>();
 
@@ -59,7 +62,7 @@ namespace MedicalExaminer.BackgroundServices.Services
 
                     examination.UpdateCaseUrgencyScore();
 
-                    //if (examination.UrgencyScore != previousScore)
+                    if (examination.UrgencyScore != previousScore)
                     {
                         examination.LastModifiedBy = "UpdateExaminationService";
                         examination.ModifiedAt = DateTimeOffset.UtcNow;
@@ -80,7 +83,7 @@ namespace MedicalExaminer.BackgroundServices.Services
                 var totalRequestChargeForAudit =
                     createAuditResponse.SuccessfulEntities.Sum(e => e.ResourceResponse.RequestCharge);
 
-                Logger.Log(LogLevel.Information, $"Consumed total RU: {totalRequestChargeForUpdates+totalRequestChargeForAudit} Updates: {totalRequestChargeForUpdates} Audits:{totalRequestChargeForAudit}");
+                Logger.Log(LogLevel.Information, $"Consumed total RU: {initialQueryCharge+totalRequestChargeForUpdates + totalRequestChargeForAudit} Query: {initialQueryCharge} Updates: {totalRequestChargeForUpdates} Audits:{totalRequestChargeForAudit}");
             }
         }
     }
