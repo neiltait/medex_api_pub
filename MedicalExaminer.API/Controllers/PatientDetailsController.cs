@@ -106,7 +106,7 @@ namespace MedicalExaminer.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return null;// BadRequest(new PutPatientDetailsResponse());
+                return BadRequestEnums(new PutPatientDetailsResponse());
             }
 
             var examination =

@@ -1,4 +1,5 @@
-﻿using MedicalExaminer.API.Models.v1;
+﻿using System;
+using MedicalExaminer.API.Models.v1;
 using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -31,9 +32,14 @@ namespace MedicalExaminer.API.Extensions.Models
             {
                 foreach (var error in item.Value.Errors)
                 {
-                    responseBase.AddError(item.Key, SystemValidationErrors.ContainsInvalidCharacters);
+                    responseBase.AddError(item.Key, ParseEnum<SystemValidationErrors>(error.ErrorMessage));
                 }
             }
+        }
+
+        public static T ParseEnum<T>(string value)
+        {
+            return (T)Enum.Parse(typeof(T), value, true);
         }
     }
 }
