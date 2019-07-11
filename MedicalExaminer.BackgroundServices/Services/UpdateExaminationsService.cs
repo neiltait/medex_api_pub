@@ -56,6 +56,8 @@ namespace MedicalExaminer.BackgroundServices.Services
 
                 var examinationAudits = new List<AuditEntry<Examination>>();
 
+                var changedExaminations = new List<Examination>();
+
                 foreach (var examination in examinations)
                 {
                     var previousScore = examination.UrgencyScore;
@@ -68,12 +70,15 @@ namespace MedicalExaminer.BackgroundServices.Services
                         examination.ModifiedAt = DateTimeOffset.UtcNow;
 
                         examinationAudits.Add(new AuditEntry<Examination>(examination));
+
+                        changedExaminations.Add(examination);
                     }
                 }
 
-                Logger.Log(LogLevel.Information, $"Reviewed: {examinations.Count} open examinations, updated: {examinationAudits.Count}.");
+                Logger.Log(LogLevel.Information, $"Reviewed: {examinations.Count} open examinations, updated: {changedExaminations.Count}.");
 
-                var updateResponse = await examinationStore.UpdateRangeAsync(examinations, null, cancellationToken);
+                // Only update the ones that have changed.
+                var updateResponse = await examinationStore.UpdateRangeAsync(changedExaminations, null, cancellationToken);
 
                 // Assume only successful responses come back with a charge that was can use.
                 var totalRequestChargeForUpdates = updateResponse.SuccessfulEntities.Sum(e => e.ResourceResponse.RequestCharge);
