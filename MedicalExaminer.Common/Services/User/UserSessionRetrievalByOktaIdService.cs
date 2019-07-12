@@ -7,29 +7,29 @@ using MedicalExaminer.Common.Queries.User;
 namespace MedicalExaminer.Common.Services.User
 {
     /// <summary>
-    /// User Session Retrieval By Okta Token Service.
+    /// User Session Retrieval By Okta Id Service.
     /// </summary>
-    public class UserSessionRetrievalByOktaTokenService : QueryHandler<UserSessionRetrievalByOktaTokenQuery, Models.MeUserSession>
+    public class UserSessionRetrievalByOktaIdService : QueryHandler<UserSessionRetrievalByOktaIdQuery, Models.MeUserSession>
     {
         /// <summary>
-        /// Initialise a new instance of <see cref="UserSessionRetrievalByOktaTokenService"/>.
+        /// Initialise a new instance of <see cref="UserSessionRetrievalByOktaIdService"/>.
         /// </summary>
         /// <param name="databaseAccess">Database access</param>
         /// <param name="connectionSettings">Connection settings</param>
-        public UserSessionRetrievalByOktaTokenService(IDatabaseAccess databaseAccess, IUserConnectionSettings connectionSettings)
+        public UserSessionRetrievalByOktaIdService(IDatabaseAccess databaseAccess, IUserSessionConnectionSettings connectionSettings)
             : base(databaseAccess, connectionSettings)
         {
         }
 
         /// <inheritdoc/>
-        public override async Task<Models.MeUserSession> Handle(UserSessionRetrievalByOktaTokenQuery param)
+        public override async Task<Models.MeUserSession> Handle(UserSessionRetrievalByOktaIdQuery param)
         {
             if (param == null)
             {
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var result = await GetItemAsync(x => x.OktaToken == param.OktaToken);
+            var result = await GetItemAsync(x => x.OktaId == param.OktaId);
 
             return result;
         }
