@@ -779,7 +779,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             response.Result.Should().BeAssignableTo<ConflictResult>();
         }
 
-
         [Fact]
         public async Task CreatePermission_ReturnsPermission_WhenCanCreate()
         {
@@ -791,9 +790,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedCurrentUserId = "expectedCurrentUserId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
+            var currentSiteId = "site2";
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
+            var currentRole = UserRoles.MedicalExaminerOfficer;
             var expectedCurrentUserOktaId = "oktaId";
             var expectedUser = new MeUser()
             {
@@ -803,14 +804,14 @@ namespace MedicalExaminer.API.Tests.Controllers
                     new MEUserPermission()
                     {
                         PermissionId = expectedPermissionId,
-                        LocationId = expectedSiteId,
-                        UserRole = expectedRole,
+                        LocationId = currentSiteId,
+                        UserRole = currentRole
                     },
                     new MEUserPermission()
                     {
                         PermissionId = "unexpectedPermissionId",
                         LocationId = expectedNationalId,
-                        UserRole = expectedRole,
+                        UserRole = expectedRole
                     },
                 }
             };
@@ -880,8 +881,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             model.PermissionId.Should().NotBeNull();
         }
-
-
 
         [Fact]
         public async Task CreatePermission_ReturnsNotFound_WhenUserNotFound()

@@ -306,7 +306,7 @@ namespace MedicalExaminer.API.Controllers
                             new LocationParentsQuery(putPermission.LocationId)))
                     .ToLocationPath();
 
-                if (!CanAsync(Common.Authorization.Permission.CreateUserPermission, locationDocument))
+                if (!CanAsync(Common.Authorization.Permission.UpdateUserPermission, locationDocument))
                 {
                     return Forbid();
                 }
