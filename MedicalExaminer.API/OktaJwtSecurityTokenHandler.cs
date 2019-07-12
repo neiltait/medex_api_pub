@@ -226,7 +226,8 @@ namespace MedicalExaminer.API
                 userSession = new MeUserSession
                 {
                     UserId = user.UserId,
-                    OktaId = oktaId
+                    OktaId = oktaId,
+                    OktaToken = oktaToken
                 };
             }
 
