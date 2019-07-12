@@ -34,9 +34,14 @@ namespace MedicalExaminer.Common.Services.User
 
             var userSessionToUpdate = await GetItemByIdAsync(query.UserId);
 
+            // If no session exists, create one.
             if (userSessionToUpdate == null)
             {
-                throw new ArgumentNullException(nameof(userSessionToUpdate));
+                userSessionToUpdate = new MeUserSession
+                {
+                    UserId = query.UserId,
+                    OktaId = query.OktaId
+                };
             }
 
             userSessionToUpdate.OktaToken = query.OktaToken;
