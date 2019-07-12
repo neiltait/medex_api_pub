@@ -55,7 +55,7 @@ namespace MedicalExaminer.API.Controllers
                 return BadRequest(new PostValidateSessionResponse());
             }
 
-            return new PostValidateSessionResponse
+            return Ok(new PostValidateSessionResponse
             {
                 UserId = meUser.UserId,
                 EmailAddress = meUser.Email,
@@ -64,7 +64,7 @@ namespace MedicalExaminer.API.Controllers
                 Role = meUser.Permissions?.Select(p => p.UserRole).ToArray(),
                 Permissions = _rolePermissions.PermissionsForRoles(
                     meUser.Permissions?.Select(p => p.UserRole).ToList()),
-            };
+            });
         }
     }
 }
