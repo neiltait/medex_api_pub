@@ -30,20 +30,6 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             base.ConfigureServices(services);
         }
 
-        /*/// <inheritdoc/>
-        /// <remarks>Overrides to pass extra constructor parameter.</remarks>
-        protected override ExaminationsDashboardService GetService(
-            IDatabaseAccess databaseAccess,
-            ExaminationConnectionSettings connectionSettings,
-            ICosmosStore<MedicalExaminer.Models.Examination> cosmosStore = null)
-        {
-            var examinationQueryBuilder = new ExaminationsQueryExpressionBuilder();
-            return new ExaminationsDashboardService(
-                databaseAccess,
-                connectionSettings,
-                examinationQueryBuilder);
-        }*/
-
         [Fact]
         public virtual async Task UnassignedCasesReturnsCorrectCount()
         {
