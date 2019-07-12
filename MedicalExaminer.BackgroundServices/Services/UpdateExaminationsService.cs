@@ -47,12 +47,13 @@ namespace MedicalExaminer.BackgroundServices.Services
 
                 var examinationAuditStore = scope.ServiceProvider.GetRequiredService<ICosmosStore<AuditEntry<Examination>>>();
 
-                var examinations = examinationStore
+                var examinations = await examinationStore
                     .Query()
                     .Where(e => !e.CaseCompleted)
-                    .ToFeedResponse();
+                    .ToListAsync(cancellationToken);
 
-                var initialQueryCharge = examinations.RequestCharge;
+                // Tried ToFeedResponse above to get request charge but always comes back 0 anyway. Left as ListAsync for now.
+                var initialQueryCharge = 0; // examinations.RequestCharge;
 
                 var examinationAudits = new List<AuditEntry<Examination>>();
 
