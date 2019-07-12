@@ -15,6 +15,7 @@ namespace MedicalExaminer.Common.Queries.User
         public UserSessionUpdateOktaTokenQuery(MeUserSession user)
         {
             UserId = user.UserId;
+            OktaId = user.OktaId;
             OktaToken = user.OktaToken;
             OktaTokenExpiry = user.OktaTokenExpiry;
         }
@@ -23,6 +24,11 @@ namespace MedicalExaminer.Common.Queries.User
         /// User Id.
         /// </summary>
         public string UserId { get; }
+
+        /// <summary>
+        /// Okta Id.
+        /// </summary>
+        public string OktaId { get; }
 
         /// <summary>
         /// Okta Token.
