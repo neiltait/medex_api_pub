@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.PatientDetails;
@@ -11,7 +9,6 @@ using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
