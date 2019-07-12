@@ -109,6 +109,10 @@ namespace MedicalExaminer.API
 
             ConfigureQueries(services, cosmosDbSettings);
 
+            Mapper.Initialize(config => { config.AddMedicalExaminerProfiles(); });
+            Mapper.AssertConfigurationIsValid();
+            services.AddAutoMapper();
+
             ConfigureAuthentication(services, oktaSettings, cosmosDbSettings);
 
             ConfigureAuthorization(services);
@@ -133,9 +137,7 @@ namespace MedicalExaminer.API
             services.AddExaminationValidation();
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
 
-            Mapper.Initialize(config => { config.AddMedicalExaminerProfiles(); });
-            Mapper.AssertConfigurationIsValid();
-            services.AddAutoMapper();
+
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(options =>
@@ -325,6 +327,11 @@ namespace MedicalExaminer.API
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
+            services.AddSingleton<IUserSessionConnectionSettings>(s => new UserSessionConnectionSettings(
+                new Uri(cosmosDbSettings.URL),
+                cosmosDbSettings.PrimaryKey,
+                cosmosDbSettings.DatabaseId));
+
             // Examination services
             services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
             services
@@ -371,7 +378,7 @@ namespace MedicalExaminer.API
 
             // User session services
             services.AddScoped<IAsyncQueryHandler<UserSessionUpdateOktaTokenQuery, MeUserSession>, UserSessionUpdateOktaTokenService>();
-            services.AddScoped<IAsyncQueryHandler<UserSessionRetrievalByOktaTokenQuery, MeUserSession>, UserSessionRetrievalByOktaTokenService>();
+            services.AddScoped<IAsyncQueryHandler<UserSessionRetrievalByOktaIdQuery, MeUserSession>, UserSessionRetrievalByOktaIdService>();
 
             // Used for roles; but is being abused to pass null and get all users.
             services.AddScoped<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>, UsersRetrievalService>();
