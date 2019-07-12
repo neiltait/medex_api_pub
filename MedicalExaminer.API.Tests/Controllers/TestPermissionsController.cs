@@ -1421,7 +1421,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task UpdatePermission_ReturnsNotFound_WhenUserNotFound()
         {
             // Arrange
-            SetupAuthorize(AuthorizationResult.Failed());
+            SetupAuthorize(AuthorizationResult.Success());
 
             var expectedPermissionId = "expectedPermissionId";
             var expectedUserId = "expectedUserId";
@@ -1448,7 +1448,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task UpdatePermission_ReturnsNotFound_WhenPermissionNotFoundOnUser()
         {
             // Arrange
-            SetupAuthorize(AuthorizationResult.Failed());
+            SetupAuthorize(AuthorizationResult.Success());
 
             var expectedPermissionId = "expectedPermissionId";
             var expectedEmail = "expectedEmail";
