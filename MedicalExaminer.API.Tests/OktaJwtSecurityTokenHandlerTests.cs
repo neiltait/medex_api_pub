@@ -817,5 +817,252 @@ namespace MedicalExaminer.API.Tests
             _mockUserUpdateService
                 .Verify(service => service.Handle(It.IsAny<UserUpdateQuery>()), Times.Never);
         }
+
+        [Fact]
+        public void ValidateToken_ShouldReturnClaimsPrincipalAndBindUserAndSession_WhenValidTokenAndNoUserOrSessionExists_AndUserExistsWithSameEmail()
+        {
+            // Arrange
+            var expectedUserId = "userId";
+            var expectedOktaId = "oktaId";
+            var expectedToken = "expectedToken";
+            var expectedOriginalToken = "expectedOriginalToken";
+            var expectedValidatedToken = new Mock<SecurityToken>().Object;
+            var expectedTokenValidationParameters = new TokenValidationParameters();
+            var expectedIntrospectResponse = new IntrospectResponse
+            {
+                Active = true
+            };
+            var mockExpectedClaims = new Mock<ClaimsPrincipal>();
+            var claims = new List<Claim>();
+            var claim = new Claim(MEClaimTypes.OktaUserId, expectedOktaId);
+            claims.Add(claim);
+            mockExpectedClaims.Setup(cp => cp.Claims).Returns(claims);
+            var identities = new List<ClaimsIdentity>();
+            var identity = new ClaimsIdentity();
+            identities.Add(identity);
+            mockExpectedClaims.Setup(cp => cp.Identities).Returns(identities);
+
+            _mockTokenService
+                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
+                .Returns(Task.FromResult(expectedIntrospectResponse));
+
+            var expectedUser = new MeUser
+            {
+                UserId = expectedUserId,
+                Email = "oktaEmail",
+            };
+
+            var expectedOktaUser = new Mock<IUser>(MockBehavior.Strict);
+            expectedOktaUser.Setup(o => o.Id).Returns(expectedOktaId);
+            expectedOktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
+            expectedOktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
+            expectedOktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
+
+            var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
+
+            mockUsersClient
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
+                .Returns(Task.FromResult(expectedOktaUser.Object));
+
+            _mockOktaClient
+                .Setup(service => service.Users)
+                .Returns(mockUsersClient.Object);
+
+            _mockUserSessionRetrievalByOktaIdService
+                .Setup(service => service.Handle(It.IsAny<UserSessionRetrievalByOktaIdQuery>()))
+                .Returns(Task.FromResult((MeUserSession)null))
+                .Verifiable();
+
+            _mockUserRetrievalByOktaId
+                .Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
+                .Returns(Task.FromResult((MeUser)null));
+
+            _mockUserRetrievalByEmailService
+                .Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(expectedUser));
+
+            var expectedCreateUserResponse = new MeUser
+            {
+                UserId = "createUserId"
+            };
+
+            _mockUserCreationService
+                .Setup(service => service.Handle(It.IsAny<CreateUserQuery>()))
+                .Returns((CreateUserQuery query) => Task.FromResult(expectedCreateUserResponse))
+                .Verifiable();
+
+            _mockTokenValidator.Setup(stv =>
+                    stv.ValidateToken(
+                        expectedToken,
+                        expectedTokenValidationParameters,
+                        out expectedValidatedToken))
+                .Returns(mockExpectedClaims.Object);
+
+            _mockUserSessionUpdateOktaTokenService
+                .Setup(service => service.Handle(It.IsAny<UserSessionUpdateOktaTokenQuery>()))
+                .Returns((UserSessionUpdateOktaTokenQuery param) => Task.FromResult(new MeUserSession()
+                {
+                    UserId = param.UserId,
+                    OktaId = expectedOktaId,
+                    OktaToken = param.OktaToken,
+                    OktaTokenExpiry = param.OktaTokenExpiry,
+                }))
+                .Verifiable();
+            /*
+                        _mockUserRetrievalById
+                            .Setup(service => service.Handle(It.IsAny<UserRetrievalByIdQuery>()))
+                            .Returns(Task.FromResult(expectedUser));
+            */
+            _mockUserUpdateService
+                .Setup(service => service.Handle(It.IsAny<UserUpdateQuery>()))
+                .Returns((UserUpdateQuery query) =>
+                {
+                    var update = query.UserUpdate as UserUpdateFull;
+                    return Task.FromResult(new MeUser
+                    {
+                        UserId = query.UserUpdate.UserId,
+                        OktaId = update.OktaId,
+                        Email = update.Email,
+                        FirstName = update.FirstName,
+                        LastName = update.LastName,
+                    });
+                })
+                .Verifiable();
+
+            // Act
+            sut.ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken)
+                .Should().Be(mockExpectedClaims.Object);
+
+            // Assert
+            _mockTokenService
+                .Verify(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()));
+
+            _mockUserSessionUpdateOktaTokenService
+                .Verify(service => service.Handle(It.IsAny<UserSessionUpdateOktaTokenQuery>()));
+
+            _mockUserUpdateService
+                .Verify(service => service.Handle(It.IsAny<UserUpdateQuery>()), Times.Once);
+        }
+
+        [Fact]
+        public void ValidateToken_ShouldThrowException_WhenValidTokenAndNoUserOrSessionExists_AndUserExistsWithSameEmail_ButEmailIsAlreadyBound()
+        {
+            // Arrange
+            var expectedUserId = "userId";
+            var expectedOktaId = "oktaId";
+            var expectedToken = "expectedToken";
+            var expectedOriginalToken = "expectedOriginalToken";
+            var expectedValidatedToken = new Mock<SecurityToken>().Object;
+            var expectedTokenValidationParameters = new TokenValidationParameters();
+            var expectedIntrospectResponse = new IntrospectResponse
+            {
+                Active = true
+            };
+            var mockExpectedClaims = new Mock<ClaimsPrincipal>();
+            var claims = new List<Claim>();
+            var claim = new Claim(MEClaimTypes.OktaUserId, expectedOktaId);
+            claims.Add(claim);
+            mockExpectedClaims.Setup(cp => cp.Claims).Returns(claims);
+            var identities = new List<ClaimsIdentity>();
+            var identity = new ClaimsIdentity();
+            identities.Add(identity);
+            mockExpectedClaims.Setup(cp => cp.Identities).Returns(identities);
+
+            _mockTokenService
+                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
+                .Returns(Task.FromResult(expectedIntrospectResponse));
+
+            var expectedUser = new MeUser
+            {
+                UserId = expectedUserId,
+                OktaId = expectedOktaId,
+                Email = "oktaEmail",
+            };
+
+            var expectedOktaUser = new Mock<IUser>(MockBehavior.Strict);
+            expectedOktaUser.Setup(o => o.Id).Returns(expectedOktaId);
+            expectedOktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
+            expectedOktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
+            expectedOktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
+
+            var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
+
+            mockUsersClient
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
+                .Returns(Task.FromResult(expectedOktaUser.Object));
+
+            _mockOktaClient
+                .Setup(service => service.Users)
+                .Returns(mockUsersClient.Object);
+
+            _mockUserSessionRetrievalByOktaIdService
+                .Setup(service => service.Handle(It.IsAny<UserSessionRetrievalByOktaIdQuery>()))
+                .Returns(Task.FromResult((MeUserSession)null))
+                .Verifiable();
+
+            _mockUserRetrievalByOktaId
+                .Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
+                .Returns(Task.FromResult((MeUser)null));
+
+            _mockUserRetrievalByEmailService
+                .Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
+                .Returns(Task.FromResult(expectedUser));
+
+            var expectedCreateUserResponse = new MeUser
+            {
+                UserId = "createUserId"
+            };
+
+            _mockUserCreationService
+                .Setup(service => service.Handle(It.IsAny<CreateUserQuery>()))
+                .Returns((CreateUserQuery query) => Task.FromResult(expectedCreateUserResponse))
+                .Verifiable();
+
+            _mockTokenValidator.Setup(stv =>
+                    stv.ValidateToken(
+                        expectedToken,
+                        expectedTokenValidationParameters,
+                        out expectedValidatedToken))
+                .Returns(mockExpectedClaims.Object);
+
+            _mockUserSessionUpdateOktaTokenService
+                .Setup(service => service.Handle(It.IsAny<UserSessionUpdateOktaTokenQuery>()))
+                .Returns((UserSessionUpdateOktaTokenQuery param) => Task.FromResult(new MeUserSession()
+                {
+                    UserId = param.UserId,
+                    OktaId = expectedOktaId,
+                    OktaToken = param.OktaToken,
+                    OktaTokenExpiry = param.OktaTokenExpiry,
+                }))
+                .Verifiable();
+            /*
+                        _mockUserRetrievalById
+                            .Setup(service => service.Handle(It.IsAny<UserRetrievalByIdQuery>()))
+                            .Returns(Task.FromResult(expectedUser));
+            */
+        /*    _mockUserUpdateService
+                .Setup(service => service.Handle(It.IsAny<UserUpdateQuery>()))
+                .Returns((UserUpdateQuery query) =>
+                {
+                    var update = query.UserUpdate as UserUpdateFull;
+                    return Task.FromResult(new MeUser
+                    {
+                        UserId = query.UserUpdate.UserId,
+                        OktaId = update.OktaId,
+                        Email = update.Email,
+                        FirstName = update.FirstName,
+                        LastName = update.LastName,
+                    });
+                })
+                .Verifiable();*/
+
+            // Act
+            Action action = () => sut
+                .ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken)
+                .Should().Be(mockExpectedClaims.Object);
+
+            // Assert
+            action.Should().Throw<Exception>();
+        }
     }
 }
