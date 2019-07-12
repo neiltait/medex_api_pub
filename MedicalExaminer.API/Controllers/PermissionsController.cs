@@ -241,7 +241,7 @@ namespace MedicalExaminer.API.Controllers
                 {
                     if (usersPermissions.IsSame(permission))
                     {
-                        return BadRequest();
+                        return Conflict();
                     }
                 }
 
@@ -333,7 +333,7 @@ namespace MedicalExaminer.API.Controllers
                 {
                     if (usersPermissions.IsSame(permissionToUpdate))  // should be permission???
                     {
-                        return BadRequest();
+                        return Conflict();
                     }
                 }
 
