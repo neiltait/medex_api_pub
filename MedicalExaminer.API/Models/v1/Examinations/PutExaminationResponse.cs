@@ -3,7 +3,7 @@
     /// <summary>
     ///     The response object when a new case is added
     /// </summary>
-    public class PutExaminationResponse : ResponseBase
+    public class PutExaminationResponse : ResponseBaseEnumErrors
     {
         /// <summary>
         ///     The id of the new case

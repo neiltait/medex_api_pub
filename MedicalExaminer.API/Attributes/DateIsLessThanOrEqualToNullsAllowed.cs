@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MedicalExaminer.API.Models.v1;
+using MedicalExaminer.Models.Enums;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace MedicalExaminer.API.Attributes
@@ -41,7 +43,7 @@ namespace MedicalExaminer.API.Attributes
             }
             catch (Exception)
             {
-                return new ValidationResult($"Incorrect Format for {context.DisplayName}");
+                return new ValidationResultEnumCodes(SystemValidationErrors.InvalidFormat);
             }
 
             try
@@ -56,16 +58,16 @@ namespace MedicalExaminer.API.Attributes
             }
             catch (NullReferenceException)
             {
-                return new ValidationResult($"Unable to find the end date field {endDateField} on the object");
+                return new ValidationResultEnumCodes(SystemValidationErrors.EndDateNotFound);
             }
             catch (Exception ex)
             {
                 var e = ex;
-                return new ValidationResult($"Incorrect Format for {context.DisplayName}");
+                return new ValidationResultEnumCodes(SystemValidationErrors.InvalidFormat);
             }
 
             return endDate < startDate
-                ? new ValidationResult("The patient cannot have died before they were born")
+                ? new ValidationResultEnumCodes(SystemValidationErrors.EndDateBeforeStartDate)
                 : ValidationResult.Success;
         }
     }

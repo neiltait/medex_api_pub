@@ -380,6 +380,8 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<UserSessionUpdateOktaTokenQuery, MeUserSession>, UserSessionUpdateOktaTokenService>();
             services.AddScoped<IAsyncQueryHandler<UserSessionRetrievalByOktaIdQuery, MeUserSession>, UserSessionRetrievalByOktaIdService>();
 
+            
+            services.AddScoped<IAsyncQueryHandler<ExaminationByNhsNumberRetrievalQuery, Examination>, ExaminationByNhsNumberRetrievalService>();
             // Used for roles; but is being abused to pass null and get all users.
             services.AddScoped<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>, UsersRetrievalService>();
             services

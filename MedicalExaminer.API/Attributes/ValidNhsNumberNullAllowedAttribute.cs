@@ -1,7 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
+using MedicalExaminer.API.Models.v1;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Attributes
 {
@@ -12,7 +13,7 @@ namespace MedicalExaminer.API.Attributes
     public class ValidNhsNumberNullAllowedAttribute : ValidationAttribute
     {
         private readonly int[] factors = { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
-        private readonly string oldWelshNhsNumber = "^[a-zA-Z0-9]{10,13}$";
+        private readonly string oldWelshNhsNumber = "^[a-zA-Z0-9]{10,17}$";
         /// <summary>
         /// Executes the validation.
         /// </summary>
@@ -26,9 +27,17 @@ namespace MedicalExaminer.API.Attributes
                 return ValidationResult.Success;
             }
 
-            nhsNumber = nhsNumber.Replace(" ", string.Empty);
-            nhsNumber = nhsNumber.Replace("-", string.Empty);
+            if(nhsNumber.Contains(" "))
+            {
+                return new ValidationResultEnumCodes(SystemValidationErrors.ContainsWhitespace);
 
+            }
+
+            if (nhsNumber.Contains("-"))
+            {
+                return new ValidationResultEnumCodes(SystemValidationErrors.ContainsInvalidCharacters);
+            }
+            
             if (CheckStandardNhsNumber(nhsNumber))
             {
                 return ValidationResult.Success;
@@ -39,7 +48,7 @@ namespace MedicalExaminer.API.Attributes
                 return ValidationResult.Success;
             }
 
-            return new ValidationResult("Invalid NHS Number");
+            return new ValidationResultEnumCodes(SystemValidationErrors.Invalid);
         }
 
         private bool CheckOldWelshNhsNumber(string nhsNumber)

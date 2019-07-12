@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.API.Attributes;
 using MedicalExaminer.API.Models.v1.Examinations;
+using MedicalExaminer.Models.Enums;
 using Moq;
 using Xunit;
 
@@ -24,7 +25,7 @@ namespace MedicalExaminer.API.Tests.Attributes
             var serviceProvider = new Mock<IServiceProvider>().Object;
             var validationContext = new ValidationContext(serviceProvider);
 
-            var expectedError = $"Unable to find the end date field {endDateField} on the object";
+            var expectedError = nameof(SystemValidationErrors.EndDateNotFound);
             var sut = new DateIsLessThanOrEqualToNullsAllowed(endDateField);
             // Act
             var result = sut.GetValidationResult(startDate, validationContext);
@@ -82,7 +83,7 @@ namespace MedicalExaminer.API.Tests.Attributes
                 DateOfDeath = endDate
             };
             var validationContext = new ValidationContext(postRequest, serviceProvider, GetItemsDictionary());
-            var expectedResult = "The patient cannot have died before they were born";
+            var expectedResult = nameof(SystemValidationErrors.EndDateBeforeStartDate);
             var sut = new DateIsLessThanOrEqualToNullsAllowed(endDateField);
             // Act
             var result = sut.GetValidationResult(startDate, validationContext);

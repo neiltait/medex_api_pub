@@ -206,6 +206,16 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Returns all Case Statuses
+        /// </summary>
+        /// <returns>Dictionary of Case Statuses</returns>
+        [HttpGet("system_validation_errors")]
+        public ActionResult GetSystemValidationErrors()
+        {
+            return Ok(GetDictionary(typeof(SystemValidationErrors)));
+        }
+
+        /// <summary>
         /// Get Dictionary.
         /// </summary>
         /// <param name="enumeratorType">Type.</param>

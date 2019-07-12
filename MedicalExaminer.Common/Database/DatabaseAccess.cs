@@ -151,7 +151,8 @@ namespace MedicalExaminer.Common.Database
 
         public async Task<IEnumerable<T>> GetItemsAsync<T>(
             IConnectionSettings connectionSettings,
-            Expression<Func<T, bool>> predicate)
+            Expression<Func<T, bool>> predicate,
+            Expression<Func<T, dynamic>> select)
             where T : class
         {
             var client = GetClient(connectionSettings);
@@ -161,6 +162,33 @@ namespace MedicalExaminer.Common.Database
                         connectionSettings.DatabaseId,
                         connectionSettings.Collection),
                     new FeedOptions {MaxItemCount = -1})
+                .Where(predicate)
+                .Select(select)
+                .AsDocumentQuery();
+
+            var results = new List<T>();
+            while (query.HasMoreResults)
+            {
+                var response = await query.ExecuteNextAsync<T>();
+
+                results.AddRange(response);
+            }
+
+            return results;
+        }
+
+        public async Task<IEnumerable<T>> GetItemsAsync<T>(
+            IConnectionSettings connectionSettings,
+            Expression<Func<T, bool>> predicate)
+            where T : class
+        {
+            var client = GetClient(connectionSettings);
+
+            var query = client.CreateDocumentQuery<T>(
+                    UriFactory.CreateDocumentCollectionUri(
+                        connectionSettings.DatabaseId,
+                        connectionSettings.Collection),
+                    new FeedOptions { MaxItemCount = -1 })
                 .Where(predicate)
                 .AsDocumentQuery();
 
