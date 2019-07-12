@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
-using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.API.Authorization;
@@ -14,7 +13,6 @@ using MedicalExaminer.Models;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 using Okta.Sdk;
-using Okta.Sdk.Configuration;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests
@@ -37,7 +35,7 @@ namespace MedicalExaminer.API.Tests
         private readonly Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>> _mockUserCreationService;
         private readonly Mock<IOktaClient> _mockOktaClient;
 
-        private readonly OktaJwtSecurityTokenHandler sut;
+        private readonly OktaJwtSecurityTokenHandler _sut;
 
         public OktaJwtSecurityTokenHandlerTests()
         {
@@ -52,7 +50,7 @@ namespace MedicalExaminer.API.Tests
             _mockUserCreationService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>(MockBehavior.Strict);
             _mockOktaClient = new Mock<IOktaClient>();
 
-            sut = new OktaJwtSecurityTokenHandler(
+            _sut = new OktaJwtSecurityTokenHandler(
                 _mockTokenService.Object,
                 _mockTokenValidator.Object,
                 _mockUserSessionUpdateOktaTokenService.Object,
@@ -73,69 +71,65 @@ namespace MedicalExaminer.API.Tests
                 .Setup(stv => stv.CanReadToken(It.IsAny<string>()))
                 .Returns(true);
 
-            sut.CanReadToken(It.IsAny<string>()).Should().BeTrue();
+            _sut.CanReadToken(It.IsAny<string>()).Should().BeTrue();
         }
 
         [Fact]
         public void CanValidateToken_ShouldReturnTrue()
         {
-            sut.CanValidateToken.Should().BeTrue();
+            _sut.CanValidateToken.Should().BeTrue();
         }
 
         [Fact]
         public void MaximumTokenSizeInBytesGet_ShouldReturnDefault()
         {
-            sut.MaximumTokenSizeInBytes.Should().Be(TokenValidationParameters.DefaultMaximumTokenSizeInBytes);
+            _sut.MaximumTokenSizeInBytes.Should().Be(TokenValidationParameters.DefaultMaximumTokenSizeInBytes);
         }
 
         [Fact]
         public void MaximumTokenSizeInBytesSet_ShouldThrowException()
         {
-            Action act = () => sut.MaximumTokenSizeInBytes = 23;
+            Action act = () => _sut.MaximumTokenSizeInBytes = 23;
             act.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
         public void ValidateToken_ShouldThrowException_WhenClaimsPrincipalNull()
         {
-            var expectedUserId = "userId";
-            var expectedOktaId = "oktaId";
-            var expectedToken = "expectedToken";
-            var expectedValidatedToken = new Mock<SecurityToken>().Object;
-            var expectedTokenValidationParameters = new TokenValidationParameters();
-            var expectedIntrospectResponse = new IntrospectResponse
+            var token = "expectedToken";
+            var validatedToken = new Mock<SecurityToken>().Object;
+            var tokenValidationParameters = new TokenValidationParameters();
+            var introspectResponse = new IntrospectResponse
             {
                 Active = false
             };
 
             _mockTokenService
-                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
-                .Returns(Task.FromResult(expectedIntrospectResponse));
+                .Setup(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()))
+                .Returns(Task.FromResult(introspectResponse));
 
             _mockTokenValidator.Setup(stv =>
                     stv.ValidateToken(
-                        expectedToken,
-                        expectedTokenValidationParameters,
-                        out expectedValidatedToken))
+                        token,
+                        tokenValidationParameters,
+                        out validatedToken))
                 .Returns((ClaimsPrincipal)null);
 
-            Action action = () => sut
-                .ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken);
+            Action action = () => _sut
+                .ValidateToken(token, tokenValidationParameters, out validatedToken);
 
             action.Should().Throw<SecurityTokenValidationException>();
 
-            expectedValidatedToken.Should().BeNull();
+            validatedToken.Should().BeNull();
         }
 
         [Fact]
         public void ValidateToken_ShouldThrowException_WhenClaimsPrincipalMissingOktaId()
         {
-            var expectedUserId = "userId";
-            var expectedOktaId = "oktaId";
-            var expectedToken = "expectedToken";
-            var expectedValidatedToken = new Mock<SecurityToken>().Object;
-            var expectedTokenValidationParameters = new TokenValidationParameters();
-            var expectedIntrospectResponse = new IntrospectResponse
+            var token = "expectedToken";
+            var validatedToken = new Mock<SecurityToken>().Object;
+            var tokenValidationParameters = new TokenValidationParameters();
+            var introspectResponse = new IntrospectResponse
             {
                 Active = false
             };
@@ -148,39 +142,39 @@ namespace MedicalExaminer.API.Tests
                 .Returns(Enumerable.Empty<ClaimsIdentity>());
 
             _mockTokenService
-                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
-                .Returns(Task.FromResult(expectedIntrospectResponse));
+                .Setup(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()))
+                .Returns(Task.FromResult(introspectResponse));
 
             _mockTokenValidator.Setup(stv =>
                     stv.ValidateToken(
-                        expectedToken,
-                        expectedTokenValidationParameters,
-                        out expectedValidatedToken))
+                        token,
+                        tokenValidationParameters,
+                        out validatedToken))
                 .Returns(mockExpectedClaims.Object);
 
-            Action action = () => sut
-                .ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken);
+            Action action = () => _sut
+                .ValidateToken(token, tokenValidationParameters, out validatedToken);
 
             action.Should().Throw<SecurityTokenValidationException>();
 
-            expectedValidatedToken.Should().BeNull();
+            validatedToken.Should().BeNull();
         }
 
         [Fact]
         public void ValidateToken_ShouldReturnClaimsPrincipal_WhenValidTokenPassedAndIntrospectResponseIsActive()
         {
-            var expectedUserId = "userId";
-            var expectedOktaId = "oktaId";
-            var expectedToken = "expectedToken";
-            var expectedValidatedToken = new Mock<SecurityToken>().Object;
-            var expectedTokenValidationParameters = new TokenValidationParameters();
-            var expectedIntrospectResponse = new IntrospectResponse
+            var userId = "userId";
+            var oktaId = "oktaId";
+            var token = "expectedToken";
+            var validatedToken = new Mock<SecurityToken>().Object;
+            var tokenValidationParameters = new TokenValidationParameters();
+            var introspectResponse = new IntrospectResponse
             {
                 Active = true
             };
             var mockExpectedClaims = new Mock<ClaimsPrincipal>();
             var claims = new List<Claim>();
-            var claim = new Claim(MEClaimTypes.OktaUserId, expectedOktaId);
+            var claim = new Claim(MEClaimTypes.OktaUserId, oktaId);
             claims.Add(claim);
             mockExpectedClaims.Setup(cp => cp.Claims).Returns(claims);
             var identities = new List<ClaimsIdentity>();
@@ -189,27 +183,27 @@ namespace MedicalExaminer.API.Tests
             mockExpectedClaims.Setup(cp => cp.Identities).Returns(identities);
 
             _mockTokenService
-                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
-                .Returns(Task.FromResult(expectedIntrospectResponse));
+                .Setup(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()))
+                .Returns(Task.FromResult(introspectResponse));
 
-            var expectedSession = new MeUserSession
+            var session = new MeUserSession
             {
-                UserId = expectedUserId,
-                OktaId = expectedOktaId,
-                OktaToken = expectedToken,
+                UserId = userId,
+                OktaId = oktaId,
+                OktaToken = token,
                 OktaTokenExpiry = DateTimeOffset.Now.AddDays(-1),
             };
 
             _mockUserSessionRetrievalByOktaIdService
                 .Setup(service => service.Handle(It.IsAny<UserSessionRetrievalByOktaIdQuery>()))
-                .Returns(Task.FromResult(expectedSession))
+                .Returns(Task.FromResult(session))
                 .Verifiable();
 
             _mockTokenValidator.Setup(stv =>
                     stv.ValidateToken(
-                        expectedToken,
-                        expectedTokenValidationParameters,
-                        out expectedValidatedToken))
+                        token,
+                        tokenValidationParameters,
+                        out validatedToken))
                 .Returns(mockExpectedClaims.Object);
 
             _mockUserSessionUpdateOktaTokenService
@@ -217,17 +211,17 @@ namespace MedicalExaminer.API.Tests
                 .Returns((UserSessionUpdateOktaTokenQuery param) => Task.FromResult(new MeUserSession()
                 {
                     UserId = param.UserId,
-                    OktaId = expectedSession.OktaId,
+                    OktaId = session.OktaId,
                     OktaToken = param.OktaToken,
                     OktaTokenExpiry = param.OktaTokenExpiry,
                 }))
                 .Verifiable();
 
-            sut.ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken)
+            _sut.ValidateToken(token, tokenValidationParameters, out validatedToken)
                 .Should().Be(mockExpectedClaims.Object);
 
             _mockTokenService
-                .Verify(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()));
+                .Verify(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()));
 
             _mockUserSessionUpdateOktaTokenService
                 .Verify(service => service.Handle(It.IsAny<UserSessionUpdateOktaTokenQuery>()));
@@ -236,18 +230,17 @@ namespace MedicalExaminer.API.Tests
         [Fact]
         public void ValidateToken_ShouldThrowException_WhenIntrospectResponseIsNotActive()
         {
-            var expectedUserId = "userId";
-            var expectedOktaId = "oktaId";
-            var expectedToken = "expectedToken";
-            var expectedValidatedToken = new Mock<SecurityToken>().Object;
-            var expectedTokenValidationParameters = new TokenValidationParameters();
-            var expectedIntrospectResponse = new IntrospectResponse
+            var oktaId = "oktaId";
+            var token = "expectedToken";
+            var validatedToken = new Mock<SecurityToken>().Object;
+            var tokenValidationParameters = new TokenValidationParameters();
+            var introspectResponse = new IntrospectResponse
             {
                 Active = false
             };
             var mockExpectedClaims = new Mock<ClaimsPrincipal>();
             var claims = new List<Claim>();
-            var claim = new Claim(MEClaimTypes.OktaUserId, expectedOktaId);
+            var claim = new Claim(MEClaimTypes.OktaUserId, oktaId);
             claims.Add(claim);
             mockExpectedClaims.Setup(cp => cp.Claims).Returns(claims);
             var identities = new List<ClaimsIdentity>();
@@ -261,42 +254,42 @@ namespace MedicalExaminer.API.Tests
                 .Verifiable();
 
             _mockTokenService
-                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
-                .Returns(Task.FromResult(expectedIntrospectResponse));
+                .Setup(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()))
+                .Returns(Task.FromResult(introspectResponse));
 
             _mockTokenValidator.Setup(stv =>
                     stv.ValidateToken(
-                        expectedToken,
-                        expectedTokenValidationParameters,
-                        out expectedValidatedToken))
+                        token,
+                        tokenValidationParameters,
+                        out validatedToken))
                 .Returns(mockExpectedClaims.Object);
 
-            Action action = () => sut
-                .ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken)
+            Action action = () => _sut
+                .ValidateToken(token, tokenValidationParameters, out validatedToken)
                 .Should().Be(mockExpectedClaims.Object);
 
             action.Should().Throw<SecurityTokenValidationException>();
 
-            expectedValidatedToken.Should().BeNull();
+            validatedToken.Should().BeNull();
         }
 
         [Fact]
         public void ValidateToken_ShouldReturnClaimsPrincipalAndUpdateUserInfo_WhenValidTokenChanged()
         {
             // Arrange
-            var expectedUserId = "userId";
-            var expectedOktaId = "oktaId";
-            var expectedToken = "expectedToken";
-            var expectedOriginalToken = "expectedOriginalToken";
-            var expectedValidatedToken = new Mock<SecurityToken>().Object;
-            var expectedTokenValidationParameters = new TokenValidationParameters();
-            var expectedIntrospectResponse = new IntrospectResponse
+            var userId = "userId";
+            var oktaId = "oktaId";
+            var token = "expectedToken";
+            var originalToken = "expectedOriginalToken";
+            var validatedToken = new Mock<SecurityToken>().Object;
+            var tokenValidationParameters = new TokenValidationParameters();
+            var introspectResponse = new IntrospectResponse
             {
                 Active = true
             };
             var mockExpectedClaims = new Mock<ClaimsPrincipal>();
             var claims = new List<Claim>();
-            var claim = new Claim(MEClaimTypes.OktaUserId, expectedOktaId);
+            var claim = new Claim(MEClaimTypes.OktaUserId, oktaId);
             claims.Add(claim);
             mockExpectedClaims.Setup(cp => cp.Claims).Returns(claims);
             var identities = new List<ClaimsIdentity>();
@@ -305,35 +298,35 @@ namespace MedicalExaminer.API.Tests
             mockExpectedClaims.Setup(cp => cp.Identities).Returns(identities);
 
             _mockTokenService
-                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
-                .Returns(Task.FromResult(expectedIntrospectResponse));
+                .Setup(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()))
+                .Returns(Task.FromResult(introspectResponse));
 
-            var expectedSession = new MeUserSession
+            var session = new MeUserSession
             {
-                UserId = expectedUserId,
-                OktaId = expectedOktaId,
-                OktaToken = expectedOriginalToken,
+                UserId = userId,
+                OktaId = oktaId,
+                OktaToken = originalToken,
                 OktaTokenExpiry = DateTimeOffset.Now.AddDays(-1),
             };
 
-            var expectedUser = new MeUser
+            var user = new MeUser
             {
-                UserId = expectedUserId,
+                UserId = userId,
                 FirstName = "currentFirstName",
                 LastName = "currentLastName",
                 Email = "currentEmail",
             };
 
-            var expectedOktaUser = new Mock<IUser>(MockBehavior.Strict);
-            expectedOktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
-            expectedOktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
-            expectedOktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
+            var oktaUser = new Mock<IUser>(MockBehavior.Strict);
+            oktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
+            oktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
+            oktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
 
             var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
 
             mockUsersClient
-                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
-                .Returns(Task.FromResult(expectedOktaUser.Object));
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default))
+                .Returns(Task.FromResult(oktaUser.Object));
 
             _mockOktaClient
                 .Setup(service => service.Users)
@@ -341,14 +334,14 @@ namespace MedicalExaminer.API.Tests
 
             _mockUserSessionRetrievalByOktaIdService
                 .Setup(service => service.Handle(It.IsAny<UserSessionRetrievalByOktaIdQuery>()))
-                .Returns(Task.FromResult(expectedSession))
+                .Returns(Task.FromResult(session))
                 .Verifiable();
 
             _mockTokenValidator.Setup(stv =>
                     stv.ValidateToken(
-                        expectedToken,
-                        expectedTokenValidationParameters,
-                        out expectedValidatedToken))
+                        token,
+                        tokenValidationParameters,
+                        out validatedToken))
                 .Returns(mockExpectedClaims.Object);
 
             _mockUserSessionUpdateOktaTokenService
@@ -356,7 +349,7 @@ namespace MedicalExaminer.API.Tests
                 .Returns((UserSessionUpdateOktaTokenQuery param) => Task.FromResult(new MeUserSession()
                 {
                     UserId = param.UserId,
-                    OktaId = expectedSession.OktaId,
+                    OktaId = session.OktaId,
                     OktaToken = param.OktaToken,
                     OktaTokenExpiry = param.OktaTokenExpiry,
                 }))
@@ -364,7 +357,7 @@ namespace MedicalExaminer.API.Tests
 
             _mockUserRetrievalById
                 .Setup(service => service.Handle(It.IsAny<UserRetrievalByIdQuery>()))
-                .Returns(Task.FromResult(expectedUser));
+                .Returns(Task.FromResult(user));
 
             _mockUserUpdateService
                 .Setup(service => service.Handle(It.IsAny<UserUpdateQuery>()))
@@ -375,12 +368,12 @@ namespace MedicalExaminer.API.Tests
                 .Verifiable();
 
             // Act
-            sut.ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken)
+            _sut.ValidateToken(token, tokenValidationParameters, out validatedToken)
                 .Should().Be(mockExpectedClaims.Object);
 
             // Assert
             _mockTokenService
-                .Verify(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()));
+                .Verify(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()));
 
             _mockUserSessionUpdateOktaTokenService
                 .Verify(service => service.Handle(It.IsAny<UserSessionUpdateOktaTokenQuery>()));
@@ -390,22 +383,22 @@ namespace MedicalExaminer.API.Tests
         }
 
         [Fact]
-        public void ValidateToken_ShouldThrowException_WhenValidTokenChangedButUserDoesntExist()
+        public void ValidateToken_ShouldThrowException_WhenValidTokenChangedButUserDoesNotExist()
         {
             // Arrange
-            var expectedUserId = "userId";
-            var expectedOktaId = "oktaId";
-            var expectedToken = "expectedToken";
-            var expectedOriginalToken = "expectedOriginalToken";
-            var expectedValidatedToken = new Mock<SecurityToken>().Object;
-            var expectedTokenValidationParameters = new TokenValidationParameters();
-            var expectedIntrospectResponse = new IntrospectResponse
+            var userId = "userId";
+            var oktaId = "oktaId";
+            var token = "expectedToken";
+            var originalToken = "expectedOriginalToken";
+            var validatedToken = new Mock<SecurityToken>().Object;
+            var tokenValidationParameters = new TokenValidationParameters();
+            var introspectResponse = new IntrospectResponse
             {
                 Active = true
             };
             var mockExpectedClaims = new Mock<ClaimsPrincipal>();
             var claims = new List<Claim>();
-            var claim = new Claim(MEClaimTypes.OktaUserId, expectedOktaId);
+            var claim = new Claim(MEClaimTypes.OktaUserId, oktaId);
             claims.Add(claim);
             mockExpectedClaims.Setup(cp => cp.Claims).Returns(claims);
             var identities = new List<ClaimsIdentity>();
@@ -414,35 +407,27 @@ namespace MedicalExaminer.API.Tests
             mockExpectedClaims.Setup(cp => cp.Identities).Returns(identities);
 
             _mockTokenService
-                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
-                .Returns(Task.FromResult(expectedIntrospectResponse));
+                .Setup(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()))
+                .Returns(Task.FromResult(introspectResponse));
 
-            var expectedSession = new MeUserSession
+            var session = new MeUserSession
             {
-                UserId = expectedUserId,
-                OktaId = expectedOktaId,
-                OktaToken = expectedOriginalToken,
+                UserId = userId,
+                OktaId = oktaId,
+                OktaToken = originalToken,
                 OktaTokenExpiry = DateTimeOffset.Now.AddDays(-1),
             };
 
-            var expectedUser = new MeUser
-            {
-                UserId = expectedUserId,
-                FirstName = "oktaFirstName",
-                LastName = "oktaLastName",
-                Email = "oktaEmail",
-            };
-
-            var expectedOktaUser = new Mock<IUser>(MockBehavior.Strict);
-            expectedOktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
-            expectedOktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
-            expectedOktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
+            var oktaUser = new Mock<IUser>(MockBehavior.Strict);
+            oktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
+            oktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
+            oktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
 
             var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
 
             mockUsersClient
-                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
-                .Returns(Task.FromResult(expectedOktaUser.Object));
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default))
+                .Returns(Task.FromResult(oktaUser.Object));
 
             _mockOktaClient
                 .Setup(service => service.Users)
@@ -450,14 +435,14 @@ namespace MedicalExaminer.API.Tests
 
             _mockUserSessionRetrievalByOktaIdService
                 .Setup(service => service.Handle(It.IsAny<UserSessionRetrievalByOktaIdQuery>()))
-                .Returns(Task.FromResult(expectedSession))
+                .Returns(Task.FromResult(session))
                 .Verifiable();
 
             _mockTokenValidator.Setup(stv =>
                     stv.ValidateToken(
-                        expectedToken,
-                        expectedTokenValidationParameters,
-                        out expectedValidatedToken))
+                        token,
+                        tokenValidationParameters,
+                        out validatedToken))
                 .Returns(mockExpectedClaims.Object);
 
             _mockUserSessionUpdateOktaTokenService
@@ -465,7 +450,7 @@ namespace MedicalExaminer.API.Tests
                 .Returns((UserSessionUpdateOktaTokenQuery param) => Task.FromResult(new MeUserSession()
                 {
                     UserId = param.UserId,
-                    OktaId = expectedSession.OktaId,
+                    OktaId = session.OktaId,
                     OktaToken = param.OktaToken,
                     OktaTokenExpiry = param.OktaTokenExpiry,
                 }))
@@ -480,8 +465,8 @@ namespace MedicalExaminer.API.Tests
                 .Verifiable();
 
             // Act
-            Action action = () => sut
-                .ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken)
+            Action action = () => _sut
+                .ValidateToken(token, tokenValidationParameters, out validatedToken)
                 .Should().Be(mockExpectedClaims.Object);
 
             // Assert
@@ -492,19 +477,19 @@ namespace MedicalExaminer.API.Tests
         public void ValidateToken_ShouldReturnClaimsPrincipalAndNotUpdateUserInfo_WhenValidTokenChangedButUserInfoAlreadyUpToDate()
         {
             // Arrange
-            var expectedUserId = "userId";
-            var expectedOktaId = "oktaId";
-            var expectedToken = "expectedToken";
-            var expectedOriginalToken = "expectedOriginalToken";
-            var expectedValidatedToken = new Mock<SecurityToken>().Object;
-            var expectedTokenValidationParameters = new TokenValidationParameters();
-            var expectedIntrospectResponse = new IntrospectResponse
+            var userId = "userId";
+            var oktaId = "oktaId";
+            var token = "expectedToken";
+            var originalToken = "expectedOriginalToken";
+            var validatedToken = new Mock<SecurityToken>().Object;
+            var tokenValidationParameters = new TokenValidationParameters();
+            var introspectResponse = new IntrospectResponse
             {
                 Active = true
             };
             var mockExpectedClaims = new Mock<ClaimsPrincipal>();
             var claims = new List<Claim>();
-            var claim = new Claim(MEClaimTypes.OktaUserId, expectedOktaId);
+            var claim = new Claim(MEClaimTypes.OktaUserId, oktaId);
             claims.Add(claim);
             mockExpectedClaims.Setup(cp => cp.Claims).Returns(claims);
             var identities = new List<ClaimsIdentity>();
@@ -513,35 +498,35 @@ namespace MedicalExaminer.API.Tests
             mockExpectedClaims.Setup(cp => cp.Identities).Returns(identities);
 
             _mockTokenService
-                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
-                .Returns(Task.FromResult(expectedIntrospectResponse));
+                .Setup(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()))
+                .Returns(Task.FromResult(introspectResponse));
 
-            var expectedSession = new MeUserSession
+            var session = new MeUserSession
             {
-                UserId = expectedUserId,
-                OktaId = expectedOktaId,
-                OktaToken = expectedOriginalToken,
+                UserId = userId,
+                OktaId = oktaId,
+                OktaToken = originalToken,
                 OktaTokenExpiry = DateTimeOffset.Now.AddDays(-1),
             };
 
-            var expectedUser = new MeUser
+            var user = new MeUser
             {
-                UserId = expectedUserId,
+                UserId = userId,
                 FirstName = "oktaFirstName",
                 LastName = "oktaLastName",
                 Email = "oktaEmail",
             };
 
-            var expectedOktaUser = new Mock<IUser>(MockBehavior.Strict);
-            expectedOktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
-            expectedOktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
-            expectedOktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
+            var oktaUser = new Mock<IUser>(MockBehavior.Strict);
+            oktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
+            oktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
+            oktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
 
             var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
 
             mockUsersClient
-                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
-                .Returns(Task.FromResult(expectedOktaUser.Object));
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default))
+                .Returns(Task.FromResult(oktaUser.Object));
 
             _mockOktaClient
                 .Setup(service => service.Users)
@@ -549,14 +534,14 @@ namespace MedicalExaminer.API.Tests
 
             _mockUserSessionRetrievalByOktaIdService
                 .Setup(service => service.Handle(It.IsAny<UserSessionRetrievalByOktaIdQuery>()))
-                .Returns(Task.FromResult(expectedSession))
+                .Returns(Task.FromResult(session))
                 .Verifiable();
 
             _mockTokenValidator.Setup(stv =>
                     stv.ValidateToken(
-                        expectedToken,
-                        expectedTokenValidationParameters,
-                        out expectedValidatedToken))
+                        token,
+                        tokenValidationParameters,
+                        out validatedToken))
                 .Returns(mockExpectedClaims.Object);
 
             _mockUserSessionUpdateOktaTokenService
@@ -564,7 +549,7 @@ namespace MedicalExaminer.API.Tests
                 .Returns((UserSessionUpdateOktaTokenQuery param) => Task.FromResult(new MeUserSession()
                 {
                     UserId = param.UserId,
-                    OktaId = expectedSession.OktaId,
+                    OktaId = session.OktaId,
                     OktaToken = param.OktaToken,
                     OktaTokenExpiry = param.OktaTokenExpiry,
                 }))
@@ -572,19 +557,19 @@ namespace MedicalExaminer.API.Tests
 
             _mockUserRetrievalById
                 .Setup(service => service.Handle(It.IsAny<UserRetrievalByIdQuery>()))
-                .Returns(Task.FromResult(expectedUser));
+                .Returns(Task.FromResult(user));
 
             _mockUserUpdateService
                 .Setup(service => service.Handle(It.IsAny<UserUpdateQuery>()))
                 .Verifiable();
 
             // Act
-            sut.ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken)
+            _sut.ValidateToken(token, tokenValidationParameters, out validatedToken)
                 .Should().Be(mockExpectedClaims.Object);
 
             // Assert
             _mockTokenService
-                .Verify(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()));
+                .Verify(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()));
 
             _mockUserSessionUpdateOktaTokenService
                 .Verify(service => service.Handle(It.IsAny<UserSessionUpdateOktaTokenQuery>()));
@@ -597,19 +582,18 @@ namespace MedicalExaminer.API.Tests
         public void ValidateToken_ShouldReturnClaimsPrincipalAndCreateSession_WhenValidTokenAndNoSessionExists()
         {
             // Arrange
-            var expectedUserId = "userId";
-            var expectedOktaId = "oktaId";
-            var expectedToken = "expectedToken";
-            var expectedOriginalToken = "expectedOriginalToken";
-            var expectedValidatedToken = new Mock<SecurityToken>().Object;
-            var expectedTokenValidationParameters = new TokenValidationParameters();
-            var expectedIntrospectResponse = new IntrospectResponse
+            var userId = "userId";
+            var oktaId = "oktaId";
+            var token = "expectedToken";
+            var validatedToken = new Mock<SecurityToken>().Object;
+            var tokenValidationParameters = new TokenValidationParameters();
+            var introspectResponse = new IntrospectResponse
             {
                 Active = true
             };
             var mockExpectedClaims = new Mock<ClaimsPrincipal>();
             var claims = new List<Claim>();
-            var claim = new Claim(MEClaimTypes.OktaUserId, expectedOktaId);
+            var claim = new Claim(MEClaimTypes.OktaUserId, oktaId);
             claims.Add(claim);
             mockExpectedClaims.Setup(cp => cp.Claims).Returns(claims);
             var identities = new List<ClaimsIdentity>();
@@ -618,35 +602,27 @@ namespace MedicalExaminer.API.Tests
             mockExpectedClaims.Setup(cp => cp.Identities).Returns(identities);
 
             _mockTokenService
-                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
-                .Returns(Task.FromResult(expectedIntrospectResponse));
+                .Setup(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()))
+                .Returns(Task.FromResult(introspectResponse));
 
-           /* var expectedSession = new MeUserSession
+            var user = new MeUser
             {
-                UserId = expectedUserId,
-                OktaId = expectedOktaId,
-                OktaToken = expectedOriginalToken,
-                OktaTokenExpiry = DateTimeOffset.Now.AddDays(-1),
-            };*/
-
-            var expectedUser = new MeUser
-            {
-                UserId = expectedUserId,
+                UserId = userId,
                 FirstName = "oktaFirstName",
                 LastName = "oktaLastName",
                 Email = "oktaEmail",
             };
 
-            var expectedOktaUser = new Mock<IUser>(MockBehavior.Strict);
-            expectedOktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
-            expectedOktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
-            expectedOktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
+            var oktaUser = new Mock<IUser>(MockBehavior.Strict);
+            oktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
+            oktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
+            oktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
 
             var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
 
             mockUsersClient
-                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
-                .Returns(Task.FromResult(expectedOktaUser.Object));
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default))
+                .Returns(Task.FromResult(oktaUser.Object));
 
             _mockOktaClient
                 .Setup(service => service.Users)
@@ -659,13 +635,13 @@ namespace MedicalExaminer.API.Tests
 
             _mockUserRetrievalByOktaId
                 .Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
-                .Returns(Task.FromResult(expectedUser));
+                .Returns(Task.FromResult(user));
 
             _mockTokenValidator.Setup(stv =>
                     stv.ValidateToken(
-                        expectedToken,
-                        expectedTokenValidationParameters,
-                        out expectedValidatedToken))
+                        token,
+                        tokenValidationParameters,
+                        out validatedToken))
                 .Returns(mockExpectedClaims.Object);
 
             _mockUserSessionUpdateOktaTokenService
@@ -673,7 +649,7 @@ namespace MedicalExaminer.API.Tests
                 .Returns((UserSessionUpdateOktaTokenQuery param) => Task.FromResult(new MeUserSession()
                 {
                     UserId = param.UserId,
-                    OktaId = expectedOktaId,
+                    OktaId = oktaId,
                     OktaToken = param.OktaToken,
                     OktaTokenExpiry = param.OktaTokenExpiry,
                 }))
@@ -681,19 +657,19 @@ namespace MedicalExaminer.API.Tests
 
             _mockUserRetrievalById
                 .Setup(service => service.Handle(It.IsAny<UserRetrievalByIdQuery>()))
-                .Returns(Task.FromResult(expectedUser));
+                .Returns(Task.FromResult(user));
 
             _mockUserUpdateService
                 .Setup(service => service.Handle(It.IsAny<UserUpdateQuery>()))
                 .Verifiable();
 
             // Act
-            sut.ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken)
+            _sut.ValidateToken(token, tokenValidationParameters, out validatedToken)
                 .Should().Be(mockExpectedClaims.Object);
 
             // Assert
             _mockTokenService
-                .Verify(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()));
+                .Verify(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()));
 
             _mockUserSessionUpdateOktaTokenService
                 .Verify(service => service.Handle(It.IsAny<UserSessionUpdateOktaTokenQuery>()));
@@ -706,19 +682,17 @@ namespace MedicalExaminer.API.Tests
         public void ValidateToken_ShouldReturnClaimsPrincipalAndCreateUserAndSession_WhenValidTokenAndNoUserOrSessionExists_AndNoUserExistsWithSameEmail()
         {
             // Arrange
-            var expectedUserId = "userId";
-            var expectedOktaId = "oktaId";
-            var expectedToken = "expectedToken";
-            var expectedOriginalToken = "expectedOriginalToken";
-            var expectedValidatedToken = new Mock<SecurityToken>().Object;
-            var expectedTokenValidationParameters = new TokenValidationParameters();
-            var expectedIntrospectResponse = new IntrospectResponse
+            var oktaId = "oktaId";
+            var token = "expectedToken";
+            var validatedToken = new Mock<SecurityToken>().Object;
+            var tokenValidationParameters = new TokenValidationParameters();
+            var introspectResponse = new IntrospectResponse
             {
                 Active = true
             };
             var mockExpectedClaims = new Mock<ClaimsPrincipal>();
             var claims = new List<Claim>();
-            var claim = new Claim(MEClaimTypes.OktaUserId, expectedOktaId);
+            var claim = new Claim(MEClaimTypes.OktaUserId, oktaId);
             claims.Add(claim);
             mockExpectedClaims.Setup(cp => cp.Claims).Returns(claims);
             var identities = new List<ClaimsIdentity>();
@@ -727,28 +701,20 @@ namespace MedicalExaminer.API.Tests
             mockExpectedClaims.Setup(cp => cp.Identities).Returns(identities);
 
             _mockTokenService
-                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
-                .Returns(Task.FromResult(expectedIntrospectResponse));
+                .Setup(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()))
+                .Returns(Task.FromResult(introspectResponse));
 
-          /*  var expectedUser = new MeUser
-            {
-                UserId = expectedUserId,
-                FirstName = "oktaFirstName",
-                LastName = "oktaLastName",
-                Email = "oktaEmail",
-            };*/
-
-            var expectedOktaUser = new Mock<IUser>(MockBehavior.Strict);
-            expectedOktaUser.Setup(o => o.Id).Returns(expectedOktaId);
-            expectedOktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
-            expectedOktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
-            expectedOktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
+            var oktaUser = new Mock<IUser>(MockBehavior.Strict);
+            oktaUser.Setup(o => o.Id).Returns(oktaId);
+            oktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
+            oktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
+            oktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
 
             var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
 
             mockUsersClient
-                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
-                .Returns(Task.FromResult(expectedOktaUser.Object));
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default))
+                .Returns(Task.FromResult(oktaUser.Object));
 
             _mockOktaClient
                 .Setup(service => service.Users)
@@ -767,21 +733,21 @@ namespace MedicalExaminer.API.Tests
                 .Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
                 .Returns(Task.FromResult((MeUser)null));
 
-            var expectedCreateUserResponse = new MeUser
+            var createUserResponse = new MeUser
             {
                 UserId = "createUserId"
             };
 
             _mockUserCreationService
                 .Setup(service => service.Handle(It.IsAny<CreateUserQuery>()) )
-                .Returns((CreateUserQuery query) => Task.FromResult(expectedCreateUserResponse))
+                .Returns((CreateUserQuery query) => Task.FromResult(createUserResponse))
                 .Verifiable();
 
             _mockTokenValidator.Setup(stv =>
                     stv.ValidateToken(
-                        expectedToken,
-                        expectedTokenValidationParameters,
-                        out expectedValidatedToken))
+                        token,
+                        tokenValidationParameters,
+                        out validatedToken))
                 .Returns(mockExpectedClaims.Object);
 
             _mockUserSessionUpdateOktaTokenService
@@ -789,27 +755,23 @@ namespace MedicalExaminer.API.Tests
                 .Returns((UserSessionUpdateOktaTokenQuery param) => Task.FromResult(new MeUserSession()
                 {
                     UserId = param.UserId,
-                    OktaId = expectedOktaId,
+                    OktaId = oktaId,
                     OktaToken = param.OktaToken,
                     OktaTokenExpiry = param.OktaTokenExpiry,
                 }))
                 .Verifiable();
-/*
-            _mockUserRetrievalById
-                .Setup(service => service.Handle(It.IsAny<UserRetrievalByIdQuery>()))
-                .Returns(Task.FromResult(expectedUser));
-*/
+
             _mockUserUpdateService
                 .Setup(service => service.Handle(It.IsAny<UserUpdateQuery>()))
                 .Verifiable();
 
             // Act
-            sut.ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken)
+            _sut.ValidateToken(token, tokenValidationParameters, out validatedToken)
                 .Should().Be(mockExpectedClaims.Object);
 
             // Assert
             _mockTokenService
-                .Verify(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()));
+                .Verify(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()));
 
             _mockUserSessionUpdateOktaTokenService
                 .Verify(service => service.Handle(It.IsAny<UserSessionUpdateOktaTokenQuery>()));
@@ -822,19 +784,18 @@ namespace MedicalExaminer.API.Tests
         public void ValidateToken_ShouldReturnClaimsPrincipalAndBindUserAndSession_WhenValidTokenAndNoUserOrSessionExists_AndUserExistsWithSameEmail()
         {
             // Arrange
-            var expectedUserId = "userId";
-            var expectedOktaId = "oktaId";
-            var expectedToken = "expectedToken";
-            var expectedOriginalToken = "expectedOriginalToken";
-            var expectedValidatedToken = new Mock<SecurityToken>().Object;
-            var expectedTokenValidationParameters = new TokenValidationParameters();
-            var expectedIntrospectResponse = new IntrospectResponse
+            var userId = "userId";
+            var oktaId = "oktaId";
+            var token = "expectedToken";
+            var validatedToken = new Mock<SecurityToken>().Object;
+            var tokenValidationParameters = new TokenValidationParameters();
+            var introspectResponse = new IntrospectResponse
             {
                 Active = true
             };
             var mockExpectedClaims = new Mock<ClaimsPrincipal>();
             var claims = new List<Claim>();
-            var claim = new Claim(MEClaimTypes.OktaUserId, expectedOktaId);
+            var claim = new Claim(MEClaimTypes.OktaUserId, oktaId);
             claims.Add(claim);
             mockExpectedClaims.Setup(cp => cp.Claims).Returns(claims);
             var identities = new List<ClaimsIdentity>();
@@ -843,26 +804,26 @@ namespace MedicalExaminer.API.Tests
             mockExpectedClaims.Setup(cp => cp.Identities).Returns(identities);
 
             _mockTokenService
-                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
-                .Returns(Task.FromResult(expectedIntrospectResponse));
+                .Setup(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()))
+                .Returns(Task.FromResult(introspectResponse));
 
-            var expectedUser = new MeUser
+            var user = new MeUser
             {
-                UserId = expectedUserId,
+                UserId = userId,
                 Email = "oktaEmail",
             };
 
-            var expectedOktaUser = new Mock<IUser>(MockBehavior.Strict);
-            expectedOktaUser.Setup(o => o.Id).Returns(expectedOktaId);
-            expectedOktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
-            expectedOktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
-            expectedOktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
+            var oktaUser = new Mock<IUser>(MockBehavior.Strict);
+            oktaUser.Setup(o => o.Id).Returns(oktaId);
+            oktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
+            oktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
+            oktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
 
             var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
 
             mockUsersClient
-                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
-                .Returns(Task.FromResult(expectedOktaUser.Object));
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default))
+                .Returns(Task.FromResult(oktaUser.Object));
 
             _mockOktaClient
                 .Setup(service => service.Users)
@@ -879,23 +840,23 @@ namespace MedicalExaminer.API.Tests
 
             _mockUserRetrievalByEmailService
                 .Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
-                .Returns(Task.FromResult(expectedUser));
+                .Returns(Task.FromResult(user));
 
-            var expectedCreateUserResponse = new MeUser
+            var createUserResponse = new MeUser
             {
                 UserId = "createUserId"
             };
 
             _mockUserCreationService
                 .Setup(service => service.Handle(It.IsAny<CreateUserQuery>()))
-                .Returns((CreateUserQuery query) => Task.FromResult(expectedCreateUserResponse))
+                .Returns((CreateUserQuery query) => Task.FromResult(createUserResponse))
                 .Verifiable();
 
             _mockTokenValidator.Setup(stv =>
                     stv.ValidateToken(
-                        expectedToken,
-                        expectedTokenValidationParameters,
-                        out expectedValidatedToken))
+                        token,
+                        tokenValidationParameters,
+                        out validatedToken))
                 .Returns(mockExpectedClaims.Object);
 
             _mockUserSessionUpdateOktaTokenService
@@ -903,21 +864,18 @@ namespace MedicalExaminer.API.Tests
                 .Returns((UserSessionUpdateOktaTokenQuery param) => Task.FromResult(new MeUserSession()
                 {
                     UserId = param.UserId,
-                    OktaId = expectedOktaId,
+                    OktaId = oktaId,
                     OktaToken = param.OktaToken,
                     OktaTokenExpiry = param.OktaTokenExpiry,
                 }))
                 .Verifiable();
-            /*
-                        _mockUserRetrievalById
-                            .Setup(service => service.Handle(It.IsAny<UserRetrievalByIdQuery>()))
-                            .Returns(Task.FromResult(expectedUser));
-            */
+
             _mockUserUpdateService
                 .Setup(service => service.Handle(It.IsAny<UserUpdateQuery>()))
                 .Returns((UserUpdateQuery query) =>
                 {
                     var update = query.UserUpdate as UserUpdateFull;
+                    Assert.NotNull(update);
                     return Task.FromResult(new MeUser
                     {
                         UserId = query.UserUpdate.UserId,
@@ -930,12 +888,12 @@ namespace MedicalExaminer.API.Tests
                 .Verifiable();
 
             // Act
-            sut.ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken)
+            _sut.ValidateToken(token, tokenValidationParameters, out validatedToken)
                 .Should().Be(mockExpectedClaims.Object);
 
             // Assert
             _mockTokenService
-                .Verify(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()));
+                .Verify(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()));
 
             _mockUserSessionUpdateOktaTokenService
                 .Verify(service => service.Handle(It.IsAny<UserSessionUpdateOktaTokenQuery>()));
@@ -948,19 +906,18 @@ namespace MedicalExaminer.API.Tests
         public void ValidateToken_ShouldThrowException_WhenValidTokenAndNoUserOrSessionExists_AndUserExistsWithSameEmail_ButEmailIsAlreadyBound()
         {
             // Arrange
-            var expectedUserId = "userId";
-            var expectedOktaId = "oktaId";
-            var expectedToken = "expectedToken";
-            var expectedOriginalToken = "expectedOriginalToken";
-            var expectedValidatedToken = new Mock<SecurityToken>().Object;
-            var expectedTokenValidationParameters = new TokenValidationParameters();
-            var expectedIntrospectResponse = new IntrospectResponse
+            var userId = "userId";
+            var oktaId = "oktaId";
+            var token = "expectedToken";
+            var validatedToken = new Mock<SecurityToken>().Object;
+            var tokenValidationParameters = new TokenValidationParameters();
+            var introspectResponse = new IntrospectResponse
             {
                 Active = true
             };
             var mockExpectedClaims = new Mock<ClaimsPrincipal>();
             var claims = new List<Claim>();
-            var claim = new Claim(MEClaimTypes.OktaUserId, expectedOktaId);
+            var claim = new Claim(MEClaimTypes.OktaUserId, oktaId);
             claims.Add(claim);
             mockExpectedClaims.Setup(cp => cp.Claims).Returns(claims);
             var identities = new List<ClaimsIdentity>();
@@ -969,27 +926,27 @@ namespace MedicalExaminer.API.Tests
             mockExpectedClaims.Setup(cp => cp.Identities).Returns(identities);
 
             _mockTokenService
-                .Setup(ts => ts.IntrospectToken(expectedToken, It.IsAny<HttpClient>()))
-                .Returns(Task.FromResult(expectedIntrospectResponse));
+                .Setup(ts => ts.IntrospectToken(token, It.IsAny<HttpClient>()))
+                .Returns(Task.FromResult(introspectResponse));
 
-            var expectedUser = new MeUser
+            var user = new MeUser
             {
-                UserId = expectedUserId,
-                OktaId = expectedOktaId,
+                UserId = userId,
+                OktaId = oktaId,
                 Email = "oktaEmail",
             };
 
-            var expectedOktaUser = new Mock<IUser>(MockBehavior.Strict);
-            expectedOktaUser.Setup(o => o.Id).Returns(expectedOktaId);
-            expectedOktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
-            expectedOktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
-            expectedOktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
+            var oktaUser = new Mock<IUser>(MockBehavior.Strict);
+            oktaUser.Setup(o => o.Id).Returns(oktaId);
+            oktaUser.Setup(o => o.Profile.FirstName).Returns("oktaFirstName");
+            oktaUser.Setup(o => o.Profile.LastName).Returns("oktaLastName");
+            oktaUser.Setup(o => o.Profile.Email).Returns("oktaEmail");
 
             var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
 
             mockUsersClient
-                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
-                .Returns(Task.FromResult(expectedOktaUser.Object));
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default))
+                .Returns(Task.FromResult(oktaUser.Object));
 
             _mockOktaClient
                 .Setup(service => service.Users)
@@ -1006,23 +963,23 @@ namespace MedicalExaminer.API.Tests
 
             _mockUserRetrievalByEmailService
                 .Setup(service => service.Handle(It.IsAny<UserRetrievalByEmailQuery>()))
-                .Returns(Task.FromResult(expectedUser));
+                .Returns(Task.FromResult(user));
 
-            var expectedCreateUserResponse = new MeUser
+            var createUserResponse = new MeUser
             {
                 UserId = "createUserId"
             };
 
             _mockUserCreationService
                 .Setup(service => service.Handle(It.IsAny<CreateUserQuery>()))
-                .Returns((CreateUserQuery query) => Task.FromResult(expectedCreateUserResponse))
+                .Returns((CreateUserQuery query) => Task.FromResult(createUserResponse))
                 .Verifiable();
 
             _mockTokenValidator.Setup(stv =>
                     stv.ValidateToken(
-                        expectedToken,
-                        expectedTokenValidationParameters,
-                        out expectedValidatedToken))
+                        token,
+                        tokenValidationParameters,
+                        out validatedToken))
                 .Returns(mockExpectedClaims.Object);
 
             _mockUserSessionUpdateOktaTokenService
@@ -1030,35 +987,15 @@ namespace MedicalExaminer.API.Tests
                 .Returns((UserSessionUpdateOktaTokenQuery param) => Task.FromResult(new MeUserSession()
                 {
                     UserId = param.UserId,
-                    OktaId = expectedOktaId,
+                    OktaId = oktaId,
                     OktaToken = param.OktaToken,
                     OktaTokenExpiry = param.OktaTokenExpiry,
                 }))
                 .Verifiable();
-            /*
-                        _mockUserRetrievalById
-                            .Setup(service => service.Handle(It.IsAny<UserRetrievalByIdQuery>()))
-                            .Returns(Task.FromResult(expectedUser));
-            */
-        /*    _mockUserUpdateService
-                .Setup(service => service.Handle(It.IsAny<UserUpdateQuery>()))
-                .Returns((UserUpdateQuery query) =>
-                {
-                    var update = query.UserUpdate as UserUpdateFull;
-                    return Task.FromResult(new MeUser
-                    {
-                        UserId = query.UserUpdate.UserId,
-                        OktaId = update.OktaId,
-                        Email = update.Email,
-                        FirstName = update.FirstName,
-                        LastName = update.LastName,
-                    });
-                })
-                .Verifiable();*/
 
             // Act
-            Action action = () => sut
-                .ValidateToken(expectedToken, expectedTokenValidationParameters, out expectedValidatedToken)
+            Action action = () => _sut
+                .ValidateToken(token, tokenValidationParameters, out validatedToken)
                 .Should().Be(mockExpectedClaims.Object);
 
             // Assert
