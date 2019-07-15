@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common.Extensions.MeUser;
+using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 
 namespace MedicalExaminer.API.Extensions.Data
@@ -13,10 +15,9 @@ namespace MedicalExaminer.API.Extensions.Data
         /// <summary>
         ///     Initialise a new instance of the Users AutoMapper Profile
         /// </summary>
-        public UsersProfile()
+        public UsersProfile(IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> service)
         {
-            CreateMap<MeUser, UserItem>()
-                .ForMember(userItem => userItem.UserRole, opt => opt.Ignore());
+            CreateMap<MeUser, UserItem>();
             CreateMap<MeUser, UserLookup>()
                 .ForMember(userLookup => userLookup.FullName, opt => opt.MapFrom(meUser => meUser.FullName()));
             CreateMap<MeUser, GetUserResponse>()
@@ -40,8 +41,32 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<MEUserPermission, UserPermission>()
                 .ForMember(userPermission => userPermission.UserRole, opt => opt.MapFrom(meUserPermission => meUserPermission.UserRole))
                 .ForMember(userPermission => userPermission.LocationId, opt => opt.MapFrom(meUserPermission => meUserPermission.LocationId))
+                .ForMember(userPermission => userPermission.LocationName, opt => opt.MapFrom(new UserPermissionLocationIdLocationNameResolver(service)))
                 .ForMember(userPermission => userPermission.PermissionId, opt => opt.MapFrom(meUserPermission => meUserPermission.PermissionId))
                 .ForAllOtherMembers(meUserPermission => meUserPermission.Ignore());
+        }
+    }
+
+    public class UserPermissionLocationIdLocationNameResolver : IValueResolver<MEUserPermission, UserPermission, string>
+    {
+        IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> _service;
+        public UserPermissionLocationIdLocationNameResolver(IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> service)
+        {
+            _service = service;
+        }
+        public string Resolve(MEUserPermission source, UserPermission destination, string destMember, ResolutionContext context)
+        {
+            var locationIdString = source.LocationId;
+            if (string.IsNullOrEmpty(locationIdString))
+            {
+                return string.Empty;
+            }
+
+            var validatedLocation = _service.Handle(new LocationRetrievalByIdQuery(locationIdString)).Result;
+
+            return validatedLocation.Name == null
+                ? string.Empty
+                : validatedLocation.Name;
         }
     }
 }

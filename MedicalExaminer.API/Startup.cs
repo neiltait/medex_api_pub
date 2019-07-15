@@ -12,6 +12,7 @@ using MedicalExaminer.API.Extensions.ApplicationBuilder;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models;
+using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
 using MedicalExaminer.BackgroundServices;
@@ -135,8 +136,6 @@ namespace MedicalExaminer.API
             services.AddExaminationValidation();
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
 
-            //AddAutomapperProfiles();
-
             Mapper.Initialize(config => { config.AddMedicalExaminerProfiles(); });
             Mapper.AssertConfigurationIsValid();
             services.AddAutoMapper();
@@ -224,12 +223,6 @@ namespace MedicalExaminer.API
             services.AddBackgroundServices(backgroundServicesSettings);
 
             UpdateInvalidOrNullUserPermissionIds(services);
-        }
-
-        private void AddAutomapperProfiles(IServiceCollection services)
-        {
-            //services.Add<>();
-
         }
 
         /// <summary>
@@ -371,6 +364,23 @@ namespace MedicalExaminer.API
             // Patient details services
             services
                 .AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
+
+
+           // services.AddScoped<IValueResolver<MEUserPermission, GetPermissionResponse, string>, LocationIdLocationNameResolver>();
+            services.AddScoped<PermissionsProfile, PermissionsProfile>();
+
+
+            services.AddScoped(provider => new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new PermissionsProfile(provider.GetService<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>()));
+                cfg.AddProfile(new UsersProfile(provider.GetService<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>()));
+            }).CreateMapper());
+
+            
+            //services.AddScoped(provider => new MapperConfiguration(cfg =>
+            //{
+            //    cfg.AddProfile(new UsersProfile(provider.GetService<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>()));
+            //}).CreateMapper());
 
             // User services
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
