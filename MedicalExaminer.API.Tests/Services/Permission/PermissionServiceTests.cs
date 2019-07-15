@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
@@ -13,13 +10,11 @@ using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using Microsoft.CodeAnalysis.Options;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
-using Permission = MedicalExaminer.Common.Authorization.Permission;
 
-namespace MedicalExaminer.API.Tests.Services
+namespace MedicalExaminer.API.Tests.Services.Permission
 {
     public class PermissionServiceTests
     {
@@ -57,7 +52,7 @@ namespace MedicalExaminer.API.Tests.Services
             // Arrange
             var expectedEmail = "expectedEmail";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedPermission = Permission.AddEventToExamination;
+            var expectedPermission = Common.Authorization.Permission.AddEventToExamination;
             var expectedNationalLocationId = "expectedNationalLocationId";
 
             var meUser = new MeUser()
@@ -98,7 +93,7 @@ namespace MedicalExaminer.API.Tests.Services
             // Arrange
             var expectedEmail = "expectedEmail";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedPermission = Permission.AddEventToExamination;
+            var expectedPermission = Common.Authorization.Permission.AddEventToExamination;
             var expectedNationalLocationId = "expectedNationalLocationId";
 
             var meUser = new MeUser()
@@ -139,7 +134,7 @@ namespace MedicalExaminer.API.Tests.Services
             // Arrange
             var expectedEmail = "expectedEmail";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedPermission = Permission.AddEventToExamination;
+            var expectedPermission = Common.Authorization.Permission.AddEventToExamination;
 
             var meUser = new MeUser()
             {
@@ -165,7 +160,7 @@ namespace MedicalExaminer.API.Tests.Services
             // Arrange
             var expectedEmail = "expectedEmail";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedPermission = Permission.AddEventToExamination;
+            var expectedPermission = Common.Authorization.Permission.AddEventToExamination;
 
             var meUser = new MeUser()
             {
@@ -201,7 +196,7 @@ namespace MedicalExaminer.API.Tests.Services
             // Arrange
             var expectedEmail = "expectedEmail";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedPermission = Permission.AddEventToExamination;
+            var expectedPermission = Common.Authorization.Permission.AddEventToExamination;
 
             var meUser = new MeUser()
             {
@@ -237,7 +232,7 @@ namespace MedicalExaminer.API.Tests.Services
             // Arrange
             var expectedEmail = "expectedEmail";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedPermission = Permission.AddEventToExamination;
+            var expectedPermission = Common.Authorization.Permission.AddEventToExamination;
 
             var meUser = new MeUser()
             {
@@ -261,7 +256,7 @@ namespace MedicalExaminer.API.Tests.Services
             // Arrange
             var expectedRole = UserRoles.MedicalExaminer;
             var unexpectedRole = UserRoles.MedicalExaminerOfficer;
-            var expectedPermission = Permission.AddEventToExamination;
+            var expectedPermission = Common.Authorization.Permission.AddEventToExamination;
             var expectedLocation = "expectedLocation";
             var unexpectedLocation = "unexpectedLocation";
             var meUser = new MeUser()

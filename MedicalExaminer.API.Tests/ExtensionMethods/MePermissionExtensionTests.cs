@@ -67,17 +67,5 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
     }
 
-    //move to correct place
-    // on update permission, check against the users current permissions that the updated one isn't the same
-    //  on insert new permission do the same
-
-    //  happy?
-
-    //public static class MeUserPermissionExtensions
-    //{
-    //    public static bool IsSame(this MEUserPermission permissionA, MEUserPermission permissionB)
-    //    {
-    //        return permissionA.LocationId == permissionB.LocationId && permissionA.UserRole == permissionB.UserRole;
-    //    }
-    //}
+    
 }
