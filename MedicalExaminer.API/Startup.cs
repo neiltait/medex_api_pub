@@ -376,12 +376,6 @@ namespace MedicalExaminer.API
                 cfg.AddProfile(new UsersProfile(provider.GetService<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>()));
             }).CreateMapper());
 
-            
-            //services.AddScoped(provider => new MapperConfiguration(cfg =>
-            //{
-            //    cfg.AddProfile(new UsersProfile(provider.GetService<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>()));
-            //}).CreateMapper());
-
             // User services
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>, UserRetrievalByEmailService>();

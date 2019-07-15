@@ -2,8 +2,12 @@
 using FluentAssertions;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Models.v1.Users;
+using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
+using Moq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Mapper
@@ -18,7 +22,13 @@ namespace MedicalExaminer.API.Tests.Mapper
         /// </summary>
         public MapperUsersProfileTests()
         {
-            var config = new MapperConfiguration(cfg => { cfg.AddProfile<UsersProfile>(); });
+            var mockLocationNameService = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>();
+            var location = new Location()
+            {
+                Name = "ExpectedName"
+            };
+            mockLocationNameService.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
+            var config = new MapperConfiguration(cfg => { cfg.AddProfile(new UsersProfile(mockLocationNameService.Object)); });
             _mapper = config.CreateMapper();
         }
 
