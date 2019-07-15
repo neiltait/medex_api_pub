@@ -49,6 +49,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
         }
 
+
         [Fact]
         public async void ValidateSession_ReturnsSession_WhenSessionValid()
         {
