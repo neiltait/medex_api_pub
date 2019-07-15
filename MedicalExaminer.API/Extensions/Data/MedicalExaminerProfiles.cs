@@ -14,10 +14,9 @@ namespace MedicalExaminer.API.Extensions.Data
         /// <param name="config">The mapper configuration.</param>
         public static void AddMedicalExaminerProfiles(this IMapperConfigurationExpression config)
         {
-            //config.ConstructServicesUsing(ObjectFactory.GetInstance);
             config.AddProfile<ExaminationProfile>();
-            config.AddProfile<UsersProfile>();
-            config.AddProfile<PermissionsProfile>();
+            //config.AddProfile<UsersProfile>();
+            //config.AddProfile<PermissionsProfile>();
             config.AddProfile<MedicalTeamProfile>();
             config.AddProfile<PatientDetailsProfile>();
             config.AddProfile<CaseBreakdownProfile>();
@@ -30,6 +29,7 @@ namespace MedicalExaminer.API.Extensions.Data
             config.AddProfile<PreScrutinyEventProfile>();
             config.AddProfile<QapDiscussionEventProfile>();
             config.AddProfile<CaseOutcomeProfile>();
+
         }
     }
 }

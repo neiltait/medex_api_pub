@@ -13,28 +13,30 @@ namespace MedicalExaminer.API.Extensions.Data
     /// </summary>
     public class PermissionsProfile : Profile
     {
+        
         /// <summary>
         ///     Initialise a new instance of the Permissions AutoMapper Profile.
         /// </summary>
-        public PermissionsProfile()
+        /// 
+
+        public PermissionsProfile(IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> service)
         {
-            //IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> service;
             CreateMap<MEUserPermission, PermissionItem>()
-                .ForMember(permissionItem => permissionItem.LocationName, opt => opt.Ignore())
+                .ForMember(permissionItem => permissionItem.LocationName, opt => opt.MapFrom(new PermissionItemLocationIdLocationNameResolver(service)))
                 .ForMember(permissionItem => permissionItem.UserId, opt => opt.Ignore());
             CreateMap<MEUserPermission, GetPermissionResponse>()
                 .ForMember(response => response.UserId, opt => opt.Ignore())
-                .ForMember(response => response.LocationName, opt => opt.MapFrom(new LocationIdLocationNameResolver()))
+                .ForMember(response => response.LocationName, opt => opt.MapFrom(new GetPermissionResponseLocationIdLocationNameResolver(service)))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<MEUserPermission, PostPermissionResponse>()
                 .ForMember(response => response.UserId, opt => opt.Ignore())
-                .ForMember(response => response.LocationName, opt => opt.Ignore())
+                .ForMember(response => response.LocationName, opt => opt.MapFrom(new PostPermissionResponseLocationIdLocationNameResolver(service)))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<MEUserPermission, PutPermissionResponse>()
                 .ForMember(response => response.UserId, opt => opt.Ignore())
-                .ForMember(response => response.LocationName, opt => opt.Ignore())
+                .ForMember(response => response.LocationName, opt => opt.MapFrom(new PutPermissionResponseLocationIdLocationNameResolver(service)))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore());
 
@@ -45,38 +47,103 @@ namespace MedicalExaminer.API.Extensions.Data
         }
     }
 
-    internal class LocationIdLocationNameResolver : IValueResolver<MEUserPermission, GetPermissionResponse, string>
+    public class GetPermissionResponseLocationIdLocationNameResolver : IValueResolver<MEUserPermission, GetPermissionResponse, string>
     {
         IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> _service;
-        public LocationIdLocationNameResolver()
+
+        public GetPermissionResponseLocationIdLocationNameResolver(IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> service)
         {
-            IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> service;
-            //_service = service;
+            _service = service;
         }
+
         public string Resolve(MEUserPermission source, GetPermissionResponse destination, string destMember, ResolutionContext context)
         {
-            //var locationIdString = source.LocationId;
-            //if (string.IsNullOrEmpty(locationIdString))
-            //{
-            //    return string.Empty;
-            //}
-            //ServiceProvider sp = new ServiceProvider();
-            //var locationService = new LocationIdService()
+            var locationIdString = source.LocationId;
+            if (string.IsNullOrEmpty(locationIdString))
+            {
+                return string.Empty;
+            }
 
-            //var locationPersistence = (IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>)context.GetService(typeof(IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>));
-            //if (locationPersistence == null)
-            //{
-            //    throw new NullReferenceException("locationPersistence is null");
-            //}
+            var validatedLocation = _service.Handle(new LocationRetrievalByIdQuery(locationIdString)).Result;
 
-            //var validatedLocation = locationPersistence.Handle(new LocationRetrievalByIdQuery(locationString)).Result;
+            return validatedLocation.Name == null
+                ? string.Empty
+                : validatedLocation.Name;
+        }
+    }
 
-            //return validatedLocation == null
-            //    ? new ValidationResult("The location Id has not been found")
-            //    : ValidationResult.Success;
+    public class PermissionItemLocationIdLocationNameResolver : IValueResolver<MEUserPermission, PermissionItem, string>
+    {
+        IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> _service;
 
+        public PermissionItemLocationIdLocationNameResolver(IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> service)
+        {
+            _service = service;
+        }
 
-            return "LOCATION_NAME";
+        public string Resolve(MEUserPermission source, PermissionItem destination, string destMember, ResolutionContext context)
+        {
+            var locationIdString = source.LocationId;
+            if (string.IsNullOrEmpty(locationIdString))
+            {
+                return string.Empty;
+            }
+
+            var validatedLocation = _service.Handle(new LocationRetrievalByIdQuery(locationIdString)).Result;
+
+            return validatedLocation.Name == null
+                ? string.Empty
+                : validatedLocation.Name;
+        }
+    }
+
+    public class PostPermissionResponseLocationIdLocationNameResolver : IValueResolver<MEUserPermission, PostPermissionResponse, string>
+    {
+        IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> _service;
+
+        public PostPermissionResponseLocationIdLocationNameResolver(IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> service)
+        {
+            _service = service;
+        }
+
+        public string Resolve(MEUserPermission source, PostPermissionResponse destination, string destMember, ResolutionContext context)
+        {
+            var locationIdString = source.LocationId;
+            if (string.IsNullOrEmpty(locationIdString))
+            {
+                return string.Empty;
+            }
+
+            var validatedLocation = _service.Handle(new LocationRetrievalByIdQuery(locationIdString)).Result;
+
+            return validatedLocation.Name == null
+                ? string.Empty
+                : validatedLocation.Name;
+        }
+    }
+
+    public class PutPermissionResponseLocationIdLocationNameResolver : IValueResolver<MEUserPermission, PutPermissionResponse, string>
+    {
+        IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> _service;
+
+        public PutPermissionResponseLocationIdLocationNameResolver(IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> service)
+        {
+            _service = service;
+        }
+
+        public string Resolve(MEUserPermission source, PutPermissionResponse destination, string destMember, ResolutionContext context)
+        {
+            var locationIdString = source.LocationId;
+            if (string.IsNullOrEmpty(locationIdString))
+            {
+                return string.Empty;
+            }
+
+            var validatedLocation = _service.Handle(new LocationRetrievalByIdQuery(locationIdString)).Result;
+
+            return validatedLocation.Name == null
+                ? string.Empty
+                : validatedLocation.Name;
         }
     }
 }
