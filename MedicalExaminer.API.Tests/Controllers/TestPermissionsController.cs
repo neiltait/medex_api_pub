@@ -40,6 +40,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             _locationParentsServiceMock = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>(MockBehavior.Strict);
             _locationsParentsServiceMock = new Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>(MockBehavior.Strict);
 
+            
+
+
+
+
             Controller = new PermissionsController(
                 LoggerMock.Object,
                 Mapper,

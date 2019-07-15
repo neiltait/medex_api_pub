@@ -1,5 +1,9 @@
 ﻿using AutoMapper;
+using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -12,10 +16,12 @@ namespace MedicalExaminer.API.Extensions.Data
         ///     Add Our Profiles to the mapper configuration.
         /// </summary>
         /// <param name="config">The mapper configuration.</param>
-        public static void AddMedicalExaminerProfiles(this IMapperConfigurationExpression config)
+        public static void AddMedicalExaminerProfiles(this IMapperConfigurationExpression config, IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> locationService)
         {
             config.AddProfile<ExaminationProfile>();
-            //config.AddProfile<UsersProfile>();
+            config.AddProfile(new PermissionsProfile(locationService));
+            config.AddProfile(new UsersProfile(locationService));
+            ////config.AddProfile<UsersProfile>();
             //config.AddProfile<PermissionsProfile>();
             config.AddProfile<MedicalTeamProfile>();
             config.AddProfile<PatientDetailsProfile>();
@@ -29,7 +35,6 @@ namespace MedicalExaminer.API.Extensions.Data
             config.AddProfile<PreScrutinyEventProfile>();
             config.AddProfile<QapDiscussionEventProfile>();
             config.AddProfile<CaseOutcomeProfile>();
-
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -19,7 +20,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
         private Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> _locationRetrievalMock;
 
-        public LocationControllerTests()
+        public LocationControllerTests() : base()
         {
             _locationRetrievalByIdMock = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>();
 
