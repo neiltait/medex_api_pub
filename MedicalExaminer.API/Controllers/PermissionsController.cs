@@ -318,7 +318,7 @@ namespace MedicalExaminer.API.Controllers
                     return NotFound(new PutPermissionResponse());
                 }
 
-                //var permission = Mapper.Map(putPermission, permissionToUpdate);
+                var permission = Mapper.Map<MEUserPermission>(putPermission);
 
                 var permissionToUpdate = user.Permissions.SingleOrDefault(p => p.PermissionId == permissionId);
 
@@ -327,15 +327,15 @@ namespace MedicalExaminer.API.Controllers
                     return NotFound(new PutPermissionResponse());
                 }
 
-                permissionToUpdate = Mapper.Map(putPermission, permissionToUpdate);
-
                 foreach (var usersPermissions in user.Permissions)
                 {
-                    if (usersPermissions.IsSame(permissionToUpdate))  // should be permission???
+                    if (usersPermissions.IsSame(permission))
                     {
                         return Conflict();
                     }
                 }
+
+                permissionToUpdate = Mapper.Map(putPermission, permissionToUpdate);
 
                 await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
 
