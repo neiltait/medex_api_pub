@@ -392,9 +392,15 @@ namespace MedicalExaminer.API.Controllers
                 var temp = user.Permissions.ToList();
                 temp.Remove(permissionToDelete);
 
+                var userUpdate = new UserUpdatePermissions()
+                {
+                    UserId = user.UserId,
+                    Permissions = temp,
+                };
+
                 user.Permissions = temp;
                 var currentUser = await CurrentUser();
-                await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
+                await _userUpdateService.Handle(new UserUpdateQuery(userUpdate, currentUser));
                 return Ok();
             }
             catch (DocumentClientException)
