@@ -142,14 +142,6 @@ namespace MedicalExaminer.API.Controllers
             {
                 var userToCreate = Mapper.Map<MeUser>(postUser);
                 var currentUser = await CurrentUser();
-                var possibleUser =
-                    await _userRetrievalByEmailService.Handle(new UserRetrievalByEmailQuery(postUser.Email));
-
-                if (possibleUser != null)
-                {
-                    return Ok(Mapper.Map<PostUserResponse>(possibleUser));
-                }
-
                 var createdUser = await _userCreationService.Handle(new CreateUserQuery(userToCreate, currentUser));
                 return Ok(Mapper.Map<PostUserResponse>(createdUser));
             }

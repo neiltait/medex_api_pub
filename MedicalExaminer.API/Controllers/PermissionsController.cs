@@ -16,6 +16,7 @@ using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
+using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -372,8 +373,6 @@ namespace MedicalExaminer.API.Controllers
                     return BadRequest();
                 }
 
-                var currentUser = await CurrentUser();
-
                 var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
 
                 if (user == null)
@@ -388,11 +387,21 @@ namespace MedicalExaminer.API.Controllers
                     return NotFound();
                 }
 
+                var locationDocument = (await
+                        _locationParentsService.Handle(
+                            new LocationParentsQuery(permissionToDelete.LocationId)))
+                    .ToLocationPath();
+
+                if (!CanAsync(Permission.DeleteUserPermission, locationDocument))
+                {
+                    return Forbid();
+                }
+
                 var temp = user.Permissions.ToList();
                 temp.Remove(permissionToDelete);
 
                 user.Permissions = temp;
-
+                var currentUser = await CurrentUser();
                 await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
                 return Ok();
             }
