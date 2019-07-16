@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MedicalExaminer.API.Attributes;
+using MedicalExaminer.API.Authorization.ExaminationContext;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.PatientDetails
@@ -9,7 +10,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
     /// <summary>
     ///     Put Patient Details Request Object.
     /// </summary>
-    public class PutPatientDetailsRequest
+    public class PutPatientDetailsRequest : IExaminationValidationModel
     {
         /// <summary>
         ///     Is the case a cultural priority?.
@@ -81,6 +82,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         ///     Patients NHS Number.
         /// </summary>
         [ValidNhsNumberNullAllowed]
+        [PutUniqueNhsNumber]
         public string NhsNumber { get; set; }
 
         /// <summary>
@@ -106,17 +108,17 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     Patients surname
         /// </summary>
-        [Required]
-        [MinLength(1)]
-        [MaxLength(150)]
+        [Required(AllowEmptyStrings = false, ErrorMessage = nameof(SystemValidationErrors.Required))]
+        [MinLength(1, ErrorMessage = nameof(SystemValidationErrors.MinimumLengthOf1))]
+        [MaxLength(150, ErrorMessage = nameof(SystemValidationErrors.MaximumLength150))]
         public string Surname { get; set; }
 
         /// <summary>
         ///     Patients given names
         /// </summary>
-        [Required]
-        [MinLength(1)]
-        [MaxLength(150)]
+        [Required(AllowEmptyStrings = false, ErrorMessage = nameof(SystemValidationErrors.Required))]
+        [MinLength(1, ErrorMessage = nameof(SystemValidationErrors.MinimumLengthOf1))]
+        [MaxLength(150, ErrorMessage = nameof(SystemValidationErrors.MaximumLength150))]
         public string GivenNames { get; set; }
 
         /// <summary>
@@ -162,7 +164,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     Patients funeral arrangements.
         /// </summary>
-        [Required]
+        [Required(AllowEmptyStrings = false, ErrorMessage = nameof(SystemValidationErrors.Required))]
         public ModeOfDisposal ModeOfDisposal { get; set; }
 
         /// <summary>
@@ -173,7 +175,7 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     Free text for the implant details.
         /// </summary>
-        [RequiredIfAttributesMatch(nameof(AnyImplants), true)]
+        [RequiredIfAttributesMatch(nameof(AnyImplants), true, ErrorMessage = nameof(SystemValidationErrors.Required))]
         public string ImplantDetails { get; set; }
 
         /// <summary>

@@ -16,64 +16,74 @@ namespace MedicalExaminer.API.Tests.Services.Location
         MedicalExaminer.Models.Location,
         LocationsQueryService>
     {
-        [Fact]
-        public async Task Handle_ReturnsAllResults_WhenNoFilterApplied()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task Handle_ReturnsAllResults_WhenNoFilterApplied(bool forLookup)
         {
-            //Arrange
-            var query = new LocationsRetrievalByQuery(null, null);
+            // Arrange
+            var query = new LocationsRetrievalByQuery(null, null, forLookup);
 
-            //Act
+            // Act
             var results = (await Service.Handle(query)).ToList();
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             results.Count.Should().Be(50);
         }
 
-        [Fact]
-        public async Task Handle_ReturnsFiltered_WhenFilteredByName()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task Handle_ReturnsFiltered_WhenFilteredByName(bool forLookup)
         {
-            //Arrange
-            var query = new LocationsRetrievalByQuery("Name2", null);
+            // Arrange
+            var query = new LocationsRetrievalByQuery("Name2", null, forLookup);
 
-            //Act
+            // Act
             var results = (await Service.Handle(query)).ToList();
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             results.Count.Should().Be(1);
         }
 
-        [Fact]
-        public async Task Handle_ReturnsFiltered_WhenFilteredByParentId()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task Handle_ReturnsFiltered_WhenFilteredByParentId(bool forLookup)
         {
-            //Arrange
-            var query = new LocationsRetrievalByQuery(null, "Name1");
+            // Arrange
+            var query = new LocationsRetrievalByQuery(null, "Name1", forLookup);
 
-            //Act
+            // Act
             var results = (await Service.Handle(query)).ToList();
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             results.Count.Should().Be(1);
         }
 
-        [Fact]
-        public async Task Handle_ReturnsFiltered_WhenFilteredByNameAndParentId()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task Handle_ReturnsFiltered_WhenFilteredByNameAndParentId(bool forLookup)
         {
-            //Arrange
-            var query = new LocationsRetrievalByQuery("Name2", "Name1");
+            // Arrange
+            var query = new LocationsRetrievalByQuery("Name2", "Name1", forLookup);
 
-            //Act
+            // Act
             var results = (await Service.Handle(query)).ToList();
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             results.Count.Should().Be(1);
         }
 
-        [Fact]
-        public async Task Handle_ReturnsFiltered_WhenFilteredByPermissedLocations()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task Handle_ReturnsFiltered_WhenFilteredByPermissedLocations(bool forLookup)
         {
             // Arrange
             var permissedLocations = new[]
@@ -82,7 +92,7 @@ namespace MedicalExaminer.API.Tests.Services.Location
                 "Name3",
             };
 
-            var query = new LocationsRetrievalByQuery(null, null, permissedLocations);
+            var query = new LocationsRetrievalByQuery(null, null, forLookup, permissedLocations);
 
             // Act
             var results = (await Service.Handle(query)).ToList();

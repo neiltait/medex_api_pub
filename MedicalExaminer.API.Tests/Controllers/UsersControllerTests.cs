@@ -1,26 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Users;
-using MedicalExaminer.Common;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
-using MedicalExaminer.Common.Services.Examination;
-using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Documents;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -35,6 +24,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>> userRetrievalService;
         public Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>> usersRetrievalService;
         public Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>> userUpdateService;
+        public Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>> userRetrievalByEmailService;
 
         public UsersControllerTests() : base()
         {
@@ -44,6 +34,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             userRetrievalService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
             usersRetrievalService = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
             userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
+            userRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
 
             Controller = new UsersController(
                 logger.Object,
@@ -54,7 +45,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 createUserService.Object,
                 userRetrievalService.Object,
                 usersRetrievalService.Object,
-                userUpdateService.Object);
+                userUpdateService.Object,
+                userRetrievalByEmailService.Object);
         }
 
         /// <summary>
