@@ -155,6 +155,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
 
             var usersRetrievalByOktaIdServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
+            var usersRetrievalByEmailServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
 
             var authorizationServiceMock = new Mock<IAuthorizationService>();
 
@@ -169,7 +170,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 createUserService.Object,
                 userRetrievalService.Object,
                 usersRetrievalService.Object,
-                userUpdateService.Object);
+                userUpdateService.Object,
+                usersRetrievalByEmailServiceMock.Object);
         }
 
         [Fact]
