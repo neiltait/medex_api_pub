@@ -8,6 +8,11 @@ namespace MedicalExaminer.Common.Settings
     public class BackgroundServicesSettings
     {
         /// <summary>
+        /// Gets or sets whether the service should be disabled.
+        /// </summary>
+        public bool Disabled { get; set; }
+
+        /// <summary>
         /// Gets or sets the time to run each day.
         /// </summary>
         public TimeSpan TimeToRunEachDay { get; set; }
