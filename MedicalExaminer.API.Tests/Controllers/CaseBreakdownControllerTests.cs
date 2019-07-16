@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
@@ -7,7 +6,6 @@ using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Queries.Examination;
-using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -19,7 +17,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 {
     public class CaseBreakdownControllerTests : AuthorizedControllerTestsBase<CaseBreakdownController>
     {
-        
         [Fact]
         public async void GetOtherEvent_When_Called_With_Null_Returns_Bad_Request()
         {

@@ -16,13 +16,11 @@ namespace MedicalExaminer.API.Extensions.Data
         ///     Add Our Profiles to the mapper configuration.
         /// </summary>
         /// <param name="config">The mapper configuration.</param>
-        public static void AddMedicalExaminerProfiles(this IMapperConfigurationExpression config, IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> locationService)
+        public static void AddMedicalExaminerProfiles(this IMapperConfigurationExpression config)
         {
             config.AddProfile<ExaminationProfile>();
-            config.AddProfile(new PermissionsProfile(locationService));
-            config.AddProfile(new UsersProfile(locationService));
-            ////config.AddProfile<UsersProfile>();
-            //config.AddProfile<PermissionsProfile>();
+            config.AddProfile(new PermissionsProfile());
+            config.AddProfile(new UsersProfile());
             config.AddProfile<MedicalTeamProfile>();
             config.AddProfile<PatientDetailsProfile>();
             config.AddProfile<CaseBreakdownProfile>();

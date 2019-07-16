@@ -1,4 +1,5 @@
-﻿using MedicalExaminer.Models;
+﻿using MedicalExaminer.Common.Extensions.Permission;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Xunit;
 
@@ -9,63 +10,61 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         public void MePermissionIdentical_Returns_True()
         {
-            var permissionA = new MEUserPermission()
+            // Arrange
+            var permissionA = new MEUserPermission
             {
                 LocationId = "locationId",
-                UserRole = UserRoles.MedicalExaminer,
-                PermissionId = "permissionId"
+                UserRole = UserRoles.MedicalExaminer
             };
 
-            var permissionB = new MEUserPermission()
+            var permissionB = new MEUserPermission
             {
                 LocationId = "locationId",
-                UserRole = UserRoles.MedicalExaminer,
-                PermissionId = "permissionId"
+                UserRole = UserRoles.MedicalExaminer
             };
 
+            // Assert
             Assert.True(permissionA.IsSame(permissionB));
         }
 
         [Fact]
         public void MePermissionDifferentLocationId_Returns_False()
         {
-            var permissionA = new MEUserPermission()
+            // Arrange
+            var permissionA = new MEUserPermission
             {
                 LocationId = "locationId",
-                UserRole = UserRoles.MedicalExaminer,
-                PermissionId = "permissionId"
+                UserRole = UserRoles.MedicalExaminer
             };
 
-            var permissionB = new MEUserPermission()
+            var permissionB = new MEUserPermission
             {
                 LocationId = "locationId-bananas",
-                UserRole = UserRoles.MedicalExaminer,
-                PermissionId = "permissionId"
+                UserRole = UserRoles.MedicalExaminer
             };
 
+            // Assert
             Assert.False(permissionA.IsSame(permissionB));
         }
 
         [Fact]
         public void MePermissionDifferentRole_Returns_False()
         {
-            var permissionA = new MEUserPermission()
+            // Arrange
+            var permissionA = new MEUserPermission
             {
                 LocationId = "locationId",
-                UserRole = UserRoles.MedicalExaminer,
-                PermissionId = "permissionId"
+                UserRole = UserRoles.MedicalExaminer
             };
 
-            var permissionB = new MEUserPermission()
+            var permissionB = new MEUserPermission
             {
                 LocationId = "locationId",
-                UserRole = UserRoles.ServiceAdministrator,
-                PermissionId = "permissionId"
+                UserRole = UserRoles.ServiceAdministrator
             };
 
+            // Assert
             Assert.False(permissionA.IsSame(permissionB));
         }
     }
-
-    
 }

@@ -5,11 +5,5 @@
     /// </summary>
     public class InvalidUserPermissionQuery : IQuery<bool>
     {
-        public string InvalidId { get; }
-
-        public InvalidUserPermissionQuery()
-        {
-            InvalidId = null;
-        }
     }
 }

@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Filters;
+using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Extensions.Models;
+using MedicalExaminer.Common.Extensions.Permission;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
@@ -52,6 +54,10 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         private readonly IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> _locationParentsService;
 
+        private readonly IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> _locationRetrievalService;
+
+
+        private readonly IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> _locationsRetrievalService;
         /// <summary>
         ///     Initializes a new instance of the <see cref="PermissionsController" /> class.
         /// </summary>
@@ -73,13 +79,17 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
             IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService,
-            IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>> locationsParentsService)
+            IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>> locationsParentsService,
+            IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> locationRetrievalService,
+            IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationsRetrievalService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _userRetrievalByIdService = userRetrievalByIdService;
             _userUpdateService = userUpdateService;
             _locationParentsService = locationParentsService;
             _locationsParentsService = locationsParentsService;
+            _locationRetrievalService = locationRetrievalService;
+            _locationsRetrievalService = locationsRetrievalService;
         }
 
         /// <summary>
@@ -116,11 +126,18 @@ namespace MedicalExaminer.API.Controllers
                     .Where(p => locationPaths[p.LocationId]
                         .Any(l => permissedLocations.Contains(l.LocationId)));
 
-                var mappedPermissions = permissions.Select(p => Mapper.Map<PermissionItem>(p)).ToArray();
+                var locations = permissions.GetLocationName(_locationsRetrievalService).Result;
 
-                foreach(var mp in mappedPermissions)
+                var permissionLocation = new PermissionLocation(permissions, locations);
+
+                var mappedPermissions = new List<PermissionItem>();
+
+                foreach (var meUserPermission in permissionLocation._permission)
                 {
-                    mp.UserId = meUserId;
+                    var pl = new PermissionLocation(new [] {meUserPermission}, permissionLocation._location);
+                    var temp = Mapper.Map<PermissionItem>(pl);
+                    temp.UserId = meUserId;
+                    mappedPermissions.Add(temp);
                 }
 
                 return Ok(new GetPermissionsResponse
@@ -174,12 +191,16 @@ namespace MedicalExaminer.API.Controllers
                             new LocationParentsQuery(permission.LocationId)))
                     .ToLocationPath();
 
-                if (!CanAsync(Common.Authorization.Permission.GetUserPermission, locationDocument))
+                if (!CanAsync(Permission.GetUserPermission, locationDocument))
                 {
                     return Forbid();
                 }
 
-                var result = Mapper.Map<GetPermissionResponse>(permission);
+                var locations = permission.GetLocationName(_locationRetrievalService).Result;
+
+                var permissionLocations = new PermissionLocation(permission, locations);
+
+                var result = Mapper.Map<GetPermissionResponse>(permissionLocations);
                 result.UserId = meUserId;
                 return Ok(result);
             }
@@ -320,7 +341,7 @@ namespace MedicalExaminer.API.Controllers
                 }
 
                 var permission = Mapper.Map<MEUserPermission>(putPermission);
-
+                permission.PermissionId = permissionId;
                 var permissionToUpdate = user.Permissions.SingleOrDefault(p => p.PermissionId == permissionId);
 
                 if (permissionToUpdate == null)
@@ -339,6 +360,18 @@ namespace MedicalExaminer.API.Controllers
                 permissionToUpdate = Mapper.Map(putPermission, permissionToUpdate);
 
                 await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
+
+                var locationOfPermission =
+                    _locationRetrievalService.Handle(new LocationRetrievalByIdQuery(permissionToUpdate.LocationId)).Result;
+
+                var thingOne = new PermissionLocation(permissionToUpdate, locationOfPermission);
+
+                return Ok(Mapper.Map<PutPermissionResponse>(thingOne));
+
+
+
+
+
 
                 return Ok(Mapper.Map<MEUserPermission, PutPermissionResponse>(
                     permissionToUpdate,

@@ -141,12 +141,7 @@ namespace MedicalExaminer.API
             services.AddExaminationValidation();
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
 
-            services.AddScoped(provider => new MapperConfiguration(cfg =>
-            {
-               cfg.AddMedicalExaminerProfiles(services.BuildServiceProvider().GetRequiredService<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>());
-            }).CreateMapper());
-
-            Mapper.Initialize(config => { services.BuildServiceProvider().GetService<MapperConfiguration>(); });
+            Mapper.Initialize(cfg => cfg.AddMedicalExaminerProfiles());
             
             Mapper.AssertConfigurationIsValid();
             services.AddAutoMapper();

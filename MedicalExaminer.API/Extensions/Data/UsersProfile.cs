@@ -15,7 +15,7 @@ namespace MedicalExaminer.API.Extensions.Data
         /// <summary>
         ///     Initialise a new instance of the Users AutoMapper Profile
         /// </summary>
-        public UsersProfile(IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> service)
+        public UsersProfile()
         {
             CreateMap<MeUser, UserItem>();
             CreateMap<MeUser, UserLookup>()
@@ -38,12 +38,12 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(meUser => meUser.LastName, opt => opt.MapFrom(request => request.LastName))
                 .ForMember(meUser => meUser.Email, opt => opt.MapFrom(request => request.Email))
                 .ForAllOtherMembers(request => request.Ignore());
-            CreateMap<MEUserPermission, UserPermission>()
-                .ForMember(userPermission => userPermission.UserRole, opt => opt.MapFrom(meUserPermission => meUserPermission.UserRole))
-                .ForMember(userPermission => userPermission.LocationId, opt => opt.MapFrom(meUserPermission => meUserPermission.LocationId))
-                .ForMember(userPermission => userPermission.LocationName, opt => opt.MapFrom(new UserPermissionLocationIdLocationNameResolver(service)))
-                .ForMember(userPermission => userPermission.PermissionId, opt => opt.MapFrom(meUserPermission => meUserPermission.PermissionId))
-                .ForAllOtherMembers(meUserPermission => meUserPermission.Ignore());
+            //CreateMap<MEUserPermission, UserPermission>()
+            //    .ForMember(userPermission => userPermission.UserRole, opt => opt.MapFrom(meUserPermission => meUserPermission.UserRole))
+            //    .ForMember(userPermission => userPermission.LocationId, opt => opt.MapFrom(meUserPermission => meUserPermission.LocationId))
+            //    .ForMember(userPermission => userPermission.LocationName, opt => opt.MapFrom(new UserPermissionLocationIdLocationNameResolver(service)))
+            //    .ForMember(userPermission => userPermission.PermissionId, opt => opt.MapFrom(meUserPermission => meUserPermission.PermissionId))
+            //    .ForAllOtherMembers(meUserPermission => meUserPermission.Ignore());
         }
     }
 
