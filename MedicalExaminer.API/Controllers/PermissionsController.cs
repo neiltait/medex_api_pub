@@ -16,6 +16,7 @@ using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
+using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -266,12 +267,14 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// Updates a Permission.
         /// </summary>
+        /// <param name="meUserId"> ME User Id </param>
+        /// <param name="permissionId"> permission Id </param>
         /// <param name="putPermission">The PutPermissionRequest.</param>
         /// <returns>A PutPermissionResponse.</returns>
         [HttpPut("{permissionId}")]
         [AuthorizePermission(Common.Authorization.Permission.UpdateUserPermission)]
         public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(
-            string meUserId, 
+            string meUserId,
             string permissionId,
             [FromBody]
             PutPermissionRequest putPermission)
@@ -340,6 +343,67 @@ namespace MedicalExaminer.API.Controllers
             catch (ArgumentException)
             {
                 return NotFound(new PutPermissionResponse());
+            }
+        }
+
+        /// <summary>
+        /// Deletes a Permission.
+        /// </summary>
+        /// <param name="meUserId"> ME User Id </param>
+        /// <param name="permissionId"> permission Id </param>
+        /// <returns>A Response.</returns>
+        [HttpDelete("{permissionId}")]
+        [AuthorizePermission(Common.Authorization.Permission.DeleteUserPermission)]
+        public async Task<ActionResult> DeletePermission(
+            string meUserId,
+            string permissionId)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
+
+                var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                var permissionToDelete = user.Permissions.FirstOrDefault(p => p.PermissionId == permissionId);
+
+                if (permissionToDelete == null)
+                {
+                    return NotFound();
+                }
+
+                var locationDocument = (await
+                        _locationParentsService.Handle(
+                            new LocationParentsQuery(permissionToDelete.LocationId)))
+                    .ToLocationPath();
+
+                if (!CanAsync(Permission.DeleteUserPermission, locationDocument))
+                {
+                    return Forbid();
+                }
+
+                var temp = user.Permissions.ToList();
+                temp.Remove(permissionToDelete);
+
+                user.Permissions = temp;
+                var currentUser = await CurrentUser();
+                await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
+                return Ok();
+            }
+            catch (DocumentClientException)
+            {
+                return NotFound();
+            }
+            catch (ArgumentException)
+            {
+                return NotFound();
             }
         }
     }

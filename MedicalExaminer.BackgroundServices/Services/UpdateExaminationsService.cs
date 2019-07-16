@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cosmonaut;
 using Cosmonaut.Extensions;
+using Cosmonaut.Testing;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,6 +39,8 @@ namespace MedicalExaminer.BackgroundServices.Services
         /// <inheritdoc/>
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
+            Logger.Log(LogLevel.Information, "Update examination background worker service running...");
+
             using (var scope = _serviceProvider.CreateScope())
             {
                 var examinationStore = scope.ServiceProvider.GetRequiredService<ICosmosStore<Examination>>();
@@ -49,21 +52,44 @@ namespace MedicalExaminer.BackgroundServices.Services
                     .Where(e => !e.CaseCompleted)
                     .ToListAsync(cancellationToken);
 
+                // Tried ToFeedResponse above to get request charge but always comes back 0 anyway. Left as ListAsync for now.
+                var initialQueryCharge = 0; // examinations.RequestCharge;
+
                 var examinationAudits = new List<AuditEntry<Examination>>();
+
+                var changedExaminations = new List<Examination>();
 
                 foreach (var examination in examinations)
                 {
-                    examination.UpdateCaseUrgencyScore();
-                    examination.LastModifiedBy = "UpdateExaminationService";
-                    examination.ModifiedAt = DateTimeOffset.UtcNow;
+                    var previousScore = examination.UrgencyScore;
 
-                    examinationAudits.Add(new AuditEntry<Examination>(examination));
+                    examination.UpdateCaseUrgencyScore();
+
+                    if (examination.UrgencyScore != previousScore)
+                    {
+                        examination.LastModifiedBy = "UpdateExaminationService";
+                        examination.ModifiedAt = DateTimeOffset.UtcNow;
+
+                        examinationAudits.Add(new AuditEntry<Examination>(examination));
+
+                        changedExaminations.Add(examination);
+                    }
                 }
 
-                Console.WriteLine($"Updated {examinations.Count}");
-                await examinationStore.UpdateRangeAsync(examinations, null, cancellationToken);
+                Logger.Log(LogLevel.Information, $"Reviewed: {examinations.Count} open examinations, updated: {changedExaminations.Count}.");
 
-                await examinationAuditStore.AddRangeAsync(examinationAudits, null, cancellationToken);
+                // Only update the ones that have changed.
+                var updateResponse = await examinationStore.UpdateRangeAsync(changedExaminations, null, cancellationToken);
+
+                // Assume only successful responses come back with a charge that was can use.
+                var totalRequestChargeForUpdates = updateResponse.SuccessfulEntities.Sum(e => e.ResourceResponse.RequestCharge);
+
+                var createAuditResponse = await examinationAuditStore.AddRangeAsync(examinationAudits, null, cancellationToken);
+
+                var totalRequestChargeForAudit =
+                    createAuditResponse.SuccessfulEntities.Sum(e => e.ResourceResponse.RequestCharge);
+
+                Logger.Log(LogLevel.Information, $"Consumed total RU: {initialQueryCharge+totalRequestChargeForUpdates + totalRequestChargeForAudit} Query: {initialQueryCharge} Updates: {totalRequestChargeForUpdates} Audits:{totalRequestChargeForAudit}");
             }
         }
     }
