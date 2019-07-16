@@ -34,6 +34,29 @@ namespace MedicalExaminer.BackgroundServices.Tests
         }
 
         [Fact]
+        public void AddBackgroundServices_DoesNotSetup_IfDisabledSettingsIsTrue()
+        {
+            // Arrange
+            var settings = new BackgroundServicesSettings
+            {
+                Disabled = true
+            };
+
+            var sut = new ServiceCollection();
+
+            // Act
+            sut.AddBackgroundServices(settings);
+
+            // Assert
+            var provider = sut.BuildServiceProvider();
+            var scheduler = provider.GetService<IScheduler>();
+            scheduler.Should().BeNull();
+
+            var serviceConfiguration = provider.GetService<IScheduledServiceConfiguration>();
+            var configuration = serviceConfiguration.Should().BeNull();
+        }
+
+        [Fact]
         public void AddBackgroundServices()
         {
             // Arrange

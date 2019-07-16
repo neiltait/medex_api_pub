@@ -10,6 +10,8 @@ namespace MedicalExaminer.Common.Database
     /// </summary>
     public class DocumentClientFactory : IDocumentClientFactory
     {
+        private IDocumentClient _client;
+
         /// <summary>
         /// Create Client.
         /// </summary>
@@ -17,18 +19,21 @@ namespace MedicalExaminer.Common.Database
         /// <returns><see cref="IDocumentClient"/>.</returns>
         public IDocumentClient CreateClient(IClientSettings connectionSettings)
         {
-            var connectionPolicy = new ConnectionPolicy
+            if (_client == null)
             {
-                ConnectionMode = ConnectionMode.Direct,
-                ConnectionProtocol = Protocol.Tcp
-            };
+                var connectionPolicy = new ConnectionPolicy
+                {
+                    ConnectionMode = ConnectionMode.Direct,
+                    ConnectionProtocol = Protocol.Tcp
+                };
 
-            var client = new DocumentClient(
-                connectionSettings.EndPointUri,
-                connectionSettings.PrimaryKey,
-                connectionPolicy);
+                _client = new DocumentClient(
+                    connectionSettings.EndPointUri,
+                    connectionSettings.PrimaryKey,
+                    connectionPolicy);
+            }
 
-            return client;
+            return _client;
         }
 
         /// <summary>
