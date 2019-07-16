@@ -64,9 +64,6 @@ namespace MedicalExaminer.API.Tests.Services.Permission
             var query = new InvalidUserPermissionQuery();
             var dbAccess = new Mock<IDatabaseAccess>();
 
-            //dbAccess.Setup(db => db.GetItemsAsync(
-            //    connectionSettings.Object,
-            //    It.IsAny<Expression<Func<IEnumerable<MeUser>, bool>>>())).Returns(Task.FromResult(users)).Verifiable();
 
             var sut = new InvalidUserPermissionUpdateService(dbAccess.Object, connectionSettings.Object);
 

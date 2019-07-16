@@ -142,9 +142,6 @@ namespace MedicalExaminer.API
             }).CreateMapper());
 
             Mapper.Initialize(config => { services.BuildServiceProvider().GetService<MapperConfiguration>(); });
-            //Mapper.Initialize(
-            //    config => { config.AddMedicalExaminerProfiles(services.BuildServiceProvider()); }
-            //    );
             
             Mapper.AssertConfigurationIsValid();
             services.AddAutoMapper();
@@ -373,18 +370,6 @@ namespace MedicalExaminer.API
             // Patient details services
             services
                 .AddScoped<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>, PatientDetailsUpdateService>();
-            //var serviceProvider = services.BuildServiceProvider();
-            services.AddScoped<IServiceProvider, ServiceProvider>();
-
-           // services.AddScoped<IValueResolver<MEUserPermission, GetPermissionResponse, string>, LocationIdLocationNameResolver>();
-           // services.AddScoped<PermissionsProfile, PermissionsProfile>();
-
-                       
-            //Mapper = services.AddScoped(provider => new MapperConfiguration(cfg =>
-            //{
-            //    cfg.AddProfile(new PermissionsProfile(provider.GetService<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>()));
-            //    cfg.AddProfile(new UsersProfile(provider.GetService<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>()));
-            //}).CreateMapper());
 
             // User services
             services.AddScoped<IAsyncQueryHandler<CreateUserQuery, MeUser>, CreateUserService>();
