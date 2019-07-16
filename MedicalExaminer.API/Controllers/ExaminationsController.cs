@@ -153,7 +153,7 @@ namespace MedicalExaminer.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new PutExaminationResponse());
+                return BadRequestEnums(new PutExaminationResponse());
             }
 
             try
