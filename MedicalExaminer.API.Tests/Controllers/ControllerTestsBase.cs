@@ -2,14 +2,20 @@
 using System.Net;
 using System.Reflection;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Common.Services.Location;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
 namespace MedicalExaminer.API.Tests.Controllers
@@ -26,8 +32,14 @@ namespace MedicalExaminer.API.Tests.Controllers
         /// </summary>
         public ControllerTestsBase()
         {
-            var mapperConfiguration = new MapperConfiguration(config => { config.AddMedicalExaminerProfiles(); });
-
+            var sp = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>();
+            var location = new Location()
+            {
+                Name = "expectedLocation"
+            };
+            sp.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
+            var mapperConfiguration = new MapperConfiguration(config => { config.AddMedicalExaminerProfiles(sp.Object); });
+            
             mapperConfiguration.AssertConfigurationIsValid();
 
             Mapper = mapperConfiguration.CreateMapper();

@@ -10,6 +10,7 @@ namespace MedicalExaminer.API.Tests.Controllers
     public class DataTypesControllerTests : ControllerTestsBase<DataTypesController>
     {
         public DataTypesControllerTests()
+            : base()
         {
             var mockLogger = new MELoggerMocker();
             _controller = new DataTypesController(mockLogger, Mapper);

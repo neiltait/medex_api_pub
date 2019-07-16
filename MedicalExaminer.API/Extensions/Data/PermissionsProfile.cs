@@ -3,7 +3,6 @@ using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
