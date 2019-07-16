@@ -1,80 +1,66 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
-using MedicalExaminer.Common.Database;
-using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Permissions;
 using MedicalExaminer.Common.Services.Permissions;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using Moq;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Services.Permission
 {
-    public class InvalidUserPermissionUpdateServiceTests
+    public class InvalidUserPermissionUpdateServiceTests : ServiceTestsBase<
+        InvalidUserPermissionQuery,
+        UserConnectionSettings,
+        bool,
+        MeUser,
+        InvalidUserPermissionUpdateService>
     {
         [Fact]
-        public void Update_Invalid_PermissionIDs_When_Duplicate_PermissionIDs_Exists()
+        public async void Update_Invalid_PermissionIDs_When_Duplicate_PermissionIDs_Exists()
         {
             // Arrange
-            var user1 = new MeUser
-            {
-                UserId = "UserId1",
-                Permissions = new[]
-                {
-                    new MEUserPermission
-                    {
-                        PermissionId = "DuplicatePermissionID",
-                        LocationId = "SiteId",
-                        UserRole = UserRoles.MedicalExaminer
-                    }
-                }
-            };
-
-            var user2 = new MeUser
-            {
-                UserId = "UserId2",
-                Permissions = new[]
-                {
-                    new MEUserPermission
-                    {
-                        PermissionId = "DuplicatePermissionID",
-                        LocationId = "NationalId",
-                        UserRole = UserRoles.MedicalExaminerOfficer
-                    },
-                    new MEUserPermission
-                    {
-                        PermissionId = "DuplicatePermissionID",
-                        LocationId = "SiteId",
-                        UserRole = UserRoles.MedicalExaminer
-                    }
-                }
-            };
-
-            List<MeUser> users = new List<MeUser>();
-            users.Add(user1);
-            users.Add(user2);
-
-            var connectionSettings = new Mock<IUserConnectionSettings>();
             var query = new InvalidUserPermissionQuery();
-            var dbAccess = new Mock<IDatabaseAccess>();
-
-            dbAccess.Setup(db => db.GetItemsAsync(
-                connectionSettings.Object,
-                It.IsAny<Expression<Func<IEnumerable<MeUser>, bool>>>())).Returns(Task.FromResult(users)).Verifiable();
-
-            var sut = new InvalidUserPermissionUpdateService(dbAccess.Object, connectionSettings.Object);
+            var users = GetExamples();
 
             // Act
-            var result = sut.Handle(query);
+            var results = await Service.Handle(query);
 
             // Assert
-            
+
+        }
+
+        protected override MeUser[] GetExamples()
+        {
+            return new[]
+            {
+                new MeUser
+                {
+                    UserId = "UserId1",
+                    Permissions = new[]
+                    {
+                        new MEUserPermission
+                        {
+                            PermissionId = "DuplicatePermissionID",
+                            LocationId = "SiteId",
+                            UserRole = UserRoles.MedicalExaminer
+                        }
+                    }
+                },
+                new MeUser
+                {
+                    UserId = "UserId2",
+                    Permissions = new[]
+                    {
+                        new MEUserPermission
+                        {
+                            PermissionId = "DuplicatePermissionID",
+                            LocationId = "NationalId",
+                            UserRole = UserRoles.MedicalExaminerOfficer
+                        }
+                    }
+                }
+            };
         }
     }
 }
