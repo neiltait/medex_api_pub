@@ -20,7 +20,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
         private Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> _locationRetrievalMock;
 
-        public LocationControllerTests() : base()
+        public LocationControllerTests()
         {
             _locationRetrievalByIdMock = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>();
 

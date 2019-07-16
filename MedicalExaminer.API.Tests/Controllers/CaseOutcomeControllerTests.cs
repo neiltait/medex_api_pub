@@ -7,7 +7,6 @@ using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
-using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -20,7 +19,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 {
     public class CaseOutcomeControllerTests : AuthorizedControllerTestsBase<CaseOutcomeController>
     {
-        public CaseOutcomeControllerTests() : base() { }
         [Fact]
         public async void GetCaseOutcome_When_Called_With_Id_Not_Found_Returns_NotFound()
         {
