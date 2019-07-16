@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -50,7 +52,8 @@ namespace MedicalExaminer.API.Tests.Services
                 .Returns((Expression expression) =>
                 {
                     var query = new EnumerableQuery<T>(expression);
-                    var response = new FeedResponse<T>(query);
+                    //var response = new FeedResponse<T>(query);
+                    var response = ToFeedResponse(query);
 
                     mockDocumentQuery
                         .SetupSequence(_ => _.HasMoreResults)
@@ -118,7 +121,9 @@ namespace MedicalExaminer.API.Tests.Services
                 {
                     var mockDocumentQuery = new Mock<IFakeDocumentQuery<T>>(MockBehavior.Strict);
                     var query = new EnumerableQuery<T>(expression);
-                    var response = new FeedResponse<T>(query);
+                    //var response = new FeedResponse<T>(query);
+
+                    var response = ToFeedResponse(query);
 
                     // Required for selects to pass to the above more generic version
                     mockDocumentQuery.Setup(_ => _.Provider)
@@ -228,7 +233,79 @@ namespace MedicalExaminer.API.Tests.Services
                     document.SetPropertyValue(jsonProperty?.PropertyName ?? propertyInfo.Name, value);
                 }
             }
-            return Task.FromResult(new ResourceResponse<Document>(document));
+
+            var response = ToResourceResponse(document, HttpStatusCode.Accepted);
+
+            return Task.FromResult(response);
+        }
+
+        public static ResourceResponse<T> ToResourceResponse<T>(this T resource, HttpStatusCode statusCode, IDictionary<string, string> responseHeaders = null) where T : Resource, new()
+        {
+            var resourceResponse = new ResourceResponse<T>(resource);
+            var documentServiceResponseType = Type.GetType("Microsoft.Azure.Documents.DocumentServiceResponse, Microsoft.Azure.DocumentDB.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+            var headersDictionaryType = Type.GetType("Microsoft.Azure.Documents.Collections.DictionaryNameValueCollection, Microsoft.Azure.DocumentDB.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+            var flags = BindingFlags.NonPublic | BindingFlags.Instance;
+            var headers = new NameValueCollection { { "x-ms-request-charge", "0" } };
+
+            if (responseHeaders != null)
+            {
+                foreach (var responseHeader in responseHeaders)
+                {
+                    headers[responseHeader.Key] = responseHeader.Value;
+                }
+            }
+
+            var headersDictionaryInstance = Activator.CreateInstance(headersDictionaryType, headers);
+            var arguments = new[] { Stream.Null, headersDictionaryInstance, statusCode, null };
+
+            var documentServiceResponse = documentServiceResponseType.GetTypeInfo().GetConstructors(flags)[0]
+                .Invoke(arguments);
+
+            var responseField = typeof(ResourceResponse<T>).GetTypeInfo().GetField("response", flags);
+
+            responseField?.SetValue(resourceResponse, documentServiceResponse);
+
+            return resourceResponse;
+        }
+
+
+        public static FeedResponse<T> ToFeedResponse<T>(this IQueryable<T> resource, IDictionary<string, string> responseHeaders = null)
+        {
+            var feedResponseType = Type.GetType("Microsoft.Azure.Documents.Client.FeedResponse`1, Microsoft.Azure.DocumentDB.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+
+            var flags = BindingFlags.NonPublic | BindingFlags.Instance;
+
+            var headers = new NameValueCollection
+            {
+                { "x-ms-request-charge", "0" },
+                { "x-ms-activity-id", Guid.NewGuid().ToString() }
+            };
+
+            if (responseHeaders != null)
+            {
+                foreach (var responseHeader in responseHeaders)
+                {
+                    headers[responseHeader.Key] = responseHeader.Value;
+                }
+            }
+
+            var headersDictionaryType = Type.GetType("Microsoft.Azure.Documents.Collections.DictionaryNameValueCollection, Microsoft.Azure.DocumentDB.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+
+            var headersDictionaryInstance = Activator.CreateInstance(headersDictionaryType, headers);
+
+            var arguments = new object[] { resource, resource.Count(), headersDictionaryInstance, false, null, null, null, 0};
+
+            if (feedResponseType != null)
+            {
+                var t = feedResponseType.MakeGenericType(typeof(T));
+
+                var feedResponse = t.GetTypeInfo().GetConstructors(flags)[0]
+                    .Invoke(arguments);
+
+                return (FeedResponse<T>)feedResponse;
+            }
+
+            return new FeedResponse<T>();
         }
 
         /// <summary>

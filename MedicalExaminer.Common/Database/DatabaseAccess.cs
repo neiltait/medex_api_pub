@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
+using MedicalExaminer.Common.Reporting;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -20,15 +21,16 @@ namespace MedicalExaminer.Common.Database
     {
         private readonly IDocumentClientFactory _documentClientFactory;
 
-        private IDocumentClient _client;
+        private readonly RequestChargeService _requestChargeService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseAccess"/> class.
         /// </summary>
         /// <param name="documentClientFactory">The document client factory.</param>
-        public DatabaseAccess(IDocumentClientFactory documentClientFactory)
+        public DatabaseAccess(IDocumentClientFactory documentClientFactory, RequestChargeService requestChargeService)
         {
             _documentClientFactory = documentClientFactory;
+            _requestChargeService = requestChargeService;
         }
 
         /// <summary>
@@ -54,12 +56,7 @@ namespace MedicalExaminer.Common.Database
 
         private IDocumentClient GetClient(IClientSettings connectionSettings)
         {
-            if (_client == null)
-            {
-                _client = _documentClientFactory.CreateClient(connectionSettings);
-            }
-
-            return _client;
+            return _documentClientFactory.CreateClient(connectionSettings);
         }
 
         public async Task<T> CreateItemAsync<T>(IConnectionSettings connectionSettings, T item, bool disableAutomaticIdGeneration = false)
@@ -71,6 +68,13 @@ namespace MedicalExaminer.Common.Database
                     connectionSettings.Collection),
                     item);
             AddAuditEntry(connectionSettings, item);
+
+            _requestChargeService.RequestCharges.Add( new RequestChargeService.RequestCharge()
+            {
+                Request = $"CreateItemAsync<{typeof(T).Name}>()",
+                Charge = resourceResponse.RequestCharge
+            });
+
             return (T)(dynamic)resourceResponse.Resource;
         }
 
@@ -99,6 +103,12 @@ namespace MedicalExaminer.Common.Database
                     id);
 
                 var response = await client.ReadDocumentAsync(documentUri);
+
+                _requestChargeService.RequestCharges.Add(new RequestChargeService.RequestCharge()
+                {
+                    Request = $"GetItemByIdAsync<{typeof(T).Name}>(id={id})",
+                    Charge = response.RequestCharge
+                });
 
                 return (T)(dynamic)response.Resource;
             }
@@ -133,7 +143,15 @@ namespace MedicalExaminer.Common.Database
                 var results = new List<T>();
                 while (query.HasMoreResults)
                 {
-                    results.AddRange(await query.ExecuteNextAsync<T>());
+                    var response = await query.ExecuteNextAsync<T>();
+
+                    _requestChargeService.RequestCharges.Add(new RequestChargeService.RequestCharge()
+                    {
+                        Request = $"GetItemAsync<{typeof(T).Name}>(query={query})",
+                        Charge = response.RequestCharge
+                    });
+
+                    results.AddRange(response);
                 }
 
                 return results.FirstOrDefault();
@@ -195,7 +213,15 @@ namespace MedicalExaminer.Common.Database
             var results = new List<T>();
             while (query.HasMoreResults)
             {
-                results.AddRange(await query.ExecuteNextAsync<T>());
+                var response = await query.ExecuteNextAsync<T>();
+
+                _requestChargeService.RequestCharges.Add(new RequestChargeService.RequestCharge()
+                {
+                    Request = $"GetItemAsync<{typeof(T).Name}>(query={query})",
+                    Charge = response.RequestCharge
+                });
+
+                results.AddRange(response);
             }
 
             return results;
@@ -224,7 +250,15 @@ namespace MedicalExaminer.Common.Database
             var results = new List<T>();
             while (query.HasMoreResults)
             {
-                results.AddRange(await query.ExecuteNextAsync<T>());
+                var response = await query.ExecuteNextAsync<T>();
+
+                _requestChargeService.RequestCharges.Add(new RequestChargeService.RequestCharge()
+                {
+                    Request = $"GetItemAsync<{typeof(T).Name}>(query={query})",
+                    Charge = response.RequestCharge
+                });
+
+                results.AddRange(response);
             }
 
             return results;
@@ -243,7 +277,15 @@ namespace MedicalExaminer.Common.Database
             var results = new List<T>();
             while (query.HasMoreResults)
             {
-                results.AddRange(await query.ExecuteNextAsync<T>());
+                var response = await query.ExecuteNextAsync<T>();
+
+                _requestChargeService.RequestCharges.Add(new RequestChargeService.RequestCharge()
+                {
+                    Request = $"GetCountAsync<{typeof(T).Name}>(query={query})",
+                    Charge = response.RequestCharge
+                });
+
+                results.AddRange(response);
             }
 
             return results.Count();
@@ -255,6 +297,13 @@ namespace MedicalExaminer.Common.Database
             var updateItemAsync = await client.UpsertDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
                 item);
+
+            _requestChargeService.RequestCharges.Add(new RequestChargeService.RequestCharge()
+            {
+                Request = $"UpdateItemAsync<{typeof(T).Name}>()",
+                Charge = updateItemAsync.RequestCharge
+            });
+
             AddAuditEntry(connectionSettings, item);
             return (T)(dynamic)updateItemAsync.Resource;
         }
