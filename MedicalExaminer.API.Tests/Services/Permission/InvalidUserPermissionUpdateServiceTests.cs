@@ -1,57 +1,63 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
-using MedicalExaminer.Common.Database;
-using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Permissions;
 using MedicalExaminer.Common.Services.Permissions;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using Moq;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Services.Permission
 {
-    public class InvalidUserPermissionUpdateServiceTests
+    public class InvalidUserPermissionUpdateServiceTests : ServiceTestsBase<
+        InvalidUserPermissionQuery,
+        UserConnectionSettings,
+        bool,
+        MeUser,
+        InvalidUserPermissionUpdateService>
     {
         [Fact]
-        public void Update_Invalid_PermissionIDs_When_Duplicate_PermissionIDs_Exists()
+        public async void Update_Invalid_PermissionIDs_When_Duplicate_PermissionIDs_Exists()
         {
             // Arrange
-            var user1 = new MeUser
-            {
-                UserId = "UserId1",
-                Permissions = new[]
-                {
-                    new MEUserPermission
-                    {
-                        PermissionId = "DuplicatePermissionID",
-                        LocationId = "SiteId",
-                        UserRole = UserRoles.MedicalExaminer
-                    }
-                }
-            };
+            var query = new InvalidUserPermissionQuery();
+            var users = GetExamples();
 
-            var user2 = new MeUser
+            // Act
+            var results = await Service.Handle(query);
+
+            // Assert
+
+        }
+
+        protected override MeUser[] GetExamples()
+        {
+            return new[]
             {
-                UserId = "UserId2",
-                Permissions = new[]
+                new MeUser
                 {
-                    new MEUserPermission
+                    UserId = "UserId1",
+                    Permissions = new[]
                     {
-                        PermissionId = "DuplicatePermissionID",
-                        LocationId = "NationalId",
-                        UserRole = UserRoles.MedicalExaminerOfficer
-                    },
-                    new MEUserPermission
+                        new MEUserPermission
+                        {
+                            PermissionId = "DuplicatePermissionID",
+                            LocationId = "SiteId",
+                            UserRole = UserRoles.MedicalExaminer
+                        }
+                    }
+                },
+                new MeUser
+                {
+                    UserId = "UserId2",
+                    Permissions = new[]
                     {
-                        PermissionId = "DuplicatePermissionID",
-                        LocationId = "SiteId",
-                        UserRole = UserRoles.MedicalExaminer
+                        new MEUserPermission
+                        {
+                            PermissionId = "DuplicatePermissionID",
+                            LocationId = "NationalId",
+                            UserRole = UserRoles.MedicalExaminerOfficer
+                        }
                     }
                 }
             };
