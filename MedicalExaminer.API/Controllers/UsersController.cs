@@ -35,6 +35,7 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> _userRetrievalByIdService;
         private readonly IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> _usersRetrievalService;
         private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
+        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _userRetrievalByEmailService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
@@ -57,13 +58,15 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<CreateUserQuery, MeUser> userCreationService,
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
-            IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService)
+            IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _userCreationService = userCreationService;
             _userRetrievalByIdService = userRetrievalByIdService;
             _usersRetrievalService = usersRetrievalService;
             _userUpdateService = userUpdateService;
+            _userRetrievalByEmailService = userRetrievalByEmailService;
         }
 
         /// <summary>
@@ -76,7 +79,7 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery(null));
+                var users = await _usersRetrievalService.Handle(new UsersRetrievalQuery(false, null));
                 return Ok(new GetUsersResponse
                 {
                     Users = users.Select(u => Mapper.Map<UserItem>(u)),
@@ -93,7 +96,7 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        ///     Get a User by its Identifier.
+        ///     Get a User by their Identifier.
         /// </summary>
         /// <param name="meUserId">The User Identifier.</param>
         /// <returns>A GetUserResponse.</returns>

@@ -37,6 +37,12 @@ namespace MedicalExaminer.Common.Database
             Expression<Func<T, bool>> predicate)
             where T : class;
 
+        Task<IEnumerable<T>> GetItemsAsync<T>(
+            IConnectionSettings connectionSettings,
+            Expression<Func<T, bool>> predicate,
+            Expression<Func<T, dynamic>> select)
+            where T : class;
+
         Task<IEnumerable<T>> GetItemsAsync<T, TKey>(IConnectionSettings connectionSettings,
             Expression<Func<T, bool>> predicate, Expression<Func<T, TKey>> orderBy)
             where T : class;

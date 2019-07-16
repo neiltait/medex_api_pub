@@ -34,7 +34,8 @@ namespace MedicalExaminer.API.Tests.Controllers
 
         private readonly Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> _locationRetrievalByQueryHandlerMock;
 
-        private readonly Mock<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>> _usersRetrievalByRoleLocationQueryServiceMock;
+        private readonly Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>> _usersRetrievalServiceMock;
+
 
         public ExaminationControllerTests()
             : base(setupAuthorize: false)
@@ -49,7 +50,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             _locationRetrievalByQueryHandlerMock = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>(MockBehavior.Strict);
 
-            _usersRetrievalByRoleLocationQueryServiceMock = new Mock<IAsyncQueryHandler<UsersRetrievalByRoleLocationQuery, IEnumerable<MeUser>>>(MockBehavior.Strict);
+            _usersRetrievalServiceMock = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>(MockBehavior.Strict);
 
             Controller = new ExaminationsController(
                 LoggerMock.Object,
@@ -62,7 +63,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 _examinationsDashboardServiceMock.Object,
                 _locationParentsServiceMock.Object,
                 _locationRetrievalByQueryHandlerMock.Object,
-                _usersRetrievalByRoleLocationQueryServiceMock.Object);
+                _usersRetrievalServiceMock.Object);
             Controller.ControllerContext = GetControllerContext();
         }
 
@@ -112,8 +113,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(service => service.Handle(It.IsAny<LocationsRetrievalByQuery>()))
                 .Returns(Task.FromResult(locations.AsEnumerable()));
 
-            _usersRetrievalByRoleLocationQueryServiceMock
-                .Setup(service => service.Handle(It.IsAny<UsersRetrievalByRoleLocationQuery>()))
+            _usersRetrievalServiceMock
+                .Setup(service => service.Handle(It.IsAny<UsersRetrievalQuery>()))
                 .Returns(Task.FromResult(users.AsEnumerable()));
 
             var request = new GetExaminationsRequest()
@@ -158,7 +159,15 @@ namespace MedicalExaminer.API.Tests.Controllers
                 {
                     UserId = "user1",
                     FirstName = "User",
-                    LastName = "1"
+                    LastName = "1",
+                    Permissions = new List<MEUserPermission>()
+                    {
+                        new MEUserPermission()
+                        {
+                            LocationId = "location1",
+                            UserRole = UserRoles.MedicalExaminer,
+                        }
+                    }
                 }
             };
 
@@ -176,8 +185,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(service => service.Handle(It.IsAny<LocationsRetrievalByQuery>()))
                 .Returns(Task.FromResult(locations.AsEnumerable()));
 
-            _usersRetrievalByRoleLocationQueryServiceMock
-                .Setup(service => service.Handle(It.IsAny<UsersRetrievalByRoleLocationQuery>()))
+            _usersRetrievalServiceMock
+                .Setup(service => service.Handle(It.IsAny<UsersRetrievalQuery>()))
                 .Returns(Task.FromResult(users.AsEnumerable()));
 
             var request = new GetExaminationsRequest()
@@ -207,14 +216,11 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             // Arrange
             SetupAuthorize(AuthorizationResult.Success());
-            var examination = CreateValidExamination();
-            var examinationId = Guid.NewGuid();
-
-            Controller.ModelState.AddModelError("test", "test");
+            Controller.ModelState.AddModelError("test", nameof(SystemValidationErrors.Required));
 
             // Act
             var response = Controller.CreateExamination(CreateValidNewCaseRequest()).Result;
-
+            
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
             var result = (BadRequestObjectResult) response.Result;
