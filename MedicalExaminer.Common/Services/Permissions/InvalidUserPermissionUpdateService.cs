@@ -23,6 +23,11 @@ namespace MedicalExaminer.Common.Services.Permissions
         /// <inheritdoc/>
         public override async Task<bool> Handle(InvalidUserPermissionQuery param)
         {
+            if (param == null)
+            {
+                throw new ArgumentNullException(nameof(param));
+            }
+
             var thingsToUpdate = DatabaseAccess.GetItemsAsync<MeUser>(ConnectionSettings, meUser => true).Result;
 
             foreach (var user in thingsToUpdate)
