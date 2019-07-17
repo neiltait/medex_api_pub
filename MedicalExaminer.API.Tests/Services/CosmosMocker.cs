@@ -259,11 +259,11 @@ namespace MedicalExaminer.API.Tests.Services
                         property = type.GetProperties().FirstOrDefault(p => p.Name.Equals(jsonProperty.PropertyName));
                     }
 
-                    // Otherwise fall back to the c# property name.
-                    if (property == null)
-                    {
-                        property = type.GetProperties().FirstOrDefault(p => p.Name.Equals(propertyInfo.Name));
-                    }
+                    //// Otherwise fall back to the c# property name.
+                    //if (property == null)
+                    //{
+                    //    property = type.GetProperties().FirstOrDefault(p => p.Name.Equals(propertyInfo.Name));
+                    //}
 
                     // Only if we found something should we set.
                     if (property != null)
