@@ -32,14 +32,8 @@ namespace MedicalExaminer.API.Tests.Controllers
         /// </summary>
         public ControllerTestsBase()
         {
-            var sp = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>();
-            var location = new Location()
-            {
-                Name = "expectedLocation"
-            };
-            sp.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
-            var mapperConfiguration = new MapperConfiguration(config => { config.AddMedicalExaminerProfiles(sp.Object); });
-            
+            var mapperConfiguration = new MapperConfiguration(config => { config.AddMedicalExaminerProfiles(); });
+
             mapperConfiguration.AssertConfigurationIsValid();
 
             Mapper = mapperConfiguration.CreateMapper();

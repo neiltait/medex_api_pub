@@ -22,13 +22,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         /// </summary>
         public MapperUsersProfileTests()
         {
-            var mockLocationNameService = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>();
-            var location = new Location()
-            {
-                Name = "ExpectedName"
-            };
-            mockLocationNameService.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
-            var config = new MapperConfiguration(cfg => { cfg.AddProfile(new UsersProfile(mockLocationNameService.Object)); });
+            var config = new MapperConfiguration(cfg => { cfg.AddProfile<UsersProfile>(); });
             _mapper = config.CreateMapper();
         }
 

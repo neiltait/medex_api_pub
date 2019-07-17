@@ -11,7 +11,7 @@ namespace MedicalExaminer.API.Tests.Services
         public BaseServiceTest()
         {
             var service = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, MedicalExaminer.Models.Location>>();
-            var mapperConfiguration = new MapperConfiguration(config => { config.AddMedicalExaminerProfiles(service.Object); });
+            var mapperConfiguration = new MapperConfiguration(config => { config.AddMedicalExaminerProfiles(); });
 
             mapperConfiguration.AssertConfigurationIsValid();
 

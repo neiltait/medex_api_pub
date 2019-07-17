@@ -29,6 +29,11 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>
             _locationsParentsServiceMock;
 
+        private readonly Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>> _locationRetrievalService;
+
+
+        private readonly Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> _locationsRetrievalService;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="TestPermissionsController" /> class.
         /// </summary>
@@ -39,6 +44,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             _userUpdateServiceMock = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>(MockBehavior.Strict);
             _locationParentsServiceMock = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>(MockBehavior.Strict);
             _locationsParentsServiceMock = new Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>(MockBehavior.Strict);
+            _locationRetrievalService = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>(MockBehavior.Strict);
+            _locationsRetrievalService = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>(MockBehavior.Strict);
 
             Controller = new PermissionsController(
                 LoggerMock.Object,
@@ -49,7 +56,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 _userRetrievalByIdServiceMock.Object,
                 _userUpdateServiceMock.Object,
                 _locationParentsServiceMock.Object,
-                _locationsParentsServiceMock.Object
+                _locationsParentsServiceMock.Object,
+                _locationRetrievalService.Object,
+                _locationsRetrievalService.Object
             );
 
             Controller.ControllerContext = GetControllerContext();
