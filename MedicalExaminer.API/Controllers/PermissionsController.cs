@@ -213,11 +213,13 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         ///     Create a new Permission.
         /// </summary>
+        /// <param name="meUserId">ME User ID</param>
         /// <param name="postPermission">The PostPermissionRequest.</param>
         /// <returns>A PostPermissionResponse.</returns>
         [HttpPost]
         [AuthorizePermission(Common.Authorization.Permission.CreateUserPermission)]
-        public async Task<ActionResult<PostPermissionResponse>> CreatePermission(string meUserId,
+        public async Task<ActionResult<PostPermissionResponse>> CreatePermission(
+            string meUserId,
             [FromBody]
             PostPermissionRequest postPermission)
         {
@@ -236,7 +238,7 @@ namespace MedicalExaminer.API.Controllers
                             new LocationParentsQuery(permission.LocationId)))
                     .ToLocationPath();
 
-                if (!CanAsync(Common.Authorization.Permission.CreateUserPermission, locationDocument))
+                if (!CanAsync(Permission.CreateUserPermission, locationDocument))
                 {
                     return Forbid();
                 }
@@ -252,15 +254,9 @@ namespace MedicalExaminer.API.Controllers
 
                 var existingPermissions = user.Permissions != null ? user.Permissions.ToList() : new List<MEUserPermission>();
 
-                var possiblePermission = existingPermissions.SingleOrDefault(ep => ep.LocationId == postPermission.LocationId
-                && ep.UserRole == postPermission.UserRole);
-
-                foreach (var usersPermissions in user.Permissions)
+                if (user.Permissions.Any(usersPermissions => usersPermissions.IsEquivalent(permission)))
                 {
-                    if (usersPermissions.IsEquivalent(permission))
-                    {
-                        return Conflict();
-                    }
+                    return Conflict();
                 }
 
                 existingPermissions.Add(permission);
