@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.API.Authorization;
@@ -945,7 +946,7 @@ namespace MedicalExaminer.API.Tests
             var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
 
             mockUsersClient
-                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default))
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
                 .Returns(Task.FromResult(oktaUser.Object));
 
             _mockOktaClient
