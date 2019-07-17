@@ -11,6 +11,7 @@ using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Okta.Sdk;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
@@ -25,6 +26,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>> usersRetrievalService;
         public Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>> userUpdateService;
         public Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>> userRetrievalByEmailService;
+        private readonly Mock<IOktaClient> mockOktaClient;
 
         public UsersControllerTests() : base()
         {
@@ -35,6 +37,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             usersRetrievalService = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
             userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
             userRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
+            mockOktaClient = new Mock<IOktaClient>(MockBehavior.Strict);
 
             Controller = new UsersController(
                 logger.Object,
@@ -46,7 +49,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 userRetrievalService.Object,
                 usersRetrievalService.Object,
                 userUpdateService.Object,
-                userRetrievalByEmailService.Object);
+                userRetrievalByEmailService.Object,
+                mockOktaClient.Object);
         }
 
         /// <summary>
