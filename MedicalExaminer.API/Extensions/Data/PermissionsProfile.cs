@@ -20,14 +20,10 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<PermissionLocation, PermissionItem>()
                 .ForMember(permissionItem => permissionItem.UserId, opt => opt.MapFrom(x => x.UserId))
-                .ForMember(permissionItem => permissionItem.PermissionId,
-                    opt => opt.MapFrom(x => x._permission.First().PermissionId))
-                .ForMember(permissionItem => permissionItem.LocationId,
-                    opt => opt.MapFrom(x => x._permission.First().LocationId))
-                .ForMember(permissionItem => permissionItem.UserRole,
-                    opt => opt.MapFrom(x => x._permission.First().UserRole))
-                .ForMember(permissionItem => permissionItem.LocationName,
-                    opt => opt.MapFrom(new PermissionLocationPermissionItemResolver()));
+                .ForMember(permissionItem => permissionItem.PermissionId, opt => opt.MapFrom(x => x._permission.First().PermissionId))
+                .ForMember(permissionItem => permissionItem.LocationId, opt => opt.MapFrom(x => x._permission.First().LocationId))
+                .ForMember(permissionItem => permissionItem.UserRole, opt => opt.MapFrom(x => x._permission.First().UserRole))
+                .ForMember(permissionItem => permissionItem.LocationName, opt => opt.MapFrom(new PermissionLocationPermissionItemResolver()));
             CreateMap<PermissionLocation, GetPermissionResponse>()
                 .ForMember(response => response.UserId, opt => opt.MapFrom(x => x.UserId))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
