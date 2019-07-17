@@ -278,7 +278,7 @@ namespace MedicalExaminer.API.Controllers
                 var temp = new PermissionLocation(permission, location);
 
                 var result = Mapper.Map<PostPermissionResponse>(temp);
-
+                result.UserId = meUserId;
                 return Ok(result);
             }
             catch (DocumentClientException)
