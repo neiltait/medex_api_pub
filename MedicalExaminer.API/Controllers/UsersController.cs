@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
-using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
@@ -30,16 +29,27 @@ namespace MedicalExaminer.API.Controllers
     public class UsersController : AuthorizedBaseController
     {
         /// <summary>
-        ///     The User Persistence Layer
+        /// User Creation Service
         /// </summary>
         private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> _userCreationService;
-        private readonly IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> _userRetrievalByIdService;
-        private readonly IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> _usersRetrievalService;
-        private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
-        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _userRetrievalByEmailService;
 
         /// <summary>
-        ///     Okta Client.
+        /// User Retrieval by Id Service.
+        /// </summary>
+        private readonly IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> _userRetrievalByIdService;
+
+        /// <summary>
+        /// Users Retrieval Service
+        /// </summary>
+        private readonly IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> _usersRetrievalService;
+
+        /// <summary>
+        /// User Update Service.
+        /// </summary>
+        private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
+
+        /// <summary>
+        /// Okta Client.
         /// </summary>
         private readonly IOktaClient _oktaClient;
 
@@ -55,7 +65,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="userRetrievalByIdService">User retrieval service.</param>
         /// <param name="usersRetrievalService">Users retrieval service.</param>
         /// <param name="userUpdateService">The userToCreate update service</param>
-        /// <param name="userRetrievalByEmailService">User retrieval by email service.</param>
         /// <param name="oktaClient">Okta client.</param>
         public UsersController(
             IMELogger logger,
@@ -67,7 +76,6 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService,
             IOktaClient oktaClient)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
@@ -75,7 +83,6 @@ namespace MedicalExaminer.API.Controllers
             _userRetrievalByIdService = userRetrievalByIdService;
             _usersRetrievalService = usersRetrievalService;
             _userUpdateService = userUpdateService;
-            _userRetrievalByEmailService = userRetrievalByEmailService;
             _oktaClient = oktaClient;
         }
 
