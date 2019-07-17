@@ -128,15 +128,12 @@ namespace MedicalExaminer.API.Controllers
 
                 var locations = permissions.GetLocationName(_locationsRetrievalService).Result;
 
-                var permissionLocation = new PermissionLocation(permissions, locations);
-
                 var mappedPermissions = new List<PermissionItem>();
 
-                foreach (var meUserPermission in permissionLocation._permission)
+                foreach (var meUserPermission in permissions)
                 {
-                    var pl = new PermissionLocation(new [] {meUserPermission}, permissionLocation._location);
+                    var pl = new PermissionLocation(new [] {meUserPermission}, locations, meUserId);
                     var temp = Mapper.Map<PermissionItem>(pl);
-                    temp.UserId = meUserId;
                     mappedPermissions.Add(temp);
                 }
 
@@ -198,10 +195,9 @@ namespace MedicalExaminer.API.Controllers
 
                 var locations = permission.GetLocationName(_locationRetrievalService).Result;
 
-                var permissionLocations = new PermissionLocation(permission, locations);
+                var permissionLocations = new PermissionLocation(permission, locations, meUserId);
 
                 var result = Mapper.Map<GetPermissionResponse>(permissionLocations);
-                result.UserId = meUserId;
                 return Ok(result);
             }
             catch (ArgumentException)
@@ -275,10 +271,9 @@ namespace MedicalExaminer.API.Controllers
 
                 var location = _locationRetrievalService.Handle(new LocationRetrievalByIdQuery(permission.LocationId)).Result;
 
-                var temp = new PermissionLocation(permission, location);
+                var temp = new PermissionLocation(permission, location, meUserId);
 
                 var result = Mapper.Map<PostPermissionResponse>(temp);
-                result.UserId = meUserId;
                 return Ok(result);
             }
             catch (DocumentClientException)
@@ -356,11 +351,9 @@ namespace MedicalExaminer.API.Controllers
                 var locationOfPermission =
                     _locationRetrievalService.Handle(new LocationRetrievalByIdQuery(permissionToUpdate.LocationId)).Result;
 
-                var permissionLocation = new PermissionLocation(permissionToUpdate, locationOfPermission);
+                var permissionLocation = new PermissionLocation(permissionToUpdate, locationOfPermission, meUserId);
 
                 var result = Mapper.Map<PutPermissionResponse>(permissionLocation);
-
-                result.UserId = meUserId;
 
                 return Ok(result);
             }

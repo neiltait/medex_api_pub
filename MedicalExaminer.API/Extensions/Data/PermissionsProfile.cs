@@ -19,7 +19,7 @@ namespace MedicalExaminer.API.Extensions.Data
         public PermissionsProfile()
         {
             CreateMap<PermissionLocation, PermissionItem>()
-                .ForMember(permissionItem => permissionItem.UserId, opt => opt.Ignore())
+                .ForMember(permissionItem => permissionItem.UserId, opt => opt.MapFrom(x => x.UserId))
                 .ForMember(permissionItem => permissionItem.PermissionId,
                     opt => opt.MapFrom(x => x._permission.First().PermissionId))
                 .ForMember(permissionItem => permissionItem.LocationId,
@@ -28,22 +28,16 @@ namespace MedicalExaminer.API.Extensions.Data
                     opt => opt.MapFrom(x => x._permission.First().UserRole))
                 .ForMember(permissionItem => permissionItem.LocationName,
                     opt => opt.MapFrom(new PermissionLocationPermissionItemResolver()));
-
             CreateMap<PermissionLocation, GetPermissionResponse>()
-                .ForMember(response => response.UserId, opt => opt.Ignore())
+                .ForMember(response => response.UserId, opt => opt.MapFrom(x => x.UserId))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore())
                 .ForMember(response => response.LocationName, opt => opt.MapFrom(new PermissionLocationGetPermissionResponseResolver()))
                 .ForMember(response => response.PermissionId, opt => opt.MapFrom(x => x._permission.First().PermissionId))
                 .ForMember(response => response.LocationId, opt => opt.MapFrom(x => x._permission.First().LocationId))
                 .ForMember(response => response.UserRole, opt => opt.MapFrom(x => x._permission.First().UserRole));
-            //CreateMap<PermissionLocation, GetPermissionResponse>()
-            //    .ForMember(response => response.UserId, opt => opt.Ignore())
-            //    .ForMember(response => response.Errors, opt => opt.Ignore())
-            //    .ForMember(response => response.Lookups, opt => opt.Ignore())
-            //    .ForMember(permissionItem => permissionItem.LocationName, opt => opt.MapFrom(new PermissionLocationPermissionItemResolver()));
             CreateMap<PermissionLocation, PutPermissionResponse>()
-                .ForMember(response => response.UserId, opt => opt.Ignore())
+                .ForMember(response => response.UserId, opt => opt.MapFrom(x => x.UserId))
                 .ForMember(response => response.LocationName, opt => opt.MapFrom(new PermissionLocationPutPermissionResponseResolver()))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore())
@@ -54,7 +48,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(response => response.PermissionId, opt => opt.MapFrom(x => x._permission.First().PermissionId))
                 .ForMember(response => response.LocationId, opt => opt.MapFrom(x => x._permission.First().LocationId))
                 .ForMember(response => response.UserRole, opt => opt.MapFrom(x => x._permission.First().UserRole))
-                .ForMember(response => response.UserId, opt => opt.Ignore())
+                .ForMember(response => response.UserId, opt => opt.MapFrom(x => x.UserId))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.LocationName, opt => opt.MapFrom(new PermissionLocationPostPermissionResponseResolver()))
                 .ForMember(response => response.Lookups, opt => opt.Ignore());
@@ -62,8 +56,6 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(meUserPermission => meUserPermission.PermissionId, opt => opt.Ignore());
             CreateMap<PutPermissionRequest, MEUserPermission>()
                 .ForMember(request => request.PermissionId, opt => opt.Ignore());
-            //CreateMap<MEUserPermission, UserPermission>()
-            //    .ForMember(up => up.LocationName, opt => opt.MapFrom(new MeUserPermissionUserPermissionLocationResolver()))
         }
     }
 
