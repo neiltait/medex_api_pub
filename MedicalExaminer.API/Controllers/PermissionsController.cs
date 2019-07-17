@@ -132,7 +132,7 @@ namespace MedicalExaminer.API.Controllers
 
                 foreach (var meUserPermission in permissions)
                 {
-                    var pl = new PermissionLocation(new [] {meUserPermission}, locations, meUserId);
+                    var pl = new PermissionLocation(meUserPermission, locations, meUserId);
                     var temp = Mapper.Map<PermissionItem>(pl);
                     mappedPermissions.Add(temp);
                 }

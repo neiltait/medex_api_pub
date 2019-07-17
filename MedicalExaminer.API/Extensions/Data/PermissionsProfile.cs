@@ -21,11 +21,11 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<PermissionLocation, PermissionItem>()
                 .ForMember(permissionItem => permissionItem.UserId, opt => opt.MapFrom(x => x.UserId))
                 .ForMember(permissionItem => permissionItem.PermissionId,
-                    opt => opt.MapFrom(x => x.Permissions.First().PermissionId))
+                    opt => opt.MapFrom(x => x.Permission.PermissionId))
                 .ForMember(permissionItem => permissionItem.LocationId,
-                    opt => opt.MapFrom(x => x.Permissions.First().LocationId))
+                    opt => opt.MapFrom(x => x.Permission.LocationId))
                 .ForMember(permissionItem => permissionItem.UserRole,
-                    opt => opt.MapFrom(x => x.Permissions.First().UserRole))
+                    opt => opt.MapFrom(x => x.Permission.UserRole))
                 .ForMember(permissionItem => permissionItem.LocationName,
                     opt => opt.MapFrom(new PermissionLocationPermissionItemResolver()));
             CreateMap<PermissionLocation, GetPermissionResponse>()
@@ -33,21 +33,21 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore())
                 .ForMember(response => response.LocationName, opt => opt.MapFrom(new PermissionLocationGetPermissionResponseResolver()))
-                .ForMember(response => response.PermissionId, opt => opt.MapFrom(x => x.Permissions.First().PermissionId))
-                .ForMember(response => response.LocationId, opt => opt.MapFrom(x => x.Permissions.First().LocationId))
-                .ForMember(response => response.UserRole, opt => opt.MapFrom(x => x.Permissions.First().UserRole));
+                .ForMember(response => response.PermissionId, opt => opt.MapFrom(x => x.Permission.PermissionId))
+                .ForMember(response => response.LocationId, opt => opt.MapFrom(x => x.Permission.LocationId))
+                .ForMember(response => response.UserRole, opt => opt.MapFrom(x => x.Permission.UserRole));
             CreateMap<PermissionLocation, PutPermissionResponse>()
                 .ForMember(response => response.UserId, opt => opt.MapFrom(x => x.UserId))
                 .ForMember(response => response.LocationName, opt => opt.MapFrom(new PermissionLocationPutPermissionResponseResolver()))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore())
-                .ForMember(response => response.PermissionId, opt => opt.MapFrom(x => x.Permissions.First().PermissionId))
-                .ForMember(response => response.LocationId, opt => opt.MapFrom(x => x.Permissions.First().LocationId))
-                .ForMember(response => response.UserRole, opt => opt.MapFrom(x => x.Permissions.First().UserRole));
+                .ForMember(response => response.PermissionId, opt => opt.MapFrom(x => x.Permission.PermissionId))
+                .ForMember(response => response.LocationId, opt => opt.MapFrom(x => x.Permission.LocationId))
+                .ForMember(response => response.UserRole, opt => opt.MapFrom(x => x.Permission.UserRole));
             CreateMap<PermissionLocation, PostPermissionResponse>()
-                .ForMember(response => response.PermissionId, opt => opt.MapFrom(x => x.Permissions.First().PermissionId))
-                .ForMember(response => response.LocationId, opt => opt.MapFrom(x => x.Permissions.First().LocationId))
-                .ForMember(response => response.UserRole, opt => opt.MapFrom(x => x.Permissions.First().UserRole))
+                .ForMember(response => response.PermissionId, opt => opt.MapFrom(x => x.Permission.PermissionId))
+                .ForMember(response => response.LocationId, opt => opt.MapFrom(x => x.Permission.LocationId))
+                .ForMember(response => response.UserRole, opt => opt.MapFrom(x => x.Permission.UserRole))
                 .ForMember(response => response.UserId, opt => opt.MapFrom(x => x.UserId))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.LocationName, opt => opt.MapFrom(new PermissionLocationPostPermissionResponseResolver()))
@@ -65,7 +65,7 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             var result = 
             source.Locations
-                .SingleOrDefault(location => location.LocationId == source.Permissions.First().LocationId).Name;
+                .SingleOrDefault(location => location.LocationId == source.Permission.LocationId).Name;
             return result;
         }
     }
@@ -75,7 +75,7 @@ namespace MedicalExaminer.API.Extensions.Data
         public string Resolve(PermissionLocation source, GetPermissionResponse destination, string destMember, ResolutionContext context)
         {
             return source.Locations
-                .SingleOrDefault(location => location.LocationId == source.Permissions.First().LocationId).Name;
+                .SingleOrDefault(location => location.LocationId == source.Permission.LocationId).Name;
         }
     }
 
@@ -84,7 +84,7 @@ namespace MedicalExaminer.API.Extensions.Data
         public string Resolve(PermissionLocation source, PutPermissionResponse destination, string destMember, ResolutionContext context)
         {
             return source.Locations
-                .SingleOrDefault(location => location.LocationId == source.Permissions.First().LocationId).Name;
+                .SingleOrDefault(location => location.LocationId == source.Permission.LocationId).Name;
         }
     }
 
@@ -94,7 +94,7 @@ namespace MedicalExaminer.API.Extensions.Data
         {
 
             var result = source.Locations
-                .SingleOrDefault(location => location.LocationId == source.Permissions.First().LocationId).Name;
+                .SingleOrDefault(location => location.LocationId == source.Permission.LocationId).Name;
             return result;
         }
     }
