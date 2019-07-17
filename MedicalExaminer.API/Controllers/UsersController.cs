@@ -14,6 +14,7 @@ using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
+using Okta.Sdk;
 using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
@@ -38,6 +39,11 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _userRetrievalByEmailService;
 
         /// <summary>
+        ///     Okta Client.
+        /// </summary>
+        private readonly IOktaClient _oktaClient;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
         /// <param name="logger">The Logger.</param>
@@ -49,6 +55,8 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="userRetrievalByIdService">User retrieval service.</param>
         /// <param name="usersRetrievalService">Users retrieval service.</param>
         /// <param name="userUpdateService">The userToCreate update service</param>
+        /// <param name="userRetrievalByEmailService">User retrieval by email service.</param>
+        /// <param name="oktaClient">Okta client.</param>
         public UsersController(
             IMELogger logger,
             IMapper mapper,
@@ -59,7 +67,8 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService)
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService,
+            IOktaClient oktaClient)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _userCreationService = userCreationService;
@@ -67,6 +76,7 @@ namespace MedicalExaminer.API.Controllers
             _usersRetrievalService = usersRetrievalService;
             _userUpdateService = userUpdateService;
             _userRetrievalByEmailService = userRetrievalByEmailService;
+            _oktaClient = oktaClient;
         }
 
         /// <summary>
@@ -141,7 +151,23 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var userToCreate = Mapper.Map<MeUser>(postUser);
+                var oktaUser = await _oktaClient.Users.GetUserAsync(postUser.Email);
+
+                if (oktaUser == null)
+                {
+                    var response = new PostUserResponse();
+                    response.AddError(nameof(PostUserRequest.Email), "Okta User doesn't exist for email");
+                    return BadRequest(response);
+                }
+
+                var userToCreate = new MeUser
+                {
+                    OktaId = oktaUser.Id,
+                    FirstName = oktaUser.Profile.FirstName,
+                    LastName = oktaUser.Profile.LastName,
+                    Email = oktaUser.Profile.Email,
+                };
+
                 var currentUser = await CurrentUser();
                 var createdUser = await _userCreationService.Handle(new CreateUserQuery(userToCreate, currentUser));
                 return Ok(Mapper.Map<PostUserResponse>(createdUser));
