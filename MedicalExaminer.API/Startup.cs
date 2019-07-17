@@ -142,7 +142,7 @@ namespace MedicalExaminer.API
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
 
             Mapper.Initialize(cfg => cfg.AddMedicalExaminerProfiles());
-            
+
             Mapper.AssertConfigurationIsValid();
             services.AddAutoMapper();
 

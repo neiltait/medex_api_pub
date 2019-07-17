@@ -25,13 +25,8 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>> _userRetrievalByIdServiceMock;
         private readonly Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>> _userUpdateServiceMock;
         private readonly Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>> _locationParentsServiceMock;
-
-        private readonly Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>
-            _locationsParentsServiceMock;
-
+        private readonly Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>> _locationsParentsServiceMock;
         private readonly Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>> _locationRetrievalService;
-
-
         private readonly Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> _locationsRetrievalService;
 
         /// <summary>
@@ -75,6 +70,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedCurrentUserOktaId = "oktaId";
+
+            Location expectedLocation = new Location
+            {
+                Name = "expectedLocationName"
+            };
+
             var expectedUser = new MeUser
             {
                 UserId = expectedUserId,
@@ -116,16 +117,16 @@ namespace MedicalExaminer.API.Tests.Controllers
                     {
                         expectedSiteId, new[]
                         {
-                            new Location { LocationId = expectedSiteId},
-                            new Location { LocationId = "trust1"},
-                            new Location { LocationId = expectedRegionId},
-                            new Location { LocationId = expectedNationalId}
+                            new Location { LocationId = expectedSiteId },
+                            new Location { LocationId = "trust1" },
+                            new Location { LocationId = expectedRegionId },
+                            new Location { LocationId = expectedNationalId }
                         }
                     },
                     {
                         expectedNationalId, new[]
                         {
-                            new Location { LocationId = expectedNationalId}
+                            new Location { LocationId = expectedNationalId }
                         }
                     }
                 };
@@ -145,6 +146,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             _locationsParentsServiceMock
                 .Setup(lps => lps.Handle(It.IsAny<LocationsParentsQuery>()))
                 .Returns(Task.FromResult(expectedLocationsParents));
+
+            _locationRetrievalService
+                .Setup(lrs => lrs.Handle(It.IsAny<LocationRetrievalByIdQuery>()))
+                .Returns(Task.FromResult(expectedLocation));
 
             // Act
             var response = await Controller.GetPermissions(expectedUserId);
@@ -224,6 +229,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedCurrentUserOktaId = "oktaId";
+            Location expectedLocation = new Location
+            {
+                Name = "expectedLocationName"
+            };
+
             var expectedUser = new MeUser
             {
                 UserId = expectedUserId,
@@ -263,10 +273,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location { LocationId = expectedSiteId},
-                new Location { LocationId = "trust1"},
-                new Location { LocationId = expectedRegionId},
-                new Location { LocationId = expectedNationalId}
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -284,6 +294,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             _locationParentsServiceMock
                 .Setup(lps => lps.Handle(It.IsAny<LocationParentsQuery>()))
                 .Returns(Task.FromResult(expectedLocationParents));
+
+            _locationRetrievalService
+                .Setup(lrs => lrs.Handle(It.IsAny<LocationRetrievalByIdQuery>()))
+                .Returns(Task.FromResult(expectedLocation));
 
             // Act
             var response = await Controller.GetPermission(expectedUserId, expectedPermissionId);
@@ -334,10 +348,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location { LocationId = expectedSiteId},
-                new Location { LocationId = "trust1"},
-                new Location { LocationId = expectedRegionId},
-                new Location { LocationId = expectedNationalId}
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -418,10 +432,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location { LocationId = expectedSiteId},
-                new Location { LocationId = "trust1"},
-                new Location { LocationId = expectedRegionId},
-                new Location { LocationId = expectedNationalId}
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -507,10 +521,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location { LocationId = expectedSiteId},
-                new Location { LocationId = "trust1"},
-                new Location { LocationId = expectedRegionId},
-                new Location { LocationId = expectedNationalId}
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -642,16 +656,16 @@ namespace MedicalExaminer.API.Tests.Controllers
                     {
                         expectedSiteId, new[]
                         {
-                            new Location { LocationId = expectedSiteId},
-                            new Location { LocationId = "trust1"},
-                            new Location { LocationId = expectedRegionId},
-                            new Location { LocationId = expectedNationalId}
+                            new Location { LocationId = expectedSiteId },
+                            new Location { LocationId = "trust1" },
+                            new Location { LocationId = expectedRegionId },
+                            new Location { LocationId = expectedNationalId }
                         }
                     },
                     {
                         expectedNationalId, new[]
                         {
-                            new Location { LocationId = expectedNationalId}
+                            new Location { LocationId = expectedNationalId }
                         }
                     }
                 };
@@ -737,10 +751,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location { LocationId = expectedSiteId},
-                new Location { LocationId = "trust1"},
-                new Location { LocationId = expectedRegionId},
-                new Location { LocationId = expectedNationalId}
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -793,6 +807,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRole = UserRoles.MedicalExaminer;
             var currentRole = UserRoles.MedicalExaminerOfficer;
             var expectedCurrentUserOktaId = "oktaId";
+
+            Location expectedLocation = new Location
+            {
+                Name = "expectedLocationName"
+            };
+
             var expectedUser = new MeUser
             {
                 UserId = expectedUserId,
@@ -833,10 +853,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location { LocationId = expectedSiteId},
-                new Location { LocationId = "trust1"},
-                new Location { LocationId = expectedRegionId},
-                new Location { LocationId = expectedNationalId}
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -861,6 +881,10 @@ namespace MedicalExaminer.API.Tests.Controllers
                 {
                     Permissions = new List<MEUserPermission>()
                 }));
+
+            _locationRetrievalService
+                .Setup(lrs => lrs.Handle(It.IsAny<LocationRetrievalByIdQuery>()))
+                .Returns(Task.FromResult(expectedLocation));
 
             // Act
             var response = await Controller.CreatePermission(expectedUserId, new PostPermissionRequest
@@ -914,10 +938,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location { LocationId = expectedSiteId},
-                new Location { LocationId = "trust1"},
-                new Location { LocationId = expectedRegionId},
-                new Location { LocationId = expectedNationalId}
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -1014,10 +1038,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location { LocationId = expectedSiteId},
-                new Location { LocationId = "trust1"},
-                new Location { LocationId = expectedRegionId},
-                new Location { LocationId = expectedNationalId}
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -1356,10 +1380,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location { LocationId = expectedSiteId},
-                new Location { LocationId = "trust1"},
-                new Location { LocationId = expectedRegionId},
-                new Location { LocationId = expectedNationalId}
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -1449,10 +1473,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location { LocationId = expectedSiteId},
-                new Location { LocationId = "trust1"},
-                new Location { LocationId = expectedRegionId},
-                new Location { LocationId = expectedNationalId}
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
