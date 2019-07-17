@@ -267,25 +267,17 @@ namespace MedicalExaminer.API.Controllers
                     }
                 }
 
-                PostPermissionResponse result = null;
+                existingPermissions.Add(permission);
 
-                if (possiblePermission == null)
-                {
-                    existingPermissions.Add(permission);
+                user.Permissions = existingPermissions;
 
-                    user.Permissions = existingPermissions;
+                await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
 
-                    await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
-                    result = Mapper.Map<MEUserPermission, PostPermissionResponse>(
-                    permission,
-                    opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; }));
-                }
-                else
-                {
-                    result = Mapper.Map<MEUserPermission, PostPermissionResponse>(
-                    possiblePermission,
-                    opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; }));
-                }
+                var location = _locationRetrievalService.Handle(new LocationRetrievalByIdQuery(permission.LocationId)).Result;
+
+                var temp = new PermissionLocation(permission, location);
+
+                var result = Mapper.Map<PostPermissionResponse>(temp);
 
                 return Ok(result);
             }

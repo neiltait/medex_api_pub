@@ -49,10 +49,14 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(response => response.PermissionId, opt => opt.MapFrom(x => x._permission.First().PermissionId))
                 .ForMember(response => response.LocationId, opt => opt.MapFrom(x => x._permission.First().LocationId))
                 .ForMember(response => response.UserRole, opt => opt.MapFrom(x => x._permission.First().UserRole));
-            CreateMap<PutPermissionResponse, MEUserPermission>()
-                .ForMember(permission => permission.PermissionId, opt => opt.MapFrom(x => x.PermissionId))
-                .ForMember(permission => permission.LocationId, opt => opt.MapFrom(x => x.LocationId))
-                .ForMember(permission => permission.UserRole, opt => opt.MapFrom(x => x.UserRole));
+            CreateMap<PermissionLocation, PostPermissionResponse>()
+                .ForMember(response => response.PermissionId, opt => opt.MapFrom(x => x._permission.First().PermissionId))
+                .ForMember(response => response.LocationId, opt => opt.MapFrom(x => x._permission.First().LocationId))
+                .ForMember(response => response.UserRole, opt => opt.MapFrom(x => x._permission.First().UserRole))
+                .ForMember(response => response.UserId, opt => opt.Ignore())
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.LocationName, opt => opt.MapFrom(new PermissionLocationPostPermissionResponseResolver()))
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<PostPermissionRequest, MEUserPermission>()
                 .ForMember(meUserPermission => meUserPermission.PermissionId, opt => opt.Ignore());
             CreateMap<PutPermissionRequest, MEUserPermission>()
@@ -89,14 +93,12 @@ namespace MedicalExaminer.API.Extensions.Data
         }
     }
 
-    //public class PermissionLocationPermissionItemResolver : IValueResolver<PermissionLocation, PermissionItem, string>
-    //{
-    //    public string Resolve(PermissionLocation source, PermissionItem destination, string destMember, ResolutionContext context)
-    //    {
-    //        return source._location
-    //            .SingleOrDefault(location => location.LocationId == source._permission.First().PermissionId).Name;
-    //    }
-    //}
-
-
+    public class PermissionLocationPostPermissionResponseResolver : IValueResolver<PermissionLocation, PostPermissionResponse, string>
+    {
+        public string Resolve(PermissionLocation source, PostPermissionResponse destination, string destMember, ResolutionContext context)
+        {
+            return source._location
+                .SingleOrDefault(location => location.LocationId == source._permission.First().LocationId).Name;
+        }
+    }
 }
