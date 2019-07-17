@@ -9,7 +9,7 @@ namespace MedicalExaminer.Common.Extensions.Permission
 {
     public static class MeUserPermissionExtensions
     {
-        public static bool IsSame(this MEUserPermission permissionA, MEUserPermission permissionB)
+        public static bool IsEquivalent(this MEUserPermission permissionA, MEUserPermission permissionB)
         {
             return permissionA.LocationId == permissionB.LocationId && permissionA.UserRole == permissionB.UserRole;
         }

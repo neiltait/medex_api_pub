@@ -5,21 +5,21 @@ namespace MedicalExaminer.API.Models
 {
     public class PermissionLocation
     {
-        public readonly List<MEUserPermission> _permission = new List<MEUserPermission>();
-        public readonly List<Location> _location = new List<Location>();
+        public readonly List<MEUserPermission> Permissions = new List<MEUserPermission>();
+        public readonly List<Location> Locations = new List<Location>();
         public readonly string UserId;
 
         public PermissionLocation(MEUserPermission permission, Location location, string userId)
         {
-            _location.Add(location);
-            _permission.Add(permission);
+            Locations.Add(location);
+            Permissions.Add(permission);
             UserId = userId;
         }
 
         public PermissionLocation(IEnumerable<MEUserPermission> permissions, IEnumerable<Location> locations, string userId)
         {
-            _location.AddRange(locations);
-            _permission.AddRange(permissions);
+            Locations.AddRange(locations);
+            Permissions.AddRange(permissions);
             UserId = userId;
         }
     }

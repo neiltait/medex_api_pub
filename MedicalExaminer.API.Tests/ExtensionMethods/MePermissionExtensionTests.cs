@@ -24,7 +24,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Assert
-            Assert.True(permissionA.IsSame(permissionB));
+            Assert.True(permissionA.IsEquivalent(permissionB));
         }
 
         [Fact]
@@ -44,7 +44,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Assert
-            Assert.False(permissionA.IsSame(permissionB));
+            Assert.False(permissionA.IsEquivalent(permissionB));
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Assert
-            Assert.False(permissionA.IsSame(permissionB));
+            Assert.False(permissionA.IsEquivalent(permissionB));
         }
     }
 }

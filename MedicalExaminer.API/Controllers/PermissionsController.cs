@@ -257,7 +257,7 @@ namespace MedicalExaminer.API.Controllers
 
                 foreach (var usersPermissions in user.Permissions)
                 {
-                    if (usersPermissions.IsSame(permission))
+                    if (usersPermissions.IsEquivalent(permission))
                     {
                         return Conflict();
                     }
@@ -338,7 +338,7 @@ namespace MedicalExaminer.API.Controllers
 
                 foreach (var usersPermissions in user.Permissions)
                 {
-                    if (usersPermissions.IsSame(permission))
+                    if (usersPermissions.IsEquivalent(permission))
                     {
                         return Conflict();
                     }
