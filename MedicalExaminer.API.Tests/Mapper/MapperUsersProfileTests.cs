@@ -31,23 +31,6 @@ namespace MedicalExaminer.API.Tests.Mapper
         /// </summary>
         private readonly IMapper _mapper;
 
-        [Fact]
-        public void MEUserPermission_To_UserPermission()
-        {
-            var meUserPermission = new MEUserPermission
-            {
-                LocationId = "LocationId",
-                PermissionId = "PermissionId",
-                UserRole = UserRoles.MedicalExaminer
-            };
-
-            var result = _mapper.Map<UserPermission>(meUserPermission);
-
-            result.LocationId.Should().Be(meUserPermission.LocationId);
-            result.PermissionId.Should().Be(meUserPermission.PermissionId);
-            result.UserRole.Should().Be(meUserPermission.UserRole);
-        }
-
         /// <summary>
         ///     Test Mapping UserToCreate to GetUserResponse.
         /// </summary>

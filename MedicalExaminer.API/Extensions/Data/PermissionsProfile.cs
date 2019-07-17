@@ -2,6 +2,7 @@
 using AutoMapper;
 using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Models.v1.Permissions;
+using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Models;
 
 namespace MedicalExaminer.API.Extensions.Data
@@ -61,6 +62,8 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(meUserPermission => meUserPermission.PermissionId, opt => opt.Ignore());
             CreateMap<PutPermissionRequest, MEUserPermission>()
                 .ForMember(request => request.PermissionId, opt => opt.Ignore());
+            //CreateMap<MEUserPermission, UserPermission>()
+            //    .ForMember(up => up.LocationName, opt => opt.MapFrom(new MeUserPermissionUserPermissionLocationResolver()))
         }
     }
 
@@ -97,8 +100,10 @@ namespace MedicalExaminer.API.Extensions.Data
     {
         public string Resolve(PermissionLocation source, PostPermissionResponse destination, string destMember, ResolutionContext context)
         {
-            return source._location
+
+            var result = source._location
                 .SingleOrDefault(location => location.LocationId == source._permission.First().LocationId).Name;
+            return result;
         }
     }
 }

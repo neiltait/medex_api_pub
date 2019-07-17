@@ -71,9 +71,15 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedCurrentUserOktaId = "oktaId";
 
-            Location expectedLocation = new Location
+            var expectedLocation = new Location
             {
+                LocationId = "site1",
                 Name = "expectedLocationName"
+            };
+
+            var expectedLocationsCollection = new List<Location>
+            {
+                expectedLocation
             };
 
             var expectedUser = new MeUser
@@ -150,6 +156,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             _locationRetrievalService
                 .Setup(lrs => lrs.Handle(It.IsAny<LocationRetrievalByIdQuery>()))
                 .Returns(Task.FromResult(expectedLocation));
+
+            _locationsRetrievalService
+                .Setup(lrs => lrs.Handle(It.IsAny<LocationsRetrievalByQuery>()))
+                .Returns(Task.FromResult(expectedLocationsCollection.AsEnumerable()));
+
 
             // Act
             var response = await Controller.GetPermissions(expectedUserId);
@@ -229,8 +240,9 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedCurrentUserOktaId = "oktaId";
-            Location expectedLocation = new Location
+            var expectedLocation = new Location
             {
+                LocationId = "site1",
                 Name = "expectedLocationName"
             };
 
@@ -810,6 +822,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             Location expectedLocation = new Location
             {
+                LocationId = "site1",
                 Name = "expectedLocationName"
             };
 
@@ -1170,6 +1183,13 @@ namespace MedicalExaminer.API.Tests.Controllers
                     }
                 }
             };
+
+            var expectedLocation = new Location
+            {
+                LocationId = "site1",
+                Name = "expectedLocationName"
+            };
+
             var expectedCurrentUser = new MeUser
             {
                 UserId = expectedCurrentUserId,
@@ -1218,6 +1238,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 {
                     Permissions = new List<MEUserPermission>()
                 }));
+
+            _locationRetrievalService.Setup(lrs => lrs.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(expectedLocation));
+
 
             // Act
             var response = await Controller.UpdatePermission(expectedUserId, expectedPermissionId, new PutPermissionRequest
