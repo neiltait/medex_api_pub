@@ -13,6 +13,7 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Reporting;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -155,6 +156,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
 
             var usersRetrievalByOktaIdServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
+            var usersRetrievalByEmailServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
 
             var authorizationServiceMock = new Mock<IAuthorizationService>();
 
@@ -169,13 +171,14 @@ namespace MedicalExaminer.API.Tests.Controllers
                 createUserService.Object,
                 userRetrievalService.Object,
                 usersRetrievalService.Object,
-                userUpdateService.Object);
+                userUpdateService.Object,
+                usersRetrievalByEmailServiceMock.Object);
         }
 
         [Fact]
         public void OnActionExecuted_DoesNothing()
         {
-            var controllerActionFilter = new ControllerActionFilter(_mockLogger);
+            var controllerActionFilter = new ControllerActionFilter(_mockLogger, new RequestChargeService());
             var actionContext = new ActionContext
             {
                 HttpContext = new MockHttpContext(),
@@ -198,13 +201,13 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public void OnActionExecuting_WritesLog()
+        public void OnActionExecuted_WritesLog()
         {
             var expectedUnknown = "Unknown";
             var expectedUserId = "expectedUserId";
             var expectedControllerName = "expectedControllerName";
             var expectedActionName = "expectedActionName";
-            var controllerActionFilter = new ControllerActionFilter(_mockLogger);
+            var controllerActionFilter = new ControllerActionFilter(_mockLogger, new RequestChargeService());
             var actionContext = new ActionContext
             {
                 HttpContext = new MockHttpContext(),
@@ -219,14 +222,21 @@ namespace MedicalExaminer.API.Tests.Controllers
             identity.AddClaim(new Claim(MEClaimTypes.UserId, expectedUserId));
             actionContext.HttpContext.User.AddIdentity(identity);
             actionContext.RouteData = new RouteData();
-            var filters = new List<IFilterMetadata>();
+
+            var executingFilters = new List<IFilterMetadata>();
             var actionArguments = new Dictionary<string, object>();
             var actionExecutingContext =
-                new ActionExecutingContext(actionContext, filters, actionArguments, _controller);
+                new ActionExecutingContext(actionContext, executingFilters, actionArguments, _controller);
 
             actionExecutingContext.ActionArguments.Add("filter", new { Property = "value" });
 
+            var filters = new List<IFilterMetadata>();
+            var actionExecutedContext =
+                new ActionExecutedContext(actionContext, filters, _controller);
+
             controllerActionFilter.OnActionExecuting(actionExecutingContext);
+
+            controllerActionFilter.OnActionExecuted(actionExecutedContext);
             var logEntry = _mockLogger.LogEntry;
 
             logEntry.UserId.Should().Be(expectedUserId);

@@ -49,7 +49,21 @@ namespace MedicalExaminer.Common.Services.Location
                 predicate = predicate.And(idFilter);
             }
 
-            var result = await GetItemsAsync(predicate);
+            IEnumerable<Models.Location> result;
+
+            if (param.ForLookup)
+            {
+                result = await GetItemsAsync<Models.Location>(predicate, location => new
+                {
+                    location.Name,
+                    id = location.LocationId
+                });
+            }
+            else
+            {
+                result = await GetItemsAsync(predicate);
+            }
+
             return result;
         }
 

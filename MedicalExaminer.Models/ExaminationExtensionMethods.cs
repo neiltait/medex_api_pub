@@ -263,7 +263,7 @@ namespace MedicalExaminer.Models
                     return CaseOutcomeSummary.IssueMCCDWith100a;
                 }
             }
-
+        
             if (examination.CaseBreakdown.QapDiscussion.Latest != null)
             {
                 if (!examination.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)

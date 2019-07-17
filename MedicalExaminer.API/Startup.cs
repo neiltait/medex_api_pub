@@ -28,6 +28,7 @@ using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Reporting;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.CaseOutcome;
 using MedicalExaminer.Common.Services.Examination;
@@ -92,6 +93,8 @@ namespace MedicalExaminer.API
 
             services.ConfigureSettings<AuthorizationSettings>(Configuration, "Authorization");
 
+            services.ConfigureSettings<RequestChargeSettings>(Configuration, "RequestCharge");
+
             ConfigureOktaClient(services);
 
             services.AddSingleton<ITokenService, OktaTokenService>();
@@ -103,9 +106,11 @@ namespace MedicalExaminer.API
                     .AllowAnyHeader();
             }));
 
+            services.AddScoped<RequestChargeService>();
+
             // Database connections.
             services.AddSingleton<IDocumentClientFactory, DocumentClientFactory>();
-            services.AddSingleton<IDatabaseAccess, DatabaseAccess>();
+            services.AddScoped<IDatabaseAccess, DatabaseAccess>();
 
             ConfigureQueries(services, cosmosDbSettings);
 
@@ -250,12 +255,17 @@ namespace MedicalExaminer.API
             }
 
             // Ensure collections available
-            var databaseAccess = app.ApplicationServices.GetRequiredService<IDatabaseAccess>();
-            databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<ILocationConnectionSettings>());
-            databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IExaminationConnectionSettings>());
-            databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserConnectionSettings>());
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var databaseAccess = scope.ServiceProvider.GetRequiredService<IDatabaseAccess>();
+
+                databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<ILocationConnectionSettings>());
+                databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IExaminationConnectionSettings>());
+                databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserConnectionSettings>());
+            }
 
             app.UseMiddleware<ResponseTimeMiddleware>();
+            app.UseMiddleware<ReportRUMiddleware>();
 
             // TODO: Not using HTTPS while we join front to back end
             //app.UseHttpsRedirection();
@@ -369,7 +379,7 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>, UserUpdateOktaTokenService>();
             services.AddScoped<IAsyncQueryHandler<UserUpdateOktaQuery, MeUser>, UserUpdateOktaService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>, UsersRetrievalByOktaTokenService>();
-
+            services.AddScoped<IAsyncQueryHandler<ExaminationByNhsNumberRetrievalQuery, Examination>, ExaminationByNhsNumberRetrievalService>();
             // Used for roles; but is being abused to pass null and get all users.
             services.AddScoped<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>, UsersRetrievalService>();
             services
