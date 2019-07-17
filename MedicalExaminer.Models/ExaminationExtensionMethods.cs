@@ -251,7 +251,6 @@ namespace MedicalExaminer.Models
             {
                 return null;
             }
-
             if (examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome != null)
             {
                 if (examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome.Value == BereavedDiscussionOutcome.ConcernsCoronerInvestigation)
@@ -264,6 +263,7 @@ namespace MedicalExaminer.Models
                     return CaseOutcomeSummary.IssueMCCDWith100a;
                 }
             }
+        
 
             if (examination.CaseBreakdown.QapDiscussion.Latest != null)
             {
@@ -287,29 +287,7 @@ namespace MedicalExaminer.Models
                         {
                             return CaseOutcomeSummary.ReferToCoroner;
                         }
-
                         if (examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a)
-                        {
-                            return CaseOutcomeSummary.IssueMCCDWith100a;
-                        }
-                    }
-                }
-            }
-
-            if (!examination.PendingDiscussionWithQAP)
-            {
-                if (!examination.PendingDiscussionWithRepresentative)
-                {
-                    if (examination.CaseBreakdown.PreScrutiny.Latest != null)
-                    {
-                        if (examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny ==
-                            OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation)
-                        {
-                            return CaseOutcomeSummary.ReferToCoroner;
-                        }
-
-                        if (examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny ==
-                            OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a)
                         {
                             return CaseOutcomeSummary.IssueMCCDWith100a;
                         }
@@ -319,6 +297,7 @@ namespace MedicalExaminer.Models
 
             return CaseOutcomeSummary.IssueMCCD;
         }
+
 
         private static bool CalculatePendingQAPDiscussion(Examination examination)
         {
