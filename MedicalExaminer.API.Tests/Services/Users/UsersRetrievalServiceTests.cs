@@ -36,7 +36,7 @@ namespace MedicalExaminer.API.Tests.Services.Users
             user1.LastName.Should().Be("stow");
             var user2 = results.Single(user => user.UserId == "userId2");
             user2.FirstName.Should().Be("john");
-            user2.LastName.Should().Be("batty");
+            user2.LastName.Should().Be("battye");
 
             if (!forLookup)
             {
@@ -60,7 +60,7 @@ namespace MedicalExaminer.API.Tests.Services.Users
                     UserId = "userId2",
                     Email = "email2",
                     FirstName = "john",
-                    LastName = "batty"
+                    LastName = "battye"
                 },
             };
         }
