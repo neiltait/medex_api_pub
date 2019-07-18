@@ -326,7 +326,7 @@ namespace MedicalExaminer.API.Tests
             var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
 
             mockUsersClient
-                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default))
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
                 .Returns(Task.FromResult(oktaUser.Object));
 
             _mockOktaClient
@@ -427,7 +427,7 @@ namespace MedicalExaminer.API.Tests
             var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
 
             mockUsersClient
-                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default))
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
                 .Returns(Task.FromResult(oktaUser.Object));
 
             _mockOktaClient
@@ -526,7 +526,7 @@ namespace MedicalExaminer.API.Tests
             var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
 
             mockUsersClient
-                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default))
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
                 .Returns(Task.FromResult(oktaUser.Object));
 
             _mockOktaClient
@@ -622,7 +622,7 @@ namespace MedicalExaminer.API.Tests
             var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
 
             mockUsersClient
-                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default))
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
                 .Returns(Task.FromResult(oktaUser.Object));
 
             _mockOktaClient
@@ -714,7 +714,7 @@ namespace MedicalExaminer.API.Tests
             var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
 
             mockUsersClient
-                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default))
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
                 .Returns(Task.FromResult(oktaUser.Object));
 
             _mockOktaClient
@@ -823,7 +823,7 @@ namespace MedicalExaminer.API.Tests
             var mockUsersClient = new Mock<IUsersClient>(MockBehavior.Strict);
 
             mockUsersClient
-                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default))
+                .Setup(service => service.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
                 .Returns(Task.FromResult(oktaUser.Object));
 
             _mockOktaClient
