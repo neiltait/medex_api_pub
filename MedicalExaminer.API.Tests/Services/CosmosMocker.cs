@@ -260,6 +260,7 @@ namespace MedicalExaminer.API.Tests.Services
                     }
 
                     //// Otherwise fall back to the c# property name.
+                    /// perhaps should be deleted, leave for now
                     //if (property == null)
                     //{
                     //    property = type.GetProperties().FirstOrDefault(p => p.Name.Equals(propertyInfo.Name));
