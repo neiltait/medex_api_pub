@@ -19,22 +19,9 @@ namespace MedicalExaminer.Common.Extensions.Permission
             return service.Handle(new LocationRetrievalByIdQuery(permission.LocationId));
         }
 
-        public static Task<IEnumerable<Location>> GetLocationName(this IEnumerable<MEUserPermission> permissions, IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> service)
+        public static Task<IEnumerable<Location>> GetUniqueLocationNames(this IEnumerable<MEUserPermission> permissions, IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> service)
         {
             var uniqueLocationIds = permissions.Select(x => x.LocationId).Distinct();
-            return service.Handle(new LocationsRetrievalByQuery(null, null, false, uniqueLocationIds));
-        }
-
-        public static Task<IEnumerable<Location>> GetLocationName(this MedicalExaminer.Models.MeUser user, IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> service)
-        {
-            var uniqueLocationIds = user.Permissions.Select(x => x.LocationId).Distinct();
-            return service.Handle(new LocationsRetrievalByQuery(null, null, false, uniqueLocationIds));
-        }
-
-        public static Task<IEnumerable<Location>> GetLocationName(this IEnumerable<MedicalExaminer.Models.MeUser> users, IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> service)
-        {
-            var usersPermissions = users.SelectMany(usr => usr.Permissions);
-            var uniqueLocationIds = usersPermissions.Select(x => x.PermissionId).Distinct();
             return service.Handle(new LocationsRetrievalByQuery(null, null, false, uniqueLocationIds));
         }
     }

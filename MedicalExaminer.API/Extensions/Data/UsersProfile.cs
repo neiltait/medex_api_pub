@@ -38,35 +38,6 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(meUser => meUser.LastName, opt => opt.MapFrom(request => request.LastName))
                 .ForMember(meUser => meUser.Email, opt => opt.MapFrom(request => request.Email))
                 .ForAllOtherMembers(request => request.Ignore());
-            //CreateMap<MEUserPermission, UserPermission>()
-            //    .ForMember(userPermission => userPermission.UserRole, opt => opt.MapFrom(meUserPermission => meUserPermission.UserRole))
-            //    .ForMember(userPermission => userPermission.LocationId, opt => opt.MapFrom(meUserPermission => meUserPermission.LocationId))
-            //    .ForMember(userPermission => userPermission.LocationName, opt => opt.MapFrom(new UserPermissionLocationIdLocationNameResolver(service)))
-            //    .ForMember(userPermission => userPermission.PermissionId, opt => opt.MapFrom(meUserPermission => meUserPermission.PermissionId))
-            //    .ForAllOtherMembers(meUserPermission => meUserPermission.Ignore());
-        }
-    }
-
-    public class UserPermissionLocationIdLocationNameResolver : IValueResolver<MEUserPermission, UserPermission, string>
-    {
-        IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> _service;
-        public UserPermissionLocationIdLocationNameResolver(IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> service)
-        {
-            _service = service;
-        }
-        public string Resolve(MEUserPermission source, UserPermission destination, string destMember, ResolutionContext context)
-        {
-            var locationIdString = source.LocationId;
-            if (string.IsNullOrEmpty(locationIdString))
-            {
-                return string.Empty;
             }
-
-            var validatedLocation = _service.Handle(new LocationRetrievalByIdQuery(locationIdString)).Result;
-
-            return validatedLocation.Name == null
-                ? string.Empty
-                : validatedLocation.Name;
-        }
     }
 }

@@ -1,9 +1,4 @@
 ﻿using AutoMapper;
-using MedicalExaminer.Common.Queries.Location;
-using MedicalExaminer.Common.Services;
-using MedicalExaminer.Models;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -19,8 +14,8 @@ namespace MedicalExaminer.API.Extensions.Data
         public static void AddMedicalExaminerProfiles(this IMapperConfigurationExpression config)
         {
             config.AddProfile<ExaminationProfile>();
-            config.AddProfile(new PermissionsProfile());
-            config.AddProfile(new UsersProfile());
+            config.AddProfile<PermissionsProfile>();
+            config.AddProfile<UsersProfile>();
             config.AddProfile<MedicalTeamProfile>();
             config.AddProfile<PatientDetailsProfile>();
             config.AddProfile<CaseBreakdownProfile>();

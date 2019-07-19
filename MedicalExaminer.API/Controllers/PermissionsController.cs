@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
-using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.API.Services;
@@ -118,7 +117,7 @@ namespace MedicalExaminer.API.Controllers
                     await _locationsParentsService.Handle(new LocationsParentsQuery(permissionLocations));
 
                 // The locations the user making the request has direct access to.
-                var permissedLocations = (await LocationsWithPermission(Common.Authorization.Permission.GetUserPermissions)).ToList();
+                var permissedLocations = (await LocationsWithPermission(Permission.GetUserPermissions)).ToList();
 
                 // Select only the permissions that the user making the request has access to from the user in question.
                 var permissions = meUser
@@ -126,7 +125,7 @@ namespace MedicalExaminer.API.Controllers
                     .Where(p => locationPaths[p.LocationId]
                         .Any(l => permissedLocations.Contains(l.LocationId)));
 
-                var locations = permissions.GetLocationName(_locationsRetrievalService).Result;
+                var locations = permissions.GetUniqueLocationNames(_locationsRetrievalService).Result;
 
                 var mappedPermissions = new List<PermissionItem>();
 
@@ -290,7 +289,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="putPermission">The PutPermissionRequest.</param>
         /// <returns>A PutPermissionResponse.</returns>
         [HttpPut("{permissionId}")]
-        [AuthorizePermission(Common.Authorization.Permission.UpdateUserPermission)]
+        [AuthorizePermission(Permission.UpdateUserPermission)]
         public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(
             string meUserId,
             string permissionId,
@@ -311,7 +310,7 @@ namespace MedicalExaminer.API.Controllers
                             new LocationParentsQuery(putPermission.LocationId)))
                     .ToLocationPath();
 
-                if (!CanAsync(Common.Authorization.Permission.UpdateUserPermission, locationDocument))
+                if (!CanAsync(Permission.UpdateUserPermission, locationDocument))
                 {
                     return Forbid();
                 }
@@ -361,6 +360,11 @@ namespace MedicalExaminer.API.Controllers
             {
                 return NotFound(new PutPermissionResponse());
             }
+        }
+
+        private static U MapIt<T, U>(T thingToMap)
+        {
+            return AutoMapper.Mapper.Map<T, U>(thingToMap);
         }
 
         /// <summary>
