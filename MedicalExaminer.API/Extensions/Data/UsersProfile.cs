@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common.Extensions.MeUser;
+using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Models;
 
 namespace MedicalExaminer.API.Extensions.Data
@@ -33,8 +34,6 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForAllOtherMembers(x => x.Ignore());
             CreateMap<PutUserRequest, MeUser>()
                 .ForMember(meUser => meUser.UserId, opt => opt.MapFrom(request => request.UserId))
-                .ForMember(meUser => meUser.FirstName, opt => opt.MapFrom(request => request.FirstName))
-                .ForMember(meUser => meUser.LastName, opt => opt.MapFrom(request => request.LastName))
                 .ForMember(meUser => meUser.Email, opt => opt.MapFrom(request => request.Email))
                 .ForAllOtherMembers(request => request.Ignore());
             CreateMap<MEUserPermission, UserPermission>()
@@ -42,6 +41,32 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(userPermission => userPermission.LocationId, opt => opt.MapFrom(meUserPermission => meUserPermission.LocationId))
                 .ForMember(userPermission => userPermission.PermissionId, opt => opt.MapFrom(meUserPermission => meUserPermission.PermissionId))
                 .ForAllOtherMembers(meUserPermission => meUserPermission.Ignore());
+
+            CreateMap<UserUpdatePermissions, MeUser>()
+                .ForMember(meUser => meUser.UserId, opt => opt.MapFrom(request => request.UserId))
+                .ForMember(meUser => meUser.Permissions, opt => opt.MapFrom(request => request.Permissions))
+                .ForAllOtherMembers(meUser => meUser.Ignore());
+            CreateMap<UserUpdateEmail, MeUser>()
+                .ForMember(meUser => meUser.UserId, opt => opt.MapFrom(request => request.UserId))
+                .ForMember(meUser => meUser.Email, opt => opt.MapFrom(request => request.Email))
+                .ForAllOtherMembers(meUser => meUser.Ignore());
+            CreateMap<UserUpdateOktaQuery, MeUser>()
+                .ForMember(meUser => meUser.UserId, opt => opt.MapFrom(request => request.UserId))
+                .ForMember(meUser => meUser.OktaId, opt => opt.MapFrom(request => request.OktaId))
+                .ForAllOtherMembers(meUser => meUser.Ignore());
+            CreateMap<UserUpdateDetails, MeUser>()
+                .ForMember(meUser => meUser.UserId, opt => opt.MapFrom(request => request.UserId))
+                .ForMember(meUser => meUser.Email, opt => opt.MapFrom(request => request.Email))
+                .ForMember(meUser => meUser.FirstName, opt => opt.MapFrom(request => request.FirstName))
+                .ForMember(meUser => meUser.LastName, opt => opt.MapFrom(request => request.LastName))
+                .ForAllOtherMembers(meUser => meUser.Ignore());
+            CreateMap<UserUpdateFull, MeUser>()
+                .ForMember(meUser => meUser.UserId, opt => opt.MapFrom(request => request.UserId))
+                .ForMember(meUser => meUser.OktaId, opt => opt.MapFrom(request => request.OktaId))
+                .ForMember(meUser => meUser.Email, opt => opt.MapFrom(request => request.Email))
+                .ForMember(meUser => meUser.FirstName, opt => opt.MapFrom(request => request.FirstName))
+                .ForMember(meUser => meUser.LastName, opt => opt.MapFrom(request => request.LastName))
+                .ForAllOtherMembers(meUser => meUser.Ignore());
         }
     }
 }
