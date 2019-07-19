@@ -233,9 +233,13 @@ namespace MedicalExaminer.API.Controllers
                 {
                     existingPermissions.Add(permission);
 
-                    user.Permissions = existingPermissions;
+                    var userUpdate = new UserUpdatePermissions
+                    {
+                        UserId = user.UserId,
+                        Permissions = existingPermissions
+                    };
 
-                    await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
+                    await _userUpdateService.Handle(new UserUpdateQuery(userUpdate, currentUser));
                     result = Mapper.Map<MEUserPermission, PostPermissionResponse>(
                     permission,
                     opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; }));
@@ -320,7 +324,13 @@ namespace MedicalExaminer.API.Controllers
                         opts => opts.AfterMap((src, dest) => { dest.UserId = user.UserId; })));
                 }
 
-                await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
+                var updateUser = new UserUpdatePermissions
+                {
+                    UserId = user.UserId,
+                    Permissions = user.Permissions,
+                };
+
+                await _userUpdateService.Handle(new UserUpdateQuery(updateUser, currentUser));
 
                 return Ok(Mapper.Map<MEUserPermission, PutPermissionResponse>(
                     permission,
@@ -382,9 +392,15 @@ namespace MedicalExaminer.API.Controllers
                 var temp = user.Permissions.ToList();
                 temp.Remove(permissionToDelete);
 
+                var userUpdate = new UserUpdatePermissions()
+                {
+                    UserId = user.UserId,
+                    Permissions = temp,
+                };
+
                 user.Permissions = temp;
                 var currentUser = await CurrentUser();
-                await _userUpdateService.Handle(new UserUpdateQuery(user, currentUser));
+                await _userUpdateService.Handle(new UserUpdateQuery(userUpdate, currentUser));
                 return Ok();
             }
             catch (DocumentClientException)
