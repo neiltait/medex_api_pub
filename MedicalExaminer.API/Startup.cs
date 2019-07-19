@@ -117,6 +117,10 @@ namespace MedicalExaminer.API
 
             ConfigureQueries(services, cosmosDbSettings);
 
+            Mapper.Initialize(config => { config.AddMedicalExaminerProfiles(); });
+            Mapper.AssertConfigurationIsValid();
+            services.AddAutoMapper();
+
             ConfigureAuthentication(services, oktaSettings, cosmosDbSettings);
 
             ConfigureAuthorization(services);
@@ -268,6 +272,7 @@ namespace MedicalExaminer.API
                 databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<ILocationConnectionSettings>());
                 databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IExaminationConnectionSettings>());
                 databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserConnectionSettings>());
+                databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserSessionConnectionSettings>());
             }
 
             app.UseMiddleware<ResponseTimeMiddleware>();
@@ -340,6 +345,11 @@ namespace MedicalExaminer.API
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
+            services.AddSingleton<IUserSessionConnectionSettings>(s => new UserSessionConnectionSettings(
+                new Uri(cosmosDbSettings.URL),
+                cosmosDbSettings.PrimaryKey,
+                cosmosDbSettings.DatabaseId));
+
             // Examination services
             services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
             services
@@ -382,11 +392,16 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>, UserRetrievalByOktaIdService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>, UserRetrievalByIdService>();
             services.AddScoped<IAsyncQueryHandler<UserUpdateQuery, MeUser>, UserUpdateService>();
-            services.AddScoped<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>, UserUpdateOktaTokenService>();
             services.AddScoped<IAsyncQueryHandler<UserUpdateOktaQuery, MeUser>, UserUpdateOktaService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>, UsersRetrievalByOktaTokenService>();
             services.AddScoped<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>, InvalidUserPermissionUpdateService>();
 
+
+            // User session services
+            services.AddScoped<IAsyncQueryHandler<UserSessionUpdateOktaTokenQuery, MeUserSession>, UserSessionUpdateOktaTokenService>();
+            services.AddScoped<IAsyncQueryHandler<UserSessionRetrievalByOktaIdQuery, MeUserSession>, UserSessionRetrievalByOktaIdService>();
+
+            
             services.AddScoped<IAsyncQueryHandler<ExaminationByNhsNumberRetrievalQuery, Examination>, ExaminationByNhsNumberRetrievalService>();
             // Used for roles; but is being abused to pass null and get all users.
             services.AddScoped<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>, UsersRetrievalService>();
@@ -433,9 +448,14 @@ namespace MedicalExaminer.API
                         new OktaJwtSecurityTokenHandler(
                             tokenService,
                             new JwtSecurityTokenHandler(),
-                            provider.GetRequiredService<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>>(),
-                            provider.GetRequiredService<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserSessionUpdateOktaTokenQuery, MeUserSession>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserSessionRetrievalByOktaIdQuery, MeUserSession>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>(),
                             provider.GetRequiredService<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserUpdateQuery, MeUser>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<CreateUserQuery, MeUser>>(),
+                            provider.GetRequiredService<OktaClient>(),
                             oktaTokenExpiry));
                 });
         }

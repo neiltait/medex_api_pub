@@ -33,16 +33,6 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "okta_id")]
         public string OktaId { get; set; }
 
-        [Required]
-        [DataType(DataType.Text)]
-        [JsonProperty(PropertyName = "okta_token")]
-        public string OktaToken { get; set; }
-
-        [Required]
-        [Display(Name = "okta_token_expiry")]
-        [DataType(DataType.DateTime)]
-        public DateTimeOffset OktaTokenExpiry { get; set; }
-
         /// <summary>
         /// Permissions.
         /// </summary>
