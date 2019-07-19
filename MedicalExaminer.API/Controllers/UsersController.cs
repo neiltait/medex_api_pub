@@ -171,9 +171,9 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var userUpdateEmail = Mapper.Map<UserUpdateEmail>(putUser);
+                var userToUpdate = Mapper.Map<MeUser>(putUser);
                 var currentUser = await CurrentUser();
-                var updatedUser = await _userUpdateService.Handle(new UserUpdateQuery(userUpdateEmail, currentUser));
+                var updatedUser = await _userUpdateService.Handle(new UserUpdateQuery(userToUpdate, currentUser));
                 return Ok(Mapper.Map<PutUserResponse>(updatedUser));
             }
             catch (DocumentClientException)

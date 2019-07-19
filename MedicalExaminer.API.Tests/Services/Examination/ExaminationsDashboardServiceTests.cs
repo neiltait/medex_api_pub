@@ -8,7 +8,6 @@ using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Models;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Services.Examination
@@ -20,14 +19,18 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         MedicalExaminer.Models.Examination,
         ExaminationsDashboardService>
     {
-        protected override void ConfigureServices(IServiceCollection services)
+        /// <inheritdoc/>
+        /// <remarks>Overrides to pass extra constructor parameter.</remarks>
+        protected override ExaminationsDashboardService GetService(
+            IDatabaseAccess databaseAccess,
+            ExaminationConnectionSettings connectionSettings,
+            ICosmosStore<MedicalExaminer.Models.Examination> cosmosStore = null)
         {
-            services.AddTransient<ExaminationsQueryExpressionBuilder>();
-
-            var store = CosmosMocker.CreateCosmosStore(GetExamples());
-            services.AddTransient<ICosmosStore<MedicalExaminer.Models.Examination>>(s => store.Object);
-
-            base.ConfigureServices(services);
+            var examinationQueryBuilder = new ExaminationsQueryExpressionBuilder();
+            return new ExaminationsDashboardService(
+                databaseAccess,
+                connectionSettings,
+                examinationQueryBuilder);
         }
 
         [Fact]
