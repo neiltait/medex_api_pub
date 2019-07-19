@@ -1241,7 +1241,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             _locationRetrievalService.Setup(lrs => lrs.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(expectedLocation));
 
-
             // Act
             var response = await Controller.UpdatePermission(expectedUserId, expectedPermissionId, new PutPermissionRequest
             {
