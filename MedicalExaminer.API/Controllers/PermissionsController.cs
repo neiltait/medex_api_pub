@@ -322,8 +322,6 @@ namespace MedicalExaminer.API.Controllers
                     return NotFound(new PutPermissionResponse());
                 }
 
-                var incomingPermission = Mapper.Map<MEUserPermission>(putPermission);
-                incomingPermission.PermissionId = permissionId;
                 var permissionToUpdate = user.Permissions.SingleOrDefault(p => p.PermissionId == permissionId);
 
                 if (permissionToUpdate == null)
@@ -331,9 +329,9 @@ namespace MedicalExaminer.API.Controllers
                     return NotFound(new PutPermissionResponse());
                 }
 
-                foreach (var usersPermissions in user.Permissions)
+                foreach (var usersPermission in user.Permissions)
                 {
-                    if (usersPermissions.IsEquivalent(incomingPermission))
+                    if (usersPermission.LocationId == putPermission.LocationId && usersPermission.UserRole == putPermission.UserRole)
                     {
                         return Conflict();
                     }
@@ -362,10 +360,6 @@ namespace MedicalExaminer.API.Controllers
             }
         }
 
-        private static U MapIt<T, U>(T thingToMap)
-        {
-            return AutoMapper.Mapper.Map<T, U>(thingToMap);
-        }
 
         /// <summary>
         /// Deletes a Permission.

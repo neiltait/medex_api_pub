@@ -24,5 +24,7 @@ namespace MedicalExaminer.Common.Extensions.Permission
             var uniqueLocationIds = permissions.Select(x => x.LocationId).Distinct();
             return service.Handle(new LocationsRetrievalByQuery(null, null, false, uniqueLocationIds));
         }
+
+        
     }
 }
