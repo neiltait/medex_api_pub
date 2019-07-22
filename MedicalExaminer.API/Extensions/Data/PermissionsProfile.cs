@@ -20,14 +20,10 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<PermissionLocation, PermissionItem>()
                 .ForMember(permissionItem => permissionItem.UserId, opt => opt.MapFrom(x => x.UserId))
-                .ForMember(permissionItem => permissionItem.PermissionId,
-                    opt => opt.MapFrom(x => x.Permission.PermissionId))
-                .ForMember(permissionItem => permissionItem.LocationId,
-                    opt => opt.MapFrom(x => x.Permission.LocationId))
-                .ForMember(permissionItem => permissionItem.UserRole,
-                    opt => opt.MapFrom(x => x.Permission.UserRole))
-                .ForMember(permissionItem => permissionItem.LocationName,
-                    opt => opt.MapFrom(new PermissionLocationPermissionItemResolver()));
+                .ForMember(permissionItem => permissionItem.PermissionId, opt => opt.MapFrom(x => x.Permission.PermissionId))
+                .ForMember(permissionItem => permissionItem.LocationId, opt => opt.MapFrom(x => x.Permission.LocationId))
+                .ForMember(permissionItem => permissionItem.UserRole, opt => opt.MapFrom(x => x.Permission.UserRole))
+                .ForMember(permissionItem => permissionItem.LocationName, opt => opt.MapFrom(new PermissionLocationPermissionItemResolver()));
             CreateMap<PermissionLocation, GetPermissionResponse>()
                 .ForMember(response => response.UserId, opt => opt.MapFrom(x => x.UserId))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
@@ -63,10 +59,8 @@ namespace MedicalExaminer.API.Extensions.Data
     {
         public string Resolve(PermissionLocation source, PermissionItem destination, string destMember, ResolutionContext context)
         {
-            var result = 
-            source.Locations
+            return source.Locations
                 .SingleOrDefault(location => location.LocationId == source.Permission.LocationId).Name;
-            return result;
         }
     }
 
@@ -93,9 +87,8 @@ namespace MedicalExaminer.API.Extensions.Data
         public string Resolve(PermissionLocation source, PostPermissionResponse destination, string destMember, ResolutionContext context)
         {
 
-            var result = source.Locations
+            return source.Locations
                 .SingleOrDefault(location => location.LocationId == source.Permission.LocationId).Name;
-            return result;
         }
     }
 }
