@@ -329,12 +329,9 @@ namespace MedicalExaminer.API.Controllers
                     return NotFound(new PutPermissionResponse());
                 }
 
-                foreach (var usersPermission in user.Permissions)
+                if (user.Permissions.Any(usersPermission => usersPermission.LocationId == putPermission.LocationId && usersPermission.UserRole == putPermission.UserRole))
                 {
-                    if (usersPermission.LocationId == putPermission.LocationId && usersPermission.UserRole == putPermission.UserRole)
-                    {
-                        return Conflict();
-                    }
+                    return Conflict();
                 }
 
                 permissionToUpdate = Mapper.Map(putPermission, permissionToUpdate);

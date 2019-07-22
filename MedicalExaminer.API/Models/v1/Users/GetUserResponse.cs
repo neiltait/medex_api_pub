@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using MedicalExaminer.API.Models.v1.Permissions;
-using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.Users
 {
