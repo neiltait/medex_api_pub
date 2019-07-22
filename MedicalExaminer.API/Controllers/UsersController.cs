@@ -186,7 +186,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutUserResponse.</returns>
         [HttpPut("{meUserId}")]
         [AuthorizePermission(Permission.UpdateUser)]
-        public async Task<ActionResult<PutUserResponse>> UpdateUser([FromBody] PutUserRequest putUser)
+        public async Task<ActionResult<PutUserResponse>> UpdateUser(string meUserId, [FromBody] PutUserRequest putUser)
         {
             if (!ModelState.IsValid)
             {
@@ -195,9 +195,10 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var userToUpdate = Mapper.Map<MeUser>(putUser);
+                var userUpdateEmail = Mapper.Map<UserUpdateEmail>(putUser);
+                userUpdateEmail.UserId = meUserId;
                 var currentUser = await CurrentUser();
-                var updatedUser = await _userUpdateService.Handle(new UserUpdateQuery(userToUpdate, currentUser));
+                var updatedUser = await _userUpdateService.Handle(new UserUpdateQuery(userUpdateEmail, currentUser));
                 return Ok(Mapper.Map<PutUserResponse>(updatedUser));
             }
             catch (DocumentClientException)

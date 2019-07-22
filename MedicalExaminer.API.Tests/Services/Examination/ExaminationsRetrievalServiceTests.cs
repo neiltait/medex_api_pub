@@ -8,6 +8,7 @@ using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Models.Enums;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Services.Examination
@@ -19,22 +20,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         MedicalExaminer.Models.Examination,
         ExaminationsRetrievalService>
     {
-        /// <inheritdoc/>
-        /// <remarks>Overrides to pass extra constructor parameter.</remarks>
-        protected override ExaminationsRetrievalService GetService(
-            IDatabaseAccess databaseAccess,
-            ExaminationConnectionSettings connectionSettings,
-            ICosmosStore<MedicalExaminer.Models.Examination> cosmosStore = null)
+        protected override void ConfigureServices(IServiceCollection services)
         {
+            base.ConfigureServices(services);
+
+            services.AddTransient<ExaminationsQueryExpressionBuilder>();
+
             var store = CosmosMocker.CreateCosmosStore(GetExamples());
-
-            var examinationQueryBuilder = new ExaminationsQueryExpressionBuilder();
-
-            return new ExaminationsRetrievalService(
-                databaseAccess,
-                connectionSettings,
-                examinationQueryBuilder,
-                store.Object);
+            services.AddTransient<ICosmosStore<MedicalExaminer.Models.Examination>>(s => store.Object);
         }
 
         [Fact]

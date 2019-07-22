@@ -39,9 +39,9 @@ namespace MedicalExaminer.Common.Services.User
                 result = await GetItemsAsync<MeUser>(x => true, user => new
                 {
                     id = user.UserId,
-                    user.FirstName,
-                    user.LastName,
-                    user.Permissions,
+                    first_name = user.FirstName,
+                    last_name = user.LastName,
+                    permissions = user.Permissions,
                 });
             }
             else

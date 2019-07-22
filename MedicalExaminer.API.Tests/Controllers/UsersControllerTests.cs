@@ -340,7 +340,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await Controller.UpdateUser(expectedRequest);
+            var response = await Controller.UpdateUser(It.IsAny<string>(), expectedRequest);
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -368,7 +368,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await Controller.UpdateUser(expectedRequest);
+            var response = await Controller.UpdateUser(It.IsAny<string>(), expectedRequest);
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -407,7 +407,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await Controller.UpdateUser(expectedRequest);
+            var response = await Controller.UpdateUser(It.IsAny<string>(), expectedRequest);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
@@ -431,7 +431,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Act
             var request = new PutUserRequest();
-            var response = await Controller.UpdateUser(request);
+            var response = await Controller.UpdateUser(It.IsAny<string>(), request);
 
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
