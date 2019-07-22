@@ -8,11 +8,6 @@ namespace MedicalExaminer.API.Models.v1.Users
     public class PutUserRequest
     {
         /// <summary>
-        ///     The User identifier.
-        /// </summary>
-        public string UserId { get; set; }
-
-        /// <summary>
         ///     The User's first name.
         /// </summary>
         public string FirstName { get; set; }

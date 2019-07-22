@@ -34,7 +34,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(meUser => meUser.Email, opt => opt.MapFrom(request => request.Email))
                 .ForAllOtherMembers(x => x.Ignore());
             CreateMap<PutUserRequest, MeUser>()
-                .ForMember(meUser => meUser.UserId, opt => opt.MapFrom(request => request.UserId))
+                .ForMember(meUser => meUser.UserId, opt => opt.Ignore())
                 .ForMember(meUser => meUser.FirstName, opt => opt.MapFrom(request => request.FirstName))
                 .ForMember(meUser => meUser.LastName, opt => opt.MapFrom(request => request.LastName))
                 .ForMember(meUser => meUser.Email, opt => opt.MapFrom(request => request.Email))

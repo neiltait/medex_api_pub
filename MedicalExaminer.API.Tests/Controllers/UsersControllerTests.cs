@@ -393,7 +393,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var expectedRequest = new PutUserRequest
             {
-                UserId = expectedUserId,
                 Email = "testing@methods.co.uk"
             };
 

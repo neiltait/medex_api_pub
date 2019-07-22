@@ -91,18 +91,15 @@ namespace MedicalExaminer.API.Tests.Mapper
         [Fact]
         public void TestPutUserRequest()
         {
-            var expectedUserId = "expectedUserId";
             var expectedEmail = "test@methods.co.uk";
 
             var user = new PutUserRequest
             {
-                UserId = expectedUserId,
                 Email = expectedEmail
             };
 
             var response = _mapper.Map<MeUser>(user);
 
-            response.UserId.Should().Be(expectedUserId);
             response.Email.Should().Be(expectedEmail);
         }
 
