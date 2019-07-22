@@ -12,6 +12,7 @@ using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Reporting;
 using MedicalExaminer.Common.Services;
@@ -156,7 +157,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var usersRetrievalByOktaIdServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var usersRetrievalByEmailServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-
+            var locationsService = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>();
             var authorizationServiceMock = new Mock<IAuthorizationService>();
 
             var permissionServiceMock = new Mock<IPermissionService>();
@@ -171,7 +172,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 userRetrievalService.Object,
                 usersRetrievalService.Object,
                 userUpdateService.Object,
-                usersRetrievalByEmailServiceMock.Object);
+                usersRetrievalByEmailServiceMock.Object,
+                locationsService.Object);
         }
 
         [Fact]

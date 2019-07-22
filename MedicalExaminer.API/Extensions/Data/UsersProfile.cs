@@ -22,7 +22,8 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(userLookup => userLookup.FullName, opt => opt.MapFrom(meUser => meUser.FullName()));
             CreateMap<MeUser, GetUserResponse>()
                 .ForMember(response => response.Errors, opt => opt.Ignore())
-                .ForMember(response => response.Lookups, opt => opt.Ignore());
+                .ForMember(response => response.Lookups, opt => opt.Ignore())
+                .ForMember(response => response.Permissions, opt => opt.Ignore());
             CreateMap<MeUser, PutUserResponse>()
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore());

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.Users
@@ -32,6 +33,6 @@ namespace MedicalExaminer.API.Models.v1.Users
         /// <summary>
         /// Permissions
         /// </summary>
-        public IEnumerable<UserPermission> Permissions { get; set; }
+        public IEnumerable<PermissionItem> Permissions { get; set; }
     }
 }

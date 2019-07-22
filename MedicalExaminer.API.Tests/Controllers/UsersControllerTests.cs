@@ -26,6 +26,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>> usersRetrievalService;
         public Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>> userUpdateService;
         public Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>> userRetrievalByEmailService;
+        public Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> locationsService;
 
         public UsersControllerTests() : base()
         {
@@ -36,7 +37,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             usersRetrievalService = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
             userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
             userRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-
+            locationsService = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>();
             Controller = new UsersController(
                 logger.Object,
                 Mapper,
@@ -47,7 +48,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 userRetrievalService.Object,
                 usersRetrievalService.Object,
                 userUpdateService.Object,
-                userRetrievalByEmailService.Object);
+                userRetrievalByEmailService.Object,
+                locationsService.Object);
         }
 
         /// <summary>
