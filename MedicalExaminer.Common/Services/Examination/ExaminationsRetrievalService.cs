@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Cosmonaut;
@@ -49,7 +50,16 @@ namespace MedicalExaminer.Common.Services.Examination
             switch (param.FilterOrderBy)
             {
                 case ExaminationsOrderBy.Urgency:
-                    return _store.Query().WithPagination(param.FilterPageNumber, param.FilterPageSize).Where(predicate).OrderByDescending(x => x.UrgencyScore).ToListAsync().Result;
+
+                    var key = DateTime.Now.Date.ToString("on_yyyy_MM_dd");
+                    return _store
+                        .Query()
+                        .WithPagination(param.FilterPageNumber, param.FilterPageSize)
+                        .Where(predicate)
+                        .OrderByDescending(x => x.UrgencyScores[key])
+                        .ToListAsync()
+                        .Result;
+
                 case ExaminationsOrderBy.CaseCreated:
                     return _store.Query().WithPagination(param.FilterPageNumber, param.FilterPageSize).Where(predicate).OrderBy(x => x.CreatedAt).ToListAsync().Result;
                 case null:

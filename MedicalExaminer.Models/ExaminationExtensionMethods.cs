@@ -113,7 +113,7 @@ namespace MedicalExaminer.Models
                 .Range(0, daysToScore)
                 .Select(days => now.Date.AddDays(days))
                 .ToDictionary(
-                    date => date.ToString("on_yyyy_mm_dd"),
+                    date => date.ToString("on_yyyy_MM_dd"),
                     date => GetCaseUrgencyScore(examination, date));
 
             return examination;
