@@ -24,6 +24,11 @@ namespace MedicalExaminer.API.Models.v1.Permissions
         public string LocationId { get; set; }
 
         /// <summary>
+        ///     Gets or sets the location name.
+        /// </summary>
+        public string LocationName { get; set; }
+
+        /// <summary>
         ///     Gets or sets the User Role for the Permission.
         /// </summary>
         public UserRoles UserRole { get; set; }

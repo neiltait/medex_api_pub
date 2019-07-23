@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
-using MedicalExaminer.API.Filters;
+using MedicalExaminer.API.Models;
+using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -36,7 +38,7 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> _usersRetrievalService;
         private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
         private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _userRetrievalByEmailService;
-
+        private readonly IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> _locationsRetrievalService;
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
@@ -59,7 +61,8 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService)
+            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService,
+            IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationsRetrievalService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _userCreationService = userCreationService;
@@ -67,6 +70,7 @@ namespace MedicalExaminer.API.Controllers
             _usersRetrievalService = usersRetrievalService;
             _userUpdateService = userUpdateService;
             _userRetrievalByEmailService = userRetrievalByEmailService;
+            _locationsRetrievalService = locationsRetrievalService;
         }
 
         /// <summary>
@@ -112,14 +116,33 @@ namespace MedicalExaminer.API.Controllers
             try
             {
                 var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
-                return Ok(Mapper.Map<GetUserResponse>(user));
+                var usersPermissionLocationsIds = user.Permissions?.Select(x => x.LocationId).ToList();
+
+                var locations =
+                    _locationsRetrievalService.Handle(new LocationsRetrievalByQuery(
+                        null,
+                        null,
+                        false,
+                        usersPermissionLocationsIds)).Result;
+
+                var mappedPermissions = user.Permissions?.Select(meUserPermission => new PermissionLocation(
+                    meUserPermission,
+                    locations,
+                    meUserId)).Select(pl => Mapper.Map<PermissionItem>(pl)).ToList();
+
+                var gur = new GetUserResponse();
+                Mapper.Map(user, gur);
+                gur.Permissions = mappedPermissions;
+
+                return Ok(gur);
             }
             catch (ArgumentException)
-            {
+            { 
                 return NotFound(new GetUserResponse());
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
+                var t = ex;
                 return NotFound(new GetUserResponse());
             }
         }
@@ -163,7 +186,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutUserResponse.</returns>
         [HttpPut("{meUserId}")]
         [AuthorizePermission(Permission.UpdateUser)]
-        public async Task<ActionResult<PutUserResponse>> UpdateUser([FromBody] PutUserRequest putUser)
+        public async Task<ActionResult<PutUserResponse>> UpdateUser(string meUserId, [FromBody] PutUserRequest putUser)
         {
             if (!ModelState.IsValid)
             {
@@ -173,6 +196,7 @@ namespace MedicalExaminer.API.Controllers
             try
             {
                 var userUpdateEmail = Mapper.Map<UserUpdateEmail>(putUser);
+                userUpdateEmail.UserId = meUserId;
                 var currentUser = await CurrentUser();
                 var updatedUser = await _userUpdateService.Handle(new UserUpdateQuery(userUpdateEmail, currentUser));
                 return Ok(Mapper.Map<PutUserResponse>(updatedUser));

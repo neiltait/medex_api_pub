@@ -1,6 +1,4 @@
-﻿using MedicalExaminer.Models.Enums;
-
-namespace MedicalExaminer.API.Models.v1.Users
+﻿namespace MedicalExaminer.API.Models.v1.Users
 {
     /// <inheritdoc />
     /// <summary>
