@@ -13,7 +13,6 @@ namespace MedicalExaminer.Models
 
         public IList<TEvent> History { get; set; }
 
-
         public virtual void Add(TEvent theEvent)
         {
             if (string.IsNullOrEmpty(theEvent.EventId))

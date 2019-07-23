@@ -103,10 +103,12 @@ namespace MedicalExaminer.Models
 
     public class QapDiscussionEventContainer: BaseEventContainter<QapDiscussionEvent>
     {
+
         public QapDiscussionEventContainer()
         {
             Drafts = new List<QapDiscussionEvent>();
             History = new List<QapDiscussionEvent>();
+            
         }
     }
 }
