@@ -111,9 +111,9 @@ namespace MedicalExaminer.Models
 
             examination.UrgencyScores = Enumerable
                 .Range(0, daysToScore)
-                .Select(days => now.Date.AddDays(days))
+                .Select(days => now.AddDays(days))
                 .ToDictionary(
-                    date => date.ToString("on_yyyy_MM_dd"),
+                    date => date.Date.ToString("on_yyyy_MM_dd"),
                     date => GetCaseUrgencyScore(examination, date));
 
             return examination;
@@ -287,9 +287,9 @@ namespace MedicalExaminer.Models
         private static int GetCaseUrgencyScore(Examination examination, DateTime forDate)
         {
             const int defaultScoreWeighting = 100;
-            const int overdueScoreWeighting = 1000;
+            const int overdueScoreWeighting = 100000;
 
-            var score = 0;
+            var score = (forDate.Date - examination.CreatedAt.Date).Days * 1000;
 
             if (examination.ChildPriority)
             {
