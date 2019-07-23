@@ -100,7 +100,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var result = await sut.Handle(examination, "a");
 
             // Assert
-            Assert.Equal(0, result.UrgencyScore);
+            Assert.Equal(3000, result.UrgencyScore);
             Assert.Equal("a", result.LastModifiedBy);
         }
 
@@ -137,7 +137,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var result = await sut.Handle(examination, "a");
 
             // Assert
-            Assert.Equal(500, result.UrgencyScore);
+            Assert.Equal(3000 + 500, result.UrgencyScore);
             Assert.Equal("a", result.LastModifiedBy);
         }
     }

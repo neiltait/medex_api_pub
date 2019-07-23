@@ -96,7 +96,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             // Assert
             Assert.NotNull(result.Result);
-            Assert.Equal(0, result.Result.UrgencyScore);
+            Assert.Equal(3000, result.Result.UrgencyScore);
             Assert.Equal(myUser.Object.UserId, result.Result.LastModifiedBy);
         }
 

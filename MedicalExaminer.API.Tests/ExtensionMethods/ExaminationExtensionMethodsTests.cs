@@ -211,7 +211,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var result = examination.UpdateCaseUrgencyScore();
 
             // Assert
-            Assert.Equal(0, result.UrgencyScore);
+            Assert.Equal(3000, result.UrgencyScore);
         }
 
         [Fact]
@@ -232,7 +232,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var result = examination.UpdateCaseUrgencyScore();
 
             // Assert
-            Assert.Equal(500, result.UrgencyScore);
+            Assert.Equal(3000 + 500, result.UrgencyScore);
         }
 
         [Fact]
@@ -253,7 +253,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var result = examination.UpdateCaseUrgencyScore();
 
             // Assert
-            Assert.Equal(1000, result.UrgencyScore);
+            Assert.Equal(100000 + 6000, result.UrgencyScore);
         }
 
         [Fact]
@@ -455,7 +455,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var result = examination.UpdateCaseUrgencyScore();
 
             // Assert
-            Assert.Equal(1500, result.UrgencyScore);
+            Assert.Equal(100000 + 6000 + 500, result.UrgencyScore);
         }
 
         [Fact]

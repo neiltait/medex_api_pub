@@ -173,7 +173,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var result = sut.Handle(query);
 
             // Assert
-            Assert.Equal(0, result.Result.UrgencyScore);
+            Assert.Equal(3000, result.Result.UrgencyScore);
             Assert.Equal("a", result.Result.LastModifiedBy);
         }
 
@@ -223,7 +223,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var result = sut.Handle(query);
 
             // Assert
-            Assert.Equal(500, result.Result.UrgencyScore);
+            Assert.Equal(3000 + 500, result.Result.UrgencyScore);
             Assert.Equal("a", result.Result.LastModifiedBy);
         }
     }
