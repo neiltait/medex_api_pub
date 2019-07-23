@@ -16,6 +16,12 @@ namespace MedicalExaminer.Models
         public int UrgencyScore { get; set; }
 
         /// <summary>
+        /// the urgency score assinged to the case
+        /// </summary>
+        [JsonProperty(PropertyName = "urgency_scores")]
+        public Dictionary<string,int> UrgencyScores { get; set; }
+
+        /// <summary>
         /// Patients first hospital number.
         /// </summary>
         [JsonProperty(PropertyName = "hospital_number_1")]

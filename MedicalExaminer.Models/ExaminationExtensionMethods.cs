@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MedicalExaminer.Models.Enums;
 
@@ -90,10 +91,6 @@ namespace MedicalExaminer.Models
 
         public static Examination UpdateCaseUrgencyScore(this Examination examination)
         {
-            var score = 0;
-            const int defaultScoreWeighting = 100;
-            const int overdueScoreWeighting = 1000;
-
             if (examination == null)
             {
                 throw new ArgumentNullException(nameof(examination));
@@ -101,41 +98,24 @@ namespace MedicalExaminer.Models
 
             if (examination.CaseCompleted)
             {
-                examination.UrgencyScore = score;
+                examination.UrgencyScore = 0;
+                examination.UrgencyScores = new Dictionary<string, int>();
                 return examination;
             }
 
-            if (examination.ChildPriority)
-            {
-                score = score + defaultScoreWeighting;
-            }
+            var now = DateTime.Now;
 
-            if (examination.CoronerPriority)
-            {
-                score = score + defaultScoreWeighting;
-            }
+            examination.UrgencyScore = GetCaseUrgencyScore(examination, now);
 
-            if (examination.CulturalPriority)
-            {
-                score = score + defaultScoreWeighting;
-            }
+            const int daysToScore = 30;
 
-            if (examination.FaithPriority)
-            {
-                score = score + defaultScoreWeighting;
-            }
+            examination.UrgencyScores = Enumerable
+                .Range(0, daysToScore)
+                .Select(days => now.Date.AddDays(days))
+                .ToDictionary(
+                    date => date.ToString("on_yyyy_mm_dd"),
+                    date => GetCaseUrgencyScore(examination, date));
 
-            if (examination.OtherPriority)
-            {
-                score = score + defaultScoreWeighting;
-            }
-
-            if (DateTime.Now.Date.AddDays(-4) > examination.CreatedAt.Date)
-            {
-                score = score + overdueScoreWeighting;
-            }
-
-            examination.UrgencyScore = score;
             return examination;
         }
 
@@ -304,6 +284,45 @@ namespace MedicalExaminer.Models
             return CaseOutcomeSummary.IssueMCCD;
         }
 
+        private static int GetCaseUrgencyScore(Examination examination, DateTime forDate)
+        {
+            const int defaultScoreWeighting = 100;
+            const int overdueScoreWeighting = 1000;
+
+            var score = 0;
+
+            if (examination.ChildPriority)
+            {
+                score += defaultScoreWeighting;
+            }
+
+            if (examination.CoronerPriority)
+            {
+                score += defaultScoreWeighting;
+            }
+
+            if (examination.CulturalPriority)
+            {
+                score += defaultScoreWeighting;
+            }
+
+            if (examination.FaithPriority)
+            {
+                score += defaultScoreWeighting;
+            }
+
+            if (examination.OtherPriority)
+            {
+                score += defaultScoreWeighting;
+            }
+
+            if (forDate.Date.AddDays(-4) > examination.CreatedAt.Date)
+            {
+                score += overdueScoreWeighting;
+            }
+
+            return score;
+        }
 
         private static bool CalculatePendingQAPDiscussion(Examination examination)
         {

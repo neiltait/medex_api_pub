@@ -125,6 +125,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.MedicalTeam, opt => opt.Ignore())
                 .ForMember(examination => examination.MedicalExaminerOfficeResponsibleName, opt => opt.Ignore())
                 .ForMember(examination => examination.UrgencyScore, opt => opt.Ignore())
+                .ForMember(examination => examination.UrgencyScores, opt => opt.Ignore())
                 .ForMember(examination => examination.NationalLocationId, opt => opt.Ignore())
                 .ForMember(examination => examination.RegionLocationId, opt => opt.Ignore())
                 .ForMember(examination => examination.TrustLocationId, opt => opt.Ignore())
