@@ -7,6 +7,7 @@ using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -26,6 +27,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>> _userRetrievalService;
         private readonly Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>> _usersRetrievalService;
         private readonly Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>> _userUpdateService;
+        private readonly Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> _locationsService;
         private readonly Mock<IOktaClient> _mockOktaClient;
 
         public UsersControllerTests()
@@ -36,6 +38,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             _userRetrievalService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
             _usersRetrievalService = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
             _userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
+            _locationsService = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>();
             _mockOktaClient = new Mock<IOktaClient>(MockBehavior.Strict);
 
             Controller = new UsersController(
@@ -48,6 +51,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 _userRetrievalService.Object,
                 _usersRetrievalService.Object,
                 _userUpdateService.Object,
+                _locationsService.Object,
                 _mockOktaClient.Object);
         }
 
@@ -456,7 +460,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await Controller.UpdateUser(request);
+            var response = await Controller.UpdateUser(It.IsAny<string>(), request);
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -484,7 +488,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await Controller.UpdateUser(request);
+            var response = await Controller.UpdateUser(It.IsAny<string>(), request);
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -509,7 +513,6 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             var request = new PutUserRequest
             {
-                UserId = expectedUserId,
                 Email = "testing@methods.co.uk"
             };
 
@@ -524,7 +527,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await Controller.UpdateUser(request);
+            var response = await Controller.UpdateUser(It.IsAny<string>(), request);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
@@ -548,7 +551,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Act
             var request = new PutUserRequest();
-            var response = await Controller.UpdateUser(request);
+            var response = await Controller.UpdateUser(It.IsAny<string>(), request);
 
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();

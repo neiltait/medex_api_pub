@@ -12,6 +12,7 @@ using MedicalExaminer.API.Extensions.ApplicationBuilder;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models;
+using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
 using MedicalExaminer.BackgroundServices;
@@ -27,6 +28,7 @@ using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.PatientDetails;
+using MedicalExaminer.Common.Queries.Permissions;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Reporting;
 using MedicalExaminer.Common.Services;
@@ -35,6 +37,7 @@ using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.Location;
 using MedicalExaminer.Common.Services.MedicalTeam;
 using MedicalExaminer.Common.Services.PatientDetails;
+using MedicalExaminer.Common.Services.Permissions;
 using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
@@ -225,6 +228,8 @@ namespace MedicalExaminer.API
                 cosmosDbSettings.DatabaseId));
 
             services.AddBackgroundServices(backgroundServicesSettings);
+
+            UpdateInvalidOrNullUserPermissionIds(services);
         }
 
         /// <summary>
@@ -385,12 +390,12 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>, UserRetrievalByIdService>();
             services.AddScoped<IAsyncQueryHandler<UserUpdateQuery, MeUser>, UserUpdateService>();
             services.AddScoped<IAsyncQueryHandler<UserUpdateOktaQuery, MeUser>, UserUpdateOktaService>();
+            services.AddScoped<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>, InvalidUserPermissionUpdateService>();
 
             // User session services
             services.AddScoped<IAsyncQueryHandler<UserSessionUpdateOktaTokenQuery, MeUserSession>, UserSessionUpdateOktaTokenService>();
             services.AddScoped<IAsyncQueryHandler<UserSessionRetrievalByOktaIdQuery, MeUserSession>, UserSessionRetrievalByOktaIdService>();
 
-            
             services.AddScoped<IAsyncQueryHandler<ExaminationByNhsNumberRetrievalQuery, Examination>, ExaminationByNhsNumberRetrievalService>();
             // Used for roles; but is being abused to pass null and get all users.
             services.AddScoped<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>, UsersRetrievalService>();
@@ -524,6 +529,15 @@ namespace MedicalExaminer.API
             services.AddScoped<IAuthorizationHandler, PermissionHandler>();
             services.AddScoped<IAuthorizationHandler, DocumentPermissionHandler>();
             services.AddScoped<IPermissionService, PermissionService>();
+        }
+
+        private void UpdateInvalidOrNullUserPermissionIds(IServiceCollection services)
+        {
+            IServiceProvider provider = services.BuildServiceProvider();
+
+            IAsyncQueryHandler<InvalidUserPermissionQuery, bool> instance = provider.GetService<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>>();
+
+            instance.Handle(new InvalidUserPermissionQuery());
         }
     }
 }

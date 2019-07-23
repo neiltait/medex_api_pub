@@ -14,8 +14,8 @@ namespace MedicalExaminer.API.Extensions.Data
         public static void AddMedicalExaminerProfiles(this IMapperConfigurationExpression config)
         {
             config.AddProfile<ExaminationProfile>();
-            config.AddProfile<UsersProfile>();
             config.AddProfile<PermissionsProfile>();
+            config.AddProfile<UsersProfile>();
             config.AddProfile<MedicalTeamProfile>();
             config.AddProfile<PatientDetailsProfile>();
             config.AddProfile<CaseBreakdownProfile>();

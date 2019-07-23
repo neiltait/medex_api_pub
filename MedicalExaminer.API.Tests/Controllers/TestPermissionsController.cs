@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.Permissions;
-using MedicalExaminer.Common;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -28,10 +25,9 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>> _userRetrievalByIdServiceMock;
         private readonly Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>> _userUpdateServiceMock;
         private readonly Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>> _locationParentsServiceMock;
-
-        private readonly Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>
-            _locationsParentsServiceMock;
-
+        private readonly Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>> _locationsParentsServiceMock;
+        private readonly Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>> _locationRetrievalService;
+        private readonly Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> _locationsRetrievalService;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TestPermissionsController" /> class.
@@ -43,6 +39,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             _userUpdateServiceMock = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>(MockBehavior.Strict);
             _locationParentsServiceMock = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>(MockBehavior.Strict);
             _locationsParentsServiceMock = new Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>(MockBehavior.Strict);
+            _locationRetrievalService = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>(MockBehavior.Strict);
+            _locationsRetrievalService = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>(MockBehavior.Strict);
 
             Controller = new PermissionsController(
                 LoggerMock.Object,
@@ -53,7 +51,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 _userRetrievalByIdServiceMock.Object,
                 _userUpdateServiceMock.Object,
                 _locationParentsServiceMock.Object,
-                _locationsParentsServiceMock.Object
+                _locationsParentsServiceMock.Object,
+                _locationRetrievalService.Object,
+                _locationsRetrievalService.Object
             );
 
             Controller.ControllerContext = GetControllerContext();
@@ -63,7 +63,6 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task GetPermissions_ReturnsPermission()
         {
             // Arrange
-            var expectedEmail = "expectedEmail";
             var expectedCurrentUserId = "expectedCurrentUserId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
@@ -71,59 +70,71 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedCurrentUserOktaId = "oktaId";
-            var expectedUser = new MeUser()
+
+            var expectedLocation = new Location
+            {
+                LocationId = "site1",
+                Name = "expectedLocationName"
+            };
+
+            var expectedLocationsCollection = new List<Location>
+            {
+                expectedLocation
+            };
+
+            var expectedUser = new MeUser
             {
                 UserId = expectedUserId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         LocationId = expectedSiteId,
-                        UserRole = expectedRole,
+                        UserRole = expectedRole
                     },
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         LocationId = expectedNationalId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
-            var expectedCurrentUser = new MeUser()
+            var expectedCurrentUser = new MeUser
             {
                 UserId = expectedCurrentUserId,
                 OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         LocationId = expectedRegionId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
             var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
             var expectedLocations = new[]
             {
-                expectedRegionId,
+                expectedRegionId
             };
             IDictionary<string, IEnumerable<Location>> expectedLocationsParents =
-                new Dictionary<string, IEnumerable<Location>>()
+                new Dictionary<string, IEnumerable<Location>>
                 {
                     {
                         expectedSiteId, new[]
                         {
-                            new Location() {LocationId = expectedSiteId},
-                            new Location() {LocationId = "trust1"},
-                            new Location() {LocationId = expectedRegionId},
-                            new Location() {LocationId = expectedNationalId},
+                            new Location { LocationId = expectedSiteId },
+                            new Location { LocationId = "trust1" },
+                            new Location { LocationId = expectedRegionId },
+                            new Location { LocationId = expectedNationalId }
                         }
                     },
                     {
                         expectedNationalId, new[]
                         {
-                            new Location() {LocationId = expectedNationalId},
+                            new Location { LocationId = expectedNationalId }
                         }
-                    },
+                    }
                 };
 
             _userRetrievalByIdServiceMock
@@ -141,6 +152,15 @@ namespace MedicalExaminer.API.Tests.Controllers
             _locationsParentsServiceMock
                 .Setup(lps => lps.Handle(It.IsAny<LocationsParentsQuery>()))
                 .Returns(Task.FromResult(expectedLocationsParents));
+
+            _locationRetrievalService
+                .Setup(lrs => lrs.Handle(It.IsAny<LocationRetrievalByIdQuery>()))
+                .Returns(Task.FromResult(expectedLocation));
+
+            _locationsRetrievalService
+                .Setup(lrs => lrs.Handle(It.IsAny<LocationsRetrievalByQuery>()))
+                .Returns(Task.FromResult(expectedLocationsCollection.AsEnumerable()));
+
 
             // Act
             var response = await Controller.GetPermissions(expectedUserId);
@@ -213,7 +233,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             SetupAuthorize(AuthorizationResult.Success());
 
             var expectedPermissionId = "expectedPermissionId";
-            var expectedEmail = "expectedEmail";
             var expectedCurrentUserId = "expectedCurrentUserId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
@@ -221,49 +240,55 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedCurrentUserOktaId = "oktaId";
-            var expectedUser = new MeUser()
+            var expectedLocation = new Location
+            {
+                LocationId = "site1",
+                Name = "expectedLocationName"
+            };
+
+            var expectedUser = new MeUser
             {
                 UserId = expectedUserId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         PermissionId = expectedPermissionId,
                         LocationId = expectedSiteId,
-                        UserRole = expectedRole,
+                        UserRole = expectedRole
                     },
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         PermissionId = "unexpectedPermissionId",
                         LocationId = expectedNationalId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
-            var expectedCurrentUser = new MeUser()
+            var expectedCurrentUser = new MeUser
             {
                 UserId = expectedCurrentUserId,
                 OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         LocationId = expectedRegionId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
             var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
             var expectedLocations = new[]
             {
-                expectedRegionId,
+                expectedRegionId
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location() {LocationId = expectedSiteId},
-                new Location() {LocationId = "trust1"},
-                new Location() {LocationId = expectedRegionId},
-                new Location() {LocationId = expectedNationalId},
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -281,6 +306,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             _locationParentsServiceMock
                 .Setup(lps => lps.Handle(It.IsAny<LocationParentsQuery>()))
                 .Returns(Task.FromResult(expectedLocationParents));
+
+            _locationRetrievalService
+                .Setup(lrs => lrs.Handle(It.IsAny<LocationRetrievalByIdQuery>()))
+                .Returns(Task.FromResult(expectedLocation));
 
             // Act
             var response = await Controller.GetPermission(expectedUserId, expectedPermissionId);
@@ -303,7 +332,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             SetupAuthorize(AuthorizationResult.Success());
 
             var expectedPermissionId = "expectedPermissionId";
-            var expectedEmail = "expectedEmail";
             var expectedCurrentUserId = "expectedCurrentUserId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
@@ -312,30 +340,30 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedCurrentUserOktaId = "oktaId";
             const MeUser expectedUser = null;
-            var expectedCurrentUser = new MeUser()
+            var expectedCurrentUser = new MeUser
             {
                 UserId = expectedCurrentUserId,
                 OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         LocationId = expectedRegionId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
             var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
             var expectedLocations = new[]
             {
-                expectedRegionId,
+                expectedRegionId
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location() {LocationId = expectedSiteId},
-                new Location() {LocationId = "trust1"},
-                new Location() {LocationId = expectedRegionId},
-                new Location() {LocationId = expectedNationalId},
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -376,7 +404,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             SetupAuthorize(AuthorizationResult.Success());
 
             var expectedPermissionId = "expectedPermissionId";
-            var expectedEmail = "expectedEmail";
             var expectedCurrentUserId = "expectedCurrentUserId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
@@ -384,43 +411,43 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedCurrentUserOktaId = "oktaId";
-            var expectedUser = new MeUser()
+            var expectedUser = new MeUser
             {
                 UserId = expectedUserId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         PermissionId = "unexpectedPermissionId",
                         LocationId = expectedNationalId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
-            var expectedCurrentUser = new MeUser()
+            var expectedCurrentUser = new MeUser
             {
                 UserId = expectedCurrentUserId,
                 OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         LocationId = expectedRegionId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
             var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
             var expectedLocations = new[]
             {
-                expectedRegionId,
+                expectedRegionId
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location() {LocationId = expectedSiteId},
-                new Location() {LocationId = "trust1"},
-                new Location() {LocationId = expectedRegionId},
-                new Location() {LocationId = expectedNationalId},
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -460,7 +487,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             SetupAuthorize(AuthorizationResult.Failed());
 
             var expectedPermissionId = "expectedPermissionId";
-            var expectedEmail = "expectedEmail";
             var expectedCurrentUserId = "expectedCurrentUserId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
@@ -468,49 +494,49 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedCurrentUserOktaId = "oktaId";
-            var expectedUser = new MeUser()
+            var expectedUser = new MeUser
             {
                 UserId = expectedUserId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         PermissionId = expectedPermissionId,
                         LocationId = expectedSiteId,
-                        UserRole = expectedRole,
+                        UserRole = expectedRole
                     },
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         PermissionId = "unexpectedPermissionId",
                         LocationId = expectedNationalId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
-            var expectedCurrentUser = new MeUser()
+            var expectedCurrentUser = new MeUser
             {
                 UserId = expectedCurrentUserId,
                 OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         LocationId = expectedRegionId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
             var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
             var expectedLocations = new[]
             {
-                expectedRegionId,
+                expectedRegionId
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location() {LocationId = expectedSiteId},
-                new Location() {LocationId = "trust1"},
-                new Location() {LocationId = expectedRegionId},
-                new Location() {LocationId = expectedNationalId},
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -610,7 +636,6 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task GetPermissions_ReturnsNotFound_WhenUserNotFound()
         {
             // Arrange
-            var expectedEmail = "expectedEmail";
             var expectedCurrentUserId = "expectedCurrentUserId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
@@ -619,42 +644,42 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedCurrentUserOktaId = "oktaId";
             const MeUser expectedUser = null;
-            var expectedCurrentUser = new MeUser()
+            var expectedCurrentUser = new MeUser
             {
                 UserId = expectedCurrentUserId,
                 OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         LocationId = expectedRegionId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
             var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
             var expectedLocations = new[]
             {
-                expectedRegionId,
+                expectedRegionId
             };
             IDictionary<string, IEnumerable<Location>> expectedLocationsParents =
-                new Dictionary<string, IEnumerable<Location>>()
+                new Dictionary<string, IEnumerable<Location>>
                 {
                     {
                         expectedSiteId, new[]
                         {
-                            new Location() {LocationId = expectedSiteId},
-                            new Location() {LocationId = "trust1"},
-                            new Location() {LocationId = expectedRegionId},
-                            new Location() {LocationId = expectedNationalId},
+                            new Location { LocationId = expectedSiteId },
+                            new Location { LocationId = "trust1" },
+                            new Location { LocationId = expectedRegionId },
+                            new Location { LocationId = expectedNationalId }
                         }
                     },
                     {
                         expectedNationalId, new[]
                         {
-                            new Location() {LocationId = expectedNationalId},
+                            new Location { LocationId = expectedNationalId }
                         }
-                    },
+                    }
                 };
 
             _userRetrievalByIdServiceMock
@@ -686,13 +711,12 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public async Task CreatePermission_ReturnsPermission_WhenCanCreate()
+        public async Task CreateDuplicatePermission_ReturnsConflict_WhenCanCreate()
         {
             // Arrange
             SetupAuthorize(AuthorizationResult.Success());
 
             var expectedPermissionId = "expectedPermissionId";
-            var expectedEmail = "expectedEmail";
             var expectedCurrentUserId = "expectedCurrentUserId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
@@ -700,49 +724,49 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedCurrentUserOktaId = "oktaId";
-            var expectedUser = new MeUser()
+            var expectedUser = new MeUser
             {
                 UserId = expectedUserId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         PermissionId = expectedPermissionId,
                         LocationId = expectedSiteId,
-                        UserRole = expectedRole,
+                        UserRole = expectedRole
                     },
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         PermissionId = "unexpectedPermissionId",
                         LocationId = expectedNationalId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
-            var expectedCurrentUser = new MeUser()
+            var expectedCurrentUser = new MeUser
             {
                 UserId = expectedCurrentUserId,
                 OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         LocationId = expectedRegionId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
             var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
             var expectedLocations = new[]
             {
-                expectedRegionId,
+                expectedRegionId
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location() {LocationId = expectedSiteId},
-                new Location() {LocationId = "trust1"},
-                new Location() {LocationId = expectedRegionId},
-                new Location() {LocationId = expectedNationalId},
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -763,16 +787,123 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             _userUpdateServiceMock
                 .Setup(uus => uus.Handle(It.IsAny<UserUpdateQuery>()))
-                .Returns(Task.FromResult(new MeUser()
+                .Returns(Task.FromResult(new MeUser
                 {
                     Permissions = new List<MEUserPermission>()
                 }));
 
             // Act
-            var response = await Controller.CreatePermission(expectedUserId, new PostPermissionRequest()
+            var response = await Controller.CreatePermission(expectedUserId, new PostPermissionRequest
             {
                 LocationId = expectedSiteId,
-                UserRole = expectedRole,
+                UserRole = expectedRole
+            });
+
+            // Assert
+            response.Result.Should().BeAssignableTo<ConflictResult>();
+        }
+
+        [Fact]
+        public async Task CreatePermission_ReturnsPermission_WhenCanCreate()
+        {
+            // Arrange
+            SetupAuthorize(AuthorizationResult.Success());
+
+            var expectedPermissionId = "expectedPermissionId";
+            var expectedCurrentUserId = "expectedCurrentUserId";
+            var expectedUserId = "expectedUserId";
+            var expectedSiteId = "site1";
+            var currentSiteId = "site2";
+            var expectedRegionId = "region1";
+            var expectedNationalId = "national1";
+            var expectedRole = UserRoles.MedicalExaminer;
+            var currentRole = UserRoles.MedicalExaminerOfficer;
+            var expectedCurrentUserOktaId = "oktaId";
+
+            Location expectedLocation = new Location
+            {
+                LocationId = "site1",
+                Name = "expectedLocationName"
+            };
+
+            var expectedUser = new MeUser
+            {
+                UserId = expectedUserId,
+                Permissions = new[]
+                {
+                    new MEUserPermission
+                    {
+                        PermissionId = expectedPermissionId,
+                        LocationId = currentSiteId,
+                        UserRole = currentRole
+                    },
+                    new MEUserPermission
+                    {
+                        PermissionId = "unexpectedPermissionId",
+                        LocationId = expectedNationalId,
+                        UserRole = expectedRole
+                    }
+                }
+            };
+
+            var expectedCurrentUser = new MeUser
+            {
+                UserId = expectedCurrentUserId,
+                OktaId = expectedCurrentUserOktaId,
+                Permissions = new[]
+                {
+                    new MEUserPermission
+                    {
+                        LocationId = expectedRegionId,
+                        UserRole = expectedRole
+                    }
+                }
+            };
+            var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
+            var expectedLocations = new[]
+            {
+                expectedRegionId
+            };
+            IEnumerable<Location> expectedLocationParents = new[]
+            {
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
+            };
+
+            _userRetrievalByIdServiceMock
+                .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
+                .Returns(Task.FromResult(expectedUser));
+
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
+                .Returns(Task.FromResult(expectedCurrentUser));
+
+            PermissionServiceMock
+                .Setup(ps => ps.LocationIdsWithPermission(expectedCurrentUser, expectedPermission))
+                .Returns(expectedLocations);
+
+            _locationParentsServiceMock
+                .Setup(lps => lps.Handle(It.IsAny<LocationParentsQuery>()))
+                .Returns(Task.FromResult(expectedLocationParents));
+
+            _userUpdateServiceMock
+                .Setup(uus => uus.Handle(It.IsAny<UserUpdateQuery>()))
+                .Returns(Task.FromResult(new MeUser
+                {
+                    Permissions = new List<MEUserPermission>()
+                }));
+
+            _locationRetrievalService
+                .Setup(lrs => lrs.Handle(It.IsAny<LocationRetrievalByIdQuery>()))
+                .Returns(Task.FromResult(expectedLocation));
+
+            // Act
+            var response = await Controller.CreatePermission(expectedUserId, new PostPermissionRequest
+            {
+                LocationId = expectedSiteId,
+                UserRole = expectedRole
             });
 
             // Assert
@@ -792,8 +923,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             SetupAuthorize(AuthorizationResult.Success());
 
-            var expectedPermissionId = "expectedPermissionId";
-            var expectedEmail = "expectedEmail";
             var expectedCurrentUserId = "expectedCurrentUserId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
@@ -802,30 +931,30 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedCurrentUserOktaId = "oktaId";
             const MeUser expectedUser = null;
-            var expectedCurrentUser = new MeUser()
+            var expectedCurrentUser = new MeUser
             {
                 UserId = expectedCurrentUserId,
                 OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         LocationId = expectedRegionId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
             var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
             var expectedLocations = new[]
             {
-                expectedRegionId,
+                expectedRegionId
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location() {LocationId = expectedSiteId},
-                new Location() {LocationId = "trust1"},
-                new Location() {LocationId = expectedRegionId},
-                new Location() {LocationId = expectedNationalId},
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -846,16 +975,16 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             _userUpdateServiceMock
                 .Setup(uus => uus.Handle(It.IsAny<UserUpdateQuery>()))
-                .Returns(Task.FromResult(new MeUser()
+                .Returns(Task.FromResult(new MeUser
                 {
                     Permissions = new List<MEUserPermission>()
                 }));
 
             // Act
-            var response = await Controller.CreatePermission(expectedUserId, new PostPermissionRequest()
+            var response = await Controller.CreatePermission(expectedUserId, new PostPermissionRequest
             {
                 LocationId = expectedSiteId,
-                UserRole = expectedRole,
+                UserRole = expectedRole
             });
 
             // Assert
@@ -876,7 +1005,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             SetupAuthorize(AuthorizationResult.Failed());
 
             var expectedPermissionId = "expectedPermissionId";
-            var expectedEmail = "expectedEmail";
             var expectedCurrentUserId = "expectedCurrentUserId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
@@ -884,49 +1012,49 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedCurrentUserOktaId = "oktaId";
-            var expectedUser = new MeUser()
+            var expectedUser = new MeUser
             {
                 UserId = expectedUserId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         PermissionId = expectedPermissionId,
                         LocationId = expectedSiteId,
-                        UserRole = expectedRole,
+                        UserRole = expectedRole
                     },
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         PermissionId = "unexpectedPermissionId",
                         LocationId = expectedNationalId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
-            var expectedCurrentUser = new MeUser()
+            var expectedCurrentUser = new MeUser
             {
                 UserId = expectedCurrentUserId,
                 OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         LocationId = expectedRegionId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
             var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
             var expectedLocations = new[]
             {
-                expectedRegionId,
+                expectedRegionId
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location() {LocationId = expectedSiteId},
-                new Location() {LocationId = "trust1"},
-                new Location() {LocationId = expectedRegionId},
-                new Location() {LocationId = expectedNationalId},
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -948,16 +1076,16 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             _userUpdateServiceMock
                 .Setup(uus => uus.Handle(It.IsAny<UserUpdateQuery>()))
-                .Returns(Task.FromResult(new MeUser()
+                .Returns(Task.FromResult(new MeUser
                 {
                     Permissions = new List<MEUserPermission>()
                 }));
 
             // Act
-            var response = await Controller.CreatePermission(expectedUserId, new PostPermissionRequest()
+            var response = await Controller.CreatePermission(expectedUserId, new PostPermissionRequest
             {
                 LocationId = expectedSiteId,
-                UserRole = expectedRole,
+                UserRole = expectedRole
             });
 
             // Assert
@@ -1033,57 +1161,59 @@ namespace MedicalExaminer.API.Tests.Controllers
             SetupAuthorize(AuthorizationResult.Success());
 
             var expectedPermissionId = "expectedPermissionId";
-            var expectedEmail = "expectedEmail";
             var expectedCurrentUserId = "expectedCurrentUserId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
+            var currentSiteId = "site2";
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
+            var currentRole = UserRoles.MedicalExaminerOfficer;
             var expectedCurrentUserOktaId = "oktaId";
-            var expectedUser = new MeUser()
+            var expectedUser = new MeUser
             {
                 UserId = expectedUserId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         PermissionId = expectedPermissionId,
-                        LocationId = expectedSiteId,
-                        UserRole = expectedRole,
-                    },
-                    new MEUserPermission()
-                    {
-                        PermissionId = "unexpectedPermissionId",
-                        LocationId = expectedNationalId,
-                        UserRole = expectedRole,
-                    },
+                        LocationId = currentSiteId,
+                        UserRole = currentRole
+                    }
                 }
             };
-            var expectedCurrentUser = new MeUser()
+
+            var expectedLocation = new Location
+            {
+                LocationId = "site1",
+                Name = "expectedLocationName"
+            };
+
+            var expectedCurrentUser = new MeUser
             {
                 UserId = expectedCurrentUserId,
                 OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         LocationId = expectedRegionId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
             var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
             var expectedLocations = new[]
             {
-                expectedRegionId,
+                expectedRegionId
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location() {LocationId = expectedSiteId},
-                new Location() {LocationId = "trust1"},
-                new Location() {LocationId = expectedRegionId},
-                new Location() {LocationId = expectedNationalId},
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -1104,16 +1234,18 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             _userUpdateServiceMock
                 .Setup(uus => uus.Handle(It.IsAny<UserUpdateQuery>()))
-                .Returns(Task.FromResult(new MeUser()
+                .Returns(Task.FromResult(new MeUser
                 {
                     Permissions = new List<MEUserPermission>()
                 }));
 
+            _locationRetrievalService.Setup(lrs => lrs.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(expectedLocation));
+
             // Act
-            var response = await Controller.UpdatePermission(expectedUserId, expectedPermissionId, new PutPermissionRequest()
+            var response = await Controller.UpdatePermission(expectedUserId, expectedPermissionId, new PutPermissionRequest
             {
                 LocationId = expectedSiteId,
-                UserRole = expectedRole,
+                UserRole = expectedRole
             });
 
             // Assert
@@ -1131,13 +1263,12 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public async Task UpdatePermission_ReturnsForbid_WhenCanNotUpdate()
+        public async Task UpdatePermission_ReturnsConflict_WhenFoundDuplicate()
         {
             // Arrange
-            SetupAuthorize(AuthorizationResult.Failed());
+            SetupAuthorize(AuthorizationResult.Success());
 
             var expectedPermissionId = "expectedPermissionId";
-            var expectedEmail = "expectedEmail";
             var expectedCurrentUserId = "expectedCurrentUserId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
@@ -1145,49 +1276,43 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
             var expectedCurrentUserOktaId = "oktaId";
-            var expectedUser = new MeUser()
+            var expectedUser = new MeUser
             {
                 UserId = expectedUserId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         PermissionId = expectedPermissionId,
                         LocationId = expectedSiteId,
-                        UserRole = expectedRole,
-                    },
-                    new MEUserPermission()
-                    {
-                        PermissionId = "unexpectedPermissionId",
-                        LocationId = expectedNationalId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
-            var expectedCurrentUser = new MeUser()
+            var expectedCurrentUser = new MeUser
             {
                 UserId = expectedCurrentUserId,
                 OktaId = expectedCurrentUserOktaId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         LocationId = expectedRegionId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
             var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
             var expectedLocations = new[]
             {
-                expectedRegionId,
+                expectedRegionId
             };
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location() {LocationId = expectedSiteId},
-                new Location() {LocationId = "trust1"},
-                new Location() {LocationId = expectedRegionId},
-                new Location() {LocationId = expectedNationalId},
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
@@ -1208,16 +1333,202 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             _userUpdateServiceMock
                 .Setup(uus => uus.Handle(It.IsAny<UserUpdateQuery>()))
-                .Returns(Task.FromResult(new MeUser()
+                .Returns(Task.FromResult(new MeUser
                 {
                     Permissions = new List<MEUserPermission>()
                 }));
 
             // Act
-            var response = await Controller.UpdatePermission(expectedUserId, expectedPermissionId, new PutPermissionRequest()
+            var response = await Controller.UpdatePermission(expectedUserId, expectedPermissionId, new PutPermissionRequest
             {
                 LocationId = expectedSiteId,
-                UserRole = expectedRole,
+                UserRole = expectedRole
+            });
+
+            // Assert
+            response.Result.Should().BeAssignableTo<ConflictResult>();
+        }
+
+        [Fact]
+        public async Task UpdatePermissionWithDuplicate_ReturnsConflict_WhenCanUpdate()
+        {
+            // Arrange
+            SetupAuthorize(AuthorizationResult.Success());
+
+            var expectedPermissionId = "expectedPermissionId";
+            var expectedCurrentUserId = "expectedCurrentUserId";
+            var expectedUserId = "expectedUserId";
+            var expectedSiteId = "site1";
+            var expectedRegionId = "region1";
+            var expectedNationalId = "national1";
+            var expectedRole = UserRoles.MedicalExaminer;
+            var expectedCurrentUserOktaId = "oktaId";
+            var expectedUser = new MeUser
+            {
+                UserId = expectedUserId,
+                Permissions = new[]
+                {
+                    new MEUserPermission
+                    {
+                        PermissionId = expectedPermissionId,
+                        LocationId = expectedSiteId,
+                        UserRole = expectedRole
+                    },
+                    new MEUserPermission
+                    {
+                        PermissionId = "unexpectedPermissionId",
+                        LocationId = expectedNationalId,
+                        UserRole = expectedRole
+                    }
+                }
+            };
+            var expectedCurrentUser = new MeUser
+            {
+                UserId = expectedCurrentUserId,
+                OktaId = expectedCurrentUserOktaId,
+                Permissions = new[]
+                {
+                    new MEUserPermission
+                    {
+                        LocationId = expectedRegionId,
+                        UserRole = expectedRole
+                    }
+                }
+            };
+            var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
+            var expectedLocations = new[]
+            {
+                expectedRegionId
+            };
+            IEnumerable<Location> expectedLocationParents = new[]
+            {
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
+            };
+
+            _userRetrievalByIdServiceMock
+                .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
+                .Returns(Task.FromResult(expectedUser));
+
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
+                .Returns(Task.FromResult(expectedCurrentUser));
+
+            PermissionServiceMock
+                .Setup(ps => ps.LocationIdsWithPermission(expectedCurrentUser, expectedPermission))
+                .Returns(expectedLocations);
+
+            _locationParentsServiceMock
+                .Setup(lps => lps.Handle(It.IsAny<LocationParentsQuery>()))
+                .Returns(Task.FromResult(expectedLocationParents));
+
+            _userUpdateServiceMock
+                .Setup(uus => uus.Handle(It.IsAny<UserUpdateQuery>()))
+                .Returns(Task.FromResult(new MeUser
+                {
+                    Permissions = new List<MEUserPermission>()
+                }));
+
+            // Act
+            var response = await Controller.UpdatePermission(expectedUserId, expectedPermissionId, new PutPermissionRequest
+            {
+                LocationId = expectedSiteId,
+                UserRole = expectedRole
+            });
+
+            // Assert
+            response.Result.Should().BeAssignableTo<ConflictResult>();
+        }
+
+        [Fact]
+        public async Task UpdatePermission_ReturnsForbid_WhenCanNotUpdate()
+        {
+            // Arrange
+            SetupAuthorize(AuthorizationResult.Failed());
+
+            var expectedPermissionId = "expectedPermissionId";
+            var expectedCurrentUserId = "expectedCurrentUserId";
+            var expectedUserId = "expectedUserId";
+            var expectedSiteId = "site1";
+            var expectedRegionId = "region1";
+            var expectedNationalId = "national1";
+            var expectedRole = UserRoles.MedicalExaminer;
+            var expectedCurrentUserOktaId = "oktaId";
+            var expectedUser = new MeUser
+            {
+                UserId = expectedUserId,
+                Permissions = new[]
+                {
+                    new MEUserPermission
+                    {
+                        PermissionId = expectedPermissionId,
+                        LocationId = expectedSiteId,
+                        UserRole = expectedRole
+                    },
+                    new MEUserPermission
+                    {
+                        PermissionId = "unexpectedPermissionId",
+                        LocationId = expectedNationalId,
+                        UserRole = expectedRole
+                    }
+                }
+            };
+            var expectedCurrentUser = new MeUser
+            {
+                UserId = expectedCurrentUserId,
+                OktaId = expectedCurrentUserOktaId,
+                Permissions = new[]
+                {
+                    new MEUserPermission
+                    {
+                        LocationId = expectedRegionId,
+                        UserRole = expectedRole
+                    }
+                }
+            };
+            var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
+            var expectedLocations = new[]
+            {
+                expectedRegionId
+            };
+            IEnumerable<Location> expectedLocationParents = new[]
+            {
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
+            };
+
+            _userRetrievalByIdServiceMock
+                .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
+                .Returns(Task.FromResult(expectedUser));
+
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
+                .Returns(Task.FromResult(expectedCurrentUser));
+
+            PermissionServiceMock
+                .Setup(ps => ps.LocationIdsWithPermission(expectedCurrentUser, expectedPermission))
+                .Returns(expectedLocations);
+
+            _locationParentsServiceMock
+                .Setup(lps => lps.Handle(It.IsAny<LocationParentsQuery>()))
+                .Returns(Task.FromResult(expectedLocationParents));
+
+            _userUpdateServiceMock
+                .Setup(uus => uus.Handle(It.IsAny<UserUpdateQuery>()))
+                .Returns(Task.FromResult(new MeUser
+                {
+                    Permissions = new List<MEUserPermission>()
+                }));
+
+            // Act
+            var response = await Controller.UpdatePermission(expectedUserId, expectedPermissionId, new PutPermissionRequest
+            {
+                LocationId = expectedSiteId,
+                UserRole = expectedRole
             });
 
             // Assert
@@ -1228,23 +1539,37 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task UpdatePermission_ReturnsNotFound_WhenUserNotFound()
         {
             // Arrange
-            SetupAuthorize(AuthorizationResult.Failed());
+            SetupAuthorize(AuthorizationResult.Success());
 
             var expectedPermissionId = "expectedPermissionId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
+            var expectedRegionId = "region1";
+            var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
             const MeUser expectedUser = null;
+
+            IEnumerable<Location> expectedLocationParents = new[]
+            {
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
+            };
 
             _userRetrievalByIdServiceMock
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
+            _locationParentsServiceMock
+                .Setup(lps => lps.Handle(It.IsAny<LocationParentsQuery>()))
+                .Returns(Task.FromResult(expectedLocationParents));
+
             // Act
-            var response = await Controller.UpdatePermission(expectedUserId, expectedPermissionId, new PutPermissionRequest()
+            var response = await Controller.UpdatePermission(expectedUserId, expectedPermissionId, new PutPermissionRequest
             {
                 LocationId = expectedSiteId,
-                UserRole = expectedRole,
+                UserRole = expectedRole
             });
 
             // Assert
@@ -1255,84 +1580,49 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task UpdatePermission_ReturnsNotFound_WhenPermissionNotFoundOnUser()
         {
             // Arrange
-            SetupAuthorize(AuthorizationResult.Failed());
+            SetupAuthorize(AuthorizationResult.Success());
 
             var expectedPermissionId = "expectedPermissionId";
-            var expectedEmail = "expectedEmail";
-            var expectedCurrentUserId = "expectedCurrentUserId";
             var expectedUserId = "expectedUserId";
             var expectedSiteId = "site1";
             var expectedRegionId = "region1";
             var expectedNationalId = "national1";
             var expectedRole = UserRoles.MedicalExaminer;
-            var expectedCurrentUserOktaId = "oktaId";
-            var expectedUser = new MeUser()
+            var expectedUser = new MeUser
             {
                 UserId = expectedUserId,
                 Permissions = new[]
                 {
-                    new MEUserPermission()
+                    new MEUserPermission
                     {
                         PermissionId = "unexpectedPermissionId",
                         LocationId = expectedNationalId,
-                        UserRole = expectedRole,
-                    },
+                        UserRole = expectedRole
+                    }
                 }
             };
-            var expectedCurrentUser = new MeUser()
-            {
-                UserId = expectedCurrentUserId,
-                OktaId = expectedCurrentUserOktaId,
-                Permissions = new[]
-                {
-                    new MEUserPermission()
-                    {
-                        LocationId = expectedRegionId,
-                        UserRole = expectedRole,
-                    },
-                }
-            };
-            var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
-            var expectedLocations = new[]
-            {
-                expectedRegionId,
-            };
+
             IEnumerable<Location> expectedLocationParents = new[]
             {
-                new Location() {LocationId = expectedSiteId},
-                new Location() {LocationId = "trust1"},
-                new Location() {LocationId = expectedRegionId},
-                new Location() {LocationId = expectedNationalId},
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
             };
 
             _userRetrievalByIdServiceMock
                 .Setup(urbis => urbis.Handle(It.Is<UserRetrievalByIdQuery>(q => q.UserId == expectedUserId)))
                 .Returns(Task.FromResult(expectedUser));
 
-            UsersRetrievalByOktaIdServiceMock
-                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
-                .Returns(Task.FromResult(expectedCurrentUser));
-
-            PermissionServiceMock
-                .Setup(ps => ps.LocationIdsWithPermission(expectedCurrentUser, expectedPermission))
-                .Returns(expectedLocations);
-
             _locationParentsServiceMock
                 .Setup(lps => lps.Handle(It.IsAny<LocationParentsQuery>()))
                 .Returns(Task.FromResult(expectedLocationParents));
 
-            _userUpdateServiceMock
-                .Setup(uus => uus.Handle(It.IsAny<UserUpdateQuery>()))
-                .Returns(Task.FromResult(new MeUser()
-                {
-                    Permissions = new List<MEUserPermission>()
-                }));
-
             // Act
-            var response = await Controller.UpdatePermission(expectedUserId, expectedPermissionId, new PutPermissionRequest()
+            var response = await Controller.UpdatePermission(expectedUserId, expectedPermissionId, new PutPermissionRequest
             {
                 LocationId = expectedSiteId,
-                UserRole = expectedRole,
+                UserRole = expectedRole
             });
 
             // Assert
@@ -1361,9 +1651,61 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task UpdatePermission_ReturnsNotFound_WhenArgumentExceptionOccurs()
         {
             // Arrange
+            SetupAuthorize(AuthorizationResult.Success());
+            var expectedCurrentUserId = "expectedCurrentUserId";
+            var expectedSiteId = "site1";
+            var expectedRegionId = "region1";
+            var expectedNationalId = "national1";
+            var expectedRole = UserRoles.MedicalExaminer;
+            var expectedCurrentUserOktaId = "oktaId";
+            var expectedCurrentUser = new MeUser
+            {
+                UserId = expectedCurrentUserId,
+                OktaId = expectedCurrentUserOktaId,
+                Permissions = new[]
+                {
+                    new MEUserPermission
+                    {
+                        LocationId = expectedRegionId,
+                        UserRole = expectedRole
+                    }
+                }
+            };
+            var expectedPermission = Common.Authorization.Permission.GetUserPermissions;
+            var expectedLocations = new[]
+            {
+                expectedRegionId
+            };
+            IEnumerable<Location> expectedLocationParents = new[]
+            {
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
+            };
+
             _userRetrievalByIdServiceMock
                 .Setup(urbis => urbis.Handle(It.IsAny<UserRetrievalByIdQuery>()))
                 .Throws<ArgumentException>();
+
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(urbes => urbes.Handle(It.Is<UserRetrievalByOktaIdQuery>(q => q.OktaId == expectedCurrentUserOktaId)))
+                .Returns(Task.FromResult(expectedCurrentUser));
+
+            PermissionServiceMock
+                .Setup(ps => ps.LocationIdsWithPermission(expectedCurrentUser, expectedPermission))
+                .Returns(expectedLocations);
+
+            _locationParentsServiceMock
+                .Setup(lps => lps.Handle(It.IsAny<LocationParentsQuery>()))
+                .Returns(Task.FromResult(expectedLocationParents));
+
+            _userUpdateServiceMock
+                .Setup(uus => uus.Handle(It.IsAny<UserUpdateQuery>()))
+                .Returns(Task.FromResult(new MeUser
+                {
+                    Permissions = new List<MEUserPermission>()
+                }));
 
             // Act
             var response = await Controller.UpdatePermission(string.Empty, string.Empty, new PutPermissionRequest());
@@ -1383,9 +1725,26 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task UpdatePermission_ReturnsNotFound_WhenDocumentClientExceptionOccurs()
         {
             // Arrange
+            SetupAuthorize(AuthorizationResult.Success());
+            var expectedSiteId = "site1";
+            var expectedRegionId = "region1";
+            var expectedNationalId = "national1";
+
+            IEnumerable<Location> expectedLocationParents = new[]
+            {
+                new Location { LocationId = expectedSiteId },
+                new Location { LocationId = "trust1" },
+                new Location { LocationId = expectedRegionId },
+                new Location { LocationId = expectedNationalId }
+            };
+
             _userRetrievalByIdServiceMock
                 .Setup(urbis => urbis.Handle(It.IsAny<UserRetrievalByIdQuery>()))
                 .Throws(CreateDocumentClientExceptionForTesting());
+
+            _locationParentsServiceMock
+                .Setup(lps => lps.Handle(It.IsAny<LocationParentsQuery>()))
+                .Returns(Task.FromResult(expectedLocationParents));
 
             // Act
             var response = await Controller.UpdatePermission(string.Empty, string.Empty, new PutPermissionRequest());

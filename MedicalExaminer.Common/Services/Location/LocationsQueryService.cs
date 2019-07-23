@@ -7,6 +7,7 @@ using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.Location;
+using Newtonsoft.Json;
 
 namespace MedicalExaminer.Common.Services.Location
 {
@@ -43,8 +44,7 @@ namespace MedicalExaminer.Common.Services.Location
                     || param.PermissedLocations.Contains(l.NationalLocationId)
                     || param.PermissedLocations.Contains(l.RegionLocationId)
                     || param.PermissedLocations.Contains(l.TrustLocationId)
-                    || param.PermissedLocations.Contains(l.SiteLocationId)
-                    ;
+                    || param.PermissedLocations.Contains(l.SiteLocationId);
 
                 predicate = predicate.And(idFilter);
             }
@@ -55,7 +55,7 @@ namespace MedicalExaminer.Common.Services.Location
             {
                 result = await GetItemsAsync<Models.Location>(predicate, location => new
                 {
-                    location.Name,
+                    name = location.Name,
                     id = location.LocationId
                 });
             }
