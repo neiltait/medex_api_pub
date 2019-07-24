@@ -257,7 +257,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 IsEqual(caseBreakdown.QapDiscussion, caseBreakdownItem.QapDiscussion);
         }
 
-        private bool IsEqual(BaseEventContainter<QapDiscussionEvent> qapDiscussion1, EventContainerItem<QapDiscussionEventItem> qapDiscussion2)
+        private bool IsEqual(BaseEventContainter<QapDiscussionEvent> qapDiscussion1, EventContainerItem<QapDiscussionEventItem, QapDiscussionPrepopulated> qapDiscussion2)
         {
             var historyIsEqual = true;
 
@@ -294,7 +294,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 qapItem.UserId == qap.UserId;
         }
 
-        private bool IsEqual(BaseEventContainter<PreScrutinyEvent> preScrutiny1, EventContainerItem<PreScrutinyEventItem> preScrutiny2)
+        private bool IsEqual(BaseEventContainter<PreScrutinyEvent> preScrutiny1, EventContainerItem<PreScrutinyEventItem, NullPrepopulated> preScrutiny2)
         {
             var historyIsEqual = true;
 
@@ -327,7 +327,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 historyItem.UserId == history.UserId;
         }
 
-        private bool IsEqual(BaseEventContainter<OtherEvent> otherEvents1, EventContainerItem<OtherEventItem> otherEvents2)
+        private bool IsEqual(BaseEventContainter<OtherEvent> otherEvents1, EventContainerItem<OtherEventItem, NullPrepopulated> otherEvents2)
         {
             var historyIsEqual = true;
 
@@ -356,7 +356,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 historyItem.IsFinal == history.IsFinal;
         }
 
-        private bool IsEqual(BaseEventContainter<MeoSummaryEvent> meoSummary1, EventContainerItem<MeoSummaryEventItem> meoSummary2)
+        private bool IsEqual(BaseEventContainter<MeoSummaryEvent> meoSummary1, EventContainerItem<MeoSummaryEventItem, NullPrepopulated> meoSummary2)
         {
             var historyIsEqual = true;
 
@@ -381,7 +381,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 historyItem.UserId == history.UserId;
         }
 
-        private bool IsEqual(BaseEventContainter<MedicalHistoryEvent> medicalHistory1, EventContainerItem<MedicalHistoryEventItem> medicalHistory2)
+        private bool IsEqual(BaseEventContainter<MedicalHistoryEvent> medicalHistory1, EventContainerItem<MedicalHistoryEventItem, NullPrepopulated> medicalHistory2)
         {
             var historyIsEqual = true;
 
@@ -406,7 +406,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 historyItem.UserId == history.UserId;
         }
 
-        private bool IsEqual(BaseEventContainter<BereavedDiscussionEvent> bereavedDiscussion1, EventContainerItem<BereavedDiscussionEventItem> bereavedDiscussion2)
+        private bool IsEqual(BaseEventContainter<BereavedDiscussionEvent> bereavedDiscussion1, EventContainerItem<BereavedDiscussionEventItem, NullPrepopulated> bereavedDiscussion2)
         {
             var historyIsEqual = true;
 
@@ -440,7 +440,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                    bereavedDiscussionItem.UserId == bereavedDiscussion.UserId;
         }
 
-        private bool IsEqual(BaseEventContainter<AdmissionEvent> admissionNotes1, EventContainerItem<AdmissionEventItem> admissionNotes2)
+        private bool IsEqual(BaseEventContainter<AdmissionEvent> admissionNotes1, EventContainerItem<AdmissionEventItem, NullPrepopulated> admissionNotes2)
         {
             var historyIsEqual = true;
 
