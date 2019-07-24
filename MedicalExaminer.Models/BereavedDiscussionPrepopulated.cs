@@ -35,7 +35,7 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// date of latest qap discussion event
         /// </summary>
-public DateTime DateOfLatestQAPDiscussion { get; set; }
+        public DateTime DateOfLatestQAPDiscussion { get; set; }
         
         /// <summary>
         /// name of person who added last qap discussion event

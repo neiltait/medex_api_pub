@@ -9,11 +9,11 @@ namespace MedicalExaminer.API.Extensions.Data
     {
         public CaseBreakdownProfile()
         {
-            CreateMap<CaseBreakDown, QapDiscussionPrepopulated>()
-                .ForMember(prepopulated => prepopulated.CauseOfDeath1a, cbd => cbd.MapFrom(source => source.PreScrutiny.Latest.CauseOfDeath1a ?? ""))
-                .ForMember(prepopulated => prepopulated.CauseOfDeath1b, cbd => cbd.MapFrom(source => source.PreScrutiny.Latest.CauseOfDeath1b ?? ""))
-                .ForMember(prepopulated => prepopulated.CauseOfDeath1c, cbd => cbd.MapFrom(source => source.PreScrutiny.Latest.CauseOfDeath1c ?? ""))
-                .ForMember(prepopulated => prepopulated.CauseOfDeath2, cbd => cbd.MapFrom(source => source.PreScrutiny.Latest.CauseOfDeath2 ?? ""));
+            //CreateMap<CaseBreakDown, QapDiscussionPrepopulated>()
+            //    .ForMember(prepopulated => prepopulated.CauseOfDeath1a, cbd => cbd.MapFrom(source => source.PreScrutiny.Latest.CauseOfDeath1a ?? ""))
+            //    .ForMember(prepopulated => prepopulated.CauseOfDeath1b, cbd => cbd.MapFrom(source => source.PreScrutiny.Latest.CauseOfDeath1b ?? ""))
+            //    .ForMember(prepopulated => prepopulated.CauseOfDeath1c, cbd => cbd.MapFrom(source => source.PreScrutiny.Latest.CauseOfDeath1c ?? ""))
+            //    .ForMember(prepopulated => prepopulated.CauseOfDeath2, cbd => cbd.MapFrom(source => source.PreScrutiny.Latest.CauseOfDeath2 ?? ""));
             CreateMap<CaseBreakDown, CaseBreakDownItem>()
             .ForMember(caseBreakDownItem => caseBreakDownItem.PatientDeathEvent, cbd => cbd.MapFrom(caseBreakDown => caseBreakDown.DeathEvent))
             .ForMember(caseBreakDownItem => caseBreakDownItem.CaseClosed, cbd => cbd.MapFrom(caseBreakDown => caseBreakDown.CaseClosedEvent))
@@ -31,7 +31,9 @@ namespace MedicalExaminer.API.Extensions.Data
             }))
             .ForMember(caseBreakDownItem => caseBreakDownItem.BereavedDiscussion, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {
-                return EventContainerMapping<BereavedDiscussionEvent, NullPrepopulated>(source.BereavedDiscussion, context);
+                var container = EventContainerMapping<BereavedDiscussionEvent, BereavedDiscussionPrepopulated>(source.BereavedDiscussion, context);
+                container.Prepopulated = context.Mapper.Map<BereavedDiscussionPrepopulated>(source);
+                return container;
             }))
             .ForMember(caseBreakDownItem => caseBreakDownItem.MeoSummary, ev => ev.MapFrom((source, destination, destinationMember, context) =>
             {

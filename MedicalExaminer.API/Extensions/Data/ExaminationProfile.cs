@@ -7,6 +7,7 @@ using MedicalExaminer.Models;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.Models.Enums;
+using System.Linq;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -20,6 +21,47 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public ExaminationProfile()
         {
+
+
+            CreateMap<Examination, BereavedDiscussionPrepopulated>()
+                .ForMember(dest => dest.CauseOfDeath1a, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a))
+                .ForMember(dest => dest.CauseOfDeath1b, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1b))
+                .ForMember(dest => dest.CauseOfDeath1c, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1c))
+                .ForMember(dest => dest.CauseOfDeath2, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath2))
+                .ForMember(dest => dest.DateOfLatestPreScrutiny, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.Created))
+                .ForMember(dest => dest.DateOfLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.Created))
+                .ForMember(dest => dest.MedicalExaminer, opt => opt.MapFrom(source => source.MedicalTeam.MedicalExaminerFullName))
+                .ForMember(dest => dest.PreScrutinyStatus, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny == null ? PreScrutinyStatus.PrescrutinyHappened : PreScrutinyStatus.PrescrutinyNotHappened))
+                .ForMember(dest => dest.QAPDiscussionStatus, opt => opt.Ignore())
+                .ForMember(dest => dest.QAPNameForLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.ParticipantName))
+                .ForMember(dest => dest.UserForLatestPrescrutiny, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.UserFullName))
+                .ForMember(dest => dest.UserForLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.UserFullName));
+
+
+
+
+            CreateMap<Examination, CaseBreakDownItem>()
+                .ForMember(cbi => cbi.AdmissionNotes, opt => opt.MapFrom((source, destination, destinationMember, context) => {
+                    var container = EventContainerMapping<AdmissionEvent, NullPrepopulated>(source.CaseBreakdown.AdmissionNotes, context);
+                    //container.Prepopulated = context.Mapper.Map<BereavedDiscussionPrepopulated>(source);
+                    return container;
+                }))
+                .ForMember(cbi => cbi.BereavedDiscussion, opt => opt.MapFrom((source, destination, destinationMember, context) =>
+                {
+                    var container = EventContainerMapping<BereavedDiscussionEvent, BereavedDiscussionPrepopulated>(source.CaseBreakdown.BereavedDiscussion, context);
+                    container.Prepopulated = context.Mapper.Map<BereavedDiscussionPrepopulated>(source);
+                    return container;
+                }))
+                .ForAllOtherMembers(x => x.Ignore());
+
+
+
+
+
+
+
+
+
             CreateMap<Examination, CaseOutcome>()
                 .ForMember(caseOutcome => caseOutcome.CaseMedicalExaminerFullName, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseMedicalExaminerFullName))
                 .ForMember(caseOutcome => caseOutcome.CaseCompleted, opt => opt.MapFrom(examination => examination.CaseCompleted))
@@ -160,6 +202,22 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(deathEvent => deathEvent.EventId, opt => opt.Ignore())
                 .ForMember(deathEvent => deathEvent.UsersRole, opt => opt.Ignore())
                 .ForMember(deathEvent => deathEvent.UserFullName, opt => opt.Ignore());
+        }
+
+        private EventContainerItem<T, U> EventContainerMapping<T, U>(
+            BaseEventContainter<T> source,
+            ResolutionContext context)
+            where T : IEvent
+        {
+            var myUser = (MeUser)context.Items["user"];
+            var usersDraft = source.Drafts.SingleOrDefault(draft => draft.UserId == myUser.UserId);
+            var usersDraftItem = context.Mapper.Map<T>(usersDraft);
+            return new EventContainerItem<T, U>
+            {
+                UsersDraft = usersDraftItem,
+                History = source.History.Select(hist => context.Mapper.Map<T>(hist)),
+                Latest = context.Mapper.Map<T>(source.Latest),
+            };
         }
     }
 

@@ -18,7 +18,7 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// <summary>
         /// Case breakdown berevaed discussion notes
         /// </summary>
-        public EventContainerItem<BereavedDiscussionEventItem, NullPrepopulated> BereavedDiscussion { get; set; }
+        public EventContainerItem<BereavedDiscussionEventItem, BereavedDiscussionPrepopulated> BereavedDiscussion { get; set; }
 
         /// <summary>
         /// Case breakdown meo summary notes
