@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MedicalExaminer.Models;
+using System;
+using System.Collections.Generic;
 
 namespace MedicalExaminer.API.Models.v1.Report
 {
@@ -47,22 +49,50 @@ namespace MedicalExaminer.API.Models.v1.Report
         /// </summary>
         public string CauseOfDeath2 { get; set; }
 
+        /// <summary>
+        /// the patients date of birth
+        /// </summary>
         public DateTime DateOfBirth { get; set; }
 
+        /// <summary>
+        /// the patients gender
+        /// </summary>
         public string Gender { get; set; }
 
-        public string Address { get; set; }
+        /// <summary>
+        /// the patients address
+        /// </summary>
+        public string AddressAndPostcode { get; set; }
 
+        /// <summary>
+        /// the place where the patient became extinct
+        /// </summary>
         public string PlaceOfDeath { get; set; }
 
+        /// <summary>
+        /// the date the patient died
+        /// </summary>
         public DateTime DateOfDeath { get; set; }
 
+        /// <summary>
+        /// the time the patient died
+        /// </summary>
         public TimeSpan TimeOfDeath { get; set; }
 
-        public string AnyImplants { get; set; }
+        /// <summary>
+        /// does the patient have any implants
+        /// </summary>
+        public bool AnyImplants { get; set; }
 
-        public string BereavedName { get; set; }
+        /// <summary>
+        /// details of the patients implants
+        /// </summary>
+        public string ImplantDetails { get; set; }
 
-        public string BereavedPhoneNumber { get; set; }
+        /// <summary>
+        ///     Details of any representatives
+        /// </summary>
+        public IEnumerable<Representative> Representatives { get; set; }
+
     }
 }
