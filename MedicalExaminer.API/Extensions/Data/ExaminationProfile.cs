@@ -7,6 +7,7 @@ using MedicalExaminer.Models;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.Models.Enums;
+using MedicalExaminer.API.Models.v1.Report;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -20,6 +21,8 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public ExaminationProfile()
         {
+            CreateMap<Examination, GetCoronerReferralDownloadResponse>();
+
             CreateMap<Examination, CaseOutcome>()
                 .ForMember(caseOutcome => caseOutcome.CaseMedicalExaminerFullName, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseMedicalExaminerFullName))
                 .ForMember(caseOutcome => caseOutcome.CaseCompleted, opt => opt.MapFrom(examination => examination.CaseCompleted))
