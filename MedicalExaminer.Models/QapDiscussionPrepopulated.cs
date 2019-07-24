@@ -2,6 +2,9 @@
 {
     public class QapDiscussionPrepopulated
     {
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Medical Examiner 1a
+        /// </summary>
         public string CauseOfDeath1a { get; set; }
 
         /// <summary>
