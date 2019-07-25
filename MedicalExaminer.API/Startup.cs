@@ -12,7 +12,6 @@ using MedicalExaminer.API.Extensions.ApplicationBuilder;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models;
-using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
 using MedicalExaminer.BackgroundServices;

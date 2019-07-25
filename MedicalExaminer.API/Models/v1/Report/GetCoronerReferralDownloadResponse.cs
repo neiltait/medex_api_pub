@@ -1,5 +1,6 @@
 ﻿using System;
-using MedicalExaminer.Models;
+using MedicalExaminer.API.Models.v1.CaseBreakdown;
+using MedicalExaminer.API.Models.v1.MedicalTeams;
 
 namespace MedicalExaminer.API.Models.v1.Report
 {
@@ -63,12 +64,24 @@ namespace MedicalExaminer.API.Models.v1.Report
         /// </summary>
         public string HouseNameNumber { get; set; }
 
+        /// <summary>
+        /// the street where the patient resides
+        /// </summary>
         public string Street { get; set; }
 
+        /// <summary>
+        /// the town where the patient resides
+        /// </summary>
         public string Town { get; set; }
 
+        /// <summary>
+        /// the contry wherethe patient resides
+        /// </summary>
         public string County { get; set; }
 
+        /// <summary>
+        /// the patients postcode
+        /// </summary>
         public string Postcode { get; set; }
 
 
@@ -100,27 +113,27 @@ namespace MedicalExaminer.API.Models.v1.Report
         /// <summary>
         ///     Bereaved Discussion Event
         /// </summary>
-        public BereavedDiscussionEvent LatestBereavedDiscussion { get; set; }
+        public BereavedDiscussionEventItem LatestBereavedDiscussion { get; set; }
 
         /// <summary>
         /// The clinical professional that performed the QAP Event
         /// </summary>
-        public ClinicalProfessional Qap { get; set; }
+        public ClinicalProfessionalItem Qap { get; set; }
 
         /// <summary>
         /// the first consultant from the medical team
         /// </summary>
-        public ClinicalProfessional Consultant { get; set; }
+        public ClinicalProfessionalItem Consultant { get; set; }
 
         /// <summary>
         /// the GP from the medical team
         /// </summary>
-        public ClinicalProfessional GP { get; set; }
+        public ClinicalProfessionalItem GP { get; set; }
 
         /// <summary>
         /// the most recent admission details from the case breakdown
         /// </summary>
-        public AdmissionEvent LatestAdmissionDetails { get; set; }
+        public AdmissionEventItem LatestAdmissionDetails { get; set; }
 
         /// <summary>
         /// The medical history information taken from the latest medical history event on the case breakdown
