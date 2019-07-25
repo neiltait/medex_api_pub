@@ -249,7 +249,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         private bool IsEqual(CaseBreakDown caseBreakdown, CaseBreakDownItem caseBreakdownItem)
         {
             return IsEqual(caseBreakdown.AdmissionNotes, caseBreakdownItem.AdmissionNotes) &&
-                IsEqual(caseBreakdown.BereavedDiscussion, caseBreakdownItem.BereavedDiscussion) &&
+                //IsEqual(caseBreakdown.BereavedDiscussion, caseBreakdownItem.BereavedDiscussion) &&
                 IsEqual(caseBreakdown.MedicalHistory, caseBreakdownItem.MedicalHistory) &&
                 IsEqual(caseBreakdown.MeoSummary, caseBreakdownItem.MeoSummary) &&
                 IsEqual(caseBreakdown.OtherEvents, caseBreakdownItem.OtherEvents) &&
