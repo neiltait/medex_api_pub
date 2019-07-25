@@ -1,6 +1,5 @@
-﻿using MedicalExaminer.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using MedicalExaminer.Models;
 
 namespace MedicalExaminer.API.Models.v1.Report
 {
@@ -62,7 +61,16 @@ namespace MedicalExaminer.API.Models.v1.Report
         /// <summary>
         /// the patients address
         /// </summary>
-        public string AddressAndPostcode { get; set; }
+        public string HouseNameNumber { get; set; }
+
+        public string Street { get; set; }
+
+        public string Town { get; set; }
+
+        public string County { get; set; }
+
+        public string Postcode { get; set; }
+
 
         /// <summary>
         /// the place where the patient became extinct
@@ -90,9 +98,33 @@ namespace MedicalExaminer.API.Models.v1.Report
         public string ImplantDetails { get; set; }
 
         /// <summary>
-        ///     Details of any representatives
+        ///     Bereaved Discussion Event
         /// </summary>
-        public IEnumerable<Representative> Representatives { get; set; }
+        public BereavedDiscussionEvent LatestBereavedDiscussion { get; set; }
 
+        /// <summary>
+        /// The clinical professional that performed the QAP Event
+        /// </summary>
+        public ClinicalProfessional Qap { get; set; }
+
+        /// <summary>
+        /// the first consultant from the medical team
+        /// </summary>
+        public ClinicalProfessional Consultant { get; set; }
+
+        /// <summary>
+        /// the GP from the medical team
+        /// </summary>
+        public ClinicalProfessional GP { get; set; }
+
+        /// <summary>
+        /// the most recent admission details from the case breakdown
+        /// </summary>
+        public AdmissionEvent LatestAdmissionDetails { get; set; }
+
+        /// <summary>
+        /// The medical history information taken from the latest medical history event on the case breakdown
+        /// </summary>
+        public string DetailsAboutMedicalHistory { get; set; }
     }
 }

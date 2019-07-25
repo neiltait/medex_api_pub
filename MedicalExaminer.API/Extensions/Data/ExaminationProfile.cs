@@ -8,6 +8,7 @@ using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.Models.Enums;
 using MedicalExaminer.API.Models.v1.Report;
+using System.Linq;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -21,7 +22,20 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public ExaminationProfile()
         {
-            CreateMap<Examination, GetCoronerReferralDownloadResponse>();
+            CreateMap<Examination, GetCoronerReferralDownloadResponse>()
+                .ForMember(dest => dest.AbleToIssueMCCD, opt => opt.Ignore())
+                .ForMember(dest => dest.CauseOfDeath1a, opt => opt.Ignore())
+                .ForMember(dest => dest.CauseOfDeath1b, opt => opt.Ignore())
+                .ForMember(dest => dest.CauseOfDeath1c, opt => opt.Ignore())
+                .ForMember(dest => dest.CauseOfDeath2, opt => opt.Ignore())
+                .ForMember(dest => dest.PlaceOfDeath, opt => opt.MapFrom(src => src.PlaceDeathOccured))
+                .ForMember(dest => dest.LatestBereavedDiscussion, opt => opt.MapFrom(src => src.CaseBreakdown.BereavedDiscussion.Latest))
+                .ForMember(dest => dest.Qap, opt => opt.Ignore())
+                .ForMember(dest => dest.Consultant, opt => opt.MapFrom(src => src.MedicalTeam.ConsultantResponsible))
+                .ForMember(dest => dest.GP, opt => opt.MapFrom(src => src.MedicalTeam.GeneralPractitioner))
+                .ForMember(dest => dest.LatestAdmissionDetails, opt => opt.MapFrom(src => src.CaseBreakdown.AdmissionNotes.Latest))
+                .ForMember(dest => dest.DetailsAboutMedicalHistory, opt => opt.MapFrom(src => src.CaseBreakdown.MedicalHistory.History.
+                    Select(hstry => hstry.Text).Aggregate("", (current, next) => current + Environment.NewLine + next)));
 
             CreateMap<Examination, CaseOutcome>()
                 .ForMember(caseOutcome => caseOutcome.CaseMedicalExaminerFullName, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseMedicalExaminerFullName))
