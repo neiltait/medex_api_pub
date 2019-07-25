@@ -229,7 +229,10 @@ namespace MedicalExaminer.API
 
             services.AddBackgroundServices(backgroundServicesSettings);
 
-            UpdateInvalidOrNullUserPermissionIds(services);
+            IServiceProvider serviceProvider = services.BuildServiceProvider();
+
+            UpdateInvalidOrNullUserPermissionIds(serviceProvider);
+            UpdateLocations(serviceProvider);
         }
 
         /// <summary>
@@ -358,6 +361,8 @@ namespace MedicalExaminer.API
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
                     ExaminationsRetrievalService>();
+
+            services.AddScoped<IAsyncQueryHandler<LocationMigrationQuery, bool>, LocationMigrationService>();
 
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
@@ -531,11 +536,16 @@ namespace MedicalExaminer.API
             services.AddScoped<IPermissionService, PermissionService>();
         }
 
-        private void UpdateInvalidOrNullUserPermissionIds(IServiceCollection services)
+        private void UpdateLocations(IServiceProvider serviceProvider)
         {
-            IServiceProvider provider = services.BuildServiceProvider();
+            IAsyncQueryHandler<LocationMigrationQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<LocationMigrationQuery, bool>>();
 
-            IAsyncQueryHandler<InvalidUserPermissionQuery, bool> instance = provider.GetService<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>>();
+            instance.Handle(new LocationMigrationQuery());
+        }
+
+        private void UpdateInvalidOrNullUserPermissionIds(IServiceProvider serviceProvider)
+        {
+            IAsyncQueryHandler<InvalidUserPermissionQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>>();
 
             instance.Handle(new InvalidUserPermissionQuery());
         }
