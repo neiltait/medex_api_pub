@@ -25,6 +25,9 @@ namespace MedicalExaminer.Models
         /// </summary>
         public string CauseOfDeath2 { get; set; }
 
+        /// <summary>
+        /// Medical examiners full name
+        /// </summary>
         public string MedicalExaminer { get; set; }
 
         /// <summary>

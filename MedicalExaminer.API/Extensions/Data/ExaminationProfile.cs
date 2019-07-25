@@ -21,8 +21,6 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public ExaminationProfile()
         {
-
-
             CreateMap<Examination, BereavedDiscussionPrepopulated>()
                 .ForMember(dest => dest.CauseOfDeath1a, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a))
                 .ForMember(dest => dest.CauseOfDeath1b, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1b))
@@ -32,7 +30,22 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(dest => dest.DateOfLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.Created))
                 .ForMember(dest => dest.MedicalExaminer, opt => opt.MapFrom(source => source.MedicalTeam.MedicalExaminerFullName))
                 .ForMember(dest => dest.PreScrutinyStatus, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny == null ? PreScrutinyStatus.PrescrutinyHappened : PreScrutinyStatus.PrescrutinyNotHappened))
-                .ForMember(dest => dest.QAPDiscussionStatus, opt => opt.Ignore())
+                .ForMember(dest => dest.QAPDiscussionStatus, opt => opt.MapFrom((source, dest, destMember, context) =>
+                {
+                    if (source.CaseBreakdown.QapDiscussion.Latest == null)
+                    {
+                        return QAPDiscussionStatus.NoRecord;
+                    }
+                    if (source.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                    {
+                        return QAPDiscussionStatus.CouldNotHappen;
+                    }
+                    if (source.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP)
+                    {
+                        return QAPDiscussionStatus.HappenedWithRevisions;
+                    }
+                    return QAPDiscussionStatus.HappenedNoRevision;
+                }))
                 .ForMember(dest => dest.QAPNameForLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.ParticipantName))
                 .ForMember(dest => dest.UserForLatestPrescrutiny, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.UserFullName))
                 .ForMember(dest => dest.UserForLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.UserFullName));
