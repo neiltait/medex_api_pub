@@ -97,6 +97,12 @@ namespace MedicalExaminer.Models
         public bool DiscussionUnableHappen { get; set; }
 
         /// <summary>
+        /// Unable to happen details.
+        /// </summary>
+        [JsonProperty(PropertyName = "discussion_unable_happen_details")]
+        public string DiscussionUnableHappenDetails { get; set; }
+
+        /// <summary>
         /// Details of the Discussion.
         /// </summary>
         [JsonProperty(PropertyName = "discussion_details")]
