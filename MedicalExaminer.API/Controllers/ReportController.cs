@@ -13,15 +13,27 @@ using System.Threading.Tasks;
 
 namespace MedicalExaminer.API.Controllers
 {
+    /// <summary>
+    /// A controller that returns reporting data
+    /// </summary>
     [ApiVersion("1.0")]
     [Route("/v{api-version:apiVersion}/report")]
     [ApiController]
     public class ReportController : AuthorizedBaseController
     {
-
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
 
-        public ReportController(IMELogger logger,
+        /// <summary>
+        /// The report controller constructor
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="mapper"></param>
+        /// <param name="usersRetrievalByOktaIdService"></param>
+        /// <param name="authorizationService"></param>
+        /// <param name="permissionService"></param>
+        /// <param name="examinationRetrievalService"></param>
+        public ReportController(
+            IMELogger logger,
             IMapper mapper,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,
@@ -32,17 +44,21 @@ namespace MedicalExaminer.API.Controllers
             _examinationRetrievalService = examinationRetrievalService;
         }
 
-
         /// <summary>
         ///     Get the dto object for making the coroner referral report <see cref="GetCoronerReferralDownloadResponse" />.
         /// </summary>
-        /// <param name="request">The request.</param>
+        /// <param name="examinationId">The examination id to return reporting data for.</param>
         /// <returns>A coroner referral download response</returns>
         [HttpGet]
         [Route("{examinationId}/coronal_referral_download")]
         public async Task<ActionResult<GetCoronerReferralDownloadResponse>> GetCoronerReferralDownload(string examinationId)
         {
-            var currentUser = CurrentUser().Result;
+            if (string.IsNullOrEmpty(examinationId))
+            {
+                return new BadRequestObjectResult(nameof(examinationId));
+            }
+
+            var currentUser = await CurrentUser();
             var examination = _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, currentUser)).Result;
 
             if (!CanAsync(Permission.GetCoronerReferralDownload, examination))

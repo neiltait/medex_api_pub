@@ -5,7 +5,7 @@ using MedicalExaminer.API.Models.v1.MedicalTeams;
 namespace MedicalExaminer.API.Models.v1.Report
 {
     /// <summary>
-    /// the getcoronerreferraldownloadresponse
+    /// the GetCoronerReferralDownloadResponse
     /// </summary>
     public class GetCoronerReferralDownloadResponse
     {

@@ -44,6 +44,6 @@
         AdmissionEvent,
         MedicalHistoryEvent,
         PreScrutinyEvent,
-        GetCoronerReferralDownload
+        GetCoronerReferralDownload,
     }
 }
