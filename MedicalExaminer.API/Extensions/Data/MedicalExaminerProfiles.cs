@@ -18,7 +18,7 @@ namespace MedicalExaminer.API.Extensions.Data
             config.AddProfile<UsersProfile>();
             config.AddProfile<MedicalTeamProfile>();
             config.AddProfile<PatientDetailsProfile>();
-            config.AddProfile<CaseBreakdownProfile>();
+            //config.AddProfile<CaseBreakdownProfile>();
             config.AddProfile<OtherEventProfile>();
             config.AddProfile<AdmissionEventProfile>();
             config.AddProfile<BereavedDiscussionEventProfile>();

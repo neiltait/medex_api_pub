@@ -192,7 +192,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<ExaminationProfile>();
-                cfg.AddProfile<CaseBreakdownProfile>();
+               // cfg.AddProfile<CaseBreakdownProfile>();
             });
 
             _mapper = config.CreateMapper();
