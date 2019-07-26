@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
@@ -12,60 +13,78 @@ using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Okta.Sdk;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
 {
     /// <summary>
-    ///     Users Controller Tests
+    /// Users Controller Tests
     /// </summary>
     public class UsersControllerTests : AuthorizedControllerTestsBase<UsersController>
     {
-        public Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>> createUserService;
-        public Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>> userRetrievalService;
-        public Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>> usersRetrievalService;
-        public Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>> userUpdateService;
-        public Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>> userRetrievalByEmailService;
-        public Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> locationsService;
+        private readonly Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>> _createUserService;
+        private readonly Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>> _userRetrievalService;
+        private readonly Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>> _usersRetrievalService;
+        private readonly Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>> _userUpdateService;
+        private readonly Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> _locationsService;
+        private readonly Mock<IOktaClient> _mockOktaClient;
 
-        public UsersControllerTests() : base()
+        public UsersControllerTests()
         {
             var logger = new Mock<IMELogger>();
 
-            createUserService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
-            userRetrievalService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
-            usersRetrievalService = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
-            userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
-            userRetrievalByEmailService = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
-            locationsService = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>();
+            _createUserService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
+            _userRetrievalService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
+            _usersRetrievalService = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
+            _userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
+            _locationsService = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>();
+            _mockOktaClient = new Mock<IOktaClient>(MockBehavior.Strict);
+
             Controller = new UsersController(
                 logger.Object,
                 Mapper,
                 UsersRetrievalByOktaIdServiceMock.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
-                createUserService.Object,
-                userRetrievalService.Object,
-                usersRetrievalService.Object,
-                userUpdateService.Object,
-                userRetrievalByEmailService.Object,
-                locationsService.Object);
+                _createUserService.Object,
+                _userRetrievalService.Object,
+                _usersRetrievalService.Object,
+                _userUpdateService.Object,
+                _locationsService.Object,
+                _mockOktaClient.Object);
         }
 
         /// <summary>
-        ///     Test when a ArgumentException is thrown.
+        /// Test when a ArgumentException is thrown.
         /// </summary>
         /// <returns>Async Task</returns>
         [Fact]
         public async Task TestCreateUserArgumentException()
         {
-            // Arrange 
-            createUserService.Setup(cus => cus.Handle(It.IsAny<CreateUserQuery>())).Throws<ArgumentException>();
-            var expectedRequest = new PostUserRequest();
+            // Arrange
+            const string oktaFirstName = "oktaFirstName";
+            const string oktaLastName = "oktaLastName";
+            const string oktaId = "oktaId";
+            const string oktaEmail = "oktaEmail";
+            _createUserService
+                .Setup(cus => cus.Handle(It.IsAny<CreateUserQuery>()))
+                .Throws<ArgumentException>();
+            var request = new PostUserRequest();
             Controller.ControllerContext = GetControllerContext();
 
+            var oktaUser = new Mock<IUser>(MockBehavior.Strict);
+            oktaUser.Setup(u => u.Id).Returns(oktaId);
+            oktaUser.Setup(u => u.Profile.FirstName).Returns(oktaFirstName);
+            oktaUser.Setup(u => u.Profile.LastName).Returns(oktaLastName);
+            oktaUser.Setup(u => u.Profile.Email).Returns(oktaEmail);
+
+            _mockOktaClient
+                .Setup(s => s.Users.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
+                .Returns(Task.FromResult(oktaUser.Object));
+
             // Act
-            var response = await Controller.CreateUser(expectedRequest);
+            var response = await Controller.CreateUser(request);
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -79,20 +98,35 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         /// <summary>
-        ///     Test when a DocumentClientException is thrown.
+        /// Test when a DocumentClientException is thrown.
         /// </summary>
         /// <returns>Async Task</returns>
         [Fact]
         public async Task TestCreateUserDocumentClientException()
         {
             // Arrange
-            var expectedRequest = new PostUserRequest();
-            createUserService.Setup(cus => cus.Handle(It.IsAny<CreateUserQuery>()))
+            const string oktaFirstName = "oktaFirstName";
+            const string oktaLastName = "oktaLastName";
+            const string oktaId = "oktaId";
+            const string oktaEmail = "oktaEmail";
+
+            var request = new PostUserRequest();
+            _createUserService.Setup(cus => cus.Handle(It.IsAny<CreateUserQuery>()))
                 .Throws(CreateDocumentClientExceptionForTesting());
             Controller.ControllerContext = GetControllerContext();
 
+            var oktaUser = new Mock<IUser>(MockBehavior.Strict);
+            oktaUser.Setup(u => u.Id).Returns(oktaId);
+            oktaUser.Setup(u => u.Profile.FirstName).Returns(oktaFirstName);
+            oktaUser.Setup(u => u.Profile.LastName).Returns(oktaLastName);
+            oktaUser.Setup(u => u.Profile.Email).Returns(oktaEmail);
+
+            _mockOktaClient
+                .Setup(s => s.Users.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
+                .Returns(Task.FromResult(oktaUser.Object));
+
             // Act
-            var response = await Controller.CreateUser(expectedRequest);
+            var response = await Controller.CreateUser(request);
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -106,7 +140,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         /// <summary>
-        ///     Test that an ok response is returned in full
+        /// Test that an ok response is returned in full
         /// </summary>
         /// <returns>Async Task</returns>
         [Fact]
@@ -115,24 +149,39 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             const string expectedUserId = "expectedUserId";
             const string expectedEmail = "thisisatest@methods.co.uk";
+            const string oktaFirstName = "oktaFirstName";
+            const string oktaLastName = "oktaLastName";
+            const string oktaId = "oktaId";
+            const string oktaEmail = "oktaEmail";
 
-            var expectedRequest = new PostUserRequest
+            var request = new PostUserRequest
             {
                 Email = expectedEmail,
             };
 
-            var expectedUser = new MeUser
+            var user = new MeUser
             {
                 UserId = expectedUserId,
                 Email = expectedEmail,
             };
 
-            createUserService.Setup(cus => cus.Handle(It.IsAny<CreateUserQuery>()))
-                .Returns(Task.FromResult(expectedUser));
+            var oktaUser = new Mock<IUser>(MockBehavior.Strict);
+            oktaUser.Setup(u => u.Id).Returns(oktaId);
+            oktaUser.Setup(u => u.Profile.FirstName).Returns(oktaFirstName);
+            oktaUser.Setup(u => u.Profile.LastName).Returns(oktaLastName);
+            oktaUser.Setup(u => u.Profile.Email).Returns(oktaEmail);
+
+            _mockOktaClient
+                .Setup(s => s.Users.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
+                .Returns(Task.FromResult(oktaUser.Object));
+
+            _createUserService
+                .Setup(cus => cus.Handle(It.IsAny<CreateUserQuery>()))
+                .Returns(Task.FromResult(user));
             Controller.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await Controller.CreateUser(expectedRequest);
+            var response = await Controller.CreateUser(request);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
@@ -142,6 +191,34 @@ namespace MedicalExaminer.API.Tests.Controllers
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
             model.UserId.Should().Be(expectedUserId);
+        }
+
+        /// <summary>
+        /// Test that model validation error causes validation failure.
+        /// </summary>
+        /// <returns>Async Task</returns>
+        [Fact]
+        public async Task TestCreateUserReturnsBadRequest_WhenOktaUserNotFound()
+        {
+            // Arrange
+            Controller.ControllerContext = GetControllerContext();
+
+            _mockOktaClient
+                .Setup(s => s.Users.GetUserAsync(It.IsAny<string>(), default(CancellationToken)))
+                .Returns(Task.FromResult((IUser)null));
+
+            var request = new PostUserRequest();
+
+            // Act
+            var response = await Controller.CreateUser(request);
+
+            // Assert
+            response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
+            var result = (BadRequestObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<PostUserResponse>();
+            var model = (PostUserResponse)result.Value;
+            model.Errors.Count.Should().Be(1);
+            model.Success.Should().BeFalse();
         }
 
         /// <summary>
@@ -177,7 +254,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             const string expectedUserId = "expectedUserId";
 
-            userRetrievalService.Setup(up => up.Handle(It.IsAny<UserRetrievalByIdQuery>()))
+            _userRetrievalService.Setup(up => up.Handle(It.IsAny<UserRetrievalByIdQuery>()))
                 .Throws<NullReferenceException>();
 
             // Act
@@ -194,6 +271,29 @@ namespace MedicalExaminer.API.Tests.Controllers
             model.UserId.Should().Be(null);
         }
 
+        [Fact]
+        public async Task TestGetUserReturnsNotFound_WhenArgumentExceptionThrown()
+        {
+            // Arrange
+            const string expectedUserId = "expectedUserId";
+
+            _userRetrievalService.Setup(up => up.Handle(It.IsAny<UserRetrievalByIdQuery>()))
+                .Throws<ArgumentException>();
+
+            // Act
+            var response = await Controller.GetUser(expectedUserId);
+
+            // Assert
+            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
+            var result = (NotFoundObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetUserResponse>();
+            var model = (GetUserResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.UserId.Should().Be(null);
+        }
+
         /// <summary>
         ///     Test that a good response is returned in full
         /// </summary>
@@ -204,10 +304,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             const string expectedUserId = "expectedUserId";
 
-            var expectedUser = new MeUser { UserId = expectedUserId };
+            var user = new MeUser { UserId = expectedUserId };
 
-            userRetrievalService.Setup(up => up.Handle(It.IsAny<UserRetrievalByIdQuery>()))
-                .Returns(Task.FromResult(expectedUser));
+            _userRetrievalService.Setup(up => up.Handle(It.IsAny<UserRetrievalByIdQuery>()))
+                .Returns(Task.FromResult(user));
 
             // Act
             var response = await Controller.GetUser(expectedUserId);
@@ -230,10 +330,8 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task TestGetUsersArgumentException()
         {
             // Arrange
-            usersRetrievalService.Setup(up => up.Handle(It.IsAny<UsersRetrievalQuery>()))
+            _usersRetrievalService.Setup(up => up.Handle(It.IsAny<UsersRetrievalQuery>()))
                 .Throws<ArgumentException>();
-
-            var expectedUser = new MeUser { UserId = "aabbcc" };
 
             // Act
             var response = await Controller.GetUsers();
@@ -249,6 +347,28 @@ namespace MedicalExaminer.API.Tests.Controllers
             model.Users.Should().BeNull();
         }
 
+        [Fact]
+        public async Task TestGetUsersDocumentClientException()
+        {
+            // Arrange
+            _usersRetrievalService
+                .Setup(up => up.Handle(It.IsAny<UsersRetrievalQuery>()))
+                .Throws(CreateDocumentClientExceptionForTesting());
+
+            // Act
+            var response = await Controller.GetUsers();
+
+            // Assert
+            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
+            var result = (NotFoundObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetUsersResponse>();
+            var model = (GetUsersResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.Users.Should().BeNull();
+        }
+
         /// <summary>
         ///     Test returning an empty list
         /// </summary>
@@ -257,7 +377,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task TestGetUsersEmptyResponse()
         {
             // Arrange
-            usersRetrievalService.Setup(up => up.Handle(It.IsAny<UsersRetrievalQuery>()))
+            _usersRetrievalService.Setup(up => up.Handle(It.IsAny<UsersRetrievalQuery>()))
                 .Returns(Task.FromResult<IEnumerable<MeUser>>(new List<MeUser>()));
 
             // Act
@@ -284,7 +404,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             const string expectedUserId = "expectedUserId";
 
-            usersRetrievalService.Setup(up => up.Handle(It.IsAny<UsersRetrievalQuery>())).Returns(
+            _usersRetrievalService.Setup(up => up.Handle(It.IsAny<UsersRetrievalQuery>())).Returns(
                 Task.FromResult<IEnumerable<MeUser>>(
                     new List<MeUser> { new MeUser { UserId = expectedUserId } }));
 
@@ -333,14 +453,14 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task TestUpdateUserArgumentException()
         {
             // Arrange
-            var expectedRequest = new PutUserRequest();
+            var request = new PutUserRequest();
 
-            userUpdateService.Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
+            _userUpdateService.Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
                 .Throws<ArgumentException>();
             Controller.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await Controller.UpdateUser(It.IsAny<string>(), expectedRequest);
+            var response = await Controller.UpdateUser(It.IsAny<string>(), request);
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -361,14 +481,14 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async Task TestUpdateUserDocumentClientException()
         {
             // Arrange
-            var expectedRequest = new PutUserRequest();
+            var request = new PutUserRequest();
 
-            userUpdateService.Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
+            _userUpdateService.Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
                 .Throws(CreateDocumentClientExceptionForTesting());
             Controller.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await Controller.UpdateUser(It.IsAny<string>(), expectedRequest);
+            var response = await Controller.UpdateUser(It.IsAny<string>(), request);
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -391,23 +511,23 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             const string expectedUserId = "expectedUserId";
 
-            var expectedRequest = new PutUserRequest
+            var request = new PutUserRequest
             {
                 Email = "testing@methods.co.uk"
             };
 
-            var expectedUser = new MeUser
+            var user = new MeUser
             {
                 UserId = expectedUserId,
                 Email = "testing@methods.co.uk"
             };
 
-            userUpdateService.Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
-                .Returns(Task.FromResult(expectedUser));
+            _userUpdateService.Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
+                .Returns(Task.FromResult(user));
             Controller.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await Controller.UpdateUser(It.IsAny<string>(), expectedRequest);
+            var response = await Controller.UpdateUser(It.IsAny<string>(), request);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
