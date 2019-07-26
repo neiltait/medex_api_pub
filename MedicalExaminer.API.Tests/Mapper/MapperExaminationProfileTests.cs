@@ -241,7 +241,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         public void Examination_To_GetCaseBreakdowResponse()
         {
             var examination = GenerateExamination();
-            var result = _mapper.Map<CaseBreakDownItem>(examination.CaseBreakdown, opt => opt.Items["user"] = User0);
+            var result = _mapper.Map<CaseBreakDownItem>(examination, opt => opt.Items["user"] = User0);
 
             Assert.True(IsEqual(examination.CaseBreakdown, result));
         }
@@ -249,7 +249,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         private bool IsEqual(CaseBreakDown caseBreakdown, CaseBreakDownItem caseBreakdownItem)
         {
             return IsEqual(caseBreakdown.AdmissionNotes, caseBreakdownItem.AdmissionNotes) &&
-                //IsEqual(caseBreakdown.BereavedDiscussion, caseBreakdownItem.BereavedDiscussion) &&
+                IsEqual(caseBreakdown.BereavedDiscussion, caseBreakdownItem.BereavedDiscussion) &&
                 IsEqual(caseBreakdown.MedicalHistory, caseBreakdownItem.MedicalHistory) &&
                 IsEqual(caseBreakdown.MeoSummary, caseBreakdownItem.MeoSummary) &&
                 IsEqual(caseBreakdown.OtherEvents, caseBreakdownItem.OtherEvents) &&
@@ -406,7 +406,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 historyItem.UserId == history.UserId;
         }
 
-        private bool IsEqual(BaseEventContainter<BereavedDiscussionEvent> bereavedDiscussion1, EventContainerItem<BereavedDiscussionEventItem, NullPrepopulated> bereavedDiscussion2)
+        private bool IsEqual(BaseEventContainter<BereavedDiscussionEvent> bereavedDiscussion1, EventContainerItem<BereavedDiscussionEventItem, BereavedDiscussionPrepopulated> bereavedDiscussion2)
         {
             var historyIsEqual = true;
 
