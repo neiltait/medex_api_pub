@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -27,14 +26,15 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                         connectionSettings.Object,
                         It.IsAny<Expression<Func<MedicalExaminer.Models.Examination, bool>>>()))
                 .Returns(Task.FromResult<MedicalExaminer.Models.Examination>(null));
-            var user = new MedicalExaminer.Models.MeUser();
-            var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MedicalExaminer.Models.MeUser>>();
+            var user = new MeUser();
+            var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
 
             userRetrievalByIdService.Setup(x => x.Handle(It.IsAny<UserRetrievalByIdQuery>())).Returns(Task.FromResult(user));
             var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentNullException>(() => sut.Handle(null, "a"));
+            Action act = () => sut.Handle(null, "a").GetAwaiter().GetResult();
+            act.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -47,14 +47,11 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                 ExaminationId = examinationId
             };
 
-            IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>
-                { examination1 };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var userConnectionSettings = new Mock<IUserConnectionSettings>();
 
             var dbAccess = new Mock<IDatabaseAccess>();
-            var user = new MedicalExaminer.Models.MeUser();
-            var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MedicalExaminer.Models.MeUser>>();
+            var user = new MeUser();
+            var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
 
             userRetrievalByIdService.Setup(x => x.Handle(It.IsAny<UserRetrievalByIdQuery>())).Returns(Task.FromResult(user));
 
@@ -86,12 +83,11 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                 OtherPriority = false,
                 CreatedAt = DateTime.Now.AddDays(-3)
             };
-            var user = new MedicalExaminer.Models.MeUser();
-            var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MedicalExaminer.Models.MeUser>>();
+            var user = new MeUser();
+            var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
 
             userRetrievalByIdService.Setup(x => x.Handle(It.IsAny<UserRetrievalByIdQuery>())).Returns(Task.FromResult(user));
-            IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>
-                { examination };
+
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object, examination))
@@ -123,12 +119,11 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                 CreatedAt = DateTime.Now.AddDays(-3)
             };
 
-            var user = new MedicalExaminer.Models.MeUser();
-            var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MedicalExaminer.Models.MeUser>>();
+            var user = new MeUser();
+            var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
 
             userRetrievalByIdService.Setup(x => x.Handle(It.IsAny<UserRetrievalByIdQuery>())).Returns(Task.FromResult(user));
-            IEnumerable<MedicalExaminer.Models.Examination> examinations = new List<MedicalExaminer.Models.Examination>
-                { examination };
+
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object, examination))
