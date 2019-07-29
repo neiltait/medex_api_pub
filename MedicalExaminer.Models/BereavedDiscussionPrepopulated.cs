@@ -1,7 +1,5 @@
-﻿using MedicalExaminer.Models.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models
 {
@@ -50,21 +48,21 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// cause of death 1a
         /// </summary>
-        public string CauseOfDeath1a {get; set;}
+        public string CauseOfDeath1a { get; set; }
 
         /// <summary>
         /// cause of death 1b
         /// </summary>
-        public string CauseOfDeath1b {get; set;}
+        public string CauseOfDeath1b { get; set; }
 
         /// <summary>
         /// cause of death 1c
         /// </summary>
-        public string CauseOfDeath1c {get; set;}
+        public string CauseOfDeath1c { get; set; }
 
         /// <summary>
         /// cause of death 2 
         /// </summary>
-        public string CauseOfDeath2 {get; set;}
+        public string CauseOfDeath2 { get; set; }
     }
 }
