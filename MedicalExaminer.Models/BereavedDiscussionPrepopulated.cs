@@ -20,7 +20,7 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// date of latest prescrutiny event
         /// </summary>
-        public DateTime DateOfLatestPreScrutiny { get; set; }
+        public DateTime? DateOfLatestPreScrutiny { get; set; }
 
         /// <summary>
         /// name of person who added last prescrutiny event
@@ -35,7 +35,7 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// date of latest qap discussion event
         /// </summary>
-        public DateTime DateOfLatestQAPDiscussion { get; set; }
+        public DateTime? DateOfLatestQAPDiscussion { get; set; }
         
         /// <summary>
         /// name of person who added last qap discussion event
@@ -50,21 +50,21 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// cause of death 1a
         /// </summary>
-   public string CauseOfDeath1a {get; set;}
+        public string CauseOfDeath1a {get; set;}
 
         /// <summary>
         /// cause of death 1b
         /// </summary>
-   public string CauseOfDeath1b {get; set;}
+        public string CauseOfDeath1b {get; set;}
 
         /// <summary>
         /// cause of death 1c
         /// </summary>
-   public string CauseOfDeath1c {get; set;}
+        public string CauseOfDeath1c {get; set;}
 
         /// <summary>
         /// cause of death 2 
         /// </summary>
-   public string CauseOfDeath2 {get; set;}
+        public string CauseOfDeath2 {get; set;}
     }
 }

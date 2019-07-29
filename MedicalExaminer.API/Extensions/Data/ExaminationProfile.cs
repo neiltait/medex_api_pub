@@ -27,7 +27,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(dest => dest.CauseOfDeath1c, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1c))
                 .ForMember(dest => dest.CauseOfDeath2, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath2))
                 .ForMember(dest => dest.DateOfLatestPreScrutiny, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.Created))
-                .ForMember(dest => dest.DateOfLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.Created))
+                .ForMember(dest => dest.DateOfLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.DateOfConversation))
                 .ForMember(dest => dest.MedicalExaminer, opt => opt.MapFrom(source => source.MedicalTeam.MedicalExaminerFullName))
                 .ForMember(dest => dest.PreScrutinyStatus, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest == null ? PreScrutinyStatus.PrescrutinyNotHappened : PreScrutinyStatus.PrescrutinyHappened))
                 .ForMember(dest => dest.QAPDiscussionStatus, opt => opt.MapFrom((source, dest, destMember, context) =>
