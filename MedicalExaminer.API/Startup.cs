@@ -12,7 +12,6 @@ using MedicalExaminer.API.Extensions.ApplicationBuilder;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models;
-using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
 using MedicalExaminer.BackgroundServices;
@@ -23,6 +22,7 @@ using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Extensions;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
@@ -93,6 +93,20 @@ namespace MedicalExaminer.API
 
             var backgroundServicesSettings =
                 services.ConfigureSettings<BackgroundServicesSettings>(Configuration, "BackgroundServices");
+
+            var locationMigrationSettings =
+                services.ConfigureSettings<LocationMigrationSettings>(Configuration, "LocationMigrationSettings");
+
+
+            if(locationMigrationSettings == null)
+            {
+                throw new ArgumentNullException(@"there is no location migration settings
+example:
+  LocationMigrationSettings: {
+  LocationVersion: 1
+  }
+            ");
+            }
 
             services.ConfigureSettings<AuthorizationSettings>(Configuration, "Authorization");
 
@@ -232,7 +246,7 @@ namespace MedicalExaminer.API
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
             UpdateInvalidOrNullUserPermissionIds(serviceProvider);
-            UpdateLocations(serviceProvider);
+            UpdateLocations(serviceProvider, locationMigrationSettings);
         }
 
         /// <summary>
@@ -362,7 +376,7 @@ namespace MedicalExaminer.API
                 .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
                     ExaminationsRetrievalService>();
 
-            services.AddScoped<IAsyncQueryHandler<LocationMigrationQuery, bool>, LocationMigrationService>();
+            services.AddScoped<LocationMigrationService, LocationMigrationService>();
 
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
@@ -536,11 +550,10 @@ namespace MedicalExaminer.API
             services.AddScoped<IPermissionService, PermissionService>();
         }
 
-        private void UpdateLocations(IServiceProvider serviceProvider)
+        private void UpdateLocations(IServiceProvider serviceProvider, LocationMigrationSettings locationMigrationSettings)
         {
-            IAsyncQueryHandler<LocationMigrationQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<LocationMigrationQuery, bool>>();
-
-            instance.Handle(new LocationMigrationQuery());
+            LocationMigrationService instance = serviceProvider.GetService<LocationMigrationService>();
+            var result = instance.Handle(_locationMigrationQueryLookup[locationMigrationSettings.LocationVersion]);
         }
 
         private void UpdateInvalidOrNullUserPermissionIds(IServiceProvider serviceProvider)
@@ -549,5 +562,10 @@ namespace MedicalExaminer.API
 
             instance.Handle(new InvalidUserPermissionQuery());
         }
+
+        private Dictionary<int, IMigrationQuery> _locationMigrationQueryLookup = new Dictionary<int, IMigrationQuery>
+        {
+            {1, new LocationMigrationQueryV1() }
+        };
     }
 }

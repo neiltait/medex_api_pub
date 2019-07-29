@@ -5,6 +5,9 @@ namespace MedicalExaminer.Models
 {
     public class Location : ILocationPath
     {
+        [JsonProperty(PropertyName = "version")]
+        public int Version { get; set; }
+
         [JsonProperty(PropertyName = "id")]
         public string LocationId { get; set; }
 

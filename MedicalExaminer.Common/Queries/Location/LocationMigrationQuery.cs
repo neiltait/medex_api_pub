@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MedicalExaminer.Common.Queries.Location
+﻿namespace MedicalExaminer.Common.Queries.Location
 {
-    public class LocationMigrationQuery : IQuery<bool>
+    public class LocationMigrationQueryV1 : IMigrationQuery
     {
-        public LocationMigrationQuery()
+
+        public LocationMigrationQueryV1()
         {
 
         }
+
+        public int VersionNumber => 1;
     }
 }
