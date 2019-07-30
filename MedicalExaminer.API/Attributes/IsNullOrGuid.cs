@@ -21,6 +21,7 @@ namespace MedicalExaminer.API.Attributes
             {
                 return null;
             }
+
             return new ValidationResult("Value should be null or a GUID.");
         }
     }
