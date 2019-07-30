@@ -11,6 +11,7 @@ using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.API.Models.v1.PatientDetails;
+using MedicalExaminer.API.Models.v1.Report;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Xunit;
@@ -1220,7 +1221,32 @@ namespace MedicalExaminer.API.Tests.Mapper
 
         }
 
-        
+        [Fact]
+        public void Full_Examination_To_Odt_Download()
+        {
+            var examination = GenerateExamination();
+            var expected = new GetCoronerReferralDownloadResponse()
+            {
+
+            };
+
+            var result = _mapper.Map<GetCoronerReferralDownloadResponse>(examination);
+            IsEquivalent(expected, result);
+
+        }
+
+        private void IsEquivalent(GetCoronerReferralDownloadResponse expected, GetCoronerReferralDownloadResponse actual)
+        {
+            actual.AbleToIssueMCCD.Should().Be(expected.AbleToIssueMCCD);
+            actual.AnyImplants.Should().Be(expected.AnyImplants);
+            actual.CauseOfDeath1a.Should().Be(expected.CauseOfDeath1a);
+            actual.CauseOfDeath1b.Should().Be(expected.CauseOfDeath1b);
+            actual.CauseOfDeath1c.Should().Be(expected.CauseOfDeath1c);
+            actual.CauseOfDeath2.Should().Be(expected.CauseOfDeath2);
+            actual.Consultant.Should().Be(expected.Consultant);
+
+        }
+
         private void AssertAllSourcePropertiesMappedForMap(TypeMap map)
         {
 

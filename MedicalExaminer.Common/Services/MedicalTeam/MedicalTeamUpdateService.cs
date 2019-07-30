@@ -31,11 +31,17 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
                 throw new ArgumentNullException(nameof(examination));
             }
 
-            var me = await _userService.Handle(new UserRetrievalByIdQuery(examination.MedicalTeam.MedicalExaminerUserId));
-            var meo = await _userService.Handle(new UserRetrievalByIdQuery(examination.MedicalTeam.MedicalExaminerOfficerUserId));
+            if (examination.MedicalTeam.MedicalExaminerUserId != null)
+            {
+                var me = await _userService.Handle(new UserRetrievalByIdQuery(examination.MedicalTeam.MedicalExaminerUserId));
+                examination.MedicalTeam.MedicalExaminerFullName = me.FullName();
+            }
 
-            examination.MedicalTeam.MedicalExaminerFullName = me.FullName();
-            examination.MedicalTeam.MedicalExaminerOfficerFullName = meo.FullName();
+            if (examination.MedicalTeam.MedicalExaminerOfficerUserId != null)
+            {
+                var meo = await _userService.Handle(new UserRetrievalByIdQuery(examination.MedicalTeam.MedicalExaminerOfficerUserId));
+                examination.MedicalTeam.MedicalExaminerOfficerFullName = meo.FullName();
+            }
 
             examination = examination.UpdateCaseUrgencyScore();
             examination = examination.UpdateCaseStatus();

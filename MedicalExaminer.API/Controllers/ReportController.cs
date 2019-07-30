@@ -61,6 +61,11 @@ namespace MedicalExaminer.API.Controllers
             var currentUser = await CurrentUser();
             var examination = _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, currentUser)).Result;
 
+            if (examination == null)
+            {
+                return new NotFoundResult();
+            }
+
             if (!CanAsync(Permission.GetCoronerReferralDownload, examination))
             {
                 return Forbid();
