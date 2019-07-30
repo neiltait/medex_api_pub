@@ -41,8 +41,15 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
                 throw new ArgumentNullException(nameof(examination));
             }
 
-            examination.MedicalTeam.MedicalExaminerFullName = await GetFullName(examination.MedicalTeam.MedicalExaminerUserId);
-            examination.MedicalTeam.MedicalExaminerOfficerFullName = await GetFullName(examination.MedicalTeam.MedicalExaminerOfficerUserId);
+            if (!string.IsNullOrEmpty(examination.MedicalTeam.MedicalExaminerUserId))
+            {
+                examination.MedicalTeam.MedicalExaminerFullName = await GetFullName(examination.MedicalTeam.MedicalExaminerUserId);
+            }
+
+            if (!string.IsNullOrEmpty(examination.MedicalTeam.MedicalExaminerOfficerUserId))
+            {
+                examination.MedicalTeam.MedicalExaminerOfficerFullName = await GetFullName(examination.MedicalTeam.MedicalExaminerOfficerUserId);
+            }
 
             examination = examination.UpdateCaseUrgencyScore();
             examination = examination.UpdateCaseStatus();

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Filters;
@@ -136,6 +137,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var medicalTeamRequest = Mapper.Map<MedicalTeam>(putMedicalTeamRequest);
+
             var myUser = await CurrentUser();
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, null));
 
