@@ -119,7 +119,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(prepopulated => prepopulated.CauseOfDeath2,
                     cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath2))
                 .ForMember(prepopulated => prepopulated.MedicalExaminer,
-                    cbd => cbd.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.ParticipantName)) // this don't look right
+                    cbd => cbd.MapFrom(source => source.MedicalTeam.MedicalExaminerFullName)) 
                 .ForMember(prepopulated => prepopulated.DateOfLatestPreScrutiny,
                     cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.Created))
                 .ForMember(prepopulated => prepopulated.PreScrutinyStatus,

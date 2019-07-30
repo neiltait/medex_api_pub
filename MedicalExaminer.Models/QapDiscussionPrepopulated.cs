@@ -38,7 +38,7 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// date of the latest prescrutiny
         /// </summary>
-        public DateTime DateOfLatestPreScrutiny { get; set; }
+        public DateTime? DateOfLatestPreScrutiny { get; set; }
 
         /// <summary>
         /// the users full name that added the latest pre scrutiny

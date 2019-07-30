@@ -1232,7 +1232,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
-        public void Examination_To_Casebreakdown_No_PrescrutinyLatest()
+        public void BereavedDiscussionPrepopulated_Examination_To_Casebreakdown_No_PrescrutinyLatest()
         {
             //  Arrange
 
@@ -1270,7 +1270,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
-        public void Examination_To_Casebreakdown_PrescrutinyLatest_Same_As_QapLatest()
+        public void BereavedDiscussionPrepopulated_Examination_To_Casebreakdown_PrescrutinyLatest_Same_As_QapLatest()
         {
             //  Arrange
 
@@ -1304,7 +1304,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
-        public void Examination_To_Casebreakdown_PrescrutinyLatest_Different_To_QapLatest()
+        public void BereavedDiscussionPrepopulated_Examination_To_Casebreakdown_PrescrutinyLatest_Different_To_QapLatest()
         {
             //  Arrange
 
@@ -1339,7 +1339,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
-        public void Examination_To_Casebreakdown_No_LatestQapDiscussion()
+        public void BereavedDiscussionPrepopulated_Examination_To_Casebreakdown_No_LatestQapDiscussion()
         {
             //  Arrange
 
@@ -1375,7 +1375,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
-        public void Examination_To_Casebreakdown_No_LatestQapDiscussionDidNotHappen()
+        public void BereavedDiscussionPrepopulated_Examination_To_Casebreakdown_No_LatestQapDiscussionDidNotHappen()
         {
             //  Arrange
 
@@ -1410,7 +1410,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
-        public void Examination_To_Casebreakdown_No_LatestQapDiscussion_No_LatestPrescrutiny()
+        public void BereavedDiscussionPrepopulated_Examination_To_Casebreakdown_No_LatestQapDiscussion_No_LatestPrescrutiny()
         {
             //  Arrange
 
@@ -1449,6 +1449,67 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
 
+        [Fact]
+        public void QapDiscussionPrepopulated_Examination_To_Casebreakdown_LatestPreScrutinyDiscussion()
+        {
+            //  Arrange
+
+            var casebreakdown = GenerateCaseBreakdown();
+            var dateNow = DateTime.Now.Date;
+
+            var examination = GenerateExamination(casebreakdown);
+
+            var expectedQapPrepopulated = new QapDiscussionPrepopulated()
+            {
+                CauseOfDeath1a = casebreakdown.PreScrutiny.Latest.CauseOfDeath1a,
+                CauseOfDeath1b = casebreakdown.PreScrutiny.Latest.CauseOfDeath1b,
+                CauseOfDeath1c = casebreakdown.PreScrutiny.Latest.CauseOfDeath1c,
+                CauseOfDeath2 = casebreakdown.PreScrutiny.Latest.CauseOfDeath2,
+                DateOfLatestPreScrutiny = casebreakdown.PreScrutiny.Latest.Created,
+                MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                PreScrutinyStatus = PreScrutinyStatus.PrescrutinyHappened,
+                UserForLatestPrescrutiny = casebreakdown.PreScrutiny.Latest.UserFullName,
+            };
+
+            //  Act
+            var result = _mapper.Map<CaseBreakDownItem>(examination, opt => opt.Items["user"] = User0);
+
+            //  Assert
+            AreEquivalent(expectedQapPrepopulated, result.QapDiscussion.Prepopulated);
+        }
+
+        [Fact]
+        public void QapDiscussionPrepopulated_Examination_To_Casebreakdown_No_LatestPreScrutinyDiscussion()
+        {
+            //  Arrange
+
+            var casebreakdown = GenerateCaseBreakdown();
+            casebreakdown.PreScrutiny.Latest = null;
+            casebreakdown.PreScrutiny.History = new List<PreScrutinyEvent>();
+            var dateNow = DateTime.Now.Date;
+
+            var examination = GenerateExamination(casebreakdown);
+
+            var expectedQapPrepopulated = new QapDiscussionPrepopulated()
+            {
+                CauseOfDeath1a = null,
+                CauseOfDeath1b = null,
+                CauseOfDeath1c = null,
+                CauseOfDeath2 = null,
+                DateOfLatestPreScrutiny = null,
+                MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                PreScrutinyStatus = PreScrutinyStatus.PrescrutinyNotHappened,
+                UserForLatestPrescrutiny = null,
+            };
+
+            //  Act
+            var result = _mapper.Map<CaseBreakDownItem>(examination, opt => opt.Items["user"] = User0);
+
+            //  Assert
+            AreEquivalent(expectedQapPrepopulated, result.QapDiscussion.Prepopulated);
+        }
+
+
         private void AreEquivalent(BereavedDiscussionPrepopulated expectedBereavedPrepopulated, BereavedDiscussionPrepopulated prepopulated)
         {
             prepopulated.CauseOfDeath1a.Should().Be(expectedBereavedPrepopulated.CauseOfDeath1a);
@@ -1464,6 +1525,20 @@ namespace MedicalExaminer.API.Tests.Mapper
             prepopulated.UserForLatestPrescrutiny.Should().Be(expectedBereavedPrepopulated.UserForLatestPrescrutiny);
             prepopulated.UserForLatestQAPDiscussion.Should().Be(expectedBereavedPrepopulated.UserForLatestQAPDiscussion);
         }
+
+
+        private void AreEquivalent(QapDiscussionPrepopulated expectedQapPrepopulated, QapDiscussionPrepopulated prepopulated)
+        {
+            prepopulated.CauseOfDeath1a.Should().Be(expectedQapPrepopulated.CauseOfDeath1a);
+            prepopulated.CauseOfDeath1b.Should().Be(expectedQapPrepopulated.CauseOfDeath1b);
+            prepopulated.CauseOfDeath1c.Should().Be(expectedQapPrepopulated.CauseOfDeath1c);
+            prepopulated.CauseOfDeath2.Should().Be(expectedQapPrepopulated.CauseOfDeath2);
+            prepopulated.DateOfLatestPreScrutiny.Should().Be(expectedQapPrepopulated.DateOfLatestPreScrutiny);
+            prepopulated.MedicalExaminer.Should().Be(expectedQapPrepopulated.MedicalExaminer);
+            prepopulated.PreScrutinyStatus.Should().Be(expectedQapPrepopulated.PreScrutinyStatus);
+            prepopulated.UserForLatestPrescrutiny.Should().Be(expectedQapPrepopulated.UserForLatestPrescrutiny);
+        }
+
 
         private void AssertAllSourcePropertiesMappedForMap(TypeMap map)
         {
