@@ -41,12 +41,12 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
                 throw new ArgumentNullException(nameof(examination));
             }
 
-            if (examination.MedicalTeam.MedicalExaminerUserId != null)
+            if (!string.IsNullOrEmpty(examination.MedicalTeam.MedicalExaminerUserId))
             {
                 examination.MedicalTeam.MedicalExaminerFullName = await GetFullName(examination.MedicalTeam.MedicalExaminerUserId);
             }
 
-            if (examination.MedicalTeam.MedicalExaminerOfficerUserId != null)
+            if (!string.IsNullOrEmpty(examination.MedicalTeam.MedicalExaminerOfficerUserId))
             {
                 examination.MedicalTeam.MedicalExaminerOfficerFullName = await GetFullName(examination.MedicalTeam.MedicalExaminerOfficerUserId);
             }
