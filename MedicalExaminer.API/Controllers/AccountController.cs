@@ -112,16 +112,16 @@ namespace MedicalExaminer.API.Controllers
                 throw new Exception("Failed to create user");
             }
 
-            // Reset token if it has changed
-            if (meUser.OktaToken == null || meUser.OktaToken != oktaToken)
-            {
-                var expiryTime = DateTime.Now.AddMinutes(_oktaTokenExpiryMinutes);
+            //// Reset token if it has changed
+            //if (meUser.OktaToken == null || meUser.OktaToken != oktaToken)
+            //{
+            //    var expiryTime = DateTime.Now.AddMinutes(_oktaTokenExpiryMinutes);
 
-                meUser.OktaToken = oktaToken;
-                meUser.OktaTokenExpiry = expiryTime;
+            //    meUser.OktaToken = oktaToken;
+            //    meUser.OktaTokenExpiry = expiryTime;
 
-                meUser = await UpdateUserOktaToken(meUser);
-            }
+            //    meUser = await UpdateUserOktaToken(meUser);
+            //}
 
             return new PostValidateSessionResponse
             {
@@ -201,9 +201,9 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                var updatedUser = await _userUpdateOktaTokenService.Handle(new UsersUpdateOktaTokenQuery(toUpdate));
+                //  var updatedUser = await _userUpdateOktaTokenService.Handle(new UsersUpdateOktaTokenQuery(toUpdate));
 
-                return updatedUser;
+                return null;// updatedUser;
             }
             catch (DocumentClientException)
             {
