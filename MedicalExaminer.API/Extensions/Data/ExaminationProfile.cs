@@ -8,6 +8,7 @@ using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.Models.Enums;
 using System.Linq;
+using MedicalExaminer.API.Models.v1.Report;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
