@@ -226,6 +226,26 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Returns all QAP Discussion Statuses
+        /// </summary>
+        /// <returns>Dictionary of QAP Discussion Statuses</returns>
+        [HttpGet("qap_discussion_status")]
+        public ActionResult GetQapDiscussionStatues()
+        {
+            return Ok(GetDictionary(typeof(QAPDiscussionStatus)));
+        }
+
+        /// <summary>
+        /// Returns all Pre Scrutiny Statuses
+        /// </summary>
+        /// <returns>Dictionary of Pre Scrutiny Statuses</returns>
+        [HttpGet("pre_scrutiny_status")]
+        public ActionResult GetPreScrutinyStatus()
+        {
+            return Ok(GetDictionary(typeof(PreScrutinyStatus)));
+        }
+
+        /// <summary>
         /// Get Dictionary.
         /// </summary>
         /// <param name="enumeratorType">Type.</param>
