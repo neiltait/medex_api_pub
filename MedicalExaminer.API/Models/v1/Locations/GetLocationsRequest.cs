@@ -22,5 +22,10 @@ namespace MedicalExaminer.API.Models.v1.Locations
         /// Parent Id.
         /// </summary>
         public string ParentId { get; set; }
+
+        /// <summary>
+        /// retrieve only those locations that are defined as Medical Examiner Offices
+        /// </summary>
+        public bool OnlyMEOffices { get; set; } = false;
     }
 }

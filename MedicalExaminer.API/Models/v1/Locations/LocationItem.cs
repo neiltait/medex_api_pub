@@ -36,5 +36,10 @@ namespace MedicalExaminer.API.Models.v1.Locations
         ///     Location is in use in Medical Examiners.
         /// </summary>
         public bool IsActive { get; set; }
+
+        /// <summary>
+        ///     Location is a Medical Examiners Office.
+        /// </summary>
+        public bool IsMeOffice { get; set; }
     }
 }

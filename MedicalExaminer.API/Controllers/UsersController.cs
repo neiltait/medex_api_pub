@@ -148,6 +148,7 @@ namespace MedicalExaminer.API.Controllers
                         null,
                         null,
                         false,
+                        false,
                         usersPermissionLocationsIds)).Result;
 
                 var mappedPermissions = user.Permissions?.Select(meUserPermission => new PermissionLocation(

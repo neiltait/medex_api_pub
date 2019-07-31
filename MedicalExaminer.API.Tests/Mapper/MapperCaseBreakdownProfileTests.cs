@@ -16,7 +16,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile<CaseBreakdownProfile>();
+                cfg.AddProfile<ExaminationProfile>();
                 cfg.AddProfile<OtherEventProfile>();
                 cfg.AddProfile<AdmissionEventProfile>();
                 cfg.AddProfile<BereavedDiscussionEventProfile>();
@@ -80,13 +80,18 @@ namespace MedicalExaminer.API.Tests.Mapper
                 }
             };
 
-            var result = _mapper.Map<CaseBreakDownItem>(caseBreakdown, opt => opt.Items["user"] = myUser);
+            var examination = new Examination()
+            {
+                CaseBreakdown = caseBreakdown
+            };
+
+            var result = _mapper.Map<CaseBreakDownItem>(examination, opt => opt.Items["user"] = myUser);
 
             Assert.Equal(latest.EventId, result.OtherEvents.Latest.EventId);
             result.OtherEvents.History.Should().BeEquivalentTo(history);
             Assert.Null(result.OtherEvents.UsersDraft);
 
-            var otherResult = _mapper.Map<CaseBreakDownItem>(caseBreakdown, opt => opt.Items["user"] = otherUser);
+            var otherResult = _mapper.Map<CaseBreakDownItem>(examination, opt => opt.Items["user"] = otherUser);
 
             Assert.Equal(latest.EventId, result.OtherEvents.Latest.EventId);
             otherResult.OtherEvents.History.Should().BeEquivalentTo(history);

@@ -7,7 +7,6 @@ using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.Location;
-using Newtonsoft.Json;
 
 namespace MedicalExaminer.Common.Services.Location
 {
@@ -92,6 +91,11 @@ namespace MedicalExaminer.Common.Services.Location
             {
                 predicate = location => location.Name == param.Name
                                         && location.ParentId == param.ParentId;
+            }
+
+            if (param.OnlyMeOffices)
+            {
+                predicate = predicate.And(x => x.IsMeOffice);
             }
 
             return predicate;
