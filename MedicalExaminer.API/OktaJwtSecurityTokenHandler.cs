@@ -126,11 +126,11 @@ namespace MedicalExaminer.API
             var claimsPrincipal = _tokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
 
             // Update user record with okta settings if not found originally or if token had expired
-            if ((meUserReturned == null || meUserReturned.OktaTokenExpiry < DateTimeOffset.Now) &&
-                claimsPrincipal != null)
-            {
-                meUserReturned = UpdateOktaTokenForUser(securityToken, claimsPrincipal);
-            }
+            //if ((meUserReturned == null || meUserReturned.OktaTokenExpiry < DateTimeOffset.Now) &&
+            //    claimsPrincipal != null)
+            //{
+            //    meUserReturned = UpdateOktaTokenForUser(securityToken, claimsPrincipal);
+            //}
 
             if (meUserReturned != null)
             {
