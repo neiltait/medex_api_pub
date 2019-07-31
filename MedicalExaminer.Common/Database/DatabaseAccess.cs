@@ -311,10 +311,12 @@ namespace MedicalExaminer.Common.Database
                 return (T)(dynamic)updateItemAsync.Resource;
             }
             catch
-            (DocumentClientException ex)
+            (DocumentClientException
+            ex)
             {
                 if
-                    (ex.StatusCode ==
+                    (
+                    ex.StatusCode ==
                     HttpStatusCode.TooManyRequests)
                 {
                     System.Threading.Thread.Sleep(ex.RetryAfter.Milliseconds);
