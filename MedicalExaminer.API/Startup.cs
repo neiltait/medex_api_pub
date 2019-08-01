@@ -553,7 +553,7 @@ example:
         private void UpdateLocations(IServiceProvider serviceProvider, LocationMigrationSettings locationMigrationSettings)
         {
             LocationMigrationService instance = serviceProvider.GetService<LocationMigrationService>();
-            var result = instance.Handle(_locationMigrationQueryLookup[locationMigrationSettings.LocationVersion]);
+            var result = instance.Handle(_locationMigrationQueryLookup[locationMigrationSettings.Version]);
         }
 
         private void UpdateInvalidOrNullUserPermissionIds(IServiceProvider serviceProvider)
