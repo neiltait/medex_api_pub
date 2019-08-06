@@ -28,7 +28,8 @@ namespace MedicalExaminer.Common.Authorization.Roles
                 Permission.BereavedDiscussionEvent,
                 Permission.QapDiscussionEvent,
                 Permission.OtherEvent,
-                Permission.PreScrutinyEvent);
+                Permission.PreScrutinyEvent,
+                Permission.CreateExamination);
         }
     }
 }
