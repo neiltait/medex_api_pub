@@ -1228,8 +1228,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             response.PlaceDeathOccured.Should().Be(PlaceDeathOccured);
             response.Surname.Should().Be(Surname);
             response.TimeOfDeath.Should().Be(TimeOfDeath);
-
-
         }
 
         [Fact]
@@ -1238,11 +1236,12 @@ namespace MedicalExaminer.API.Tests.Mapper
             var examination = GenerateExamination();
             var expected = new GetCoronerReferralDownloadResponse()
             {
-
+                AbleToIssueMCCD = true,
+                AnyImplants = examination.AnyImplants,
             };
 
             var result = _mapper.Map<GetCoronerReferralDownloadResponse>(examination);
-//            IsEquivalent(expected, result);
+            IsEquivalent(expected, result);
 
         }
 
