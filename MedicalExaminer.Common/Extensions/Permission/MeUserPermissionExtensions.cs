@@ -22,9 +22,7 @@ namespace MedicalExaminer.Common.Extensions.Permission
         public static Task<IEnumerable<Location>> GetUniqueLocationNames(this IEnumerable<MEUserPermission> permissions, IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> service)
         {
             var uniqueLocationIds = permissions.Select(x => x.LocationId).Distinct();
-            return service.Handle(new LocationsRetrievalByQuery(null, null, false, uniqueLocationIds));
+            return service.Handle(new LocationsRetrievalByQuery(null, null, false, false, uniqueLocationIds));
         }
-
-        
     }
 }

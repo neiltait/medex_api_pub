@@ -22,7 +22,7 @@ namespace MedicalExaminer.API.Tests.Services.Location
         public async Task Handle_ReturnsAllResults_WhenNoFilterApplied(bool forLookup)
         {
             // Arrange
-            var query = new LocationsRetrievalByQuery(null, null, forLookup);
+            var query = new LocationsRetrievalByQuery(null, null, forLookup, false);
 
             // Act
             var results = (await Service.Handle(query)).ToList();
@@ -38,7 +38,7 @@ namespace MedicalExaminer.API.Tests.Services.Location
         public async Task Handle_ReturnsFiltered_WhenFilteredByName(bool forLookup)
         {
             // Arrange
-            var query = new LocationsRetrievalByQuery("Name2", null, forLookup);
+            var query = new LocationsRetrievalByQuery("Name2", null, forLookup, false);
 
             // Act
             var results = (await Service.Handle(query)).ToList();
@@ -54,7 +54,7 @@ namespace MedicalExaminer.API.Tests.Services.Location
         public async Task Handle_ReturnsFiltered_WhenFilteredByParentId(bool forLookup)
         {
             // Arrange
-            var query = new LocationsRetrievalByQuery(null, "Name1", forLookup);
+            var query = new LocationsRetrievalByQuery(null, "Name1", forLookup, false);
 
             // Act
             var results = (await Service.Handle(query)).ToList();
@@ -70,7 +70,7 @@ namespace MedicalExaminer.API.Tests.Services.Location
         public async Task Handle_ReturnsFiltered_WhenFilteredByNameAndParentId(bool forLookup)
         {
             // Arrange
-            var query = new LocationsRetrievalByQuery("Name2", "Name1", forLookup);
+            var query = new LocationsRetrievalByQuery("Name2", "Name1", forLookup, false);
 
             // Act
             var results = (await Service.Handle(query)).ToList();
@@ -92,7 +92,7 @@ namespace MedicalExaminer.API.Tests.Services.Location
                 "Name3",
             };
 
-            var query = new LocationsRetrievalByQuery(null, null, forLookup, permissedLocations);
+            var query = new LocationsRetrievalByQuery(null, null, forLookup, false, permissedLocations);
 
             // Act
             var results = (await Service.Handle(query)).ToList();
@@ -111,7 +111,8 @@ namespace MedicalExaminer.API.Tests.Services.Location
             {
                 LocationId = $"Name{i}",
                 Name = $"Name{i}",
-                ParentId = i > start ? $"Name{(i-1)}" : null
+                ParentId = i > start ? $"Name{(i-1)}" : null,
+                IsMeOffice = false
             }).ToArray();
         }
     }

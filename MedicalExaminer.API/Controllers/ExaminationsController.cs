@@ -133,7 +133,7 @@ namespace MedicalExaminer.API.Controllers
             };
 
             var locations = (await _locationRetrievalByQueryHandler.Handle(
-                    new LocationsRetrievalByQuery(null, null, true, permissedLocations))).ToList();
+                    new LocationsRetrievalByQuery(null, null, true, false, permissedLocations))).ToList();
 
             response.AddLookup(LocationFilterLookupKey, Mapper.Map<IEnumerable<Location>, IEnumerable<LocationLookup>>(locations));
 

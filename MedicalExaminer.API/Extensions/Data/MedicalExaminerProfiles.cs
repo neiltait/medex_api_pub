@@ -13,12 +13,12 @@ namespace MedicalExaminer.API.Extensions.Data
         /// <param name="config">The mapper configuration.</param>
         public static void AddMedicalExaminerProfiles(this IMapperConfigurationExpression config)
         {
+            config.AddProfile<LocationProfile>();
             config.AddProfile<ExaminationProfile>();
             config.AddProfile<PermissionsProfile>();
             config.AddProfile<UsersProfile>();
             config.AddProfile<MedicalTeamProfile>();
             config.AddProfile<PatientDetailsProfile>();
-            config.AddProfile<CaseBreakdownProfile>();
             config.AddProfile<OtherEventProfile>();
             config.AddProfile<AdmissionEventProfile>();
             config.AddProfile<BereavedDiscussionEventProfile>();

@@ -14,13 +14,19 @@ namespace MedicalExaminer.Common.Queries.Location
         /// <param name="parentId">Parent Id.</param>
         /// <param name="forLookup">Is the query targeted at lookups.</param>
         /// <param name="permissedLocations">Permissed locations.</param>
-        public LocationsRetrievalByQuery(string name, string parentId, bool forLookup, IEnumerable<string> permissedLocations = null)
+        public LocationsRetrievalByQuery(string name, string parentId, bool forLookup, bool onlyMeOffices, IEnumerable<string> permissedLocations = null)
         {
             Name = name;
             ParentId = parentId;
             ForLookup = forLookup;
             PermissedLocations = permissedLocations;
+            OnlyMeOffices = onlyMeOffices;
         }
+
+        /// <summary>
+        /// return only locations defined as ME Offices
+        /// </summary>
+        public bool OnlyMeOffices { get; }
 
         /// <summary>
         /// For Lookup

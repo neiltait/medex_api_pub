@@ -294,18 +294,45 @@ namespace MedicalExaminer.Common.Database
         public async Task<T> UpdateItemAsync<T>(IConnectionSettings connectionSettings, T item)
         {
             var client = GetClient(connectionSettings);
-            var updateItemAsync = await client.UpsertDocumentAsync(
-                UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
-                item);
 
-            _requestChargeService.RequestCharges.Add(new RequestChargeService.RequestCharge()
+            try
             {
-                Request = $"UpdateItemAsync<{typeof(T).Name}>()",
-                Charge = updateItemAsync.RequestCharge
-            });
+                var updateItemAsync = await client.UpsertDocumentAsync(
+                    UriFactory.CreateDocumentCollectionUri(connectionSettings.DatabaseId, connectionSettings.Collection),
+                    item);
 
-            AddAuditEntry(connectionSettings, item);
-            return (T)(dynamic)updateItemAsync.Resource;
+                _requestChargeService.RequestCharges.Add(new RequestChargeService.RequestCharge()
+                {
+                    Request = $"UpdateItemAsync<{typeof(T).Name}>()",
+                    Charge = updateItemAsync.RequestCharge
+                });
+
+                AddAuditEntry(connectionSettings, item);
+                return (T)(dynamic)updateItemAsync.Resource;
+            }
+            catch
+            (DocumentClientException
+            ex)
+            {
+                if
+                    (
+                    ex.StatusCode ==
+                    HttpStatusCode.TooManyRequests)
+                {
+                    System.Threading.Thread.Sleep(ex.RetryAfter.Milliseconds);
+                    var
+                        retry =
+                        await UpdateItemAsync(
+                            connectionSettings,
+                            item);
+                    return
+                        retry;
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
     }
 }
