@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models
@@ -143,6 +142,7 @@ namespace MedicalExaminer.Models
         {
             examination.Unassigned = !(examination.MedicalTeam.MedicalExaminerOfficerUserId != null && examination.MedicalTeam.MedicalExaminerUserId != null);
             examination.PendingAdmissionNotes = CalculateAdmissionNotesPending(examination);
+            examination.HaveUnknownBasicDetails = !CalculateBasicDetailsEntered(examination);
             examination.AdmissionNotesHaveBeenAdded = !examination.PendingAdmissionNotes;
             examination.ReadyForMEScrutiny = CalculateReadyForScrutiny(examination);
             examination.HaveBeenScrutinisedByME = examination.ScrutinyConfirmed;
@@ -153,6 +153,61 @@ namespace MedicalExaminer.Models
             examination.CaseOutcome.CaseOutcomeSummary = CalculateScrutinyOutcome(examination);
 
             return examination;
+        }
+
+        public static bool CalculateBasicDetailsEntered(this Examination examination)
+        {
+            if (examination.GivenNames == null || examination.Surname == null)
+            {
+                return false;
+            }
+
+            if (examination.DateOfBirth == null)
+            {
+                return false;
+            }
+
+            if (examination.DateOfDeath == null)
+            {
+                return false;
+            }
+
+            if (examination.NhsNumber == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool CalculateAdditionalDetailsEntered(this Examination examination)
+        {
+            if (examination.CaseBreakdown.AdmissionNotes.Latest == null)
+            {
+                return false;
+            }
+
+            if (examination.MedicalTeam.ConsultantResponsible.Name == null)
+            {
+                return false;
+            }
+
+            if (examination.MedicalTeam.Qap.Name == null)
+            {
+                return false;
+            }
+
+            if (examination.Representatives.GetEnumerator().Current?.FullName == null)
+            {
+                return false;
+            }
+
+            if (examination.MedicalTeam.MedicalExaminerUserId == null)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public static bool CalculateOutstandingCaseOutcomesCompleted(this Examination examination)

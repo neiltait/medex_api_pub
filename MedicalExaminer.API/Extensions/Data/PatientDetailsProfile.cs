@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿
+using AutoMapper;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Models;
 
@@ -24,6 +25,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.LastAdmission, opt => opt.Ignore())
                 .ForMember(examination => examination.MedicalTeam, opt => opt.Ignore())
                 .ForMember(examination => examination.CaseBreakdown, opt => opt.Ignore())
+                .ForMember(examination => examination.HaveUnknownBasicDetails, opt => opt.Ignore())
                 .ForMember(examination => examination.AdmissionNotesHaveBeenAdded, opt => opt.Ignore())
                 .ForMember(examination => examination.ReadyForMEScrutiny, opt => opt.Ignore())
                 .ForMember(examination => examination.Unassigned, opt => opt.Ignore())

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using FluentAssertions;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
@@ -1815,6 +1816,74 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var actualCaseOutcomeSummary = examination.CalculateScrutinyOutcome();
 
             actualCaseOutcomeSummary.Should().Be(caseOutcomeSummary);
+        }
+
+        [Fact]
+        public void CalculateBasicDetailsEntered_When_All_The_Details_Are_Entered_Returns_True()
+        {
+            var examination = new Examination
+            {
+                GivenNames = "GivenNames",
+                Surname = "Surname",
+                DateOfBirth = DateTime.Today,
+                DateOfDeath = DateTime.Today,
+                NhsNumber = "1234567890"
+            };
+
+            var haveUnknownBasicDetails = examination.CalculateBasicDetailsEntered();
+
+            haveUnknownBasicDetails.Should().BeTrue();
+        }
+
+        [Fact]
+        public void CalculateBasicDetailsEntered_When_DOB_Is_Unknown_Returns_False()
+        {
+            var examination = new Examination
+            {
+                GivenNames = "GivenNames",
+                Surname = "Surname",
+                DateOfBirth = null,
+                DateOfDeath = DateTime.Today,
+                NhsNumber = "1234567890"
+            };
+
+            var haveUnknownBasicDetails = examination.CalculateBasicDetailsEntered();
+
+            haveUnknownBasicDetails.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CalculateBasicDetailsEntered_When_DOD_Is_Unknown_Returns_False()
+        {
+            var examination = new Examination
+            {
+                GivenNames = "GivenNames",
+                Surname = "Surname",
+                DateOfBirth = DateTime.Today,
+                DateOfDeath = null,
+                NhsNumber = "1234567890"
+            };
+
+            var haveUnknownBasicDetails = examination.CalculateBasicDetailsEntered();
+
+            haveUnknownBasicDetails.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CalculateBasicDetailsEntered_When_NHSNumber_Is_Unknown_Returns_False()
+        {
+            var examination = new Examination
+            {
+                GivenNames = "GivenNames",
+                Surname = "Surname",
+                DateOfBirth = DateTime.Today,
+                DateOfDeath = DateTime.Today,
+                NhsNumber = null
+            };
+
+            var haveUnknownBasicDetails = examination.CalculateBasicDetailsEntered();
+
+            haveUnknownBasicDetails.Should().BeFalse();
         }
     }
 }

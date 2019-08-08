@@ -71,6 +71,11 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public DateTime CaseCreatedDate { get; set; }
 
         /// <summary>
+        /// Have Unknown Basic Details (Name, DOB, DOD and NHS Number)
+        /// </summary>
+        public bool HaveUnknownBasicDetails { get; set; }
+
+        /// <summary>
         /// Has the admission notes event been finalised
         /// </summary>
         public bool AdmissionNotesHaveBeenAdded { get; set; }
