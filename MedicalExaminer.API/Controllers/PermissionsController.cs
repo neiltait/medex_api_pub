@@ -253,6 +253,11 @@ namespace MedicalExaminer.API.Controllers
 
                 var existingPermissions = user.Permissions != null ? user.Permissions.ToList() : new List<MEUserPermission>();
 
+                if (user.Permissions == null)
+                {
+                    user.Permissions = new List<MEUserPermission>();
+                }
+
                 if (user.Permissions.Any(usersPermissions => usersPermissions.IsEquivalent(permission)))
                 {
                     return Conflict();
@@ -261,21 +266,14 @@ namespace MedicalExaminer.API.Controllers
                 existingPermissions.Add(permission);
 
                 user.Permissions = existingPermissions;
-                    var userUpdate = new UserUpdatePermissions
-                    {
-                        UserId = user.UserId,
-                        Permissions = existingPermissions
-                    };
 
-                    var updateUser = new UserUpdatePermissions
-                    {
-                        UserId = user.UserId,
-                        Permissions = user.Permissions,
-                    };
+                var updateUser = new UserUpdatePermissions
+                {
+                    UserId = user.UserId,
+                    Permissions = user.Permissions,
+                };
 
-
-                    await _userUpdateService.Handle(new UserUpdateQuery(updateUser, currentUser));
-
+                await _userUpdateService.Handle(new UserUpdateQuery(updateUser, currentUser));
 
                 var location = _locationRetrievalService.Handle(new LocationRetrievalByIdQuery(permission.LocationId)).Result;
 
