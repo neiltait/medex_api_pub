@@ -410,6 +410,7 @@ example:
             services.AddScoped<IAsyncQueryHandler<UserUpdateQuery, MeUser>, UserUpdateService>();
             services.AddScoped<IAsyncQueryHandler<UserUpdateOktaQuery, MeUser>, UserUpdateOktaService>();
             services.AddScoped<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>, InvalidUserPermissionUpdateService>();
+            services.AddScoped<IOktaClient, OktaClient>();
 
             // User session services
             services.AddScoped<IAsyncQueryHandler<UserSessionUpdateOktaTokenQuery, MeUserSession>, UserSessionUpdateOktaTokenService>();
