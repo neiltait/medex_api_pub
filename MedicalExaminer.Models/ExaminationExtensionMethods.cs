@@ -181,8 +181,6 @@ namespace MedicalExaminer.Models
 
         public static bool CalculateCanCompleteScrutiny(this Examination examination)
         {
-            examination = examination.UpdateCaseStatus();
-
             if (!examination.ReadyForMEScrutiny)
             {
                 return false;
@@ -220,7 +218,7 @@ namespace MedicalExaminer.Models
                 examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.IssueMCCDWith100a;
         }
 
-        private static bool CalculatePendingDiscussionWithRepresentative(Examination examination)
+        public static bool CalculatePendingDiscussionWithRepresentative(Examination examination)
         {
             if (examination.ReadyForMEScrutiny)
             {
@@ -235,7 +233,6 @@ namespace MedicalExaminer.Models
                 }
                 else
                 {
-
                     var latest = examination.CaseBreakdown.BereavedDiscussion.Latest;
 
                     if (latest != null && !latest.DiscussionUnableHappen)
@@ -248,39 +245,65 @@ namespace MedicalExaminer.Models
             return true;
         }
 
-        private static CaseOutcomeSummary? CalculateScrutinyOutcome(Examination examination)
+        public static CaseOutcomeSummary? CalculateScrutinyOutcome(this Examination examination)
         {
-            if (examination.CaseBreakdown.PreScrutiny.Latest == null
-                && examination.CaseBreakdown.QapDiscussion.Latest == null
-                && examination.CaseBreakdown.BereavedDiscussion.Latest == null)
+            if (!examination.Unassigned && examination.CaseBreakdown.AdmissionNotes.Latest?.ImmediateCoronerReferral.Value == true
+                && examination.CaseBreakdown.PreScrutiny?.Latest.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation)
+            {
+                return CaseOutcomeSummary.ReferToCoroner;
+            }
+
+            if (!examination.CalculateCanCompleteScrutiny())
             {
                 return null;
             }
 
-            if (examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoronerFor100a)
+            if (examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome != null)
             {
-                return CaseOutcomeSummary.ReferToCoroner;
+                if (examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome.Value == BereavedDiscussionOutcome.ConcernsCoronerInvestigation)
+                {
+                    return CaseOutcomeSummary.ReferToCoroner;
+                }
+
+                if (examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome.Value == BereavedDiscussionOutcome.ConcernsRequires100a)
+                {
+                    return CaseOutcomeSummary.IssueMCCDWith100a;
+                }
             }
 
-            if (examination.CaseBreakdown.PreScrutiny?.Latest?.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a 
-                && examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoronerFor100a)
+            if (examination.CaseBreakdown.QapDiscussion.Latest != null)
             {
-                return CaseOutcomeSummary.ReferToCoroner;
+                if (!examination.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                {
+                    if (examination.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoronerInvestigation)
+                    {
+                        return CaseOutcomeSummary.ReferToCoroner;
+                    }
+
+                    if (examination.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.ReferToCoronerFor100a)
+                    {
+                        return CaseOutcomeSummary.IssueMCCDWith100a;
+                    }
+                }
+                else
+                {
+                    if (examination.CaseBreakdown.PreScrutiny.Latest != null)
+                    {
+                        if (examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation)
+                        {
+                            return CaseOutcomeSummary.ReferToCoroner;
+                        }
+                        if (examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a)
+                        {
+                            return CaseOutcomeSummary.IssueMCCDWith100a;
+                        }
+                    }
+                }
             }
 
-            if (examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome == BereavedDiscussionOutcome.ConcernsCoronerInvestigation)
-            {
-                return CaseOutcomeSummary.ReferToCoroner;
-            }
-            else if (examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome == BereavedDiscussionOutcome.ConcernsRequires100a)
-            {
-                return CaseOutcomeSummary.IssueMCCDWith100a;
-            }
-            else
-            {
-                return CaseOutcomeSummary.IssueMCCD;
-            }
+            return CaseOutcomeSummary.IssueMCCD;
         }
+
 
         private static bool CalculatePendingQAPDiscussion(Examination examination)
         {
@@ -290,7 +313,7 @@ namespace MedicalExaminer.Models
             }
             else
             {
-                if (examination.CaseBreakdown.AdmissionNotes.Latest != null && 
+                if (examination.CaseBreakdown.AdmissionNotes.Latest != null &&
                     examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral.Value)
                 {
                     return false;

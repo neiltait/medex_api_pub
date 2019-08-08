@@ -5,6 +5,9 @@ namespace MedicalExaminer.Models
 {
     public class Location : ILocationPath
     {
+        [JsonProperty(PropertyName = "version")]
+        public int Version { get; set; }
+
         [JsonProperty(PropertyName = "id")]
         public string LocationId { get; set; }
 
@@ -38,5 +41,9 @@ namespace MedicalExaminer.Models
         /// <inheritdoc/>
         [JsonProperty(PropertyName = "site_location_id")]
         public string SiteLocationId { get; set; }
+
+        /// <inheritdoc/>
+        [JsonProperty(PropertyName = "is_me_office")]
+        public bool IsMeOffice { get; set; } = false;
     }
 }

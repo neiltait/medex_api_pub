@@ -17,5 +17,7 @@
         public BaseEventContainter<MedicalHistoryEvent> MedicalHistory { get; set; } = new MedicalHistoryEventContainer();
 
         public BaseEventContainter<AdmissionEvent> AdmissionNotes { get; set; } = new AdmissionNotesEventContainer();
+
+        public CaseClosedEvent CaseClosedEvent { get; set; }
     }
 }

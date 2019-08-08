@@ -3,7 +3,6 @@ using System.Linq;
 using FluentAssertions;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using Moq;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.ExtensionMethods
@@ -18,12 +17,12 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             var caseBreakdown = new CaseBreakDown();
             caseBreakdown.OtherEvents = new OtherEventContainer();
-            var myUser = new MeUser()
+            var myUser = new MeUser
             {
                 UserId = "userOne"
             };
 
-            var newDraft = new OtherEvent()
+            var newDraft = new OtherEvent
             {
                 IsFinal = false,
                 Text = "other event one",
@@ -64,12 +63,12 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             var caseBreakdown = new CaseBreakDown();
             caseBreakdown.OtherEvents = new OtherEventContainer();
-            var myUser = new MeUser()
+            var myUser = new MeUser
             {
                 UserId = "userOne"
             };
 
-            var newDraft = new OtherEvent()
+            var newDraft = new OtherEvent
             {
                 IsFinal = false,
                 Text = "other event one",
@@ -81,7 +80,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             // Act
             examination.AddEvent(newDraft);
 
-            var updateDraft = new OtherEvent()
+            var updateDraft = new OtherEvent
             {
                 EventId = newDraft.EventId,
                 IsFinal = false,
@@ -103,12 +102,12 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             var caseBreakdown = new CaseBreakDown();
             caseBreakdown.OtherEvents = new OtherEventContainer();
-            var myUser = new MeUser()
+            var myUser = new MeUser
             {
                 UserId = "userOne"
             };
 
-            var newDraft = new OtherEvent()
+            var newDraft = new OtherEvent
             {
                 IsFinal = false,
                 Text = "other event one",
@@ -119,7 +118,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             examination.AddEvent(newDraft);
 
-            var updateDraft = new OtherEvent()
+            var updateDraft = new OtherEvent
             {
                 EventId = "bad id",
                 IsFinal = false,
@@ -142,24 +141,24 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             var caseBreakdown = new CaseBreakDown();
             caseBreakdown.OtherEvents = new OtherEventContainer();
-            var userOne = new MeUser()
+            var userOne = new MeUser
             {
                 UserId = "userOne"
             };
 
-            var userTwo = new MeUser()
+            var userTwo = new MeUser
             {
                 UserId = "userTwo"
             };
 
-            var newDraft = new OtherEvent()
+            var newDraft = new OtherEvent
             {
                 IsFinal = false,
                 Text = "other event one",
                 UserId = "userOne"
             };
 
-            var newDraftTwo = new OtherEvent()
+            var newDraftTwo = new OtherEvent
             {
                 IsFinal = false,
                 Text = "other event one",
@@ -172,7 +171,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination.AddEvent(newDraft);
             examination.AddEvent(newDraftTwo);
 
-            var updateDraft = new OtherEvent()
+            var updateDraft = new OtherEvent
             {
                 EventId = newDraft.EventId,
                 IsFinal = true,
@@ -297,7 +296,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var examination = new Examination();
             var caseBreakDown = new CaseBreakDown();
             var admissionNotes = new AdmissionNotesEventContainer();
-            admissionNotes.Latest = new AdmissionEvent()
+            admissionNotes.Latest = new AdmissionEvent
             {
                 ImmediateCoronerReferral = false
             };
@@ -351,7 +350,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var examination = new Examination();
             var caseBreakDown = new CaseBreakDown();
             var admissionNotes = new AdmissionNotesEventContainer();
-            admissionNotes.Latest = new AdmissionEvent()
+            admissionNotes.Latest = new AdmissionEvent
             {
                 ImmediateCoronerReferral = false
             };
@@ -375,9 +374,9 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination.MedicalTeam = medicalTeam;
             var caseBreakDown = new CaseBreakDown();
             var admissionNotes = new AdmissionNotesEventContainer();
-            admissionNotes.Latest = new AdmissionEvent()
+            admissionNotes.Latest = new AdmissionEvent
             {
-                ImmediateCoronerReferral = false,
+                ImmediateCoronerReferral = false
             };
             caseBreakDown.AdmissionNotes = admissionNotes;
             examination.CaseBreakdown = caseBreakDown;
@@ -491,7 +490,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             var examination = new Examination();
             examination.ReadyForMEScrutiny = false;
-            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() {
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent
+            {
                 ImmediateCoronerReferral = false
             };
             examination = examination.UpdateCaseStatus();
@@ -503,7 +503,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             var examination = new Examination();
             examination.ReadyForMEScrutiny = false;
-            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = true };
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent { ImmediateCoronerReferral = true };
             examination = examination.UpdateCaseStatus();
             Assert.False(examination.PendingDiscussionWithQAP);
         }
@@ -513,7 +513,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             var examination = new Examination();
             examination = SetNotReadyForMeScrutiny(examination);
-            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent { ImmediateCoronerReferral = false };
             examination = examination.UpdateCaseStatus();
             Assert.True(examination.PendingDiscussionWithQAP);
         }
@@ -523,8 +523,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             var examination = new Examination();
             examination = SetNotReadyForMeScrutiny(examination);
-            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
-            examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent() { DiscussionUnableHappen = false };
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent { ImmediateCoronerReferral = false };
+            examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent { DiscussionUnableHappen = false };
             examination = examination.UpdateCaseStatus();
             Assert.False(examination.PendingDiscussionWithQAP);
         }
@@ -534,8 +534,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             var examination = new Examination();
             examination = SetNotReadyForMeScrutiny(examination);
-            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
-            examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent() { DiscussionUnableHappen = true };
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent { ImmediateCoronerReferral = false };
+            examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent { DiscussionUnableHappen = true };
             examination = examination.UpdateCaseStatus();
             Assert.True(examination.PendingDiscussionWithQAP);
         }
@@ -572,7 +572,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             var examination = new Examination();
             examination = SetNotReadyForMeScrutiny(examination);
-            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent()
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent
             {
                 ImmediateCoronerReferral = false
             };
@@ -585,7 +585,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             var examination = new Examination();
             examination = SetNotReadyForMeScrutiny(examination);
-            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = true };
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent { ImmediateCoronerReferral = true };
             examination = examination.UpdateCaseStatus();
             Assert.False(examination.PendingDiscussionWithRepresentative);
         }
@@ -595,7 +595,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             var examination = new Examination();
             examination = SetNotReadyForMeScrutiny(examination);
-            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent { ImmediateCoronerReferral = false };
             examination = examination.UpdateCaseStatus();
             Assert.True(examination.PendingDiscussionWithRepresentative);
         }
@@ -605,7 +605,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             var examination = new Examination();
             examination = SetNotReadyForMeScrutiny(examination);
-            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent { ImmediateCoronerReferral = false };
             examination.CaseBreakdown.BereavedDiscussion.Latest = new BereavedDiscussionEvent();
             examination = examination.UpdateCaseStatus();
             Assert.False(examination.PendingDiscussionWithRepresentative);
@@ -616,8 +616,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             var examination = new Examination();
             examination = SetNotReadyForMeScrutiny(examination);
-            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent() { ImmediateCoronerReferral = false };
-            examination.CaseBreakdown.BereavedDiscussion.Latest = new BereavedDiscussionEvent() { DiscussionUnableHappen = true };
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent { ImmediateCoronerReferral = false };
+            examination.CaseBreakdown.BereavedDiscussion.Latest = new BereavedDiscussionEvent { DiscussionUnableHappen = true };
             examination = examination.UpdateCaseStatus();
             Assert.True(examination.PendingDiscussionWithRepresentative);
         }
@@ -709,7 +709,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
         private Examination SetReadyForMeScrutinyAdmissionNotes(Examination examination)
         {
-            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent()
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent
             {
                 ImmediateCoronerReferral = true
             };
@@ -740,11 +740,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         private Examination SetPendingQapDiscussion(Examination examination)
         {
             examination = SetNotReadyForMeScrutiny(examination);
-            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent()
+            examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent
             {
                 ImmediateCoronerReferral = false
             };
-            examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent()
+            examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent
             {
                 DiscussionUnableHappen = false
             };
@@ -784,7 +784,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             }
             else
             {
-                examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent()
+                examination.CaseBreakdown.AdmissionNotes.Latest = new AdmissionEvent
                 {
                     ImmediateCoronerReferral = true
                 };
@@ -801,7 +801,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             }
             else
             {
-                examination.CaseBreakdown.BereavedDiscussion.Latest = new BereavedDiscussionEvent()
+                examination.CaseBreakdown.BereavedDiscussion.Latest = new BereavedDiscussionEvent
                 {
                     DiscussionUnableHappen = false
                 };
@@ -813,9 +813,9 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         private void CalculateScrutinyCanBeConfirmed_CompleteRequirements_Returns_True()
         {
-            var examination = new Examination()
+            var examination = new Examination
             {
-                MedicalTeam = new MedicalTeam()
+                MedicalTeam = new MedicalTeam
                 {
                     MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId",
                     MedicalExaminerUserId = "MedicalExaminerUserId",
@@ -829,32 +829,32 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         GMCNumber = "GMCNumber"
                     }
                 },
-                CaseBreakdown = new CaseBreakDown()
+                CaseBreakdown = new CaseBreakDown
                 {
-                    PreScrutiny = new PreScrutinyEventContainer()
+                    PreScrutiny = new PreScrutinyEventContainer
                     {
-                        Latest = new PreScrutinyEvent()
+                        Latest = new PreScrutinyEvent
                         {
                             CauseOfDeath1a = "CauseOfDeath1a",
                             CauseOfDeath1b = "CauseOfDeath1b",
                             CauseOfDeath1c = "CauseOfDeath1c",
                             CauseOfDeath2 = "CauseOfDeath2",
-                            CircumstancesOfDeath = MedicalExaminer.Models.Enums.OverallCircumstancesOfDeath.Expected,
-                            ClinicalGovernanceReview = MedicalExaminer.Models.Enums.ClinicalGovernanceReview.No,
+                            CircumstancesOfDeath = OverallCircumstancesOfDeath.Expected,
+                            ClinicalGovernanceReview = ClinicalGovernanceReview.No,
                             ClinicalGovernanceReviewText = "ClinicalGovernanceReviewText",
                             Created = DateTime.Now,
                             EventId = "1",
                             IsFinal = true,
                             MedicalExaminerThoughts = "MedicalExaminerThoughts",
-                            OutcomeOfPreScrutiny = MedicalExaminer.Models.Enums.OverallOutcomeOfPreScrutiny.IssueAnMccd,
+                            OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
                             UserFullName = "UserFullName",
                             UserId = "userId",
                             UsersRole = "UsersRole"
                         }
                     },
-                    AdmissionNotes = new AdmissionNotesEventContainer()
+                    AdmissionNotes = new AdmissionNotesEventContainer
                     {
-                        Latest = new AdmissionEvent()
+                        Latest = new AdmissionEvent
                         {
                             AdmittedDate = DateTime.Now,
                             AdmittedTime = new TimeSpan(12, 12, 12),
@@ -881,9 +881,9 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Created = DateTime.Now
                         }
                     },
-                    QapDiscussion = new QapDiscussionEventContainer()
+                    QapDiscussion = new QapDiscussionEventContainer
                     {
-                        Latest = new QapDiscussionEvent()
+                        Latest = new QapDiscussionEvent
                         {
                             CauseOfDeath1a = "CauseOfDeath1a",
                             CauseOfDeath1b = "CauseOfDeath1b",
@@ -900,24 +900,24 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             EventId = "3",
                             IsFinal = true,
                             Created = DateTime.Now,
-                            QapDiscussionOutcome = MedicalExaminer.Models.Enums.QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                            QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                             UserFullName = "user full name",
                             UserId = "userId",
                             UsersRole = "user role"
                         }
                     },
-                    BereavedDiscussion = new BereavedDiscussionEventContainer()
+                    BereavedDiscussion = new BereavedDiscussionEventContainer
                     {
-                        Latest = new BereavedDiscussionEvent()
+                        Latest = new BereavedDiscussionEvent
                         {
-                            BereavedDiscussionOutcome = MedicalExaminer.Models.Enums.BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                            BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
                             Created = DateTime.Now,
                             DateOfConversation = DateTime.Now,
                             TimeOfConversation = new TimeSpan(10, 00, 00),
                             DiscussionDetails = "Discussion details",
                             DiscussionUnableHappen = false,
                             EventId = "4",
-                            InformedAtDeath = MedicalExaminer.Models.Enums.InformedAtDeath.Yes,
+                            InformedAtDeath = InformedAtDeath.Yes,
                             IsFinal = true,
                             UserId = "userId",
                             UserFullName = "user full name",
@@ -925,7 +925,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             ParticipantFullName = "ParticipantFullName",
                             ParticipantPhoneNumber = "ParticipantPhoneNumber",
                             ParticipantRelationship = "ParticipantRelationship",
-                            PresentAtDeath = MedicalExaminer.Models.Enums.PresentAtDeath.No
+                            PresentAtDeath = PresentAtDeath.No
                         }
                     }
                 }
@@ -939,39 +939,39 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         private void CalculateScrutinyCanBeConfirmed_MEAndMEOUnassigned_Returns_False()
         {
-            var examination = new Examination()
+            var examination = new Examination
             {
-                MedicalTeam = new MedicalTeam()
+                MedicalTeam = new MedicalTeam
                 {
                     MedicalExaminerOfficerUserId = null,
                     MedicalExaminerUserId = null
                 },
-                CaseBreakdown = new CaseBreakDown()
+                CaseBreakdown = new CaseBreakDown
                 {
-                    PreScrutiny = new PreScrutinyEventContainer()
+                    PreScrutiny = new PreScrutinyEventContainer
                     {
-                        Latest = new PreScrutinyEvent()
+                        Latest = new PreScrutinyEvent
                         {
                             CauseOfDeath1a = "CauseOfDeath1a",
                             CauseOfDeath1b = "CauseOfDeath1b",
                             CauseOfDeath1c = "CauseOfDeath1c",
                             CauseOfDeath2 = "CauseOfDeath2",
-                            CircumstancesOfDeath = MedicalExaminer.Models.Enums.OverallCircumstancesOfDeath.Expected,
-                            ClinicalGovernanceReview = MedicalExaminer.Models.Enums.ClinicalGovernanceReview.No,
+                            CircumstancesOfDeath = OverallCircumstancesOfDeath.Expected,
+                            ClinicalGovernanceReview = ClinicalGovernanceReview.No,
                             ClinicalGovernanceReviewText = "ClinicalGovernanceReviewText",
                             Created = DateTime.Now,
                             EventId = "1",
                             IsFinal = true,
                             MedicalExaminerThoughts = "MedicalExaminerThoughts",
-                            OutcomeOfPreScrutiny = MedicalExaminer.Models.Enums.OverallOutcomeOfPreScrutiny.IssueAnMccd,
+                            OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
                             UserFullName = "UserFullName",
                             UserId = "userId",
                             UsersRole = "UsersRole"
                         }
                     },
-                    AdmissionNotes = new AdmissionNotesEventContainer()
+                    AdmissionNotes = new AdmissionNotesEventContainer
                     {
-                        Latest = new AdmissionEvent()
+                        Latest = new AdmissionEvent
                         {
                             AdmittedDate = DateTime.Now,
                             AdmittedTime = new TimeSpan(12, 12, 12),
@@ -998,9 +998,9 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Created = DateTime.Now
                         }
                     },
-                    QapDiscussion = new QapDiscussionEventContainer()
+                    QapDiscussion = new QapDiscussionEventContainer
                     {
-                        Latest = new QapDiscussionEvent()
+                        Latest = new QapDiscussionEvent
                         {
                             CauseOfDeath1a = "CauseOfDeath1a",
                             CauseOfDeath1b = "CauseOfDeath1b",
@@ -1017,24 +1017,24 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             EventId = "3",
                             IsFinal = true,
                             Created = DateTime.Now,
-                            QapDiscussionOutcome = MedicalExaminer.Models.Enums.QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                            QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                             UserFullName = "user full name",
                             UserId = "userId",
                             UsersRole = "user role"
                         }
                     },
-                    BereavedDiscussion = new BereavedDiscussionEventContainer()
+                    BereavedDiscussion = new BereavedDiscussionEventContainer
                     {
-                        Latest = new BereavedDiscussionEvent()
+                        Latest = new BereavedDiscussionEvent
                         {
-                            BereavedDiscussionOutcome = MedicalExaminer.Models.Enums.BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                            BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
                             Created = DateTime.Now,
                             DateOfConversation = DateTime.Now,
                             TimeOfConversation = new TimeSpan(10, 00, 00),
                             DiscussionDetails = "Discussion details",
                             DiscussionUnableHappen = false,
                             EventId = "4",
-                            InformedAtDeath = MedicalExaminer.Models.Enums.InformedAtDeath.Yes,
+                            InformedAtDeath = InformedAtDeath.Yes,
                             IsFinal = true,
                             UserId = "userId",
                             UserFullName = "user full name",
@@ -1042,7 +1042,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             ParticipantFullName = "ParticipantFullName",
                             ParticipantPhoneNumber = "ParticipantPhoneNumber",
                             ParticipantRelationship = "ParticipantRelationship",
-                            PresentAtDeath = MedicalExaminer.Models.Enums.PresentAtDeath.No
+                            PresentAtDeath = PresentAtDeath.No
                         }
                     }
                 }
@@ -1056,9 +1056,9 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         private void CalculateScrutinyCanBeConfirmed_HasQAPDiscussion_NoBereavedDiscussion_Returns_True()
         {
-            var examination = new Examination()
+            var examination = new Examination
             {
-                MedicalTeam = new MedicalTeam()
+                MedicalTeam = new MedicalTeam
                 {
                     MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId",
                     MedicalExaminerUserId = "MedicalExaminerUserId",
@@ -1072,32 +1072,32 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         GMCNumber = "GMCNumber"
                     }
                 },
-                CaseBreakdown = new CaseBreakDown()
+                CaseBreakdown = new CaseBreakDown
                 {
-                    PreScrutiny = new PreScrutinyEventContainer()
+                    PreScrutiny = new PreScrutinyEventContainer
                     {
-                        Latest = new PreScrutinyEvent()
+                        Latest = new PreScrutinyEvent
                         {
                             CauseOfDeath1a = "CauseOfDeath1a",
                             CauseOfDeath1b = "CauseOfDeath1b",
                             CauseOfDeath1c = "CauseOfDeath1c",
                             CauseOfDeath2 = "CauseOfDeath2",
-                            CircumstancesOfDeath = MedicalExaminer.Models.Enums.OverallCircumstancesOfDeath.Expected,
-                            ClinicalGovernanceReview = MedicalExaminer.Models.Enums.ClinicalGovernanceReview.No,
+                            CircumstancesOfDeath = OverallCircumstancesOfDeath.Expected,
+                            ClinicalGovernanceReview = ClinicalGovernanceReview.No,
                             ClinicalGovernanceReviewText = "ClinicalGovernanceReviewText",
                             Created = DateTime.Now,
                             EventId = "1",
                             IsFinal = true,
                             MedicalExaminerThoughts = "MedicalExaminerThoughts",
-                            OutcomeOfPreScrutiny = MedicalExaminer.Models.Enums.OverallOutcomeOfPreScrutiny.IssueAnMccd,
+                            OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
                             UserFullName = "UserFullName",
                             UserId = "userId",
                             UsersRole = "UsersRole"
                         }
                     },
-                    AdmissionNotes = new AdmissionNotesEventContainer()
+                    AdmissionNotes = new AdmissionNotesEventContainer
                     {
-                        Latest = new AdmissionEvent()
+                        Latest = new AdmissionEvent
                         {
                             AdmittedDate = DateTime.Now,
                             AdmittedTime = new TimeSpan(12, 12, 12),
@@ -1124,9 +1124,9 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Created = DateTime.Now
                         }
                     },
-                    QapDiscussion = new QapDiscussionEventContainer()
+                    QapDiscussion = new QapDiscussionEventContainer
                     {
-                        Latest = new QapDiscussionEvent()
+                        Latest = new QapDiscussionEvent
                         {
                             CauseOfDeath1a = "CauseOfDeath1a",
                             CauseOfDeath1b = "CauseOfDeath1b",
@@ -1143,12 +1143,12 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             EventId = "3",
                             IsFinal = true,
                             Created = DateTime.Now,
-                            QapDiscussionOutcome = MedicalExaminer.Models.Enums.QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                            QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                             UserFullName = "user full name",
                             UserId = "userId",
                             UsersRole = "user role"
                         }
-                    },
+                    }
                 }
             };
 
@@ -1160,9 +1160,9 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         private void CalculateScrutinyCanBeConfirmed_NoQapDiscussion_HasBereavedDiscussion_Returns_True()
         {
-            var examination = new Examination()
+            var examination = new Examination
             {
-                MedicalTeam = new MedicalTeam()
+                MedicalTeam = new MedicalTeam
                 {
                     MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId",
                     MedicalExaminerUserId = "MedicalExaminerUserId",
@@ -1176,32 +1176,32 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         GMCNumber = "GMCNumber"
                     }
                 },
-                CaseBreakdown = new CaseBreakDown()
+                CaseBreakdown = new CaseBreakDown
                 {
-                    PreScrutiny = new PreScrutinyEventContainer()
+                    PreScrutiny = new PreScrutinyEventContainer
                     {
-                        Latest = new PreScrutinyEvent()
+                        Latest = new PreScrutinyEvent
                         {
                             CauseOfDeath1a = "CauseOfDeath1a",
                             CauseOfDeath1b = "CauseOfDeath1b",
                             CauseOfDeath1c = "CauseOfDeath1c",
                             CauseOfDeath2 = "CauseOfDeath2",
-                            CircumstancesOfDeath = MedicalExaminer.Models.Enums.OverallCircumstancesOfDeath.Expected,
-                            ClinicalGovernanceReview = MedicalExaminer.Models.Enums.ClinicalGovernanceReview.No,
+                            CircumstancesOfDeath = OverallCircumstancesOfDeath.Expected,
+                            ClinicalGovernanceReview = ClinicalGovernanceReview.No,
                             ClinicalGovernanceReviewText = "ClinicalGovernanceReviewText",
                             Created = DateTime.Now,
                             EventId = "1",
                             IsFinal = true,
                             MedicalExaminerThoughts = "MedicalExaminerThoughts",
-                            OutcomeOfPreScrutiny = MedicalExaminer.Models.Enums.OverallOutcomeOfPreScrutiny.IssueAnMccd,
+                            OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
                             UserFullName = "UserFullName",
                             UserId = "userId",
                             UsersRole = "UsersRole"
                         }
                     },
-                    AdmissionNotes = new AdmissionNotesEventContainer()
+                    AdmissionNotes = new AdmissionNotesEventContainer
                     {
-                        Latest = new AdmissionEvent()
+                        Latest = new AdmissionEvent
                         {
                             AdmittedDate = DateTime.Now,
                             AdmittedTime = new TimeSpan(12, 12, 12),
@@ -1228,18 +1228,18 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Created = DateTime.Now
                         }
                     },
-                    BereavedDiscussion = new BereavedDiscussionEventContainer()
+                    BereavedDiscussion = new BereavedDiscussionEventContainer
                     {
-                        Latest = new BereavedDiscussionEvent()
+                        Latest = new BereavedDiscussionEvent
                         {
-                            BereavedDiscussionOutcome = MedicalExaminer.Models.Enums.BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                            BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
                             Created = DateTime.Now,
                             DateOfConversation = DateTime.Now,
                             TimeOfConversation = new TimeSpan(10, 00, 00),
                             DiscussionDetails = "Discussion details",
                             DiscussionUnableHappen = false,
                             EventId = "4",
-                            InformedAtDeath = MedicalExaminer.Models.Enums.InformedAtDeath.Yes,
+                            InformedAtDeath = InformedAtDeath.Yes,
                             IsFinal = true,
                             UserId = "userId",
                             UserFullName = "user full name",
@@ -1247,7 +1247,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             ParticipantFullName = "ParticipantFullName",
                             ParticipantPhoneNumber = "ParticipantPhoneNumber",
                             ParticipantRelationship = "ParticipantRelationship",
-                            PresentAtDeath = MedicalExaminer.Models.Enums.PresentAtDeath.No
+                            PresentAtDeath = PresentAtDeath.No
                         }
                     }
                 }
@@ -1261,9 +1261,9 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         private void CalculateScrutinyCanBeConfirmed_NoAdmissionNotes_Returns_False()
         {
-            var examination = new Examination()
+            var examination = new Examination
             {
-                MedicalTeam = new MedicalTeam()
+                MedicalTeam = new MedicalTeam
                 {
                     MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId",
                     MedicalExaminerUserId = "MedicalExaminerUserId",
@@ -1277,24 +1277,24 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         GMCNumber = "GMCNumber"
                     }
                 },
-                CaseBreakdown = new CaseBreakDown()
+                CaseBreakdown = new CaseBreakDown
                 {
-                    PreScrutiny = new PreScrutinyEventContainer()
+                    PreScrutiny = new PreScrutinyEventContainer
                     {
-                        Latest = new PreScrutinyEvent()
+                        Latest = new PreScrutinyEvent
                         {
                             CauseOfDeath1a = "CauseOfDeath1a",
                             CauseOfDeath1b = "CauseOfDeath1b",
                             CauseOfDeath1c = "CauseOfDeath1c",
                             CauseOfDeath2 = "CauseOfDeath2",
-                            CircumstancesOfDeath = MedicalExaminer.Models.Enums.OverallCircumstancesOfDeath.Expected,
-                            ClinicalGovernanceReview = MedicalExaminer.Models.Enums.ClinicalGovernanceReview.No,
+                            CircumstancesOfDeath = OverallCircumstancesOfDeath.Expected,
+                            ClinicalGovernanceReview = ClinicalGovernanceReview.No,
                             ClinicalGovernanceReviewText = "ClinicalGovernanceReviewText",
                             Created = DateTime.Now,
                             EventId = "1",
                             IsFinal = true,
                             MedicalExaminerThoughts = "MedicalExaminerThoughts",
-                            OutcomeOfPreScrutiny = MedicalExaminer.Models.Enums.OverallOutcomeOfPreScrutiny.IssueAnMccd,
+                            OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
                             UserFullName = "UserFullName",
                             UserId = "userId",
                             UsersRole = "UsersRole"
@@ -1313,9 +1313,9 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Created = DateTime.Now
                         }
                     },
-                    QapDiscussion = new QapDiscussionEventContainer()
+                    QapDiscussion = new QapDiscussionEventContainer
                     {
-                        Latest = new QapDiscussionEvent()
+                        Latest = new QapDiscussionEvent
                         {
                             CauseOfDeath1a = "CauseOfDeath1a",
                             CauseOfDeath1b = "CauseOfDeath1b",
@@ -1332,24 +1332,24 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             EventId = "3",
                             IsFinal = true,
                             Created = DateTime.Now,
-                            QapDiscussionOutcome = MedicalExaminer.Models.Enums.QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                            QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                             UserFullName = "user full name",
                             UserId = "userId",
                             UsersRole = "user role"
                         }
                     },
-                    BereavedDiscussion = new BereavedDiscussionEventContainer()
+                    BereavedDiscussion = new BereavedDiscussionEventContainer
                     {
-                        Latest = new BereavedDiscussionEvent()
+                        Latest = new BereavedDiscussionEvent
                         {
-                            BereavedDiscussionOutcome = MedicalExaminer.Models.Enums.BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                            BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
                             Created = DateTime.Now,
                             DateOfConversation = DateTime.Now,
                             TimeOfConversation = new TimeSpan(10, 00, 00),
                             DiscussionDetails = "Discussion details",
                             DiscussionUnableHappen = false,
                             EventId = "4",
-                            InformedAtDeath = MedicalExaminer.Models.Enums.InformedAtDeath.Yes,
+                            InformedAtDeath = InformedAtDeath.Yes,
                             IsFinal = true,
                             UserId = "userId",
                             UserFullName = "user full name",
@@ -1357,7 +1357,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             ParticipantFullName = "ParticipantFullName",
                             ParticipantPhoneNumber = "ParticipantPhoneNumber",
                             ParticipantRelationship = "ParticipantRelationship",
-                            PresentAtDeath = MedicalExaminer.Models.Enums.PresentAtDeath.No
+                            PresentAtDeath = PresentAtDeath.No
                         }
                     }
                 }
@@ -1371,9 +1371,9 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         private void CalculateScrutinyCanBeConfirmed_NoPreScrutiny_Returns_False()
         {
-            var examination = new Examination()
+            var examination = new Examination
             {
-                MedicalTeam = new MedicalTeam()
+                MedicalTeam = new MedicalTeam
                 {
                     MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId",
                     MedicalExaminerUserId = "MedicalExaminerUserId",
@@ -1387,11 +1387,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         GMCNumber = "GMCNumber"
                     }
                 },
-                CaseBreakdown = new CaseBreakDown()
+                CaseBreakdown = new CaseBreakDown
                 {
-                    AdmissionNotes = new AdmissionNotesEventContainer()
+                    AdmissionNotes = new AdmissionNotesEventContainer
                     {
-                        Latest = new AdmissionEvent()
+                        Latest = new AdmissionEvent
                         {
                             AdmittedDate = DateTime.Now,
                             AdmittedTime = new TimeSpan(12, 12, 12),
@@ -1418,9 +1418,9 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Created = DateTime.Now
                         }
                     },
-                    QapDiscussion = new QapDiscussionEventContainer()
+                    QapDiscussion = new QapDiscussionEventContainer
                     {
-                        Latest = new QapDiscussionEvent()
+                        Latest = new QapDiscussionEvent
                         {
                             CauseOfDeath1a = "CauseOfDeath1a",
                             CauseOfDeath1b = "CauseOfDeath1b",
@@ -1437,24 +1437,24 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             EventId = "3",
                             IsFinal = true,
                             Created = DateTime.Now,
-                            QapDiscussionOutcome = MedicalExaminer.Models.Enums.QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                            QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                             UserFullName = "user full name",
                             UserId = "userId",
                             UsersRole = "user role"
                         }
                     },
-                    BereavedDiscussion = new BereavedDiscussionEventContainer()
+                    BereavedDiscussion = new BereavedDiscussionEventContainer
                     {
-                        Latest = new BereavedDiscussionEvent()
+                        Latest = new BereavedDiscussionEvent
                         {
-                            BereavedDiscussionOutcome = MedicalExaminer.Models.Enums.BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                            BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
                             Created = DateTime.Now,
                             DateOfConversation = DateTime.Now,
                             TimeOfConversation = new TimeSpan(10, 00, 00),
                             DiscussionDetails = "Discussion details",
                             DiscussionUnableHappen = false,
                             EventId = "4",
-                            InformedAtDeath = MedicalExaminer.Models.Enums.InformedAtDeath.Yes,
+                            InformedAtDeath = InformedAtDeath.Yes,
                             IsFinal = true,
                             UserId = "userId",
                             UserFullName = "user full name",
@@ -1462,7 +1462,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             ParticipantFullName = "ParticipantFullName",
                             ParticipantPhoneNumber = "ParticipantPhoneNumber",
                             ParticipantRelationship = "ParticipantRelationship",
-                            PresentAtDeath = MedicalExaminer.Models.Enums.PresentAtDeath.No
+                            PresentAtDeath = PresentAtDeath.No
                         }
                     }
                 }
@@ -1476,39 +1476,39 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         private void CalculateScrutinyCanBeConfirmed_NoMEOSummary_Returns_False()
         {
-            var examination = new Examination()
+            var examination = new Examination
             {
-                MedicalTeam = new MedicalTeam()
+                MedicalTeam = new MedicalTeam
                 {
                     MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId",
-                    MedicalExaminerUserId = "MedicalExaminerUserId",
+                    MedicalExaminerUserId = "MedicalExaminerUserId"
                 },
-                CaseBreakdown = new CaseBreakDown()
+                CaseBreakdown = new CaseBreakDown
                 {
-                    PreScrutiny = new PreScrutinyEventContainer()
+                    PreScrutiny = new PreScrutinyEventContainer
                     {
-                        Latest = new PreScrutinyEvent()
+                        Latest = new PreScrutinyEvent
                         {
                             CauseOfDeath1a = "CauseOfDeath1a",
                             CauseOfDeath1b = "CauseOfDeath1b",
                             CauseOfDeath1c = "CauseOfDeath1c",
                             CauseOfDeath2 = "CauseOfDeath2",
-                            CircumstancesOfDeath = MedicalExaminer.Models.Enums.OverallCircumstancesOfDeath.Expected,
-                            ClinicalGovernanceReview = MedicalExaminer.Models.Enums.ClinicalGovernanceReview.No,
+                            CircumstancesOfDeath = OverallCircumstancesOfDeath.Expected,
+                            ClinicalGovernanceReview = ClinicalGovernanceReview.No,
                             ClinicalGovernanceReviewText = "ClinicalGovernanceReviewText",
                             Created = DateTime.Now,
                             EventId = "1",
                             IsFinal = true,
                             MedicalExaminerThoughts = "MedicalExaminerThoughts",
-                            OutcomeOfPreScrutiny = MedicalExaminer.Models.Enums.OverallOutcomeOfPreScrutiny.IssueAnMccd,
+                            OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
                             UserFullName = "UserFullName",
                             UserId = "userId",
                             UsersRole = "UsersRole"
                         }
                     },
-                    AdmissionNotes = new AdmissionNotesEventContainer()
+                    AdmissionNotes = new AdmissionNotesEventContainer
                     {
-                        Latest = new AdmissionEvent()
+                        Latest = new AdmissionEvent
                         {
                             AdmittedDate = DateTime.Now,
                             AdmittedTime = new TimeSpan(12, 12, 12),
@@ -1522,9 +1522,9 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             UserFullName = "usersFullName"
                         }
                     },
-                    QapDiscussion = new QapDiscussionEventContainer()
+                    QapDiscussion = new QapDiscussionEventContainer
                     {
-                        Latest = new QapDiscussionEvent()
+                        Latest = new QapDiscussionEvent
                         {
                             CauseOfDeath1a = "CauseOfDeath1a",
                             CauseOfDeath1b = "CauseOfDeath1b",
@@ -1541,24 +1541,24 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             EventId = "3",
                             IsFinal = true,
                             Created = DateTime.Now,
-                            QapDiscussionOutcome = MedicalExaminer.Models.Enums.QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                            QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                             UserFullName = "user full name",
                             UserId = "userId",
                             UsersRole = "user role"
                         }
                     },
-                    BereavedDiscussion = new BereavedDiscussionEventContainer()
+                    BereavedDiscussion = new BereavedDiscussionEventContainer
                     {
-                        Latest = new BereavedDiscussionEvent()
+                        Latest = new BereavedDiscussionEvent
                         {
-                            BereavedDiscussionOutcome = MedicalExaminer.Models.Enums.BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                            BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
                             Created = DateTime.Now,
                             DateOfConversation = DateTime.Now,
                             TimeOfConversation = new TimeSpan(10, 00, 00),
                             DiscussionDetails = "Discussion details",
                             DiscussionUnableHappen = false,
                             EventId = "4",
-                            InformedAtDeath = MedicalExaminer.Models.Enums.InformedAtDeath.Yes,
+                            InformedAtDeath = InformedAtDeath.Yes,
                             IsFinal = true,
                             UserId = "userId",
                             UserFullName = "user full name",
@@ -1566,7 +1566,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             ParticipantFullName = "ParticipantFullName",
                             ParticipantPhoneNumber = "ParticipantPhoneNumber",
                             ParticipantRelationship = "ParticipantRelationship",
-                            PresentAtDeath = MedicalExaminer.Models.Enums.PresentAtDeath.No
+                            PresentAtDeath = PresentAtDeath.No
                         }
                     }
                 }
@@ -1681,6 +1681,140 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             Assert.True(examination.CalculateOutstandingCaseOutcomesCompleted());
+        }
+
+        [Theory]
+        [InlineData("Scenario1", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario2", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario3", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario4", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario5", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, true, null, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario6", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario7", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario8", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario9", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario10", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, true, null, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario11", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario12", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario13", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario14", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario15", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, true, null, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario16", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.ReferToCoronerFor100a, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario17", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.ReferToCoronerFor100a, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario18", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.ReferToCoronerFor100a, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario19", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.ReferToCoronerFor100a, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario20", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.ReferToCoronerFor100a, true, null, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario21", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.ReferToCoronerInvestigation, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario22", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.ReferToCoronerInvestigation, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario23", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.ReferToCoronerInvestigation, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario24", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.ReferToCoronerInvestigation, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario25", OverallOutcomeOfPreScrutiny.IssueAnMccd, false, QapDiscussionOutcome.ReferToCoronerInvestigation, true, null, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario26", OverallOutcomeOfPreScrutiny.IssueAnMccd, true, null, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario27", OverallOutcomeOfPreScrutiny.IssueAnMccd, true, null, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario28", OverallOutcomeOfPreScrutiny.IssueAnMccd, true, null, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario29", OverallOutcomeOfPreScrutiny.IssueAnMccd, true, null, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario30", OverallOutcomeOfPreScrutiny.IssueAnMccd, true, null, true, null, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario31", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario32", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario33", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario34", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario35", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, true, null, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario36", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario37", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario38", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario39", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario40", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, true, null, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario41", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario42", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario43", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario44", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario45", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, true, null, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario46", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.ReferToCoronerFor100a, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario47", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.ReferToCoronerFor100a, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario48", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.ReferToCoronerFor100a, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario49", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.ReferToCoronerFor100a, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario50", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.ReferToCoronerFor100a, true, null, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario51", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.ReferToCoronerInvestigation, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario52", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.ReferToCoronerInvestigation, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario53", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.ReferToCoronerInvestigation, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario54", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.ReferToCoronerInvestigation, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario55", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, false, QapDiscussionOutcome.ReferToCoronerInvestigation, true, null, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario56", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, true, null, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario57", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, true, null, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario58", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, true, null, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario59", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, true, null, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario60", OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a, true, null, true, null, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario61", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario62", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario63", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario64", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario65", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP, true, null, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario66", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario67", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario68", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario69", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario70", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathProvidedByME, true, null, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario71", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario72", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario73", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario74", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario75", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME, true, null, CaseOutcomeSummary.IssueMCCD)]
+        [InlineData("Scenario76", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.ReferToCoronerFor100a, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario77", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.ReferToCoronerFor100a, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario78", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.ReferToCoronerFor100a, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario79", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.ReferToCoronerFor100a, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario80", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.ReferToCoronerFor100a, true, null, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario81", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.ReferToCoronerInvestigation, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario82", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.ReferToCoronerInvestigation, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario83", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.ReferToCoronerInvestigation, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario84", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.ReferToCoronerInvestigation, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario85", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, false, QapDiscussionOutcome.ReferToCoronerInvestigation, true, null, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario86", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, true, null, false, BereavedDiscussionOutcome.CauseOfDeathAccepted, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario87", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, true, null, false, BereavedDiscussionOutcome.ConcernsCoronerInvestigation, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario88", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, true, null, false, BereavedDiscussionOutcome.ConcernsRequires100a, CaseOutcomeSummary.IssueMCCDWith100a)]
+        [InlineData("Scenario89", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, true, null, false, BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner, CaseOutcomeSummary.ReferToCoroner)]
+        [InlineData("Scenario90", OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation, true, null, true, null, CaseOutcomeSummary.ReferToCoroner)]
+        public void TestCaseOutcome(
+            string scenario,
+            OverallOutcomeOfPreScrutiny? overallOutcomeOfPreScrutiny,
+            bool qapDiscussionUnableToHappen,
+            QapDiscussionOutcome? qapDiscussionOutcome,
+            bool bereavedDiscussionUnableToHappen,
+            BereavedDiscussionOutcome? bereavedDiscussionOutcome,
+            CaseOutcomeSummary caseOutcomeSummary)
+        {
+            var examination = new Examination();
+
+            examination.ReadyForMEScrutiny = true;
+            examination.Unassigned = false;
+            examination.PendingScrutinyNotes = false;
+            examination.PendingAdmissionNotes = false;
+            examination.PendingDiscussionWithQAP = false;
+
+
+            examination.CaseBreakdown.PreScrutiny.Add(new PreScrutinyEvent
+            {
+                IsFinal = true,
+                OutcomeOfPreScrutiny = overallOutcomeOfPreScrutiny
+            });
+
+            examination.CaseBreakdown.QapDiscussion.Add(new QapDiscussionEvent
+            {
+                IsFinal = true,
+                QapDiscussionOutcome = qapDiscussionOutcome,
+                DiscussionUnableHappen = qapDiscussionUnableToHappen
+            });
+
+            examination.CaseBreakdown.BereavedDiscussion.Add(new BereavedDiscussionEvent
+            {
+                IsFinal = true,
+                BereavedDiscussionOutcome = bereavedDiscussionOutcome,
+                DiscussionUnableHappen = bereavedDiscussionUnableToHappen
+            });
+
+            var actualCaseOutcomeSummary = examination.CalculateScrutinyOutcome();
+
+            actualCaseOutcomeSummary.Should().Be(caseOutcomeSummary);
         }
     }
 }

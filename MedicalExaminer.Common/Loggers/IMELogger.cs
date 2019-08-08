@@ -27,6 +27,7 @@ namespace MedicalExaminer.Common.Loggers
             string controllerMethod,
             IDictionary<string, object> parameters,
             string remoteIP,
-            DateTime timeStamp);
+            DateTime timeStamp,
+            double totalRus);
     }
 }

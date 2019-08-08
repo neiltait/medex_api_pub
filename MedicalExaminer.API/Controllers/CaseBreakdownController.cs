@@ -70,7 +70,6 @@ namespace MedicalExaminer.API.Controllers
             var user = await CurrentUser();
 
             var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
-            var patientCard = Mapper.Map<PatientCardItem>(examination);
 
             if (examination == null)
             {
@@ -82,7 +81,8 @@ namespace MedicalExaminer.API.Controllers
                 return Forbid();
             }
 
-            var result = Mapper.Map<CaseBreakDownItem>(examination.CaseBreakdown, opt => opt.Items["user"] = user);
+            var patientCard = Mapper.Map<PatientCardItem>(examination);
+            var result = Mapper.Map<CaseBreakDownItem>(examination, opt => opt.Items["user"] = user);
 
             return Ok(new GetCaseBreakdownResponse
             {

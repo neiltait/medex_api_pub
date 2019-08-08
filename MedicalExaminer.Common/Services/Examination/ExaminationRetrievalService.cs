@@ -32,7 +32,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var result = GetItemAsync(x => x.ExaminationId == param.ExaminationId);
+            var result = GetItemByIdAsync(param.ExaminationId);
 
             if (result.Result != null)
             {

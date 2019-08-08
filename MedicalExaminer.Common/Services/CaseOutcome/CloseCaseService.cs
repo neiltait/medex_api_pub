@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
+using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Models;
 
@@ -34,14 +35,25 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
 
             var examinationToUpdate = await
                 _databaseAccess
-                    .GetItemAsync<Models.Examination>(
+                    .GetItemByIdAsync<Models.Examination>(
                         _connectionSettings,
-                        examination => examination.ExaminationId == param.ExaminationId);
+                        param.ExaminationId);
 
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
             examinationToUpdate.CaseCompleted = true;
             examinationToUpdate.CaseOutcome.CaseCompleted = false;
+
+            examinationToUpdate.CaseBreakdown.CaseClosedEvent = new CaseClosedEvent()
+            {
+                CaseOutcome = examinationToUpdate.CaseOutcome.CaseOutcomeSummary.Value,
+                Created = DateTime.Now,
+                DateCaseClosed = DateTime.Now,
+                EventId = Guid.NewGuid().ToString(),
+                UserFullName = param.User.FullName(),
+                UserId = param.User.UserId,
+                UsersRole = param.User.Role()?.ToString()
+            };
 
             examinationToUpdate = examinationToUpdate.UpdateCaseUrgencyScore();
             examinationToUpdate = examinationToUpdate.UpdateCaseStatus();

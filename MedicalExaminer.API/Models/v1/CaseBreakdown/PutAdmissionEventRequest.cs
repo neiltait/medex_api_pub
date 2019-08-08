@@ -1,4 +1,5 @@
 ﻿using MedicalExaminer.API.Attributes;
+using MedicalExaminer.Models.Enums;
 using System;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
@@ -48,5 +49,12 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// </summary>
         [RequiredIfAttributesMatch(nameof(IsFinal), true)]
         public bool? ImmediateCoronerReferral { get; set; }
+
+        /// <summary>
+        /// Patients Route of Admission
+        /// </summary>
+        [RequiredIfAttributesMatch(nameof(IsFinal), true)]
+        public RouteOfAdmission? RouteOfAdmission { get; set; }
+
     }
 }

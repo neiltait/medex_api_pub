@@ -24,15 +24,18 @@ namespace MedicalExaminer.BackgroundServices
                 return services;
             }
 
-            services.AddSingleton<IScheduler, Scheduler>();
+            if (backgroundServicesSettings.Disabled == false)
+            {
+                services.AddSingleton<IScheduler, Scheduler>();
 
-            // All hosted services will use this same configuration unless different interfaces are used.
-            services.AddSingleton<IScheduledServiceConfiguration, ScheduledServiceEveryDayAtSetTime>(
-                serviceProvider => new ScheduledServiceEveryDayAtSetTime(
-                    backgroundServicesSettings.TimeToRunEachDay,
-                    backgroundServicesSettings.SampleRate));
+                // All hosted services will use this same configuration unless different interfaces are used.
+                services.AddSingleton<IScheduledServiceConfiguration, ScheduledServiceEveryDayAtSetTime>(
+                    serviceProvider => new ScheduledServiceEveryDayAtSetTime(
+                        backgroundServicesSettings.TimeToRunEachDay,
+                        backgroundServicesSettings.SampleRate));
 
-            services.AddHostedService<UpdateExaminationsService>();
+                services.AddHostedService<UpdateExaminationsService>();
+            }
 
             return services;
         }

@@ -1,4 +1,6 @@
-﻿namespace MedicalExaminer.API.Models.v1.Permissions
+﻿using MedicalExaminer.Models.Enums;
+
+namespace MedicalExaminer.API.Models.v1.Permissions
 {
     /// <inheritdoc />
     /// <summary>
@@ -22,8 +24,13 @@
         public string LocationId { get; set; }
 
         /// <summary>
+        ///     Gets or sets the location name.
+        /// </summary>
+        public string LocationName { get; set; }
+
+        /// <summary>
         ///     Gets or sets the User Role for the Permission.
         /// </summary>
-        public int UserRole { get; set; }
+        public UserRoles UserRole { get; set; }
     }
 }

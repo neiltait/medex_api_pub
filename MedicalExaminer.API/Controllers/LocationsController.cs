@@ -72,12 +72,12 @@ namespace MedicalExaminer.API.Controllers
 
             if (request.AccessOnly)
             {
-                permissedLocations = await LocationsWithPermission(Permission.GetExaminations);
+                permissedLocations = await LocationsWithPermission(Permission.GetLocation);
             }
 
             var locations =
                 await _locationRetrievalByQueryHandler.Handle(
-                    new LocationsRetrievalByQuery(request.Name, request.ParentId, permissedLocations));
+                    new LocationsRetrievalByQuery(request.Name, request.ParentId, false, request.OnlyMEOffices, permissedLocations));
 
             return Ok(new GetLocationsResponse
             {

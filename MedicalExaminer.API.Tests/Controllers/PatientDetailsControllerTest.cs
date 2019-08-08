@@ -1,7 +1,6 @@
+using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.PatientDetails;
@@ -11,7 +10,7 @@ using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
-using Microsoft.AspNetCore.Http;
+using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -208,7 +207,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 patientDetailsUpdateService.Object,
                 _locationParentsQueryServiceMock.Object);
 
-            Controller.ModelState.AddModelError("An", "Error");
+            Controller.ModelState.AddModelError("An", nameof(SystemValidationErrors.Duplicate));
 
             var expectedPutPatientDetailsRequest = new PutPatientDetailsRequest();
 

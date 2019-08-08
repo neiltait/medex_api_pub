@@ -22,18 +22,22 @@ using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Extensions;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.PatientDetails;
+using MedicalExaminer.Common.Queries.Permissions;
 using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Reporting;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.CaseOutcome;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.Location;
 using MedicalExaminer.Common.Services.MedicalTeam;
 using MedicalExaminer.Common.Services.PatientDetails;
+using MedicalExaminer.Common.Services.Permissions;
 using MedicalExaminer.Common.Services.User;
 using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
@@ -90,7 +94,23 @@ namespace MedicalExaminer.API
             var backgroundServicesSettings =
                 services.ConfigureSettings<BackgroundServicesSettings>(Configuration, "BackgroundServices");
 
+            var locationMigrationSettings =
+                services.ConfigureSettings<LocationMigrationSettings>(Configuration, "LocationMigrationSettings");
+
+
+            if(locationMigrationSettings == null)
+            {
+                throw new ArgumentNullException(@"there is no location migration settings
+example:
+  LocationMigrationSettings: {
+  LocationVersion: 1
+  }
+            ");
+            }
+
             services.ConfigureSettings<AuthorizationSettings>(Configuration, "Authorization");
+
+            services.ConfigureSettings<RequestChargeSettings>(Configuration, "RequestCharge");
 
             ConfigureOktaClient(services);
 
@@ -103,11 +123,17 @@ namespace MedicalExaminer.API
                     .AllowAnyHeader();
             }));
 
+            services.AddScoped<RequestChargeService>();
+
             // Database connections.
             services.AddSingleton<IDocumentClientFactory, DocumentClientFactory>();
-            services.AddSingleton<IDatabaseAccess, DatabaseAccess>();
+            services.AddScoped<IDatabaseAccess, DatabaseAccess>();
 
             ConfigureQueries(services, cosmosDbSettings);
+
+            Mapper.Initialize(config => { config.AddMedicalExaminerProfiles(); });
+            Mapper.AssertConfigurationIsValid();
+            services.AddAutoMapper();
 
             ConfigureAuthentication(services, oktaSettings, cosmosDbSettings);
 
@@ -133,9 +159,7 @@ namespace MedicalExaminer.API
             services.AddExaminationValidation();
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
 
-            Mapper.Initialize(config => { config.AddMedicalExaminerProfiles(); });
-            Mapper.AssertConfigurationIsValid();
-            services.AddAutoMapper();
+
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(options =>
@@ -218,6 +242,11 @@ namespace MedicalExaminer.API
                 cosmosDbSettings.DatabaseId));
 
             services.AddBackgroundServices(backgroundServicesSettings);
+
+            IServiceProvider serviceProvider = services.BuildServiceProvider();
+
+            UpdateInvalidOrNullUserPermissionIds(serviceProvider);
+            UpdateLocations(serviceProvider, locationMigrationSettings);
         }
 
         /// <summary>
@@ -250,12 +279,18 @@ namespace MedicalExaminer.API
             }
 
             // Ensure collections available
-            var databaseAccess = app.ApplicationServices.GetRequiredService<IDatabaseAccess>();
-            databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<ILocationConnectionSettings>());
-            databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IExaminationConnectionSettings>());
-            databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserConnectionSettings>());
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var databaseAccess = scope.ServiceProvider.GetRequiredService<IDatabaseAccess>();
+
+                databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<ILocationConnectionSettings>());
+                databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IExaminationConnectionSettings>());
+                databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserConnectionSettings>());
+                databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserSessionConnectionSettings>());
+            }
 
             app.UseMiddleware<ResponseTimeMiddleware>();
+            app.UseMiddleware<ReportRUMiddleware>();
 
             // TODO: Not using HTTPS while we join front to back end
             //app.UseHttpsRedirection();
@@ -324,6 +359,11 @@ namespace MedicalExaminer.API
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
+            services.AddSingleton<IUserSessionConnectionSettings>(s => new UserSessionConnectionSettings(
+                new Uri(cosmosDbSettings.URL),
+                cosmosDbSettings.PrimaryKey,
+                cosmosDbSettings.DatabaseId));
+
             // Examination services
             services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
             services
@@ -335,6 +375,8 @@ namespace MedicalExaminer.API
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
                     ExaminationsRetrievalService>();
+
+            services.AddScoped<LocationMigrationService, LocationMigrationService>();
 
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
@@ -366,10 +408,15 @@ namespace MedicalExaminer.API
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>, UserRetrievalByOktaIdService>();
             services.AddScoped<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>, UserRetrievalByIdService>();
             services.AddScoped<IAsyncQueryHandler<UserUpdateQuery, MeUser>, UserUpdateService>();
-            services.AddScoped<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>, UserUpdateOktaTokenService>();
             services.AddScoped<IAsyncQueryHandler<UserUpdateOktaQuery, MeUser>, UserUpdateOktaService>();
-            services.AddScoped<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>, UsersRetrievalByOktaTokenService>();
+            services.AddScoped<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>, InvalidUserPermissionUpdateService>();
+            services.AddScoped<IOktaClient, OktaClient>();
 
+            // User session services
+            services.AddScoped<IAsyncQueryHandler<UserSessionUpdateOktaTokenQuery, MeUserSession>, UserSessionUpdateOktaTokenService>();
+            services.AddScoped<IAsyncQueryHandler<UserSessionRetrievalByOktaIdQuery, MeUserSession>, UserSessionRetrievalByOktaIdService>();
+
+            services.AddScoped<IAsyncQueryHandler<ExaminationByNhsNumberRetrievalQuery, Examination>, ExaminationByNhsNumberRetrievalService>();
             // Used for roles; but is being abused to pass null and get all users.
             services.AddScoped<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>, UsersRetrievalService>();
             services
@@ -415,9 +462,14 @@ namespace MedicalExaminer.API
                         new OktaJwtSecurityTokenHandler(
                             tokenService,
                             new JwtSecurityTokenHandler(),
-                            provider.GetRequiredService<IAsyncQueryHandler<UsersUpdateOktaTokenQuery, MeUser>>(),
-                            provider.GetRequiredService<IAsyncQueryHandler<UserRetrievalByOktaTokenQuery, MeUser>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserSessionUpdateOktaTokenQuery, MeUserSession>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserSessionRetrievalByOktaIdQuery, MeUserSession>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>(),
                             provider.GetRequiredService<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<UserUpdateQuery, MeUser>>(),
+                            provider.GetRequiredService<IAsyncQueryHandler<CreateUserQuery, MeUser>>(),
+                            provider.GetRequiredService<OktaClient>(),
                             oktaTokenExpiry));
                 });
         }
@@ -498,5 +550,23 @@ namespace MedicalExaminer.API
             services.AddScoped<IAuthorizationHandler, DocumentPermissionHandler>();
             services.AddScoped<IPermissionService, PermissionService>();
         }
+
+        private void UpdateLocations(IServiceProvider serviceProvider, LocationMigrationSettings locationMigrationSettings)
+        {
+            LocationMigrationService instance = serviceProvider.GetService<LocationMigrationService>();
+            var result = instance.Handle(_locationMigrationQueryLookup[locationMigrationSettings.Version]);
+        }
+
+        private void UpdateInvalidOrNullUserPermissionIds(IServiceProvider serviceProvider)
+        {
+            IAsyncQueryHandler<InvalidUserPermissionQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>>();
+
+            instance.Handle(new InvalidUserPermissionQuery());
+        }
+
+        private Dictionary<int, IMigrationQuery> _locationMigrationQueryLookup = new Dictionary<int, IMigrationQuery>
+        {
+            {1, new LocationMigrationQueryV1() }
+        };
     }
 }

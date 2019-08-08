@@ -43,13 +43,26 @@ namespace MedicalExaminer.Common.Services.Location
                     || param.PermissedLocations.Contains(l.NationalLocationId)
                     || param.PermissedLocations.Contains(l.RegionLocationId)
                     || param.PermissedLocations.Contains(l.TrustLocationId)
-                    || param.PermissedLocations.Contains(l.SiteLocationId)
-                    ;
+                    || param.PermissedLocations.Contains(l.SiteLocationId);
 
                 predicate = predicate.And(idFilter);
             }
 
-            var result = await GetItemsAsync(predicate);
+            IEnumerable<Models.Location> result;
+
+            if (param.ForLookup)
+            {
+                result = await GetItemsAsync<Models.Location>(predicate, location => new
+                {
+                    name = location.Name,
+                    id = location.LocationId
+                });
+            }
+            else
+            {
+                result = await GetItemsAsync(predicate);
+            }
+
             return result;
         }
 
@@ -78,6 +91,11 @@ namespace MedicalExaminer.Common.Services.Location
             {
                 predicate = location => location.Name == param.Name
                                         && location.ParentId == param.ParentId;
+            }
+
+            if (param.OnlyMeOffices)
+            {
+                predicate = predicate.And(x => x.IsMeOffice);
             }
 
             return predicate;

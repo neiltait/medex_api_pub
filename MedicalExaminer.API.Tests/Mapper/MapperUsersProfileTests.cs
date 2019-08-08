@@ -2,8 +2,12 @@
 using FluentAssertions;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.API.Models.v1.Users;
+using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
+using Moq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Mapper
@@ -26,23 +30,6 @@ namespace MedicalExaminer.API.Tests.Mapper
         ///     Mapper.
         /// </summary>
         private readonly IMapper _mapper;
-
-        [Fact]
-        public void MEUserPermission_To_UserPermission()
-        {
-            var meUserPermission = new MEUserPermission
-            {
-                LocationId = "LocationId",
-                PermissionId = "PermissionId",
-                UserRole = UserRoles.MedicalExaminer
-            };
-
-            var result = _mapper.Map<UserPermission>(meUserPermission);
-
-            result.LocationId.Should().Be(meUserPermission.LocationId);
-            result.PermissionId.Should().Be(meUserPermission.PermissionId);
-            result.UserRole.Should().Be(meUserPermission.UserRole);
-        }
 
         /// <summary>
         ///     Test Mapping UserToCreate to GetUserResponse.
@@ -104,18 +91,15 @@ namespace MedicalExaminer.API.Tests.Mapper
         [Fact]
         public void TestPutUserRequest()
         {
-            var expectedUserId = "expectedUserId";
             var expectedEmail = "test@methods.co.uk";
 
             var user = new PutUserRequest
             {
-                UserId = expectedUserId,
                 Email = expectedEmail
             };
 
             var response = _mapper.Map<MeUser>(user);
 
-            response.UserId.Should().Be(expectedUserId);
             response.Email.Should().Be(expectedEmail);
         }
 
