@@ -103,7 +103,7 @@ namespace MedicalExaminer.API
                 throw new ArgumentNullException(@"there is no location migration settings
 example:
   LocationMigrationSettings: {
-  LocationVersion: 1
+  Version: 1
   }
             ");
             }
