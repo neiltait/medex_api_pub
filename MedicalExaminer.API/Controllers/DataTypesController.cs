@@ -26,6 +26,26 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Returns all Personal Effects
+        /// </summary>
+        /// <returns>Dictionary of Personal Effects</returns>
+        [HttpGet("personal_effects")]
+        public ActionResult GetPersonalEffects()
+        {
+            return Ok(GetDictionary(typeof(PersonalEffects)));
+        }
+
+        /// <summary>
+        /// Returns all Any Implants
+        /// </summary>
+        /// <returns>Dictionary of Any Implants</returns>
+        [HttpGet("any_implants")]
+        public ActionResult GetAnyImplants()
+        {
+            return Ok(GetDictionary(typeof(AnyImplants)));
+        }
+
+        /// <summary>
         /// Returns all Analysis Entry Type types
         /// </summary>
         /// <returns>Dictionary of Analysis Entry Type</returns>
