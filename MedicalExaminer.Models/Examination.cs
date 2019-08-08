@@ -327,7 +327,7 @@ namespace MedicalExaminer.Models
         /// Have Unknown Basic Details (Name, DOB, DOD and NHS Number)
         /// </summary>
         [JsonProperty(PropertyName = "have_unknown_basic_details")]
-        public bool HaveUnknownBasicDetails { get; set; }
+        public bool HaveUnknownBasicDetails { get; set; } = true;
 
         /// <summary>
         /// Have the admission notes been added

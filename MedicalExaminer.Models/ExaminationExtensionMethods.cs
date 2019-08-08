@@ -157,22 +157,11 @@ namespace MedicalExaminer.Models
 
         public static bool CalculateBasicDetailsEntered(this Examination examination)
         {
-            if (examination.GivenNames == null || examination.Surname == null)
-            {
-                return false;
-            }
-
-            if (examination.DateOfBirth == null)
-            {
-                return false;
-            }
-
-            if (examination.DateOfDeath == null)
-            {
-                return false;
-            }
-
-            if (examination.NhsNumber == null)
+            if (examination.GivenNames == null
+                || examination.Surname == null
+                || examination.DateOfBirth == null
+                || examination.DateOfDeath == null
+                || examination.NhsNumber == null)
             {
                 return false;
             }

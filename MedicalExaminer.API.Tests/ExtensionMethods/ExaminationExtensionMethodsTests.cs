@@ -1836,48 +1836,14 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void CalculateBasicDetailsEntered_When_DOB_Is_Unknown_Returns_False()
+        public void CalculateBasicDetailsEntered_When_No_Basic_Details_Returns_False()
         {
             var examination = new Examination
             {
-                GivenNames = "GivenNames",
-                Surname = "Surname",
+                GivenNames = null,
+                Surname = null,
                 DateOfBirth = null,
-                DateOfDeath = DateTime.Today,
-                NhsNumber = "1234567890"
-            };
-
-            var haveUnknownBasicDetails = examination.CalculateBasicDetailsEntered();
-
-            haveUnknownBasicDetails.Should().BeFalse();
-        }
-
-        [Fact]
-        public void CalculateBasicDetailsEntered_When_DOD_Is_Unknown_Returns_False()
-        {
-            var examination = new Examination
-            {
-                GivenNames = "GivenNames",
-                Surname = "Surname",
-                DateOfBirth = DateTime.Today,
                 DateOfDeath = null,
-                NhsNumber = "1234567890"
-            };
-
-            var haveUnknownBasicDetails = examination.CalculateBasicDetailsEntered();
-
-            haveUnknownBasicDetails.Should().BeFalse();
-        }
-
-        [Fact]
-        public void CalculateBasicDetailsEntered_When_NHSNumber_Is_Unknown_Returns_False()
-        {
-            var examination = new Examination
-            {
-                GivenNames = "GivenNames",
-                Surname = "Surname",
-                DateOfBirth = DateTime.Today,
-                DateOfDeath = DateTime.Today,
                 NhsNumber = null
             };
 
