@@ -1820,7 +1820,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void CalculateBasicDetailsEntered_When_All_The_Details_Are_Entered_Returns_True()
+        public void CalculateBasicDetailsEnteredStatus_When_All_The_Details_Are_Entered_Returns_True()
         {
             var examination = new Examination
             {
@@ -1831,13 +1831,13 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 NhsNumber = "1234567890"
             };
 
-            var haveUnknownBasicDetails = examination.CalculateBasicDetailsEntered();
+            var haveUnknownBasicDetails = examination.CalculateBasicDetailsEnteredStatus();
 
             haveUnknownBasicDetails.Should().BeTrue();
         }
 
         [Fact]
-        public void CalculateBasicDetailsEntered_When_No_Basic_Details_Returns_False()
+        public void CalculateBasicDetailsEnteredStatus_When_No_Basic_Details_Returns_False()
         {
             var examination = new Examination
             {
@@ -1848,13 +1848,13 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 NhsNumber = null
             };
 
-            var haveUnknownBasicDetails = examination.CalculateBasicDetailsEntered();
+            var haveUnknownBasicDetails = examination.CalculateBasicDetailsEnteredStatus();
 
             haveUnknownBasicDetails.Should().BeFalse();
         }
 
         [Fact]
-        public void CalculateAdditionalDetailsEntered_When_All_Additional_Details_Returns_True()
+        public void CalculateAdditionalDetailsEnteredStatus_When_All_Additional_Details_Returns_True()
         {
             var examination = new Examination
             {
@@ -1917,13 +1917,13 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 }
             };
 
-            var additionalDetailsEntered = examination.CalculateAdditionalDetailsEntered();
+            var additionalDetailsEntered = examination.CalculateAdditionalDetailsEnteredStatus();
 
             additionalDetailsEntered.Should().BeTrue();
         }
 
         [Fact]
-        public void CalculateAdditionalDetailsEntered_When_No_Additional_Details_Returns_False()
+        public void CalculateAdditionalDetailsEnteredStatus_When_No_Additional_Details_Returns_False()
         {
             var examination = new Examination
             {
@@ -1946,9 +1946,157 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 }
             };
 
-            var additionalDetailsEntered = examination.CalculateAdditionalDetailsEntered();
+            var additionalDetailsEntered = examination.CalculateAdditionalDetailsEnteredStatus();
 
             additionalDetailsEntered.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CalculateScrutinyCompleteStatus_When_No_Required_Events_Entered_Returns_False()
+        {
+            var examination = new Examination
+            {
+                CaseBreakdown = new CaseBreakDown
+                {
+                    PreScrutiny = new PreScrutinyEventContainer
+                    {
+                        Latest = null
+                    },
+                    QapDiscussion = new QapDiscussionEventContainer
+                    {
+                        Latest = null
+                    },
+                    BereavedDiscussion = new BereavedDiscussionEventContainer
+                    {
+                        Latest = null
+                    }
+                }
+            };
+
+            var additionalDetailsEntered = examination.CalculateScrutinyCompleteStatus();
+
+            additionalDetailsEntered.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CalculateScrutinyCompleteStatus_When_All_Required_Events_Entered_Returns_True()
+        {
+            var examination = new Examination
+            {
+                CaseBreakdown = new CaseBreakDown
+                {
+                    PreScrutiny = new PreScrutinyEventContainer
+                    {
+                        Latest = new PreScrutinyEvent
+                        {
+                            CauseOfDeath1a = "CauseOfDeath1a",
+                            CauseOfDeath1b = "CauseOfDeath1b",
+                            CauseOfDeath1c = "CauseOfDeath1c",
+                            CauseOfDeath2 = "CauseOfDeath2",
+                            CircumstancesOfDeath = OverallCircumstancesOfDeath.Expected,
+                            ClinicalGovernanceReview = ClinicalGovernanceReview.No,
+                            ClinicalGovernanceReviewText = "ClinicalGovernanceReviewText",
+                            Created = DateTime.Now,
+                            EventId = "1",
+                            IsFinal = true,
+                            MedicalExaminerThoughts = "MedicalExaminerThoughts",
+                            OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
+                            UserFullName = "UserFullName",
+                            UserId = "userId",
+                            UsersRole = "UsersRole"
+                        }
+                    },
+                    QapDiscussion = new QapDiscussionEventContainer
+                    {
+                        Latest = new QapDiscussionEvent
+                        {
+                            CauseOfDeath1a = "CauseOfDeath1a",
+                            CauseOfDeath1b = "CauseOfDeath1b",
+                            CauseOfDeath1c = "CauseOfDeath1c",
+                            CauseOfDeath2 = "CauseOfDeath2",
+                            DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(10, 00, 00),
+                            DiscussionDetails = "Discussion Details",
+                            DiscussionUnableHappen = false,
+                            ParticipantName = "ParticipantName",
+                            ParticipantOrganisation = "ParticipantOrganisation",
+                            ParticipantPhoneNumber = "ParticipantPhoneNumber",
+                            ParticipantRole = "ParticipantRole",
+                            EventId = "3",
+                            IsFinal = true,
+                            Created = DateTime.Now,
+                            QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                            UserFullName = "user full name",
+                            UserId = "userId",
+                            UsersRole = "user role"
+                        }
+                    },
+                    BereavedDiscussion = new BereavedDiscussionEventContainer
+                    {
+                        Latest = new BereavedDiscussionEvent
+                        {
+                            BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                            Created = DateTime.Now,
+                            DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(10, 00, 00),
+                            DiscussionDetails = "Discussion details",
+                            DiscussionUnableHappen = false,
+                            EventId = "4",
+                            InformedAtDeath = InformedAtDeath.Yes,
+                            IsFinal = true,
+                            UserId = "userId",
+                            UserFullName = "user full name",
+                            UsersRole = "users role",
+                            ParticipantFullName = "ParticipantFullName",
+                            ParticipantPhoneNumber = "ParticipantPhoneNumber",
+                            ParticipantRelationship = "ParticipantRelationship",
+                            PresentAtDeath = PresentAtDeath.No
+                        }
+                    }
+                }
+            };
+
+            var additionalDetailsEntered = examination.CalculateScrutinyCompleteStatus();
+
+            additionalDetailsEntered.Should().BeTrue();
+        }
+
+        [Fact]
+        public void CalculateCaseItemsCompleteStatus_When_No_Case_Items_Entered_Returns_False()
+        {
+            var examination = new Examination
+            {
+                CaseOutcome = new CaseOutcome
+                {
+                    MccdIssued = null,
+                    CremationFormStatus = null,
+                    GpNotifiedStatus = null,
+                    CoronerReferralSent = false
+                }
+            };
+
+            var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
+
+            additionalDetailsEntered.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CalculateCaseItemsCompleteStatus_When_All_Case_Items_Entered_Returns_True()
+        {
+            var examination = new Examination
+            {
+                CaseOutcome = new CaseOutcome
+                {
+                    MccdIssued = true,
+                    CremationFormStatus = CremationFormStatus.Yes,
+                    GpNotifiedStatus = GPNotified.GPNotified,
+                    CoronerReferralSent = true
+                }
+            };
+
+            var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
+
+            additionalDetailsEntered.Should().BeTrue();
         }
     }
 }

@@ -107,32 +107,32 @@ namespace MedicalExaminer.Models
 
             if (examination.ChildPriority)
             {
-                score = score + defaultScoreWeighting;
+                score += defaultScoreWeighting;
             }
 
             if (examination.CoronerPriority)
             {
-                score = score + defaultScoreWeighting;
+                score += defaultScoreWeighting;
             }
 
             if (examination.CulturalPriority)
             {
-                score = score + defaultScoreWeighting;
+                score += defaultScoreWeighting;
             }
 
             if (examination.FaithPriority)
             {
-                score = score + defaultScoreWeighting;
+                score += defaultScoreWeighting;
             }
 
             if (examination.OtherPriority)
             {
-                score = score + defaultScoreWeighting;
+                score += defaultScoreWeighting;
             }
 
             if (DateTime.Now.Date.AddDays(-4) > examination.CreatedAt.Date)
             {
-                score = score + overdueScoreWeighting;
+                score += overdueScoreWeighting;
             }
 
             examination.UrgencyScore = score;
@@ -143,7 +143,7 @@ namespace MedicalExaminer.Models
         {
             examination.Unassigned = !(examination.MedicalTeam.MedicalExaminerOfficerUserId != null && examination.MedicalTeam.MedicalExaminerUserId != null);
             examination.PendingAdmissionNotes = CalculateAdmissionNotesPending(examination);
-            examination.HaveUnknownBasicDetails = !CalculateBasicDetailsEntered(examination);
+            examination.HaveUnknownBasicDetails = !CalculateBasicDetailsEnteredStatus(examination);
             examination.AdmissionNotesHaveBeenAdded = !examination.PendingAdmissionNotes;
             examination.ReadyForMEScrutiny = CalculateReadyForScrutiny(examination);
             examination.HaveBeenScrutinisedByME = examination.ScrutinyConfirmed;
@@ -156,7 +156,7 @@ namespace MedicalExaminer.Models
             return examination;
         }
 
-        public static bool CalculateBasicDetailsEntered(this Examination examination)
+        public static bool CalculateBasicDetailsEnteredStatus(this Examination examination)
         {
             return examination.GivenNames != null
                    && examination.Surname != null
@@ -165,13 +165,28 @@ namespace MedicalExaminer.Models
                    && examination.NhsNumber != null;
         }
 
-        public static bool CalculateAdditionalDetailsEntered(this Examination examination)
+        public static bool CalculateAdditionalDetailsEnteredStatus(this Examination examination)
         {
             return examination.CaseBreakdown.AdmissionNotes.Latest != null
                    && examination.MedicalTeam.ConsultantResponsible.Name != null
                    && examination.MedicalTeam.Qap.Name != null
                    && examination.Representatives.First().FullName != null
                    && examination.MedicalTeam.MedicalExaminerUserId != null;
+        }
+
+        public static bool CalculateScrutinyCompleteStatus(this Examination examination)
+        {
+            return examination.CaseBreakdown.PreScrutiny.Latest != null
+                   && examination.CaseBreakdown.QapDiscussion.Latest != null
+                   && examination.CaseBreakdown.BereavedDiscussion.Latest != null;
+        }
+
+        public static bool CalculateCaseItemsCompleteStatus(this Examination examination)
+        {
+            return examination.CaseOutcome.MccdIssued != null
+                   && examination.CaseOutcome.CremationFormStatus != null
+                   && examination.CaseOutcome.GpNotifiedStatus != null
+                   && examination.CaseOutcome.CoronerReferralSent;
         }
 
         public static bool CalculateOutstandingCaseOutcomesCompleted(this Examination examination)
@@ -322,7 +337,6 @@ namespace MedicalExaminer.Models
 
             return CaseOutcomeSummary.IssueMCCD;
         }
-
 
         private static bool CalculatePendingQAPDiscussion(Examination examination)
         {
