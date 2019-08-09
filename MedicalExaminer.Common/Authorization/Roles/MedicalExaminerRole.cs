@@ -30,6 +30,7 @@ namespace MedicalExaminer.Common.Authorization.Roles
                 Permission.OtherEvent,
                 Permission.PreScrutinyEvent,
                 Permission.GetCoronerReferralDownload);
+                Permission.CreateExamination);
         }
     }
 }

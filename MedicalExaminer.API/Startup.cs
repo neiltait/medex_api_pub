@@ -410,6 +410,7 @@ example:
             services.AddScoped<IAsyncQueryHandler<UserUpdateQuery, MeUser>, UserUpdateService>();
             services.AddScoped<IAsyncQueryHandler<UserUpdateOktaQuery, MeUser>, UserUpdateOktaService>();
             services.AddScoped<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>, InvalidUserPermissionUpdateService>();
+            services.AddScoped<IOktaClient, OktaClient>();
 
             // User session services
             services.AddScoped<IAsyncQueryHandler<UserSessionUpdateOktaTokenQuery, MeUserSession>, UserSessionUpdateOktaTokenService>();
@@ -553,7 +554,7 @@ example:
         private void UpdateLocations(IServiceProvider serviceProvider, LocationMigrationSettings locationMigrationSettings)
         {
             LocationMigrationService instance = serviceProvider.GetService<LocationMigrationService>();
-            var result = instance.Handle(_locationMigrationQueryLookup[locationMigrationSettings.LocationVersion]);
+            var result = instance.Handle(_locationMigrationQueryLookup[locationMigrationSettings.Version]);
         }
 
         private void UpdateInvalidOrNullUserPermissionIds(IServiceProvider serviceProvider)

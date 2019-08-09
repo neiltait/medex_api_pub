@@ -7,6 +7,6 @@ namespace MedicalExaminer.Common.Settings
     /// </summary>
     public class LocationMigrationSettings
     {
-        public int LocationVersion { get; set; }
+        public int Version { get; set; }
     }
 }
