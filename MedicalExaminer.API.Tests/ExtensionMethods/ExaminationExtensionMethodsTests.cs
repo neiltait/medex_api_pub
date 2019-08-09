@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using FluentAssertions;
@@ -1850,6 +1851,104 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var haveUnknownBasicDetails = examination.CalculateBasicDetailsEntered();
 
             haveUnknownBasicDetails.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CalculateAdditionalDetailsEntered_When_All_Additional_Details_Returns_True()
+        {
+            var examination = new Examination
+            {
+                Representatives = new List<Representative>
+                {
+                    new Representative
+                    {
+                        AppointmentDate = new DateTime(2019, 2, 24),
+                        AppointmentTime = new TimeSpan(11, 30, 0),
+                        FullName = "fullName",
+                        Informed = InformedAtDeath.Yes,
+                        PhoneNumber = "123456789",
+                        PresentAtDeath = PresentAtDeath.Yes,
+                        Relationship = "relationship"
+                    }
+                },
+
+                MedicalTeam = new MedicalTeam
+                {
+                    MedicalExaminerUserId = "MedicalExaminerUserId",
+                    MedicalExaminerFullName = "MedicalExaminerFullName",
+                    ConsultantResponsible = new ClinicalProfessional
+                    {
+                        Name = "ConsultantResponsibleName",
+                        Role = "ConsultantResponsible",
+                        Organisation = "Organisation",
+                        Phone = "12345678",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber"
+                    },
+                    Qap = new ClinicalProfessional
+                    {
+                        Name = "QapName",
+                        Role = "Qap",
+                        Organisation = "Organisation",
+                        Phone = "12345678",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber"
+                    }
+                },
+
+                CaseBreakdown = new CaseBreakDown
+                {
+                    AdmissionNotes = new AdmissionNotesEventContainer
+                    {
+                        Latest = new AdmissionEvent
+                        {
+                            AdmittedDate = DateTime.Now,
+                            AdmittedTime = new TimeSpan(12, 12, 12),
+                            Created = DateTime.Now,
+                            EventId = "2",
+                            ImmediateCoronerReferral = false,
+                            IsFinal = true,
+                            Notes = "Notes",
+                            UserId = "userId",
+                            UsersRole = "usersRole",
+                            UserFullName = "usersFullName"
+                        }
+                    }
+                }
+            };
+
+            var additionalDetailsEntered = examination.CalculateAdditionalDetailsEntered();
+
+            additionalDetailsEntered.Should().BeTrue();
+        }
+
+        [Fact]
+        public void CalculateAdditionalDetailsEntered_When_No_Additional_Details_Returns_False()
+        {
+            var examination = new Examination
+            {
+                Representatives = null,
+
+                MedicalTeam = new MedicalTeam
+                {
+                    MedicalExaminerUserId = null,
+                    MedicalExaminerFullName = null,
+                    ConsultantResponsible = null,
+                    Qap = null
+                },
+
+                CaseBreakdown = new CaseBreakDown
+                {
+                    AdmissionNotes = new AdmissionNotesEventContainer
+                    {
+                        Latest = null
+                    }
+                }
+            };
+
+            var additionalDetailsEntered = examination.CalculateAdditionalDetailsEntered();
+
+            additionalDetailsEntered.Should().BeFalse();
         }
     }
 }

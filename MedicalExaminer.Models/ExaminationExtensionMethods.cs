@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models
@@ -157,46 +158,20 @@ namespace MedicalExaminer.Models
 
         public static bool CalculateBasicDetailsEntered(this Examination examination)
         {
-            if (examination.GivenNames == null
-                || examination.Surname == null
-                || examination.DateOfBirth == null
-                || examination.DateOfDeath == null
-                || examination.NhsNumber == null)
-            {
-                return false;
-            }
-
-            return true;
+            return examination.GivenNames != null
+                   && examination.Surname != null
+                   && examination.DateOfBirth != null
+                   && examination.DateOfDeath != null
+                   && examination.NhsNumber != null;
         }
 
         public static bool CalculateAdditionalDetailsEntered(this Examination examination)
         {
-            if (examination.CaseBreakdown.AdmissionNotes.Latest == null)
-            {
-                return false;
-            }
-
-            if (examination.MedicalTeam.ConsultantResponsible.Name == null)
-            {
-                return false;
-            }
-
-            if (examination.MedicalTeam.Qap.Name == null)
-            {
-                return false;
-            }
-
-            if (examination.Representatives.GetEnumerator().Current?.FullName == null)
-            {
-                return false;
-            }
-
-            if (examination.MedicalTeam.MedicalExaminerUserId == null)
-            {
-                return false;
-            }
-
-            return true;
+            return examination.CaseBreakdown.AdmissionNotes.Latest != null
+                   && examination.MedicalTeam.ConsultantResponsible.Name != null
+                   && examination.MedicalTeam.Qap.Name != null
+                   && examination.Representatives.First().FullName != null
+                   && examination.MedicalTeam.MedicalExaminerUserId != null;
         }
 
         public static bool CalculateOutstandingCaseOutcomesCompleted(this Examination examination)
@@ -258,7 +233,7 @@ namespace MedicalExaminer.Models
 
         public static bool CalculateRequiresCoronerReferral(this Examination examination)
         {
-            return examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner || 
+            return examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner ||
                 examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.IssueMCCDWith100a;
         }
 
@@ -270,7 +245,7 @@ namespace MedicalExaminer.Models
             }
             else
             {
-                if (examination.CaseBreakdown.AdmissionNotes.Latest != null && 
+                if (examination.CaseBreakdown.AdmissionNotes.Latest != null &&
                     examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral.Value)
                 {
                     return false;
