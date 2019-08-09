@@ -294,7 +294,8 @@ namespace MedicalExaminer.API.Extensions.Data
                     opt => opt.MapFrom(new AdmissionDateResolver()))
                 .ForMember(
                     patientCard => patientCard.CaseOutcome,
-                    opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary));
+                    opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary))
+                .ForAllOtherMembers(patientCard => patientCard.Ignore()); // For now
 
             CreateMap<Representative, RepresentativeItem>();
             CreateMap<Examination, DeathEvent>()
@@ -321,8 +322,6 @@ namespace MedicalExaminer.API.Extensions.Data
             {
                 return true;
             }
-
-            
 
             return caseBreakdown.QapDiscussion.Latest.CauseOfDeath1a != caseBreakdown.PreScrutiny.Latest.CauseOfDeath1a
                 && caseBreakdown.QapDiscussion.Latest.CauseOfDeath1b != caseBreakdown.PreScrutiny.Latest.CauseOfDeath1b

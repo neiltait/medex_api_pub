@@ -121,6 +121,101 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public bool HaveFinalCaseOutcomesOutstanding { get; set; }
 
         /// <summary>
+        /// Main Status flag: Basic Details Entered
+        /// </summary>
+        public bool BasicDetailsEntered { get; set; }
+
+        /// <summary>
+        /// Status flag: Patient Name Entered
+        /// </summary>
+        public bool NameEntered { get; set; }
+
+        /// <summary>
+        /// Status flag: DOB Entered
+        /// </summary>
+        public bool DobEntered { get; set; }
+
+        /// <summary>
+        /// Status flag: DOD Entered
+        /// </summary>
+        public bool DodEntered { get; set; }
+
+        /// <summary>
+        /// Main Status flag: Additional Details Entered
+        /// </summary>
+        public bool AdditionalDetailsEntered { get; set; }
+
+        /// <summary>
+        /// Status flag: Latest Admission Details Entered
+        /// </summary>
+        public bool LatestAdmissionDetailsEntered { get; set; }
+
+        /// <summary>
+        /// Status flag: Doctor In Charge Entered
+        /// </summary>
+        public bool DoctorInChargeEntered { get; set; }
+
+        /// <summary>
+        /// Status flag: Qap Entered
+        /// </summary>
+        public bool QapEntered { get; set; }
+
+        /// <summary>
+        /// Status flag: Bereaved Info Entered
+        /// </summary>
+        public bool BereavedInfoEntered { get; set; }
+
+        /// <summary>
+        /// Status flag: ME Assigned
+        /// </summary>
+        public bool MeAssigned { get; set; }
+
+        /// <summary>
+        /// Main Status flag: Is Scrutiny Completed
+        /// </summary>
+        public bool IsScrutinyCompleted { get; set; }
+
+        /// <summary>
+        /// Status flag: Pre-Scrutiny Event Entered
+        /// </summary>
+        public bool PreScrutinyEventEntered { get; set; }
+
+        /// <summary>
+        /// Status flag: QAP Discussion Event Entered
+        /// </summary>
+        public bool QapDiscussionEventEntered { get; set; }
+
+        /// <summary>
+        /// Status flag: Bereaved Discussion Event Entered
+        /// </summary>
+        public bool BereavedDiscussionEventEntered { get; set; }
+
+        /// <summary>
+        /// Main Status flag: Is Case Items Completed
+        /// </summary>
+        public bool IsCaseItemsCompleted { get; set; }
+
+        /// <summary>
+        /// Status flag: MCCD Issued
+        /// </summary>
+        public bool MccdIssued { get; set; }
+
+        /// <summary>
+        /// Status flag: Cremation Form Info Entered
+        /// </summary>
+        public bool CremationFormInfoEntered { get; set; }
+
+        /// <summary>
+        /// Status flag: GP Notified
+        /// </summary>
+        public bool GpNotified { get; set; }
+
+        /// <summary>
+        /// Status flag: Sent To Coroner
+        /// </summary>
+        public bool SentToCoroner { get; set; }
+
+        /// <summary>
         /// Case Outcome
         /// </summary>
         public CaseOutcomeSummary? CaseOutcome { get; set; }

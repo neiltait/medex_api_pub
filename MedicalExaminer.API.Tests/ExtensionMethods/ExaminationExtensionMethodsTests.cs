@@ -2098,5 +2098,24 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             additionalDetailsEntered.Should().BeTrue();
         }
+
+        [Fact]
+        public void CalculateCaseItemsCompleteStatus_When_Any_Unknown_Case_Items_Entered_Returns_True()
+        {
+            var examination = new Examination
+            {
+                CaseOutcome = new CaseOutcome
+                {
+                    MccdIssued = true,
+                    CremationFormStatus = CremationFormStatus.Unknown,
+                    GpNotifiedStatus = GPNotified.GPNotified,
+                    CoronerReferralSent = true
+                }
+            };
+
+            var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
+
+            additionalDetailsEntered.Should().BeNull();
+        }
     }
 }

@@ -181,12 +181,27 @@ namespace MedicalExaminer.Models
                    && examination.CaseBreakdown.BereavedDiscussion.Latest != null;
         }
 
-        public static bool CalculateCaseItemsCompleteStatus(this Examination examination)
+        //todo: Need to look at the logic again
+        public static bool? CalculateCaseItemsCompleteStatus(this Examination examination)
         {
-            return examination.CaseOutcome.MccdIssued != null
-                   && examination.CaseOutcome.CremationFormStatus != null
-                   && examination.CaseOutcome.GpNotifiedStatus != null
-                   && examination.CaseOutcome.CoronerReferralSent;
+            if (examination.CaseOutcome.CremationFormStatus == CremationFormStatus.Unknown)
+            {
+                return null;
+            }
+
+            if (examination.CaseOutcome.CremationFormStatus == null
+                || examination.CaseOutcome.MccdIssued == null
+                || examination.CaseOutcome.GpNotifiedStatus == null)
+            {
+                return false;
+            }
+
+            if (examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner)
+            {
+                return examination.CaseOutcome.CoronerReferralSent;
+            }
+
+            return true;
         }
 
         public static bool CalculateOutstandingCaseOutcomesCompleted(this Examination examination)
