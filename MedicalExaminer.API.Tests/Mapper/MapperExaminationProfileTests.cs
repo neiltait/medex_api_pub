@@ -1245,6 +1245,153 @@ namespace MedicalExaminer.API.Tests.Mapper
 
         }
 
+        [Fact]
+        public void Nullish_Examination_To_Odt_Download()
+        {
+            var examination = GetNullExaminationForOdtMapping();
+            //var expected = new GetCoronerReferralDownloadResponse()
+            //{
+            //    AbleToIssueMCCD = true,
+            //    AnyImplants = examination.AnyImplants,
+            //};
+
+            var result = _mapper.Map<GetCoronerReferralDownloadResponse>(examination);
+            //            IsEquivalent(expected, result);
+
+        }
+
+        private Examination GetNullExaminationForOdtMapping()
+        {
+            return new Examination()
+            {
+                AdmissionNotesHaveBeenAdded = false,
+                AnyImplants = null,
+                AnyPersonalEffects = false,
+                CaseBreakdown = new CaseBreakDown()
+                {
+                    AdmissionNotes = new AdmissionNotesEventContainer()
+                    {
+                        Latest = null,
+                        Drafts = null,
+                        History = null
+                    },
+                    BereavedDiscussion = new BereavedDiscussionEventContainer()
+                    {
+                        Latest = null,
+                        Drafts = null,
+                        History = null
+                    },
+                    CaseClosedEvent = null,
+                    DeathEvent = null,
+                    MedicalHistory = new MedicalHistoryEventContainer()
+                    {
+                        Latest = null,
+                        Drafts = null,
+                        History = null
+                    },
+                    MeoSummary = new MeoSummaryEventContainer()
+                    {
+                        Latest = null,
+                        Drafts = null,
+                        History = null
+                    },
+                    OtherEvents = new OtherEventContainer()
+                    {
+                        Latest = null,
+                        Drafts = null,
+                        History = null
+                    },
+                    PreScrutiny = new PreScrutinyEventContainer()
+                    {
+                        Latest = null,
+                        Drafts = null,
+                        History = null
+                    },
+                    QapDiscussion = new QapDiscussionEventContainer()
+                    {
+                        Latest = null,
+                        Drafts = null,
+                        History = null
+                    }
+                },
+                CaseCompleted = false,
+                CaseOutcome = null,
+                ChildPriority = false,
+                ConfirmationOfScrutinyCompletedAt = null,
+                ConfirmationOfScrutinyCompletedBy = null,
+                CoronerPriority = false,
+                CoronerReferralSent = false,
+                CoronerStatus = CoronerStatus.None,
+                Country = null,
+                County = null,
+                CreatedAt = DateTime.Now,
+                CreatedBy = null,
+                CulturalPriority = false,
+                DateOfBirth = null,
+                DateOfDeath = null,
+                DeletedAt = null,
+                ExaminationId = "examinationId",
+                FaithPriority = false,
+                FuneralDirectors = null,
+                Gender = ExaminationGender.Female,
+                GenderDetails = null,
+                GivenNames = null,
+                HaveBeenScrutinisedByME = false,
+                HaveFinalCaseOutcomesOutstanding = false,
+                HospitalNumber_1 = null,
+                HospitalNumber_2 = null,
+                HospitalNumber_3 = null,
+                HouseNameNumber = null,
+                ImplantDetails= null,
+                LastAdmission = null,
+                LastModifiedBy = null,
+                LastOccupation = null,
+                MedicalExaminerOfficeResponsible = null,
+                MedicalExaminerOfficeResponsibleName = null,
+                MedicalTeam = new MedicalTeam()
+                {
+                    ConsultantResponsible = null,
+                    ConsultantsOther = null,
+                    GeneralPractitioner = null,
+                    MedicalExaminerFullName = null,
+                    MedicalExaminerOfficerFullName = null,
+                    MedicalExaminerOfficerUserId = null,
+                    MedicalExaminerUserId = null,
+                    NursingTeamInformation = null,
+                    Qap = null
+                },
+                ModeOfDisposal = ModeOfDisposal.Unknown,
+                ModifiedAt = new DateTimeOffset(),
+                NationalLocationId = null,
+                NhsNumber = null,
+                OrganisationCareBeforeDeathLocationId = null,
+                OtherPriority = false,
+                OutstandingCaseItemsCompleted = false,
+                PendingAdmissionNotes = false,
+                PendingDiscussionWithQAP = false,
+                PendingDiscussionWithRepresentative = false,
+                PendingScrutinyNotes = false,
+                PersonalEffectDetails = null,
+                PlaceDeathOccured = null,
+                Postcode = null,
+                PriorityDetails = null,
+                ReadyForMEScrutiny = false,
+                RegionLocationId = null,
+                Representatives = null,
+                ScrutinyConfirmed = false,
+                SiteLocationId = null,
+                Street = null,
+                Surname = null,
+                TimeOfDeath = null,
+                Town = null,
+                TrustLocationId = null,
+                Unassigned = false,
+                UrgencyScore = 0
+            };
+
+            return null;
+        }
+
         private void IsEquivalent(GetCoronerReferralDownloadResponse expected, GetCoronerReferralDownloadResponse actual)
         {
             actual.AbleToIssueMCCD.Should().Be(expected.AbleToIssueMCCD);

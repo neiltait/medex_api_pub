@@ -52,7 +52,7 @@ namespace MedicalExaminer.API.Models.v1.Report
         /// <summary>
         /// the patients date of birth
         /// </summary>
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         /// <summary>
         /// the patients gender
@@ -93,12 +93,12 @@ namespace MedicalExaminer.API.Models.v1.Report
         /// <summary>
         /// the date the patient died
         /// </summary>
-        public DateTime DateOfDeath { get; set; }
+        public DateTime? DateOfDeath { get; set; }
 
         /// <summary>
         /// the time the patient died
         /// </summary>
-        public TimeSpan TimeOfDeath { get; set; }
+        public TimeSpan? TimeOfDeath { get; set; }
 
         /// <summary>
         /// does the patient have any implants
