@@ -158,6 +158,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var locationsService = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>();
             var authorizationServiceMock = new Mock<IAuthorizationService>();
             var permissionServiceMock = new Mock<IPermissionService>();
+            var locationsParentsServiceMock = new Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>();
 
             _controller = new UsersController(
                 _mockLogger,
@@ -170,7 +171,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 usersRetrievalService.Object,
                 userUpdateService.Object,
                 locationsService.Object,
-                null);
+                null,
+                locationsParentsServiceMock.Object);
         }
 
         [Fact]
