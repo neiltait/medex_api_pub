@@ -167,18 +167,18 @@ namespace MedicalExaminer.Models
 
         public static bool CalculateAdditionalDetailsEnteredStatus(this Examination examination)
         {
-            return examination.CaseBreakdown.AdmissionNotes.Latest != null
-                   && examination.MedicalTeam.ConsultantResponsible.Name != null
-                   && examination.MedicalTeam.Qap.Name != null
-                   && examination.Representatives.First().FullName != null
-                   && examination.MedicalTeam.MedicalExaminerUserId != null;
+            return examination.CaseBreakdown.AdmissionNotes?.Latest != null
+                   && examination.MedicalTeam?.ConsultantResponsible?.Name != null
+                   && examination.MedicalTeam?.Qap?.Name != null
+                   && examination.Representatives?.FirstOrDefault()?.FullName != null
+                   && examination.MedicalTeam?.MedicalExaminerUserId != null;
         }
 
         public static bool CalculateScrutinyCompleteStatus(this Examination examination)
         {
-            return examination.CaseBreakdown.PreScrutiny.Latest != null
-                   && examination.CaseBreakdown.QapDiscussion.Latest != null
-                   && examination.CaseBreakdown.BereavedDiscussion.Latest != null;
+            return examination.CaseBreakdown.PreScrutiny?.Latest != null
+                   && examination.CaseBreakdown.QapDiscussion?.Latest != null
+                   && examination.CaseBreakdown.BereavedDiscussion?.Latest != null;
         }
 
         //todo: Need to look at the logic again
