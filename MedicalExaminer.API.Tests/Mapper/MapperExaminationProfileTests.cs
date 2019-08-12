@@ -1254,7 +1254,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 County = "county",
                 DateOfBirth = new DateTime(2001, 9, 11),
                 DateOfDeath = new DateTime(2019, 8, 5),
-                DetailsAboutMedicalHistory = "\r\nSome History should never be thought of",
+                DetailsAboutMedicalHistory = "Some History should never be thought of",
                 Gender = ExaminationGender.Female,
                 GivenNames = "givenName",
                 GP = new ClinicalProfessionalItem()
@@ -1343,7 +1343,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 County = null,
                 DateOfBirth = null,
                 DateOfDeath = null,
-                DetailsAboutMedicalHistory = null,
+                DetailsAboutMedicalHistory = "",
                 Gender = ExaminationGender.Female,
                 GivenNames = null,
                 GP = null,
@@ -1389,7 +1389,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 County = "county",
                 DateOfBirth = new DateTime(2001, 9, 11),
                 DateOfDeath = new DateTime(2019, 8, 5),
-                DetailsAboutMedicalHistory = "\r\nSome History should never be thought of",
+                DetailsAboutMedicalHistory = "Some History should never be thought of",
                 Gender = ExaminationGender.Female,
                 GivenNames = "givenName",
                 GP = new ClinicalProfessionalItem()
@@ -1479,7 +1479,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 County = "county",
                 DateOfBirth = new DateTime(2001, 9, 11),
                 DateOfDeath = new DateTime(2019, 8, 5),
-                DetailsAboutMedicalHistory = "\r\nSome History should never be thought of",
+                DetailsAboutMedicalHistory = "Some History should never be thought of",
                 Gender = ExaminationGender.Female,
                 GivenNames = "givenName",
                 GP = new ClinicalProfessionalItem()

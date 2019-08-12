@@ -142,8 +142,16 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(dest => dest.Consultant, opt => opt.MapFrom(src => src.MedicalTeam.ConsultantResponsible))
                 .ForMember(dest => dest.GP, opt => opt.MapFrom(src => src.MedicalTeam.GeneralPractitioner))
                 .ForMember(dest => dest.LatestAdmissionDetails, opt => opt.MapFrom(src => src.CaseBreakdown.AdmissionNotes.Latest))
-                .ForMember(dest => dest.DetailsAboutMedicalHistory, opt => opt.MapFrom(src => src.CaseBreakdown.MedicalHistory.History.
-                    Select(hstry => hstry.Text).Aggregate("", (current, next) => current + Environment.NewLine + next)));
+                .ForMember(dest => dest.DetailsAboutMedicalHistory, opt => opt.MapFrom((src, dest, destMember, context) => {
+                    var temp = src.CaseBreakdown.MedicalHistory.History.
+                    Select(hstry => hstry?.Text).Aggregate("", (current, next) => current + next + Environment.NewLine);
+                    if (temp != null)
+                    {
+                        temp = temp.TrimEnd(Environment.NewLine.ToCharArray());
+                    }
+
+                    return temp;
+                }));
 
             CreateMap<Examination, BereavedDiscussionPrepopulated>()
                 .ForMember(dest => dest.CauseOfDeath1a, opt => opt.MapFrom((source, dest, destMember, context) =>
