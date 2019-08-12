@@ -1371,14 +1371,14 @@ namespace MedicalExaminer.API.Tests.Mapper
                 DateOfDeath = null,
                 DetailsAboutMedicalHistory = "",
                 Gender = null,
-                GivenNames = "",
+                GivenNames = "givenNames",
                 GP = null,
-                HouseNameNumber = "",
-                ImplantDetails = "",
+                HouseNameNumber = "houseNameNumber",
+                ImplantDetails = "implantDetails",
                 LatestAdmissionDetails = null,
                 LatestBereavedDiscussion = null,
                 NhsNumber = "nhsNumber",
-                PlaceOfDeath = "",
+                PlaceOfDeath = "placeDeathOccured",
                 Postcode = "postCode",
                 Qap = new ClinicalProfessionalItem()
                 {
@@ -1389,10 +1389,10 @@ namespace MedicalExaminer.API.Tests.Mapper
                     Phone = "111",
                     Role = "QAP"
                 },
-                Street = "",
-                Surname = "",
-                TimeOfDeath = new TimeSpan(),
-                Town = "",
+                Street = "street",
+                Surname = "surname",
+                TimeOfDeath = new TimeSpan(11, 11, 00),
+                Town = "town",
             };
 
             var result = _mapper.Map<GetCoronerReferralDownloadResponse>(examination);
@@ -1447,6 +1447,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                 UsersRole = "Tax Man"
             };
 
+            AdmissionEvent admissionEvent = null;
+            BereavedDiscussionEvent bereavedDiscussion = null;
             CaseOutcome caseOutcome = null;
             Representative[] representatives = null;
             TimeSpan? timeOfDeath = null;
@@ -1455,6 +1457,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             DateTime? lastAdmission = null;
             ClinicalProfessional consultant = null;
             ClinicalProfessional qap = null;
+            ClinicalProfessional gp = null;
 
             if (generalDetails)
             {
@@ -1462,6 +1465,16 @@ namespace MedicalExaminer.API.Tests.Mapper
                 dateOfBirth = new DateTime(2001, 9, 11);
                 dateOfDeath = new DateTime(2019, 8, 5);
                 lastAdmission = new DateTime(2019, 5, 5);
+
+                gp = new ClinicalProfessional()
+                {
+                    GMCNumber = "11111111111112",
+                    Name = "Gary Numan",
+                    Notes = "About to retire",
+                    Organisation = "The Oaklands Practice",
+                    Phone = "1111",
+                    Role = "General Practitioner"
+                };
 
                 consultant = new ClinicalProfessional()
                 {
@@ -1481,6 +1494,11 @@ namespace MedicalExaminer.API.Tests.Mapper
                     Organisation = "General Staffing Pool",
                     Phone = "111",
                     Role = "QAP"
+                };
+
+                admissionEvent = new AdmissionEvent()
+                {
+
                 };
 
                 caseOutcome = new CaseOutcome()
@@ -1512,6 +1530,27 @@ namespace MedicalExaminer.API.Tests.Mapper
                         Relationship = "Embarrassing Uncle"
                     }
                 };
+
+                bereavedDiscussion = new BereavedDiscussionEvent()
+                {
+                    BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                    Created = new DateTime(2019, 8, 12),
+                    DateOfConversation = new DateTime(2019, 8, 12),
+                    DiscussionDetails = "discussionDetails",
+                    DiscussionUnableHappen = false,
+                    DiscussionUnableHappenDetails = "unableToHappenDetails",
+                    EventId = "1",
+                    InformedAtDeath = InformedAtDeath.Yes,
+                    IsFinal = true,
+                    ParticipantFullName = "Maraget Thatcher",
+                    ParticipantPhoneNumber = "9876",
+                    ParticipantRelationship = "Wet nurse",
+                    PresentAtDeath = PresentAtDeath.Yes,
+                    TimeOfConversation = new TimeSpan(13, 13, 0),
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "usersRole"
+                };
             }
 
             return new Examination()
@@ -1523,13 +1562,13 @@ namespace MedicalExaminer.API.Tests.Mapper
                 {
                     AdmissionNotes = new AdmissionNotesEventContainer()
                     {
-                        Latest = null,
+                        Latest = admissionEvent,
                         Drafts = null,
                         History = null
                     },
                     BereavedDiscussion = new BereavedDiscussionEventContainer()
                     {
-                        Latest = null,
+                        Latest = bereavedDiscussion,
                         Drafts = null,
                         History = null
                     },
@@ -1604,7 +1643,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 {
                     ConsultantResponsible = consultant,
                     ConsultantsOther = null,
-                    GeneralPractitioner = null,
+                    GeneralPractitioner = gp,
                     MedicalExaminerFullName = generalDetails ? "medicalExaminerName" : null,
                     MedicalExaminerOfficerFullName = generalDetails ? "medicalExaminerOfficerName" : null,
                     MedicalExaminerOfficerUserId = generalDetails ? "medicalExaminerOfficerId" : null,
