@@ -29,7 +29,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>> _userUpdateService;
         private readonly Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> _locationsService;
         private readonly Mock<IOktaClient> _mockOktaClient;
-
+        private readonly Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>> _locationsParentsServiceMock;
         public UsersControllerTests()
         {
             var logger = new Mock<IMELogger>();
@@ -40,6 +40,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             _userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
             _locationsService = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>();
             _mockOktaClient = new Mock<IOktaClient>(MockBehavior.Strict);
+            _locationsParentsServiceMock = new Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>();
 
             Controller = new UsersController(
                 logger.Object,
@@ -52,7 +53,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 _usersRetrievalService.Object,
                 _userUpdateService.Object,
                 _locationsService.Object,
-                _mockOktaClient.Object);
+                _mockOktaClient.Object,
+                _locationsParentsServiceMock.Object);
         }
 
         /// <summary>
@@ -304,11 +306,20 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             const string expectedUserId = "expectedUserId";
 
-            var user = new MeUser { UserId = expectedUserId };
-
+            var user = new MeUser
+            {
+                UserId = expectedUserId,
+                Permissions = new MEUserPermission[0]
+            };
+            var theManager = new MeUser()
+            {
+                Permissions = new MEUserPermission[0]
+            };
+            UsersRetrievalByOktaIdServiceMock.Setup(uroi => uroi.Handle(It.IsAny<UserRetrievalByOktaIdQuery>())).Returns(Task.FromResult(theManager));
             _userRetrievalService.Setup(up => up.Handle(It.IsAny<UserRetrievalByIdQuery>()))
                 .Returns(Task.FromResult(user));
 
+            Controller.ControllerContext = GetControllerContext();
             // Act
             var response = await Controller.GetUser(expectedUserId);
 
