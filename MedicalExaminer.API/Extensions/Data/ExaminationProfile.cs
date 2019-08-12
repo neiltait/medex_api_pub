@@ -29,7 +29,7 @@ namespace MedicalExaminer.API.Extensions.Data
                     {
                         if(src.CaseBreakdown.PreScrutiny.Latest == null)
                         {
-                            return string.Empty;
+                            return null;
                         }
                         else
                         {
@@ -55,7 +55,7 @@ namespace MedicalExaminer.API.Extensions.Data
                     {
                         if (src.CaseBreakdown.PreScrutiny.Latest == null)
                         {
-                            return string.Empty;
+                            return null;
                         }
                         else
                         {
@@ -82,7 +82,7 @@ namespace MedicalExaminer.API.Extensions.Data
                     {
                         if (src.CaseBreakdown.PreScrutiny.Latest == null)
                         {
-                            return string.Empty;
+                            return null;
                         }
                         else
                         {
@@ -108,7 +108,7 @@ namespace MedicalExaminer.API.Extensions.Data
                     {
                         if (src.CaseBreakdown.PreScrutiny.Latest == null)
                         {
-                            return string.Empty;
+                            return null;
                         }
                         else
                         {

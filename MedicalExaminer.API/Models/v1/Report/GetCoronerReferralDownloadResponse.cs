@@ -1,6 +1,7 @@
 ﻿using System;
 using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.Report
 {
@@ -57,7 +58,7 @@ namespace MedicalExaminer.API.Models.v1.Report
         /// <summary>
         /// the patients gender
         /// </summary>
-        public string Gender { get; set; }
+        public ExaminationGender Gender { get; set; }
 
         /// <summary>
         /// the patients address

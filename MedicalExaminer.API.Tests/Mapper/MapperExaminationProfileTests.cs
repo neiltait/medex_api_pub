@@ -1242,27 +1242,86 @@ namespace MedicalExaminer.API.Tests.Mapper
                 CauseOfDeath1b = "bathroom",
                 CauseOfDeath1c = "novotel",
                 CauseOfDeath2 = "airbnb",
-                Consultant = null,
-                County = "",
-                DateOfBirth = null,
-                DateOfDeath = null,
-                DetailsAboutMedicalHistory = "",
-                Gender = null,
-                GivenNames = "",
-                GP = null,
-                HouseNameNumber = "",
-                ImplantDetails = "",
-                LatestAdmissionDetails = null,
-                LatestBereavedDiscussion = null,
-                NhsNumber = "",
-                PlaceOfDeath = "",
-                Postcode = "",
-                Qap = null,
-                Street = "",
-                Surname = "",
-                TimeOfDeath = new TimeSpan(),
-                Town = "",
+                Consultant = new ClinicalProfessionalItem()
+                {
+                    GMCNumber = "122484abcd",
+                    Name = "Clarisa Charmeress",
+                    Notes = "TOP SECRET",
+                    Organisation = "The World Health Organisation",
+                    Phone = "999",
+                    Role = "Consultant"
+                },
+                County = "county",
+                DateOfBirth = new DateTime(2001, 9, 11),
+                DateOfDeath = new DateTime(2019, 8, 5),
+                DetailsAboutMedicalHistory = "\r\nSome History should never be thought of",
+                Gender = ExaminationGender.Female,
+                GivenNames = "givenName",
+                GP = new ClinicalProfessionalItem()
+                {
+                    GMCNumber = "11111111111112",
+                    Name = "Gary Numan",
+                    Notes = "About to retire",
+                    Organisation = "The Oaklands Practice",
+                    Phone = "1111",
+                    Role = "General Practitioner"
+                },
+                HouseNameNumber = "houseNameNumber",
+                ImplantDetails = "implantDetails",
+                LatestAdmissionDetails = new AdmissionEventItem()
+                {
+                    AdmittedDate = new DateTime(2019, 5, 5),
+                    AdmittedDateUnknown = false,
+                    AdmittedTime = new TimeSpan(11, 11, 00),
+                    AdmittedTimeUnknown = false,
+                    Created = new DateTime(),
+                    EventId = "2",
+                    ImmediateCoronerReferral = false,
+                    IsFinal = true,
+                    Notes = "the admission notes",
+                    RouteOfAdmission = RouteOfAdmission.AccidentAndEmergency,
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "userRole"
+                },
+                LatestBereavedDiscussion = new BereavedDiscussionEventItem()
+                {
+                    BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                    Created = new DateTime(2019, 8, 12),
+                    DateOfConversation = new DateTime(2019, 8, 12),
+                    DiscussionDetails = "discussionDetails",
+                    DiscussionUnableHappen = false,
+                    DiscussionUnableHappenDetails = "unableToHappenDetails",
+                    EventId = "1",
+                    InformedAtDeath = InformedAtDeath.Yes,
+                    IsFinal = true,
+                    ParticipantFullName = "Maraget Thatcher",
+                    ParticipantPhoneNumber = "9876",
+                    ParticipantRelationship = "Wet nurse",
+                    PresentAtDeath = PresentAtDeath.Yes,
+                    TimeOfConversation = new TimeSpan(13, 13, 0),
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "usersRole"
+                },
+                NhsNumber = "nhsNumber",
+                PlaceOfDeath = "placeDeathOccured",
+                Postcode = "postCode",
+                Qap = new ClinicalProfessionalItem()
+                {
+                    GMCNumber = null,
+                    Name = "gary link",
+                    Notes = "some discussion details",
+                    Organisation = "gary links big examination",
+                    Phone = "077123456",
+                    Role = "SomeRole"
+                },
+                Street = "street",
+                Surname = "surname",
+                TimeOfDeath = new TimeSpan(11, 11, 00),
+                Town = "town",
             };
+
 
             var result = _mapper.Map<GetCoronerReferralDownloadResponse>(examination);
             IsEquivalent(expected, result);
@@ -1274,32 +1333,32 @@ namespace MedicalExaminer.API.Tests.Mapper
             var examination = GetExaminationForOdtMapping(false, false, false);
             var expected = new GetCoronerReferralDownloadResponse()
             {
-                AbleToIssueMCCD = true,
+                AbleToIssueMCCD = false,
                 AnyImplants = examination.AnyImplants,
-                CauseOfDeath1a = "",
-                CauseOfDeath1b = "",
-                CauseOfDeath1c = "",
-                CauseOfDeath2 = "",
+                CauseOfDeath1a = null,
+                CauseOfDeath1b = null,
+                CauseOfDeath1c = null,
+                CauseOfDeath2 = null,
                 Consultant = null,
-                County = "",
+                County = null,
                 DateOfBirth = null,
                 DateOfDeath = null,
-                DetailsAboutMedicalHistory = "",
-                Gender = null,
-                GivenNames = "",
+                DetailsAboutMedicalHistory = null,
+                Gender = ExaminationGender.Female,
+                GivenNames = null,
                 GP = null,
-                HouseNameNumber = "",
-                ImplantDetails = "",
+                HouseNameNumber = null,
+                ImplantDetails = null,
                 LatestAdmissionDetails = null,
                 LatestBereavedDiscussion = null,
-                NhsNumber = "",
-                PlaceOfDeath = "",
-                Postcode = "",
+                NhsNumber = null,
+                PlaceOfDeath = null,
+                Postcode = null,
                 Qap = null,
-                Street = "",
-                Surname = "",
-                TimeOfDeath = new TimeSpan(),
-                Town = "",
+                Street = null,
+                Surname = null,
+                TimeOfDeath = null,
+                Town = null,
             };
 
             var result = _mapper.Map<GetCoronerReferralDownloadResponse>(examination);
@@ -1314,31 +1373,82 @@ namespace MedicalExaminer.API.Tests.Mapper
             {
                 AbleToIssueMCCD = true,
                 AnyImplants = examination.AnyImplants,
-                CauseOfDeath1a = "",
-                CauseOfDeath1b = "",
-                CauseOfDeath1c = "",
-                CauseOfDeath2 = "",
-                Consultant = null,
-                County = "",
-                DateOfBirth = null,
-                DateOfDeath = null,
-                DetailsAboutMedicalHistory = "",
-                Gender = null,
-                GivenNames = "",
-                GP = null,
-                HouseNameNumber = "",
-                ImplantDetails = "",
-                LatestAdmissionDetails = null,
-                LatestBereavedDiscussion = null,
-                NhsNumber = "",
-                PlaceOfDeath = "",
-                Postcode = "",
+                CauseOfDeath1a = "apple",
+                CauseOfDeath1b = "banana",
+                CauseOfDeath1c = "Cucumber",
+                CauseOfDeath2 = "doughnut",
+                Consultant = new ClinicalProfessionalItem()
+                {
+                    GMCNumber = "122484abcd",
+                    Name = "Clarisa Charmeress",
+                    Notes = "TOP SECRET",
+                    Organisation = "The World Health Organisation",
+                    Phone = "999",
+                    Role = "Consultant"
+                },
+                County = "county",
+                DateOfBirth = new DateTime(2001, 9, 11),
+                DateOfDeath = new DateTime(2019, 8, 5),
+                DetailsAboutMedicalHistory = "\r\nSome History should never be thought of",
+                Gender = ExaminationGender.Female,
+                GivenNames = "givenName",
+                GP = new ClinicalProfessionalItem()
+                {
+                    GMCNumber = "11111111111112",
+                    Name = "Gary Numan",
+                    Notes = "About to retire",
+                    Organisation = "The Oaklands Practice",
+                    Phone = "1111",
+                    Role = "General Practitioner"
+                },
+                HouseNameNumber = "houseNameNumber",
+                ImplantDetails = "implantDetails",
+                LatestAdmissionDetails = new AdmissionEventItem()
+                {
+                    AdmittedDate = new DateTime(2019, 5, 5),
+                    AdmittedDateUnknown = false,
+                    AdmittedTime = new TimeSpan(11, 11, 00),
+                    AdmittedTimeUnknown = false,
+                    Created = new DateTime(),
+                    EventId = "2",
+                    ImmediateCoronerReferral = false,
+                    IsFinal = true,
+                    Notes = "the admission notes",
+                    RouteOfAdmission = RouteOfAdmission.AccidentAndEmergency,
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "userRole"
+                },
+                LatestBereavedDiscussion = new BereavedDiscussionEventItem()
+                {
+                    BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                    Created = new DateTime(2019, 8, 12),
+                    DateOfConversation = new DateTime(2019, 8, 12),
+                    DiscussionDetails = "discussionDetails",
+                    DiscussionUnableHappen = false,
+                    DiscussionUnableHappenDetails = "unableToHappenDetails",
+                    EventId = "1",
+                    InformedAtDeath = InformedAtDeath.Yes,
+                    IsFinal = true,
+                    ParticipantFullName = "Maraget Thatcher",
+                    ParticipantPhoneNumber = "9876",
+                    ParticipantRelationship = "Wet nurse",
+                    PresentAtDeath = PresentAtDeath.Yes,
+                    TimeOfConversation = new TimeSpan(13, 13, 0),
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "usersRole"
+                },
+                NhsNumber = "nhsNumber",
+                PlaceOfDeath = "placeDeathOccured",
+                Postcode = "postCode",
                 Qap = null,
-                Street = "",
-                Surname = "",
-                TimeOfDeath = new TimeSpan(),
-                Town = "",
+                Street = "street",
+                Surname = "surname",
+                TimeOfDeath = new TimeSpan(11, 11, 00),
+                Town = "town",
             };
+
 
             var result = _mapper.Map<GetCoronerReferralDownloadResponse>(examination);
             IsEquivalent(expected, result);
@@ -1366,28 +1476,70 @@ namespace MedicalExaminer.API.Tests.Mapper
                     Phone = "999",
                     Role = "Consultant"
                 },
-                County = "country",
-                DateOfBirth = null,
-                DateOfDeath = null,
-                DetailsAboutMedicalHistory = "",
-                Gender = null,
-                GivenNames = "givenNames",
-                GP = null,
+                County = "county",
+                DateOfBirth = new DateTime(2001, 9, 11),
+                DateOfDeath = new DateTime(2019, 8, 5),
+                DetailsAboutMedicalHistory = "\r\nSome History should never be thought of",
+                Gender = ExaminationGender.Female,
+                GivenNames = "givenName",
+                GP = new ClinicalProfessionalItem()
+                {
+                    GMCNumber = "11111111111112",
+                    Name = "Gary Numan",
+                    Notes = "About to retire",
+                    Organisation = "The Oaklands Practice",
+                    Phone = "1111",
+                    Role = "General Practitioner"
+                },
                 HouseNameNumber = "houseNameNumber",
                 ImplantDetails = "implantDetails",
-                LatestAdmissionDetails = null,
-                LatestBereavedDiscussion = null,
+                LatestAdmissionDetails = new AdmissionEventItem()
+                {
+                    AdmittedDate = new DateTime(2019, 5, 5),
+                    AdmittedDateUnknown = false,
+                    AdmittedTime = new TimeSpan(11, 11, 00),
+                    AdmittedTimeUnknown = false,
+                    Created = new DateTime(),
+                    EventId = "2",
+                    ImmediateCoronerReferral = false,
+                    IsFinal = true,
+                    Notes = "the admission notes",
+                    RouteOfAdmission = RouteOfAdmission.AccidentAndEmergency,
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "userRole"
+                },
+                LatestBereavedDiscussion = new BereavedDiscussionEventItem()
+                {
+                    BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                    Created = new DateTime(2019, 8, 12),
+                    DateOfConversation = new DateTime(2019, 8, 12),
+                    DiscussionDetails = "discussionDetails",
+                    DiscussionUnableHappen = false,
+                    DiscussionUnableHappenDetails = "unableToHappenDetails",
+                    EventId = "1",
+                    InformedAtDeath = InformedAtDeath.Yes,
+                    IsFinal = true,
+                    ParticipantFullName = "Maraget Thatcher",
+                    ParticipantPhoneNumber = "9876",
+                    ParticipantRelationship = "Wet nurse",
+                    PresentAtDeath = PresentAtDeath.Yes,
+                    TimeOfConversation = new TimeSpan(13, 13, 0),
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "usersRole"
+                },
                 NhsNumber = "nhsNumber",
                 PlaceOfDeath = "placeDeathOccured",
                 Postcode = "postCode",
                 Qap = new ClinicalProfessionalItem()
                 {
-                    GMCNumber = "112484abcd",
-                    Name = "Jermimer Puddleduck",
-                    Notes = "Its great weather for ducks outside",
-                    Organisation = "General Staffing Pool",
-                    Phone = "111",
-                    Role = "QAP"
+                    GMCNumber = null,
+                    Name = "gary link",
+                    Notes = "some discussion details",
+                    Organisation = "gary links big examination",
+                    Phone = "077123456",
+                    Role = "SomeRole"
                 },
                 Street = "street",
                 Surname = "surname",
@@ -1424,29 +1576,34 @@ namespace MedicalExaminer.API.Tests.Mapper
                 };
             }
 
-            QapDiscussionEvent latestQapDiscussionEvent = new QapDiscussionEvent()
+            QapDiscussionEvent latestQapDiscussionEvent = null;
+            if (hasQapDiscussion)
             {
-                CauseOfDeath1a = "mustang",
-                CauseOfDeath1b = "bathroom",
-                CauseOfDeath1c = "novotel",
-                CauseOfDeath2 = "airbnb",
-                Created = null,
-                DateOfConversation = null,
-                DiscussionDetails = "some discussion details",
-                DiscussionUnableHappen = false,
-                EventId = "qapDiscussionEventId",
-                IsFinal = true,
-                ParticipantName = "gary link",
-                ParticipantOrganisation = "gary links big examination",
-                ParticipantPhoneNumber = "077123456",
-                ParticipantRole = "SomeRole",
-                QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP,
-                TimeOfConversation = null,
-                UserFullName = "The Tax Man",
-                UserId = "TaxMan",
-                UsersRole = "Tax Man"
-            };
+                latestQapDiscussionEvent = new QapDiscussionEvent()
+                {
+                    CauseOfDeath1a = "mustang",
+                    CauseOfDeath1b = "bathroom",
+                    CauseOfDeath1c = "novotel",
+                    CauseOfDeath2 = "airbnb",
+                    Created = null,
+                    DateOfConversation = null,
+                    DiscussionDetails = "some discussion details",
+                    DiscussionUnableHappen = false,
+                    EventId = "qapDiscussionEventId",
+                    IsFinal = true,
+                    ParticipantName = "gary link",
+                    ParticipantOrganisation = "gary links big examination",
+                    ParticipantPhoneNumber = "077123456",
+                    ParticipantRole = "SomeRole",
+                    QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP,
+                    TimeOfConversation = null,
+                    UserFullName = "The Tax Man",
+                    UserId = "TaxMan",
+                    UsersRole = "Tax Man"
+                };
+            }
 
+            MedicalHistoryEvent medicalHistoryEvent = null;
             AdmissionEvent admissionEvent = null;
             BereavedDiscussionEvent bereavedDiscussion = null;
             CaseOutcome caseOutcome = null;
@@ -1465,6 +1622,11 @@ namespace MedicalExaminer.API.Tests.Mapper
                 dateOfBirth = new DateTime(2001, 9, 11);
                 dateOfDeath = new DateTime(2019, 8, 5);
                 lastAdmission = new DateTime(2019, 5, 5);
+
+                medicalHistoryEvent = new MedicalHistoryEvent()
+                {
+                    Text = "Some History should never be thought of"
+                };
 
                 gp = new ClinicalProfessional()
                 {
@@ -1498,7 +1660,19 @@ namespace MedicalExaminer.API.Tests.Mapper
 
                 admissionEvent = new AdmissionEvent()
                 {
-
+                    AdmittedDate = new DateTime(2019, 5, 5),
+                    AdmittedDateUnknown = false,
+                    AdmittedTime = new TimeSpan(11, 11, 00),
+                    AdmittedTimeUnknown = false,
+                    Created = new DateTime(),
+                    EventId = "2",
+                    ImmediateCoronerReferral = false,
+                    IsFinal = true,
+                    Notes = "the admission notes",
+                    RouteOfAdmission = RouteOfAdmission.AccidentAndEmergency,
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "userRole"
                 };
 
                 caseOutcome = new CaseOutcome()
@@ -1576,9 +1750,9 @@ namespace MedicalExaminer.API.Tests.Mapper
                     DeathEvent = null,
                     MedicalHistory = new MedicalHistoryEventContainer()
                     {
-                        Latest = null,
+                        Latest = medicalHistoryEvent,
                         Drafts = null,
-                        History = null
+                        History = new [] { medicalHistoryEvent }
                     },
                     MeoSummary = new MeoSummaryEventContainer()
                     {
@@ -1689,8 +1863,26 @@ namespace MedicalExaminer.API.Tests.Mapper
             actual.CauseOfDeath1b.Should().Be(expected.CauseOfDeath1b);
             actual.CauseOfDeath1c.Should().Be(expected.CauseOfDeath1c);
             actual.CauseOfDeath2.Should().Be(expected.CauseOfDeath2);
-            actual.Consultant.Should().Be(expected.Consultant);
-
+            actual.Consultant.Should().BeEquivalentTo(expected.Consultant);
+            actual.County.Should().Be(expected.County);
+            actual.DateOfBirth.Should().Be(expected.DateOfBirth);
+            actual.DateOfDeath.Should().Be(expected.DateOfDeath);
+            actual.DetailsAboutMedicalHistory.Should().Be(expected.DetailsAboutMedicalHistory);
+            actual.Gender.Should().Be(expected.Gender);
+            actual.GivenNames.Should().Be(expected.GivenNames);
+            actual.GP.Should().BeEquivalentTo(expected.GP);
+            actual.HouseNameNumber.Should().Be(expected.HouseNameNumber);
+            actual.ImplantDetails.Should().Be(expected.ImplantDetails);
+            actual.LatestAdmissionDetails.Should().BeEquivalentTo(expected.LatestAdmissionDetails);
+            actual.LatestBereavedDiscussion.Should().BeEquivalentTo(expected.LatestBereavedDiscussion);
+            actual.NhsNumber.Should().Be(expected.NhsNumber);
+            actual.PlaceOfDeath.Should().Be(expected.PlaceOfDeath);
+            actual.Postcode.Should().Be(expected.Postcode);
+            actual.Qap.Should().BeEquivalentTo(expected.Qap);
+            actual.Street.Should().Be(expected.Street);
+            actual.Surname.Should().Be(expected.Surname);
+            actual.TimeOfDeath.Should().Be(expected.TimeOfDeath);
+            actual.Town.Should().Be(expected.Town);
         }
 
         public void BereavedDiscussionPrepopulated_Examination_To_Casebreakdown_No_PrescrutinyLatest()
