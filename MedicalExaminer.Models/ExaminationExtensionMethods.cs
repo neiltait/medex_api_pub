@@ -181,7 +181,6 @@ namespace MedicalExaminer.Models
                    && examination.CaseBreakdown.BereavedDiscussion?.Latest != null;
         }
 
-        //todo: Need to look at the logic again
         public static bool? CalculateCaseItemsCompleteStatus(this Examination examination)
         {
             if (examination.CaseOutcome.CremationFormStatus == CremationFormStatus.Unknown)
@@ -191,14 +190,12 @@ namespace MedicalExaminer.Models
 
             if (examination.CaseOutcome.CremationFormStatus == null
                 || examination.CaseOutcome.MccdIssued == null
-                || examination.CaseOutcome.GpNotifiedStatus == null)
+                || examination.CaseOutcome.GpNotifiedStatus == null
+                || examination.CaseCompleted == false
+                || (examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner
+                    && !examination.CaseOutcome.CoronerReferralSent))
             {
                 return false;
-            }
-
-            if (examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner)
-            {
-                return examination.CaseOutcome.CoronerReferralSent;
             }
 
             return true;

@@ -470,6 +470,8 @@ namespace MedicalExaminer.API.Extensions.Data
                     (source, dest, destMember, context) => source.CaseOutcome.GpNotifiedStatus != null))
                 .ForMember(patientCard => patientCard.SentToCoroner, opt => opt.MapFrom(
                     (source, dest, destMember, context) => source.CaseOutcome.CoronerReferralSent))
+                .ForMember(patientCard => patientCard.CaseClosed, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CaseCompleted))
                 .ForMember(patientCard => patientCard.IsCaseItemsCompleted, opt => opt.MapFrom(
                     (source, dest, destMember, context) => source.CalculateCaseItemsCompleteStatus()));
 

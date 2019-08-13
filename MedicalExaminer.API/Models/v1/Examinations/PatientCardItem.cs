@@ -221,8 +221,14 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public bool SentToCoroner { get; set; } = false;
 
         /// <summary>
+        /// Status flag: Case Closed?
+        /// </summary>
+        public bool CaseClosed { get; set; } = false;
+
+        /// <summary>
         /// Case Outcome
         /// </summary>
         public CaseOutcomeSummary? CaseOutcome { get; set; }
+
     }
 }

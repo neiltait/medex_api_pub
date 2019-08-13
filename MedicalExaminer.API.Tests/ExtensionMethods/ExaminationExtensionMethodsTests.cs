@@ -1793,7 +1793,6 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination.PendingAdmissionNotes = false;
             examination.PendingDiscussionWithQAP = false;
 
-
             examination.CaseBreakdown.PreScrutiny.Add(new PreScrutinyEvent
             {
                 IsFinal = true,
@@ -1822,40 +1821,47 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         public void CalculateBasicDetailsEnteredStatus_When_All_The_Details_Are_Entered_Returns_True()
         {
+            // Arrange
             var examination = new Examination
             {
                 GivenNames = "GivenNames",
                 Surname = "Surname",
                 DateOfBirth = DateTime.Today,
                 DateOfDeath = DateTime.Today,
-                NhsNumber = "1234567890"
+                NhsNumber = "1234567890",
             };
 
+            // Act
             var haveUnknownBasicDetails = examination.CalculateBasicDetailsEnteredStatus();
 
+            // Assert
             haveUnknownBasicDetails.Should().BeTrue();
         }
 
         [Fact]
         public void CalculateBasicDetailsEnteredStatus_When_No_Basic_Details_Returns_False()
         {
+            // Arrange
             var examination = new Examination
             {
                 GivenNames = null,
                 Surname = null,
                 DateOfBirth = null,
                 DateOfDeath = null,
-                NhsNumber = null
+                NhsNumber = null,
             };
 
+            // Act
             var haveUnknownBasicDetails = examination.CalculateBasicDetailsEnteredStatus();
 
+            // Assert
             haveUnknownBasicDetails.Should().BeFalse();
         }
 
         [Fact]
         public void CalculateAdditionalDetailsEnteredStatus_When_All_Additional_Details_Returns_True()
         {
+            // Arrange
             var examination = new Examination
             {
                 Representatives = new List<Representative>
@@ -1868,7 +1874,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         Informed = InformedAtDeath.Yes,
                         PhoneNumber = "123456789",
                         PresentAtDeath = PresentAtDeath.Yes,
-                        Relationship = "relationship"
+                        Relationship = "relationship",
                     }
                 },
 
@@ -1883,7 +1889,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         Organisation = "Organisation",
                         Phone = "12345678",
                         Notes = "Notes",
-                        GMCNumber = "GMCNumber"
+                        GMCNumber = "GMCNumber",
                     },
                     Qap = new ClinicalProfessional
                     {
@@ -1892,7 +1898,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         Organisation = "Organisation",
                         Phone = "12345678",
                         Notes = "Notes",
-                        GMCNumber = "GMCNumber"
+                        GMCNumber = "GMCNumber",
                     }
                 },
 
@@ -1911,20 +1917,23 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Notes = "Notes",
                             UserId = "userId",
                             UsersRole = "usersRole",
-                            UserFullName = "usersFullName"
+                            UserFullName = "usersFullName",
                         }
                     }
                 }
             };
 
+            // Act
             var additionalDetailsEntered = examination.CalculateAdditionalDetailsEnteredStatus();
 
+            // Assert
             additionalDetailsEntered.Should().BeTrue();
         }
 
         [Fact]
         public void CalculateAdditionalDetailsEnteredStatus_When_No_Additional_Details_Returns_False()
         {
+            // Arrange
             var examination = new Examination
             {
                 Representatives = null,
@@ -1934,7 +1943,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                     MedicalExaminerUserId = null,
                     MedicalExaminerFullName = null,
                     ConsultantResponsible = null,
-                    Qap = null
+                    Qap = null,
                 },
 
                 CaseBreakdown = new CaseBreakDown
@@ -1946,14 +1955,17 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 }
             };
 
+            // Act
             var additionalDetailsEntered = examination.CalculateAdditionalDetailsEnteredStatus();
 
+            // Assert
             additionalDetailsEntered.Should().BeFalse();
         }
 
         [Fact]
         public void CalculateScrutinyCompleteStatus_When_No_Required_Events_Entered_Returns_False()
         {
+            // Arrange
             var examination = new Examination
             {
                 CaseBreakdown = new CaseBreakDown
@@ -1973,14 +1985,17 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 }
             };
 
+            // Act
             var additionalDetailsEntered = examination.CalculateScrutinyCompleteStatus();
 
+            // Assert
             additionalDetailsEntered.Should().BeFalse();
         }
 
         [Fact]
         public void CalculateScrutinyCompleteStatus_When_All_Required_Events_Entered_Returns_True()
         {
+            // Arrange
             var examination = new Examination
             {
                 CaseBreakdown = new CaseBreakDown
@@ -2003,7 +2018,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
                             UserFullName = "UserFullName",
                             UserId = "userId",
-                            UsersRole = "UsersRole"
+                            UsersRole = "UsersRole",
                         }
                     },
                     QapDiscussion = new QapDiscussionEventContainer
@@ -2028,7 +2043,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                             UserFullName = "user full name",
                             UserId = "userId",
-                            UsersRole = "user role"
+                            UsersRole = "user role",
                         }
                     },
                     BereavedDiscussion = new BereavedDiscussionEventContainer
@@ -2050,20 +2065,23 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             ParticipantFullName = "ParticipantFullName",
                             ParticipantPhoneNumber = "ParticipantPhoneNumber",
                             ParticipantRelationship = "ParticipantRelationship",
-                            PresentAtDeath = PresentAtDeath.No
+                            PresentAtDeath = PresentAtDeath.No,
                         }
                     }
                 }
             };
 
+            // Act
             var additionalDetailsEntered = examination.CalculateScrutinyCompleteStatus();
 
+            // Assert
             additionalDetailsEntered.Should().BeTrue();
         }
 
         [Fact]
         public void CalculateCaseItemsCompleteStatus_When_No_Case_Items_Entered_Returns_False()
         {
+            // Arrange
             var examination = new Examination
             {
                 CaseOutcome = new CaseOutcome
@@ -2071,18 +2089,22 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                     MccdIssued = null,
                     CremationFormStatus = null,
                     GpNotifiedStatus = null,
-                    CoronerReferralSent = false
-                }
+                    CoronerReferralSent = false,
+                },
+                CaseCompleted = true
             };
 
+            // Act
             var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
 
+            // Assert
             additionalDetailsEntered.Should().BeFalse();
         }
 
         [Fact]
         public void CalculateCaseItemsCompleteStatus_When_All_Case_Items_Entered_Returns_True()
         {
+            // Arrange
             var examination = new Examination
             {
                 CaseOutcome = new CaseOutcome
@@ -2090,18 +2112,22 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                     MccdIssued = true,
                     CremationFormStatus = CremationFormStatus.Yes,
                     GpNotifiedStatus = GPNotified.GPNotified,
-                    CoronerReferralSent = true
-                }
+                    CoronerReferralSent = true,
+                },
+                CaseCompleted = true
             };
 
+            // Act
             var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
 
+            // Assert
             additionalDetailsEntered.Should().BeTrue();
         }
 
         [Fact]
         public void CalculateCaseItemsCompleteStatus_When_Any_Unknown_Case_Items_Entered_Returns_True()
         {
+            // Arrange
             var examination = new Examination
             {
                 CaseOutcome = new CaseOutcome
@@ -2109,13 +2135,64 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                     MccdIssued = true,
                     CremationFormStatus = CremationFormStatus.Unknown,
                     GpNotifiedStatus = GPNotified.GPNotified,
-                    CoronerReferralSent = true
-                }
+                    CoronerReferralSent = true,
+                },
+                CaseCompleted = true
             };
 
+            // Act
             var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
 
+            // Assert
             additionalDetailsEntered.Should().BeNull();
+        }
+
+        [Fact]
+        public void CalculateCaseItemsCompleteStatus_When_Refer_To_Coroner_And_CoronerReferralSent_Is_False_Entered_Returns_False()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                CaseOutcome = new CaseOutcome
+                {
+                    CaseOutcomeSummary = CaseOutcomeSummary.ReferToCoroner,
+                    MccdIssued = true,
+                    CremationFormStatus = CremationFormStatus.Yes,
+                    GpNotifiedStatus = GPNotified.GPNotified,
+                    CoronerReferralSent = false,
+                },
+                CaseCompleted = true
+            };
+
+            // Act
+            var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
+
+            // Assert
+            additionalDetailsEntered.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CalculateCaseItemsCompleteStatus_When_Case_Not_Closed_Returns_False()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                CaseOutcome = new CaseOutcome
+                {
+                    CaseOutcomeSummary = CaseOutcomeSummary.ReferToCoroner,
+                    MccdIssued = true,
+                    CremationFormStatus = CremationFormStatus.Yes,
+                    GpNotifiedStatus = GPNotified.GPNotified,
+                    CoronerReferralSent = true,
+                },
+                CaseCompleted = false
+            };
+
+            // Act
+            var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
+
+            // Assert
+            additionalDetailsEntered.Should().BeFalse();
         }
     }
 }
