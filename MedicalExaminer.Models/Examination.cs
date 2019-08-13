@@ -324,6 +324,12 @@ namespace MedicalExaminer.Models
         public CaseBreakDown CaseBreakdown { get; set; } = new CaseBreakDown();
 
         /// <summary>
+        /// Have Unknown Basic Details (Name, DOB, DOD and NHS Number)
+        /// </summary>
+        [JsonProperty(PropertyName = "have_unknown_basic_details")]
+        public bool HaveUnknownBasicDetails { get; set; } = true;
+
+        /// <summary>
         /// Have the admission notes been added
         /// </summary>
         [JsonProperty(PropertyName = "admission_notes_have_been_added")]

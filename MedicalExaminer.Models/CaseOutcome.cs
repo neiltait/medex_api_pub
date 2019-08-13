@@ -39,7 +39,7 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Scrutiny Confirmed On
         /// </summary>
-        [JsonProperty(PropertyName = "ccrutiny_confirmed_on")]
+        [JsonProperty(PropertyName = "scrutiny_confirmed_on")]
         public DateTime? ScrutinyConfirmedOn { get; set; }
 
         /// <summary>

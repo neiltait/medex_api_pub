@@ -644,6 +644,346 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.Unassigned.Should().Be(true);
         }
 
+        [Fact]
+        public void Examination_To_PatientCard_Statuses_When_All_Required_Details_Entered()
+        {
+            // Arrange
+            var appointmentDate = DateTime.Now.AddDays(1);
+            var appointmentTime = new TimeSpan(10, 30, 00);
+            var representative = new Representative()
+            {
+                AppointmentDate = appointmentDate,
+                AppointmentTime = appointmentTime,
+                FullName = "bob",
+                Informed = InformedAtDeath.Yes,
+                PhoneNumber = "1234",
+                PresentAtDeath = PresentAtDeath.Unknown,
+                Relationship = "milk man"
+            };
+
+            var examination = GenerateExamination();
+            examination.GivenNames = "GivenNames";
+            examination.Surname = "Surname";
+            examination.DateOfBirth = new DateTime(2000, 01, 12);
+            examination.DateOfDeath = new DateTime(2019, 08, 12);
+            examination.NhsNumber = "1234567890";
+
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
+            {
+                Name = "ConsultantResponsible",
+                Role = "Consultant",
+                Organisation = "Organisation",
+                Phone = "01148394748",
+                Notes = "Notes",
+                GMCNumber = "G12345"
+            };
+            examination.MedicalTeam.Qap.Name = "Qap Name";
+            examination.Representatives = new[] { representative };
+            examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+
+            examination.CaseOutcome.MccdIssued = true;
+            examination.CaseOutcome.CremationFormStatus = CremationFormStatus.Yes;
+            examination.CaseOutcome.GpNotifiedStatus = GPNotified.GPNotified;
+            examination.CaseOutcome.CoronerReferralSent = true;
+
+            // Action
+            var result = _mapper.Map<PatientCardItem>(examination);
+
+            // Assert
+            // Basic Details
+            result.BasicDetailsEntered.Should().BeTrue();
+            result.NameEntered.Should().BeTrue();
+            result.DobEntered.Should().BeTrue();
+            result.DodEntered.Should().BeTrue();
+            result.NhsNumberEntered.Should().BeTrue();
+
+            // Additional Details
+            result.AdditionalDetailsEntered.Should().BeTrue();
+            result.LatestAdmissionDetailsEntered.Should().BeTrue();
+            result.DoctorInChargeEntered.Should().BeTrue();
+            result.QapEntered.Should().BeTrue();
+            result.BereavedInfoEntered.Should().BeTrue();
+            result.MeAssigned.Should().BeTrue();
+
+            // Is Scrutiny Complete?
+            result.IsScrutinyCompleted.Should().BeTrue();
+            result.PreScrutinyEventEntered.Should().BeTrue();
+            result.QapDiscussionEventEntered.Should().BeTrue();
+            result.BereavedDiscussionEventEntered.Should().BeTrue();
+
+            // Is Case Items Complete?
+            result.IsCaseItemsCompleted.Should().BeTrue();
+            result.MccdIssued.Should().BeTrue();
+            result.CremationFormInfoEntered.Should().BeTrue();
+            result.GpNotified.Should().BeTrue();
+            result.SentToCoroner.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Examination_To_PatientCard_Statuses_When_Basic_Details_Not_Entered()
+        {
+            // Arrange
+            var appointmentDate = DateTime.Now.AddDays(1);
+            var appointmentTime = new TimeSpan(10, 30, 00);
+            var representative = new Representative()
+            {
+                AppointmentDate = appointmentDate,
+                AppointmentTime = appointmentTime,
+                FullName = "bob",
+                Informed = InformedAtDeath.Yes,
+                PhoneNumber = "1234",
+                PresentAtDeath = PresentAtDeath.Unknown,
+                Relationship = "milk man"
+            };
+
+            var examination = GenerateExamination();
+            examination.GivenNames = null;
+            examination.Surname = null;
+            examination.DateOfBirth = null;
+            examination.DateOfDeath = null;
+            examination.NhsNumber = null;
+
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
+            {
+                Name = "ConsultantResponsible",
+                Role = "Consultant",
+                Organisation = "Organisation",
+                Phone = "01148394748",
+                Notes = "Notes",
+                GMCNumber = "G12345"
+            };
+            examination.MedicalTeam.Qap.Name = "Qap Name";
+            examination.Representatives = new[] { representative };
+            examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+
+            examination.CaseOutcome.MccdIssued = true;
+            examination.CaseOutcome.CremationFormStatus = CremationFormStatus.Yes;
+            examination.CaseOutcome.GpNotifiedStatus = GPNotified.GPNotified;
+            examination.CaseOutcome.CoronerReferralSent = true;
+
+            // Action
+            var result = _mapper.Map<PatientCardItem>(examination);
+
+            // Assert
+            // Basic Details
+            result.BasicDetailsEntered.Should().BeFalse();
+            result.NameEntered.Should().BeFalse();
+            result.DobEntered.Should().BeFalse();
+            result.DodEntered.Should().BeFalse();
+            result.NhsNumberEntered.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Examination_To_PatientCard_Statuses_When_Additional_Details_Not_Entered()
+        {
+            // Arrange
+            var appointmentDate = DateTime.Now.AddDays(1);
+            var appointmentTime = new TimeSpan(10, 30, 00);
+            var representative = new Representative()
+            {
+                AppointmentDate = appointmentDate,
+                AppointmentTime = appointmentTime,
+                FullName = "bob",
+                Informed = InformedAtDeath.Yes,
+                PhoneNumber = "1234",
+                PresentAtDeath = PresentAtDeath.Unknown,
+                Relationship = "milk man"
+            };
+
+            var examination = GenerateExamination();
+            examination.GivenNames = "GivenNames";
+            examination.Surname = "Surname";
+            examination.DateOfBirth = new DateTime(2000, 01, 12);
+            examination.DateOfDeath = new DateTime(2019, 08, 12);
+            examination.NhsNumber = "1234567890";
+
+            examination.CaseBreakdown.AdmissionNotes.Latest = null;
+            examination.MedicalTeam.ConsultantResponsible = null;
+            examination.MedicalTeam.Qap.Name = null;
+            examination.Representatives = null;
+            examination.MedicalTeam.MedicalExaminerUserId = null;
+
+            examination.CaseOutcome.MccdIssued = true;
+            examination.CaseOutcome.CremationFormStatus = CremationFormStatus.Yes;
+            examination.CaseOutcome.GpNotifiedStatus = GPNotified.GPNotified;
+            examination.CaseOutcome.CoronerReferralSent = true;
+
+            // Action
+            var result = _mapper.Map<PatientCardItem>(examination);
+
+            // Assert
+            // Additional Details
+            result.AdditionalDetailsEntered.Should().BeFalse();
+            result.LatestAdmissionDetailsEntered.Should().BeFalse();
+            result.DoctorInChargeEntered.Should().BeFalse();
+            result.QapEntered.Should().BeFalse();
+            result.BereavedInfoEntered.Should().BeFalse();
+            result.MeAssigned.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Examination_To_PatientCard_Statuses_When_Events_Required_For_Scrutiny_Not_Entered()
+        {
+            // Arrange
+            var appointmentDate = DateTime.Now.AddDays(1);
+            var appointmentTime = new TimeSpan(10, 30, 00);
+            var representative = new Representative()
+            {
+                AppointmentDate = appointmentDate,
+                AppointmentTime = appointmentTime,
+                FullName = "bob",
+                Informed = InformedAtDeath.Yes,
+                PhoneNumber = "1234",
+                PresentAtDeath = PresentAtDeath.Unknown,
+                Relationship = "milk man"
+            };
+
+            var examination = GenerateExamination();
+            examination.GivenNames = "GivenNames";
+            examination.Surname = "Surname";
+            examination.DateOfBirth = new DateTime(2000, 01, 12);
+            examination.DateOfDeath = new DateTime(2019, 08, 12);
+            examination.NhsNumber = "1234567890";
+
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
+            {
+                Name = "ConsultantResponsible",
+                Role = "Consultant",
+                Organisation = "Organisation",
+                Phone = "01148394748",
+                Notes = "Notes",
+                GMCNumber = "G12345"
+            };
+            examination.MedicalTeam.Qap.Name = "Qap Name";
+            examination.Representatives = new[] { representative };
+            examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+
+            examination.CaseBreakdown.PreScrutiny.Latest = null;
+            examination.CaseBreakdown.QapDiscussion.Latest = null;
+            examination.CaseBreakdown.BereavedDiscussion.Latest = null;
+
+            examination.CaseOutcome.MccdIssued = true;
+            examination.CaseOutcome.CremationFormStatus = CremationFormStatus.Yes;
+            examination.CaseOutcome.GpNotifiedStatus = GPNotified.GPNotified;
+            examination.CaseOutcome.CoronerReferralSent = true;
+
+            // Action
+            var result = _mapper.Map<PatientCardItem>(examination);
+
+            // Assert
+            // Is Scrutiny Complete?
+            result.IsScrutinyCompleted.Should().BeFalse();
+            result.PreScrutinyEventEntered.Should().BeFalse();
+            result.QapDiscussionEventEntered.Should().BeFalse();
+            result.BereavedDiscussionEventEntered.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Examination_To_PatientCard_Statuses_When_Case_Items_Not_Entered()
+        {
+            // Arrange
+            var appointmentDate = DateTime.Now.AddDays(1);
+            var appointmentTime = new TimeSpan(10, 30, 00);
+            var representative = new Representative()
+            {
+                AppointmentDate = appointmentDate,
+                AppointmentTime = appointmentTime,
+                FullName = "bob",
+                Informed = InformedAtDeath.Yes,
+                PhoneNumber = "1234",
+                PresentAtDeath = PresentAtDeath.Unknown,
+                Relationship = "milk man"
+            };
+
+            var examination = GenerateExamination();
+            examination.GivenNames = "GivenNames";
+            examination.Surname = "Surname";
+            examination.DateOfBirth = new DateTime(2000, 01, 12);
+            examination.DateOfDeath = new DateTime(2019, 08, 12);
+            examination.NhsNumber = "1234567890";
+
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
+            {
+                Name = "ConsultantResponsible",
+                Role = "Consultant",
+                Organisation = "Organisation",
+                Phone = "01148394748",
+                Notes = "Notes",
+                GMCNumber = "G12345"
+            };
+            examination.MedicalTeam.Qap.Name = "Qap Name";
+            examination.Representatives = new[] { representative };
+            examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+
+            examination.CaseOutcome.MccdIssued = null;
+            examination.CaseOutcome.CremationFormStatus = null;
+            examination.CaseOutcome.GpNotifiedStatus = null;
+            examination.CaseOutcome.CoronerReferralSent = false;
+
+            // Action
+            var result = _mapper.Map<PatientCardItem>(examination);
+
+            // Assert
+            // Is Case Items Complete?
+            result.IsCaseItemsCompleted.Should().BeFalse();
+            result.MccdIssued.Should().BeFalse();
+            result.CremationFormInfoEntered.Should().BeFalse();
+            result.GpNotified.Should().BeFalse();
+            result.SentToCoroner.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Examination_To_PatientCard_Statuses_When_Unknown_Case_Items_Entered()
+        {
+            // Arrange
+            var appointmentDate = DateTime.Now.AddDays(1);
+            var appointmentTime = new TimeSpan(10, 30, 00);
+            var representative = new Representative()
+            {
+                AppointmentDate = appointmentDate,
+                AppointmentTime = appointmentTime,
+                FullName = "bob",
+                Informed = InformedAtDeath.Yes,
+                PhoneNumber = "1234",
+                PresentAtDeath = PresentAtDeath.Unknown,
+                Relationship = "milk man"
+            };
+
+            var examination = GenerateExamination();
+            examination.GivenNames = "GivenNames";
+            examination.Surname = "Surname";
+            examination.DateOfBirth = new DateTime(2000, 01, 12);
+            examination.DateOfDeath = new DateTime(2019, 08, 12);
+            examination.NhsNumber = "1234567890";
+
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
+            {
+                Name = "ConsultantResponsible",
+                Role = "Consultant",
+                Organisation = "Organisation",
+                Phone = "01148394748",
+                Notes = "Notes",
+                GMCNumber = "G12345"
+            };
+            examination.MedicalTeam.Qap.Name = "Qap Name";
+            examination.Representatives = new[] { representative };
+            examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+
+            examination.CaseOutcome.MccdIssued = null;
+            examination.CaseOutcome.CremationFormStatus = CremationFormStatus.Unknown;
+            examination.CaseOutcome.GpNotifiedStatus = null;
+            examination.CaseOutcome.CoronerReferralSent = false;
+
+            // Action
+            var result = _mapper.Map<PatientCardItem>(examination);
+
+            // Assert
+            // Is Case Items Complete?
+            result.IsCaseItemsCompleted.Should().BeNull();
+            result.CremationFormInfoEntered.Should().BeNull();
+        }
+
+        [Fact]
         public void Examination_To_PatientCard_One_Representative_Appointment_Details()
         {
             var appointmentDate = DateTime.Now.AddDays(1);
@@ -897,6 +1237,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             var examination = new Examination
             {
+                CreatedAt = CaseCreated,
                 ExaminationId = ExaminationId,
                 CaseBreakdown = casebreakdown,
                 CaseOutcome = caseOutcome,
