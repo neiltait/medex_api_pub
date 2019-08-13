@@ -685,6 +685,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             examination.CaseOutcome.CremationFormStatus = CremationFormStatus.Yes;
             examination.CaseOutcome.GpNotifiedStatus = GPNotified.GPNotified;
             examination.CaseOutcome.CoronerReferralSent = true;
+            examination.CaseCompleted = true;
 
             // Action
             var result = _mapper.Map<PatientCardItem>(examination);
@@ -717,6 +718,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.CremationFormInfoEntered.Should().BeTrue();
             result.GpNotified.Should().BeTrue();
             result.SentToCoroner.Should().BeTrue();
+            result.CaseClosed.Should().BeTrue();
         }
 
         [Fact]
@@ -919,6 +921,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             examination.CaseOutcome.CremationFormStatus = null;
             examination.CaseOutcome.GpNotifiedStatus = null;
             examination.CaseOutcome.CoronerReferralSent = false;
+            examination.CaseCompleted = false;
 
             // Action
             var result = _mapper.Map<PatientCardItem>(examination);
@@ -930,6 +933,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.CremationFormInfoEntered.Should().BeFalse();
             result.GpNotified.Should().BeFalse();
             result.SentToCoroner.Should().BeFalse();
+            result.CaseClosed.Should().BeFalse();
         }
 
         [Fact]

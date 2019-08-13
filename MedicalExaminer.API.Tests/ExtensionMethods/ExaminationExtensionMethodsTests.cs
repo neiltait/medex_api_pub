@@ -2072,7 +2072,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                     CremationFormStatus = null,
                     GpNotifiedStatus = null,
                     CoronerReferralSent = false
-                }
+                },
+                CaseCompleted = true
             };
 
             var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
@@ -2091,7 +2092,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                     CremationFormStatus = CremationFormStatus.Yes,
                     GpNotifiedStatus = GPNotified.GPNotified,
                     CoronerReferralSent = true
-                }
+                },
+                CaseCompleted = true
             };
 
             var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
@@ -2110,12 +2112,55 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                     CremationFormStatus = CremationFormStatus.Unknown,
                     GpNotifiedStatus = GPNotified.GPNotified,
                     CoronerReferralSent = true
-                }
+                },
+                CaseCompleted = true
             };
 
             var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
 
             additionalDetailsEntered.Should().BeNull();
+        }
+
+        [Fact]
+        public void CalculateCaseItemsCompleteStatus_When_Refer_To_Coroner_And_CoronerReferralSent_Is_False_Entered_Returns_False()
+        {
+            var examination = new Examination
+            {
+                CaseOutcome = new CaseOutcome
+                {
+                    CaseOutcomeSummary = CaseOutcomeSummary.ReferToCoroner,
+                    MccdIssued = true,
+                    CremationFormStatus = CremationFormStatus.Yes,
+                    GpNotifiedStatus = GPNotified.GPNotified,
+                    CoronerReferralSent = false
+                },
+                CaseCompleted = true
+            };
+
+            var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
+
+            additionalDetailsEntered.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CalculateCaseItemsCompleteStatus_When_Case_Not_Closed_Returns_False()
+        {
+            var examination = new Examination
+            {
+                CaseOutcome = new CaseOutcome
+                {
+                    CaseOutcomeSummary = CaseOutcomeSummary.ReferToCoroner,
+                    MccdIssued = true,
+                    CremationFormStatus = CremationFormStatus.Yes,
+                    GpNotifiedStatus = GPNotified.GPNotified,
+                    CoronerReferralSent = true
+                },
+                CaseCompleted = false
+            };
+
+            var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
+
+            additionalDetailsEntered.Should().BeFalse();
         }
     }
 }
