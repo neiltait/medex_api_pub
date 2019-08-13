@@ -29,6 +29,7 @@ namespace MedicalExaminer.Common.Authorization.Roles
                 Permission.QapDiscussionEvent,
                 Permission.OtherEvent,
                 Permission.PreScrutinyEvent,
+                Permission.GetCoronerReferralDownload,
                 Permission.CreateExamination);
         }
     }

@@ -11,6 +11,7 @@ using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.API.Models.v1.PatientDetails;
+using MedicalExaminer.API.Models.v1.Report;
 using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
@@ -1572,11 +1573,663 @@ namespace MedicalExaminer.API.Tests.Mapper
             response.PlaceDeathOccured.Should().Be(PlaceDeathOccured);
             response.Surname.Should().Be(Surname);
             response.TimeOfDeath.Should().Be(TimeOfDeath);
+        }
 
+        [Fact]
+        public void Full_Examination_To_Odt_Download()
+        {
+            var examination = GetExaminationForOdtMapping(true, true, true);
+            var expected = new GetCoronerReferralDownloadResponse()
+            {
+                AbleToIssueMCCD = true,
+                AnyImplants = examination.AnyImplants,
+                CauseOfDeath1a = "mustang",
+                CauseOfDeath1b = "bathroom",
+                CauseOfDeath1c = "novotel",
+                CauseOfDeath2 = "airbnb",
+                Consultant = new ClinicalProfessionalItem()
+                {
+                    GMCNumber = "122484abcd",
+                    Name = "Clarisa Charmeress",
+                    Notes = "TOP SECRET",
+                    Organisation = "The World Health Organisation",
+                    Phone = "999",
+                    Role = "Consultant"
+                },
+                County = "county",
+                DateOfBirth = new DateTime(2001, 9, 11),
+                DateOfDeath = new DateTime(2019, 8, 5),
+                DetailsAboutMedicalHistory = "Some History should never be thought of",
+                Gender = ExaminationGender.Female,
+                GivenNames = "givenName",
+                GP = new ClinicalProfessionalItem()
+                {
+                    GMCNumber = "11111111111112",
+                    Name = "Gary Numan",
+                    Notes = "About to retire",
+                    Organisation = "The Oaklands Practice",
+                    Phone = "1111",
+                    Role = "General Practitioner"
+                },
+                HouseNameNumber = "houseNameNumber",
+                ImplantDetails = "implantDetails",
+                LatestAdmissionDetails = new AdmissionEventItem()
+                {
+                    AdmittedDate = new DateTime(2019, 5, 5),
+                    AdmittedDateUnknown = false,
+                    AdmittedTime = new TimeSpan(11, 11, 00),
+                    AdmittedTimeUnknown = false,
+                    Created = new DateTime(),
+                    EventId = "2",
+                    ImmediateCoronerReferral = false,
+                    IsFinal = true,
+                    Notes = "the admission notes",
+                    RouteOfAdmission = RouteOfAdmission.AccidentAndEmergency,
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "userRole"
+                },
+                LatestBereavedDiscussion = new BereavedDiscussionEventItem()
+                {
+                    BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                    Created = new DateTime(2019, 8, 12),
+                    DateOfConversation = new DateTime(2019, 8, 12),
+                    DiscussionDetails = "discussionDetails",
+                    DiscussionUnableHappen = false,
+                    DiscussionUnableHappenDetails = "unableToHappenDetails",
+                    EventId = "1",
+                    InformedAtDeath = InformedAtDeath.Yes,
+                    IsFinal = true,
+                    ParticipantFullName = "Maraget Thatcher",
+                    ParticipantPhoneNumber = "9876",
+                    ParticipantRelationship = "Wet nurse",
+                    PresentAtDeath = PresentAtDeath.Yes,
+                    TimeOfConversation = new TimeSpan(13, 13, 0),
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "usersRole"
+                },
+                NhsNumber = "nhsNumber",
+                PlaceOfDeath = "placeDeathOccured",
+                Postcode = "postCode",
+                Qap = new ClinicalProfessionalItem()
+                {
+                    GMCNumber = null,
+                    Name = "gary link",
+                    Notes = "some discussion details",
+                    Organisation = "gary links big examination",
+                    Phone = "077123456",
+                    Role = "SomeRole"
+                },
+                Street = "street",
+                Surname = "surname",
+                TimeOfDeath = new TimeSpan(11, 11, 00),
+                Town = "town",
+            };
+
+
+            var result = _mapper.Map<GetCoronerReferralDownloadResponse>(examination);
+            IsEquivalent(expected, result);
+        }
+
+        [Fact]
+        public void Nullish_Examination_To_Odt_Download()
+        {
+            var examination = GetExaminationForOdtMapping(false, false, false);
+            var expected = new GetCoronerReferralDownloadResponse()
+            {
+                AbleToIssueMCCD = false,
+                AnyImplants = examination.AnyImplants,
+                CauseOfDeath1a = null,
+                CauseOfDeath1b = null,
+                CauseOfDeath1c = null,
+                CauseOfDeath2 = null,
+                Consultant = null,
+                County = null,
+                DateOfBirth = null,
+                DateOfDeath = null,
+                DetailsAboutMedicalHistory = "",
+                Gender = ExaminationGender.Female,
+                GivenNames = null,
+                GP = null,
+                HouseNameNumber = null,
+                ImplantDetails = null,
+                LatestAdmissionDetails = null,
+                LatestBereavedDiscussion = null,
+                NhsNumber = null,
+                PlaceOfDeath = null,
+                Postcode = null,
+                Qap = null,
+                Street = null,
+                Surname = null,
+                TimeOfDeath = null,
+                Town = null,
+            };
+
+            var result = _mapper.Map<GetCoronerReferralDownloadResponse>(examination);
+            IsEquivalent(expected, result);
+        }
+
+        [Fact]
+        public void OnlyPrescrutiny_Examination_To_Odt_Download()
+        {
+            var examination = GetExaminationForOdtMapping(true, false, true);
+            var expected = new GetCoronerReferralDownloadResponse()
+            {
+                AbleToIssueMCCD = true,
+                AnyImplants = examination.AnyImplants,
+                CauseOfDeath1a = "apple",
+                CauseOfDeath1b = "banana",
+                CauseOfDeath1c = "Cucumber",
+                CauseOfDeath2 = "doughnut",
+                Consultant = new ClinicalProfessionalItem()
+                {
+                    GMCNumber = "122484abcd",
+                    Name = "Clarisa Charmeress",
+                    Notes = "TOP SECRET",
+                    Organisation = "The World Health Organisation",
+                    Phone = "999",
+                    Role = "Consultant"
+                },
+                County = "county",
+                DateOfBirth = new DateTime(2001, 9, 11),
+                DateOfDeath = new DateTime(2019, 8, 5),
+                DetailsAboutMedicalHistory = "Some History should never be thought of",
+                Gender = ExaminationGender.Female,
+                GivenNames = "givenName",
+                GP = new ClinicalProfessionalItem()
+                {
+                    GMCNumber = "11111111111112",
+                    Name = "Gary Numan",
+                    Notes = "About to retire",
+                    Organisation = "The Oaklands Practice",
+                    Phone = "1111",
+                    Role = "General Practitioner"
+                },
+                HouseNameNumber = "houseNameNumber",
+                ImplantDetails = "implantDetails",
+                LatestAdmissionDetails = new AdmissionEventItem()
+                {
+                    AdmittedDate = new DateTime(2019, 5, 5),
+                    AdmittedDateUnknown = false,
+                    AdmittedTime = new TimeSpan(11, 11, 00),
+                    AdmittedTimeUnknown = false,
+                    Created = new DateTime(),
+                    EventId = "2",
+                    ImmediateCoronerReferral = false,
+                    IsFinal = true,
+                    Notes = "the admission notes",
+                    RouteOfAdmission = RouteOfAdmission.AccidentAndEmergency,
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "userRole"
+                },
+                LatestBereavedDiscussion = new BereavedDiscussionEventItem()
+                {
+                    BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                    Created = new DateTime(2019, 8, 12),
+                    DateOfConversation = new DateTime(2019, 8, 12),
+                    DiscussionDetails = "discussionDetails",
+                    DiscussionUnableHappen = false,
+                    DiscussionUnableHappenDetails = "unableToHappenDetails",
+                    EventId = "1",
+                    InformedAtDeath = InformedAtDeath.Yes,
+                    IsFinal = true,
+                    ParticipantFullName = "Maraget Thatcher",
+                    ParticipantPhoneNumber = "9876",
+                    ParticipantRelationship = "Wet nurse",
+                    PresentAtDeath = PresentAtDeath.Yes,
+                    TimeOfConversation = new TimeSpan(13, 13, 0),
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "usersRole"
+                },
+                NhsNumber = "nhsNumber",
+                PlaceOfDeath = "placeDeathOccured",
+                Postcode = "postCode",
+                Qap = null,
+                Street = "street",
+                Surname = "surname",
+                TimeOfDeath = new TimeSpan(11, 11, 00),
+                Town = "town",
+            };
+
+
+            var result = _mapper.Map<GetCoronerReferralDownloadResponse>(examination);
+            IsEquivalent(expected, result);
 
         }
 
         [Fact]
+        public void OnlyQapDiscussion_Examination_To_Odt_Download()
+        {
+            var examination = GetExaminationForOdtMapping(false, true, true);
+            var expected = new GetCoronerReferralDownloadResponse()
+            {
+                AbleToIssueMCCD = true,
+                AnyImplants = examination.AnyImplants,
+                CauseOfDeath1a = "mustang",
+                CauseOfDeath1b = "bathroom",
+                CauseOfDeath1c = "novotel",
+                CauseOfDeath2 = "airbnb",
+                Consultant = new ClinicalProfessionalItem()
+                {
+                    GMCNumber = "122484abcd",
+                    Name = "Clarisa Charmeress",
+                    Notes = "TOP SECRET",
+                    Organisation = "The World Health Organisation",
+                    Phone = "999",
+                    Role = "Consultant"
+                },
+                County = "county",
+                DateOfBirth = new DateTime(2001, 9, 11),
+                DateOfDeath = new DateTime(2019, 8, 5),
+                DetailsAboutMedicalHistory = "Some History should never be thought of",
+                Gender = ExaminationGender.Female,
+                GivenNames = "givenName",
+                GP = new ClinicalProfessionalItem()
+                {
+                    GMCNumber = "11111111111112",
+                    Name = "Gary Numan",
+                    Notes = "About to retire",
+                    Organisation = "The Oaklands Practice",
+                    Phone = "1111",
+                    Role = "General Practitioner"
+                },
+                HouseNameNumber = "houseNameNumber",
+                ImplantDetails = "implantDetails",
+                LatestAdmissionDetails = new AdmissionEventItem()
+                {
+                    AdmittedDate = new DateTime(2019, 5, 5),
+                    AdmittedDateUnknown = false,
+                    AdmittedTime = new TimeSpan(11, 11, 00),
+                    AdmittedTimeUnknown = false,
+                    Created = new DateTime(),
+                    EventId = "2",
+                    ImmediateCoronerReferral = false,
+                    IsFinal = true,
+                    Notes = "the admission notes",
+                    RouteOfAdmission = RouteOfAdmission.AccidentAndEmergency,
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "userRole"
+                },
+                LatestBereavedDiscussion = new BereavedDiscussionEventItem()
+                {
+                    BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                    Created = new DateTime(2019, 8, 12),
+                    DateOfConversation = new DateTime(2019, 8, 12),
+                    DiscussionDetails = "discussionDetails",
+                    DiscussionUnableHappen = false,
+                    DiscussionUnableHappenDetails = "unableToHappenDetails",
+                    EventId = "1",
+                    InformedAtDeath = InformedAtDeath.Yes,
+                    IsFinal = true,
+                    ParticipantFullName = "Maraget Thatcher",
+                    ParticipantPhoneNumber = "9876",
+                    ParticipantRelationship = "Wet nurse",
+                    PresentAtDeath = PresentAtDeath.Yes,
+                    TimeOfConversation = new TimeSpan(13, 13, 0),
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "usersRole"
+                },
+                NhsNumber = "nhsNumber",
+                PlaceOfDeath = "placeDeathOccured",
+                Postcode = "postCode",
+                Qap = new ClinicalProfessionalItem()
+                {
+                    GMCNumber = null,
+                    Name = "gary link",
+                    Notes = "some discussion details",
+                    Organisation = "gary links big examination",
+                    Phone = "077123456",
+                    Role = "SomeRole"
+                },
+                Street = "street",
+                Surname = "surname",
+                TimeOfDeath = new TimeSpan(11, 11, 00),
+                Town = "town",
+            };
+
+            var result = _mapper.Map<GetCoronerReferralDownloadResponse>(examination);
+            IsEquivalent(expected, result);
+        }
+
+        private Examination GetExaminationForOdtMapping(bool hasPrescrutiny, bool hasQapDiscussion, bool generalDetails)
+        {
+            PreScrutinyEvent latestPrescrutiny = null;
+            if (hasPrescrutiny)
+            {
+                latestPrescrutiny = new PreScrutinyEvent()
+                {
+                    CauseOfDeath1a = "apple",
+                    CauseOfDeath1b = "banana",
+                    CauseOfDeath1c = "Cucumber",
+                    CauseOfDeath2 = "doughnut",
+                    CircumstancesOfDeath = OverallCircumstancesOfDeath.Unexpected,
+                    ClinicalGovernanceReview = ClinicalGovernanceReview.Yes,
+                    ClinicalGovernanceReviewText = "So much for 5 a day",
+                    Created = null,
+                    EventId = "prescrutinyEventId",
+                    IsFinal = true,
+                    MedicalExaminerThoughts = "musings",
+                    OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
+                    UserFullName = "bob marley",
+                    UserId = "BobMarley",
+                    UsersRole = "MedicalExaminer"
+                };
+            }
+
+            QapDiscussionEvent latestQapDiscussionEvent = null;
+            if (hasQapDiscussion)
+            {
+                latestQapDiscussionEvent = new QapDiscussionEvent()
+                {
+                    CauseOfDeath1a = "mustang",
+                    CauseOfDeath1b = "bathroom",
+                    CauseOfDeath1c = "novotel",
+                    CauseOfDeath2 = "airbnb",
+                    Created = null,
+                    DateOfConversation = null,
+                    DiscussionDetails = "some discussion details",
+                    DiscussionUnableHappen = false,
+                    EventId = "qapDiscussionEventId",
+                    IsFinal = true,
+                    ParticipantName = "gary link",
+                    ParticipantOrganisation = "gary links big examination",
+                    ParticipantPhoneNumber = "077123456",
+                    ParticipantRole = "SomeRole",
+                    QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP,
+                    TimeOfConversation = null,
+                    UserFullName = "The Tax Man",
+                    UserId = "TaxMan",
+                    UsersRole = "Tax Man"
+                };
+            }
+
+            MedicalHistoryEvent medicalHistoryEvent = null;
+            AdmissionEvent admissionEvent = null;
+            BereavedDiscussionEvent bereavedDiscussion = null;
+            CaseOutcome caseOutcome = null;
+            Representative[] representatives = null;
+            TimeSpan? timeOfDeath = null;
+            DateTime? dateOfBirth = null;
+            DateTime? dateOfDeath = null;
+            DateTime? lastAdmission = null;
+            ClinicalProfessional consultant = null;
+            ClinicalProfessional qap = null;
+            ClinicalProfessional gp = null;
+
+            if (generalDetails)
+            {
+                timeOfDeath = new TimeSpan(11, 11, 00);
+                dateOfBirth = new DateTime(2001, 9, 11);
+                dateOfDeath = new DateTime(2019, 8, 5);
+                lastAdmission = new DateTime(2019, 5, 5);
+
+                medicalHistoryEvent = new MedicalHistoryEvent()
+                {
+                    Text = "Some History should never be thought of"
+                };
+
+                gp = new ClinicalProfessional()
+                {
+                    GMCNumber = "11111111111112",
+                    Name = "Gary Numan",
+                    Notes = "About to retire",
+                    Organisation = "The Oaklands Practice",
+                    Phone = "1111",
+                    Role = "General Practitioner"
+                };
+
+                consultant = new ClinicalProfessional()
+                {
+                    GMCNumber = "122484abcd",
+                    Name = "Clarisa Charmeress",
+                    Notes = "TOP SECRET",
+                    Organisation = "The World Health Organisation",
+                    Phone = "999",
+                    Role = "Consultant"
+                };
+
+                qap = new ClinicalProfessional()
+                {
+                    GMCNumber = "112484abcd",
+                    Name = "Jermimer Puddleduck",
+                    Notes = "Its great weather for ducks outside",
+                    Organisation = "General Staffing Pool",
+                    Phone = "111",
+                    Role = "QAP"
+                };
+
+                admissionEvent = new AdmissionEvent()
+                {
+                    AdmittedDate = new DateTime(2019, 5, 5),
+                    AdmittedDateUnknown = false,
+                    AdmittedTime = new TimeSpan(11, 11, 00),
+                    AdmittedTimeUnknown = false,
+                    Created = new DateTime(),
+                    EventId = "2",
+                    ImmediateCoronerReferral = false,
+                    IsFinal = true,
+                    Notes = "the admission notes",
+                    RouteOfAdmission = RouteOfAdmission.AccidentAndEmergency,
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "userRole"
+                };
+
+                caseOutcome = new CaseOutcome()
+                {
+                    CaseCompleted = true,
+                    CaseMedicalExaminerFullName = "caseMedicalExaminerFullName",
+                    CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
+                    CoronerReferralSent = true,
+                    CremationFormStatus = CremationFormStatus.Yes,
+                    GpNotifiedStatus = GPNotified.GPNotified,
+                    MccdIssued = true,
+                    OutcomeOfPrescrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
+                    OutcomeOfRepresentativeDiscussion = BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                    OutcomeQapDiscussion = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                    ScrutinyConfirmedOn = new DateTime()
+                };
+
+                representatives = new Representative[]
+                {
+                    new Representative()
+                    {
+                        AppointmentDate = new DateTime(2019, 8, 12),
+                        AppointmentTime = new TimeSpan(14, 45, 00),
+                        FullName = "Alexander Boris de Pfeffel Johnson",
+                        Informed = InformedAtDeath.No,
+                        Notes = "Plonker",
+                        PhoneNumber = "888",
+                        PresentAtDeath = PresentAtDeath.Yes,
+                        Relationship = "Embarrassing Uncle"
+                    }
+                };
+
+                bereavedDiscussion = new BereavedDiscussionEvent()
+                {
+                    BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted,
+                    Created = new DateTime(2019, 8, 12),
+                    DateOfConversation = new DateTime(2019, 8, 12),
+                    DiscussionDetails = "discussionDetails",
+                    DiscussionUnableHappen = false,
+                    DiscussionUnableHappenDetails = "unableToHappenDetails",
+                    EventId = "1",
+                    InformedAtDeath = InformedAtDeath.Yes,
+                    IsFinal = true,
+                    ParticipantFullName = "Maraget Thatcher",
+                    ParticipantPhoneNumber = "9876",
+                    ParticipantRelationship = "Wet nurse",
+                    PresentAtDeath = PresentAtDeath.Yes,
+                    TimeOfConversation = new TimeSpan(13, 13, 0),
+                    UserFullName = "userFullName",
+                    UserId = "userId",
+                    UsersRole = "usersRole"
+                };
+            }
+
+            return new Examination()
+            {
+                AdmissionNotesHaveBeenAdded = generalDetails ? true : false,
+                AnyImplants = generalDetails ? true : false,
+                AnyPersonalEffects = generalDetails ? true : false,
+                CaseBreakdown = new CaseBreakDown()
+                {
+                    AdmissionNotes = new AdmissionNotesEventContainer()
+                    {
+                        Latest = admissionEvent,
+                        Drafts = null,
+                        History = null
+                    },
+                    BereavedDiscussion = new BereavedDiscussionEventContainer()
+                    {
+                        Latest = bereavedDiscussion,
+                        Drafts = null,
+                        History = null
+                    },
+                    CaseClosedEvent = null,
+                    DeathEvent = null,
+                    MedicalHistory = new MedicalHistoryEventContainer()
+                    {
+                        Latest = medicalHistoryEvent,
+                        Drafts = null,
+                        History = new [] { medicalHistoryEvent }
+                    },
+                    MeoSummary = new MeoSummaryEventContainer()
+                    {
+                        Latest = null,
+                        Drafts = null,
+                        History = null
+                    },
+                    OtherEvents = new OtherEventContainer()
+                    {
+                        Latest = null,
+                        Drafts = null,
+                        History = null
+                    },
+                    PreScrutiny = new PreScrutinyEventContainer()
+                    {
+                        Latest = latestPrescrutiny,
+                        Drafts = null,
+                        History = null
+                    },
+                    QapDiscussion = new QapDiscussionEventContainer()
+                    {
+                        Latest = latestQapDiscussionEvent,
+                        Drafts = null,
+                        History = null
+                    }
+                },
+                CaseCompleted = generalDetails ? true : false,
+                CaseOutcome = caseOutcome,
+                ChildPriority = generalDetails ? true : false,
+                ConfirmationOfScrutinyCompletedAt = null,
+                ConfirmationOfScrutinyCompletedBy = generalDetails ? "Dan Ooka" : null,
+                CoronerPriority = generalDetails ? true : false,
+                CoronerReferralSent = generalDetails ? true : false,
+                CoronerStatus = CoronerStatus.None,
+                Country = generalDetails ? "country" : null,
+                County = generalDetails ? "county" : null,
+                CreatedAt = DateTime.Now,
+                CreatedBy = generalDetails ? "Dan Ooka" : null,
+                CulturalPriority = generalDetails ? true : false,
+                DateOfBirth = dateOfBirth,
+                DateOfDeath = dateOfDeath,
+                DeletedAt = null,
+                ExaminationId = "examinationId",
+                FaithPriority = generalDetails ? true : false,
+                FuneralDirectors = generalDetails ? "easyBurials" : null,
+                Gender = ExaminationGender.Female,
+                GenderDetails = generalDetails ? "genderDetails" : null,
+                GivenNames = generalDetails ? "givenName" : null,
+                HaveBeenScrutinisedByME = generalDetails ? true : false,
+                HaveFinalCaseOutcomesOutstanding = generalDetails ? true : false,
+                HospitalNumber_1 = generalDetails ? "hospitalNumber_1" : null,
+                HospitalNumber_2 = generalDetails ? "hospitalNumber_2" : null,
+                HospitalNumber_3 = generalDetails ? "hospitalNumber_3" : null,
+                HouseNameNumber = generalDetails ? "houseNameNumber" : null,
+                ImplantDetails = generalDetails ? "implantDetails" : null,
+                LastAdmission = lastAdmission,
+                LastModifiedBy = null,
+                LastOccupation = generalDetails ? "lastOccupation" : null,
+                MedicalExaminerOfficeResponsible = generalDetails ? "medicalExaminerOfficeId" : null,
+                MedicalExaminerOfficeResponsibleName = generalDetails ? "medicalExaminerOfficeName" : null,
+                MedicalTeam = new MedicalTeam()
+                {
+                    ConsultantResponsible = consultant,
+                    ConsultantsOther = null,
+                    GeneralPractitioner = gp,
+                    MedicalExaminerFullName = generalDetails ? "medicalExaminerName" : null,
+                    MedicalExaminerOfficerFullName = generalDetails ? "medicalExaminerOfficerName" : null,
+                    MedicalExaminerOfficerUserId = generalDetails ? "medicalExaminerOfficerId" : null,
+                    MedicalExaminerUserId = generalDetails ? "medicalExaminerId" : null,
+                    NursingTeamInformation = null,
+                    Qap = qap
+                },
+                ModeOfDisposal = ModeOfDisposal.Unknown,
+                ModifiedAt = new DateTimeOffset(),
+                NationalLocationId = generalDetails ? "nationalLocationId" : null,
+                NhsNumber = generalDetails ? "nhsNumber" : null,
+                OrganisationCareBeforeDeathLocationId = generalDetails ? "organisationCareBeforeDeathLocationId" : null,
+                OtherPriority = generalDetails ? true : false,
+                OutstandingCaseItemsCompleted = generalDetails ? true : false,
+                PendingAdmissionNotes = generalDetails ? true : false,
+                PendingDiscussionWithQAP = generalDetails ? true : false,
+                PendingDiscussionWithRepresentative = generalDetails ? true : false,
+                PendingScrutinyNotes = generalDetails ? true : false,
+                PersonalEffectDetails = generalDetails ? "personalEffectDetails" : null,
+                PlaceDeathOccured = generalDetails ? "placeDeathOccured" : null,
+                Postcode = generalDetails ? "postCode" : null,
+                PriorityDetails = generalDetails ? "priorityDetails" : null,
+                ReadyForMEScrutiny = generalDetails ? true : false,
+                RegionLocationId = generalDetails ? "regionLocationId" : null,
+                Representatives = representatives,
+                ScrutinyConfirmed = generalDetails ? true : false,
+                SiteLocationId = generalDetails ? "siteLocationId" : null,
+                Street = generalDetails ? "street" : null,
+                Surname = generalDetails ? "surname" : null,
+                TimeOfDeath = timeOfDeath,
+                Town = generalDetails ? "town" : null,
+                TrustLocationId = generalDetails ? "trustLocationId" : null,
+                Unassigned = generalDetails ? true : false,
+                UrgencyScore = 0
+            };
+        }
+
+        private void IsEquivalent(GetCoronerReferralDownloadResponse expected, GetCoronerReferralDownloadResponse actual)
+        {
+            actual.AbleToIssueMCCD.Should().Be(expected.AbleToIssueMCCD);
+            actual.AnyImplants.Should().Be(expected.AnyImplants);
+            actual.CauseOfDeath1a.Should().Be(expected.CauseOfDeath1a);
+            actual.CauseOfDeath1b.Should().Be(expected.CauseOfDeath1b);
+            actual.CauseOfDeath1c.Should().Be(expected.CauseOfDeath1c);
+            actual.CauseOfDeath2.Should().Be(expected.CauseOfDeath2);
+            actual.Consultant.Should().BeEquivalentTo(expected.Consultant);
+            actual.County.Should().Be(expected.County);
+            actual.DateOfBirth.Should().Be(expected.DateOfBirth);
+            actual.DateOfDeath.Should().Be(expected.DateOfDeath);
+            actual.DetailsAboutMedicalHistory.Should().Be(expected.DetailsAboutMedicalHistory);
+            actual.Gender.Should().Be(expected.Gender);
+            actual.GivenNames.Should().Be(expected.GivenNames);
+            actual.GP.Should().BeEquivalentTo(expected.GP);
+            actual.HouseNameNumber.Should().Be(expected.HouseNameNumber);
+            actual.ImplantDetails.Should().Be(expected.ImplantDetails);
+            actual.LatestAdmissionDetails.Should().BeEquivalentTo(expected.LatestAdmissionDetails);
+            actual.LatestBereavedDiscussion.Should().BeEquivalentTo(expected.LatestBereavedDiscussion);
+            actual.NhsNumber.Should().Be(expected.NhsNumber);
+            actual.PlaceOfDeath.Should().Be(expected.PlaceOfDeath);
+            actual.Postcode.Should().Be(expected.Postcode);
+            actual.Qap.Should().BeEquivalentTo(expected.Qap);
+            actual.Street.Should().Be(expected.Street);
+            actual.Surname.Should().Be(expected.Surname);
+            actual.TimeOfDeath.Should().Be(expected.TimeOfDeath);
+            actual.Town.Should().Be(expected.Town);
+        }
+
         public void BereavedDiscussionPrepopulated_Examination_To_Casebreakdown_No_PrescrutinyLatest()
         {
             //  Arrange
