@@ -1,4 +1,5 @@
-﻿using MedicalExaminer.Models.Enums;
+﻿using MedicalExaminer.API.Attributes;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Models.v1.Permissions
 {
@@ -10,6 +11,7 @@ namespace MedicalExaminer.API.Models.v1.Permissions
         /// <summary>
         ///     Gets or sets the location ID.
         /// </summary>
+        [ValidLocation]
         public string LocationId { get; set; }
 
         /// <summary>

@@ -29,9 +29,9 @@ namespace MedicalExaminer.Common.Services.Examination
 
             var examinationToUpdate = await
                             _databaseAccess
-                                .GetItemAsync<Models.Examination>(
+                                .GetItemByIdAsync<Models.Examination>(
                                     _connectionSettings,
-                                    examination => examination.ExaminationId == param.CaseId);
+                                    param.CaseId);
 
             examinationToUpdate = examinationToUpdate
                                             .AddEvent(param.Event)

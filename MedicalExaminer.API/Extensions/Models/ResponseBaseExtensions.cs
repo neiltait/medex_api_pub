@@ -1,4 +1,6 @@
-﻿using MedicalExaminer.API.Models.v1;
+﻿using System;
+using MedicalExaminer.API.Models.v1;
+using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace MedicalExaminer.API.Extensions.Models
@@ -16,10 +18,28 @@ namespace MedicalExaminer.API.Extensions.Models
         public static void AddModelErrors(this ResponseBase responseBase, ModelStateDictionary modelState)
         {
             foreach (var item in modelState)
-            foreach (var error in item.Value.Errors)
             {
-                responseBase.AddError(item.Key, error.ErrorMessage);
+                foreach (var error in item.Value.Errors)
+                {
+                    responseBase.AddError(item.Key, error.ErrorMessage);
+                }
             }
+        }
+
+        public static void AddModelErrors(this ResponseBaseEnumErrors responseBase, ModelStateDictionary modelState)
+        {
+            foreach (var item in modelState)
+            {
+                foreach (var error in item.Value.Errors)
+                {
+                    responseBase.AddError(item.Key, ParseEnum<SystemValidationErrors>(error.ErrorMessage));
+                }
+            }
+        }
+
+        public static T ParseEnum<T>(string value)
+        {
+            return (T)Enum.Parse(typeof(T), value, true);
         }
     }
 }

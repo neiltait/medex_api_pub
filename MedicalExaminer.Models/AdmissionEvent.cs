@@ -83,5 +83,12 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "immediate_coroner_referral")]
         public bool? ImmediateCoronerReferral { get; set; }
+
+        /// <summary>
+        /// Route of Admission
+        /// </summary>
+        [JsonProperty(PropertyName = "route_of_admission")]
+        public RouteOfAdmission? RouteOfAdmission { get; set; }
+
     }
 }

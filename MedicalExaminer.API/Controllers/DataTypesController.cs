@@ -176,9 +176,9 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Returns all Case Statuses
+        /// Returns all Cremation Form Statuses
         /// </summary>
-        /// <returns>Dictionary of Case Statuses</returns>
+        /// <returns>Dictionary of Creation Form Statuses</returns>
         [HttpGet("cremation_form_statuses")]
         public ActionResult GetCremationFormStatuses()
         {
@@ -186,9 +186,9 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Returns all Case Statuses
+        /// Returns all GP Notified
         /// </summary>
-        /// <returns>Dictionary of Case Statuses</returns>
+        /// <returns>Dictionary of GP Notified</returns>
         [HttpGet("gp_notified_statuses")]
         public ActionResult GetGPNotifiedStatuses()
         {
@@ -196,13 +196,53 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Returns all Case Statuses
+        /// Returns all Case Outcome Summaries
         /// </summary>
-        /// <returns>Dictionary of Case Statuses</returns>
+        /// <returns>Dictionary of Case Outcome summary</returns>
         [HttpGet("case_outcome_summary_statuses")]
         public ActionResult GetCaseOutcomeSummaryStatuses()
         {
             return Ok(GetDictionary(typeof(CaseOutcomeSummary)));
+        }
+
+        /// <summary>
+        /// Returns all Validation Error Codes
+        /// </summary>
+        /// <returns>Dictionary of Validation Error codes</returns>
+        [HttpGet("system_validation_errors")]
+        public ActionResult GetSystemValidationErrors()
+        {
+            return Ok(GetDictionary(typeof(SystemValidationErrors)));
+        }
+
+        /// <summary>
+        /// Returns all Routes of Admission
+        /// </summary>
+        /// <returns>Dictionary of Route of Admission</returns>
+        [HttpGet("route_of_admission")]
+        public ActionResult GetRouteOfAdmission()
+        {
+            return Ok(GetDictionary(typeof(RouteOfAdmission)));
+        }
+
+        /// <summary>
+        /// Returns all QAP Discussion Statuses
+        /// </summary>
+        /// <returns>Dictionary of QAP Discussion Statuses</returns>
+        [HttpGet("qap_discussion_status")]
+        public ActionResult GetQapDiscussionStatues()
+        {
+            return Ok(GetDictionary(typeof(QAPDiscussionStatus)));
+        }
+
+        /// <summary>
+        /// Returns all Pre Scrutiny Statuses
+        /// </summary>
+        /// <returns>Dictionary of Pre Scrutiny Statuses</returns>
+        [HttpGet("pre_scrutiny_status")]
+        public ActionResult GetPreScrutinyStatus()
+        {
+            return Ok(GetDictionary(typeof(PreScrutinyStatus)));
         }
 
         /// <summary>

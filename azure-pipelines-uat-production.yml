@@ -1,0 +1,76 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+resources:
+  - repo: self
+
+trigger:
+  - release/*
+
+pool:
+  vmImage: 'windows-2019'
+#  vmImage: 'Ubuntu 16.04'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: restore
+      projects: 'MedicalExaminer.API/MedicalExaminer.API.csproj'
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      projects: 'MedicalExaminer.API/MedicalExaminer.API.csproj'
+      arguments: '--configuration $(BuildConfiguration)'
+
+  - task: DotNetCoreCLI@2
+    displayName: Unit tests for API
+    inputs:
+      command: test
+      projects: 'MedicalExaminer.API.Tests/MedicalExaminer.API.Tests.csproj'
+      arguments: '--configuration $(BuildConfiguration)'
+      publishTestResults: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Unit tests for Common Libs
+    inputs:
+      command: test
+      projects: 'MedicalExaminer.Common.Tests/MedicalExaminer.Common.Tests.csproj'
+      arguments: '--configuration $(BuildConfiguration)'
+      publishTestResults: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Unit tests for Background Services
+    inputs:
+      command: test
+      projects: 'MedicalExaminer.BackgroundServices.Tests/MedicalExaminer.BackgroundServices.Tests.csproj'
+      arguments: '--configuration $(BuildConfiguration)'
+      publishTestResults: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: 'MedicalExaminer.API/MedicalExaminer.API.csproj'
+      arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+
+  - task: CopyFiles@2
+    displayName: 'Copy Templates '
+    inputs:
+      SourceFolder: _templates
+      Contents: |
+        **/*.json
+      TargetFolder: '$(Build.ArtifactStagingDirectory)/templates'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      PathtoPublish: '$(build.artifactstagingdirectory)'
+

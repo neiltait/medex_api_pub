@@ -71,5 +71,10 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// </summary>
         public DateTime? Created { get; set; }
 
+        /// <summary>
+        /// The route of admission
+        /// </summary>
+        public RouteOfAdmission? RouteOfAdmission { get; set; }
+
     }
 }

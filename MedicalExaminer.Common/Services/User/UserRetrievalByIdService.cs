@@ -29,7 +29,7 @@ namespace MedicalExaminer.Common.Services.User
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var result = GetItemAsync(x => x.UserId == param.UserId);
+            var result = GetItemByIdAsync(param.UserId);
             return result;
         }
     }

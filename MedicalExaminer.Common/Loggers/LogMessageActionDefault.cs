@@ -30,7 +30,8 @@ namespace MedicalExaminer.Common.Loggers
             string controllerMethod,
             IDictionary<string, object> parameters,
             string remoteIP,
-            DateTime timestamp)
+            DateTime timestamp,
+            double totalRus)
         {
             UserId = userId;
             UserAuthenticationType = userAuthenticationType;
@@ -40,6 +41,7 @@ namespace MedicalExaminer.Common.Loggers
             Parameters = parameters;
             RemoteIP = remoteIP;
             TimeStamp = timestamp;
+            TotalRus = totalRus;
         }
 
         /// <summary>
@@ -90,6 +92,12 @@ namespace MedicalExaminer.Common.Loggers
         [JsonProperty(PropertyName = "timestamp")]
         [DataType(DataType.DateTime)]
         public DateTime TimeStamp { get; }
+
+        /// <summary>
+        /// Total RUs
+        /// </summary>
+        [JsonProperty(PropertyName = "total_rus")]
+        public double TotalRus { get; }
 
         /// <summary>
         ///     ToString()

@@ -51,5 +51,13 @@ namespace MedicalExaminer.API.Controllers
 
             return new BadRequestObjectResult(response);
         }
+
+        protected BadRequestObjectResult BadRequestEnums<TResponse>(TResponse response)
+            where TResponse : ResponseBaseEnumErrors
+        {
+            response.AddModelErrors(ModelState);
+
+            return new BadRequestObjectResult(response);
+        }
     }
 }

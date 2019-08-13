@@ -35,9 +35,9 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
 
             var examinationToUpdate = await
                 _databaseAccess
-                    .GetItemAsync<Models.Examination>(
+                    .GetItemByIdAsync<Models.Examination>(
                         _connectionSettings,
-                        examination => examination.ExaminationId == param.ExaminationId);
+                        param.ExaminationId);
 
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;

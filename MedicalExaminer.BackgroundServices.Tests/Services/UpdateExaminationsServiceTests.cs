@@ -15,6 +15,7 @@ using MedicalExaminer.Models;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Internal;
 using Moq;
 using Xunit;
 
@@ -42,6 +43,10 @@ namespace MedicalExaminer.BackgroundServices.Tests.Services
             _configurationMock = new Mock<IScheduledServiceConfiguration>(MockBehavior.Strict);
             _schedulerMock = new Mock<IScheduler>(MockBehavior.Strict);
             _serviceProviderMock = new Mock<IServiceProvider>(MockBehavior.Strict);
+
+            _logger
+                .Setup(s => s.Log(It.IsAny<LogLevel>(), It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()))
+                .Verifiable();
 
             _schedulerMock
                 .SetupGet(s => s.LastExecuted)

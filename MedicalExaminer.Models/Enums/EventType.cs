@@ -13,6 +13,7 @@ namespace MedicalExaminer.Models.Enums
         MeoSummary,
         QapDiscussion,
         Admission,
-        PatientDied
+        PatientDied,
+        CaseClosed
     }
 }

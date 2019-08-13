@@ -30,11 +30,15 @@ namespace MedicalExaminer.Common.Services.User
                 throw new ArgumentNullException(nameof(param));
             }
 
+            // Make sure date time is same for both fields.
+            var now = DateTime.Now;
+
             param.UserToCreate.UserId = Guid.NewGuid().ToString();
-            param.UserToCreate.CreatedAt = DateTime.Now;
-            param.UserToCreate.ModifiedAt = DateTime.Now;
+            param.UserToCreate.CreatedAt = now;
+            param.UserToCreate.ModifiedAt = now;
             param.UserToCreate.CreatedBy = param.CurrentUser.UserId;
             param.UserToCreate.LastModifiedBy = param.CurrentUser.UserId;
+
             var result = await CreateItemAsync(param.UserToCreate);
             return result;
         }

@@ -22,7 +22,8 @@ namespace MedicalExaminer.Common.Loggers
             string controllerMethod,
             IDictionary<string, object> parameters,
             string remoteIP,
-            DateTime timeStamp)
+            DateTime timeStamp,
+            double totalRus)
         {
             LogEntry = new LogMessageActionDefault(
                 userName,
@@ -32,7 +33,8 @@ namespace MedicalExaminer.Common.Loggers
                 controllerMethod,
                 parameters,
                 remoteIP,
-                timeStamp);
+                timeStamp,
+                totalRus);
         }
     }
 }

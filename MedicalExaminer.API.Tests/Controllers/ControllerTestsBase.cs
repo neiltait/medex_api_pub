@@ -2,14 +2,20 @@
 using System.Net;
 using System.Reflection;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Extensions.Data;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Common.Services.Location;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
 namespace MedicalExaminer.API.Tests.Controllers
