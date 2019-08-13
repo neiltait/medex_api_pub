@@ -33,7 +33,8 @@ namespace MedicalExaminer.Common.Authorization.Roles
                 Permission.MeoSummaryEvent,
                 Permission.OtherEvent,
                 Permission.AdmissionEvent,
-                Permission.MedicalHistoryEvent);
+                Permission.MedicalHistoryEvent,
+                Permission.GetCoronerReferralDownload);
         }
     }
 }
