@@ -191,7 +191,7 @@ namespace MedicalExaminer.Models
             if (examination.CaseOutcome.CremationFormStatus == null
                 || examination.CaseOutcome.MccdIssued == null
                 || examination.CaseOutcome.GpNotifiedStatus == null
-                || !examination.CaseCompleted
+                || examination.CaseCompleted == false
                 || (examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner
                     && !examination.CaseOutcome.CoronerReferralSent))
             {

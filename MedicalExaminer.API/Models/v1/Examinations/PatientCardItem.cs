@@ -223,7 +223,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Status flag: Case Closed?
         /// </summary>
-        public bool CaseClosed { get; set; }
+        public bool CaseClosed { get; set; } = false;
 
         /// <summary>
         /// Case Outcome
