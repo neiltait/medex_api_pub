@@ -59,7 +59,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             var currentUser = await CurrentUser();
-            var examination = _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, currentUser)).Result;
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, currentUser));
 
             if (examination == null)
             {
