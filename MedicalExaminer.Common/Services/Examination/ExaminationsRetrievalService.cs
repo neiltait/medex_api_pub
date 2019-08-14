@@ -8,6 +8,7 @@ using Cosmonaut.Extensions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Common.Services.Examination
@@ -51,12 +52,12 @@ namespace MedicalExaminer.Common.Services.Examination
             {
                 case ExaminationsOrderBy.Urgency:
 
-                    var key = DateTime.Now.Date.ToString("on_yyyy_MM_dd");
+                    var key = DateTime.Now.Date.UrgencyKey();
                     return _store
                         .Query()
                         .WithPagination(param.FilterPageNumber, param.FilterPageSize)
                         .Where(predicate)
-                        .OrderByDescending(x => x.UrgencyScores[key])
+                        .OrderByDescending(x => x.UrgencySort[key])
                         .ToListAsync()
                         .Result;
 
