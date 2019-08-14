@@ -95,5 +95,15 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         ///// Outcome of the Bereaved Discussion.
         ///// </summary>
         public BereavedDiscussionOutcome? BereavedDiscussionOutcome { get; set; }
+
+        /// <summary>
+        /// Clinical governance review
+        /// </summary>
+        public ClinicalGovernanceReview? ClinicalGovernanceReview { get; set; }
+
+        /// <summary>
+        /// Clinical governance review text
+        /// </summary>
+        public string ClinicalGovernanceReviewText { get; set; }
     }
 }
