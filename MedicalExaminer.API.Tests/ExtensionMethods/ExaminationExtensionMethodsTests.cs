@@ -48,10 +48,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination.CaseCompleted = true;
 
             // Act
-            examination.UpdateCaseUrgencyScore();
+            examination.UpdateCaseUrgencyScoreAndSort();
 
             // Assert
-            Assert.Equal(0, examination.UrgencyScore);
+            Assert.Equal(0, examination.GetCaseUrgencyScore());
         }
 
 
@@ -189,7 +189,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         public void When_Null_Examination_Is_Passed_Throws_Argument_Null_Exception()
         {
-            Action act = () => ExaminationExtensionMethods.UpdateCaseUrgencyScore(null);
+            Action act = () => ExaminationExtensionMethods.UpdateCaseUrgencyScoreAndSort(null);
             act.Should().Throw<ArgumentNullException>();
         }
 
@@ -208,10 +208,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var result = examination.UpdateCaseUrgencyScore();
+            var result = examination.UpdateCaseUrgencyScoreAndSort();
 
             // Assert
-            Assert.Equal(3000, result.UrgencyScore);
+            Assert.Equal(0, result.GetCaseUrgencyScore());
+            Assert.Equal(3000, result.GetCaseUrgencySort());
         }
 
         [Fact]
@@ -229,10 +230,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var result = examination.UpdateCaseUrgencyScore();
+            var result = examination.UpdateCaseUrgencyScoreAndSort();
 
             // Assert
-            Assert.Equal(3000 + 500, result.UrgencyScore);
+            Assert.Equal(500, result.GetCaseUrgencyScore());
+            Assert.Equal(3000 + 500, result.GetCaseUrgencySort());
         }
 
         [Fact]
@@ -250,10 +252,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var result = examination.UpdateCaseUrgencyScore();
+            var result = examination.UpdateCaseUrgencyScoreAndSort();
 
             // Assert
-            Assert.Equal(100000 + 6000, result.UrgencyScore);
+            Assert.Equal(10000, result.GetCaseUrgencyScore());
+            Assert.Equal(100000 + 6000, result.GetCaseUrgencySort());
         }
 
         [Fact]
@@ -452,10 +455,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var result = examination.UpdateCaseUrgencyScore();
+            var result = examination.UpdateCaseUrgencyScoreAndSort();
 
             // Assert
-            Assert.Equal(100000 + 6000 + 500, result.UrgencyScore);
+            Assert.Equal(10000 + 500, result.GetCaseUrgencyScore());
+            Assert.Equal(100000 + 6000 + 500, result.GetCaseUrgencySort());
         }
 
         [Fact]
