@@ -1,5 +1,4 @@
-﻿using MedicalExaminer.BackgroundServices.Services;
-using MedicalExaminer.Common.Settings;
+﻿using MedicalExaminer.Common.Settings;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MedicalExaminer.BackgroundServices
@@ -33,8 +32,6 @@ namespace MedicalExaminer.BackgroundServices
                     serviceProvider => new ScheduledServiceEveryDayAtSetTime(
                         backgroundServicesSettings.TimeToRunEachDay,
                         backgroundServicesSettings.SampleRate));
-
-                services.AddHostedService<UpdateExaminationsService>();
             }
 
             return services;

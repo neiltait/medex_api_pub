@@ -37,5 +37,9 @@
     <ProjectReference Include="..\MedicalExaminer.API.Tests\MedicalExaminer.API.Tests.csproj" />
     <ProjectReference Include="..\MedicalExaminer.BackgroundServices\MedicalExaminer.BackgroundServices.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
 </Project>
 
