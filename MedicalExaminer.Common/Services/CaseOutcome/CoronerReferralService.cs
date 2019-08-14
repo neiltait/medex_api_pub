@@ -43,7 +43,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.ModifiedAt = DateTime.Now;
             examinationToUpdate.CoronerReferralSent = true;
 
-            examinationToUpdate = examinationToUpdate.UpdateCaseUrgencyScore();
+            examinationToUpdate = examinationToUpdate.UpdateCaseUrgencyScoreAndSort();
             examinationToUpdate = examinationToUpdate.UpdateCaseStatus();
 
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);

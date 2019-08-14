@@ -32,7 +32,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.ScrutinyConfirmed = true;
 
             examinationToUpdate.UpdateCaseStatus();
-            examinationToUpdate.UpdateCaseUrgencyScore();
+            examinationToUpdate.UpdateCaseUrgencyScoreAndSort();
 
             var result = await DatabaseAccess.UpdateItemAsync(ConnectionSettings, examinationToUpdate);
             return result;

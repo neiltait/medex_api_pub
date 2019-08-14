@@ -37,7 +37,7 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
             examination.MedicalTeam.MedicalExaminerFullName = me.FullName();
             examination.MedicalTeam.MedicalExaminerOfficerFullName = meo.FullName();
 
-            examination = examination.UpdateCaseUrgencyScore();
+            examination = examination.UpdateCaseUrgencyScoreAndSort();
             examination = examination.UpdateCaseStatus();
             examination.LastModifiedBy = userId;
             examination.ModifiedAt = DateTime.Now;
