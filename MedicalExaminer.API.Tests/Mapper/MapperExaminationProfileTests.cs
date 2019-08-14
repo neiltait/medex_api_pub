@@ -929,7 +929,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                 Street = Street,
                 Town = Town,
                 TimeOfDeath = TimeOfDeath,
-                UrgencyScore = UrgencyScore,
                 LastAdmission = LastAdmission,
                 PendingAdmissionNotes = true,
                 PendingDiscussionWithQAP = true,
@@ -939,7 +938,11 @@ namespace MedicalExaminer.API.Tests.Mapper
                 HaveFinalCaseOutcomesOutstanding = true,
                 ReadyForMEScrutiny = true,
                 Unassigned = true,
-                MedicalTeam = medicalTeam
+                MedicalTeam = medicalTeam,
+                UrgencyScores = new Dictionary<string, int>
+                {
+                    { DateTime.Now.UrgencyKey(), UrgencyScore }
+                },
             };
 
             return examination;
