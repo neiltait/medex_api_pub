@@ -150,7 +150,12 @@ namespace MedicalExaminer.API.Controllers
             try
             {
                 var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
-                var usersPermissionLocationsIds = user.Permissions?.Select(x => x.LocationId).ToList();
+                if (user == null)
+                {
+                    return NotFound(new GetUserResponse());
+                }
+
+                var usersPermissionLocationsIds = user.Permissions == null ? new List<string>() : user.Permissions.Select(x => x.LocationId).ToList();
 
                 // Get all the location paths for all those locations.
                 var locationPaths =
@@ -170,11 +175,11 @@ namespace MedicalExaminer.API.Controllers
 
                 // Select only the permissions that the user making the request has access to from the user in question.
                 var permissions = user
-                    .Permissions
+                    .Permissions?.Where(p => p.LocationId != null)
                     .Where(p => locationPaths[p.LocationId]
-                        .Any(l => permissedLocations.Contains(l.LocationId)));
+                        .Any(l => permissedLocations.Contains(l.LocationId))) ?? new List<MEUserPermission>();
 
-                var uniqueLocations = permissions.GetUniqueLocationNames(_locationsRetrievalService).Result;
+                var uniqueLocations = await permissions?.GetUniqueLocationNames(_locationsRetrievalService);
 
                 var mappedPermissions = new List<PermissionItem>();
 
