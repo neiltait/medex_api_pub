@@ -293,7 +293,6 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             {
                 ExaminationId = "examination5",
                 CaseCompleted = false,
-                UrgencyScore = 3,
                 TrustLocationId = "expectedLocation",
             };
 
