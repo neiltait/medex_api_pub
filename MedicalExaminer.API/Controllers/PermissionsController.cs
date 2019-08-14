@@ -102,30 +102,37 @@ namespace MedicalExaminer.API.Controllers
         {
             try
             {
-                // Get all the permission location ids on the user in the request.
-                var meUser = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
-
-                if (meUser == null)
+                var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
+                if (user == null)
                 {
                     return NotFound(new GetPermissionsResponse());
                 }
 
-                var permissionLocations = meUser.Permissions.Select(p => p.LocationId).ToList();
+                var usersPermissionLocationsIds = user.Permissions == null ? new List<string>() : user.Permissions.Select(x => x.LocationId).ToList();
 
                 // Get all the location paths for all those locations.
                 var locationPaths =
-                    await _locationsParentsService.Handle(new LocationsParentsQuery(permissionLocations));
+                    await _locationsParentsService.Handle(new LocationsParentsQuery(usersPermissionLocationsIds));
+
+
+                var locations =
+                    _locationsRetrievalService.Handle(new LocationsRetrievalByQuery(
+                        null,
+                        null,
+                        false,
+                        false,
+                        usersPermissionLocationsIds)).Result;
 
                 // The locations the user making the request has direct access to.
                 var permissedLocations = (await LocationsWithPermission(Permission.GetUserPermissions)).ToList();
 
                 // Select only the permissions that the user making the request has access to from the user in question.
-                var permissions = meUser
-                    .Permissions
+                var permissions = user
+                    .Permissions?.Where(p => p.LocationId != null)
                     .Where(p => locationPaths[p.LocationId]
-                        .Any(l => permissedLocations.Contains(l.LocationId)));
+                        .Any(l => permissedLocations.Contains(l.LocationId))) ?? new List<MEUserPermission>();
 
-                var locations = permissions.GetUniqueLocationNames(_locationsRetrievalService).Result;
+                var uniqueLocations = await permissions?.GetUniqueLocationNames(_locationsRetrievalService);
 
                 var mappedPermissions = new List<PermissionItem>();
 
