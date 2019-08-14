@@ -10,16 +10,17 @@ namespace MedicalExaminer.Models
     public class Examination : Record,  IExamination, ILocationPath
     {
         /// <summary>
-        /// the urgency score assinged to the case
+        /// Pre calculated Urgency scores for the next N-days
         /// </summary>
-        [JsonProperty(PropertyName = "urgency_score")]
-        public int UrgencyScore { get; set; }
-
-        /// <summary>
-        /// the urgency score assinged to the case
-        /// </summary>
+        /// <remarks>A score of 1 or more makes the case urgent.</remarks>
         [JsonProperty(PropertyName = "urgency_scores")]
         public Dictionary<string,int> UrgencyScores { get; set; }
+
+        /// <summary>
+        /// Pre calculated Sort orders for the next N-days
+        /// </summary>
+        [JsonProperty(PropertyName = "urgency_sort")]
+        public Dictionary<string, int> UrgencySort { get; set; }
 
         /// <summary>
         /// Patients first hospital number.
