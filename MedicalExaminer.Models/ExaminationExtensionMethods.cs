@@ -89,7 +89,43 @@ namespace MedicalExaminer.Models
             return examination;
         }
 
-        public static Examination UpdateCaseUrgencyScore(this Examination examination)
+        public static int GetCaseUrgencyScore(this Examination examination)
+        {
+            return examination.GetCaseUrgencyScore(DateTime.Now);
+        }
+
+        public static int GetCaseUrgencyScore(this Examination examination, DateTime forDateTime)
+        {
+            if (examination.UrgencyScores == null)
+            {
+                return 0;
+            }
+
+            var key = forDateTime.UrgencyKey();
+            return examination.UrgencyScores.ContainsKey(key)
+                ? examination.UrgencyScores[key]
+                : 0;
+        }
+
+        public static int GetCaseUrgencySort(this Examination examination)
+        {
+            return examination.GetCaseUrgencySort(DateTime.Now);
+        }
+
+        public static int GetCaseUrgencySort(this Examination examination, DateTime forDateTime)
+        {
+            if (examination.UrgencySort == null)
+            {
+                return 0;
+            }
+
+            var key = forDateTime.UrgencyKey();
+            return examination.UrgencySort.ContainsKey(key)
+                ? examination.UrgencySort[key]
+                : 0;
+        }
+
+        public static Examination UpdateCaseUrgencyScoreAndSort(this Examination examination)
         {
             if (examination == null)
             {
@@ -98,23 +134,29 @@ namespace MedicalExaminer.Models
 
             if (examination.CaseCompleted)
             {
-                examination.UrgencyScore = 0;
                 examination.UrgencyScores = new Dictionary<string, int>();
+                examination.UrgencySort = new Dictionary<string, int>();
                 return examination;
             }
 
             var now = DateTime.Now;
 
-            examination.UrgencyScore = GetCaseUrgencyScore(examination, now);
-
             const int daysToScore = 30;
 
-            examination.UrgencyScores = Enumerable
+            var dayList = Enumerable
                 .Range(0, daysToScore)
                 .Select(days => now.AddDays(days))
+                .ToList();
+
+            examination.UrgencyScores = dayList
                 .ToDictionary(
-                    date => date.Date.ToString("on_yyyy_MM_dd"),
-                    date => GetCaseUrgencyScore(examination, date));
+                    date => date.UrgencyKey(),
+                    date => CalculateCaseUrgencyScore(examination, date));
+
+            examination.UrgencySort = dayList
+                .ToDictionary(
+                    date => date.UrgencyKey(),
+                    date => CalculateCaseSortOrder(examination, date));
 
             return examination;
         }
@@ -284,12 +326,36 @@ namespace MedicalExaminer.Models
             return CaseOutcomeSummary.IssueMCCD;
         }
 
-        private static int GetCaseUrgencyScore(Examination examination, DateTime forDate)
+        public static string UrgencyKey(this DateTime dateTime)
+        {
+            return dateTime
+                .Date
+                .ToString("on_yyyy_MM_dd");
+        }
+
+        private static int CalculateCaseSortOrder(Examination examination, DateTime forDate)
         {
             const int defaultScoreWeighting = 100;
             const int overdueScoreWeighting = 100000;
 
             var score = (forDate.Date - examination.CreatedAt.Date).Days * 1000;
+
+            score += CalculateCaseUrgencyScore(examination, forDate, defaultScoreWeighting, overdueScoreWeighting);
+
+            return score;
+        }
+
+        private static int CalculateCaseUrgencyScore(Examination examination, DateTime forDate)
+        {
+            const int defaultScoreWeighting = 100;
+            const int overdueScoreWeighting = 10000;
+
+            return CalculateCaseUrgencyScore(examination, forDate, defaultScoreWeighting, overdueScoreWeighting);
+        }
+
+        private static int CalculateCaseUrgencyScore(Examination examination, DateTime forDate, int defaultScoreWeighting, int overdueScoreWeighting)
+        {
+            var score = 0;
 
             if (examination.ChildPriority)
             {
