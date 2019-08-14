@@ -128,7 +128,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
         }
 
         /// <summary>
-        /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
+        /// Test to make sure UpdateCaseUrgencyScoreAndSort method is called whenever the Examination is updated
         /// </summary>
         [Fact]
         public void PatientDetailsUpdateOnExaminationWithNoUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScoreZero()
@@ -173,12 +173,12 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var result = sut.Handle(query);
 
             // Assert
-            Assert.Equal(3000, result.Result.UrgencyScore);
+            Assert.Equal(0, result.Result.GetCaseUrgencyScore());
             Assert.Equal("a", result.Result.LastModifiedBy);
         }
 
         /// <summary>
-        /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
+        /// Test to make sure UpdateCaseUrgencyScoreAndSort method is called whenever the Examination is updated
         /// </summary>
         [Fact]
         public void PatientDetailsUpdateOnExaminationWithAllUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScore500()
@@ -223,7 +223,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var result = sut.Handle(query);
 
             // Assert
-            Assert.Equal(3000 + 500, result.Result.UrgencyScore);
+            Assert.Equal(500, result.Result.GetCaseUrgencyScore());
             Assert.Equal("a", result.Result.LastModifiedBy);
         }
     }

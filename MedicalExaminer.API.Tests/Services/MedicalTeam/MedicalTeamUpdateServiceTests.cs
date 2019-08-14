@@ -7,6 +7,7 @@ using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.MedicalTeam;
+using MedicalExaminer.Models;
 using Moq;
 using Xunit;
 
@@ -69,7 +70,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
         }
 
         /// <summary>
-        /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
+        /// Test to make sure UpdateCaseUrgencyScoreAndSort method is called whenever the Examination is updated
         /// </summary>
         [Fact]
         public async void UpdateMedicalTeamOfExaminationWithNoUrgencyIndicatorsThenCaseUrgencyScoreUpdatedWithZero()
@@ -100,12 +101,12 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var result = await sut.Handle(examination, "a");
 
             // Assert
-            Assert.Equal(3000, result.UrgencyScore);
+            Assert.Equal(0, result.GetCaseUrgencyScore());
             Assert.Equal("a", result.LastModifiedBy);
         }
 
         /// <summary>
-        /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
+        /// Test to make sure UpdateCaseUrgencyScoreAndSort method is called whenever the Examination is updated
         /// </summary>
         [Fact]
         public async void UpdateMedicalTeamOfExaminationWithAllUrgencyIndicatorsThenCaseUrgencyScoreUpdatedWith500()
@@ -137,7 +138,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var result = await sut.Handle(examination, "a");
 
             // Assert
-            Assert.Equal(3000 + 500, result.UrgencyScore);
+            Assert.Equal( 500, result.GetCaseUrgencyScore());
             Assert.Equal("a", result.LastModifiedBy);
         }
     }
