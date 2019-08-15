@@ -348,7 +348,7 @@ namespace MedicalExaminer.Models
         private static int CalculateCaseUrgencyScore(Examination examination, DateTime forDate)
         {
             const int defaultScoreWeighting = 100;
-            const int overdueScoreWeighting = 10000;
+            const int overdueScoreWeighting = 1000;
 
             return CalculateCaseUrgencyScore(examination, forDate, defaultScoreWeighting, overdueScoreWeighting);
         }
