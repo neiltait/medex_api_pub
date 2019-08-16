@@ -34,8 +34,4 @@
     <ProjectReference Include="..\MedicalExaminer.Models\MedicalExaminer.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 </Project>
