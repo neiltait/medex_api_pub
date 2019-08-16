@@ -34,7 +34,7 @@ namespace MedicalExaminer.Models
                 var userHasDraft = Drafts.Any(draft => draft.UserId == theEvent.UserId);
                 if (userHasDraft)
                 {
-                    var usersDraft = Drafts.SingleOrDefault(draft => draft.EventId == theEvent.EventId);
+                    var usersDraft = Drafts.SingleOrDefault(draft => draft.UserId == theEvent.UserId);
                     if (usersDraft == null)
                     {
                         throw new ArgumentException(nameof(theEvent.EventId));
