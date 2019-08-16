@@ -61,12 +61,10 @@ namespace MedicalExaminer.BackgroundServices.Services
 
                 foreach (var examination in examinations)
                 {
-                    var previousScore = examination.UrgencyScore;
-
-                    examination.UpdateCaseUrgencyScore();
-
-                    if (examination.UrgencyScore != previousScore)
+                    if( examination.UrgencySort == null || examination.UrgencyScores == null)
                     {
+                        examination.UpdateCaseUrgencyScoreAndSort();
+
                         examination.LastModifiedBy = "UpdateExaminationService";
                         examination.ModifiedAt = DateTimeOffset.UtcNow;
 
