@@ -51,7 +51,6 @@ namespace MedicalExaminer.Common.Services.Examination
             switch (param.FilterOrderBy)
             {
                 case ExaminationsOrderBy.Urgency:
-
                     var key = DateTime.Now.Date.UrgencyKey();
                     return _store
                         .Query()

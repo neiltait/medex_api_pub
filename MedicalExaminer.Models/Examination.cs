@@ -12,7 +12,7 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Pre calculated Urgency scores for the next N-days
         /// </summary>
-        /// <remarks>A score of 1 or more makes the case urgent.</remarks>
+        /// <remarks>A score greater than 0 makes the case urgent.</remarks>
         [JsonProperty(PropertyName = "urgency_scores")]
         public Dictionary<string,int> UrgencyScores { get; set; }
 

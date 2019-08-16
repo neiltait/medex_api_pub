@@ -7,6 +7,8 @@ namespace MedicalExaminer.Models
 {
     public static class ExaminationExtensionMethods
     {
+        private const int NumberOfDaysToPreCalculateUrgencyAndSort = 30;
+
         public static Examination AddEvent(this Examination examination, IEvent theEvent)
         {
             switch (theEvent.EventType)
@@ -141,10 +143,8 @@ namespace MedicalExaminer.Models
 
             var now = DateTime.Now;
 
-            const int daysToScore = 30;
-
             var dayList = Enumerable
-                .Range(0, daysToScore)
+                .Range(0, NumberOfDaysToPreCalculateUrgencyAndSort)
                 .Select(days => now.AddDays(days))
                 .ToList();
 

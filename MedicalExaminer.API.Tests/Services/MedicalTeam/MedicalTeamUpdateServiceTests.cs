@@ -138,7 +138,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var result = await sut.Handle(examination, "a");
 
             // Assert
-            Assert.Equal( 500, result.GetCaseUrgencyScore());
+            Assert.Equal(500, result.GetCaseUrgencyScore());
             Assert.Equal("a", result.LastModifiedBy);
         }
     }
