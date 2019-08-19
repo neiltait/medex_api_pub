@@ -59,9 +59,13 @@ namespace MedicalExaminer.BackgroundServices.Services
 
                 var changedExaminations = new List<Examination>();
 
+                var urgencyScoreKey = DateTime.Now.UrgencyKey();
+
                 foreach (var examination in examinations)
                 {
-                    if( examination.UrgencySort == null || examination.UrgencyScores == null)
+                    if (examination.UrgencySort == null
+                        || examination.UrgencyScores == null
+                        || examination.UrgencyScores.ContainsKey(urgencyScoreKey) == false)
                     {
                         examination.UpdateCaseUrgencyScoreAndSort();
 
