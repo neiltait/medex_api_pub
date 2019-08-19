@@ -383,15 +383,13 @@ namespace MedicalExaminer.Models
         {
             const int defaultScoreMultiplier = 100;
 
-            // Days order is Ascending.
             var daysSinceCreated = (forDate.Date - examination.CreatedAt.Date).Days;
-            var score = Math.Max(0, Math.Min(defaultScoreMultiplier, daysSinceCreated));
-
+            var sortOrder = Math.Max(0, Math.Min(defaultScoreMultiplier, daysSinceCreated));
             var urgencyScore = CalculateCaseUrgencyScore(examination, forDate);
 
-            score += urgencyScore * defaultScoreMultiplier;
+            sortOrder += urgencyScore * defaultScoreMultiplier;
 
-            return score;
+            return sortOrder;
         }
 
         private static int CalculateCaseUrgencyScore(Examination examination, DateTime forDate)
