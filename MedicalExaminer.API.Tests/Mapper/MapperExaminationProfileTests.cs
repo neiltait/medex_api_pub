@@ -2204,7 +2204,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                 Town = generalDetails ? "town" : null,
                 TrustLocationId = generalDetails ? "trustLocationId" : null,
                 Unassigned = generalDetails ? true : false,
-                UrgencyScore = 0
             };
         }
 
