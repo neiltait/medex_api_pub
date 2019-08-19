@@ -26,6 +26,26 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Returns all Personal Effects
+        /// </summary>
+        /// <returns>Dictionary of Personal Effects</returns>
+        [HttpGet("personal_effects")]
+        public ActionResult GetPersonalEffects()
+        {
+            return Ok(GetDictionary(typeof(PersonalEffects)));
+        }
+
+        /// <summary>
+        /// Returns all Any Implants
+        /// </summary>
+        /// <returns>Dictionary of Any Implants</returns>
+        [HttpGet("any_implants")]
+        public ActionResult GetAnyImplants()
+        {
+            return Ok(GetDictionary(typeof(AnyImplants)));
+        }
+
+        /// <summary>
         /// Returns all Analysis Entry Type types
         /// </summary>
         /// <returns>Dictionary of Analysis Entry Type</returns>
@@ -223,6 +243,26 @@ namespace MedicalExaminer.API.Controllers
         public ActionResult GetRouteOfAdmission()
         {
             return Ok(GetDictionary(typeof(RouteOfAdmission)));
+        }
+
+        /// <summary>
+        /// Returns all QAP Discussion Statuses
+        /// </summary>
+        /// <returns>Dictionary of QAP Discussion Statuses</returns>
+        [HttpGet("qap_discussion_status")]
+        public ActionResult GetQapDiscussionStatues()
+        {
+            return Ok(GetDictionary(typeof(QAPDiscussionStatus)));
+        }
+
+        /// <summary>
+        /// Returns all Pre Scrutiny Statuses
+        /// </summary>
+        /// <returns>Dictionary of Pre Scrutiny Statuses</returns>
+        [HttpGet("pre_scrutiny_status")]
+        public ActionResult GetPreScrutinyStatus()
+        {
+            return Ok(GetDictionary(typeof(PreScrutinyStatus)));
         }
 
         /// <summary>

@@ -82,6 +82,11 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         public bool DiscussionUnableHappen { get; set; }
 
         /// <summary>
+        /// details as to why the discussion was unable to happen
+        /// </summary>
+        public string DiscussionUnableHappenDetails { get; set; }
+
+        /// <summary>
         /// Details of the Discussion.
         /// </summary>
         public string DiscussionDetails { get; set; }
@@ -90,5 +95,15 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         ///// Outcome of the Bereaved Discussion.
         ///// </summary>
         public BereavedDiscussionOutcome? BereavedDiscussionOutcome { get; set; }
+
+        /// <summary>
+        /// Clinical governance review
+        /// </summary>
+        public ClinicalGovernanceReview? ClinicalGovernanceReview { get; set; }
+
+        /// <summary>
+        /// Clinical governance review text
+        /// </summary>
+        public string ClinicalGovernanceReviewText { get; set; }
     }
 }

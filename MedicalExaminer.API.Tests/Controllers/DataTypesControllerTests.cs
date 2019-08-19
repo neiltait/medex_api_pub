@@ -18,6 +18,32 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly DataTypesController _controller;
 
         [Fact]
+        public void GetPersonalEffects_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var response = _controller.GetPersonalEffects();
+
+            // Assert
+            var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
+
+            Assert.Equal(3, dictionary.Keys.Count);
+        }
+
+        [Fact]
+        public void GetAnyImplants_When_Called_Returns_Expected_Type()
+        {
+            // Act
+            var response = _controller.GetAnyImplants();
+
+            // Assert
+            var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
+
+            Assert.Equal(3, dictionary.Keys.Count);
+        }
+
+        [Fact]
         public void GetCoronerStatuses_When_Called_Returns_Expected_Type()
         {
             // Act

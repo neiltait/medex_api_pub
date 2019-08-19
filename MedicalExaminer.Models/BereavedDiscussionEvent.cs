@@ -97,6 +97,12 @@ namespace MedicalExaminer.Models
         public bool DiscussionUnableHappen { get; set; }
 
         /// <summary>
+        /// Unable to happen details.
+        /// </summary>
+        [JsonProperty(PropertyName = "discussion_unable_happen_details")]
+        public string DiscussionUnableHappenDetails { get; set; }
+
+        /// <summary>
         /// Details of the Discussion.
         /// </summary>
         [JsonProperty(PropertyName = "discussion_details")]
@@ -107,5 +113,17 @@ namespace MedicalExaminer.Models
         ///// </summary>
         [JsonProperty(PropertyName = "bereaved_discussion_outcome")]
         public BereavedDiscussionOutcome? BereavedDiscussionOutcome { get; set; }
+
+        ///// <summary>
+        ///// Clinical governance review
+        ///// </summary>
+        [JsonProperty(PropertyName = "clinical_governance_review")]
+        public ClinicalGovernanceReview? ClinicalGovernanceReview { get; set; }
+        
+        ///// <summary>
+        ///// Clinical governance review text
+        ///// </summary>
+        [JsonProperty(PropertyName = "clinical_governance_review_text")]
+        public string ClinicalGovernanceReviewText { get; set; }
     }
 }

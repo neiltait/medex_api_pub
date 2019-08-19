@@ -40,12 +40,14 @@ namespace MedicalExaminer.API.Models.v1.MedicalTeams
         ///     Medical Examiner.
         /// </summary>
         [ValidRoleOnExamination(UserRoles.MedicalExaminer)]
+        [IsNullOrGuid]
         public string MedicalExaminerUserId { get; set; }
 
         /// <summary>
         ///     Medical Examiner Officer.
         /// </summary>
         [ValidRoleOnExamination(UserRoles.MedicalExaminerOfficer)]
+        [IsNullOrGuid]
         public string MedicalExaminerOfficerUserId { get; set; }
     }
 }

@@ -42,7 +42,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
             examinationToUpdate.CaseCompleted = true;
-            examinationToUpdate.CaseOutcome.CaseCompleted = false;
+            examinationToUpdate.CaseOutcome.CaseCompleted = true;
 
             examinationToUpdate.CaseBreakdown.CaseClosedEvent = new CaseClosedEvent()
             {

@@ -8,6 +8,7 @@ using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.API.Services;
+using MedicalExaminer.Common.Extensions.Permission;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
@@ -16,6 +17,7 @@ using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
+using Okta.Sdk;
 using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
@@ -31,14 +33,42 @@ namespace MedicalExaminer.API.Controllers
     public class UsersController : AuthorizedBaseController
     {
         /// <summary>
-        ///     The User Persistence Layer
+        /// Locations Parents Service.
+        /// </summary>
+        private readonly
+            IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>
+            _locationsParentsService;
+
+        /// <summary>
+        /// User Creation Service
         /// </summary>
         private readonly IAsyncQueryHandler<CreateUserQuery, MeUser> _userCreationService;
+
+        /// <summary>
+        /// User Retrieval by Id Service.
+        /// </summary>
         private readonly IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> _userRetrievalByIdService;
+
+        /// <summary>
+        /// Users Retrieval Service
+        /// </summary>
         private readonly IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> _usersRetrievalService;
+
+        /// <summary>
+        /// User Update Service.
+        /// </summary>
         private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
-        private readonly IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> _userRetrievalByEmailService;
+
+        /// <summary>
+        /// Locations Retrieval Service.
+        /// </summary>
         private readonly IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> _locationsRetrievalService;
+
+        /// <summary>
+        /// Okta Client.
+        /// </summary>
+        private readonly IOktaClient _oktaClient;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
@@ -51,6 +81,8 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="userRetrievalByIdService">User retrieval service.</param>
         /// <param name="usersRetrievalService">Users retrieval service.</param>
         /// <param name="userUpdateService">The userToCreate update service</param>
+        /// <param name="locationsRetrievalService">Locations Retrieval Service.</param>
+        /// <param name="oktaClient">Okta client.</param>
         public UsersController(
             IMELogger logger,
             IMapper mapper,
@@ -61,16 +93,18 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
-            IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser> userRetrievalByEmailService,
-            IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationsRetrievalService)
+            IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationsRetrievalService,
+            IOktaClient oktaClient,
+            IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>> locationsParentsService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _userCreationService = userCreationService;
             _userRetrievalByIdService = userRetrievalByIdService;
             _usersRetrievalService = usersRetrievalService;
             _userUpdateService = userUpdateService;
-            _userRetrievalByEmailService = userRetrievalByEmailService;
             _locationsRetrievalService = locationsRetrievalService;
+            _oktaClient = oktaClient;
+            _locationsParentsService = locationsParentsService;
         }
 
         /// <summary>
@@ -116,19 +150,45 @@ namespace MedicalExaminer.API.Controllers
             try
             {
                 var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
-                var usersPermissionLocationsIds = user.Permissions?.Select(x => x.LocationId).ToList();
+                if (user == null)
+                {
+                    return NotFound(new GetUserResponse());
+                }
+
+                var usersPermissionLocationsIds = user.Permissions == null ? new List<string>() : user.Permissions.Select(x => x.LocationId).ToList();
+
+                // Get all the location paths for all those locations.
+                var locationPaths =
+                    await _locationsParentsService.Handle(new LocationsParentsQuery(usersPermissionLocationsIds));
+
 
                 var locations =
                     _locationsRetrievalService.Handle(new LocationsRetrievalByQuery(
                         null,
                         null,
                         false,
+                        false,
                         usersPermissionLocationsIds)).Result;
 
-                var mappedPermissions = user.Permissions?.Select(meUserPermission => new PermissionLocation(
-                    meUserPermission,
-                    locations,
-                    meUserId)).Select(pl => Mapper.Map<PermissionItem>(pl)).ToList();
+                // The locations the user making the request has direct access to.
+                var permissedLocations = (await LocationsWithPermission(Permission.GetUserPermissions)).ToList();
+
+                // Select only the permissions that the user making the request has access to from the user in question.
+                var permissions = user
+                    .Permissions?.Where(p => p.LocationId != null)
+                    .Where(p => locationPaths[p.LocationId]
+                        .Any(l => permissedLocations.Contains(l.LocationId))) ?? new List<MEUserPermission>();
+
+                var uniqueLocations = await permissions?.GetUniqueLocationNames(_locationsRetrievalService);
+
+                var mappedPermissions = new List<PermissionItem>();
+
+                foreach (var meUserPermission in permissions)
+                {
+                    var pl = new PermissionLocation(meUserPermission, locations, meUserId);
+                    var temp = Mapper.Map<PermissionItem>(pl);
+                    mappedPermissions.Add(temp);
+                }
 
                 var gur = new GetUserResponse();
                 Mapper.Map(user, gur);
@@ -137,12 +197,11 @@ namespace MedicalExaminer.API.Controllers
                 return Ok(gur);
             }
             catch (ArgumentException)
-            { 
+            {
                 return NotFound(new GetUserResponse());
             }
-            catch (NullReferenceException ex)
+            catch (NullReferenceException)
             {
-                var t = ex;
                 return NotFound(new GetUserResponse());
             }
         }
@@ -164,7 +223,23 @@ namespace MedicalExaminer.API.Controllers
 
             try
             {
-                var userToCreate = Mapper.Map<MeUser>(postUser);
+                var oktaUser = await _oktaClient.Users.GetUserAsync(postUser.Email);
+
+                if (oktaUser == null)
+                {
+                    var response = new PostUserResponse();
+                    response.AddError(nameof(PostUserRequest.Email), "Okta User doesn't exist for email");
+                    return BadRequest(response);
+                }
+
+                var userToCreate = new MeUser
+                {
+                    OktaId = oktaUser.Id,
+                    FirstName = oktaUser.Profile.FirstName,
+                    LastName = oktaUser.Profile.LastName,
+                    Email = oktaUser.Profile.Email,
+                };
+
                 var currentUser = await CurrentUser();
                 var createdUser = await _userCreationService.Handle(new CreateUserQuery(userToCreate, currentUser));
                 return Ok(Mapper.Map<PostUserResponse>(createdUser));
@@ -182,6 +257,7 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// Update a new User.
         /// </summary>
+        /// <param name="meUserId">The user id.</param>
         /// <param name="putUser">The PutUserRequest.</param>
         /// <returns>A PutUserResponse.</returns>
         [HttpPut("{meUserId}")]

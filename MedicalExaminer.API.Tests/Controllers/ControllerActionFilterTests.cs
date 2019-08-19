@@ -154,13 +154,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             var usersRetrievalService =
                 new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>();
             var userUpdateService = new Mock<IAsyncQueryHandler<UserUpdateQuery, MeUser>>();
-
             var usersRetrievalByOktaIdServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
-            var usersRetrievalByEmailServiceMock = new Mock<IAsyncQueryHandler<UserRetrievalByEmailQuery, MeUser>>();
             var locationsService = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>();
             var authorizationServiceMock = new Mock<IAuthorizationService>();
-
             var permissionServiceMock = new Mock<IPermissionService>();
+            var locationsParentsServiceMock = new Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>();
 
             _controller = new UsersController(
                 _mockLogger,
@@ -172,8 +170,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 userRetrievalService.Object,
                 usersRetrievalService.Object,
                 userUpdateService.Object,
-                usersRetrievalByEmailServiceMock.Object,
-                locationsService.Object);
+                locationsService.Object,
+                null,
+                locationsParentsServiceMock.Object);
         }
 
         [Fact]
