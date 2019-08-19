@@ -330,17 +330,20 @@ namespace MedicalExaminer.Models
         {
             return dateTime
                 .Date
-                .ToString("on_yyyy_MM_dd");
+                .ToString("yyyy_MM_dd");
         }
 
         private static int CalculateCaseSortOrder(Examination examination, DateTime forDate)
         {
-            const int defaultScoreWeighting = 100;
-            const int overdueScoreWeighting = 100000;
+            const int defaultScoreMultiplier = 100;
 
-            var score = (forDate.Date - examination.CreatedAt.Date).Days * 1000;
+            // Days order is Ascending.
+            var daysSinceCreated = (forDate.Date - examination.CreatedAt.Date).Days;
+            var score = Math.Max(0, Math.Min(defaultScoreMultiplier, daysSinceCreated));
 
-            score += CalculateCaseUrgencyScore(examination, forDate, defaultScoreWeighting, overdueScoreWeighting);
+            var urgencyScore = CalculateCaseUrgencyScore(examination, forDate);
+
+            score += urgencyScore * defaultScoreMultiplier;
 
             return score;
         }
@@ -350,11 +353,6 @@ namespace MedicalExaminer.Models
             const int defaultScoreWeighting = 100;
             const int overdueScoreWeighting = 1000;
 
-            return CalculateCaseUrgencyScore(examination, forDate, defaultScoreWeighting, overdueScoreWeighting);
-        }
-
-        private static int CalculateCaseUrgencyScore(Examination examination, DateTime forDate, int defaultScoreWeighting, int overdueScoreWeighting)
-        {
             var score = 0;
 
             if (examination.ChildPriority)
