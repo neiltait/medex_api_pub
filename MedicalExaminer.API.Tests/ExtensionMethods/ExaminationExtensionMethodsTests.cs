@@ -212,7 +212,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             // Assert
             Assert.Equal(0, result.GetCaseUrgencyScore());
-            Assert.Equal(3000, result.GetCaseUrgencySort());
+            Assert.Equal(3, result.GetCaseUrgencySort());
         }
 
         [Fact]
@@ -234,7 +234,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             // Assert
             Assert.Equal(500, result.GetCaseUrgencyScore());
-            Assert.Equal(3000 + 500, result.GetCaseUrgencySort());
+            Assert.Equal(500 * 100 + 3, result.GetCaseUrgencySort());
         }
 
         [Fact]
@@ -255,8 +255,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var result = examination.UpdateCaseUrgencyScoreAndSort();
 
             // Assert
-            Assert.Equal(10000, result.GetCaseUrgencyScore());
-            Assert.Equal(100000 + 6000, result.GetCaseUrgencySort());
+            Assert.Equal(1000, result.GetCaseUrgencyScore());
+            Assert.Equal(100000 + 6, result.GetCaseUrgencySort());
         }
 
         [Fact]
@@ -458,8 +458,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var result = examination.UpdateCaseUrgencyScoreAndSort();
 
             // Assert
-            Assert.Equal(10000 + 500, result.GetCaseUrgencyScore());
-            Assert.Equal(100000 + 6000 + 500, result.GetCaseUrgencySort());
+            Assert.Equal(1000 + 500, result.GetCaseUrgencyScore());
+            Assert.Equal((1000 + 500)*100 + 6, result.GetCaseUrgencySort());
         }
 
         [Fact]
