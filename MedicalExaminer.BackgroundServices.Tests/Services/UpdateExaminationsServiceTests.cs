@@ -74,7 +74,6 @@ namespace MedicalExaminer.BackgroundServices.Tests.Services
             {
                 new Examination()
                 {
-                    UrgencyScore = -1,
                     ModifiedAt = startingModified,
                 }
             };
@@ -172,7 +171,7 @@ namespace MedicalExaminer.BackgroundServices.Tests.Services
 
             foreach (var updatedExamination in updatedExaminations)
             {
-                updatedExamination.UrgencyScore.Should().NotBe(-1);
+                updatedExamination.GetCaseUrgencyScore().Should().NotBe(-1);
                 updatedExamination.LastModifiedBy.Should().Be("UpdateExaminationService");
                 updatedExamination.ModifiedAt.Should().NotBe(startingModified);
             }
