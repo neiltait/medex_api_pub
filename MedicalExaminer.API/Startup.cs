@@ -113,6 +113,7 @@ example:
             services.ConfigureSettings<RequestChargeSettings>(Configuration, "RequestCharge");
 
             services.ConfigureSettings<UrgencySettings>(Configuration, "UrgencySettings");
+            var urgencySettings = services.ConfigureSettings<UrgencySettings>(Configuration, "UrgencySettings");
 
             ConfigureOktaClient(services);
 
