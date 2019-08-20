@@ -10,8 +10,9 @@ namespace MedicalExaminer.Models
     public class Examination : Record,  IExamination, ILocationPath
     {
         /// <summary>
-        /// Pre calculated Sort orders for the next N-days
+        /// Pre calculated Sort orders for the next N-days.
         /// </summary>
+        /// <remarks>Configured by property in UrgencySettings</remarks>
         [JsonProperty(PropertyName = "urgency_sort")]
         public Dictionary<string, int> UrgencySort { get; set; }
 
