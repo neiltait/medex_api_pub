@@ -91,24 +91,6 @@ namespace MedicalExaminer.Models
             return examination;
         }
 
-        public static int GetCaseUrgencyScore(this Examination examination)
-        {
-            return examination.GetCaseUrgencyScore(DateTime.Now);
-        }
-
-        public static int GetCaseUrgencyScore(this Examination examination, DateTime forDateTime)
-        {
-            if (examination.UrgencyScores == null)
-            {
-                return 0;
-            }
-
-            var key = forDateTime.UrgencyKey();
-            return examination.UrgencyScores.ContainsKey(key)
-                ? examination.UrgencyScores[key]
-                : 0;
-        }
-
         public static int GetCaseUrgencySort(this Examination examination)
         {
             return examination.GetCaseUrgencySort(DateTime.Now);
@@ -127,6 +109,14 @@ namespace MedicalExaminer.Models
                 : 0;
         }
 
+        public static bool IsUrgent(this Examination examination)
+        {
+            var score = CalculateCaseUrgencyScore(examination, DateTime.Now);
+
+            return score > 0;
+        }
+
+        // TODO: Rename to just sort
         public static Examination UpdateCaseUrgencyScoreAndSort(this Examination examination)
         {
             if (examination == null)
@@ -136,7 +126,6 @@ namespace MedicalExaminer.Models
 
             if (examination.CaseCompleted)
             {
-                examination.UrgencyScores = new Dictionary<string, int>();
                 examination.UrgencySort = new Dictionary<string, int>();
                 return examination;
             }
@@ -147,11 +136,6 @@ namespace MedicalExaminer.Models
                 .Range(0, NumberOfDaysToPreCalculateUrgencyAndSort)
                 .Select(days => now.AddDays(days))
                 .ToList();
-
-            examination.UrgencyScores = dayList
-                .ToDictionary(
-                    date => date.UrgencyKey(),
-                    date => CalculateCaseUrgencyScore(examination, date));
 
             examination.UrgencySort = dayList
                 .ToDictionary(
