@@ -67,7 +67,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
         }
 
         /// <summary>
-        /// Test to make sure UpdateCaseUrgencyScoreAndSort method is called whenever the Examination is updated
+        /// Test to make sure UpdateCaseUrgencySort method is called whenever the Examination is updated
         /// </summary>
         [Fact]
         public void CreateEventOnExaminationWithNoUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScoreZero()
@@ -106,7 +106,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
         }
 
         /// <summary>
-        /// Test to make sure UpdateCaseUrgencyScoreAndSort method is called whenever the Examination is updated
+        /// Test to make sure UpdateCaseUrgencySort method is called whenever the Examination is updated
         /// </summary>
         [Fact]
         public void CreateEventOnExaminationWithAllUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScore500()

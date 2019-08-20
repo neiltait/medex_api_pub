@@ -19,15 +19,17 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         public void CreateExaminationQueryIsNullThrowsException()
         {
             // Arrange
-            MedicalExaminer.Models.Examination examination = new MedicalExaminer.Models.Examination();
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
-            CreateExaminationQuery query = null;
+            const CreateExaminationQuery query = null;
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
             var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
 
+            // Act
             Action act = () => sut.Handle(query).GetAwaiter().GetResult();
+
+            // Assert
             act.Should().Throw<ArgumentNullException>();
         }
 
@@ -60,10 +62,10 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         }
 
         /// <summary>
-        /// Test to make sure UpdateCaseUrgencyScoreAndSort method is called when the Examination is created
+        /// Test to make sure UpdateCaseUrgencySort method is called when the Examination is created
         /// </summary>
         [Fact]
-        public void CreateExaminationQueryWithNoUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScoreZero()
+        public void CreateExaminationQueryWithNoUrgencyIndicatorsSuccessReturnsExaminationWithIsUrgentFalse()
         {
             // Arrange
             var examination = new MedicalExaminer.Models.Examination()
@@ -105,10 +107,10 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         }
 
         /// <summary>
-        /// Test to make sure UpdateCaseUrgencyScoreAndSort method is called when the Examination is created
+        /// Test to make sure UpdateCaseUrgencySort method is called when the Examination is created
         /// </summary>
         [Fact]
-        public void CreateExaminationQueryWithAllUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScore500()
+        public void CreateExaminationQueryWithAllUrgencyIndicatorsSuccessReturnsExaminationWithIsUrgentTrue()
         {
             // Arrange
             var examination = new MedicalExaminer.Models.Examination()

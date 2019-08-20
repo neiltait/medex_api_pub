@@ -55,7 +55,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
                 UsersRole = param.User.Role()?.ToString()
             };
 
-            examinationToUpdate = examinationToUpdate.UpdateCaseUrgencyScoreAndSort();
+            examinationToUpdate = examinationToUpdate.UpdateCaseUrgencySort();
             examinationToUpdate = examinationToUpdate.UpdateCaseStatus();
 
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);

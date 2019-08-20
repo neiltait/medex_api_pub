@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -9,7 +8,6 @@ using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.PatientDetails;
-using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.Location;
 using MedicalExaminer.Common.Services.PatientDetails;
 using MedicalExaminer.Models;
@@ -20,7 +18,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
 {
     public class PatientDetailsUpdateServiceTests : BaseServiceTest
     {
-        private IEnumerable<MedicalExaminer.Models.Location> _locationPath;
+        private readonly IEnumerable<MedicalExaminer.Models.Location> _locationPath;
 
         public PatientDetailsUpdateServiceTests()
         {
@@ -50,7 +48,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
         {
             // Arrange
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            PatientDetailsUpdateQuery query = null;
+            const PatientDetailsUpdateQuery query = null;
 
             var mapper = new Mock<IMapper>();
             var dbAccess = new Mock<IDatabaseAccess>();
@@ -60,7 +58,10 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             locationService.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
             var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object, locationService.Object);
 
+            // Act
             Action act = () => sut.Handle(query).GetAwaiter().GetResult();
+
+            // Assert
             act.Should().Throw<ArgumentNullException>();
         }
 
@@ -90,8 +91,12 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var result = sut.Handle(query);
 
             // Assert
-            dbAccess.Verify(db => db.UpdateItemAsync(connectionSettings.Object,
-                It.IsAny<MedicalExaminer.Models.Examination>()), Times.Once);
+            dbAccess
+                .Verify(
+                    db => db.UpdateItemAsync(
+                    connectionSettings.Object,
+                It.IsAny<MedicalExaminer.Models.Examination>()),
+                    Times.Once);
             Assert.NotNull(result.Result);
             Assert.Equal("a", result.Result.LastModifiedBy);
         }
@@ -122,16 +127,19 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var result = sut.Handle(query);
 
             // Assert
-            dbAccess.Verify(db => db.UpdateItemAsync(connectionSettings.Object,
-                It.IsAny<MedicalExaminer.Models.Examination>()), Times.Once);
+            dbAccess.Verify(
+                db => db.UpdateItemAsync(
+                    connectionSettings.Object,
+                    It.IsAny<MedicalExaminer.Models.Examination>()),
+                Times.Once);
             Assert.NotNull(result.Result);
         }
 
         /// <summary>
-        /// Test to make sure UpdateCaseUrgencyScoreAndSort method is called whenever the Examination is updated
+        /// Test to make sure UpdateCaseUrgencySort method is called whenever the Examination is updated
         /// </summary>
         [Fact]
-        public void PatientDetailsUpdateOnExaminationWithNoUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScoreZero()
+        public void PatientDetailsUpdateOnExaminationWithNoUrgencyIndicatorsSuccessReturnsExaminationWithIsUrgentFalse()
         {
             // Arrange
             var examination = new MedicalExaminer.Models.Examination()
@@ -181,10 +189,10 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
         }
 
         /// <summary>
-        /// Test to make sure UpdateCaseUrgencyScoreAndSort method is called whenever the Examination is updated
+        /// Test to make sure UpdateCaseUrgencySort method is called whenever the Examination is updated
         /// </summary>
         [Fact]
-        public void PatientDetailsUpdateOnExaminationWithAllUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScore500()
+        public void PatientDetailsUpdateOnExaminationWithAllUrgencyIndicatorsSuccessReturnsExaminationWithIsUrgentTrue()
         {
             // Arrange
             var examination = new MedicalExaminer.Models.Examination()

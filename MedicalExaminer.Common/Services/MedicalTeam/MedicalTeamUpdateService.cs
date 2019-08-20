@@ -51,7 +51,7 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
                 examination.MedicalTeam.MedicalExaminerOfficerFullName = await GetFullName(examination.MedicalTeam.MedicalExaminerOfficerUserId);
             }
 
-            examination = examination.UpdateCaseUrgencyScoreAndSort();
+            examination = examination.UpdateCaseUrgencySort();
             examination = examination.UpdateCaseStatus();
             examination.LastModifiedBy = userId;
             examination.ModifiedAt = DateTime.Now;

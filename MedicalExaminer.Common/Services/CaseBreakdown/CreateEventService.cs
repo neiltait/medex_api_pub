@@ -35,7 +35,7 @@ namespace MedicalExaminer.Common.Services.Examination
 
             examinationToUpdate = examinationToUpdate
                                             .AddEvent(param.Event)
-                                            .UpdateCaseUrgencyScoreAndSort()
+                                            .UpdateCaseUrgencySort()
                                             .UpdateCaseStatus();
 
             examinationToUpdate.LastModifiedBy = param.Event.UserId;

@@ -51,7 +51,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.CaseOutcome.GpNotifiedStatus = param.CaseOutcome.GpNotifiedStatus;
 
             examinationToUpdate.OutstandingCaseItemsCompleted = examinationToUpdate.CalculateOutstandingCaseOutcomesCompleted();
-            examinationToUpdate = examinationToUpdate.UpdateCaseUrgencyScoreAndSort();
+            examinationToUpdate = examinationToUpdate.UpdateCaseUrgencySort();
             examinationToUpdate = examinationToUpdate.UpdateCaseStatus();
 
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);

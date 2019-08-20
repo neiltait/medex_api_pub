@@ -116,8 +116,7 @@ namespace MedicalExaminer.Models
             return score > 0;
         }
 
-        // TODO: Rename to just sort
-        public static Examination UpdateCaseUrgencyScoreAndSort(this Examination examination)
+        public static Examination UpdateCaseUrgencySort(this Examination examination)
         {
             if (examination == null)
             {

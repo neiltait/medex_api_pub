@@ -67,7 +67,7 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             caseToReplace.LastModifiedBy = param.User.UserId;
             caseToReplace.ModifiedAt = DateTime.Now;
 
-            caseToReplace = caseToReplace.UpdateCaseUrgencyScoreAndSort();
+            caseToReplace = caseToReplace.UpdateCaseUrgencySort();
             caseToReplace = caseToReplace.UpdateCaseStatus();
             caseToReplace.CaseBreakdown.DeathEvent = _mapper.Map(caseToReplace, caseToReplace.CaseBreakdown.DeathEvent);
             caseToReplace.CaseBreakdown.DeathEvent.UserId = param.User.UserId;

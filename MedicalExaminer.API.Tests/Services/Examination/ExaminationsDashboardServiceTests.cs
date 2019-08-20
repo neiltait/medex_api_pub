@@ -345,7 +345,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             foreach (var examination in examinations)
             {
-                examination.UpdateCaseUrgencyScoreAndSort();
+                examination.UpdateCaseUrgencySort();
             }
         }
 

@@ -68,10 +68,10 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
         }
 
         /// <summary>
-        /// Test to make sure UpdateCaseUrgencyScoreAndSort method is called whenever the Examination is updated
+        /// Test to make sure UpdateCaseUrgencySort method is called whenever the Examination is updated
         /// </summary>
         [Fact]
-        public async void UpdateMedicalTeamOfExaminationWithNoUrgencyIndicatorsThenCaseUrgencyScoreUpdatedWithZero()
+        public async void UpdateMedicalTeamOfExaminationWithNoUrgencyIndicatorsThenIsUrgentShouldBeFalse()
         {
             // Arrange
             var examination = new MedicalExaminer.Models.Examination
@@ -104,10 +104,10 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
         }
 
         /// <summary>
-        /// Test to make sure UpdateCaseUrgencyScoreAndSort method is called whenever the Examination is updated
+        /// Test to make sure UpdateCaseUrgencySort method is called whenever the Examination is updated
         /// </summary>
         [Fact]
-        public async void UpdateMedicalTeamOfExaminationWithAllUrgencyIndicatorsThenCaseUrgencyScoreUpdatedWith500()
+        public async void UpdateMedicalTeamOfExaminationWithAllUrgencyIndicatorsThenIsUrgentShouldBeTrue()
         {
             // Arrange
             var examination = new MedicalExaminer.Models.Examination
