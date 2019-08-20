@@ -31,8 +31,8 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.CaseOutcome.ScrutinyConfirmedOn = DateTime.Now;
             examinationToUpdate.ScrutinyConfirmed = true;
 
+            examinationToUpdate.UpdateCaseUrgencySort();
             examinationToUpdate.UpdateCaseStatus();
-            examinationToUpdate.UpdateCaseUrgencyScoreAndSort();
 
             var result = await DatabaseAccess.UpdateItemAsync(ConnectionSettings, examinationToUpdate);
             return result;
