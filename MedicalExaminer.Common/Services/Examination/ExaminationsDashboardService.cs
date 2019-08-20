@@ -60,7 +60,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 CountOfPendingDiscussionWithRepresentative = GetCount(examinations, CaseStatus.PendingDiscussionWithRepresentative),
                 CountOfReadyForMEScrutiny = GetCount(examinations, CaseStatus.ReadyForMEScrutiny),
                 TotalCases = examinations.Count(),
-                CountOfUrgentCases = GetCount(examinations, x => ((x.GetCaseUrgencyScore() > 0) && (x.CaseCompleted == false)))
+                CountOfUrgentCases = GetCount(examinations, x => x.IsUrgent() && x.CaseCompleted == false)
             };
 
             return overView;
