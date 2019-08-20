@@ -14,7 +14,6 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
-using MedicalExaminer.BackgroundServices;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Authorization.Roles;
@@ -91,9 +90,6 @@ namespace MedicalExaminer.API
 
             var cosmosDbSettings = services.ConfigureSettings<CosmosDbSettings>(Configuration, "CosmosDB");
 
-            var backgroundServicesSettings =
-                services.ConfigureSettings<BackgroundServicesSettings>(Configuration, "BackgroundServices");
-
             var locationMigrationSettings =
                 services.ConfigureSettings<LocationMigrationSettings>(Configuration, "LocationMigrationSettings");
 
@@ -112,7 +108,6 @@ example:
 
             services.ConfigureSettings<RequestChargeSettings>(Configuration, "RequestCharge");
 
-            services.ConfigureSettings<UrgencySettings>(Configuration, "UrgencySettings");
             var urgencySettings = services.ConfigureSettings<UrgencySettings>(Configuration, "UrgencySettings");
 
             ConfigureOktaClient(services);
@@ -243,8 +238,6 @@ example:
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
-
-            services.AddBackgroundServices(backgroundServicesSettings);
 
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
