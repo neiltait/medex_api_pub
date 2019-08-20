@@ -101,9 +101,8 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             var result = sut.Handle(query);
 
             // Assert
-            Assert.Equal(0, examination.GetCaseUrgencyScore());
-            Assert.Equal("a", examination.LastModifiedBy);
-
+            examination.IsUrgent().Should().BeFalse();
+            examination.LastModifiedBy.Should().Be("a");
         }
 
         /// <summary>
@@ -141,8 +140,8 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             var result = sut.Handle(query);
 
             // Assert
-            Assert.Equal(500, examination.GetCaseUrgencyScore());
-            Assert.Equal("a", examination.LastModifiedBy);
+            examination.IsUrgent().Should().BeTrue();
+            examination.LastModifiedBy.Should().Be("a");
         }
     }
 }

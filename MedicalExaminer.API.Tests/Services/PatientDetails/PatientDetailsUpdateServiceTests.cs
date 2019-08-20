@@ -154,9 +154,12 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             };
 
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var user = new Mock<MeUser>();
-            user.Object.UserId = "a";
-            var query = new PatientDetailsUpdateQuery("a", patientDetails, user.Object, _locationPath);
+            var userId = "userId";
+            var user = new MeUser()
+            {
+                UserId = userId,
+            };
+            var query = new PatientDetailsUpdateQuery("a", patientDetails, user, _locationPath);
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -173,8 +176,8 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var result = sut.Handle(query);
 
             // Assert
-            Assert.Equal(0, result.Result.GetCaseUrgencyScore());
-            Assert.Equal("a", result.Result.LastModifiedBy);
+            result.Result.IsUrgent().Should().BeFalse();
+            result.Result.LastModifiedBy.Should().Be(userId);
         }
 
         /// <summary>
@@ -202,11 +205,15 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
                 OtherPriority = true,
             };
 
-            var user = new Mock<MeUser>();
-            user.Object.UserId = "a";
+            const string userId = "userId";
+            var user = new MeUser()
+            {
+                UserId = userId,
+            };
+
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
 
-            var query = new PatientDetailsUpdateQuery("a", patientDetails, user.Object, _locationPath);
+            var query = new PatientDetailsUpdateQuery("a", patientDetails, user, _locationPath);
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -223,8 +230,8 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var result = sut.Handle(query);
 
             // Assert
-            Assert.Equal(500, result.Result.GetCaseUrgencyScore());
-            Assert.Equal("a", result.Result.LastModifiedBy);
+            result.Result.IsUrgent().Should().BeTrue();
+            result.Result.LastModifiedBy.Should().Be(userId);
         }
     }
 }

@@ -310,19 +310,27 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CreatedAt = dateTimeNow,
             };
 
-            var examinations = SetLocationCache(new[] { examination1, examination2, examination4, examination5,
-                           examination6, examination7, examination8, examination9, examination10,
-                           examination11});
-
-            foreach (var examination in examinations)
+            var examinations = new[]
             {
-                examination.UpdateCaseUrgencyScoreAndSort();
-            }
+                examination1,
+                examination2,
+                examination4,
+                examination5,
+                examination6,
+                examination7,
+                examination8,
+                examination9,
+                examination10,
+                examination11
+            };
+
+            SetSiteLocationIdOnExaminations(examinations);
+            UpdateUrgencySortOnExaminations(examinations);
 
             return examinations;
         }
 
-        private MedicalExaminer.Models.Examination[] SetLocationCache(MedicalExaminer.Models.Examination[] examinations)
+        private void SetSiteLocationIdOnExaminations(MedicalExaminer.Models.Examination[] examinations)
         {
             foreach (var examination in examinations)
             {
@@ -331,8 +339,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                     examination.SiteLocationId = "site1";
                 }
             }
+        }
 
-            return examinations;
+        private void UpdateUrgencySortOnExaminations(MedicalExaminer.Models.Examination[] examinations)
+        {
+            foreach (var examination in examinations)
+            {
+                examination.UpdateCaseUrgencyScoreAndSort();
+            }
         }
 
         private IEnumerable<string> PermissedLocations()

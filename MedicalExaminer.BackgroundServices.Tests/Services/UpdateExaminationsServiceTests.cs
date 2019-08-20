@@ -171,7 +171,7 @@ namespace MedicalExaminer.BackgroundServices.Tests.Services
 
             foreach (var updatedExamination in updatedExaminations)
             {
-                updatedExamination.GetCaseUrgencyScore().Should().NotBe(-1);
+                updatedExamination.IsUrgent().Should().BeTrue();
                 updatedExamination.LastModifiedBy.Should().Be("UpdateExaminationService");
                 updatedExamination.ModifiedAt.Should().NotBe(startingModified);
             }

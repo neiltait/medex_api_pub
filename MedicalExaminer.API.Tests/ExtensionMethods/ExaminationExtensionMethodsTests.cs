@@ -48,12 +48,13 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             // Arrange
             var examination = new Examination();
             examination.CaseCompleted = true;
+            examination.CreatedAt = DateTimeOffset.Now;
 
             // Act
-            examination.UpdateCaseUrgencyScoreAndSort();
+            var isUrgent = examination.IsUrgent();
 
             // Assert
-            Assert.Equal(0, examination.GetCaseUrgencyScore());
+            isUrgent.Should().BeFalse();
         }
 
 
@@ -213,8 +214,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var result = examination.UpdateCaseUrgencyScoreAndSort();
 
             // Assert
-            Assert.Equal(0, result.GetCaseUrgencyScore());
-            Assert.Equal(3, result.GetCaseUrgencySort());
+            result.IsUrgent().Should().BeFalse();
+            result.GetCaseUrgencySort().Should().Be(3);
         }
 
         [Fact]
@@ -235,8 +236,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var result = examination.UpdateCaseUrgencyScoreAndSort();
 
             // Assert
-            Assert.Equal(500, result.GetCaseUrgencyScore());
-            Assert.Equal(500 * 100 + 3, result.GetCaseUrgencySort());
+            result.IsUrgent().Should().BeTrue();
+            result.GetCaseUrgencySort().Should().Be((500 * 100) + 3);
         }
 
         [Fact]
@@ -257,8 +258,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var result = examination.UpdateCaseUrgencyScoreAndSort();
 
             // Assert
-            Assert.Equal(1000, result.GetCaseUrgencyScore());
-            Assert.Equal(100000 + 6, result.GetCaseUrgencySort());
+            result.IsUrgent().Should().BeTrue();
+            result.GetCaseUrgencySort().Should().Be(100000 + 6);
         }
 
         [Fact]
@@ -460,8 +461,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var result = examination.UpdateCaseUrgencyScoreAndSort();
 
             // Assert
-            Assert.Equal(1000 + 500, result.GetCaseUrgencyScore());
-            Assert.Equal((1000 + 500)*100 + 6, result.GetCaseUrgencySort());
+            result.IsUrgent().Should().BeTrue();
+            result.GetCaseUrgencySort().Should().Be(((1000 + 500) * 100) + 6);
         }
 
         [Fact]

@@ -76,9 +76,13 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CreatedAt = DateTime.Now.AddDays(-3)
             };
 
-            var myUser = new Mock<MeUser>();
+            var userId = "userId";
+            var user = new MeUser()
+            {
+                UserId = userId
+            };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            CreateExaminationQuery query = new CreateExaminationQuery(examination, myUser.Object);
+            CreateExaminationQuery query = new CreateExaminationQuery(examination, user);
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -95,9 +99,9 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var result = sut.Handle(query);
 
             // Assert
-            Assert.NotNull(result.Result);
-            Assert.Equal(0, result.Result.GetCaseUrgencyScore());
-            Assert.Equal(myUser.Object.UserId, result.Result.LastModifiedBy);
+            result.Result.Should().NotBeNull();
+            result.Result.IsUrgent().Should().BeFalse();
+            result.Result.LastModifiedBy.Should().Be(user.UserId);
         }
 
         /// <summary>
@@ -117,8 +121,12 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CreatedAt = DateTime.Now
             };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var myUser = new Mock<MeUser>();
-            CreateExaminationQuery query = new CreateExaminationQuery(examination, myUser.Object);
+            var userId = "userId";
+            var user = new MeUser()
+            {
+                UserId = userId
+            };
+            CreateExaminationQuery query = new CreateExaminationQuery(examination, user);
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -134,9 +142,9 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             var result = sut.Handle(query);
 
             // Assert
-            Assert.NotNull(result.Result);
-            Assert.Equal(500, result.Result.GetCaseUrgencyScore());
-            Assert.Equal(myUser.Object.UserId, result.Result.LastModifiedBy);
+            result.Result.Should().NotBeNull();
+            result.Result.IsUrgent().Should().BeTrue();
+            result.Result.LastModifiedBy.Should().Be(user.UserId);
         }
     }
 }

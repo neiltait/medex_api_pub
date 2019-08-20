@@ -83,6 +83,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                 OtherPriority = false,
                 CreatedAt = DateTime.Now.AddDays(-3)
             };
+            const string userA = "a";
             var user = new MeUser();
             var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
 
@@ -95,11 +96,11 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
 
             // Act
-            var result = await sut.Handle(examination, "a");
+            var result = await sut.Handle(examination, userA);
 
             // Assert
-            Assert.Equal(0, result.GetCaseUrgencyScore());
-            Assert.Equal("a", result.LastModifiedBy);
+            result.IsUrgent().Should().BeFalse();
+            result.LastModifiedBy.Should().Be(userA);
         }
 
         /// <summary>
@@ -118,7 +119,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                 OtherPriority = true,
                 CreatedAt = DateTime.Now.AddDays(-3)
             };
-
+            const string userA = "a";
             var user = new MeUser();
             var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
 
@@ -131,11 +132,11 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
 
             // Act
-            var result = await sut.Handle(examination, "a");
+            var result = await sut.Handle(examination, userA);
 
             // Assert
-            Assert.Equal(500, result.GetCaseUrgencyScore());
-            Assert.Equal("a", result.LastModifiedBy);
+            result.IsUrgent().Should().BeTrue();
+            result.LastModifiedBy.Should().Be(userA);
         }
 
         /// <summary>
