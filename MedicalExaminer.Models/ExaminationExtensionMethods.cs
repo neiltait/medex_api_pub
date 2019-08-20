@@ -137,7 +137,7 @@ namespace MedicalExaminer.Models
             examination.UrgencySort = dayList
                 .ToDictionary(
                     date => date.UrgencyKey(),
-                    date => CalculateCaseSortOrder(examination, date));
+                    date => CalculateCaseUrgencySortOrder(examination, date));
 
             return examination;
         }
@@ -360,7 +360,7 @@ namespace MedicalExaminer.Models
                 .ToString("yyyy_MM_dd");
         }
 
-        private static int CalculateCaseSortOrder(Examination examination, DateTime forDate)
+        private static int CalculateCaseUrgencySortOrder(Examination examination, DateTime forDate)
         {
             const int defaultScoreMultiplier = 100;
 
