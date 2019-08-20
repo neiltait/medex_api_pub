@@ -114,7 +114,7 @@ namespace MedicalExaminer.Models
             return score > 0;
         }
 
-        public static Examination UpdateCaseUrgencySort(this Examination examination, int numberOfDaysToPreCalculateUrgencyAndSort)
+        public static Examination UpdateCaseUrgencySort(this Examination examination, int numberOfDaysToPreCalculateUrgencySort)
         {
             if (examination == null)
             {
@@ -130,7 +130,7 @@ namespace MedicalExaminer.Models
             var now = DateTime.Now;
 
             var dayList = Enumerable
-                .Range(0, numberOfDaysToPreCalculateUrgencyAndSort)
+                .Range(0, numberOfDaysToPreCalculateUrgencySort)
                 .Select(days => now.AddDays(days))
                 .ToList();
 
