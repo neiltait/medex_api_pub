@@ -53,7 +53,8 @@ namespace MedicalExaminer.Common.Services.Examination
                 UserFullName = param.User.FullName(),
                 EventId = Guid.NewGuid().ToString()
             };
-            param.Examination.UpdateCaseUrgencyScoreAndSort();
+            param.Examination.UpdateCaseUrgencySort();
+            param.Examination.UpdateCaseStatus();
             param.Examination.LastModifiedBy = param.User.UserId;
             param.Examination.ModifiedAt = DateTime.Now;
 
