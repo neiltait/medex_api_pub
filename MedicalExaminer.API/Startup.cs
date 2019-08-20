@@ -249,6 +249,7 @@ example:
 
             UpdateInvalidOrNullUserPermissionIds(serviceProvider);
             UpdateLocations(serviceProvider, locationMigrationSettings);
+            UpdateExaminationUrgencySort(serviceProvider, urgencySettings);
         }
 
         /// <summary>
@@ -570,5 +571,12 @@ example:
         {
             {1, new LocationMigrationQueryV1() }
         };
+
+        private void UpdateExaminationUrgencySort(IServiceProvider serviceProvider, UrgencySettings urgencySettings)
+        {
+            IAsyncQueryHandler<InvalidUserPermissionQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>>();
+
+            instance.Handle(new InvalidUserPermissionQuery());
+        }
     }
 }
