@@ -322,10 +322,10 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(response => response.CremationFormStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.CremationFormStatus))
                 .ForMember(response => response.GpNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GpNotifiedStatus));
             CreateMap<Examination, ExaminationItem>()
-                .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.GetCaseUrgencyScore()));
+                .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0));
             CreateMap<Examination, GetPatientDetailsResponse>()
                 .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
-                .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.GetCaseUrgencyScore()))
+                .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<Examination, PutMedicalTeamResponse>()
@@ -402,7 +402,6 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.MedicalTeam, opt => opt.Ignore())
                 .ForMember(examination => examination.MedicalExaminerOfficeResponsibleName, opt => opt.Ignore())
                 .ForMember(examination => examination.UrgencySort, opt => opt.Ignore())
-                .ForMember(examination => examination.UrgencyScores, opt => opt.Ignore())
                 .ForMember(examination => examination.NationalLocationId, opt => opt.Ignore())
                 .ForMember(examination => examination.RegionLocationId, opt => opt.Ignore())
                 .ForMember(examination => examination.TrustLocationId, opt => opt.Ignore())
@@ -415,7 +414,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.CaseOutcome, opt => opt.Ignore())
                 .ForMember(examination => examination.CreatedBy, opt => opt.Ignore());
             CreateMap<Examination, PatientCardItem>()
-                .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.GetCaseUrgencyScore()))
+                .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0))
                 .ForMember(patientCard => patientCard.AppointmentDate,
                     examination => examination.MapFrom(new AppointmentDateResolver(new AppointmentFinder())))
                 .ForMember(patientCard => patientCard.AppointmentTime, examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())))

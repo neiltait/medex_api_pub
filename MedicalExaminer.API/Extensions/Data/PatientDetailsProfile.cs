@@ -22,7 +22,6 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
                 .ForMember(examination => examination.MedicalExaminerOfficeResponsibleName, opt => opt.Ignore())
                 .ForMember(examination => examination.UrgencySort, opt => opt.Ignore())
-                .ForMember(examination => examination.UrgencyScores, opt => opt.Ignore())
                 .ForMember(examination => examination.LastAdmission, opt => opt.Ignore())
                 .ForMember(examination => examination.MedicalTeam, opt => opt.Ignore())
                 .ForMember(examination => examination.CaseBreakdown, opt => opt.Ignore())
