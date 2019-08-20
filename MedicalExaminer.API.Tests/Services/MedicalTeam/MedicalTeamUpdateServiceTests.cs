@@ -7,7 +7,9 @@ using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.MedicalTeam;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -15,6 +17,19 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
 {
     public class MedicalTeamUpdateServiceTests
     {
+        private readonly Mock<IOptions<UrgencySettings>> _urgencySettingsMock;
+
+        public MedicalTeamUpdateServiceTests()
+        {
+            _urgencySettingsMock = new Mock<IOptions<UrgencySettings>>(MockBehavior.Strict);
+            _urgencySettingsMock
+                .Setup(s => s.Value)
+                .Returns(new UrgencySettings
+                {
+                    DaysToPreCalculateUrgencySort = 1
+                });
+        }
+
         [Fact]
         public void ExaminationIdNull_ThrowsException()
         {
@@ -30,7 +45,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var userRetrievalByIdService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
 
             userRetrievalByIdService.Setup(x => x.Handle(It.IsAny<UserRetrievalByIdQuery>())).Returns(Task.FromResult(user));
-            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
+            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object, _urgencySettingsMock.Object);
 
             // Assert
             Action act = () => sut.Handle(null, "a").GetAwaiter().GetResult();
@@ -57,7 +72,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
 
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object, examination1))
                 .Returns(Task.FromResult(examination1));
-            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
+            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = await sut.Handle(examination1, "a");
@@ -93,7 +108,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object, examination))
                 .Returns(Task.FromResult(examination));
-            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
+            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = await sut.Handle(examination, userA);
@@ -129,7 +144,7 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var dbAccess = new Mock<IDatabaseAccess>();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object, examination))
                 .Returns(Task.FromResult(examination));
-            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object);
+            var sut = new MedicalTeamUpdateService(dbAccess.Object, connectionSettings.Object, userRetrievalByIdService.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = await sut.Handle(examination, userA);
@@ -177,7 +192,8 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var sut = new MedicalTeamUpdateService(
                 dbAccess.Object,
                 connectionSettings.Object,
-                userRetrievalByIdService.Object);
+                userRetrievalByIdService.Object,
+                _urgencySettingsMock.Object);
 
             // Act
             var result = await sut.Handle(examination, "a");
@@ -246,7 +262,8 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var sut = new MedicalTeamUpdateService(
                 dbAccess.Object,
                 connectionSettings.Object,
-                userRetrievalByIdService.Object);
+                userRetrievalByIdService.Object,
+                _urgencySettingsMock.Object);
 
             // Act
             var result = await sut.Handle(examination, "a");
@@ -307,7 +324,8 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var sut = new MedicalTeamUpdateService(
                 dbAccess.Object,
                 connectionSettings.Object,
-                userRetrievalByIdService.Object);
+                userRetrievalByIdService.Object,
+                _urgencySettingsMock.Object);
 
             // Act
             var result = await sut.Handle(examination, "a");
@@ -368,7 +386,8 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             var sut = new MedicalTeamUpdateService(
               dbAccess.Object,
               connectionSettings.Object,
-              userRetrievalByIdService.Object);
+              userRetrievalByIdService.Object,
+              _urgencySettingsMock.Object);
 
             // Act
             var result = await sut.Handle(examination, "a");

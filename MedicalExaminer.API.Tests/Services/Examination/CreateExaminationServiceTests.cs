@@ -7,7 +7,9 @@ using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.Location;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -15,6 +17,19 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 {
     public class CreateExaminationServiceTests
     {
+        private readonly Mock<IOptions<UrgencySettings>> _urgencySettingsMock;
+
+        public CreateExaminationServiceTests()
+        {
+            _urgencySettingsMock = new Mock<IOptions<UrgencySettings>>(MockBehavior.Strict);
+            _urgencySettingsMock
+                .Setup(s => s.Value)
+                .Returns(new UrgencySettings
+                {
+                    DaysToPreCalculateUrgencySort = 1
+                });
+        }
+
         [Fact]
         public void CreateExaminationQueryIsNullThrowsException()
         {
@@ -24,7 +39,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             const CreateExaminationQuery query = null;
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
-            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
+            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object, _urgencySettingsMock.Object);
 
             // Act
             Action act = () => sut.Handle(query).GetAwaiter().GetResult();
@@ -50,7 +65,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 connectionSettings.Object,
                 examination,
                 false)).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
+            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -95,7 +110,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 connectionSettings.Object,
                 examination,
                 false)).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
+            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -138,7 +153,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 connectionSettings.Object,
                 examination,
                 false)).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object);
+            var sut = new CreateExaminationService(dbAccess.Object, connectionSettings.Object, locationService.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);

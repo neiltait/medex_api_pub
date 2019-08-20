@@ -6,8 +6,10 @@ using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
+using Microsoft.Extensions.Options;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
@@ -16,19 +18,18 @@ namespace MedicalExaminer.Common.Services.Examination
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IConnectionSettings _connectionSettings;
         private readonly IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location> _locationHandler;
-        //private readonly IAsyncQueryHandler<UserRetrievalByOktaIdQuery, UserToCreate> _UsersRetrievalByOktaIdService;
-
+        private readonly UrgencySettings _urgencySettings;
 
         public CreateExaminationService(
             IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings,
-            IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location> locationHandler)
-      //      IAsyncQueryHandler<UserRetrievalByOktaIdQuery, UserToCreate> UsersRetrievalByOktaIdService)
+            IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location> locationHandler,
+            IOptions<UrgencySettings> urgencySettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
             _locationHandler = locationHandler;
-        //    _UsersRetrievalByOktaIdService = UsersRetrievalByOktaIdService;
+            _urgencySettings = urgencySettings.Value;
         }
 
         public async Task<Models.Examination> Handle(CreateExaminationQuery param)
@@ -53,7 +54,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 UserFullName = param.User.FullName(),
                 EventId = Guid.NewGuid().ToString()
             };
-            param.Examination.UpdateCaseUrgencySort();
+            param.Examination.UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort);
             param.Examination.UpdateCaseStatus();
             param.Examination.LastModifiedBy = param.User.UserId;
             param.Examination.ModifiedAt = DateTime.Now;

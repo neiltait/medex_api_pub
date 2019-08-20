@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Services.CaseOutcome;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -14,6 +15,19 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
 {
     public class SaveOutstandingCaseItemsServiceTests
     {
+        private readonly Mock<IOptions<UrgencySettings>> _urgencySettingsMock;
+
+        public SaveOutstandingCaseItemsServiceTests()
+        {
+            _urgencySettingsMock = new Mock<IOptions<UrgencySettings>>(MockBehavior.Strict);
+            _urgencySettingsMock
+                .Setup(s => s.Value)
+                .Returns(new UrgencySettings
+                {
+                    DaysToPreCalculateUrgencySort = 1
+                });
+        }
+
         /// <summary>
         /// Save outstanding case items when Scrutiny is not confirmed
         /// </summary>
@@ -46,7 +60,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
                 connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
-            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
+            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -94,7 +108,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
                 connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
-            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
+            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -142,7 +156,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
                 connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
-            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
+            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -190,7 +204,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
                 connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
-            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
+            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -238,7 +252,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
                 connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
-            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
+            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -286,7 +300,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
                 connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
-            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
+            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -334,7 +348,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
                 connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
-            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
+            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -382,7 +396,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
                 connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
-            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object);
+            var sut = new SaveOutstandingCaseItemsService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
