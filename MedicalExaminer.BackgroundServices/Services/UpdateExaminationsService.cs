@@ -63,9 +63,9 @@ namespace MedicalExaminer.BackgroundServices.Services
 
                 foreach (var examination in examinations)
                 {
+                    // TODO: Replace with startup code.
                     if (examination.UrgencySort == null
-                        || examination.UrgencyScores == null
-                        || examination.UrgencyScores.ContainsKey(urgencyScoreKey) == false)
+                        || examination.UrgencySort.ContainsKey(urgencyScoreKey) == false)
                     {
                         examination.UpdateCaseUrgencyScoreAndSort();
 
