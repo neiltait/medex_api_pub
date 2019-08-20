@@ -112,6 +112,8 @@ example:
 
             services.ConfigureSettings<RequestChargeSettings>(Configuration, "RequestCharge");
 
+            services.ConfigureSettings<UrgencySettings>(Configuration, "UrgencySettings");
+
             ConfigureOktaClient(services);
 
             services.AddSingleton<ITokenService, OktaTokenService>();
