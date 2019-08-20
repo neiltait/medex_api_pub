@@ -67,7 +67,8 @@ namespace MedicalExaminer.BackgroundServices.Services
                     if (examination.UrgencySort == null
                         || examination.UrgencySort.ContainsKey(urgencyScoreKey) == false)
                     {
-                        examination.UpdateCaseUrgencySort();
+                        // TODO: Move to startup code; just let it build for now.
+                        examination.UpdateCaseUrgencySort(30);
 
                         examination.LastModifiedBy = "UpdateExaminationService";
                         examination.ModifiedAt = DateTimeOffset.UtcNow;

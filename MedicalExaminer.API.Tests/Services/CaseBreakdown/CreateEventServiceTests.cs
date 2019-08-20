@@ -6,7 +6,9 @@ using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Services.Examination;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -14,6 +16,19 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
 {
     public class CreateEventServiceTests
     {
+        private readonly Mock<IOptions<UrgencySettings>> _urgencySettingsMock;
+
+        public CreateEventServiceTests()
+        {
+            _urgencySettingsMock = new Mock<IOptions<UrgencySettings>>(MockBehavior.Strict);
+            _urgencySettingsMock
+                .Setup(s => s.Value)
+                .Returns(new UrgencySettings
+                {
+                    DaysToPreCalculateUrgencySort = 1
+                });
+        }
+
         /// <summary>
         /// Behavior when incoming Create Event Query is NUll.
         /// </summary>
@@ -24,7 +39,8 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
             CreateEventQuery query = null;
             var dbAccess = new Mock<IDatabaseAccess>();
-            var sut = new CreateEventService(dbAccess.Object, connectionSettings.Object);
+
+            var sut = new CreateEventService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
             Action act = () => sut.Handle(query).GetAwaiter().GetResult();
@@ -52,7 +68,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
-            var sut = new CreateEventService(dbAccess.Object, connectionSettings.Object);
+            var sut = new CreateEventService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -95,7 +111,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
-            var sut = new CreateEventService(dbAccess.Object, connectionSettings.Object);
+            var sut = new CreateEventService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -127,19 +143,25 @@ namespace MedicalExaminer.API.Tests.Services.CaseBreakdown
             var query = new CreateEventQuery("1", theEvent.Object);
             var dbAccess = new Mock<IDatabaseAccess>();
 
-            dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(connectionSettings.Object,
+            dbAccess
+                .Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(
+                    connectionSettings.Object,
                     It.IsAny<string>()))
                 .Returns(Task.FromResult(examination)).Verifiable();
 
-            dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
-                It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
+            dbAccess
+                .Setup(db => db.UpdateItemAsync(
+                    connectionSettings.Object,
+                    It.IsAny<MedicalExaminer.Models.Examination>()))
+                .Returns(Task.FromResult(examination)).Verifiable();
 
-            var sut = new CreateEventService(dbAccess.Object, connectionSettings.Object);
+            var sut = new CreateEventService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
-            var result = sut.Handle(query);
+            var result = sut.Handle(query).Result;
 
             // Assert
+            result.Should().NotBeNull();
             examination.IsUrgent().Should().BeTrue();
             examination.LastModifiedBy.Should().Be("a");
         }

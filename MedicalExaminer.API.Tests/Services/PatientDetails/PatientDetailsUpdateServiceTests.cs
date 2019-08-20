@@ -10,7 +10,9 @@ using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Common.Services.Location;
 using MedicalExaminer.Common.Services.PatientDetails;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -19,6 +21,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
     public class PatientDetailsUpdateServiceTests : BaseServiceTest
     {
         private readonly IEnumerable<MedicalExaminer.Models.Location> _locationPath;
+        private readonly Mock<IOptions<UrgencySettings>> _urgencySettingsMock;
 
         public PatientDetailsUpdateServiceTests()
         {
@@ -41,6 +44,14 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
                     LocationId = "SiteId"
                 },
             };
+
+            _urgencySettingsMock = new Mock<IOptions<UrgencySettings>>(MockBehavior.Strict);
+            _urgencySettingsMock
+                .Setup(s => s.Value)
+                .Returns(new UrgencySettings
+                {
+                    DaysToPreCalculateUrgencySort = 1
+                });
         }
 
         [Fact]
@@ -56,7 +67,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var location = new MedicalExaminer.Models.Location();
             var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
             locationService.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object, locationService.Object);
+            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object, locationService.Object, _urgencySettingsMock.Object);
 
             // Act
             Action act = () => sut.Handle(query).GetAwaiter().GetResult();
@@ -85,7 +96,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
                 .Returns(Task.FromResult(examination)).Verifiable();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object);
+            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -121,7 +132,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
                 .Returns(Task.FromResult(examination)).Verifiable();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object);
+            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -178,7 +189,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
                 .Returns(Task.FromResult(examination)).Verifiable();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object);
+            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
@@ -232,7 +243,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
                 .Returns(Task.FromResult(examination)).Verifiable();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object);
+            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);

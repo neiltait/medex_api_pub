@@ -192,7 +192,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         [Fact]
         public void When_Null_Examination_Is_Passed_Throws_Argument_Null_Exception()
         {
-            Action act = () => ExaminationExtensionMethods.UpdateCaseUrgencySort(null);
+            // Arrange / Act
+            Action act = () => ExaminationExtensionMethods.UpdateCaseUrgencySort(null, 0);
+            
+            // Assert
             act.Should().Throw<ArgumentNullException>();
         }
 
@@ -211,7 +214,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var result = examination.UpdateCaseUrgencySort();
+            var result = examination.UpdateCaseUrgencySort(1);
 
             // Assert
             result.IsUrgent().Should().BeFalse();
@@ -233,7 +236,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var result = examination.UpdateCaseUrgencySort();
+            var result = examination.UpdateCaseUrgencySort(1);
 
             // Assert
             result.IsUrgent().Should().BeTrue();
@@ -255,7 +258,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var result = examination.UpdateCaseUrgencySort();
+            var result = examination.UpdateCaseUrgencySort(1);
 
             // Assert
             result.IsUrgent().Should().BeTrue();
@@ -458,7 +461,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var result = examination.UpdateCaseUrgencySort();
+            var result = examination.UpdateCaseUrgencySort(1);
 
             // Assert
             result.IsUrgent().Should().BeTrue();
