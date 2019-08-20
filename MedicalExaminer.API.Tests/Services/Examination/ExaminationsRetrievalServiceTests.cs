@@ -389,12 +389,27 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(3)),
             };
 
-            return PopulateRequiredProperties(new[] { examination1, examination2, examination4, examination5,
-                           examination6, examination7, examination8, examination9, examination10,
-                           examination11});
+            var examinations = new[]
+            {
+                examination1,
+                examination2,
+                examination4,
+                examination5,
+                examination6,
+                examination7,
+                examination8,
+                examination9,
+                examination10,
+                examination11
+            };
+
+            SetSiteLocationIdOnExaminations(examinations);
+            UpdateUrgencySortOnExaminations(examinations);
+
+            return examinations;
         }
 
-        private MedicalExaminer.Models.Examination[] PopulateRequiredProperties(MedicalExaminer.Models.Examination[] examinations)
+        private static void SetSiteLocationIdOnExaminations(MedicalExaminer.Models.Examination[] examinations)
         {
             foreach (var examination in examinations)
             {
@@ -402,11 +417,15 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 {
                     examination.SiteLocationId = "site1";
                 }
+            }
+        }
 
+        private static void UpdateUrgencySortOnExaminations(MedicalExaminer.Models.Examination[] examinations)
+        {
+            foreach (var examination in examinations)
+            {
                 examination.UpdateCaseUrgencyScoreAndSort();
             }
-
-            return examinations;
         }
 
         private IEnumerable<string> PermissedLocations()

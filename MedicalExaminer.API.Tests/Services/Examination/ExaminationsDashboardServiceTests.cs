@@ -330,7 +330,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             return examinations;
         }
 
-        private void SetSiteLocationIdOnExaminations(MedicalExaminer.Models.Examination[] examinations)
+        private static void SetSiteLocationIdOnExaminations(MedicalExaminer.Models.Examination[] examinations)
         {
             foreach (var examination in examinations)
             {
@@ -341,7 +341,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             }
         }
 
-        private void UpdateUrgencySortOnExaminations(MedicalExaminer.Models.Examination[] examinations)
+        private static void UpdateUrgencySortOnExaminations(MedicalExaminer.Models.Examination[] examinations)
         {
             foreach (var examination in examinations)
             {
