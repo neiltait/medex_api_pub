@@ -108,20 +108,16 @@ namespace MedicalExaminer.API.Controllers
                     return NotFound(new GetPermissionsResponse());
                 }
 
-                var usersPermissionLocationsIds = user.Permissions == null ? new List<string>() : user.Permissions.Select(x => x.LocationId).ToList();
+                var usersPermissionLocationsIds = user.Permissions == null
+                    ? new List<string>()
+                    : user.Permissions
+                        .Where(p => p.LocationId != null)
+                        .Select(p => p.LocationId)
+                        .ToList();
 
                 // Get all the location paths for all those locations.
                 var locationPaths =
                     await _locationsParentsService.Handle(new LocationsParentsQuery(usersPermissionLocationsIds));
-
-
-                var locations =
-                    _locationsRetrievalService.Handle(new LocationsRetrievalByQuery(
-                        null,
-                        null,
-                        false,
-                        false,
-                        usersPermissionLocationsIds)).Result;
 
                 // The locations the user making the request has direct access to.
                 var permissedLocations = (await LocationsWithPermission(Permission.GetUserPermissions)).ToList();
@@ -130,22 +126,34 @@ namespace MedicalExaminer.API.Controllers
                 var permissions = user
                     .Permissions?.Where(p => p.LocationId != null)
                     .Where(p => locationPaths[p.LocationId]
-                        .Any(l => permissedLocations.Contains(l.LocationId))) ?? new List<MEUserPermission>();
+                        .Any(l => permissedLocations.Contains(l.LocationId)))
+                    .ToList() ?? new List<MEUserPermission>();
 
-                var uniqueLocations = await permissions?.GetUniqueLocationNames(_locationsRetrievalService);
+                // To avoid getting names for locations we cant see; get a list of just the ones we're going to return.
+                var locationIdsToGetNamesFor = permissions
+                    .Select(p => p.LocationId)
+                    .ToList();
 
-                var mappedPermissions = new List<PermissionItem>();
+                // Get the full location model for the ones we want names for.
+                var locations = (await
+                    _locationsRetrievalService.Handle(new LocationsRetrievalByQuery(
+                        null,
+                        null,
+                        false,
+                        false,
+                        locationIdsToGetNamesFor))).ToList();
 
-                foreach (var meUserPermission in permissions)
-                {
-                    var pl = new PermissionLocation(meUserPermission, locations, meUserId);
-                    var temp = Mapper.Map<PermissionItem>(pl);
-                    mappedPermissions.Add(temp);
-                }
+                // Now create the permission list incorporating the location name.
+                var permissionItems = permissions
+                    .Select(permission => Mapper.Map<PermissionItem>(new PermissionLocation(
+                        permission,
+                        locations.SingleOrDefault(l => l.LocationId == permission.LocationId),
+                        meUserId)))
+                    .ToList();
 
                 return Ok(new GetPermissionsResponse
                 {
-                    Permissions = mappedPermissions
+                    Permissions = permissionItems
                 });
             }
             catch (DocumentClientException)
@@ -199,9 +207,9 @@ namespace MedicalExaminer.API.Controllers
                     return Forbid();
                 }
 
-                var locations = permission.GetLocationName(_locationRetrievalService).Result;
+                var location = permission.GetLocationName(_locationRetrievalService).Result;
 
-                var permissionLocations = new PermissionLocation(permission, locations, meUserId);
+                var permissionLocations = new PermissionLocation(permission, location, meUserId);
 
                 var result = Mapper.Map<GetPermissionResponse>(permissionLocations);
                 return Ok(result);
@@ -284,9 +292,9 @@ namespace MedicalExaminer.API.Controllers
 
                 var location = _locationRetrievalService.Handle(new LocationRetrievalByIdQuery(permission.LocationId)).Result;
 
-                var temp = new PermissionLocation(permission, location, meUserId);
+                var permissionLocation = new PermissionLocation(permission, location, meUserId);
 
-                var result = Mapper.Map<PostPermissionResponse>(temp);
+                var result = Mapper.Map<PostPermissionResponse>(permissionLocation);
                 return Ok(result);
             }
             catch (DocumentClientException)
