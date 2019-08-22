@@ -185,18 +185,13 @@ namespace MedicalExaminer.Common.Database
                 .AsDocumentQuery();
 
             var results = new List<T>();
-            var resultPartCount = 0;
             while (query.HasMoreResults)
             {
                 var response = await query.ExecuteNextAsync<T>();
 
-                _requestChargeService.RequestCharges.Add(new RequestChargeService.RequestCharge()
-                {
-                    Request = $"GetItemsAsync<{typeof(T).Name}>({resultPartCount},query={query})",
-                    Charge = response.RequestCharge
-                });
+                // Unable to get RequestCharge during testing since we've casted the return type
+                // to match our select. Appears to work fine on the real cosmos; something missing on the CosmosMocker.
 
-                resultPartCount++;
                 results.AddRange(response);
             }
 
