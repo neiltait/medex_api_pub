@@ -54,40 +54,5 @@ namespace MedicalExaminer.Common.Services.Location
 
             return result;
         }
-
-        /// <summary>
-        /// Get Predicate.
-        /// </summary>
-        /// <param name="param">Params.</param>
-        /// <returns>The Predicate.</returns>
-        private Expression<Func<Models.Location, bool>> GetPredicate(LocationsRetrievalByQuery param)
-        {
-            Expression<Func<Models.Location, bool>> predicate;
-
-            if (param.Name == null && param.ParentId == null)
-            {
-                predicate = location => true;
-            }
-            else if (param.Name == null)
-            {
-                predicate = location => location.ParentId == param.ParentId;
-            }
-            else if (param.ParentId == null)
-            {
-                predicate = location => location.Name == param.Name;
-            }
-            else
-            {
-                predicate = location => location.Name == param.Name
-                                        && location.ParentId == param.ParentId;
-            }
-
-            if (param.OnlyMeOffices)
-            {
-                predicate = predicate.And(x => x.IsMeOffice);
-            }
-
-            return predicate;
-        }
     }
 }
