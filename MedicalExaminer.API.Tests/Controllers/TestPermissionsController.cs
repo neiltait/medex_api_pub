@@ -27,7 +27,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>> _locationParentsServiceMock;
         private readonly Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>> _locationsParentsServiceMock;
         private readonly Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>> _locationRetrievalService;
-        private readonly Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> _locationsRetrievalService;
+        private readonly Mock<IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>>> _locationsRetrievalService;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TestPermissionsController" /> class.
@@ -40,7 +40,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             _locationParentsServiceMock = new Mock<IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>>>(MockBehavior.Strict);
             _locationsParentsServiceMock = new Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>(MockBehavior.Strict);
             _locationRetrievalService = new Mock<IAsyncQueryHandler<LocationRetrievalByIdQuery, Location>>(MockBehavior.Strict);
-            _locationsRetrievalService = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>(MockBehavior.Strict);
+            _locationsRetrievalService = new Mock<IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>>>(MockBehavior.Strict);
 
             Controller = new PermissionsController(
                 LoggerMock.Object,
@@ -158,7 +158,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(expectedLocation));
 
             _locationsRetrievalService
-                .Setup(lrs => lrs.Handle(It.IsAny<LocationsRetrievalByQuery>()))
+                .Setup(lrs => lrs.Handle(It.IsAny<LocationsRetrievalByIdQuery>()))
                 .Returns(Task.FromResult(expectedLocationsCollection.AsEnumerable()));
 
 
