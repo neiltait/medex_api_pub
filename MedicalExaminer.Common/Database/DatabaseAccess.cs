@@ -217,7 +217,7 @@ namespace MedicalExaminer.Common.Database
 
                 _requestChargeService.RequestCharges.Add(new RequestChargeService.RequestCharge()
                 {
-                    Request = $"GetItemAsync<{typeof(T).Name}>(query={query})",
+                    Request = $"GetItemsAsync<{typeof(T).Name}>(query={query})",
                     Charge = response.RequestCharge
                 });
 
