@@ -434,6 +434,9 @@ example:
             services
                 .AddScoped<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>,
                     LocationsParentsQueryService>();
+            services
+                .AddScoped<IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>>, LocationsRetrievalByIdService
+                >();
         }
 
         /// <summary>
