@@ -55,8 +55,8 @@ namespace MedicalExaminer.API.Controllers
 
         private readonly IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> _locationRetrievalService;
 
+        private readonly IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>> _locationsRetrievalByIdService;
 
-        private readonly IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> _locationsRetrievalService;
         /// <summary>
         ///     Initializes a new instance of the <see cref="PermissionsController" /> class.
         /// </summary>
@@ -69,6 +69,8 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="userUpdateService">User update service.</param>
         /// <param name="locationParentsService">Location Parents Service.</param>
         /// <param name="locationsParentsService">Locations Parents Service.</param>
+        /// <param name="locationRetrievalService">Location Retrieval Service.</param>
+        /// <param name="locationsRetrievalByIdService">Locations Retrieval By Id Service.</param>
         public PermissionsController(
             IMELogger logger,
             IMapper mapper,
@@ -80,7 +82,7 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService,
             IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>> locationsParentsService,
             IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> locationRetrievalService,
-            IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationsRetrievalService)
+            IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>> locationsRetrievalByIdService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _userRetrievalByIdService = userRetrievalByIdService;
@@ -88,7 +90,7 @@ namespace MedicalExaminer.API.Controllers
             _locationParentsService = locationParentsService;
             _locationsParentsService = locationsParentsService;
             _locationRetrievalService = locationRetrievalService;
-            _locationsRetrievalService = locationsRetrievalService;
+            _locationsRetrievalByIdService = locationsRetrievalByIdService;
         }
 
         /// <summary>
@@ -134,13 +136,10 @@ namespace MedicalExaminer.API.Controllers
                     .Select(p => p.LocationId)
                     .ToList();
 
-                // Get the full location model for the ones we want names for.
+                // Get the lookup location model for the ones we want names for.
                 var locations = (await
-                    _locationsRetrievalService.Handle(new LocationsRetrievalByQuery(
-                        null,
-                        null,
-                        false,
-                        false,
+                    _locationsRetrievalByIdService.Handle(new LocationsRetrievalByIdQuery(
+                        true,
                         locationIdsToGetNamesFor))).ToList();
 
                 // Now create the permission list incorporating the location name.
@@ -207,7 +206,7 @@ namespace MedicalExaminer.API.Controllers
                     return Forbid();
                 }
 
-                var location = permission.GetLocationName(_locationRetrievalService).Result;
+                var location = await permission.GetLocationName(_locationsRetrievalByIdService);
 
                 var permissionLocations = new PermissionLocation(permission, location, meUserId);
 
