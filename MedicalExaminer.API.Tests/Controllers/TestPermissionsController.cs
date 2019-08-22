@@ -161,7 +161,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(lrs => lrs.Handle(It.IsAny<LocationsRetrievalByIdQuery>()))
                 .Returns(Task.FromResult(expectedLocationsCollection.AsEnumerable()));
 
-
             // Act
             var response = await Controller.GetPermissions(expectedUserId);
 
@@ -310,6 +309,10 @@ namespace MedicalExaminer.API.Tests.Controllers
             _locationRetrievalService
                 .Setup(lrs => lrs.Handle(It.IsAny<LocationRetrievalByIdQuery>()))
                 .Returns(Task.FromResult(expectedLocation));
+
+            _locationsRetrievalService
+                .Setup(lrs => lrs.Handle(It.IsAny<LocationsRetrievalByIdQuery>()))
+                .Returns(Task.FromResult(new[] { expectedLocation }.AsEnumerable()));
 
             // Act
             var response = await Controller.GetPermission(expectedUserId, expectedPermissionId);
