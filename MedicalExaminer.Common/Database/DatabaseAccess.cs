@@ -185,10 +185,18 @@ namespace MedicalExaminer.Common.Database
                 .AsDocumentQuery();
 
             var results = new List<T>();
+            var resultPartCount = 0;
             while (query.HasMoreResults)
             {
                 var response = await query.ExecuteNextAsync<T>();
 
+                _requestChargeService.RequestCharges.Add(new RequestChargeService.RequestCharge()
+                {
+                    Request = $"GetItemsAsync<{typeof(T).Name}>({resultPartCount},query={query})",
+                    Charge = response.RequestCharge
+                });
+
+                resultPartCount++;
                 results.AddRange(response);
             }
 
@@ -211,16 +219,18 @@ namespace MedicalExaminer.Common.Database
                 .AsDocumentQuery();
 
             var results = new List<T>();
+            var resultPartCount = 0;
             while (query.HasMoreResults)
             {
                 var response = await query.ExecuteNextAsync<T>();
 
                 _requestChargeService.RequestCharges.Add(new RequestChargeService.RequestCharge()
                 {
-                    Request = $"GetItemsAsync<{typeof(T).Name}>(query={query})",
+                    Request = $"GetItemsAsync<{typeof(T).Name}>({resultPartCount},query={query})",
                     Charge = response.RequestCharge
                 });
 
+                resultPartCount++;
                 results.AddRange(response);
             }
 
