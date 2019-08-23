@@ -103,7 +103,7 @@ namespace MedicalExaminer.API.Controllers
             string examinationId,
             [FromBody] PutBereavedDiscussionEventRequest putNewBereavedDiscussionEventNoteRequest)
         {
-            if (putNewBereavedDiscussionEventNoteRequest.DiscussionUnableHappen)
+            if (putNewBereavedDiscussionEventNoteRequest != null && putNewBereavedDiscussionEventNoteRequest.DiscussionUnableHappen)
             {
                 putNewBereavedDiscussionEventNoteRequest.BereavedDiscussionOutcome =
                     BereavedDiscussionOutcome.DiscussionUnableToHappen;
@@ -200,7 +200,7 @@ namespace MedicalExaminer.API.Controllers
             string examinationId,
             [FromBody] PutQapDiscussionEventRequest putNewQapDiscussionEventNoteRequest)
         {
-            if (putNewQapDiscussionEventNoteRequest.DiscussionUnableHappen)
+            if (putNewQapDiscussionEventNoteRequest != null && putNewQapDiscussionEventNoteRequest.DiscussionUnableHappen)
             {
                 putNewQapDiscussionEventNoteRequest.QapDiscussionOutcome =
                     QapDiscussionOutcome.DiscussionUnableToHappen;
