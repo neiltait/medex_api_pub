@@ -11,6 +11,7 @@ namespace MedicalExaminer.Models.Enums
         MccdCauseOfDeathProvidedByME,
         MccdCauseOfDeathAgreedByQAPandME,
         ReferToCoronerFor100a,
-        ReferToCoronerInvestigation
+        ReferToCoronerInvestigation,
+        DiscussionUnableToHappen
     }
 }
