@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -19,7 +20,19 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(bereavedDiscussionEvent => bereavedDiscussionEvent.UserId, opt => opt.Ignore())
                 .ForMember(bereavedDiscussionEvent => bereavedDiscussionEvent.Created, opt => opt.Ignore())
                 .ForMember(bereavedDiscussionEvent => bereavedDiscussionEvent.UserFullName, opt => opt.Ignore())
-                .ForMember(bereavedDiscussionEvent => bereavedDiscussionEvent.UsersRole, opt => opt.Ignore());
+                .ForMember(bereavedDiscussionEvent => bereavedDiscussionEvent.UsersRole, opt => opt.Ignore())
+                .ForMember(bereavedDiscussionEvent => bereavedDiscussionEvent.BereavedDiscussionOutcome, opt => opt.MapFrom(
+                    (src, dest, destMember, context) =>
+                    {
+                        if (src.DiscussionUnableHappen)
+                        {
+                            return BereavedDiscussionOutcome.DiscussionUnableToHappen;
+                        }
+                        else
+                        {
+                            return src.BereavedDiscussionOutcome;
+                        }
+                    }));
         }
     }
 }

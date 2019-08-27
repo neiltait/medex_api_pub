@@ -103,12 +103,6 @@ namespace MedicalExaminer.API.Controllers
             string examinationId,
             [FromBody] PutBereavedDiscussionEventRequest putNewBereavedDiscussionEventNoteRequest)
         {
-            if (putNewBereavedDiscussionEventNoteRequest != null && putNewBereavedDiscussionEventNoteRequest.DiscussionUnableHappen)
-            {
-                putNewBereavedDiscussionEventNoteRequest.BereavedDiscussionOutcome =
-                    BereavedDiscussionOutcome.DiscussionUnableToHappen;
-            }
-
             return await UpsertEvent<BereavedDiscussionEvent, PutBereavedDiscussionEventRequest>(
                 examinationId,
                 Permission.BereavedDiscussionEvent,
@@ -200,12 +194,6 @@ namespace MedicalExaminer.API.Controllers
             string examinationId,
             [FromBody] PutQapDiscussionEventRequest putNewQapDiscussionEventNoteRequest)
         {
-            if (putNewQapDiscussionEventNoteRequest != null && putNewQapDiscussionEventNoteRequest.DiscussionUnableHappen)
-            {
-                putNewQapDiscussionEventNoteRequest.QapDiscussionOutcome =
-                    QapDiscussionOutcome.DiscussionUnableToHappen;
-            }
-
             return await UpsertEvent<QapDiscussionEvent, PutQapDiscussionEventRequest>(
                 examinationId,
                 Permission.QapDiscussionEvent,
