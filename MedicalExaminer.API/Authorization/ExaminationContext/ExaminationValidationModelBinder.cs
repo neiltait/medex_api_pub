@@ -58,7 +58,7 @@ namespace MedicalExaminer.API.Authorization.ExaminationContext
             }
 
             // This gets the field being used to reference an examination, should return "examinationId"
-            var examinationIdName = attribute.ArgumentName;
+            var examinationIdName = attribute.ParameterName;
 
             // This then gets the value of the field. The examination id itself.
             var examinationId = bindingContext.ValueProvider.GetValue(examinationIdName).FirstValue;
