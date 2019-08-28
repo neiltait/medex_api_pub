@@ -196,7 +196,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<ExaminationProfile>();
-               // cfg.AddProfile<CaseBreakdownProfile>();
+                // cfg.AddProfile<CaseBreakdownProfile>();
             });
 
             _mapper = config.CreateMapper();
@@ -1236,8 +1236,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.TimeOfDeath.Should().Be(TimeOfDeath);
         }
 
-
-
         private Examination GenerateExamination(CaseBreakDown casebreakdown = null)
         {
             if (casebreakdown == null)
@@ -2102,7 +2100,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     {
                         Latest = medicalHistoryEvent,
                         Drafts = null,
-                        History = new [] { medicalHistoryEvent }
+                        History = new[] { medicalHistoryEvent }
                     },
                     MeoSummary = new MeoSummaryEventContainer()
                     {
@@ -2235,6 +2233,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             actual.Town.Should().Be(expected.Town);
         }
 
+        [Fact]
         public void BereavedDiscussionPrepopulated_Examination_To_Casebreakdown_No_PrescrutinyLatest()
         {
             // Arrange
@@ -2244,10 +2243,11 @@ namespace MedicalExaminer.API.Tests.Mapper
             casebreakdown.PreScrutiny.Latest = null;
             casebreakdown.PreScrutiny.History = new List<PreScrutinyEvent>();
             var examination = GenerateExamination(casebreakdown);
-
+            examination.Representatives = Representatives;
 
             var expectedBereavedPrepopulated = new BereavedDiscussionPrepopulated()
             {
+                Representatives = examination.Representatives,
                 CauseOfDeath1a = null,
                 CauseOfDeath1b = null,
                 CauseOfDeath1c = null,
@@ -2262,13 +2262,11 @@ namespace MedicalExaminer.API.Tests.Mapper
                 UserForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.UserFullName
             };
 
-
             // Act
             var result = _mapper.Map<CaseBreakDownItem>(examination, opt => opt.Items["user"] = User0);
 
             // Assert
             AreEquivalent(expectedBereavedPrepopulated, result.BereavedDiscussion.Prepopulated);
-
         }
 
         [Fact]
@@ -2279,9 +2277,11 @@ namespace MedicalExaminer.API.Tests.Mapper
             var dateNow = DateTime.Now.Date;
             casebreakdown.PreScrutiny.Latest.Created = dateNow;
             var examination = GenerateExamination(casebreakdown);
+            examination.Representatives = Representatives;
 
             var expectedBereavedPrepopulated = new BereavedDiscussionPrepopulated()
             {
+                Representatives = examination.Representatives,
                 CauseOfDeath1a = casebreakdown.QapDiscussion.Latest.CauseOfDeath1a,
                 CauseOfDeath1b = casebreakdown.QapDiscussion.Latest.CauseOfDeath1b,
                 CauseOfDeath1c = casebreakdown.QapDiscussion.Latest.CauseOfDeath1c,
@@ -2313,9 +2313,11 @@ namespace MedicalExaminer.API.Tests.Mapper
             var dateNow = DateTime.Now.Date;
             casebreakdown.PreScrutiny.Latest.Created = dateNow;
             var examination = GenerateExamination(casebreakdown);
+            examination.Representatives = Representatives;
 
             var expectedBereavedPrepopulated = new BereavedDiscussionPrepopulated()
             {
+                Representatives = examination.Representatives,
                 CauseOfDeath1a = casebreakdown.QapDiscussion.Latest.CauseOfDeath1a,
                 CauseOfDeath1b = casebreakdown.QapDiscussion.Latest.CauseOfDeath1b,
                 CauseOfDeath1c = casebreakdown.QapDiscussion.Latest.CauseOfDeath1c,
@@ -2348,9 +2350,11 @@ namespace MedicalExaminer.API.Tests.Mapper
             casebreakdown.QapDiscussion.Latest = null;
             casebreakdown.QapDiscussion.History = new List<QapDiscussionEvent>();
             var examination = GenerateExamination(casebreakdown);
+            examination.Representatives = Representatives;
 
             var expectedBereavedPrepopulated = new BereavedDiscussionPrepopulated()
             {
+                Representatives = examination.Representatives,
                 CauseOfDeath1a = casebreakdown.PreScrutiny.Latest.CauseOfDeath1a,
                 CauseOfDeath1b = casebreakdown.PreScrutiny.Latest.CauseOfDeath1b,
                 CauseOfDeath1c = casebreakdown.PreScrutiny.Latest.CauseOfDeath1c,
@@ -2383,9 +2387,11 @@ namespace MedicalExaminer.API.Tests.Mapper
             casebreakdown.QapDiscussion.Latest.DiscussionUnableHappen = true;
 
             var examination = GenerateExamination(casebreakdown);
+            examination.Representatives = Representatives;
 
             var expectedBereavedPrepopulated = new BereavedDiscussionPrepopulated()
             {
+                Representatives = examination.Representatives,
                 CauseOfDeath1a = casebreakdown.PreScrutiny.Latest.CauseOfDeath1a,
                 CauseOfDeath1b = casebreakdown.PreScrutiny.Latest.CauseOfDeath1b,
                 CauseOfDeath1c = casebreakdown.PreScrutiny.Latest.CauseOfDeath1c,
@@ -2419,9 +2425,11 @@ namespace MedicalExaminer.API.Tests.Mapper
             casebreakdown.PreScrutiny.Latest = null;
             casebreakdown.PreScrutiny.History = new List<PreScrutinyEvent>();
             var examination = GenerateExamination(casebreakdown);
+            examination.Representatives = Representatives;
 
             var expectedBereavedPrepopulated = new BereavedDiscussionPrepopulated()
             {
+                Representatives = examination.Representatives,
                 CauseOfDeath1a = null,
                 CauseOfDeath1b = null,
                 CauseOfDeath1c = null,
@@ -2451,9 +2459,11 @@ namespace MedicalExaminer.API.Tests.Mapper
             var dateNow = DateTime.Now.Date;
 
             var examination = GenerateExamination(casebreakdown);
+            examination.MedicalTeam = medicalTeam;
 
             var expectedQapPrepopulated = new QapDiscussionPrepopulated()
             {
+                Qap = examination.MedicalTeam.Qap,
                 CauseOfDeath1a = casebreakdown.PreScrutiny.Latest.CauseOfDeath1a,
                 CauseOfDeath1b = casebreakdown.PreScrutiny.Latest.CauseOfDeath1b,
                 CauseOfDeath1c = casebreakdown.PreScrutiny.Latest.CauseOfDeath1c,
@@ -2481,9 +2491,11 @@ namespace MedicalExaminer.API.Tests.Mapper
             var dateNow = DateTime.Now.Date;
 
             var examination = GenerateExamination(casebreakdown);
+            examination.MedicalTeam = medicalTeam;
 
             var expectedQapPrepopulated = new QapDiscussionPrepopulated()
             {
+                Qap = examination.MedicalTeam.Qap,
                 CauseOfDeath1a = null,
                 CauseOfDeath1b = null,
                 CauseOfDeath1c = null,

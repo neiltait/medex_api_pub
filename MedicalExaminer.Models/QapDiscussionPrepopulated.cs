@@ -1,10 +1,15 @@
-﻿using MedicalExaminer.Models.Enums;
-using System;
+﻿using System;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models
 {
     public class QapDiscussionPrepopulated
     {
+        /// <summary>
+        /// Clinical Professional: QAP details from Medical Team
+        /// </summary>
+        public ClinicalProfessional Qap { get; set; }
+
         /// <summary>
         /// Possible cause of death established during scrutiny by Medical Examiner 1a
         /// </summary>
