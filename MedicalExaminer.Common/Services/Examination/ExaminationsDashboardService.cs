@@ -51,14 +51,14 @@ namespace MedicalExaminer.Common.Services.Examination
             // Now do all the counting our side.
             var overView = new ExaminationsOverview
             {
-                CountOfAdmissionNotesHaveBeenAdded = GetCount(examinations, CaseStatus.AdmissionNotesHaveBeenAdded),
+                CountOfHaveUnknownBasicDetails = GetCount(examinations, CaseStatus.HaveUnknownBasicDetails),
+                CountOfReadyForMEScrutiny = GetCount(examinations, CaseStatus.ReadyForMEScrutiny),
                 CountOfUnassigned = GetCount(examinations, CaseStatus.Unassigned),
                 CountOfHaveBeenScrutinisedByME = GetCount(examinations, CaseStatus.HaveBeenScrutinisedByME),
-                CountOfHaveFinalCaseOutstandingOutcomes = GetCount(examinations, CaseStatus.HaveFinalCaseOutstandingOutcomes),
-                CountOfPendingAdmissionNotes = GetCount(examinations, CaseStatus.PendingAdmissionNotes),
+                CountOfPendingAdditionalDetails = GetCount(examinations, CaseStatus.PendingAdditionalDetails),
                 CountOfPendingDiscussionWithQAP = GetCount(examinations, CaseStatus.PendingDiscussionWithQAP),
                 CountOfPendingDiscussionWithRepresentative = GetCount(examinations, CaseStatus.PendingDiscussionWithRepresentative),
-                CountOfReadyForMEScrutiny = GetCount(examinations, CaseStatus.ReadyForMEScrutiny),
+                CountOfHaveFinalCaseOutstandingOutcomes = GetCount(examinations, CaseStatus.HaveFinalCaseOutstandingOutcomes),
                 TotalCases = examinations.Count(),
                 CountOfUrgentCases = GetCount(examinations, x => ((x.UrgencyScore > 0) && (x.CaseCompleted == false)))
             };
@@ -83,16 +83,16 @@ namespace MedicalExaminer.Common.Services.Examination
         {
             switch (paramFilterCaseStatus)
             {
-                case CaseStatus.AdmissionNotesHaveBeenAdded:
-                    return examination => examination.AdmissionNotesHaveBeenAdded;
+                case CaseStatus.HaveUnknownBasicDetails:
+                    return examination => examination.HaveUnknownBasicDetails;
                 case CaseStatus.ReadyForMEScrutiny:
                     return examination => examination.ReadyForMEScrutiny;
                 case CaseStatus.Unassigned:
                     return examination => examination.Unassigned;
                 case CaseStatus.HaveBeenScrutinisedByME:
                     return examination => examination.HaveBeenScrutinisedByME;
-                case CaseStatus.PendingAdmissionNotes:
-                    return examination => examination.PendingAdmissionNotes;
+                case CaseStatus.PendingAdditionalDetails:
+                    return examination => examination.PendingAdditionalDetails;
                 case CaseStatus.PendingDiscussionWithQAP:
                     return examination => examination.PendingDiscussionWithQAP;
                 case CaseStatus.PendingDiscussionWithRepresentative:
