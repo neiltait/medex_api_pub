@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore;
+﻿using MedicalExaminer.Common.Extensions;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
 namespace MedicalExaminer.API
@@ -26,6 +27,7 @@ namespace MedicalExaminer.API
         {
             // Not using https for now until we resolve certificates.
             return WebHost.CreateDefaultBuilder(args)
+                .ConfigureSharedSettings()
                 .UseStartup<Startup>()
                 .UseApplicationInsights();
         }
