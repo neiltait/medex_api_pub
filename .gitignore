@@ -56,3 +56,4 @@ Thumbs.db
 .idea/vcs.xml
 MedicalExaminer.API/appsettings.Staging.json
 sharedsettings.Development.json
+MedicalExaminer.ReferenceDataLoader/MedicalExaminer.ReferenceDataLoader.xml
