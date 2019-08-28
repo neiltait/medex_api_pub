@@ -1,15 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2016
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29209.62
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{03BE65AC-3442-48F9-9C0A-857D428FDD2A}"
 	ProjectSection(SolutionItems) = preProject
 		Analyzers\Analyzers.ruleset = Analyzers\Analyzers.ruleset
+		azure-pipelines-uat-production.yml = azure-pipelines-uat-production.yml
 		azure-pipelines.yml = azure-pipelines.yml
 		README.md = README.md
+		sharedsettings.Development.json = sharedsettings.Development.json
+		sharedsettings.json = sharedsettings.json
 		Analyzers\stylecop.json = Analyzers\stylecop.json
-		azure-pipelines-uat-production.yml = azure-pipelines-uat-production.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.Models", "MedicalExaminer.Models\MedicalExaminer.Models.csproj", "{27D7A04D-333C-4167-8302-5B4E85951E7B}"
@@ -32,9 +34,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.ToolBox.Com
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.ToolBox.MVC", "MedicalExaminer.ToolBox.MVC\MedicalExaminer.ToolBox.MVC.csproj", "{049CD8D2-49BB-4917-8D84-5E49DDF1C93F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedicalExaminer.BackgroundServices", "MedicalExaminer.BackgroundServices\MedicalExaminer.BackgroundServices.csproj", "{F63ED94B-7122-4B02-85D7-F4AA59061DBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.BackgroundServices", "MedicalExaminer.BackgroundServices\MedicalExaminer.BackgroundServices.csproj", "{F63ED94B-7122-4B02-85D7-F4AA59061DBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedicalExaminer.BackgroundServices.Tests", "MedicalExaminer.BackgroundServices.Tests\MedicalExaminer.BackgroundServices.Tests.csproj", "{9FB0BDE0-3713-41E3-BFF3-4B31067F0A2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.BackgroundServices.Tests", "MedicalExaminer.BackgroundServices.Tests\MedicalExaminer.BackgroundServices.Tests.csproj", "{9FB0BDE0-3713-41E3-BFF3-4B31067F0A2D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{BE4A4631-6E31-4011-A4B2-DFBDECA40CA3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{C7536CD5-BE5D-42BC-A98C-6CC9F9F89516}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{B4E7279D-8BFF-4BEC-A431-A51C15600AFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +101,19 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{27D7A04D-333C-4167-8302-5B4E85951E7B} = {BE4A4631-6E31-4011-A4B2-DFBDECA40CA3}
+		{3B616225-3238-4052-A052-2496BF471116} = {BE4A4631-6E31-4011-A4B2-DFBDECA40CA3}
+		{E6E003D0-C32B-4443-87D1-364688A4FC4D} = {BE4A4631-6E31-4011-A4B2-DFBDECA40CA3}
+		{2A14EDD9-B416-45EE-B6F0-46084CEC9F16} = {C7536CD5-BE5D-42BC-A98C-6CC9F9F89516}
+		{759CEDF6-1FC0-4055-970B-ED32AFC39669} = {B4E7279D-8BFF-4BEC-A431-A51C15600AFB}
+		{5275B933-602B-4B71-B63B-B8505AF6F3E7} = {C7536CD5-BE5D-42BC-A98C-6CC9F9F89516}
+		{A4AA0B98-3460-442A-8D09-56E026FE1AC6} = {C7536CD5-BE5D-42BC-A98C-6CC9F9F89516}
+		{1081E6E5-9668-4C8E-932B-B265003CBD17} = {B4E7279D-8BFF-4BEC-A431-A51C15600AFB}
+		{049CD8D2-49BB-4917-8D84-5E49DDF1C93F} = {B4E7279D-8BFF-4BEC-A431-A51C15600AFB}
+		{F63ED94B-7122-4B02-85D7-F4AA59061DBB} = {BE4A4631-6E31-4011-A4B2-DFBDECA40CA3}
+		{9FB0BDE0-3713-41E3-BFF3-4B31067F0A2D} = {C7536CD5-BE5D-42BC-A98C-6CC9F9F89516}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A0BDC707-75A0-4303-9480-6DE12D31358A}
