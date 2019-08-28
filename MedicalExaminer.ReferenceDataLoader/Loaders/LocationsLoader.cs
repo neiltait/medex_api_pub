@@ -28,6 +28,7 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
         private DocumentClient _client;
         private Uri _documentCollectionUri;
         private List<Location> _locations;
+        private char[] _loadingChars = new[] { '|', '/', '-', '\\' };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocationsLoader"/> class.
@@ -98,6 +99,13 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
                 if (loadCount % 1000 == 0)
                 {
                     Console.WriteLine($"loaded {loadCount} locations out of {_locations.Count}...");
+                }
+
+                if (loadCount % 5 == 0)
+                {
+                    int bar = 20;
+                    int per = (int)(((loadCount % 1000) / 1000.0f) * bar);
+                    Console.Write($"{_loadingChars[(loadCount / 5) % 4]} [{string.Empty.PadRight(per, '#').PadRight(bar, ' ')}]\r");
                 }
             }
 
