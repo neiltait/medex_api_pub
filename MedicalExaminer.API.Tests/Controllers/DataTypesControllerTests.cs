@@ -170,7 +170,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
             var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
 
-            Assert.Equal(5, dictionary.Keys.Count);
+            Assert.Equal(6, dictionary.Keys.Count);
         }
 
         [Fact]
@@ -195,7 +195,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var okResult = response.Should().BeAssignableTo<OkObjectResult>().Subject;
             var dictionary = okResult.Value.Should().BeAssignableTo<Dictionary<string, int>>().Subject;
 
-            Assert.Equal(4, dictionary.Keys.Count);
+            Assert.Equal(5, dictionary.Keys.Count);
         }
     }
 }
