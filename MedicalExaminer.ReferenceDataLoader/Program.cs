@@ -22,7 +22,7 @@ namespace MedicalExaminer.ReferenceDataLoader
                 .ConfigureSharedSettings()
                 .ConfigureServices((context, services) =>
                 {
-                    var cosmosDbSettings = services.ConfigureSettings<CosmosDbSettings>(context.Configuration, "CosmosDB");
+                    services.ConfigureSettings<CosmosDbSettings>(context.Configuration, "CosmosDB");
 
                     services.AddHostedService<LocationsLoader>();
                 });
