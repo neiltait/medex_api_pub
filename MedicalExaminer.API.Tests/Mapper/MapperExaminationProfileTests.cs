@@ -2248,10 +2248,10 @@ namespace MedicalExaminer.API.Tests.Mapper
             var expectedBereavedPrepopulated = new BereavedDiscussionPrepopulated()
             {
                 Representatives = examination.Representatives,
-                CauseOfDeath1a = null,
-                CauseOfDeath1b = null,
-                CauseOfDeath1c = null,
-                CauseOfDeath2 = null,
+                CauseOfDeath1a = casebreakdown.QapDiscussion.Latest.CauseOfDeath1a,
+                CauseOfDeath1b = casebreakdown.QapDiscussion.Latest.CauseOfDeath1b,
+                CauseOfDeath1c = casebreakdown.QapDiscussion.Latest.CauseOfDeath1c,
+                CauseOfDeath2 = casebreakdown.QapDiscussion.Latest.CauseOfDeath2,
                 DateOfLatestPreScrutiny = null,
                 DateOfLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.DateOfConversation,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
