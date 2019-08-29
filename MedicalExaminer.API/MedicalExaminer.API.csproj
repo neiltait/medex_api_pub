@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <CodeAnalysisRuleSet>..\Analyzers\Analyzers.ruleset</CodeAnalysisRuleSet>
-    <Version>0.13.1</Version>
+    <Version>0.13.2</Version>
     <!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
   </PropertyGroup>
 
