@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedicalExaminer.API.Authorization.ExaminationContext;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.API.Models.v1.Users;
@@ -14,6 +15,7 @@ using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
@@ -128,7 +130,7 @@ namespace MedicalExaminer.API.Controllers
         [HttpPut("medical_team/")]
         public async Task<ActionResult<PutMedicalTeamResponse>> PutMedicalTeam(
             string examinationId,
-            [FromBody] [ModelBinder(Name = "examinationId")] PutMedicalTeamRequest putMedicalTeamRequest)
+            [FromBody] [ExaminationValidationModelBinderContext("examinationId")] PutMedicalTeamRequest putMedicalTeamRequest)
         {
             if (!ModelState.IsValid)
             {

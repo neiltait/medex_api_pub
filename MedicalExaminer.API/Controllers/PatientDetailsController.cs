@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedicalExaminer.API.Authorization.ExaminationContext;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.PatientDetails;
@@ -102,7 +103,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>PutPatientDetailsResponse</returns>
         [HttpPut]
         public async Task<ActionResult<PutPatientDetailsResponse>> UpdatePatientDetails(string examinationId,
-            [FromBody] [ModelBinder(Name = "examinationId")]PutPatientDetailsRequest putPatientDetailsRequest)
+            [FromBody] [ExaminationValidationModelBinderContext("examinationId")] PutPatientDetailsRequest putPatientDetailsRequest)
         {
             if (!ModelState.IsValid)
             {
