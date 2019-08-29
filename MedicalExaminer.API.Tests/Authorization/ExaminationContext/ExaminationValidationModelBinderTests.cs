@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.API.Authorization.ExaminationContext;
@@ -7,6 +9,7 @@ using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Moq;
 using Xunit;
 
@@ -56,10 +59,11 @@ namespace MedicalExaminer.API.Tests.Authorization.ExaminationContext
         {
             // Arrange
             var expectedModelBinder = new Mock<IModelBinder>();
-            var expectedModelName = "expectedModelName";
+            var expectedParameterName = "expectedParameterName";
             var sut = new ExaminationValidationModelBinder(expectedModelBinder.Object);
             var context = new Mock<ModelBindingContext>(MockBehavior.Strict);
             var expectedModel = new PutMedicalTeamRequest();
+            var modelMetadata = MockDefaultModelMetadata();
 
             context
                 .Setup(c => c.HttpContext.RequestServices.GetService(
@@ -70,9 +74,11 @@ namespace MedicalExaminer.API.Tests.Authorization.ExaminationContext
                 .Setup(emb => emb.BindModelAsync(It.IsAny<ModelBindingContext>()))
                 .Returns((ModelBindingContext mbc) => Task.CompletedTask);
 
-            context.SetupGet(c => c.ModelName).Returns(expectedModelName);
             context
-                .Setup(c => c.ValueProvider.GetValue(expectedModelName))
+                .SetupGet(c => c.ModelMetadata)
+                .Returns(modelMetadata);
+            context
+                .Setup(c => c.ValueProvider.GetValue(expectedParameterName))
                 .Returns(new ValueProviderResult(new[] {"1"}));
 
             context.SetupGet(c => c.Result).Returns(ModelBindingResult.Success(expectedModel));
@@ -89,8 +95,9 @@ namespace MedicalExaminer.API.Tests.Authorization.ExaminationContext
         {
             // Arrange
             var expectedModelBinder = new Mock<IModelBinder>(MockBehavior.Strict);
-            var expectedModelName = "expectedModelName";
+            var expectedParameterName = "expectedParameterName";
 
+            var modelMetadata = MockDefaultModelMetadata();
             var sut = new ExaminationValidationModelBinder(expectedModelBinder.Object);
             var context = new Mock<ModelBindingContext>(MockBehavior.Strict);
             var expectedModel = new PutMedicalTeamRequest();
@@ -126,9 +133,12 @@ namespace MedicalExaminer.API.Tests.Authorization.ExaminationContext
                 .Setup(emb => emb.BindModelAsync(It.IsAny<ModelBindingContext>()))
                 .Returns((ModelBindingContext mbc) => Task.CompletedTask);
 
-            context.SetupGet(c => c.ModelName).Returns(expectedModelName);
             context
-                .Setup(c => c.ValueProvider.GetValue(expectedModelName))
+                .SetupGet(c => c.ModelMetadata)
+                .Returns(modelMetadata);
+
+            context
+                .Setup(c => c.ValueProvider.GetValue(expectedParameterName))
                 .Returns(new ValueProviderResult(new[] { "1" }));
 
             context.SetupGet(c => c.Result).Returns(ModelBindingResult.Success(expectedModel));
@@ -138,6 +148,41 @@ namespace MedicalExaminer.API.Tests.Authorization.ExaminationContext
 
             // Assert
             examinationValidationContextProvider.Current.Examination.Should().Be(expectedExamination);
+        }
+
+        /// <summary>
+        /// Create a mock <see cref="DefaultModelMetadata"/> to be used in place of the mock model binding.
+        /// </summary>
+        /// <remarks>Bare minimum required to make model binding function. Not necessarily correct.</remarks>
+        /// <returns>A Default Model Metadata object.</returns>
+        private DefaultModelMetadata MockDefaultModelMetadata()
+        {
+            var memberInfo = new Mock<MemberInfo>(MockBehavior.Strict);
+            memberInfo.Setup(mi => mi.MemberType).Returns(MemberTypes.Method);
+            memberInfo.Setup(mi => mi.DeclaringType).Returns(typeof(object));
+
+            var parameterInfo = new Mock<ParameterInfo>(MockBehavior.Strict);
+            parameterInfo.Setup(pi => pi.Name).Returns("name");
+            parameterInfo.Setup(pi => pi.ParameterType).Returns(typeof(object));
+            parameterInfo.Setup(pi => pi.Member).Returns(memberInfo.Object);
+
+            var attributes = new Attribute[]
+            {
+                new ExaminationValidationModelBinderContextAttribute("expectedParameterName"),
+            };
+
+            // ReSharper disable once CoVariantArrayConversion
+            parameterInfo.Setup(pi => pi.GetCustomAttributes(typeof(Attribute), false)).Returns(attributes);
+
+            var modelAttributes = ModelAttributes.GetAttributesForParameter(parameterInfo.Object);
+
+            var provider = new Mock<IModelMetadataProvider>(MockBehavior.Strict);
+            var detailsProvider = new Mock<ICompositeMetadataDetailsProvider>(MockBehavior.Strict);
+            var modelMetadataDetails = new DefaultMetadataDetails(ModelMetadataIdentity.ForType(typeof(object)), modelAttributes);
+
+            var modelMetadata = new DefaultModelMetadata(provider.Object, detailsProvider.Object, modelMetadataDetails);
+
+            return modelMetadata;
         }
     }
 }

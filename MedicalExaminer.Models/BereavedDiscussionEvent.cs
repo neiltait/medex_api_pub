@@ -113,17 +113,5 @@ namespace MedicalExaminer.Models
         ///// </summary>
         [JsonProperty(PropertyName = "bereaved_discussion_outcome")]
         public BereavedDiscussionOutcome? BereavedDiscussionOutcome { get; set; }
-
-        ///// <summary>
-        ///// Clinical governance review
-        ///// </summary>
-        [JsonProperty(PropertyName = "clinical_governance_review")]
-        public ClinicalGovernanceReview? ClinicalGovernanceReview { get; set; }
-        
-        ///// <summary>
-        ///// Clinical governance review text
-        ///// </summary>
-        [JsonProperty(PropertyName = "clinical_governance_review_text")]
-        public string ClinicalGovernanceReviewText { get; set; }
     }
 }

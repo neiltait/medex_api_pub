@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 
 namespace MedicalExaminer.API.Authorization.ExaminationContext
 {
@@ -40,11 +42,26 @@ namespace MedicalExaminer.API.Authorization.ExaminationContext
                 return;
             }
 
+            if (!(bindingContext.ModelMetadata is DefaultModelMetadata defaultModelMetadata))
+            {
+                return;
+            }
+
+            var attribute = (ExaminationValidationModelBinderContextAttribute)defaultModelMetadata
+                .Attributes
+                .Attributes
+                .FirstOrDefault(a => a is ExaminationValidationModelBinderContextAttribute);
+
+            if (attribute == null)
+            {
+                return;
+            }
+
             // This gets the field being used to reference an examination, should return "examinationId"
-            var modelName = bindingContext.ModelName;
+            var examinationIdName = attribute.ParameterName;
 
             // This then gets the value of the field. The examination id itself.
-            var examinationId = bindingContext.ValueProvider.GetValue(modelName).FirstValue;
+            var examinationId = bindingContext.ValueProvider.GetValue(examinationIdName).FirstValue;
 
             var examinationRetrievalService =
                 (IAsyncQueryHandler<ExaminationRetrievalQuery, MedicalExaminer.Models.Examination>) bindingContext

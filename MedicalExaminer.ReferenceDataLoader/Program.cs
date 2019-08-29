@@ -1,5 +1,12 @@
 ﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using MedicalExaminer.Common.Extensions;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.ReferenceDataLoader.Loaders;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace MedicalExaminer.ReferenceDataLoader
 {
@@ -8,19 +15,21 @@ namespace MedicalExaminer.ReferenceDataLoader
     /// </summary>
     public class Program
     {
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            try
-            {
-                var locationsLoader = new LocationsLoader(args);
-                locationsLoader.Load().Wait();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Loading failed. Exception raised:");
-                Console.WriteLine(ex.Message);
-                Console.ReadKey();
-            }
+            var hostBuilder = new HostBuilder()
+                .UseEnvironment(EnvironmentName.Development)
+                .ConfigureSharedSettings()
+                .ConfigureServices((context, services) =>
+                {
+                    services.ConfigureSettings<CosmosDbSettings>(context.Configuration, "CosmosDB");
+
+                    services.AddHostedService<LocationsLoader>();
+                });
+
+            await hostBuilder.RunConsoleAsync();
+
+            Console.ReadLine();
         }
     }
 }
