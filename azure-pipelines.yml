@@ -21,6 +21,22 @@ variables:
   imageName: 'medex-api:$(Build.BuildId)'
   dockerId: medexFrontendStaging
 
+- task: PythonScript@0
+  displayName: 'Export project path'
+  inputs:
+    scriptSource: 'inline'
+    script: |
+      """Search all subdirectories for `MedicalExaminer.API`."""
+      from glob import iglob
+      from os import path
+      # Python >= 3.5
+      medexApi = next(iglob(path.join('**', 'MedicalExaminer.API'), recursive=True), None)
+      if not medexApi:
+          raise SystemExit('Could not find the frontend Django project')
+      project_location = path.dirname(path.abspath(medexApi))
+      print('Found API project in', project_location)
+      print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
+
 steps:
 - task: DotNetCoreCLI@2
   displayName: Restore
@@ -80,7 +96,8 @@ steps:
     PathtoPublish: '$(build.artifactstagingdirectory)'
 
 - script: |
-    docker build -f Dockerfile -t $(dockerId).azurecr.io/$(imageName) .
+    pushd '$(projectRoot)'
+    docker build -f ./Dockerfile -t $(dockerId).azurecr.io/$(imageName) .
     docker login -u $(dockerId) -p $pswd $(dockerId).azurecr.io
     docker push $(dockerId).azurecr.io/$(imageName)
   env:
