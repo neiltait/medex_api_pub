@@ -145,8 +145,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             }
         };
 
-        private readonly CaseOutcome brbr
-            = new CaseOutcome
+        private readonly CaseOutcome caseOutcome = new CaseOutcome
         {
             ScrutinyConfirmedOn = new DateTime(2019, 5, 1),
             CaseCompleted = false,
