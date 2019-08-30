@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using AutoMapper;
 using Cosmonaut;
@@ -32,6 +33,7 @@ using MedicalExaminer.Common.Queries.Permissions;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Reporting;
 using MedicalExaminer.Common.Services;
+using MedicalExaminer.Common.Services.CaseBreakdown;
 using MedicalExaminer.Common.Services.CaseOutcome;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.Location;
@@ -245,6 +247,8 @@ example:
 
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
+            // temporary fudges until the real migration framework is implemented.
+            UpdateDiscussionOutcomes(serviceProvider);
             UpdateInvalidOrNullUserPermissionIds(serviceProvider);
             UpdateLocations(serviceProvider, locationMigrationSettings);
         }
@@ -375,7 +379,7 @@ example:
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
                     ExaminationsRetrievalService>();
-
+            services.AddScoped<IAsyncQueryHandler<NullQuery, bool>, DiscussionOutcomesUpdateService>();
             services.AddScoped<LocationMigrationService, LocationMigrationService>();
 
             services
@@ -558,6 +562,13 @@ example:
         {
             LocationMigrationService instance = serviceProvider.GetService<LocationMigrationService>();
             var result = instance.Handle(_locationMigrationQueryLookup[locationMigrationSettings.Version]);
+        }
+
+        private void UpdateDiscussionOutcomes(IServiceProvider serviceProvider)
+        {
+            IAsyncQueryHandler<NullQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<NullQuery, bool>>();
+
+            instance.Handle(new NullQuery());
         }
 
         private void UpdateInvalidOrNullUserPermissionIds(IServiceProvider serviceProvider)
