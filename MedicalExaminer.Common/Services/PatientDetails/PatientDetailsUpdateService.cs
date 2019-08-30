@@ -7,8 +7,10 @@ using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Extensions.Models;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.PatientDetails;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
+using Microsoft.Extensions.Options;
 
 namespace MedicalExaminer.Common.Services.PatientDetails
 {
@@ -21,6 +23,7 @@ namespace MedicalExaminer.Common.Services.PatientDetails
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IMapper _mapper;
         private readonly IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location> _locationHandler;
+        private readonly UrgencySettings _urgencySettings;
 
         /// <summary>
         /// Initialise a new instance of <see cref="PatientDetailsUpdateService"/>.
@@ -33,12 +36,14 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings,
             IMapper mapper,
-            IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location> locationHandler)
+            IAsyncQueryHandler<LocationRetrievalByIdQuery, Models.Location> locationHandler,
+            IOptions<UrgencySettings> urgencySettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
             _mapper = mapper;
             _locationHandler = locationHandler;
+            _urgencySettings = urgencySettings.Value;
         }
 
         /// <summary>
@@ -67,7 +72,7 @@ namespace MedicalExaminer.Common.Services.PatientDetails
             caseToReplace.LastModifiedBy = param.User.UserId;
             caseToReplace.ModifiedAt = DateTime.Now;
 
-            caseToReplace = caseToReplace.UpdateCaseUrgencyScore();
+            caseToReplace = caseToReplace.UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort);
             caseToReplace = caseToReplace.UpdateCaseStatus();
             caseToReplace.CaseBreakdown.DeathEvent = _mapper.Map(caseToReplace, caseToReplace.CaseBreakdown.DeathEvent);
             caseToReplace.CaseBreakdown.DeathEvent.UserId = param.User.UserId;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -9,10 +8,11 @@ using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.PatientDetails;
-using MedicalExaminer.Common.Services;
 using MedicalExaminer.Common.Services.Location;
 using MedicalExaminer.Common.Services.PatientDetails;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -20,7 +20,8 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
 {
     public class PatientDetailsUpdateServiceTests : BaseServiceTest
     {
-        private IEnumerable<MedicalExaminer.Models.Location> _locationPath;
+        private readonly IEnumerable<MedicalExaminer.Models.Location> _locationPath;
+        private readonly Mock<IOptions<UrgencySettings>> _urgencySettingsMock;
 
         public PatientDetailsUpdateServiceTests()
         {
@@ -43,6 +44,14 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
                     LocationId = "SiteId"
                 },
             };
+
+            _urgencySettingsMock = new Mock<IOptions<UrgencySettings>>(MockBehavior.Strict);
+            _urgencySettingsMock
+                .Setup(s => s.Value)
+                .Returns(new UrgencySettings
+                {
+                    DaysToPreCalculateUrgencySort = 1
+                });
         }
 
         [Fact]
@@ -50,7 +59,7 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
         {
             // Arrange
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            PatientDetailsUpdateQuery query = null;
+            const PatientDetailsUpdateQuery query = null;
 
             var mapper = new Mock<IMapper>();
             var dbAccess = new Mock<IDatabaseAccess>();
@@ -58,9 +67,12 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             var location = new MedicalExaminer.Models.Location();
             var locationService = new Mock<LocationIdService>(dbAccess.Object, locationConnectionSettings.Object);
             locationService.Setup(x => x.Handle(It.IsAny<LocationRetrievalByIdQuery>())).Returns(Task.FromResult(location));
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object, locationService.Object);
+            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, mapper.Object, locationService.Object, _urgencySettingsMock.Object);
 
+            // Act
             Action act = () => sut.Handle(query).GetAwaiter().GetResult();
+
+            // Assert
             act.Should().Throw<ArgumentNullException>();
         }
 
@@ -84,14 +96,18 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
                 .Returns(Task.FromResult(examination)).Verifiable();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object);
+            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
 
             // Assert
-            dbAccess.Verify(db => db.UpdateItemAsync(connectionSettings.Object,
-                It.IsAny<MedicalExaminer.Models.Examination>()), Times.Once);
+            dbAccess
+                .Verify(
+                    db => db.UpdateItemAsync(
+                    connectionSettings.Object,
+                It.IsAny<MedicalExaminer.Models.Examination>()),
+                    Times.Once);
             Assert.NotNull(result.Result);
             Assert.Equal("a", result.Result.LastModifiedBy);
         }
@@ -116,22 +132,25 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
                 .Returns(Task.FromResult(examination)).Verifiable();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object);
+            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
 
             // Assert
-            dbAccess.Verify(db => db.UpdateItemAsync(connectionSettings.Object,
-                It.IsAny<MedicalExaminer.Models.Examination>()), Times.Once);
+            dbAccess.Verify(
+                db => db.UpdateItemAsync(
+                    connectionSettings.Object,
+                    It.IsAny<MedicalExaminer.Models.Examination>()),
+                Times.Once);
             Assert.NotNull(result.Result);
         }
 
         /// <summary>
-        /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
+        /// Test to make sure UpdateCaseUrgencySort method is called whenever the Examination is updated
         /// </summary>
         [Fact]
-        public void PatientDetailsUpdateOnExaminationWithNoUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScoreZero()
+        public void PatientDetailsUpdateOnExaminationWithNoUrgencyIndicatorsSuccessReturnsExaminationWithIsUrgentFalse()
         {
             // Arrange
             var examination = new MedicalExaminer.Models.Examination()
@@ -154,9 +173,12 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
             };
 
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var user = new Mock<MeUser>();
-            user.Object.UserId = "a";
-            var query = new PatientDetailsUpdateQuery("a", patientDetails, user.Object, _locationPath);
+            var userId = "userId";
+            var user = new MeUser()
+            {
+                UserId = userId,
+            };
+            var query = new PatientDetailsUpdateQuery("a", patientDetails, user, _locationPath);
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -167,21 +189,21 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
                 .Returns(Task.FromResult(examination)).Verifiable();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object);
+            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
 
             // Assert
-            Assert.Equal(0, result.Result.UrgencyScore);
-            Assert.Equal("a", result.Result.LastModifiedBy);
+            result.Result.IsUrgent().Should().BeFalse();
+            result.Result.LastModifiedBy.Should().Be(userId);
         }
 
         /// <summary>
-        /// Test to make sure UpdateCaseUrgencyScore method is called whenever the Examination is updated
+        /// Test to make sure UpdateCaseUrgencySort method is called whenever the Examination is updated
         /// </summary>
         [Fact]
-        public void PatientDetailsUpdateOnExaminationWithAllUrgencyIndicatorsSuccessReturnsExaminationWithUrgencyScore500()
+        public void PatientDetailsUpdateOnExaminationWithAllUrgencyIndicatorsSuccessReturnsExaminationWithIsUrgentTrue()
         {
             // Arrange
             var examination = new MedicalExaminer.Models.Examination()
@@ -202,11 +224,15 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
                 OtherPriority = true,
             };
 
-            var user = new Mock<MeUser>();
-            user.Object.UserId = "a";
+            const string userId = "userId";
+            var user = new MeUser()
+            {
+                UserId = userId,
+            };
+
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
 
-            var query = new PatientDetailsUpdateQuery("a", patientDetails, user.Object, _locationPath);
+            var query = new PatientDetailsUpdateQuery("a", patientDetails, user, _locationPath);
             var dbAccess = new Mock<IDatabaseAccess>();
             var locationConnectionSettings = new Mock<ILocationConnectionSettings>();
             var location = new MedicalExaminer.Models.Location();
@@ -217,14 +243,14 @@ namespace MedicalExaminer.API.Tests.Services.PatientDetails
                 .Returns(Task.FromResult(examination)).Verifiable();
             dbAccess.Setup(db => db.UpdateItemAsync(connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
-            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object);
+            var sut = new PatientDetailsUpdateService(dbAccess.Object, connectionSettings.Object, Mapper, locationService.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
 
             // Assert
-            Assert.Equal(500, result.Result.UrgencyScore);
-            Assert.Equal("a", result.Result.LastModifiedBy);
+            result.Result.IsUrgent().Should().BeTrue();
+            result.Result.LastModifiedBy.Should().Be(userId);
         }
     }
 }

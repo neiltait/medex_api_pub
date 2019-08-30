@@ -62,7 +62,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         private const string Surname = "surname";
         private const string Street = "street";
         private const string Town = "town";
-        private const int UrgencyScore = 4;
+        private const int UrgencyScore = 1;
         private DateTime CaseCreated = new DateTime(2019, 3, 15);
         private DateTime LastAdmission = new DateTime(2019, 1, 15);
         private TimeSpan TimeOfDeath = new TimeSpan(11, 30, 00);
@@ -1288,7 +1288,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                 Street = Street,
                 Town = Town,
                 TimeOfDeath = TimeOfDeath,
-                UrgencyScore = UrgencyScore,
                 LastAdmission = LastAdmission,
                 PendingAdmissionNotes = true,
                 PendingDiscussionWithQAP = true,
@@ -1298,7 +1297,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 HaveFinalCaseOutcomesOutstanding = true,
                 ReadyForMEScrutiny = true,
                 Unassigned = true,
-                MedicalTeam = medicalTeam
+                MedicalTeam = medicalTeam,
             };
 
             return examination;
@@ -2201,7 +2200,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                 Town = generalDetails ? "town" : null,
                 TrustLocationId = generalDetails ? "trustLocationId" : null,
                 Unassigned = generalDetails ? true : false,
-                UrgencyScore = 0
             };
         }
 

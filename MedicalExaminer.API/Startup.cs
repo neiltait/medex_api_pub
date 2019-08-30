@@ -14,7 +14,6 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
-using MedicalExaminer.BackgroundServices;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Authorization.Roles;
@@ -91,9 +90,6 @@ namespace MedicalExaminer.API
 
             var cosmosDbSettings = services.ConfigureSettings<CosmosDbSettings>(Configuration, "CosmosDB");
 
-            var backgroundServicesSettings =
-                services.ConfigureSettings<BackgroundServicesSettings>(Configuration, "BackgroundServices");
-
             var locationMigrationSettings =
                 services.ConfigureSettings<LocationMigrationSettings>(Configuration, "LocationMigrationSettings");
 
@@ -111,6 +107,8 @@ example:
             services.ConfigureSettings<AuthorizationSettings>(Configuration, "Authorization");
 
             services.ConfigureSettings<RequestChargeSettings>(Configuration, "RequestCharge");
+
+            var urgencySettings = services.ConfigureSettings<UrgencySettings>(Configuration, "UrgencySettings");
 
             ConfigureOktaClient(services);
 
@@ -241,12 +239,11 @@ example:
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
-            services.AddBackgroundServices(backgroundServicesSettings);
-
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
             UpdateInvalidOrNullUserPermissionIds(serviceProvider);
             UpdateLocations(serviceProvider, locationMigrationSettings);
+            UpdateExaminationUrgencySort(serviceProvider, urgencySettings);
         }
 
         /// <summary>
@@ -568,5 +565,12 @@ example:
         {
             {1, new LocationMigrationQueryV1() }
         };
+
+        private void UpdateExaminationUrgencySort(IServiceProvider serviceProvider, UrgencySettings urgencySettings)
+        {
+            IAsyncQueryHandler<InvalidUserPermissionQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>>();
+
+            instance.Handle(new InvalidUserPermissionQuery());
+        }
     }
 }

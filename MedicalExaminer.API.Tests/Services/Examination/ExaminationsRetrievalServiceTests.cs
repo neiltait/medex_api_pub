@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Cosmonaut;
@@ -7,6 +8,7 @@ using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services.Examination;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -111,6 +113,38 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             //Assert
             results.Should().NotBeNull();
             Assert.Equal(9, results.Count());
+        }
+
+        [Fact]
+        public virtual async Task EmptyQueryWithOrderByUrgency_ReturnsAllOpenCasesInOrder()
+        {
+            // Arrange
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(
+                PermissedLocations(),
+                null,
+                "",
+                ExaminationsOrderBy.Urgency,
+                1,
+                10,
+                "",
+                true);
+
+            // Act
+            var results = (await Service.Handle(examinationsDashboardQuery)).ToList();
+
+            // Assert
+            results.Should().NotBeNull();
+            results.Count().Should().Be(9);
+
+            results.ElementAt(0).ExaminationId.Should().Be("examination9");
+            results.ElementAt(1).ExaminationId.Should().Be("examination8");
+            results.ElementAt(2).ExaminationId.Should().Be("examination7");
+            results.ElementAt(3).ExaminationId.Should().Be("examination6");
+            results.ElementAt(4).ExaminationId.Should().Be("examination5");
+            results.ElementAt(5).ExaminationId.Should().Be("examination11");
+            results.ElementAt(6).ExaminationId.Should().Be("examination10");
+            results.ElementAt(7).ExaminationId.Should().Be("examination2");
+            results.ElementAt(8).ExaminationId.Should().Be("examination1");
         }
 
         [Fact]
@@ -267,12 +301,15 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         /// <inheritdoc/>
         protected override MedicalExaminer.Models.Examination[] GetExamples()
         {
+            var dateTimeNow = DateTime.Now;
+
             var examination1 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination1",
                 Unassigned = true,
                 CaseCompleted = false,
                 NationalLocationId = "expectedLocation",
+                CreatedAt = dateTimeNow,
             };
 
             var examination2 = new MedicalExaminer.Models.Examination()
@@ -281,6 +318,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 ReadyForMEScrutiny = true,
                 CaseCompleted = false,
                 RegionLocationId = "expectedLocation",
+                CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(1)),
             };
 
             var examination4 = new MedicalExaminer.Models.Examination()
@@ -293,8 +331,9 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             {
                 ExaminationId = "examination5",
                 CaseCompleted = false,
-                UrgencyScore = 3,
                 TrustLocationId = "expectedLocation",
+                CreatedAt = dateTimeNow,
+                OtherPriority = true,
             };
 
             var examination6 = new MedicalExaminer.Models.Examination()
@@ -303,49 +342,74 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CaseCompleted = false,
                 AdmissionNotesHaveBeenAdded = true,
                 SiteLocationId = "expectedLocation",
+                OtherPriority = true,
+                CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(1)),
             };
 
             var examination7 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination7",
                 CaseCompleted = false,
-                PendingDiscussionWithQAP = true
+                PendingDiscussionWithQAP = true,
+                OtherPriority = true,
+                CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(6)),
             };
 
             var examination8 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination8",
                 CaseCompleted = false,
-                PendingDiscussionWithRepresentative = true
+                PendingDiscussionWithRepresentative = true,
+                OtherPriority = true,
+                CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(7)),
             };
 
             var examination9 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination9",
                 CaseCompleted = false,
-                HaveFinalCaseOutcomesOutstanding = true
+                HaveFinalCaseOutcomesOutstanding = true,
+                OtherPriority = true,
+                CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(8)),
             };
 
             var examination10 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination10",
                 CaseCompleted = false,
-                HaveBeenScrutinisedByME = true
+                HaveBeenScrutinisedByME = true,
+                CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(2)),
             };
 
             var examination11 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination11",
                 CaseCompleted = false,
-                PendingAdmissionNotes = true
+                PendingAdmissionNotes = true,
+                CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(3)),
             };
 
-            return SetLocationCache(new[] { examination1, examination2, examination4, examination5,
-                           examination6, examination7, examination8, examination9, examination10,
-                           examination11});
+            var examinations = new[]
+            {
+                examination1,
+                examination2,
+                examination4,
+                examination5,
+                examination6,
+                examination7,
+                examination8,
+                examination9,
+                examination10,
+                examination11
+            };
+
+            SetSiteLocationIdOnExaminations(examinations);
+            UpdateUrgencySortOnExaminations(examinations);
+
+            return examinations;
         }
 
-        private MedicalExaminer.Models.Examination[] SetLocationCache(MedicalExaminer.Models.Examination[] examinations)
+        private static void SetSiteLocationIdOnExaminations(MedicalExaminer.Models.Examination[] examinations)
         {
             foreach (var examination in examinations)
             {
@@ -354,8 +418,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                     examination.SiteLocationId = "site1";
                 }
             }
+        }
 
-            return examinations;
+        private static void UpdateUrgencySortOnExaminations(MedicalExaminer.Models.Examination[] examinations)
+        {
+            foreach (var examination in examinations)
+            {
+                examination.UpdateCaseUrgencySort(1);
+            }
         }
 
         private IEnumerable<string> PermissedLocations()
