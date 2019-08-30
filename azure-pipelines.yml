@@ -21,6 +21,7 @@ variables:
   imageName: 'medex-api:$(Build.BuildId)'
   dockerId: medexFrontendStaging
 
+steps:
 - task: PythonScript@0
   displayName: 'Export project path'
   inputs:
@@ -32,12 +33,11 @@ variables:
       # Python >= 3.5
       medexApi = next(iglob(path.join('**', 'MedicalExaminer.API'), recursive=True), None)
       if not medexApi:
-          raise SystemExit('Could not find the frontend Django project')
+          raise SystemExit('Could not find the API project')
       project_location = path.dirname(path.abspath(medexApi))
       print('Found API project in', project_location)
       print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
 
-steps:
 - task: DotNetCoreCLI@2
   displayName: Restore
   inputs:
