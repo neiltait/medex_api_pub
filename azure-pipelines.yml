@@ -19,7 +19,7 @@ pool:
 variables:
   buildConfiguration: 'Release'
   imageName: 'medex-api:$(Build.BuildId)'
-  dockerId: medexAPIStaging
+  dockerId: medexFrontendStaging
 
 steps:
 - task: DotNetCoreCLI@2
