@@ -11,7 +11,7 @@ namespace MedicalExaminer.API.Attributes
     public class DateIsLessThanOrEqualToNullsAllowed : ValidationAttribute
     {
         private readonly string endDateField;
-
+        private readonly DateTime FrontEndNullDateValue = new DateTime(1, 1, 1);
         /// <summary>
         ///     Initializes a new instance of the <see cref="DateIsLessThanOrEqualToNullsAllowed" /> class.
         /// </summary>
@@ -55,6 +55,12 @@ namespace MedicalExaminer.API.Attributes
                 }
 
                 endDate = Convert.ToDateTime(temp);
+
+                if (endDate == FrontEndNullDateValue)
+                {
+                    return ValidationResult.Success;
+                }
+
             }
             catch (NullReferenceException)
             {
