@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using AutoMapper;
 using Cosmonaut;
@@ -245,6 +246,8 @@ example:
 
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
+            // temporary fudges until the real migration framework is implemented.
+            UpdateDiscussionOutcomes(serviceProvider);
             UpdateInvalidOrNullUserPermissionIds(serviceProvider);
             UpdateLocations(serviceProvider, locationMigrationSettings);
         }
@@ -558,6 +561,48 @@ example:
         {
             LocationMigrationService instance = serviceProvider.GetService<LocationMigrationService>();
             var result = instance.Handle(_locationMigrationQueryLookup[locationMigrationSettings.Version]);
+        }
+
+        private void UpdateDiscussionOutcomes(IServiceProvider serviceProvider)
+        {
+            IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> instance = serviceProvider.GetService<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>();
+            var strings = new string[] { "377e5b2d-f858-4398-a51c-1892973b6537" };
+            var t = instance.Handle(new ExaminationsRetrievalQuery(strings, null, string.Empty, null, 1, 1000, string.Empty, true)).Result;
+            foreach (var v in t)
+            {
+                if (v.CaseBreakdown.QapDiscussion.Latest != null)
+                {
+                    if (v.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                    {
+                        v.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome = MedicalExaminer.Models.Enums.QapDiscussionOutcome.DiscussionUnableToHappen;
+                    }
+
+                    foreach (var item in v.CaseBreakdown.QapDiscussion.History)
+                    {
+                        if (item.DiscussionUnableHappen)
+                        {
+                            item.QapDiscussionOutcome = MedicalExaminer.Models.Enums.QapDiscussionOutcome.DiscussionUnableToHappen;
+                        }
+                    }
+                }
+
+                if (v.CaseBreakdown.BereavedDiscussion.Latest != null)
+                {
+                    if (v.CaseBreakdown.BereavedDiscussion.Latest.DiscussionUnableHappen)
+                    {
+                        v.CaseBreakdown.BereavedDiscussion.Latest.BereavedDiscussionOutcome = MedicalExaminer.Models.Enums.BereavedDiscussionOutcome.DiscussionUnableToHappen;
+                    }
+
+                    foreach (var item in v.CaseBreakdown.BereavedDiscussion.History)
+                    {
+                        if (item.DiscussionUnableHappen)
+                        {
+                            item.BereavedDiscussionOutcome = MedicalExaminer.Models.Enums.BereavedDiscussionOutcome.DiscussionUnableToHappen;
+                        }
+                    }
+                }
+
+            }
         }
 
         private void UpdateInvalidOrNullUserPermissionIds(IServiceProvider serviceProvider)
