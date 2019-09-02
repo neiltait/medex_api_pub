@@ -238,12 +238,6 @@ example:
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
-
-            IServiceProvider serviceProvider = services.BuildServiceProvider();
-
-            UpdateInvalidOrNullUserPermissionIds(serviceProvider);
-            UpdateLocations(serviceProvider, locationMigrationSettings);
-            UpdateExaminationUrgencySort(serviceProvider, urgencySettings);
         }
 
         /// <summary>
@@ -278,12 +272,22 @@ example:
             // Ensure collections available
             using (var scope = app.ApplicationServices.CreateScope())
             {
+                var serviceProvider = scope.ServiceProvider;
                 var databaseAccess = scope.ServiceProvider.GetRequiredService<IDatabaseAccess>();
 
                 databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<ILocationConnectionSettings>());
                 databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IExaminationConnectionSettings>());
                 databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserConnectionSettings>());
                 databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserSessionConnectionSettings>());
+
+                var locationMigrationSettings =
+                    serviceProvider.GetRequiredService<IOptions<LocationMigrationSettings>>();
+                var urgencySettings =
+                    serviceProvider.GetRequiredService<IOptions<UrgencySettings>>();
+
+                UpdateInvalidOrNullUserPermissionIds(serviceProvider);
+                UpdateLocations(serviceProvider, locationMigrationSettings.Value);
+                UpdateExaminationUrgencySort(serviceProvider, urgencySettings.Value);
             }
 
             app.UseMiddleware<ResponseTimeMiddleware>();
