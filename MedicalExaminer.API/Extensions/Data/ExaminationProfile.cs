@@ -164,6 +164,10 @@ namespace MedicalExaminer.API.Extensions.Data
                     }
                     if (shouldUseQap == true)
                     {
+                        if (source.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                        {
+                            return null;
+                        }
                         return source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1a;
                     }
                     return source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a;
@@ -177,6 +181,10 @@ namespace MedicalExaminer.API.Extensions.Data
                     }
                     if (shouldUseQap == true)
                     {
+                        if (source.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                        {
+                            return null;
+                        }
                         return source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1b;
                     }
                     return source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1b;
@@ -190,6 +198,10 @@ namespace MedicalExaminer.API.Extensions.Data
                     }
                     if (shouldUseQap == true)
                     {
+                        if (source.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                        {
+                            return null;
+                        }
                         return source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1c;
                     }
                     return source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1c;
@@ -203,6 +215,10 @@ namespace MedicalExaminer.API.Extensions.Data
                     }
                     if (shouldUseQap == true)
                     {
+                        if (source.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                        {
+                            return null;
+                        }
                         return source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath2;
                     }
                     return source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath2;
@@ -497,6 +513,10 @@ namespace MedicalExaminer.API.Extensions.Data
             if (caseBreakdown.QapDiscussion.Latest != null && caseBreakdown.PreScrutiny.Latest == null)
             {
                 return true;
+            }
+            if (caseBreakdown.QapDiscussion.Latest != null && caseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+            {
+                return false;
             }
 
             if (caseBreakdown.QapDiscussion.Latest == null && caseBreakdown.PreScrutiny.Latest != null)
