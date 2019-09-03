@@ -372,6 +372,7 @@ example:
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
                     ExaminationsRetrievalService>();
+            services.AddScoped<IAsyncQueryHandler<UpdateExaminationUrgencySortQuery, bool>, UpdateExaminationUrgencySortService>();
 
             services.AddScoped<LocationMigrationService, LocationMigrationService>();
 
@@ -568,9 +569,9 @@ example:
 
         private void UpdateExaminationUrgencySort(IServiceProvider serviceProvider, UrgencySettings urgencySettings)
         {
-            IAsyncQueryHandler<InvalidUserPermissionQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>>();
+            IAsyncQueryHandler<UpdateExaminationUrgencySortQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<UpdateExaminationUrgencySortQuery, bool>>();
 
-            instance.Handle(new InvalidUserPermissionQuery());
+            instance.Handle(new UpdateExaminationUrgencySortQuery());
         }
     }
 }
