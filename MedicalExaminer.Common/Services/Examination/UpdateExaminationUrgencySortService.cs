@@ -24,7 +24,7 @@ namespace MedicalExaminer.Common.Services.Examination
         /// <param name="urgencySettings">Urgency settings.</param>
         public UpdateExaminationUrgencySortService(
             IDatabaseAccess databaseAccess,
-            IUserConnectionSettings connectionSettings,
+            IExaminationConnectionSettings connectionSettings,
             IOptions<UrgencySettings> urgencySettings)
             : base(databaseAccess, connectionSettings)
         {
