@@ -510,13 +510,17 @@ namespace MedicalExaminer.API.Extensions.Data
                 return null;
             }
 
-            if (caseBreakdown.QapDiscussion.Latest != null && caseBreakdown.PreScrutiny.Latest == null)
+            if (caseBreakdown.QapDiscussion.Latest != null)
             {
-                return true;
-            }
-            if (caseBreakdown.QapDiscussion.Latest != null && caseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
-            {
-                return false;
+                if (caseBreakdown.PreScrutiny.Latest == null)
+                {
+                    return true;
+                }
+
+                if (caseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathProvidedByME || caseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                {
+                    return false;
+                }
             }
 
             if (caseBreakdown.QapDiscussion.Latest == null && caseBreakdown.PreScrutiny.Latest != null)
