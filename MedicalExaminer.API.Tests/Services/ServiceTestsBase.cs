@@ -7,7 +7,9 @@ using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Reporting;
 using MedicalExaminer.Common.Services;
+using MedicalExaminer.Common.Settings;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Xunit;
 // ReSharper disable VirtualMemberCallInConstructor
 
@@ -42,7 +44,7 @@ namespace MedicalExaminer.API.Tests.Services
             // Make sure you don't access the sub class inside this method since its being called in constructor.
             var client = CosmosMocker.CreateDocumentClient(GetExamples());
             var clientFactory = CosmosMocker.CreateClientFactory(client);
-            var dataAccess = new DatabaseAccess(clientFactory.Object, new RequestChargeService());
+            var dataAccess = new DatabaseAccess(clientFactory.Object, new RequestChargeService(), new OptionsWrapper<CosmosDbSettings>(new CosmosDbSettings()));
             var connectionSettings = CosmosMocker.CreateConnectionSettings<TConnectionSettings>();
 
             serviceCollection.AddTransient(s => mapper);
