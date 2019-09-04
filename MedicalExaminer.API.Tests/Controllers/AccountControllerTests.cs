@@ -1,25 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
-using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Controllers;
-using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Models.v1.Account;
 using MedicalExaminer.Common.Authorization;
-using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Moq;
-using Okta.Sdk;
-using Okta.Sdk.Configuration;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
@@ -34,7 +27,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly Mock<IRolePermissions> _mockRolePermissions;
         public AccountControllerTests()
         {
-            var mockLogger = new Mock<IMELogger>(MockBehavior.Strict);
+            var mockLogger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>(MockBehavior.Strict);
             var mockMapper = new Mock<IMapper>(MockBehavior.Strict);
             _mockUserRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>(MockBehavior.Strict);
             _mockRolePermissions = new Mock<IRolePermissions>();

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
-using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -26,7 +25,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="mapper">The Mapper.</param>
         /// <param name="usersRetrievalByOktaIdService">User Retrieval By Okta Id Service.</param>
         protected AuthenticatedBaseController(
-            IMELogger logger,
+            IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> logger,
             IMapper mapper,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService)
             : base(logger, mapper)

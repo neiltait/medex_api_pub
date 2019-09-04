@@ -2,7 +2,6 @@
 using MedicalExaminer.API.Models.v1.Report;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Authorization;
-using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
@@ -10,6 +9,7 @@ using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using MedicalExaminer.Common.Queries.MELogger;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -33,7 +33,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="permissionService"></param>
         /// <param name="examinationRetrievalService"></param>
         public ReportController(
-            IMELogger logger,
+            IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> logger,
             IMapper mapper,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,

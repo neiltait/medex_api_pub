@@ -14,18 +14,17 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
-using MedicalExaminer.Common;
 using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Authorization.Roles;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Extensions;
-using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Common.Queries.Permissions;
 using MedicalExaminer.Common.Queries.User;
@@ -35,6 +34,7 @@ using MedicalExaminer.Common.Services.CaseOutcome;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.Location;
 using MedicalExaminer.Common.Services.MedicalTeam;
+using MedicalExaminer.Common.Services.MELogger;
 using MedicalExaminer.Common.Services.PatientDetails;
 using MedicalExaminer.Common.Services.Permissions;
 using MedicalExaminer.Common.Services.User;
@@ -219,10 +219,6 @@ example:
                 options.AddSecurityRequirement(security);
             });
 
-            // Logger.
-            services.AddScoped<IMELogger, MELogger>();
-
- 
             services.AddScoped<ControllerActionFilter>();
 
             var cosmosSettings = new CosmosStoreSettings(
@@ -233,11 +229,6 @@ example:
             const string examinationsCollection = "Examinations";
             services.AddCosmosStore<Examination>(cosmosSettings, examinationsCollection);
             services.AddCosmosStore<AuditEntry<Examination>>(cosmosSettings, examinationsCollection.AuditCollection());
-
-            services.AddScoped<IMeLoggerPersistence>(s => new MeLoggerPersistence(
-                new Uri(cosmosDbSettings.URL),
-                cosmosDbSettings.PrimaryKey,
-                cosmosDbSettings.DatabaseId));
         }
 
         /// <summary>
@@ -365,8 +356,15 @@ example:
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
+            services.AddSingleton<IMELoggerConnectionSettings>(s => new MELoggerConnectionSettings(
+                new Uri(cosmosDbSettings.URL),
+                cosmosDbSettings.PrimaryKey,
+                cosmosDbSettings.DatabaseId));
+
             // Examination services
             services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
+            services
+                .AddScoped<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>, CreateMELoggerService>();
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>,
                     ExaminationsDashboardService>();
