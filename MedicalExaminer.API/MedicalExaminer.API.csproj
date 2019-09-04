@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <CodeAnalysisRuleSet>..\Analyzers\Analyzers.ruleset</CodeAnalysisRuleSet>
-    <Version>0.10.1</Version>
+    <Version>0.13.2</Version>
     <!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
   </PropertyGroup>
 
@@ -60,7 +60,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MedicalExaminer.BackgroundServices\MedicalExaminer.BackgroundServices.csproj" />
     <ProjectReference Include="..\MedicalExaminer.Common\MedicalExaminer.Common.csproj" />
     <ProjectReference Include="..\MedicalExaminer.Models\MedicalExaminer.Models.csproj" />
   </ItemGroup>

@@ -3,17 +3,23 @@ using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.CaseOutcome;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
+using Microsoft.Extensions.Options;
 
 namespace MedicalExaminer.Common.Services.CaseOutcome
 {
     public class ConfirmationOfScrutinyService : QueryHandler<ConfirmationOfScrutinyQuery, Models.Examination>
     {
+        private readonly UrgencySettings _urgencySettings;
+
         public ConfirmationOfScrutinyService(
             IDatabaseAccess databaseAccess,
-            IExaminationConnectionSettings connectionSettings)
+            IExaminationConnectionSettings connectionSettings,
+            IOptions<UrgencySettings> urgencySettings)
             : base(databaseAccess, connectionSettings)
         {
+            _urgencySettings = urgencySettings.Value;
         }
 
         public override async Task<Models.Examination> Handle(ConfirmationOfScrutinyQuery param)
@@ -31,8 +37,8 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.CaseOutcome.ScrutinyConfirmedOn = DateTime.Now;
             examinationToUpdate.ScrutinyConfirmed = true;
 
+            examinationToUpdate.UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort);
             examinationToUpdate.UpdateCaseStatus();
-            examinationToUpdate.UpdateCaseUrgencyScore();
 
             var result = await DatabaseAccess.UpdateItemAsync(ConnectionSettings, examinationToUpdate);
             return result;

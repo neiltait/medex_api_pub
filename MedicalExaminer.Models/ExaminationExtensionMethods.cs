@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MedicalExaminer.Models.Enums;
 
@@ -88,12 +89,33 @@ namespace MedicalExaminer.Models
             return examination;
         }
 
-        public static Examination UpdateCaseUrgencyScore(this Examination examination)
+        public static int GetCaseUrgencySort(this Examination examination)
         {
-            var score = 0;
-            const int defaultScoreWeighting = 100;
-            const int overdueScoreWeighting = 1000;
+            return examination.GetCaseUrgencySort(DateTime.Now);
+        }
 
+        public static int GetCaseUrgencySort(this Examination examination, DateTime forDateTime)
+        {
+            if (examination.UrgencySort == null)
+            {
+                return 0;
+            }
+
+            var key = forDateTime.UrgencyKey();
+            return examination.UrgencySort.ContainsKey(key)
+                ? examination.UrgencySort[key]
+                : 0;
+        }
+
+        public static bool IsUrgent(this Examination examination)
+        {
+            var score = CalculateCaseUrgencyScore(examination, DateTime.Now);
+
+            return score > 0;
+        }
+
+        public static Examination UpdateCaseUrgencySort(this Examination examination, int numberOfDaysToPreCalculateUrgencySort)
+        {
             if (examination == null)
             {
                 throw new ArgumentNullException(nameof(examination));
@@ -101,41 +123,22 @@ namespace MedicalExaminer.Models
 
             if (examination.CaseCompleted)
             {
-                examination.UrgencyScore = score;
+                examination.UrgencySort = new Dictionary<string, int>();
                 return examination;
             }
 
-            if (examination.ChildPriority)
-            {
-                score = score + defaultScoreWeighting;
-            }
+            var now = DateTime.Now;
 
-            if (examination.CoronerPriority)
-            {
-                score = score + defaultScoreWeighting;
-            }
+            var dayList = Enumerable
+                .Range(0, numberOfDaysToPreCalculateUrgencySort)
+                .Select(days => now.AddDays(days))
+                .ToList();
 
-            if (examination.CulturalPriority)
-            {
-                score = score + defaultScoreWeighting;
-            }
+            examination.UrgencySort = dayList
+                .ToDictionary(
+                    date => date.UrgencyKey(),
+                    date => CalculateCaseUrgencySortOrder(examination, date));
 
-            if (examination.FaithPriority)
-            {
-                score = score + defaultScoreWeighting;
-            }
-
-            if (examination.OtherPriority)
-            {
-                score = score + defaultScoreWeighting;
-            }
-
-            if (DateTime.Now.Date.AddDays(-4) > examination.CreatedAt.Date)
-            {
-                score = score + overdueScoreWeighting;
-            }
-
-            examination.UrgencyScore = score;
             return examination;
         }
 
@@ -143,9 +146,11 @@ namespace MedicalExaminer.Models
         {
             examination.Unassigned = !(examination.MedicalTeam.MedicalExaminerOfficerUserId != null && examination.MedicalTeam.MedicalExaminerUserId != null);
             examination.PendingAdmissionNotes = CalculateAdmissionNotesPending(examination);
+            examination.HaveUnknownBasicDetails = !CalculateBasicDetailsEnteredStatus(examination);
             examination.AdmissionNotesHaveBeenAdded = !examination.PendingAdmissionNotes;
             examination.ReadyForMEScrutiny = CalculateReadyForScrutiny(examination);
             examination.HaveBeenScrutinisedByME = examination.ScrutinyConfirmed;
+            examination.PendingAdditionalDetails = !examination.CalculateAdditionalDetailsEnteredStatus();
             examination.PendingDiscussionWithQAP = CalculatePendingQAPDiscussion(examination);
             examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
             examination.PendingScrutinyNotes = CalculateScrutinyNotesPending(examination);
@@ -153,6 +158,51 @@ namespace MedicalExaminer.Models
             examination.CaseOutcome.CaseOutcomeSummary = CalculateScrutinyOutcome(examination);
 
             return examination;
+        }
+
+        public static bool CalculateBasicDetailsEnteredStatus(this Examination examination)
+        {
+            return examination.GivenNames != null
+                   && examination.Surname != null
+                   && examination.DateOfBirth != null
+                   && examination.DateOfDeath != null
+                   && examination.NhsNumber != null;
+        }
+
+        public static bool CalculateAdditionalDetailsEnteredStatus(this Examination examination)
+        {
+            return examination.CaseBreakdown.AdmissionNotes?.Latest != null
+                   && examination.MedicalTeam?.ConsultantResponsible?.Name != null
+                   && examination.MedicalTeam?.Qap?.Name != null
+                   && examination.Representatives?.FirstOrDefault()?.FullName != null
+                   && examination.MedicalTeam?.MedicalExaminerUserId != null;
+        }
+
+        public static bool CalculateScrutinyCompleteStatus(this Examination examination)
+        {
+            return examination.CaseBreakdown.PreScrutiny?.Latest != null
+                   && examination.CaseBreakdown.QapDiscussion?.Latest != null
+                   && examination.CaseBreakdown.BereavedDiscussion?.Latest != null;
+        }
+
+        public static bool? CalculateCaseItemsCompleteStatus(this Examination examination)
+        {
+            if (examination.CaseOutcome.CremationFormStatus == CremationFormStatus.Unknown)
+            {
+                return null;
+            }
+
+            if (examination.CaseOutcome.CremationFormStatus == null
+                || examination.CaseOutcome.MccdIssued == null
+                || examination.CaseOutcome.GpNotifiedStatus == null
+                || examination.CaseCompleted == false
+                || (examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner
+                    && !examination.CaseOutcome.CoronerReferralSent))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public static bool CalculateOutstandingCaseOutcomesCompleted(this Examination examination)
@@ -214,7 +264,7 @@ namespace MedicalExaminer.Models
 
         public static bool CalculateRequiresCoronerReferral(this Examination examination)
         {
-            return examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner || 
+            return examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner ||
                 examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.IssueMCCDWith100a;
         }
 
@@ -226,7 +276,7 @@ namespace MedicalExaminer.Models
             }
             else
             {
-                if (examination.CaseBreakdown.AdmissionNotes.Latest != null && 
+                if (examination.CaseBreakdown.AdmissionNotes.Latest != null &&
                     examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral.Value)
                 {
                     return false;
@@ -304,6 +354,65 @@ namespace MedicalExaminer.Models
             return CaseOutcomeSummary.IssueMCCD;
         }
 
+        public static string UrgencyKey(this DateTime dateTime)
+        {
+            return dateTime
+                .Date
+                .ToString("yyyy_MM_dd");
+        }
+
+        private static int CalculateCaseUrgencySortOrder(Examination examination, DateTime forDate)
+        {
+            const int defaultScoreMultiplier = 100;
+
+            var daysSinceCreated = (forDate.Date - examination.CreatedAt.Date).Days;
+            var sortOrder = Math.Max(0, Math.Min(defaultScoreMultiplier, daysSinceCreated));
+            var urgencyScore = CalculateCaseUrgencyScore(examination, forDate);
+
+            sortOrder += urgencyScore * defaultScoreMultiplier;
+
+            return sortOrder;
+        }
+
+        private static int CalculateCaseUrgencyScore(Examination examination, DateTime forDate)
+        {
+            const int defaultScoreWeighting = 100;
+            const int overdueScoreWeighting = 1000;
+
+            var score = 0;
+
+            if (examination.ChildPriority)
+            {
+                score += defaultScoreWeighting;
+            }
+
+            if (examination.CoronerPriority)
+            {
+                score += defaultScoreWeighting;
+            }
+
+            if (examination.CulturalPriority)
+            {
+                score += defaultScoreWeighting;
+            }
+
+            if (examination.FaithPriority)
+            {
+                score += defaultScoreWeighting;
+            }
+
+            if (examination.OtherPriority)
+            {
+                score += defaultScoreWeighting;
+            }
+
+            if (forDate.Date.AddDays(-4) > examination.CreatedAt.Date)
+            {
+                score += overdueScoreWeighting;
+            }
+
+            return score;
+        }
 
         private static bool CalculatePendingQAPDiscussion(Examination examination)
         {

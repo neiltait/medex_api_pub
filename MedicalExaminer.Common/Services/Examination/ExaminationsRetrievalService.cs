@@ -7,6 +7,7 @@ using Cosmonaut.Extensions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Common.Services.Examination
@@ -49,7 +50,15 @@ namespace MedicalExaminer.Common.Services.Examination
             switch (param.FilterOrderBy)
             {
                 case ExaminationsOrderBy.Urgency:
-                    return _store.Query().WithPagination(param.FilterPageNumber, param.FilterPageSize).Where(predicate).OrderByDescending(x => x.UrgencyScore).ToListAsync().Result;
+                    var key = DateTime.Now.Date.UrgencyKey();
+                    return _store
+                        .Query()
+                        .WithPagination(param.FilterPageNumber, param.FilterPageSize)
+                        .Where(predicate)
+                        .OrderByDescending(x => x.UrgencySort[key])
+                        .ToListAsync()
+                        .Result;
+
                 case ExaminationsOrderBy.CaseCreated:
                     return _store.Query().WithPagination(param.FilterPageNumber, param.FilterPageSize).Where(predicate).OrderBy(x => x.CreatedAt).ToListAsync().Result;
                 case null:

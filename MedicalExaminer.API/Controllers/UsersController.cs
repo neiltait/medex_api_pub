@@ -8,6 +8,7 @@ using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.API.Services;
+using MedicalExaminer.Common.Extensions.Permission;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
@@ -31,6 +32,13 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class UsersController : AuthorizedBaseController
     {
+        /// <summary>
+        /// Locations Parents Service.
+        /// </summary>
+        private readonly
+            IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>
+            _locationsParentsService;
+
         /// <summary>
         /// User Creation Service
         /// </summary>
@@ -86,8 +94,8 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
             IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationsRetrievalService,
-            IOktaClient oktaClient)
-
+            IOktaClient oktaClient,
+            IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>> locationsParentsService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _userCreationService = userCreationService;
@@ -96,6 +104,7 @@ namespace MedicalExaminer.API.Controllers
             _userUpdateService = userUpdateService;
             _locationsRetrievalService = locationsRetrievalService;
             _oktaClient = oktaClient;
+            _locationsParentsService = locationsParentsService;
         }
 
         /// <summary>
@@ -141,24 +150,13 @@ namespace MedicalExaminer.API.Controllers
             try
             {
                 var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
-                var usersPermissionLocationsIds = user.Permissions?.Select(x => x.LocationId).ToList();
-
-                var locations =
-                    _locationsRetrievalService.Handle(new LocationsRetrievalByQuery(
-                        null,
-                        null,
-                        false,
-                        false,
-                        usersPermissionLocationsIds)).Result;
-
-                var mappedPermissions = user.Permissions?.Select(meUserPermission => new PermissionLocation(
-                    meUserPermission,
-                    locations,
-                    meUserId)).Select(pl => Mapper.Map<PermissionItem>(pl)).ToList();
+                if (user == null)
+                {
+                    return NotFound(new GetUserResponse());
+                }
 
                 var gur = new GetUserResponse();
                 Mapper.Map(user, gur);
-                gur.Permissions = mappedPermissions;
 
                 return Ok(gur);
             }

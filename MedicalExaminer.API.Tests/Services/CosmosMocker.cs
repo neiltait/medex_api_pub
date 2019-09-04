@@ -55,6 +55,11 @@ namespace MedicalExaminer.API.Tests.Services
                     //var response = new FeedResponse<T>(query);
                     var response = ToFeedResponse(query);
 
+                    mockDocumentQuery.Setup(_ => _.Provider)
+                        .Returns(provider.Object);
+                    mockDocumentQuery.Setup(_ => _.Expression)
+                        .Returns(expression);
+
                     mockDocumentQuery
                         .SetupSequence(_ => _.HasMoreResults)
                         .Returns(true)

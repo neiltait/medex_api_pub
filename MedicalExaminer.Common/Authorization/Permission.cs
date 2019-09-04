@@ -43,6 +43,7 @@
         OtherEvent,
         AdmissionEvent,
         MedicalHistoryEvent,
-        PreScrutinyEvent
+        PreScrutinyEvent,
+        GetCoronerReferralDownload,
     }
 }

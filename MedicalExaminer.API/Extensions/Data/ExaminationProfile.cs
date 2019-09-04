@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Linq;
 using AutoMapper;
 using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.API.Models.v1.Examinations;
-using MedicalExaminer.Models;
-using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
+using MedicalExaminer.API.Models.v1.PatientDetails;
+using MedicalExaminer.API.Models.v1.Report;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using System.Linq;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -21,64 +22,207 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public ExaminationProfile()
         {
+            CreateMap<Examination, GetCoronerReferralDownloadResponse>()
+                .ForMember(dest => dest.AbleToIssueMCCD, opt => opt.MapFrom(src => src.CaseOutcome.OutcomeOfPrescrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation ? false : true))
+                .ForMember(dest => dest.CauseOfDeath1a, opt => opt.MapFrom((src, dest, destMember, context) => {
+                    if (src.CaseBreakdown.QapDiscussion.Latest == null)
+                    {
+                        if (src.CaseBreakdown.PreScrutiny.Latest == null)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            return src.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a;
+                        }
+                    }
+                    else
+                    {
+                        if (src.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP ||
+                        src.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME)
+                        {
+                            return src.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1a;
+                        }
+                        if (src.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathProvidedByME)
+                        {
+                            return src.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a;
+                        }
+                        return "Referred to Coroner";
+                    }
+                }))
+                .ForMember(dest => dest.CauseOfDeath1b, opt => opt.MapFrom((src, dest, destMember, context) => {
+                    if (src.CaseBreakdown.QapDiscussion.Latest == null)
+                    {
+                        if (src.CaseBreakdown.PreScrutiny.Latest == null)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            return src.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1b;
+                        }
+                    }
+                    else
+                    {
+                        if (src.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP ||
+                        src.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME)
+                        {
+                            return src.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1b;
+                        }
+                        if (src.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathProvidedByME)
+                        {
+                            return src.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1b;
+                        }
+                        return "Referred to Coroner";
+                    }
+                }))
+                .ForMember(dest => dest.CauseOfDeath1c, opt => opt.MapFrom((src, dest, destMember, context) =>
+                {
+                    if (src.CaseBreakdown.QapDiscussion.Latest == null)
+                    {
+                        if (src.CaseBreakdown.PreScrutiny.Latest == null)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            return src.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1c;
+                        }
+                    }
+                    else
+                    {
+                        if (src.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP ||
+                        src.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME)
+                        {
+                            return src.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1c;
+                        }
+                        if (src.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathProvidedByME)
+                        {
+                            return src.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1c;
+                        }
+                        return "Referred to Coroner";
+                    }
+                }))
+                .ForMember(dest => dest.CauseOfDeath2, opt => opt.MapFrom((src, dest, destMember, context) => {
+                    if (src.CaseBreakdown.QapDiscussion.Latest == null)
+                    {
+                        if (src.CaseBreakdown.PreScrutiny.Latest == null)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            return src.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath2;
+                        }
+                    }
+                    else
+                    {
+                        if (src.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP ||
+                        src.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME)
+                        {
+                            return src.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath2;
+                        }
+                        if (src.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathProvidedByME)
+                        {
+                            return src.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath2;
+                        }
+                        return "Referred to Coroner";
+                    }
+                }))
+                .ForMember(dest => dest.PlaceOfDeath, opt => opt.MapFrom(src => src.PlaceDeathOccured))
+                .ForMember(dest => dest.LatestBereavedDiscussion, opt => opt.MapFrom(src => src.CaseBreakdown.BereavedDiscussion.Latest))
+                .ForMember(dest => dest.Qap, opt => opt.MapFrom(src => new ClinicalProfessional()
+                {
+                    Name = src.CaseBreakdown.QapDiscussion.Latest.ParticipantName,
+                    Organisation = src.CaseBreakdown.QapDiscussion.Latest.ParticipantOrganisation,
+                    Notes = src.CaseBreakdown.QapDiscussion.Latest.DiscussionDetails,
+                    Phone = src.CaseBreakdown.QapDiscussion.Latest.ParticipantPhoneNumber,
+                    Role = src.CaseBreakdown.QapDiscussion.Latest.ParticipantRole
+                }))
+                .ForMember(dest => dest.Consultant, opt => opt.MapFrom(src => src.MedicalTeam.ConsultantResponsible))
+                .ForMember(dest => dest.GP, opt => opt.MapFrom(src => src.MedicalTeam.GeneralPractitioner))
+                .ForMember(dest => dest.LatestAdmissionDetails, opt => opt.MapFrom(src => src.CaseBreakdown.AdmissionNotes.Latest))
+                .ForMember(dest => dest.DetailsAboutMedicalHistory, opt => opt.MapFrom((src, dest, destMember, context) => {
+                    var temp = src.CaseBreakdown.MedicalHistory.History.
+                    Select(hstry => hstry?.Text).Aggregate("", (current, next) => current + next + Environment.NewLine);
+                    if (temp != null)
+                    {
+                        temp = temp.TrimEnd(Environment.NewLine.ToCharArray());
+                    }
+
+                    return temp;
+                }));
+
             CreateMap<Examination, BereavedDiscussionPrepopulated>()
+                .ForMember(dest => dest.Representatives, opt => opt.MapFrom(source => source.Representatives))
                 .ForMember(dest => dest.CauseOfDeath1a, opt => opt.MapFrom((source, dest, destMember, context) =>
                 {
-                    var shouldUseRor = UsePreScrutiny(source.CaseBreakdown);
-                    if (shouldUseRor == null)
+                    var shouldUseQap = UseQap(source.CaseBreakdown);
+                    if (shouldUseQap == null)
                     {
                         return null;
                     }
-                    if (shouldUseRor == true)
+                    if (shouldUseQap == true)
                     {
-                        return source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a;
+                        if (source.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                        {
+                            return null;
+                        }
+                        return source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1a;
                     }
-                    return source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1a;
-                }
-                ))
+                    return source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a;
+                }))
                 .ForMember(dest => dest.CauseOfDeath1b, opt => opt.MapFrom((source, dest, destMember, context) =>
                 {
-                    var shouldUseRor = UsePreScrutiny(source.CaseBreakdown);
-                    if (shouldUseRor == null)
+                    var shouldUseQap = UseQap(source.CaseBreakdown);
+                    if (shouldUseQap == null)
                     {
                         return null;
                     }
-                    if (shouldUseRor == true)
+                    if (shouldUseQap == true)
                     {
-                        return source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1b;
+                        if (source.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                        {
+                            return null;
+                        }
+                        return source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1b;
                     }
-                    return source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1b;
-                }
-                ))
+                    return source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1b;
+                }))
                 .ForMember(dest => dest.CauseOfDeath1c, opt => opt.MapFrom((source, dest, destMember, context) =>
                 {
-                    var shouldUseRor = UsePreScrutiny(source.CaseBreakdown);
-                    if(shouldUseRor == null)
+                    var shouldUseQap = UseQap(source.CaseBreakdown);
+                    if (shouldUseQap == null)
                     {
                         return null;
                     }
-                    if (shouldUseRor == true)
+                    if (shouldUseQap == true)
                     {
-                        return source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1c;
+                        if (source.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                        {
+                            return null;
+                        }
+                        return source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1c;
                     }
-                    return source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1c;
-
-                }
-                ))
+                    return source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1c;
+                }))
                 .ForMember(dest => dest.CauseOfDeath2, opt => opt.MapFrom((source, dest, destMember, context) =>
-                {                    
-                    var shouldUseRor = UsePreScrutiny(source.CaseBreakdown);
-                    if (shouldUseRor == null)
+                {
+                    var shouldUseQap = UseQap(source.CaseBreakdown);
+                    if (shouldUseQap == null)
                     {
                         return null;
                     }
-                    if (shouldUseRor == true)
+                    if (shouldUseQap == true)
                     {
-                        return source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath2;
+                        if (source.CaseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                        {
+                            return null;
+                        }
+                        return source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath2;
                     }
-                    return source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath2;
-                }
-                ))
+                    return source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath2;
+                }))
                 .ForMember(dest => dest.DateOfLatestPreScrutiny, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.Created))
                 .ForMember(dest => dest.DateOfLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.DateOfConversation))
                 .ForMember(dest => dest.MedicalExaminer, opt => opt.MapFrom(source => source.MedicalTeam.MedicalExaminerFullName))
@@ -93,11 +237,11 @@ namespace MedicalExaminer.API.Extensions.Data
                     {
                         return QAPDiscussionStatus.CouldNotHappen;
                     }
-                    if(source.CaseBreakdown.PreScrutiny.Latest == null)
+                    if (source.CaseBreakdown.PreScrutiny.Latest == null)
                     {
                         return QAPDiscussionStatus.HappenedNoRevision;
                     }
-                    if(source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1a == source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a
+                    if (source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1a == source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a
                 && source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1b == source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1b
                 && source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1c == source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1c
                 && source.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath2 == source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath2)
@@ -110,25 +254,18 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(dest => dest.UserForLatestPrescrutiny, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.UserFullName))
                 .ForMember(dest => dest.UserForLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.UserFullName));
             CreateMap<Examination, QapDiscussionPrepopulated>()
-                .ForMember(prepopulated => prepopulated.CauseOfDeath1a,
-                    cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a))
-                .ForMember(prepopulated => prepopulated.CauseOfDeath1b,
-                    cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1b))
-                .ForMember(prepopulated => prepopulated.CauseOfDeath1c,
-                    cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1c))
-                .ForMember(prepopulated => prepopulated.CauseOfDeath2,
-                    cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath2))
-                .ForMember(prepopulated => prepopulated.MedicalExaminer,
-                    cbd => cbd.MapFrom(source => source.MedicalTeam.MedicalExaminerFullName)) 
-                .ForMember(prepopulated => prepopulated.DateOfLatestPreScrutiny,
-                    cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.Created))
-                .ForMember(prepopulated => prepopulated.PreScrutinyStatus,
-                    cbd => cbd.MapFrom(source =>
+                .ForMember(prepopulated => prepopulated.Qap, opt => opt.MapFrom(source => source.MedicalTeam.Qap))
+                .ForMember(prepopulated => prepopulated.CauseOfDeath1a, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a))
+                .ForMember(prepopulated => prepopulated.CauseOfDeath1b, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1b))
+                .ForMember(prepopulated => prepopulated.CauseOfDeath1c, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1c))
+                .ForMember(prepopulated => prepopulated.CauseOfDeath2, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath2))
+                .ForMember(prepopulated => prepopulated.MedicalExaminer, cbd => cbd.MapFrom(source => source.MedicalTeam.MedicalExaminerFullName)) 
+                .ForMember(prepopulated => prepopulated.DateOfLatestPreScrutiny, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.Created))
+                .ForMember(prepopulated => prepopulated.PreScrutinyStatus, cbd => cbd.MapFrom(source =>
                         source.CaseBreakdown.PreScrutiny.Latest == null
                             ? PreScrutinyStatus.PrescrutinyNotHappened
                             : PreScrutinyStatus.PrescrutinyHappened))
-                .ForMember(prepopulated => prepopulated.UserForLatestPrescrutiny,
-                    cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.UserFullName));
+                .ForMember(prepopulated => prepopulated.UserForLatestPrescrutiny, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.UserFullName));
 
             CreateMap<Examination, CaseBreakDownItem>()
                 .ForMember(cbi => cbi.AdmissionNotes, opt => opt.MapFrom((source, destination, destinationMember, context) =>
@@ -202,9 +339,11 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(response => response.MccdIssued, opt => opt.MapFrom(examination => examination.CaseOutcome.MccdIssued))
                 .ForMember(response => response.CremationFormStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.CremationFormStatus))
                 .ForMember(response => response.GpNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GpNotifiedStatus));
-            CreateMap<Examination, ExaminationItem>();
+            CreateMap<Examination, ExaminationItem>()
+                .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0));
             CreateMap<Examination, GetPatientDetailsResponse>()
                 .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
+                .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<Examination, PutMedicalTeamResponse>()
@@ -262,10 +401,12 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.AnyImplants, opt => opt.Ignore())
                 .ForMember(examination => examination.ImplantDetails, opt => opt.Ignore())
                 .ForMember(examination => examination.Representatives, opt => opt.Ignore())
+                .ForMember(examination => examination.HaveUnknownBasicDetails, opt => opt.Ignore())
                 .ForMember(examination => examination.AdmissionNotesHaveBeenAdded, opt => opt.Ignore())
                 .ForMember(examination => examination.ReadyForMEScrutiny, opt => opt.Ignore())
                 .ForMember(examination => examination.Unassigned, opt => opt.Ignore())
                 .ForMember(examination => examination.HaveBeenScrutinisedByME, opt => opt.Ignore())
+                .ForMember(examination => examination.PendingAdditionalDetails, opt => opt.Ignore())
                 .ForMember(examination => examination.PendingAdmissionNotes, opt => opt.Ignore())
                 .ForMember(examination => examination.PendingDiscussionWithQAP, opt => opt.Ignore())
                 .ForMember(examination => examination.PendingDiscussionWithRepresentative, opt => opt.Ignore())
@@ -279,7 +420,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.CaseBreakdown, opt => opt.Ignore())
                 .ForMember(examination => examination.MedicalTeam, opt => opt.Ignore())
                 .ForMember(examination => examination.MedicalExaminerOfficeResponsibleName, opt => opt.Ignore())
-                .ForMember(examination => examination.UrgencyScore, opt => opt.Ignore())
+                .ForMember(examination => examination.UrgencySort, opt => opt.Ignore())
                 .ForMember(examination => examination.NationalLocationId, opt => opt.Ignore())
                 .ForMember(examination => examination.RegionLocationId, opt => opt.Ignore())
                 .ForMember(examination => examination.TrustLocationId, opt => opt.Ignore())
@@ -292,21 +433,69 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.CaseOutcome, opt => opt.Ignore())
                 .ForMember(examination => examination.CreatedBy, opt => opt.Ignore());
             CreateMap<Examination, PatientCardItem>()
-                .ForMember(
-                    patientCard => patientCard.AppointmentDate,
+                .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0))
+                .ForMember(patientCard => patientCard.AppointmentDate,
                     examination => examination.MapFrom(new AppointmentDateResolver(new AppointmentFinder())))
-                .ForMember(
-                    patientCard => patientCard.AppointmentTime,
-                    examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())))
-                .ForMember(
-                    patientCard => patientCard.CaseCreatedDate,
-                    opt => opt.MapFrom(examination => examination.CreatedAt))
-                .ForMember(
-                    patientCard => patientCard.LastAdmission,
-                    opt => opt.MapFrom(new AdmissionDateResolver()))
-                .ForMember(
-                    patientCard => patientCard.CaseOutcome,
-                    opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary));
+                .ForMember(patientCard => patientCard.AppointmentTime, examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())))
+                .ForMember(patientCard => patientCard.CaseCreatedDate, opt => opt.MapFrom(examination => examination.CreatedAt))
+                .ForMember(patientCard => patientCard.LastAdmission, opt => opt.MapFrom(new AdmissionDateResolver()))
+                .ForMember(patientCard => patientCard.CaseOutcome, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary))
+                .ForMember(patientCard => patientCard.NameEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.GivenNames != null && source.Surname != null))
+                .ForMember(patientCard => patientCard.DobEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.DateOfBirth != null))
+                .ForMember(patientCard => patientCard.DodEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.DateOfDeath != null))
+                .ForMember(patientCard => patientCard.NhsNumberEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.NhsNumber != null))
+                .ForMember(patientCard => patientCard.BasicDetailsEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CalculateBasicDetailsEnteredStatus()))
+                .ForMember(patientCard => patientCard.LatestAdmissionDetailsEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CaseBreakdown.AdmissionNotes.Latest != null))
+                .ForMember(patientCard => patientCard.DoctorInChargeEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.MedicalTeam.ConsultantResponsible?.Name != null))
+                .ForMember(patientCard => patientCard.QapEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.MedicalTeam.Qap?.Name != null))
+                .ForMember(patientCard => patientCard.BereavedInfoEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.Representatives?.FirstOrDefault()?.FullName != null))
+                .ForMember(patientCard => patientCard.MeAssigned, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.MedicalTeam.MedicalExaminerUserId != null))
+                .ForMember(patientCard => patientCard.AdditionalDetailsEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CalculateAdditionalDetailsEnteredStatus()))
+                .ForMember(patientCard => patientCard.PreScrutinyEventEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CaseBreakdown.PreScrutiny.Latest != null))
+                .ForMember(patientCard => patientCard.QapDiscussionEventEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CaseBreakdown.QapDiscussion.Latest != null))
+                .ForMember(patientCard => patientCard.BereavedDiscussionEventEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CaseBreakdown.BereavedDiscussion.Latest != null))
+                .ForMember(patientCard => patientCard.IsScrutinyCompleted, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CalculateScrutinyCompleteStatus()))
+                .ForMember(patientCard => patientCard.MccdIssued, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CaseOutcome.MccdIssued != null))
+                .ForMember(patientCard => patientCard.CremationFormInfoEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) =>
+                    {
+                        switch (source.CaseOutcome.CremationFormStatus)
+                        {
+                            case CremationFormStatus.No:
+                            case CremationFormStatus.Yes:
+                                return true;
+                            case CremationFormStatus.Unknown:
+                                return (bool?)null;
+                            case null:
+                                return false;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    }))
+                .ForMember(patientCard => patientCard.GpNotified, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CaseOutcome.GpNotifiedStatus != null))
+                .ForMember(patientCard => patientCard.SentToCoroner, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CaseOutcome.CoronerReferralSent))
+                .ForMember(patientCard => patientCard.CaseClosed, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CaseCompleted))
+                .ForMember(patientCard => patientCard.IsCaseItemsCompleted, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CalculateCaseItemsCompleteStatus()));
 
             CreateMap<Representative, RepresentativeItem>();
             CreateMap<Examination, DeathEvent>()
@@ -317,29 +506,35 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(deathEvent => deathEvent.UserFullName, opt => opt.Ignore());
         }
 
-        private bool? UsePreScrutiny(CaseBreakDown caseBreakdown)
+        private bool? UseQap(CaseBreakDown caseBreakdown)
         {
             if (caseBreakdown.PreScrutiny.Latest == null && caseBreakdown.QapDiscussion.Latest == null)
             {
                 return null;
             }
 
-            if (caseBreakdown.QapDiscussion.Latest != null && caseBreakdown.PreScrutiny.Latest == null)
+            if (caseBreakdown.QapDiscussion.Latest != null)
             {
-                return null;
+                if (caseBreakdown.PreScrutiny.Latest == null)
+                {
+                    return true;
+                }
+
+                if (caseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome == QapDiscussionOutcome.MccdCauseOfDeathProvidedByME || caseBreakdown.QapDiscussion.Latest.DiscussionUnableHappen)
+                {
+                    return false;
+                }
             }
 
             if (caseBreakdown.QapDiscussion.Latest == null && caseBreakdown.PreScrutiny.Latest != null)
             {
-                return true;
+                return false;
             }
 
-            
-
-            return caseBreakdown.QapDiscussion.Latest.CauseOfDeath1a != caseBreakdown.PreScrutiny.Latest.CauseOfDeath1a
-                && caseBreakdown.QapDiscussion.Latest.CauseOfDeath1b != caseBreakdown.PreScrutiny.Latest.CauseOfDeath1b
-                && caseBreakdown.QapDiscussion.Latest.CauseOfDeath1c != caseBreakdown.PreScrutiny.Latest.CauseOfDeath1c
-                && caseBreakdown.QapDiscussion.Latest.CauseOfDeath2 != caseBreakdown.PreScrutiny.Latest.CauseOfDeath2;
+            return caseBreakdown.QapDiscussion.Latest?.CauseOfDeath1a != caseBreakdown.PreScrutiny.Latest?.CauseOfDeath1a
+                   || caseBreakdown.QapDiscussion.Latest?.CauseOfDeath1b != caseBreakdown.PreScrutiny.Latest?.CauseOfDeath1b
+                   || caseBreakdown.QapDiscussion.Latest?.CauseOfDeath1c != caseBreakdown.PreScrutiny.Latest?.CauseOfDeath1c
+                   || caseBreakdown.QapDiscussion.Latest?.CauseOfDeath2 != caseBreakdown.PreScrutiny.Latest?.CauseOfDeath2;
         }
 
         private EventContainerItem<T, U> EventContainerMapping<T, U>(

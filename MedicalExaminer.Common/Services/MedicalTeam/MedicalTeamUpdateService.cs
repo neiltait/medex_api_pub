@@ -4,7 +4,9 @@ using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Queries.User;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
+using Microsoft.Extensions.Options;
 
 namespace MedicalExaminer.Common.Services.MedicalTeam
 {
@@ -16,6 +18,7 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
         private readonly IConnectionSettings _connectionSettings;
         private readonly IDatabaseAccess _databaseAccess;
         private readonly IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> _userRetrievalByIdService;
+        private readonly UrgencySettings _urgencySettings;
 
         /// <summary>
         /// Initialise a new instance of <see cref="MedicalTeamUpdateService"/>.
@@ -26,11 +29,13 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
         public MedicalTeamUpdateService(
             IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings,
-            IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService)
+            IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
+            IOptions<UrgencySettings> urgencySettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
             _userRetrievalByIdService = userRetrievalByIdService;
+            _urgencySettings = urgencySettings.Value;
         }
 
         /// <inheritdoc/>
@@ -51,7 +56,7 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
                 examination.MedicalTeam.MedicalExaminerOfficerFullName = await GetFullName(examination.MedicalTeam.MedicalExaminerOfficerUserId);
             }
 
-            examination = examination.UpdateCaseUrgencyScore();
+            examination = examination.UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort);
             examination = examination.UpdateCaseStatus();
             examination.LastModifiedBy = userId;
             examination.ModifiedAt = DateTime.Now;

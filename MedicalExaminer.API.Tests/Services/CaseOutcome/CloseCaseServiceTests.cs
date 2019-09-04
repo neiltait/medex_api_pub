@@ -5,8 +5,10 @@ using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Services.CaseOutcome;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -14,6 +16,19 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
 {
     public class CloseCaseServiceTests
     {
+        private readonly Mock<IOptions<UrgencySettings>> _urgencySettingsMock;
+
+        public CloseCaseServiceTests()
+        {
+            _urgencySettingsMock = new Mock<IOptions<UrgencySettings>>(MockBehavior.Strict);
+            _urgencySettingsMock
+                .Setup(s => s.Value)
+                .Returns(new UrgencySettings
+                {
+                    DaysToPreCalculateUrgencySort = 1
+                });
+        }
+
         /// <summary>
         /// Close Case When Outstanding Case Items Are CaseCompleted
         /// </summary>
@@ -56,7 +71,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
                 connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
-            var sut = new CloseCaseService(dbAccess.Object, connectionSettings.Object);
+            var sut = new CloseCaseService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);

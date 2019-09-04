@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using AutoMapper;
 using Cosmonaut;
@@ -14,7 +15,6 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
-using MedicalExaminer.BackgroundServices;
 using MedicalExaminer.Common;
 using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Authorization.Roles;
@@ -32,6 +32,7 @@ using MedicalExaminer.Common.Queries.Permissions;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Reporting;
 using MedicalExaminer.Common.Services;
+using MedicalExaminer.Common.Services.CaseBreakdown;
 using MedicalExaminer.Common.Services.CaseOutcome;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.Location;
@@ -91,9 +92,6 @@ namespace MedicalExaminer.API
 
             var cosmosDbSettings = services.ConfigureSettings<CosmosDbSettings>(Configuration, "CosmosDB");
 
-            var backgroundServicesSettings =
-                services.ConfigureSettings<BackgroundServicesSettings>(Configuration, "BackgroundServices");
-
             var locationMigrationSettings =
                 services.ConfigureSettings<LocationMigrationSettings>(Configuration, "LocationMigrationSettings");
 
@@ -103,7 +101,7 @@ namespace MedicalExaminer.API
                 throw new ArgumentNullException(@"there is no location migration settings
 example:
   LocationMigrationSettings: {
-  LocationVersion: 1
+  Version: 1
   }
             ");
             }
@@ -111,6 +109,8 @@ example:
             services.ConfigureSettings<AuthorizationSettings>(Configuration, "Authorization");
 
             services.ConfigureSettings<RequestChargeSettings>(Configuration, "RequestCharge");
+
+            var urgencySettings = services.ConfigureSettings<UrgencySettings>(Configuration, "UrgencySettings");
 
             ConfigureOktaClient(services);
 
@@ -241,12 +241,13 @@ example:
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
-            services.AddBackgroundServices(backgroundServicesSettings);
-
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
+            // temporary fudges until the real migration framework is implemented.
+            UpdateDiscussionOutcomes(serviceProvider);
             UpdateInvalidOrNullUserPermissionIds(serviceProvider);
             UpdateLocations(serviceProvider, locationMigrationSettings);
+            UpdateExaminationUrgencySort(serviceProvider, urgencySettings);
         }
 
         /// <summary>
@@ -375,7 +376,7 @@ example:
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
                     ExaminationsRetrievalService>();
-
+            services.AddScoped<IAsyncQueryHandler<NullQuery, bool>, DiscussionOutcomesUpdateService>();
             services.AddScoped<LocationMigrationService, LocationMigrationService>();
 
             services
@@ -410,6 +411,7 @@ example:
             services.AddScoped<IAsyncQueryHandler<UserUpdateQuery, MeUser>, UserUpdateService>();
             services.AddScoped<IAsyncQueryHandler<UserUpdateOktaQuery, MeUser>, UserUpdateOktaService>();
             services.AddScoped<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>, InvalidUserPermissionUpdateService>();
+            services.AddScoped<IOktaClient, OktaClient>();
 
             // User session services
             services.AddScoped<IAsyncQueryHandler<UserSessionUpdateOktaTokenQuery, MeUserSession>, UserSessionUpdateOktaTokenService>();
@@ -433,6 +435,9 @@ example:
             services
                 .AddScoped<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>,
                     LocationsParentsQueryService>();
+            services
+                .AddScoped<IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>>, LocationsRetrievalByIdService
+                >();
         }
 
         /// <summary>
@@ -556,6 +561,13 @@ example:
             var result = instance.Handle(_locationMigrationQueryLookup[locationMigrationSettings.Version]);
         }
 
+        private void UpdateDiscussionOutcomes(IServiceProvider serviceProvider)
+        {
+            IAsyncQueryHandler<NullQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<NullQuery, bool>>();
+
+            instance.Handle(new NullQuery());
+        }
+
         private void UpdateInvalidOrNullUserPermissionIds(IServiceProvider serviceProvider)
         {
             IAsyncQueryHandler<InvalidUserPermissionQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>>();
@@ -567,5 +579,12 @@ example:
         {
             {1, new LocationMigrationQueryV1() }
         };
+
+        private void UpdateExaminationUrgencySort(IServiceProvider serviceProvider, UrgencySettings urgencySettings)
+        {
+            IAsyncQueryHandler<InvalidUserPermissionQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>>();
+
+            instance.Handle(new InvalidUserPermissionQuery());
+        }
     }
 }

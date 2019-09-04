@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
+using Microsoft.Extensions.Options;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
@@ -11,13 +13,16 @@ namespace MedicalExaminer.Common.Services.Examination
     {
         private readonly IConnectionSettings _connectionSettings;
         private readonly IDatabaseAccess _databaseAccess;
+        private readonly UrgencySettings _urgencySettings;
 
         public CreateEventService(
             IDatabaseAccess databaseAccess,
-            IExaminationConnectionSettings connectionSettings)
+            IExaminationConnectionSettings connectionSettings,
+            IOptions<UrgencySettings> urgencySettings)
         {
             _databaseAccess = databaseAccess;
             _connectionSettings = connectionSettings;
+            _urgencySettings = urgencySettings.Value;
         }
 
         public async Task<EventCreationResult> Handle(CreateEventQuery param)
@@ -35,7 +40,7 @@ namespace MedicalExaminer.Common.Services.Examination
 
             examinationToUpdate = examinationToUpdate
                                             .AddEvent(param.Event)
-                                            .UpdateCaseUrgencyScore()
+                                            .UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort)
                                             .UpdateCaseStatus();
 
             examinationToUpdate.LastModifiedBy = param.Event.UserId;

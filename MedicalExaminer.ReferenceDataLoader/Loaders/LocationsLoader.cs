@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace MedicalExaminer.ReferenceDataLoader.Loaders
@@ -14,7 +18,7 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
     /// <summary>
     ///     Create collection in CosmosDB and load with locations extracted from input file
     /// </summary>
-    public class LocationsLoader
+    public class LocationsLoader : IHostedService, IDisposable
     {
         private readonly Uri _endpointUri;
         private readonly string _primaryKey;
@@ -24,23 +28,42 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
         private DocumentClient _client;
         private Uri _documentCollectionUri;
         private List<Location> _locations;
+        private char[] _loadingChars = new[] { '|', '/', '-', '\\' };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocationsLoader"/> class.
         /// </summary>
-        /// <param name="args">0: endpoint; 1: primary key; 3: databaseId; 4: import file; 5: container id</param>
+        /// <param name="environment">Environment.</param>
+        /// <param name="cosmosDbSettings">Cosmos DB Settings.</param>
         /// <remarks>Set up details of Cosmos DB and connection to write to</remarks>
-        public LocationsLoader(string[] args)
+        public LocationsLoader(IHostingEnvironment environment, IOptions<CosmosDbSettings> cosmosDbSettings)
         {
             Console.WriteLine("Setting up parameters for LocationsLoader...");
 
-            _endpointUri = new Uri(args[0]);
-            _primaryKey = args[1];
-            _databaseId = args[2];
-            _importFile = args[3];
-            _containerId = args[4];
+            _endpointUri = new Uri(cosmosDbSettings.Value.URL);
+            _primaryKey = cosmosDbSettings.Value.PrimaryKey;
+            _databaseId = cosmosDbSettings.Value.DatabaseId;
+            _importFile = Path.Combine(environment.ContentRootPath, "locations_full_out.json");
+            _containerId = "Locations";
 
             Console.WriteLine("Parameters read OK for LocationsLoader...");
+        }
+
+        /// <inheritdoc/>
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            await Load();
+        }
+
+        /// <inheritdoc/>
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
         }
 
         /// <summary>
@@ -76,6 +99,13 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
                 if (loadCount % 1000 == 0)
                 {
                     Console.WriteLine($"loaded {loadCount} locations out of {_locations.Count}...");
+                }
+
+                if (loadCount % 5 == 0)
+                {
+                    int bar = 20;
+                    int per = (int)(((loadCount % 1000) / 1000.0f) * bar);
+                    Console.Write($"{_loadingChars[(loadCount / 5) % 4]} [{string.Empty.PadRight(per, '#').PadRight(bar, ' ')}]\r");
                 }
             }
 

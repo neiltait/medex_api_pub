@@ -10,10 +10,11 @@ namespace MedicalExaminer.Models
     public class Examination : Record,  IExamination, ILocationPath
     {
         /// <summary>
-        /// the urgency score assinged to the case
+        /// Pre calculated Sort orders for the next N-days.
         /// </summary>
-        [JsonProperty(PropertyName = "urgency_score")]
-        public int UrgencyScore { get; set; }
+        /// <remarks>Configured by property in UrgencySettings</remarks>
+        [JsonProperty(PropertyName = "urgency_sort")]
+        public Dictionary<string, int> UrgencySort { get; set; }
 
         /// <summary>
         /// Patients first hospital number.
@@ -324,6 +325,12 @@ namespace MedicalExaminer.Models
         public CaseBreakDown CaseBreakdown { get; set; } = new CaseBreakDown();
 
         /// <summary>
+        /// Have Unknown Basic Details (Name, DOB, DOD and NHS Number)
+        /// </summary>
+        [JsonProperty(PropertyName = "have_unknown_basic_details")]
+        public bool HaveUnknownBasicDetails { get; set; } = true;
+
+        /// <summary>
         /// Have the admission notes been added
         /// </summary>
         [JsonProperty(PropertyName = "admission_notes_have_been_added")]
@@ -352,6 +359,12 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "pending_admission_notes")]
         public bool PendingAdmissionNotes { get; set; } = true;
+
+        /// <summary>
+        /// Pending Additional Details
+        /// </summary>
+        [JsonProperty(PropertyName = "pending_additional_details")]
+        public bool PendingAdditionalDetails { get; set; } = true;
 
         /// <summary>
         /// has the qap discussion occured
