@@ -231,6 +231,10 @@ example:
             var documentClient = documentClientFactory.CreateClient(userConnectionSettings, cosmosDbSettings.BypassSsl);
             var cosmonautClient = new CosmonautClient(documentClient);
 
+            const string examinationsCollection = "Examinations";
+            services.AddCosmosStore<Examination>(cosmonautClient, cosmosDbSettings.DatabaseId, examinationsCollection);
+            services.AddCosmosStore<AuditEntry<Examination>>(cosmonautClient, cosmosDbSettings.DatabaseId, examinationsCollection.AuditCollection());
+            
             // temporary fudges moved until after database exists...
         }
 
