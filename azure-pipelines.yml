@@ -18,7 +18,7 @@ pool:
   
 variables:
   buildConfiguration: 'Release'
-  imageName: 'medex-api:$(Build.BuildId)'
+  imageName: 'medex-api:$(Build.SourceBranchName)-$(Build.BuildId)'
   dockerId: medexFrontendStaging
 
 steps:
