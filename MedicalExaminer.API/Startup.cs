@@ -221,14 +221,17 @@ example:
 
             services.AddScoped<ControllerActionFilter>();
 
-            var cosmosSettings = new CosmosStoreSettings(
-                cosmosDbSettings.DatabaseId,
-                new Uri(cosmosDbSettings.URL),
-                cosmosDbSettings.PrimaryKey);
+            var serviceProvider = services.BuildServiceProvider();
+
+            var userConnectionSettings = serviceProvider.GetRequiredService<IUserConnectionSettings>();
+            var documentClientFactory = serviceProvider.GetRequiredService<IDocumentClientFactory>();
+
+            var documentClient = documentClientFactory.CreateClient(userConnectionSettings, cosmosDbSettings.BypassSsl);
+            var cosmonautClient = new CosmonautClient(documentClient);
 
             const string examinationsCollection = "Examinations";
-            services.AddCosmosStore<Examination>(cosmosSettings, examinationsCollection);
-            services.AddCosmosStore<AuditEntry<Examination>>(cosmosSettings, examinationsCollection.AuditCollection());
+            services.AddCosmosStore<Examination>(cosmonautClient, examinationsCollection);
+            services.AddCosmosStore<AuditEntry<Examination>>(cosmonautClient, examinationsCollection.AuditCollection());
         }
 
         /// <summary>

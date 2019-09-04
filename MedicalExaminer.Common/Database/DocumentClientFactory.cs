@@ -66,24 +66,5 @@ namespace MedicalExaminer.Common.Database
 
             return _client;
         }
-
-        /// <summary>
-        /// Create Cosmos Store.
-        /// </summary>
-        /// <typeparam name="TEntity">Type of Collection.</typeparam>
-        /// <param name="connectionSettings">Connection Settings.</param>
-        /// <returns><see cref="ICosmosStore{TEntity}"/>.</returns>
-        public ICosmosStore<TEntity> CreateCosmosStore<TEntity>(IConnectionSettings connectionSettings)
-            where TEntity : class
-        {
-            var cosmosSettings = new CosmosStoreSettings(
-                connectionSettings.DatabaseId,
-                connectionSettings.EndPointUri,
-                connectionSettings.PrimaryKey);
-
-            ICosmosStore<TEntity> cosmosStore = new CosmosStore<TEntity>(cosmosSettings);
-
-            return cosmosStore;
-        }
     }
 }
