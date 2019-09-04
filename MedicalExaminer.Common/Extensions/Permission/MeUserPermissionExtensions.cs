@@ -7,22 +7,41 @@ using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Extensions.Permission
 {
+    /// <summary>
+    /// Medical Examiner User Permission Extensions.
+    /// </summary>
     public static class MeUserPermissionExtensions
     {
+        /// <summary>
+        /// Is Equivalent.
+        /// Compares two permissions using their location and userRole properties to determine if they're equivalent.
+        /// </summary>
+        /// <param name="permissionA">First permission to compare.</param>
+        /// <param name="permissionB">Second permission to compare.</param>
+        /// <returns>Whether they're Equivalent.</returns>
         public static bool IsEquivalent(this MEUserPermission permissionA, MEUserPermission permissionB)
         {
             return permissionA.LocationId == permissionB.LocationId && permissionA.UserRole == permissionB.UserRole;
         }
 
-        public static Task<Location> GetLocationName(this MEUserPermission permission, IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> service)
+        /// <summary>
+        /// Get Location Name.
+        /// </summary>
+        /// <param name="permission">Permission to get location name for.</param>
+        /// <param name="service">The locations retrieval by id service.</param>
+        /// <returns>Single location</returns>
+        public static async Task<Location> GetLocationName(
+            this MEUserPermission permission,
+            IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>> service)
         {
-            return service.Handle(new LocationRetrievalByIdQuery(permission.LocationId));
-        }
+            var locationIds = new List<string>
+            {
+                permission.LocationId
+            };
 
-        public static Task<IEnumerable<Location>> GetUniqueLocationNames(this IEnumerable<MEUserPermission> permissions, IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> service)
-        {
-            var uniqueLocationIds = permissions.Select(x => x.LocationId).Distinct();
-            return service.Handle(new LocationsRetrievalByQuery(null, null, false, false, uniqueLocationIds));
+            var locations = await service.Handle(new LocationsRetrievalByIdQuery(true, locationIds));
+
+            return locations.FirstOrDefault();
         }
     }
 }

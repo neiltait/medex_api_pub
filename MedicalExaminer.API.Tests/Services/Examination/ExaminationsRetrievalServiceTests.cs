@@ -35,14 +35,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public virtual async Task UnassignedCasesReturnsCorrectCount()
         {
-            //Arrange
+            // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.Unassigned,
                 "", null, 1, 10, "", true);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Equal(9, results.Count());
         }
@@ -50,14 +50,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public virtual async Task ReadyForMEScrutinyCasesReturnsCorrectCount()
         {
-            //Arrange
+            // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.ReadyForMEScrutiny,
                 "", null, 1, 10, "", true);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Equal(1, results.Count());
         }
@@ -88,14 +88,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public virtual async Task EmptyQueryReturnsAllOpenCases()
         {
-            //Arrange
+            // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), null,
                 "", null, 1, 10, "", true);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Equal(9, results.Count());
         }
@@ -103,14 +103,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public virtual async Task EmptyQueryWithOrderByReturnsAllOpenCasesInOrder()
         {
-            //Arrange
+            // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), null,
                 "", null, 1, 10, "", true);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Equal(9, results.Count());
         }
@@ -150,29 +150,29 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public virtual async Task ClosedCasesQueryReturnsCorrectCount()
         {
-            //Arrange
+            // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), null,
                 "", null, 1, 10, "", false);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Single(results);
         }
 
         [Fact]
-        public virtual async Task AdmissionNotesHaveBeenAddedQueryReturnsCorrectCount()
+        public virtual async Task PendingAdditionalDetailsQueryReturnsCorrectCount()
         {
-            //Arrange
-            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.AdmissionNotesHaveBeenAdded,
+            // Arrange
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.PendingAdditionalDetails,
                 "", null, 1, 10, "", true);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Single(results);
         }
@@ -180,29 +180,29 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public virtual async Task HaveBeenScrutinisedByMEQueryReturnsCorrectCount()
         {
-            //Arrange
+            // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.HaveBeenScrutinisedByME,
                 "", null, 1, 10, "", true);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Single(results);
         }
 
         [Fact]
-        public virtual async Task PendingAdmissionNotesQueryReturnsCorrectCount()
+        public virtual async Task HaveUnknownBasicDetailsQueryReturnsCorrectCount()
         {
-            //Arrange
-            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.PendingAdmissionNotes,
+            // Arrange
+            var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.HaveUnknownBasicDetails,
                 "", null, 1, 10, "", true);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Equal(9, results.Count());
         }
@@ -210,14 +210,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public virtual async Task PendingDiscussionWithQAPQueryReturnsCorrectCount()
         {
-            //Arrange
+            // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.PendingDiscussionWithQAP,
                 "", null, 1, 10, "", true);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Equal(9, results.Count());
         }
@@ -225,14 +225,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public virtual async Task PendingDiscussionWithRepresentativeQueryReturnsCorrectCount()
         {
-            //Arrange
+            // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.PendingDiscussionWithRepresentative,
                 "", null, 1, 10, "", true);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Equal(9, results.Count());
         }
@@ -240,14 +240,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         [Fact]
         public virtual async Task HaveFinalCaseOutstandingOutcomesQueryReturnsCorrectCount()
         {
-            //Arrange
+            // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.HaveFinalCaseOutstandingOutcomes,
                 "", null, 1, 10, "", true);
 
-            //Act
+            // Act
             var results = await Service.Handle(examinationsDashboardQuery);
 
-            //Assert
+            // Assert
             results.Should().NotBeNull();
             Assert.Equal(9, results.Count());
         }
@@ -310,6 +310,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CaseCompleted = false,
                 NationalLocationId = "expectedLocation",
                 CreatedAt = dateTimeNow,
+                PendingAdditionalDetails = false,
             };
 
             var examination2 = new MedicalExaminer.Models.Examination()
@@ -319,12 +320,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CaseCompleted = false,
                 RegionLocationId = "expectedLocation",
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(1)),
+                PendingAdditionalDetails = false,
             };
 
             var examination4 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination4",
                 CaseCompleted = true,
+                PendingAdditionalDetails = false,
             };
 
             var examination5 = new MedicalExaminer.Models.Examination()
@@ -334,13 +337,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 TrustLocationId = "expectedLocation",
                 CreatedAt = dateTimeNow,
                 OtherPriority = true,
+                PendingAdditionalDetails = false,
             };
 
             var examination6 = new MedicalExaminer.Models.Examination()
             {
                 ExaminationId = "examination6",
                 CaseCompleted = false,
-                AdmissionNotesHaveBeenAdded = true,
+                PendingAdditionalDetails = true,
                 SiteLocationId = "expectedLocation",
                 OtherPriority = true,
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(1)),
@@ -353,6 +357,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 PendingDiscussionWithQAP = true,
                 OtherPriority = true,
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(6)),
+                PendingAdditionalDetails = false,
             };
 
             var examination8 = new MedicalExaminer.Models.Examination()
@@ -362,6 +367,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 PendingDiscussionWithRepresentative = true,
                 OtherPriority = true,
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(7)),
+                PendingAdditionalDetails = false,
             };
 
             var examination9 = new MedicalExaminer.Models.Examination()
@@ -371,6 +377,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 HaveFinalCaseOutcomesOutstanding = true,
                 OtherPriority = true,
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(8)),
+                PendingAdditionalDetails = false,
             };
 
             var examination10 = new MedicalExaminer.Models.Examination()
@@ -379,6 +386,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CaseCompleted = false,
                 HaveBeenScrutinisedByME = true,
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(2)),
+                PendingAdditionalDetails = false,
             };
 
             var examination11 = new MedicalExaminer.Models.Examination()
@@ -387,6 +395,8 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CaseCompleted = false,
                 PendingAdmissionNotes = true,
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(3)),
+                HaveUnknownBasicDetails = true,
+                PendingAdditionalDetails = false,
             };
 
             var examinations = new[]

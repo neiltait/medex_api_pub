@@ -361,6 +361,12 @@ namespace MedicalExaminer.Models
         public bool PendingAdmissionNotes { get; set; } = true;
 
         /// <summary>
+        /// Pending Additional Details
+        /// </summary>
+        [JsonProperty(PropertyName = "pending_additional_details")]
+        public bool PendingAdditionalDetails { get; set; } = true;
+
+        /// <summary>
         /// has the qap discussion occured
         /// </summary>
         [JsonProperty(PropertyName = "pending_discussion_with_qap")]

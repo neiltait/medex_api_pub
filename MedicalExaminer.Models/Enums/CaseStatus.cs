@@ -6,11 +6,11 @@ namespace MedicalExaminer.Models.Enums
     [JsonConverter(typeof(StringEnumConverter))]
     public enum CaseStatus
     {
-        AdmissionNotesHaveBeenAdded,
+        HaveUnknownBasicDetails,
         ReadyForMEScrutiny,
         Unassigned,
         HaveBeenScrutinisedByME,
-        PendingAdmissionNotes,
+        PendingAdditionalDetails,
         PendingDiscussionWithQAP,
         PendingDiscussionWithRepresentative,
         HaveFinalCaseOutstandingOutcomes

@@ -61,16 +61,16 @@ namespace MedicalExaminer.Common.Services.Examination
         {
             switch (paramFilterCaseStatus)
             {
-                case CaseStatus.AdmissionNotesHaveBeenAdded:
-                    return examination => examination.AdmissionNotesHaveBeenAdded;
+                case CaseStatus.HaveUnknownBasicDetails:
+                    return examination => examination.HaveUnknownBasicDetails;
                 case CaseStatus.ReadyForMEScrutiny:
                     return examination => examination.ReadyForMEScrutiny;
                 case CaseStatus.Unassigned:
                     return examination => examination.Unassigned;
                 case CaseStatus.HaveBeenScrutinisedByME:
                     return examination => examination.HaveBeenScrutinisedByME;
-                case CaseStatus.PendingAdmissionNotes:
-                    return examination => examination.PendingAdmissionNotes;
+                case CaseStatus.PendingAdditionalDetails:
+                    return examination => examination.PendingAdditionalDetails;
                 case CaseStatus.PendingDiscussionWithQAP:
                     return examination => examination.PendingDiscussionWithQAP;
                 case CaseStatus.PendingDiscussionWithRepresentative:
