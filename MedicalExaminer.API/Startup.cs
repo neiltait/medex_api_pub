@@ -223,15 +223,15 @@ example:
 
             var serviceProvider = services.BuildServiceProvider();
 
+            // Can be any service, we just need the database id and uri.
             var userConnectionSettings = serviceProvider.GetRequiredService<IUserConnectionSettings>();
             var documentClientFactory = serviceProvider.GetRequiredService<IDocumentClientFactory>();
-
             var documentClient = documentClientFactory.CreateClient(userConnectionSettings, cosmosDbSettings.BypassSsl);
             var cosmonautClient = new CosmonautClient(documentClient);
 
             const string examinationsCollection = "Examinations";
-            services.AddCosmosStore<Examination>(cosmonautClient, examinationsCollection);
-            services.AddCosmosStore<AuditEntry<Examination>>(cosmonautClient, examinationsCollection.AuditCollection());
+            services.AddCosmosStore<Examination>(cosmonautClient, cosmosDbSettings.DatabaseId, examinationsCollection);
+            services.AddCosmosStore<AuditEntry<Examination>>(cosmonautClient, cosmosDbSettings.DatabaseId, examinationsCollection.AuditCollection());
         }
 
         /// <summary>
