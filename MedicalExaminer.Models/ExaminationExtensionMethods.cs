@@ -150,6 +150,7 @@ namespace MedicalExaminer.Models
             examination.AdmissionNotesHaveBeenAdded = !examination.PendingAdmissionNotes;
             examination.ReadyForMEScrutiny = CalculateReadyForScrutiny(examination);
             examination.HaveBeenScrutinisedByME = examination.ScrutinyConfirmed;
+            examination.PendingAdditionalDetails = !examination.CalculateAdditionalDetailsEnteredStatus();
             examination.PendingDiscussionWithQAP = CalculatePendingQAPDiscussion(examination);
             examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
             examination.PendingScrutinyNotes = CalculateScrutinyNotesPending(examination);
@@ -296,8 +297,8 @@ namespace MedicalExaminer.Models
 
         public static CaseOutcomeSummary? CalculateScrutinyOutcome(this Examination examination)
         {
-            if (!examination.Unassigned && examination.CaseBreakdown.AdmissionNotes.Latest?.ImmediateCoronerReferral.Value == true
-                && examination.CaseBreakdown.PreScrutiny?.Latest.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation)
+            if (!examination.Unassigned && examination.CaseBreakdown.AdmissionNotes?.Latest?.ImmediateCoronerReferral.Value == true
+                && examination.CaseBreakdown.PreScrutiny?.Latest?.OutcomeOfPreScrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation)
             {
                 return CaseOutcomeSummary.ReferToCoroner;
             }
