@@ -155,44 +155,8 @@ namespace MedicalExaminer.API.Controllers
                     return NotFound(new GetUserResponse());
                 }
 
-                var usersPermissionLocationsIds = user.Permissions == null ? new List<string>() : user.Permissions.Select(x => x.LocationId).ToList();
-
-                // Get all the location paths for all those locations.
-                var locationPaths =
-                    await _locationsParentsService.Handle(new LocationsParentsQuery(usersPermissionLocationsIds));
-
-
-                var locations =
-                    _locationsRetrievalService.Handle(new LocationsRetrievalByQuery(
-                        null,
-                        null,
-                        false,
-                        false,
-                        usersPermissionLocationsIds)).Result;
-
-                // The locations the user making the request has direct access to.
-                var permissedLocations = (await LocationsWithPermission(Permission.GetUserPermissions)).ToList();
-
-                // Select only the permissions that the user making the request has access to from the user in question.
-                var permissions = user
-                    .Permissions?.Where(p => p.LocationId != null)
-                    .Where(p => locationPaths[p.LocationId]
-                        .Any(l => permissedLocations.Contains(l.LocationId))) ?? new List<MEUserPermission>();
-
-                var uniqueLocations = await permissions?.GetUniqueLocationNames(_locationsRetrievalService);
-
-                var mappedPermissions = new List<PermissionItem>();
-
-                foreach (var meUserPermission in permissions)
-                {
-                    var pl = new PermissionLocation(meUserPermission, locations, meUserId);
-                    var temp = Mapper.Map<PermissionItem>(pl);
-                    mappedPermissions.Add(temp);
-                }
-
                 var gur = new GetUserResponse();
                 Mapper.Map(user, gur);
-                gur.Permissions = mappedPermissions;
 
                 return Ok(gur);
             }

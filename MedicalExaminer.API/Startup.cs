@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using AutoMapper;
 using Cosmonaut;
@@ -30,6 +31,7 @@ using MedicalExaminer.Common.Queries.Permissions;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Reporting;
 using MedicalExaminer.Common.Services;
+using MedicalExaminer.Common.Services.CaseBreakdown;
 using MedicalExaminer.Common.Services.CaseOutcome;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.Location;
@@ -229,9 +231,7 @@ example:
             var documentClient = documentClientFactory.CreateClient(userConnectionSettings, cosmosDbSettings.BypassSsl);
             var cosmonautClient = new CosmonautClient(documentClient);
 
-            const string examinationsCollection = "Examinations";
-            services.AddCosmosStore<Examination>(cosmonautClient, cosmosDbSettings.DatabaseId, examinationsCollection);
-            services.AddCosmosStore<AuditEntry<Examination>>(cosmonautClient, cosmosDbSettings.DatabaseId, examinationsCollection.AuditCollection());
+            // temporary fudges moved until after database exists...
         }
 
         /// <summary>
@@ -273,12 +273,15 @@ example:
                 databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IExaminationConnectionSettings>());
                 databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserConnectionSettings>());
                 databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserSessionConnectionSettings>());
+                databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IMELoggerConnectionSettings>());
 
                 var locationMigrationSettings =
                     serviceProvider.GetRequiredService<IOptions<LocationMigrationSettings>>();
                 var urgencySettings =
                     serviceProvider.GetRequiredService<IOptions<UrgencySettings>>();
 
+                // temporary fudges until the real migration framework is implemented.
+                UpdateDiscussionOutcomes(serviceProvider);
                 UpdateInvalidOrNullUserPermissionIds(serviceProvider);
                 UpdateLocations(serviceProvider, locationMigrationSettings.Value);
                 UpdateExaminationUrgencySort(serviceProvider, urgencySettings.Value);
@@ -377,7 +380,7 @@ example:
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
                     ExaminationsRetrievalService>();
-
+            services.AddScoped<IAsyncQueryHandler<NullQuery, bool>, DiscussionOutcomesUpdateService>();
             services.AddScoped<LocationMigrationService, LocationMigrationService>();
 
             services
@@ -436,6 +439,9 @@ example:
             services
                 .AddScoped<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>,
                     LocationsParentsQueryService>();
+            services
+                .AddScoped<IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>>, LocationsRetrievalByIdService
+                >();
         }
 
         /// <summary>
@@ -557,6 +563,13 @@ example:
         {
             LocationMigrationService instance = serviceProvider.GetService<LocationMigrationService>();
             var result = instance.Handle(_locationMigrationQueryLookup[locationMigrationSettings.Version]);
+        }
+
+        private void UpdateDiscussionOutcomes(IServiceProvider serviceProvider)
+        {
+            IAsyncQueryHandler<NullQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<NullQuery, bool>>();
+
+            instance.Handle(new NullQuery());
         }
 
         private void UpdateInvalidOrNullUserPermissionIds(IServiceProvider serviceProvider)

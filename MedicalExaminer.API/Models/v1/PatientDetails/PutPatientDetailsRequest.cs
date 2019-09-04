@@ -71,12 +71,12 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         /// <summary>
         ///     Details of the patients date of birth.
         /// </summary>
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         /// <summary>
         ///     Details of the patients date of death.
         /// </summary>
-        public DateTime DateOfDeath { get; set; }
+        public DateTime? DateOfDeath { get; set; }
 
         /// <summary>
         ///     Patients NHS Number.

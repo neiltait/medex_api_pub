@@ -74,7 +74,9 @@ namespace MedicalExaminer.Common.Services.Location
                     }
                 }
 
-                locationIds = result.Select(r => r.Value.Last().ParentId).ToList();
+                locationIds = result
+                    .Where(r => r.Value.Count > 0)
+                    .Select(r => r.Value.Last().ParentId).ToList();
             }
 
             // Stop the value being a list

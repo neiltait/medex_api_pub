@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models
 {
     public class BereavedDiscussionPrepopulated
     {
+        /// <summary>
+        ///     Details of any representatives
+        /// </summary>
+        public IEnumerable<Representative> Representatives { get; set; }
+
         /// <summary>
         /// name of medical examiner
         /// </summary>
