@@ -19,40 +19,40 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public int CountOfUrgentCases { get; set; }
 
         /// <summary>
-        /// Count of Cases where Admission Notes have been added.
+        /// Count Of Have Unknown Basic Details
         /// </summary>
-        public int CountOfCasesAdmissionNotesHaveBeenAdded { get; set; }
-               
+        public int CountOfCasesHaveUnknownBasicDetails { get; set; }
+
         /// <summary>
         /// Count of Cases Ready for Medical Examiner Scrutiny.
         /// </summary>
         public int CountOfCasesReadyForMEScrutiny { get; set; }
-               
+
         /// <summary>
         /// Count of Cases Unassigned.
         /// </summary>
         public int CountOfCasesUnassigned { get; set; }
-               
+
         /// <summary>
         /// Count of Cases which have been Scrutinised by a Medical Examiner.
         /// </summary>
         public int CountOfCasesHaveBeenScrutinisedByME { get; set; }
-               
+
         /// <summary>
-        /// Count of Cases pending Admission Notes.
+        /// Count Of Pending Additional Details
         /// </summary>
-        public int CountOfCasesPendingAdmissionNotes { get; set; }
-               
+        public int CountOfCasesPendingAdditionalDetails { get; set; }
+
         /// <summary>
         /// Count of Cases pending Discussion with QAP.
         /// </summary>
         public int CountOfCasesPendingDiscussionWithQAP { get; set; }
-               
+
         /// <summary>
         /// Count of Cases pending Discussion with Represenative.
         /// </summary>
         public int CountOfCasesPendingDiscussionWithRepresentative { get; set; }
-             
+
         /// <summary>
         /// Count of Cases that have final case outstanding outcomes.
         /// </summary>
