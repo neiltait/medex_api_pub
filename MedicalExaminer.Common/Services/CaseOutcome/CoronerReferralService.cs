@@ -47,6 +47,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
             examinationToUpdate.CoronerReferralSent = true;
+            examinationToUpdate.CaseOutcome.CoronerReferralSent = true;
 
             examinationToUpdate = examinationToUpdate.UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort);
             examinationToUpdate = examinationToUpdate.UpdateCaseStatus();
