@@ -19,6 +19,7 @@ pool:
 variables:
   buildConfiguration: 'Release'
   imageName: 'medex-api:$(Build.SourceBranchName)-$(Build.BuildId)'
+  latestName: 'medex-api:$(Build.SourceBranchName)-latest'
   dockerId: medexFrontendStaging
 
 steps:
@@ -105,6 +106,9 @@ steps:
     docker build -f ./MedicalExaminer.API/Dockerfile -t $(dockerId).azurecr.io/$(imageName) .
     docker login -u $(dockerId) -p $pswd $(dockerId).azurecr.io
     docker push $(dockerId).azurecr.io/$(imageName)
+    docker build -f ./MedicalExaminer.API/Dockerfile -t $(dockerId).azurecr.io/$(latestName) .
+    docker login -u $(dockerId) -p $pswd $(dockerId).azurecr.io
+    docker push $(dockerId).azurecr.io/$(latestName)
   env:
     pswd: $(registryPassword)
   displayName: 'Build and push Docker image to Staging'
