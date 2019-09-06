@@ -17,6 +17,8 @@ namespace MedicalExaminer.API.Extensions.Data
     /// </summary>
     public class ExaminationProfile : Profile
     {
+        private static readonly DateTime NoneDate = Convert.ToDateTime("0001 - 01 - 01T00: 00:00");
+
         /// <summary>
         ///     Initialise a new instance of the Examination AutoMapper Profile.
         /// </summary>
@@ -409,20 +411,19 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.CreatedBy, opt => opt.Ignore());
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0))
-                .ForMember(patientCard => patientCard.AppointmentDate,
-                    examination => examination.MapFrom(new AppointmentDateResolver(new AppointmentFinder())))
+                .ForMember(patientCard => patientCard.AppointmentDate, examination => examination.MapFrom(new AppointmentDateResolver(new AppointmentFinder())))
                 .ForMember(patientCard => patientCard.AppointmentTime, examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())))
                 .ForMember(patientCard => patientCard.CaseCreatedDate, opt => opt.MapFrom(examination => examination.CreatedAt))
                 .ForMember(patientCard => patientCard.LastAdmission, opt => opt.MapFrom(new AdmissionDateResolver()))
                 .ForMember(patientCard => patientCard.CaseOutcome, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary))
                 .ForMember(patientCard => patientCard.NameEntered, opt => opt.MapFrom(
-                    (source, dest, destMember, context) => source.GivenNames != null && source.Surname != null))
+                    (source, dest, destMember, context) => !string.IsNullOrEmpty(source.GivenNames) && !string.IsNullOrEmpty(source.Surname)))
                 .ForMember(patientCard => patientCard.DobEntered, opt => opt.MapFrom(
-                    (source, dest, destMember, context) => source.DateOfBirth != null))
+                    (source, dest, destMember, context) => source.DateOfBirth != NoneDate))
                 .ForMember(patientCard => patientCard.DodEntered, opt => opt.MapFrom(
-                    (source, dest, destMember, context) => source.DateOfDeath != null))
+                    (source, dest, destMember, context) => source.DateOfDeath != NoneDate))
                 .ForMember(patientCard => patientCard.NhsNumberEntered, opt => opt.MapFrom(
-                    (source, dest, destMember, context) => source.NhsNumber != null))
+                    (source, dest, destMember, context) => !string.IsNullOrEmpty(source.NhsNumber)))
                 .ForMember(patientCard => patientCard.BasicDetailsEntered, opt => opt.MapFrom(
                     (source, dest, destMember, context) => source.CalculateBasicDetailsEnteredStatus()))
                 .ForMember(patientCard => patientCard.LatestAdmissionDetailsEntered, opt => opt.MapFrom(

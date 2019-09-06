@@ -1827,7 +1827,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void CalculateBasicDetailsEnteredStatus_When_All_The_Details_Are_Entered_Returns_True()
+        public void CalculateHaveUnknownBasicDetails_When_All_Basic_Details_Entered_Returns_False()
         {
             // Arrange
             var examination = new Examination
@@ -1840,14 +1840,36 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var haveUnknownBasicDetails = examination.CalculateBasicDetailsEnteredStatus();
+            var haveUnknownBasicDetails = examination.CalculateHaveUnknownBasicDetails();
+
+            // Assert
+            haveUnknownBasicDetails.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CalculateHaveUnknownBasicDetails_When_Have_Unknown_Basic_Details_Entered_Returns_True()
+        {
+            // Arrange
+            var noneDate = Convert.ToDateTime("0001 - 01 - 01T00: 00:00");
+
+            var examination = new Examination
+            {
+                GivenNames = null,
+                Surname = null,
+                DateOfBirth = noneDate,
+                DateOfDeath = noneDate,
+                NhsNumber = null
+            };
+
+            // Act
+            var haveUnknownBasicDetails = examination.CalculateHaveUnknownBasicDetails();
 
             // Assert
             haveUnknownBasicDetails.Should().BeTrue();
         }
 
         [Fact]
-        public void CalculateBasicDetailsEnteredStatus_When_No_Basic_Details_Returns_False()
+        public void CalculateHaveUnknownBasicDetails_When_No_Basic_Details_Returns_True()
         {
             // Arrange
             var examination = new Examination
@@ -1860,10 +1882,73 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var haveUnknownBasicDetails = examination.CalculateBasicDetailsEnteredStatus();
+            var haveUnknownBasicDetails = examination.CalculateHaveUnknownBasicDetails();
 
             // Assert
-            haveUnknownBasicDetails.Should().BeFalse();
+            haveUnknownBasicDetails.Should().BeTrue();
+        }
+
+        [Fact]
+        public void CalculateBasicDetailsEnteredStatus_When_All_The_Details_Are_Entered_Returns_Complete()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                GivenNames = "GivenNames",
+                Surname = "Surname",
+                DateOfBirth = DateTime.Today,
+                DateOfDeath = DateTime.Today,
+                NhsNumber = "1234567890",
+            };
+
+            // Act
+            var basicDetailsEntered = examination.CalculateBasicDetailsEnteredStatus();
+
+            // Assert
+            basicDetailsEntered.Should().Be(StatusBarResult.Complete);
+        }
+
+        // Front end sends null if nhs number is unknown so there is no way to differentiate between unknown and not entered (incomplete) 
+        //[Fact]
+        //public void CalculateBasicDetailsEnteredStatus_When_No_Basic_Details_Returns_Incomplete()
+        //{
+        //    // Arrange
+        //    var examination = new Examination
+        //    {
+        //        GivenNames = null,
+        //        Surname = null,
+        //        DateOfBirth = null,
+        //        DateOfDeath = null,
+        //        NhsNumber = null,
+        //    };
+
+        //    // Act
+        //    var basicDetailsEntered = examination.CalculateBasicDetailsEnteredStatus();
+
+        //    // Assert
+        //    basicDetailsEntered.Should().Be(StatusBarResult.Incomplete);
+        //}
+
+        [Fact]
+        public void CalculateBasicDetailsEnteredStatus_When_Unknown_Basic_Details_Entered_Returns_Unknown()
+        {
+            // Arrange
+            var noneDate = Convert.ToDateTime("0001 - 01 - 01T00: 00:00");
+
+            var examination = new Examination
+            {
+                GivenNames = null,
+                Surname = null,
+                DateOfBirth = noneDate,
+                DateOfDeath = noneDate,
+                NhsNumber = null,
+            };
+
+            // Act
+            var basicDetailsEntered = examination.CalculateBasicDetailsEnteredStatus();
+
+            // Assert
+            basicDetailsEntered.Should().Be(StatusBarResult.Unknown);
         }
 
         [Fact]

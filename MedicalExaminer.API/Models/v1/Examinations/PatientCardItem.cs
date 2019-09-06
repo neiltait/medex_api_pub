@@ -123,7 +123,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Main Status flag: Basic Details Entered
         /// </summary>
-        public bool BasicDetailsEntered { get; set; } = false;
+        public StatusBarResult BasicDetailsEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: Patient Name Entered

@@ -907,7 +907,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             // Assert
             // Basic Details
-            result.BasicDetailsEntered.Should().BeTrue();
+            result.BasicDetailsEntered.Should().Be(StatusBarResult.Complete);
             result.NameEntered.Should().BeTrue();
             result.DobEntered.Should().BeTrue();
             result.DodEntered.Should().BeTrue();
@@ -964,7 +964,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             {
                 Name = "ConsultantResponsible",
                 Role = "Consultant",
-                Organisation = "Organisation",
+                Organisation = "Organisation", //================== start here =========================
                 Phone = "01148394748",
                 Notes = "Notes",
                 GMCNumber = "G12345"
@@ -983,7 +983,7 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             // Assert
             // Basic Details
-            result.BasicDetailsEntered.Should().BeFalse();
+            result.BasicDetailsEntered.Should().Be(StatusBarResult.Incomplete);
             result.NameEntered.Should().BeFalse();
             result.DobEntered.Should().BeFalse();
             result.DodEntered.Should().BeFalse();
