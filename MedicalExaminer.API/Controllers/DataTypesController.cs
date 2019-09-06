@@ -26,6 +26,16 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Returns all Status Bar Results
+        /// </summary>
+        /// <returns>Dictionary of Status Bar Result</returns>
+        [HttpGet("status_bar_result")]
+        public ActionResult GetStatusBarResult()
+        {
+            return Ok(GetDictionary(typeof(StatusBarResult)));
+        }
+
+        /// <summary>
         /// Returns all Personal Effects
         /// </summary>
         /// <returns>Dictionary of Personal Effects</returns>
