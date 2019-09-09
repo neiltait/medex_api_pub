@@ -417,13 +417,45 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(patientCard => patientCard.LastAdmission, opt => opt.MapFrom(new AdmissionDateResolver()))
                 .ForMember(patientCard => patientCard.CaseOutcome, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary))
                 .ForMember(patientCard => patientCard.NameEntered, opt => opt.MapFrom(
-                    (source, dest, destMember, context) => !string.IsNullOrEmpty(source.GivenNames) && !string.IsNullOrEmpty(source.Surname)))
+                    (source, dest, destMember, context) =>
+                    {
+                        if (string.IsNullOrEmpty(source.GivenNames) && string.IsNullOrEmpty(source.Surname))
+                        {
+                            return StatusBarResult.Unknown;
+                        }
+
+                        return StatusBarResult.Complete;
+                    }))
                 .ForMember(patientCard => patientCard.DobEntered, opt => opt.MapFrom(
-                    (source, dest, destMember, context) => source.DateOfBirth != NoneDate))
+                    (source, dest, destMember, context) =>
+                    {
+                        if (source.DateOfBirth == NoneDate)
+                        {
+                            return StatusBarResult.Unknown;
+                        }
+
+                        return StatusBarResult.Complete;
+                    }))
                 .ForMember(patientCard => patientCard.DodEntered, opt => opt.MapFrom(
-                    (source, dest, destMember, context) => source.DateOfDeath != NoneDate))
+                    (source, dest, destMember, context) =>
+                    {
+                        if (source.DateOfDeath == NoneDate)
+                        {
+                            return StatusBarResult.Unknown;
+                        }
+
+                        return StatusBarResult.Complete;
+                    }))
                 .ForMember(patientCard => patientCard.NhsNumberEntered, opt => opt.MapFrom(
-                    (source, dest, destMember, context) => !string.IsNullOrEmpty(source.NhsNumber)))
+                    (source, dest, destMember, context) =>
+                    {
+                        if (string.IsNullOrEmpty(source.NhsNumber))
+                        {
+                            return StatusBarResult.Unknown;
+                        }
+
+                        return StatusBarResult.Complete;
+                    }))
                 .ForMember(patientCard => patientCard.BasicDetailsEntered, opt => opt.MapFrom(
                     (source, dest, destMember, context) => source.CalculateBasicDetailsEnteredStatus()))
                 .ForMember(patientCard => patientCard.LatestAdmissionDetailsEntered, opt => opt.MapFrom(

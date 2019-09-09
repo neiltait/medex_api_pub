@@ -1952,6 +1952,110 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
+        public void CalculatePendingAdditionalDetails_When_All_Additional_Details_Returns_True()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                Representatives = new List<Representative>
+                {
+                    new Representative
+                    {
+                        AppointmentDate = new DateTime(2019, 2, 24),
+                        AppointmentTime = new TimeSpan(11, 30, 0),
+                        FullName = "fullName",
+                        Informed = InformedAtDeath.Yes,
+                        PhoneNumber = "123456789",
+                        PresentAtDeath = PresentAtDeath.Yes,
+                        Relationship = "relationship",
+                    }
+                },
+
+                MedicalTeam = new MedicalTeam
+                {
+                    MedicalExaminerUserId = "MedicalExaminerUserId",
+                    MedicalExaminerFullName = "MedicalExaminerFullName",
+                    ConsultantResponsible = new ClinicalProfessional
+                    {
+                        Name = "ConsultantResponsibleName",
+                        Role = "ConsultantResponsible",
+                        Organisation = "Organisation",
+                        Phone = "12345678",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber",
+                    },
+                    Qap = new ClinicalProfessional
+                    {
+                        Name = "QapName",
+                        Role = "Qap",
+                        Organisation = "Organisation",
+                        Phone = "12345678",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber",
+                    }
+                },
+
+                CaseBreakdown = new CaseBreakDown
+                {
+                    AdmissionNotes = new AdmissionNotesEventContainer
+                    {
+                        Latest = new AdmissionEvent
+                        {
+                            AdmittedDate = DateTime.Now,
+                            AdmittedTime = new TimeSpan(12, 12, 12),
+                            Created = DateTime.Now,
+                            EventId = "2",
+                            ImmediateCoronerReferral = false,
+                            IsFinal = true,
+                            Notes = "Notes",
+                            UserId = "userId",
+                            UsersRole = "usersRole",
+                            UserFullName = "usersFullName",
+                        }
+                    }
+                }
+            };
+
+            // Act
+            var additionalDetailsEntered = examination.CalculatePendingAdditionalDetails();
+
+            // Assert
+            additionalDetailsEntered.Should().BeTrue();
+        }
+
+        [Fact]
+        public void CalculatePendingAdditionalDetails_When_No_Additional_Details_Returns_False()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                Representatives = null,
+
+                MedicalTeam = new MedicalTeam
+                {
+                    MedicalExaminerUserId = null,
+                    MedicalExaminerFullName = null,
+                    ConsultantResponsible = null,
+                    Qap = null,
+                },
+
+                CaseBreakdown = new CaseBreakDown
+                {
+                    AdmissionNotes = new AdmissionNotesEventContainer
+                    {
+                        Latest = null
+                    }
+                }
+            };
+
+            // Act
+            var additionalDetailsEntered = examination.CalculatePendingAdditionalDetails();
+
+            // Assert
+            additionalDetailsEntered.Should().BeFalse();
+        }
+
+        [Fact]
         public void CalculateAdditionalDetailsEnteredStatus_When_All_Additional_Details_Returns_True()
         {
             // Arrange
@@ -2020,7 +2124,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var additionalDetailsEntered = examination.CalculateAdditionalDetailsEnteredStatus();
 
             // Assert
-            additionalDetailsEntered.Should().BeTrue();
+            additionalDetailsEntered.Should().Be(StatusBarResult.Complete);
         }
 
         [Fact]
@@ -2052,11 +2156,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var additionalDetailsEntered = examination.CalculateAdditionalDetailsEnteredStatus();
 
             // Assert
-            additionalDetailsEntered.Should().BeFalse();
+            additionalDetailsEntered.Should().Be(StatusBarResult.Incomplete);
         }
 
         [Fact]
-        public void CalculateScrutinyCompleteStatus_When_No_Required_Events_Entered_Returns_False()
+        public void CalculateScrutinyCompleteStatus_When_No_Required_Events_Entered_Returns_Incomplete()
         {
             // Arrange
             var examination = new Examination
@@ -2082,11 +2186,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var additionalDetailsEntered = examination.CalculateScrutinyCompleteStatus();
 
             // Assert
-            additionalDetailsEntered.Should().BeFalse();
+            additionalDetailsEntered.Should().Be(StatusBarResult.Incomplete);
         }
 
         [Fact]
-        public void CalculateScrutinyCompleteStatus_When_All_Required_Events_Entered_Returns_True()
+        public void CalculateScrutinyCompleteStatus_When_All_Required_Events_Entered_Returns_Complete()
         {
             // Arrange
             var examination = new Examination
@@ -2168,11 +2272,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var additionalDetailsEntered = examination.CalculateScrutinyCompleteStatus();
 
             // Assert
-            additionalDetailsEntered.Should().BeTrue();
+            additionalDetailsEntered.Should().Be(StatusBarResult.Complete);
         }
 
         [Fact]
-        public void CalculateCaseItemsCompleteStatus_When_No_Case_Items_Entered_Returns_False()
+        public void CalculateCaseItemsCompleteStatus_When_No_Case_Items_Entered_Returns_Incomplete()
         {
             // Arrange
             var examination = new Examination
@@ -2191,11 +2295,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
 
             // Assert
-            additionalDetailsEntered.Should().BeFalse();
+            additionalDetailsEntered.Should().Be(StatusBarResult.Incomplete);
         }
 
         [Fact]
-        public void CalculateCaseItemsCompleteStatus_When_All_Case_Items_Entered_Returns_True()
+        public void CalculateCaseItemsCompleteStatus_When_All_Case_Items_Entered_Returns_Complete()
         {
             // Arrange
             var examination = new Examination
@@ -2214,11 +2318,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
 
             // Assert
-            additionalDetailsEntered.Should().BeTrue();
+            additionalDetailsEntered.Should().Be(StatusBarResult.Complete);
         }
 
         [Fact]
-        public void CalculateCaseItemsCompleteStatus_When_Any_Unknown_Case_Items_Entered_Returns_True()
+        public void CalculateCaseItemsCompleteStatus_When_Any_Unknown_Case_Items_Entered_Returns_Unknown()
         {
             // Arrange
             var examination = new Examination
@@ -2237,11 +2341,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
 
             // Assert
-            additionalDetailsEntered.Should().BeNull();
+            additionalDetailsEntered.Should().Be(StatusBarResult.Unknown);
         }
 
         [Fact]
-        public void CalculateCaseItemsCompleteStatus_When_Refer_To_Coroner_And_CoronerReferralSent_Is_False_Entered_Returns_False()
+        public void CalculateCaseItemsCompleteStatus_When_Refer_To_Coroner_And_CoronerReferralSent_Is_False_Entered_Returns_Incomplete()
         {
             // Arrange
             var examination = new Examination
@@ -2261,11 +2365,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
 
             // Assert
-            additionalDetailsEntered.Should().BeFalse();
+            additionalDetailsEntered.Should().Be(StatusBarResult.Incomplete);
         }
 
         [Fact]
-        public void CalculateCaseItemsCompleteStatus_When_Case_Not_Closed_Returns_False()
+        public void CalculateCaseItemsCompleteStatus_When_Case_Not_Closed_Returns_Incomplete()
         {
             // Arrange
             var examination = new Examination
@@ -2285,7 +2389,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
 
             // Assert
-            additionalDetailsEntered.Should().BeFalse();
+            additionalDetailsEntered.Should().Be(StatusBarResult.Incomplete);
         }
     }
 }

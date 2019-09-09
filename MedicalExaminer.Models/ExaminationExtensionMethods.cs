@@ -152,7 +152,7 @@ namespace MedicalExaminer.Models
             examination.AdmissionNotesHaveBeenAdded = !examination.PendingAdmissionNotes;
             examination.ReadyForMEScrutiny = CalculateReadyForScrutiny(examination);
             examination.HaveBeenScrutinisedByME = examination.ScrutinyConfirmed;
-            examination.PendingAdditionalDetails = !examination.CalculateAdditionalDetailsEnteredStatus();
+            examination.PendingAdditionalDetails = CalculatePendingAdditionalDetails(examination);
             examination.PendingDiscussionWithQAP = CalculatePendingQAPDiscussion(examination);
             examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
             examination.PendingScrutinyNotes = CalculateScrutinyNotesPending(examination);
@@ -171,6 +171,15 @@ namespace MedicalExaminer.Models
                    || string.IsNullOrEmpty(examination.NhsNumber);
         }
 
+        public static bool CalculatePendingAdditionalDetails(this Examination examination)
+        {
+            return examination.CaseBreakdown.AdmissionNotes?.Latest == null
+                   || examination.MedicalTeam?.ConsultantResponsible?.Name == null
+                   || examination.MedicalTeam?.Qap?.Name == null
+                   || examination.Representatives?.FirstOrDefault()?.FullName == null
+                   || examination.MedicalTeam?.MedicalExaminerUserId == null;
+        }
+
         public static StatusBarResult CalculateBasicDetailsEnteredStatus(this Examination examination)
         {
             if (string.IsNullOrEmpty(examination.GivenNames)
@@ -185,49 +194,59 @@ namespace MedicalExaminer.Models
             if (!string.IsNullOrEmpty(examination.GivenNames)
                 || !string.IsNullOrEmpty(examination.Surname)
                 || (examination.DateOfBirth != NoneDate || examination.DateOfBirth != null)
-                || (examination.DateOfDeath == NoneDate || examination.DateOfDeath == null)
+                || (examination.DateOfDeath != NoneDate || examination.DateOfDeath != null)
                 || !string.IsNullOrEmpty(examination.NhsNumber))
             {
                 return StatusBarResult.Complete;
             }
 
-            return StatusBarResult.NotApplicable;
+            return StatusBarResult.Incomplete;
         }
 
-        public static bool CalculateAdditionalDetailsEnteredStatus(this Examination examination)
+        public static StatusBarResult CalculateAdditionalDetailsEnteredStatus(this Examination examination)
         {
-            return examination.CaseBreakdown.AdmissionNotes?.Latest != null
-                   && examination.MedicalTeam?.ConsultantResponsible?.Name != null
-                   && examination.MedicalTeam?.Qap?.Name != null
-                   && examination.Representatives?.FirstOrDefault()?.FullName != null
-                   && examination.MedicalTeam?.MedicalExaminerUserId != null;
+            if (examination.CaseBreakdown.AdmissionNotes?.Latest != null
+                && examination.MedicalTeam?.ConsultantResponsible?.Name != null
+                && examination.MedicalTeam?.Qap?.Name != null
+                && examination.Representatives?.FirstOrDefault()?.FullName != null
+                && examination.MedicalTeam?.MedicalExaminerUserId != null)
+            {
+                return StatusBarResult.Complete;
+            }
+
+            return StatusBarResult.Incomplete;
         }
 
-        public static bool CalculateScrutinyCompleteStatus(this Examination examination)
+        public static StatusBarResult CalculateScrutinyCompleteStatus(this Examination examination)
         {
-            return examination.CaseBreakdown.PreScrutiny?.Latest != null
-                   && examination.CaseBreakdown.QapDiscussion?.Latest != null
-                   && examination.CaseBreakdown.BereavedDiscussion?.Latest != null;
+            if (examination.CaseBreakdown.PreScrutiny?.Latest != null
+                && examination.CaseBreakdown.QapDiscussion?.Latest != null
+                && examination.CaseBreakdown.BereavedDiscussion?.Latest != null)
+            {
+                return StatusBarResult.Complete;
+            }
+
+            return StatusBarResult.Incomplete;
         }
 
-        public static bool? CalculateCaseItemsCompleteStatus(this Examination examination)
+        public static StatusBarResult CalculateCaseItemsCompleteStatus(this Examination examination)
         {
             if (examination.CaseOutcome.CremationFormStatus == CremationFormStatus.Unknown)
             {
-                return null;
+                return StatusBarResult.Unknown;
             }
 
-            if (examination.CaseOutcome.CremationFormStatus == null
-                || examination.CaseOutcome.MccdIssued == null
-                || examination.CaseOutcome.GpNotifiedStatus == null
-                || examination.CaseCompleted == false
-                || (examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner
-                    && !examination.CaseOutcome.CoronerReferralSent))
+            if (examination.CaseOutcome.CremationFormStatus != null
+                && examination.CaseOutcome.MccdIssued != null
+                && examination.CaseOutcome.GpNotifiedStatus != null
+                && examination.CaseCompleted
+                && (examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner
+                    && examination.CaseOutcome.CoronerReferralSent))
             {
-                return false;
+                return StatusBarResult.Complete;
             }
 
-            return true;
+            return StatusBarResult.Incomplete;
         }
 
         public static bool CalculateOutstandingCaseOutcomesCompleted(this Examination examination)

@@ -24,6 +24,7 @@ namespace MedicalExaminer.API.Tests.Mapper
     /// </summary>
     public class MapperExaminationProfileTests
     {
+        private static readonly DateTime NoneDate = Convert.ToDateTime("0001 - 01 - 01T00: 00:00");
         private const string ExaminationId = "expectedExaminationId";
         private const string AltLink = "altLink";
         private const bool CaseCompleted = true;
@@ -908,36 +909,91 @@ namespace MedicalExaminer.API.Tests.Mapper
             // Assert
             // Basic Details
             result.BasicDetailsEntered.Should().Be(StatusBarResult.Complete);
-            result.NameEntered.Should().BeTrue();
-            result.DobEntered.Should().BeTrue();
-            result.DodEntered.Should().BeTrue();
-            result.NhsNumberEntered.Should().BeTrue();
+            result.NameEntered.Should().Be(StatusBarResult.Complete);
+            result.DobEntered.Should().Be(StatusBarResult.Complete);
+            result.DodEntered.Should().Be(StatusBarResult.Complete);
+            result.NhsNumberEntered.Should().Be(StatusBarResult.Complete);
 
             // Additional Details
-            result.AdditionalDetailsEntered.Should().BeTrue();
-            result.LatestAdmissionDetailsEntered.Should().BeTrue();
-            result.DoctorInChargeEntered.Should().BeTrue();
-            result.QapEntered.Should().BeTrue();
-            result.BereavedInfoEntered.Should().BeTrue();
-            result.MeAssigned.Should().BeTrue();
+            result.AdditionalDetailsEntered.Should().Be(StatusBarResult.Complete);
+            result.LatestAdmissionDetailsEntered.Should().Be(StatusBarResult.Complete);
+            result.DoctorInChargeEntered.Should().Be(StatusBarResult.Complete);
+            result.QapEntered.Should().Be(StatusBarResult.Complete);
+            result.BereavedInfoEntered.Should().Be(StatusBarResult.Complete);
+            result.MeAssigned.Should().Be(StatusBarResult.Complete);
 
             // Is Scrutiny Complete?
-            result.IsScrutinyCompleted.Should().BeTrue();
-            result.PreScrutinyEventEntered.Should().BeTrue();
-            result.QapDiscussionEventEntered.Should().BeTrue();
-            result.BereavedDiscussionEventEntered.Should().BeTrue();
+            result.IsScrutinyCompleted.Should().Be(StatusBarResult.Complete);
+            result.PreScrutinyEventEntered.Should().Be(StatusBarResult.Complete);
+            result.QapDiscussionEventEntered.Should().Be(StatusBarResult.Complete);
+            result.BereavedDiscussionEventEntered.Should().Be(StatusBarResult.Complete);
 
             // Is Case Items Complete?
-            result.IsCaseItemsCompleted.Should().BeTrue();
-            result.MccdIssued.Should().BeTrue();
-            result.CremationFormInfoEntered.Should().BeTrue();
-            result.GpNotified.Should().BeTrue();
-            result.SentToCoroner.Should().BeTrue();
-            result.CaseClosed.Should().BeTrue();
+            result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Complete);
+            result.MccdIssued.Should().Be(StatusBarResult.Complete);
+            result.CremationFormInfoEntered.Should().Be(StatusBarResult.Complete);
+            result.GpNotified.Should().Be(StatusBarResult.Complete);
+            result.SentToCoroner.Should().Be(StatusBarResult.Complete);
+            result.CaseClosed.Should().Be(StatusBarResult.Complete);
         }
 
+        // Front end sends null if nhs number is unknown so there is no way to differentiate between unknown and not entered (incomplete)
+        //[Fact]
+        //public void Examination_To_PatientCard_Statuses_When_Basic_Details_Not_Entered()
+        //{
+        //    // Arrange
+        //    var appointmentDate = DateTime.Now.AddDays(1);
+        //    var appointmentTime = new TimeSpan(10, 30, 00);
+        //    var representative = new Representative()
+        //    {
+        //        AppointmentDate = appointmentDate,
+        //        AppointmentTime = appointmentTime,
+        //        FullName = "bob",
+        //        Informed = InformedAtDeath.Yes,
+        //        PhoneNumber = "1234",
+        //        PresentAtDeath = PresentAtDeath.Unknown,
+        //        Relationship = "milk man"
+        //    };
+
+        //    var examination = GenerateExamination();
+        //    examination.GivenNames = null;
+        //    examination.Surname = null;
+        //    examination.DateOfBirth = null;
+        //    examination.DateOfDeath = null;
+        //    examination.NhsNumber = null;
+
+        //    examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
+        //    {
+        //        Name = "ConsultantResponsible",
+        //        Role = "Consultant",
+        //        Organisation = "Organisation",
+        //        Phone = "01148394748",
+        //        Notes = "Notes",
+        //        GMCNumber = "G12345"
+        //    };
+        //    examination.MedicalTeam.Qap.Name = "Qap Name";
+        //    examination.Representatives = new[] { representative };
+        //    examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+
+        //    examination.CaseOutcome.MccdIssued = true;
+        //    examination.CaseOutcome.CremationFormStatus = CremationFormStatus.Yes;
+        //    examination.CaseOutcome.GpNotifiedStatus = GPNotified.GPNotified;
+        //    examination.CaseOutcome.CoronerReferralSent = true;
+
+        //    // Action
+        //    var result = _mapper.Map<PatientCardItem>(examination);
+
+        //    // Assert
+        //    // Basic Details
+        //    result.BasicDetailsEntered.Should().Be(StatusBarResult.Incomplete);
+        //    result.NameEntered.Should().BeFalse();
+        //    result.DobEntered.Should().BeFalse();
+        //    result.DodEntered.Should().BeFalse();
+        //    result.NhsNumberEntered.Should().BeFalse();
+        //}
+
         [Fact]
-        public void Examination_To_PatientCard_Statuses_When_Basic_Details_Not_Entered()
+        public void Examination_To_PatientCard_Statuses_When_Unknown_Basic_Details_Entered()
         {
             // Arrange
             var appointmentDate = DateTime.Now.AddDays(1);
@@ -956,15 +1012,15 @@ namespace MedicalExaminer.API.Tests.Mapper
             var examination = GenerateExamination();
             examination.GivenNames = null;
             examination.Surname = null;
-            examination.DateOfBirth = null;
-            examination.DateOfDeath = null;
+            examination.DateOfBirth = NoneDate;
+            examination.DateOfDeath = NoneDate;
             examination.NhsNumber = null;
 
             examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
             {
                 Name = "ConsultantResponsible",
                 Role = "Consultant",
-                Organisation = "Organisation", //================== start here =========================
+                Organisation = "Organisation",
                 Phone = "01148394748",
                 Notes = "Notes",
                 GMCNumber = "G12345"
@@ -983,11 +1039,11 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             // Assert
             // Basic Details
-            result.BasicDetailsEntered.Should().Be(StatusBarResult.Incomplete);
-            result.NameEntered.Should().BeFalse();
-            result.DobEntered.Should().BeFalse();
-            result.DodEntered.Should().BeFalse();
-            result.NhsNumberEntered.Should().BeFalse();
+            result.BasicDetailsEntered.Should().Be(StatusBarResult.Unknown);
+            result.NameEntered.Should().Be(StatusBarResult.Unknown);
+            result.DobEntered.Should().Be(StatusBarResult.Unknown);
+            result.DodEntered.Should().Be(StatusBarResult.Unknown);
+            result.NhsNumberEntered.Should().Be(StatusBarResult.Unknown);
         }
 
         [Fact]
@@ -1030,12 +1086,12 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             // Assert
             // Additional Details
-            result.AdditionalDetailsEntered.Should().BeFalse();
-            result.LatestAdmissionDetailsEntered.Should().BeFalse();
-            result.DoctorInChargeEntered.Should().BeFalse();
-            result.QapEntered.Should().BeFalse();
-            result.BereavedInfoEntered.Should().BeFalse();
-            result.MeAssigned.Should().BeFalse();
+            result.AdditionalDetailsEntered.Should().Be(StatusBarResult.Incomplete);
+            result.LatestAdmissionDetailsEntered.Should().Be(StatusBarResult.Incomplete);
+            result.DoctorInChargeEntered.Should().Be(StatusBarResult.Incomplete);
+            result.QapEntered.Should().Be(StatusBarResult.Incomplete);
+            result.BereavedInfoEntered.Should().Be(StatusBarResult.Incomplete);
+            result.MeAssigned.Should().Be(StatusBarResult.Incomplete);
         }
 
         [Fact]
@@ -1089,10 +1145,10 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             // Assert
             // Is Scrutiny Complete?
-            result.IsScrutinyCompleted.Should().BeFalse();
-            result.PreScrutinyEventEntered.Should().BeFalse();
-            result.QapDiscussionEventEntered.Should().BeFalse();
-            result.BereavedDiscussionEventEntered.Should().BeFalse();
+            result.IsScrutinyCompleted.Should().Be(StatusBarResult.Incomplete);
+            result.PreScrutinyEventEntered.Should().Be(StatusBarResult.Incomplete);
+            result.QapDiscussionEventEntered.Should().Be(StatusBarResult.Incomplete);
+            result.BereavedDiscussionEventEntered.Should().Be(StatusBarResult.Incomplete);
         }
 
         [Fact]
@@ -1143,12 +1199,12 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             // Assert
             // Is Case Items Complete?
-            result.IsCaseItemsCompleted.Should().BeFalse();
-            result.MccdIssued.Should().BeFalse();
-            result.CremationFormInfoEntered.Should().BeFalse();
-            result.GpNotified.Should().BeFalse();
-            result.SentToCoroner.Should().BeFalse();
-            result.CaseClosed.Should().BeFalse();
+            result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Incomplete);
+            result.MccdIssued.Should().Be(StatusBarResult.Incomplete);
+            result.CremationFormInfoEntered.Should().Be(StatusBarResult.Incomplete);
+            result.GpNotified.Should().Be(StatusBarResult.Incomplete);
+            result.SentToCoroner.Should().Be(StatusBarResult.Incomplete);
+            result.CaseClosed.Should().Be(StatusBarResult.Incomplete);
         }
 
         [Fact]
@@ -1198,8 +1254,8 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             // Assert
             // Is Case Items Complete?
-            result.IsCaseItemsCompleted.Should().BeNull();
-            result.CremationFormInfoEntered.Should().BeNull();
+            result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Unknown);
+            result.CremationFormInfoEntered.Should().Be(StatusBarResult.Unknown);
         }
 
         [Fact]
