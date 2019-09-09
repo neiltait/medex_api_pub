@@ -2017,10 +2017,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var additionalDetailsEntered = examination.CalculatePendingAdditionalDetails();
+            var pendingAdditionalDetails = examination.CalculatePendingAdditionalDetails();
 
             // Assert
-            additionalDetailsEntered.Should().BeTrue();
+            pendingAdditionalDetails.Should().BeTrue();
         }
 
         [Fact]
@@ -2049,10 +2049,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var additionalDetailsEntered = examination.CalculatePendingAdditionalDetails();
+            var pendingAdditionalDetails = examination.CalculatePendingAdditionalDetails();
 
             // Assert
-            additionalDetailsEntered.Should().BeFalse();
+            pendingAdditionalDetails.Should().BeFalse();
         }
 
         [Fact]
@@ -2183,10 +2183,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var additionalDetailsEntered = examination.CalculateScrutinyCompleteStatus();
+            var scrutinyComplete = examination.CalculateScrutinyCompleteStatus();
 
             // Assert
-            additionalDetailsEntered.Should().Be(StatusBarResult.Incomplete);
+            scrutinyComplete.Should().Be(StatusBarResult.Incomplete);
         }
 
         [Fact]
@@ -2269,10 +2269,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var additionalDetailsEntered = examination.CalculateScrutinyCompleteStatus();
+            var scrutinyComplete = examination.CalculateScrutinyCompleteStatus();
 
             // Assert
-            additionalDetailsEntered.Should().Be(StatusBarResult.Complete);
+            scrutinyComplete.Should().Be(StatusBarResult.Complete);
         }
 
         [Fact]
@@ -2283,6 +2283,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             {
                 CaseOutcome = new CaseOutcome
                 {
+                    CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
                     MccdIssued = null,
                     CremationFormStatus = null,
                     GpNotifiedStatus = null,
@@ -2292,10 +2293,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             };
 
             // Act
-            var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
+            var caseItemsEntered = examination.CalculateCaseItemsCompleteStatus();
 
             // Assert
-            additionalDetailsEntered.Should().Be(StatusBarResult.Incomplete);
+            caseItemsEntered.Should().Be(StatusBarResult.Incomplete);
         }
 
         [Fact]
@@ -2306,19 +2307,19 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             {
                 CaseOutcome = new CaseOutcome
                 {
+                    CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
                     MccdIssued = true,
                     CremationFormStatus = CremationFormStatus.Yes,
                     GpNotifiedStatus = GPNotified.GPNotified,
-                    CoronerReferralSent = true,
                 },
                 CaseCompleted = true
             };
 
             // Act
-            var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
+            var caseItemsEntered = examination.CalculateCaseItemsCompleteStatus();
 
             // Assert
-            additionalDetailsEntered.Should().Be(StatusBarResult.Complete);
+            caseItemsEntered.Should().Be(StatusBarResult.Complete);
         }
 
         [Fact]
@@ -2329,6 +2330,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             {
                 CaseOutcome = new CaseOutcome
                 {
+                    CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
                     MccdIssued = true,
                     CremationFormStatus = CremationFormStatus.Unknown,
                     GpNotifiedStatus = GPNotified.GPNotified,
@@ -2369,7 +2371,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void CalculateCaseItemsCompleteStatus_When_Case_Not_Closed_Returns_Incomplete()
+        public void CalculateCaseItemsCompleteStatus_When_Refer_To_Coroner_And_CoronerReferralSent_Is_True_Entered_Returns_Complete()
         {
             // Arrange
             var examination = new Examination
@@ -2381,6 +2383,30 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                     CremationFormStatus = CremationFormStatus.Yes,
                     GpNotifiedStatus = GPNotified.GPNotified,
                     CoronerReferralSent = true,
+                },
+                CaseCompleted = true
+            };
+
+            // Act
+            var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
+
+            // Assert
+            additionalDetailsEntered.Should().Be(StatusBarResult.Complete);
+        }
+
+        [Fact]
+        public void CalculateCaseItemsCompleteStatus_When_Case_Not_Closed_Returns_Incomplete()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                CaseOutcome = new CaseOutcome
+                {
+                    CaseOutcomeSummary = CaseOutcomeSummary.ReferToCoroner,
+                    MccdIssued = null,
+                    CremationFormStatus = null,
+                    GpNotifiedStatus = null,
+                    CoronerReferralSent = false,
                 },
                 CaseCompleted = false
             };

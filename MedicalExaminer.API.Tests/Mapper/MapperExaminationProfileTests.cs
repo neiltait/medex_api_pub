@@ -897,6 +897,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             examination.Representatives = new[] { representative };
             examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
 
+            examination.CaseOutcome.CaseOutcomeSummary = CaseOutcomeSummary.ReferToCoroner;
             examination.CaseOutcome.MccdIssued = true;
             examination.CaseOutcome.CremationFormStatus = CremationFormStatus.Yes;
             examination.CaseOutcome.GpNotifiedStatus = GPNotified.GPNotified;
@@ -1188,6 +1189,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             examination.Representatives = new[] { representative };
             examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
 
+            examination.CaseOutcome.CaseOutcomeSummary = CaseOutcomeSummary.ReferToCoroner;
             examination.CaseOutcome.MccdIssued = null;
             examination.CaseOutcome.CremationFormStatus = null;
             examination.CaseOutcome.GpNotifiedStatus = null;

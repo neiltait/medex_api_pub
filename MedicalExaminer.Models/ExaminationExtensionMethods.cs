@@ -173,11 +173,11 @@ namespace MedicalExaminer.Models
 
         public static bool CalculatePendingAdditionalDetails(this Examination examination)
         {
-            return examination.CaseBreakdown.AdmissionNotes?.Latest == null
-                   || examination.MedicalTeam?.ConsultantResponsible?.Name == null
-                   || examination.MedicalTeam?.Qap?.Name == null
-                   || examination.Representatives?.FirstOrDefault()?.FullName == null
-                   || examination.MedicalTeam?.MedicalExaminerUserId == null;
+            return examination.CaseBreakdown.AdmissionNotes?.Latest != null
+                   || examination.MedicalTeam?.ConsultantResponsible?.Name != null
+                   || examination.MedicalTeam?.Qap?.Name != null
+                   || examination.Representatives?.FirstOrDefault()?.FullName != null
+                   || examination.MedicalTeam?.MedicalExaminerUserId != null;
         }
 
         public static StatusBarResult CalculateBasicDetailsEnteredStatus(this Examination examination)
@@ -236,17 +236,27 @@ namespace MedicalExaminer.Models
                 return StatusBarResult.Unknown;
             }
 
-            if (examination.CaseOutcome.CremationFormStatus != null
-                && examination.CaseOutcome.MccdIssued != null
-                && examination.CaseOutcome.GpNotifiedStatus != null
-                && examination.CaseCompleted
-                && (examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner
-                    && examination.CaseOutcome.CoronerReferralSent))
+            if (examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner)
             {
-                return StatusBarResult.Complete;
-            }
+                if (examination.CaseOutcome.CoronerReferralSent)
+                {
+                    return StatusBarResult.Complete;
+                }
 
-            return StatusBarResult.Incomplete;
+                return StatusBarResult.Incomplete;
+            }
+            else
+            {
+                if (examination.CaseOutcome.CremationFormStatus != null
+                    && examination.CaseOutcome.MccdIssued != null
+                    && examination.CaseOutcome.GpNotifiedStatus != null
+                    && examination.CaseCompleted)
+                {
+                    return StatusBarResult.Complete;
+                }
+
+                return StatusBarResult.Incomplete;
+            }
         }
 
         public static bool CalculateOutstandingCaseOutcomesCompleted(this Examination examination)

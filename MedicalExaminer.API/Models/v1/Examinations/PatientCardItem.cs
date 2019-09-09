@@ -96,9 +96,9 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public bool HaveBeenScrutinisedByME { get; set; }
 
         /// <summary>
-        /// Awaiting Admission Notes
+        /// Awaiting Additional Details
         /// </summary>
-        public bool PendingAdmissionNotes { get; set; }
+        public bool PendingAdditionalDetails { get; set; }
 
         /// <summary>
         /// Awaiting discussion with the QAP
