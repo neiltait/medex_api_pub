@@ -555,38 +555,53 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(patientCard => patientCard.MccdIssued, opt => opt.MapFrom(
                     (source, dest, destMember, context) =>
                     {
-                        if (source.CaseOutcome.MccdIssued != null)
+                        if (source.CaseOutcome.CaseOutcomeSummary != CaseOutcomeSummary.ReferToCoroner)
                         {
-                            return StatusBarResult.Complete;
+                            if (source.CaseOutcome.MccdIssued != null)
+                            {
+                                return StatusBarResult.Complete;
+                            }
+
+                            return StatusBarResult.Incomplete;
                         }
 
-                        return StatusBarResult.Incomplete;
+                        return StatusBarResult.NotApplicable;
                     }))
                 .ForMember(patientCard => patientCard.CremationFormInfoEntered, opt => opt.MapFrom(
                     (source, dest, destMember, context) =>
                     {
-                        switch (source.CaseOutcome.CremationFormStatus)
+                        if (source.CaseOutcome.CaseOutcomeSummary != CaseOutcomeSummary.ReferToCoroner)
                         {
-                            case CremationFormStatus.Yes:
-                            case CremationFormStatus.No:
-                                return StatusBarResult.Complete;
-                            case CremationFormStatus.Unknown:
-                                return StatusBarResult.Unknown;
-                            case null:
-                                return StatusBarResult.Incomplete;
-                            default:
-                                throw new ArgumentOutOfRangeException();
+                            switch (source.CaseOutcome.CremationFormStatus)
+                            {
+                                case CremationFormStatus.Yes:
+                                case CremationFormStatus.No:
+                                    return StatusBarResult.Complete;
+                                case CremationFormStatus.Unknown:
+                                    return StatusBarResult.Unknown;
+                                case null:
+                                    return StatusBarResult.Incomplete;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
                         }
+
+                        return StatusBarResult.NotApplicable;
                     }))
                 .ForMember(patientCard => patientCard.GpNotified, opt => opt.MapFrom(
                     (source, dest, destMember, context) =>
                     {
-                        if (source.CaseOutcome.GpNotifiedStatus != null)
+                        if (source.CaseOutcome.CaseOutcomeSummary != CaseOutcomeSummary.ReferToCoroner)
                         {
-                            return StatusBarResult.Complete;
+                            if (source.CaseOutcome.GpNotifiedStatus != null)
+                            {
+                                return StatusBarResult.Complete;
+                            }
+
+                            return StatusBarResult.Incomplete;
                         }
 
-                        return StatusBarResult.Incomplete;
+                        return StatusBarResult.NotApplicable;
                     }))
                 .ForMember(patientCard => patientCard.SentToCoroner, opt => opt.MapFrom(
                     (source, dest, destMember, context) =>
