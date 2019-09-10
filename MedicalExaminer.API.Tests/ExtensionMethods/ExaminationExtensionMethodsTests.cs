@@ -1908,27 +1908,6 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             basicDetailsEntered.Should().Be(StatusBarResult.Complete);
         }
 
-        // Front end sends null if nhs number is unknown so there is no way to differentiate between unknown and not entered (incomplete) 
-        //[Fact]
-        //public void CalculateBasicDetailsEnteredStatus_When_No_Basic_Details_Returns_Incomplete()
-        //{
-        //    // Arrange
-        //    var examination = new Examination
-        //    {
-        //        GivenNames = null,
-        //        Surname = null,
-        //        DateOfBirth = null,
-        //        DateOfDeath = null,
-        //        NhsNumber = null,
-        //    };
-
-        //    // Act
-        //    var basicDetailsEntered = examination.CalculateBasicDetailsEnteredStatus();
-
-        //    // Assert
-        //    basicDetailsEntered.Should().Be(StatusBarResult.Incomplete);
-        //}
-
         [Fact]
         public void CalculateBasicDetailsEnteredStatus_When_Unknown_Basic_Details_Entered_Returns_Unknown()
         {
@@ -1952,7 +1931,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void CalculatePendingAdditionalDetails_When_All_Additional_Details_Returns_True()
+        public void CalculatePendingAdditionalDetails_When_All_Additional_Details_Returns_False()
         {
             // Arrange
             var examination = new Examination
@@ -2020,11 +1999,11 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var pendingAdditionalDetails = examination.CalculatePendingAdditionalDetails();
 
             // Assert
-            pendingAdditionalDetails.Should().BeTrue();
+            pendingAdditionalDetails.Should().BeFalse();
         }
 
         [Fact]
-        public void CalculatePendingAdditionalDetails_When_No_Additional_Details_Returns_False()
+        public void CalculatePendingAdditionalDetails_When_No_Additional_Details_Returns_True()
         {
             // Arrange
             var examination = new Examination
@@ -2052,7 +2031,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var pendingAdditionalDetails = examination.CalculatePendingAdditionalDetails();
 
             // Assert
-            pendingAdditionalDetails.Should().BeFalse();
+            pendingAdditionalDetails.Should().BeTrue();
         }
 
         [Fact]

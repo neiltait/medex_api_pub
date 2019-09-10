@@ -173,11 +173,11 @@ namespace MedicalExaminer.Models
 
         public static bool CalculatePendingAdditionalDetails(this Examination examination)
         {
-            return examination.CaseBreakdown.AdmissionNotes?.Latest != null
-                   || examination.MedicalTeam?.ConsultantResponsible?.Name != null
-                   || examination.MedicalTeam?.Qap?.Name != null
-                   || examination.Representatives?.FirstOrDefault()?.FullName != null
-                   || examination.MedicalTeam?.MedicalExaminerUserId != null;
+            return examination.CaseBreakdown.AdmissionNotes?.Latest == null
+                   || examination.MedicalTeam?.ConsultantResponsible?.Name == null
+                   || examination.MedicalTeam?.Qap?.Name == null
+                   || examination.Representatives?.FirstOrDefault()?.FullName == null
+                   || examination.MedicalTeam?.MedicalExaminerUserId == null;
         }
 
         public static StatusBarResult CalculateBasicDetailsEnteredStatus(this Examination examination)
