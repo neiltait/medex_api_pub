@@ -1827,6 +1827,172 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
+        public void CalculateHaveUnknownBasicDetails_When_All_Basic_Details_Entered_Returns_False()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                GivenNames = "GivenNames",
+                Surname = "Surname",
+                DateOfBirth = DateTime.Today,
+                DateOfDeath = DateTime.Today,
+                NhsNumber = "1234567890",
+            };
+
+            // Act
+            var haveUnknownBasicDetails = examination.CalculateHaveUnknownBasicDetails();
+
+            // Assert
+            haveUnknownBasicDetails.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CalculateHaveUnknownBasicDetails_When_Have_Unknown_Basic_Details_Entered_Returns_True()
+        {
+            // Arrange
+            var noneDate = Convert.ToDateTime("0001 - 01 - 01T00: 00:00");
+
+            var examination = new Examination
+            {
+                GivenNames = null,
+                Surname = null,
+                DateOfBirth = noneDate,
+                DateOfDeath = noneDate,
+                NhsNumber = null
+            };
+
+            // Act
+            var haveUnknownBasicDetails = examination.CalculateHaveUnknownBasicDetails();
+
+            // Assert
+            haveUnknownBasicDetails.Should().BeTrue();
+        }
+
+        [Fact]
+        public void CalculateHaveUnknownBasicDetails_When_No_Basic_Details_Returns_True()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                GivenNames = null,
+                Surname = null,
+                DateOfBirth = null,
+                DateOfDeath = null,
+                NhsNumber = null,
+            };
+
+            // Act
+            var haveUnknownBasicDetails = examination.CalculateHaveUnknownBasicDetails();
+
+            // Assert
+            haveUnknownBasicDetails.Should().BeTrue();
+        }
+
+        [Fact]
+        public void CalculatePendingAdditionalDetails_When_All_Additional_Details_Returns_False()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                Representatives = new List<Representative>
+                {
+                    new Representative
+                    {
+                        AppointmentDate = new DateTime(2019, 2, 24),
+                        AppointmentTime = new TimeSpan(11, 30, 0),
+                        FullName = "fullName",
+                        Informed = InformedAtDeath.Yes,
+                        PhoneNumber = "123456789",
+                        PresentAtDeath = PresentAtDeath.Yes,
+                        Relationship = "relationship",
+                    }
+                },
+
+                MedicalTeam = new MedicalTeam
+                {
+                    MedicalExaminerUserId = "MedicalExaminerUserId",
+                    MedicalExaminerFullName = "MedicalExaminerFullName",
+                    ConsultantResponsible = new ClinicalProfessional
+                    {
+                        Name = "ConsultantResponsibleName",
+                        Role = "ConsultantResponsible",
+                        Organisation = "Organisation",
+                        Phone = "12345678",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber",
+                    },
+                    Qap = new ClinicalProfessional
+                    {
+                        Name = "QapName",
+                        Role = "Qap",
+                        Organisation = "Organisation",
+                        Phone = "12345678",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber",
+                    }
+                },
+
+                CaseBreakdown = new CaseBreakDown
+                {
+                    AdmissionNotes = new AdmissionNotesEventContainer
+                    {
+                        Latest = new AdmissionEvent
+                        {
+                            AdmittedDate = DateTime.Now,
+                            AdmittedTime = new TimeSpan(12, 12, 12),
+                            Created = DateTime.Now,
+                            EventId = "2",
+                            ImmediateCoronerReferral = false,
+                            IsFinal = true,
+                            Notes = "Notes",
+                            UserId = "userId",
+                            UsersRole = "usersRole",
+                            UserFullName = "usersFullName",
+                        }
+                    }
+                }
+            };
+
+            // Act
+            var pendingAdditionalDetails = examination.CalculatePendingAdditionalDetails();
+
+            // Assert
+            pendingAdditionalDetails.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CalculatePendingAdditionalDetails_When_No_Additional_Details_Returns_True()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                Representatives = null,
+
+                MedicalTeam = new MedicalTeam
+                {
+                    MedicalExaminerUserId = null,
+                    MedicalExaminerFullName = null,
+                    ConsultantResponsible = null,
+                    Qap = null,
+                },
+
+                CaseBreakdown = new CaseBreakDown
+                {
+                    AdmissionNotes = new AdmissionNotesEventContainer
+                    {
+                        Latest = null
+                    }
+                }
+            };
+
+            // Act
+            var pendingAdditionalDetails = examination.CalculatePendingAdditionalDetails();
+
+            // Assert
+            pendingAdditionalDetails.Should().BeTrue();
+        }
+
+        [Fact]
         public void CalculateBasicDetailsEnteredStatus_When_All_The_Details_Are_Entered_Returns_True()
         {
             // Arrange

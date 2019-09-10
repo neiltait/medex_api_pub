@@ -7,6 +7,8 @@ namespace MedicalExaminer.Models
 {
     public static class ExaminationExtensionMethods
     {
+        private static readonly DateTime NoneDate = Convert.ToDateTime("0001 - 01 - 01T00: 00:00");
+
         public static Examination AddEvent(this Examination examination, IEvent theEvent)
         {
             switch (theEvent.EventType)
@@ -146,11 +148,11 @@ namespace MedicalExaminer.Models
         {
             examination.Unassigned = !(examination.MedicalTeam.MedicalExaminerOfficerUserId != null && examination.MedicalTeam.MedicalExaminerUserId != null);
             examination.PendingAdmissionNotes = CalculateAdmissionNotesPending(examination);
-            examination.HaveUnknownBasicDetails = !CalculateBasicDetailsEnteredStatus(examination);
+            examination.HaveUnknownBasicDetails = CalculateHaveUnknownBasicDetails(examination);
             examination.AdmissionNotesHaveBeenAdded = !examination.PendingAdmissionNotes;
             examination.ReadyForMEScrutiny = CalculateReadyForScrutiny(examination);
             examination.HaveBeenScrutinisedByME = examination.ScrutinyConfirmed;
-            examination.PendingAdditionalDetails = !examination.CalculateAdditionalDetailsEnteredStatus();
+            examination.PendingAdditionalDetails = CalculatePendingAdditionalDetails(examination);
             examination.PendingDiscussionWithQAP = CalculatePendingQAPDiscussion(examination);
             examination.PendingDiscussionWithRepresentative = CalculatePendingDiscussionWithRepresentative(examination);
             examination.PendingScrutinyNotes = CalculateScrutinyNotesPending(examination);
@@ -158,6 +160,24 @@ namespace MedicalExaminer.Models
             examination.CaseOutcome.CaseOutcomeSummary = CalculateScrutinyOutcome(examination);
 
             return examination;
+        }
+
+        public static bool CalculateHaveUnknownBasicDetails(this Examination examination)
+        {
+            return string.IsNullOrEmpty(examination.GivenNames)
+                   || string.IsNullOrEmpty(examination.Surname)
+                   || examination.DateOfBirth == NoneDate
+                   || examination.DateOfDeath == NoneDate
+                   || string.IsNullOrEmpty(examination.NhsNumber);
+        }
+
+        public static bool CalculatePendingAdditionalDetails(this Examination examination)
+        {
+            return examination.CaseBreakdown.AdmissionNotes?.Latest == null
+                   || examination.MedicalTeam?.ConsultantResponsible?.Name == null
+                   || examination.MedicalTeam?.Qap?.Name == null
+                   || examination.Representatives?.FirstOrDefault()?.FullName == null
+                   || examination.MedicalTeam?.MedicalExaminerUserId == null;
         }
 
         public static bool CalculateBasicDetailsEnteredStatus(this Examination examination)
