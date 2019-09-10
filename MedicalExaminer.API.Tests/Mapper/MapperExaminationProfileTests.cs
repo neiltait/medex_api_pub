@@ -812,7 +812,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutcomesOutstanding.Should().Be(true);
-            result.PendingAdmissionNotes.Should().Be(true);
+            result.PendingAdditionalDetails.Should().Be(true);
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
@@ -853,7 +853,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutcomesOutstanding.Should().Be(true);
-            result.PendingAdmissionNotes.Should().Be(true);
+            result.PendingAdditionalDetails.Should().Be(true);
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
@@ -1242,7 +1242,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutcomesOutstanding.Should().Be(true);
-            result.PendingAdmissionNotes.Should().Be(true);
+            result.PendingAdditionalDetails.Should().Be(true);
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
@@ -1298,7 +1298,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutcomesOutstanding.Should().Be(true);
-            result.PendingAdmissionNotes.Should().Be(true);
+            result.PendingAdditionalDetails.Should().Be(true);
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
@@ -1352,7 +1352,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutcomesOutstanding.Should().Be(true);
-            result.PendingAdmissionNotes.Should().Be(true);
+            result.PendingAdditionalDetails.Should().Be(true);
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
@@ -1407,7 +1407,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutcomesOutstanding.Should().Be(true);
-            result.PendingAdmissionNotes.Should().Be(true);
+            result.PendingAdditionalDetails.Should().Be(true);
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
