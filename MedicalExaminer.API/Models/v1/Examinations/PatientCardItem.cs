@@ -98,7 +98,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Awaiting Admission Notes
         /// </summary>
-        public bool PendingAdmissionNotes { get; set; }
+        public bool PendingAdditionalDetails { get; set; }
 
         /// <summary>
         /// Awaiting discussion with the QAP
