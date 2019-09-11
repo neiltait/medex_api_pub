@@ -244,6 +244,7 @@ example:
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
             // temporary fudges until the real migration framework is implemented.
+        // TODO: https://methods.atlassian.net/browse/MES-989
         //    UpdateDiscussionOutcomes(serviceProvider);
         //    UpdateInvalidOrNullUserPermissionIds(serviceProvider);
         //    UpdateLocations(serviceProvider, locationMigrationSettings);
