@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using FluentAssertions;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
@@ -11,6 +10,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 {
     public class ExaminationExtensionMethodsTests
     {
+        private readonly DateTime NONEDATE = Convert.ToDateTime("0001 - 01 - 01T00: 00:00");
+
         [Fact]
         public void CreateDraftEventForUserReturnsDraft()
         {
@@ -1850,14 +1851,12 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         public void CalculateHaveUnknownBasicDetails_When_Have_Unknown_Basic_Details_Entered_Returns_True()
         {
             // Arrange
-            var noneDate = Convert.ToDateTime("0001 - 01 - 01T00: 00:00");
-
             var examination = new Examination
             {
                 GivenNames = null,
                 Surname = null,
-                DateOfBirth = noneDate,
-                DateOfDeath = noneDate,
+                DateOfBirth = NONEDATE,
+                DateOfDeath = NONEDATE,
                 NhsNumber = null
             };
 
@@ -1912,14 +1911,12 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         public void CalculateBasicDetailsEnteredStatus_When_Unknown_Basic_Details_Entered_Returns_Unknown()
         {
             // Arrange
-            var noneDate = Convert.ToDateTime("0001 - 01 - 01T00: 00:00");
-
             var examination = new Examination
             {
                 GivenNames = null,
                 Surname = null,
-                DateOfBirth = noneDate,
-                DateOfDeath = noneDate,
+                DateOfBirth = NONEDATE,
+                DateOfDeath = NONEDATE,
                 NhsNumber = null,
             };
 
