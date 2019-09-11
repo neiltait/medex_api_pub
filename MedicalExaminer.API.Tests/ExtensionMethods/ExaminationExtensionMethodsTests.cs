@@ -480,7 +480,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         public void ReadyForMeScrutiny_PendingQapDiscussion_False()
         {
             var examination = new Examination();
-            examination.CaseBreakdown.MeoSummary.Latest = new MeoSummaryEvent();
+            examination.MedicalTeam.MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId";
+            examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
             examination = examination.UpdateCaseStatus();
             Assert.False(examination.PendingDiscussionWithQAP);
         }
@@ -562,7 +563,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         public void PendingRepresentativeDiscussion_ReadyForMeScrutiny_False()
         {
             var examination = new Examination();
-            examination.CaseBreakdown.MeoSummary.Latest = new MeoSummaryEvent();
+            examination.MedicalTeam.MedicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId";
+            examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
             examination = examination.UpdateCaseStatus();
             Assert.False(examination.PendingDiscussionWithRepresentative);
         }

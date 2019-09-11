@@ -476,20 +476,7 @@ namespace MedicalExaminer.Models
 
         private static bool CalculateReadyForScrutiny(this Examination examination)
         {
-            if (examination.CaseBreakdown.AdmissionNotes.Latest != null)
-            {
-                if (examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral.Value)
-                {
-                    return true;
-                }
-            }
-
-            if (examination.CaseBreakdown.MeoSummary.Latest != null)
-            {
-                return true;
-            }
-
-            return false;
+            return !examination.Unassigned;
         }
 
         private static bool CalculateScrutinyNotesPending(Examination examination)
