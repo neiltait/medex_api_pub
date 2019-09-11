@@ -23,7 +23,7 @@ namespace MedicalExaminer.API.Extensions.Data
         public ExaminationProfile()
         {
             CreateMap<Examination, GetCoronerReferralDownloadResponse>()
-                .ForMember(dest => dest.AbleToIssueMCCD, opt => opt.MapFrom(src => src.CaseOutcome.OutcomeOfPrescrutiny == OverallOutcomeOfPreScrutiny.ReferToCoronerInvestigation ? false : true))
+                .ForMember(dest => dest.AbleToIssueMCCD, opt => opt.MapFrom(src => src.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner ? false : true))
                 .ForMember(dest => dest.CauseOfDeath1a, opt => opt.MapFrom((src, dest, destMember, context) =>
                 {
                     if (src.CaseBreakdown.QapDiscussion.Latest == null)
