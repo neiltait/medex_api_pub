@@ -244,9 +244,9 @@ example:
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
             // temporary fudges until the real migration framework is implemented.
-            UpdateDiscussionOutcomes(serviceProvider);
-            UpdateInvalidOrNullUserPermissionIds(serviceProvider);
-            UpdateLocations(serviceProvider, locationMigrationSettings);
+        //    UpdateDiscussionOutcomes(serviceProvider);
+        //    UpdateInvalidOrNullUserPermissionIds(serviceProvider);
+        //    UpdateLocations(serviceProvider, locationMigrationSettings);
             UpdateExaminationUrgencySort(serviceProvider, urgencySettings);
         }
 
