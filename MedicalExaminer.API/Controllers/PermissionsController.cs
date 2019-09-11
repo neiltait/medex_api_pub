@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -99,7 +100,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="meUserId">The User Identifier.</param>
         /// <returns>A GetPermissionsResponse.</returns>
         [HttpGet]
-        [AuthorizePermission(Common.Authorization.Permission.GetUserPermissions)]
+        [AuthorizePermission(Permission.GetUserPermissions)]
         public async Task<ActionResult<GetPermissionsResponse>> GetPermissions(string meUserId)
         {
             try
@@ -172,7 +173,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="permissionId">The Permission Id.</param>
         /// <returns>A GetPermissionResponse.</returns>
         [HttpGet("{permissionId}")]
-        [AuthorizePermission(Common.Authorization.Permission.GetUserPermission)]
+        [AuthorizePermission(Permission.GetUserPermission)]
         public async Task<ActionResult<GetPermissionResponse>> GetPermission(string meUserId, string permissionId)
         {
             if (!ModelState.IsValid)
@@ -230,15 +231,22 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="postPermission">The PostPermissionRequest.</param>
         /// <returns>A PostPermissionResponse.</returns>
         [HttpPost]
-        [AuthorizePermission(Common.Authorization.Permission.CreateUserPermission)]
+        [AuthorizePermission(Permission.CreateUserPermission)]
         public async Task<ActionResult<PostPermissionResponse>> CreatePermission(
-            string meUserId,
+            [Required] string meUserId,
             [FromBody]
             PostPermissionRequest postPermission)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new PostPermissionResponse());
+            }
+
+            var currentUser = await CurrentUser();
+
+            if (currentUser.UserId.Equals(meUserId))
+            {
+                return Forbid();
             }
 
             try
@@ -255,8 +263,6 @@ namespace MedicalExaminer.API.Controllers
                 {
                     return Forbid();
                 }
-
-                var currentUser = await CurrentUser();
 
                 var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
 
@@ -316,8 +322,8 @@ namespace MedicalExaminer.API.Controllers
         [HttpPut("{permissionId}")]
         [AuthorizePermission(Permission.UpdateUserPermission)]
         public async Task<ActionResult<PutPermissionResponse>> UpdatePermission(
-            string meUserId,
-            string permissionId,
+            [Required] string meUserId,
+            [Required] string permissionId,
             [FromBody]
             PutPermissionRequest putPermission)
         {
@@ -329,6 +335,11 @@ namespace MedicalExaminer.API.Controllers
                 }
 
                 var currentUser = await CurrentUser();
+
+                if (currentUser.UserId.Equals(meUserId))
+                {
+                    return Forbid();
+                }
 
                 var locationDocument = (await
                         _locationParentsService.Handle(
@@ -388,7 +399,6 @@ namespace MedicalExaminer.API.Controllers
             }
         }
 
-
         /// <summary>
         /// Deletes a Permission.
         /// </summary>
@@ -396,16 +406,23 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="permissionId"> permission Id </param>
         /// <returns>A Response.</returns>
         [HttpDelete("{permissionId}")]
-        [AuthorizePermission(Common.Authorization.Permission.DeleteUserPermission)]
+        [AuthorizePermission(Permission.DeleteUserPermission)]
         public async Task<ActionResult> DeletePermission(
-            string meUserId,
-            string permissionId)
+            [Required] string meUserId,
+            [Required] string permissionId)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
                     return BadRequest();
+                }
+
+                var currentUser = await CurrentUser();
+
+                if (currentUser.UserId.Equals(meUserId))
+                {
+                    return Forbid();
                 }
 
                 var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
@@ -442,7 +459,6 @@ namespace MedicalExaminer.API.Controllers
                 };
 
                 user.Permissions = temp;
-                var currentUser = await CurrentUser();
                 await _userUpdateService.Handle(new UserUpdateQuery(userUpdate, currentUser));
                 return Ok();
             }
