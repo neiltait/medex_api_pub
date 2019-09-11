@@ -200,7 +200,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void No_Urgency_Indicators_Selected_And_Less_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_Zero()
+        public void No_Urgency_Indicators_Selected_And_Less_Than_Five_Days_Gone_Since_Case_Created_Then_Case_Is_Urgent()
         {
             // Arrange
             var examination = new Examination
@@ -218,11 +218,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             // Assert
             result.IsUrgent().Should().BeFalse();
-            result.GetCaseUrgencySort().Should().Be(3);
         }
 
         [Fact]
-        public void All_Urgency_Indicators_Selected_And_Less_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_500()
+        public void All_Urgency_Indicators_Selected_And_Less_Than_Five_Days_Gone_Since_Case_Created_Then_Case_Is_Urgent()
         {
             // Arrange
             var examination = new Examination
@@ -240,11 +239,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             // Assert
             result.IsUrgent().Should().BeTrue();
-            result.GetCaseUrgencySort().Should().Be((500 * 100) + 3);
         }
 
         [Fact]
-        public void No_Urgency_Indicators_Selected_And_Greater_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_1000()
+        public void No_Urgency_Indicators_Selected_And_Greater_Than_Five_Days_Gone_Since_Case_Created_Then_Case_Is_Urgent()
         {
             // Arrange
             var examination = new Examination
@@ -262,7 +260,6 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             // Assert
             result.IsUrgent().Should().BeTrue();
-            result.GetCaseUrgencySort().Should().Be(100000 + 6);
         }
 
         [Fact]
@@ -447,7 +444,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void All_Urgency_Indicators_Selected_And_Greater_Than_Five_Days_Gone_Since_Case_Created_Then_The_Urgency_Score_Is_1500()
+        public void All_Urgency_Indicators_Selected_And_Greater_Than_Five_Days_Gone_Since_Case_Created_Then_Case_Is_Urgent()
         {
             // Arrange
             var examination = new Examination
@@ -465,7 +462,6 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             // Assert
             result.IsUrgent().Should().BeTrue();
-            result.GetCaseUrgencySort().Should().Be(((1000 + 500) * 100) + 6);
         }
 
         [Fact]
