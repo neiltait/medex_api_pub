@@ -1155,6 +1155,103 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
+        public void Examination_To_PatientCard_Statuses_When_Qap_And_Bereaved_Discussion_Are_Unable_To_Happen_Returns_Not_Applicable()
+        {
+            // Arrange
+            var appointmentDate = DateTime.Now.AddDays(1);
+            var appointmentTime = new TimeSpan(10, 30, 00);
+            var representative = new Representative()
+            {
+                AppointmentDate = appointmentDate,
+                AppointmentTime = appointmentTime,
+                FullName = "bob",
+                Informed = InformedAtDeath.Yes,
+                PhoneNumber = "1234",
+                PresentAtDeath = PresentAtDeath.Unknown,
+                Relationship = "milk man"
+            };
+
+            var examination = GenerateExamination();
+            examination.GivenNames = "GivenNames";
+            examination.Surname = "Surname";
+            examination.DateOfBirth = new DateTime(2000, 01, 12);
+            examination.DateOfDeath = new DateTime(2019, 08, 12);
+            examination.NhsNumber = "1234567890";
+
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
+            {
+                Name = "ConsultantResponsible",
+                Role = "Consultant",
+                Organisation = "Organisation",
+                Phone = "01148394748",
+                Notes = "Notes",
+                GMCNumber = "G12345"
+            };
+            examination.MedicalTeam.Qap.Name = "Qap Name";
+            examination.Representatives = new[] { representative };
+            examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+
+            examination.CaseBreakdown.PreScrutiny.Latest = null;
+            examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent
+            {
+                UserFullName = null,
+                UsersRole = null,
+                Created = null,
+                EventId = null,
+                UserId = null,
+                IsFinal = false,
+                ParticipantRole = null,
+                ParticipantOrganisation = null,
+                ParticipantPhoneNumber = null,
+                DateOfConversation = null,
+                TimeOfConversation = null,
+                DiscussionUnableHappen = true,
+                DiscussionDetails = null,
+                QapDiscussionOutcome = QapDiscussionOutcome.DiscussionUnableToHappen,
+                ParticipantName = null,
+                CauseOfDeath1a = null,
+                CauseOfDeath1b = null,
+                CauseOfDeath1c = null,
+                CauseOfDeath2 = null
+            };
+            examination.CaseBreakdown.BereavedDiscussion.Latest = new BereavedDiscussionEvent
+            {
+                UserFullName = null,
+                UsersRole = null,
+                Created = null,
+                EventId = null,
+                UserId = null,
+                IsFinal = false,
+                ParticipantFullName = null,
+                ParticipantRelationship = null,
+                ParticipantPhoneNumber = null,
+                PresentAtDeath = null,
+                InformedAtDeath = null,
+                DateOfConversation = null,
+                TimeOfConversation = null,
+                DiscussionUnableHappen = true,
+                DiscussionUnableHappenDetails = null,
+                DiscussionDetails = null,
+                BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted
+            };
+
+            examination.CaseOutcome.MccdIssued = true;
+            examination.CaseOutcome.CremationFormStatus = CremationFormStatus.Yes;
+            examination.CaseOutcome.GpNotifiedStatus = GPNotified.GPNotified;
+            examination.CaseOutcome.CoronerReferralSent = true;
+
+            // Action
+            var result = _mapper.Map<PatientCardItem>(examination);
+
+            // Assert
+            // Scrutiny Complete
+            result.IsScrutinyCompleted.Should().Be(StatusBarResult.Incomplete);
+            result.PreScrutinyEventEntered.Should().Be(StatusBarResult.Incomplete);
+            result.QapDiscussionEventEntered.Should().Be(StatusBarResult.NotApplicable);
+            result.BereavedDiscussionEventEntered.Should().Be(StatusBarResult.NotApplicable);
+        }
+
+        [Fact]
         public void Examination_To_PatientCard_Statuses_When_Case_Items_Not_Entered()
         {
             // Arrange
