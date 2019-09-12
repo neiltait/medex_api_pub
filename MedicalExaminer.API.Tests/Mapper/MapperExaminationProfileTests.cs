@@ -923,13 +923,13 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.BereavedInfoEntered.Should().Be(StatusBarResult.Complete);
             result.MeAssigned.Should().Be(StatusBarResult.Complete);
 
-            // Is Scrutiny Complete?
+            // Scrutiny Complete
             result.IsScrutinyCompleted.Should().Be(StatusBarResult.Complete);
             result.PreScrutinyEventEntered.Should().Be(StatusBarResult.Complete);
             result.QapDiscussionEventEntered.Should().Be(StatusBarResult.Complete);
             result.BereavedDiscussionEventEntered.Should().Be(StatusBarResult.Complete);
 
-            // Is Case Items Complete?
+            // Case Items Complete
             result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Complete);
             result.MccdIssued.Should().Be(StatusBarResult.NotApplicable);
             result.CremationFormInfoEntered.Should().Be(StatusBarResult.NotApplicable);
@@ -986,7 +986,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             var result = _mapper.Map<PatientCardItem>(examination);
 
             // Assert
-            // Is Case Items Complete?
+            // Case Items Complete
             result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Complete);
             result.MccdIssued.Should().Be(StatusBarResult.Complete);
             result.CremationFormInfoEntered.Should().Be(StatusBarResult.Complete);
@@ -994,61 +994,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.SentToCoroner.Should().Be(StatusBarResult.NotApplicable);
             result.CaseClosed.Should().Be(StatusBarResult.Complete);
         }
-
-        // Front end sends null if nhs number is unknown so there is no way to differentiate between unknown and not entered (incomplete)
-        //[Fact]
-        //public void Examination_To_PatientCard_Statuses_When_Basic_Details_Not_Entered()
-        //{
-        //    // Arrange
-        //    var appointmentDate = DateTime.Now.AddDays(1);
-        //    var appointmentTime = new TimeSpan(10, 30, 00);
-        //    var representative = new Representative()
-        //    {
-        //        AppointmentDate = appointmentDate,
-        //        AppointmentTime = appointmentTime,
-        //        FullName = "bob",
-        //        Informed = InformedAtDeath.Yes,
-        //        PhoneNumber = "1234",
-        //        PresentAtDeath = PresentAtDeath.Unknown,
-        //        Relationship = "milk man"
-        //    };
-
-        //    var examination = GenerateExamination();
-        //    examination.GivenNames = null;
-        //    examination.Surname = null;
-        //    examination.DateOfBirth = null;
-        //    examination.DateOfDeath = null;
-        //    examination.NhsNumber = null;
-
-        //    examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
-        //    {
-        //        Name = "ConsultantResponsible",
-        //        Role = "Consultant",
-        //        Organisation = "Organisation",
-        //        Phone = "01148394748",
-        //        Notes = "Notes",
-        //        GMCNumber = "G12345"
-        //    };
-        //    examination.MedicalTeam.Qap.Name = "Qap Name";
-        //    examination.Representatives = new[] { representative };
-        //    examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
-
-        //    examination.CaseOutcome.MccdIssued = true;
-        //    examination.CaseOutcome.CremationFormStatus = CremationFormStatus.Yes;
-        //    examination.CaseOutcome.GpNotifiedStatus = GPNotified.GPNotified;
-        //    examination.CaseOutcome.CoronerReferralSent = true;
-
-        //    // Action
-        //    var result = _mapper.Map<PatientCardItem>(examination);
-
-        //    // Assert
-        //    // Basic Details
-        //    result.BasicDetailsEntered.Should().Be(StatusBarResult.Incomplete);
-        //    result.NameEntered.Should().BeFalse();
-        //    result.DobEntered.Should().BeFalse();
-        //    result.DodEntered.Should().BeFalse();
-        //    result.NhsNumberEntered.Should().BeFalse();
-        //}
 
         [Fact]
         public void Examination_To_PatientCard_Statuses_When_Unknown_Basic_Details_Entered()
@@ -1202,7 +1147,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             var result = _mapper.Map<PatientCardItem>(examination);
 
             // Assert
-            // Is Scrutiny Complete?
+            // Scrutiny Complete
             result.IsScrutinyCompleted.Should().Be(StatusBarResult.Incomplete);
             result.PreScrutinyEventEntered.Should().Be(StatusBarResult.Incomplete);
             result.QapDiscussionEventEntered.Should().Be(StatusBarResult.Incomplete);
@@ -1257,7 +1202,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             var result = _mapper.Map<PatientCardItem>(examination);
 
             // Assert
-            // Is Case Items Complete?
+            // Case Items Complete
             result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Incomplete);
             result.MccdIssued.Should().Be(StatusBarResult.NotApplicable);
             result.CremationFormInfoEntered.Should().Be(StatusBarResult.NotApplicable);
@@ -1312,7 +1257,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             var result = _mapper.Map<PatientCardItem>(examination);
 
             // Assert
-            // Is Case Items Complete?
+            // Case Items Complete
             result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Unknown);
             result.CremationFormInfoEntered.Should().Be(StatusBarResult.Unknown);
         }
@@ -1361,7 +1306,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             var result = _mapper.Map<PatientCardItem>(examination);
 
             // Assert
-            // Is Case Items Complete?
+            // Case Items Complete
             result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Incomplete);
             result.MccdIssued.Should().Be(StatusBarResult.NotApplicable);
             result.CremationFormInfoEntered.Should().Be(StatusBarResult.NotApplicable);
@@ -1415,7 +1360,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             var result = _mapper.Map<PatientCardItem>(examination);
 
             // Assert
-            // Is Case Items Complete?
+            // Case Items Complete
             result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Incomplete);
             result.MccdIssued.Should().Be(StatusBarResult.Incomplete);
             result.CremationFormInfoEntered.Should().Be(StatusBarResult.Incomplete);
