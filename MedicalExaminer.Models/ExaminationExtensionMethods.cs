@@ -221,7 +221,8 @@ namespace MedicalExaminer.Models
         {
             if (examination.CaseBreakdown.PreScrutiny?.Latest != null
                 && examination.CaseBreakdown.QapDiscussion?.Latest != null
-                && examination.CaseBreakdown.BereavedDiscussion?.Latest != null)
+                && examination.CaseBreakdown.BereavedDiscussion?.Latest != null
+                && examination.ScrutinyConfirmed)
             {
                 return StatusBarResult.Complete;
             }

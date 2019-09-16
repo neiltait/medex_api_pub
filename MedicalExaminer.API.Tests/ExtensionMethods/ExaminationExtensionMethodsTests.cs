@@ -2141,6 +2141,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             // Arrange
             var examination = new Examination
             {
+                ScrutinyConfirmed = false,
+
                 CaseBreakdown = new CaseBreakDown
                 {
                     PreScrutiny = new PreScrutinyEventContainer
@@ -2171,6 +2173,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             // Arrange
             var examination = new Examination
             {
+                ScrutinyConfirmed = true,
+
                 CaseBreakdown = new CaseBreakDown
                 {
                     PreScrutiny = new PreScrutinyEventContainer

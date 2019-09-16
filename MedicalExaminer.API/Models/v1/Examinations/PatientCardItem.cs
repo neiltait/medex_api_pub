@@ -196,6 +196,11 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public StatusBarResult BereavedDiscussionEventEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
+        /// Status flag: ME confirmation of scrutiny
+        /// </summary>
+        public StatusBarResult MeScrutinyConfirmed { get; set; } = StatusBarResult.Incomplete;
+
+        /// <summary>
         /// Main Status flag: Is Case Items Completed
         /// </summary>
         public StatusBarResult IsCaseItemsCompleted { get; set; } = StatusBarResult.Incomplete;

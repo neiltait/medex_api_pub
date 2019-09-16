@@ -504,6 +504,8 @@ namespace MedicalExaminer.API.Extensions.Data
 
                         return StatusBarResult.Incomplete;
                     }))
+                .ForMember(patientCard => patientCard.MeScrutinyConfirmed, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.ScrutinyConfirmed ? StatusBarResult.Complete : StatusBarResult.Incomplete))
                 .ForMember(patientCard => patientCard.IsScrutinyCompleted, opt => opt.MapFrom(
                     (source, dest, destMember, context) => source.CalculateScrutinyCompleteStatus()))
                 .ForMember(patientCard => patientCard.MccdIssued, opt => opt.MapFrom(

@@ -896,6 +896,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             examination.MedicalTeam.Qap.Name = "Qap Name";
             examination.Representatives = new[] { representative };
             examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+            examination.ScrutinyConfirmed = true;
 
             examination.CaseOutcome.CaseOutcomeSummary = CaseOutcomeSummary.ReferToCoroner;
             examination.CaseOutcome.MccdIssued = true;
@@ -928,6 +929,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.PreScrutinyEventEntered.Should().Be(StatusBarResult.Complete);
             result.QapDiscussionEventEntered.Should().Be(StatusBarResult.Complete);
             result.BereavedDiscussionEventEntered.Should().Be(StatusBarResult.Complete);
+            result.MeScrutinyConfirmed.Should().Be(StatusBarResult.Complete);
 
             // Case Items Complete
             result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Complete);
@@ -1133,6 +1135,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             examination.MedicalTeam.Qap.Name = "Qap Name";
             examination.Representatives = new[] { representative };
             examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+            examination.ScrutinyConfirmed = false;
 
             examination.CaseBreakdown.PreScrutiny.Latest = null;
             examination.CaseBreakdown.QapDiscussion.Latest = null;
@@ -1152,6 +1155,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.PreScrutinyEventEntered.Should().Be(StatusBarResult.Incomplete);
             result.QapDiscussionEventEntered.Should().Be(StatusBarResult.Incomplete);
             result.BereavedDiscussionEventEntered.Should().Be(StatusBarResult.Incomplete);
+            result.MeScrutinyConfirmed.Should().Be(StatusBarResult.Incomplete);
         }
 
         [Fact]
