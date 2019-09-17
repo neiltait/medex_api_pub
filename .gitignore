@@ -59,3 +59,4 @@ sharedsettings.Development.json
 MedicalExaminer.ReferenceDataLoader/MedicalExaminer.ReferenceDataLoader.xml
 MedicalExaminer.ToolBox.SeedDatabase/Properties/launchSettings.json
 MedicalExaminer.ToolBox.SeedDatabase.AssertTests/Properties/launchSettings.json
+MedicalExaminer.ToolBox.TearDownDatabase/Properties/launchSettings.json
