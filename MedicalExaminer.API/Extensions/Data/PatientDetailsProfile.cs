@@ -18,6 +18,7 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<PutPatientDetailsRequest, PatientDetails>();
             CreateMap<PatientDetails, Examination>()
                 .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
+                .ForMember(examination => examination.CaseCompleted, opt => opt.Ignore())
                 .ForMember(examination => examination.MedicalExaminerOfficeResponsibleName, opt => opt.Ignore())
                 .ForMember(examination => examination.UrgencySort, opt => opt.Ignore())
                 .ForMember(examination => examination.LastAdmission, opt => opt.Ignore())
