@@ -41,6 +41,7 @@ namespace MedicalExaminer.ToolBox.SeedDatabase
                 });
 
             var cosmosDbSettings = services.ConfigureSettings<CosmosDbSettings>(configuration, "CosmosDB");
+            services.ConfigureSettings<SeedDatabaseSettings>(configuration, "SeedDatabase");
 
             services.ConfigureToolBox(cosmosDbSettings);
 
