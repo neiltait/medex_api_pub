@@ -4,9 +4,13 @@ using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models
 {
+    /// <summary>
+    /// Patient Details Model.
+    /// </summary>
     public class PatientDetails
     {
         public bool CulturalPriority { get; set; }
+
         public bool FaithPriority { get; set; }
 
         public bool ChildPriority { get; set; }
@@ -17,15 +21,11 @@ namespace MedicalExaminer.Models
 
         public string PriorityDetails { get; set; }
 
-        public bool CaseCompleted { get; set; }
-
         public CoronerStatus CoronerStatus { get; set; }
 
         public string PlaceDeathOccured { get; set; }
 
         public string GenderDetails { get; set; }
-
-        public string Id { get; set; }
 
         public string MedicalExaminerOfficeResponsible { get; set; }
 
