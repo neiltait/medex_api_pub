@@ -57,3 +57,5 @@ Thumbs.db
 MedicalExaminer.API/appsettings.Staging.json
 sharedsettings.Development.json
 MedicalExaminer.ReferenceDataLoader/MedicalExaminer.ReferenceDataLoader.xml
+MedicalExaminer.ToolBox.SeedDatabase/example/**/*.json
+**/launchSettings.json
