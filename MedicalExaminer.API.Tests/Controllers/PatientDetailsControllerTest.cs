@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
@@ -254,6 +255,108 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
+        public void UpdatePatientDetails_ReturnsForbid_WhenNoPermissionToUpdateAtExistingLocation()
+        {
+            // Arrange
+            SetupAuthorize(AuthorizationResult.Failed());
+            var expectedExaminationId = "expectedExaminationId";
+            var expectedExamination = new Examination()
+            {
+                ExaminationId = expectedExaminationId,
+            };
+
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var patientDetailsUpdateService = new Mock<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>>();
+
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
+                .Returns(Task.FromResult(AuthorizedUser));
+
+            examinationRetrievalService
+                .Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(expectedExamination));
+
+            patientDetailsUpdateService
+                .Setup(pdus => pdus.Handle(It.IsAny<PatientDetailsUpdateQuery>()))
+                .Returns(Task.FromResult(expectedExamination));
+
+            Controller = new PatientDetailsController(
+                LoggerMock.Object,
+                Mapper,
+                UsersRetrievalByOktaIdServiceMock.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                examinationRetrievalService.Object,
+                patientDetailsUpdateService.Object,
+                _locationParentsQueryServiceMock.Object);
+
+            Controller.ControllerContext = GetControllerContext();
+
+            var expectedPutPatientDetailsRequest = new PutPatientDetailsRequest();
+
+            // Act
+            var response = Controller.UpdatePatientDetails(expectedExaminationId, expectedPutPatientDetailsRequest).Result;
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutPatientDetailsResponse>>().Subject;
+            taskResult.Result.Should().BeAssignableTo<ForbidResult>();
+        }
+
+        [Fact]
+        public void UpdatePatientDetails_ReturnsForbid_WhenNoPermissionAtNewMEOfficeLocation()
+        {
+            // Arrange
+            AuthorizationServiceMock
+                .SetupSequence(aus => aus.AuthorizeAsync(
+                    It.IsAny<ClaimsPrincipal>(),
+                    It.IsAny<ILocationPath>(),
+                    It.IsAny<IEnumerable<IAuthorizationRequirement>>()))
+                .Returns(Task.FromResult(AuthorizationResult.Success()))
+                .Returns(Task.FromResult(AuthorizationResult.Failed()));
+            var expectedExaminationId = "expectedExaminationId";
+            var expectedExamination = new Examination()
+            {
+                ExaminationId = expectedExaminationId,
+            };
+
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var patientDetailsUpdateService = new Mock<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>>();
+
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
+                .Returns(Task.FromResult(AuthorizedUser));
+
+            examinationRetrievalService
+                .Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(expectedExamination));
+
+            patientDetailsUpdateService
+                .Setup(pdus => pdus.Handle(It.IsAny<PatientDetailsUpdateQuery>()))
+                .Returns(Task.FromResult(expectedExamination));
+
+            Controller = new PatientDetailsController(
+                LoggerMock.Object,
+                Mapper,
+                UsersRetrievalByOktaIdServiceMock.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                examinationRetrievalService.Object,
+                patientDetailsUpdateService.Object,
+                _locationParentsQueryServiceMock.Object);
+
+            Controller.ControllerContext = GetControllerContext();
+
+            var expectedPutPatientDetailsRequest = new PutPatientDetailsRequest();
+
+            // Act
+            var response = Controller.UpdatePatientDetails(expectedExaminationId, expectedPutPatientDetailsRequest).Result;
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutPatientDetailsResponse>>().Subject;
+            taskResult.Result.Should().BeAssignableTo<ForbidResult>();
+        }
+
+        [Fact]
         public void UpdatePatientDetails_ReturnsOkay_WhenUpdateSuccessful()
         {
             // Arrange
@@ -301,6 +404,58 @@ namespace MedicalExaminer.API.Tests.Controllers
             var okObjectResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             var okObjectResultValue = okObjectResult.Value.Should().BeAssignableTo<PutPatientDetailsResponse>().Subject;
             okObjectResultValue.Header.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void UpdatePatientDetails_DoesNotReOpenCase_WhenCaseClosed()
+        {
+            // Arrange
+            SetupAuthorize(AuthorizationResult.Success());
+            var expectedExaminationId = "expectedExaminationId";
+            var expectedExamination = new Examination()
+            {
+                ExaminationId = expectedExaminationId,
+                CaseCompleted = true,
+            };
+
+            var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
+            var patientDetailsUpdateService = new Mock<IAsyncQueryHandler<PatientDetailsUpdateQuery, Examination>>();
+
+            UsersRetrievalByOktaIdServiceMock
+                .Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
+                .Returns(Task.FromResult(AuthorizedUser));
+
+            examinationRetrievalService
+                .Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>()))
+                .Returns(Task.FromResult(expectedExamination));
+
+            patientDetailsUpdateService
+                .Setup(pdus => pdus.Handle(It.IsAny<PatientDetailsUpdateQuery>()))
+                .Returns(Task.FromResult(expectedExamination));
+
+            Controller = new PatientDetailsController(
+                LoggerMock.Object,
+                Mapper,
+                UsersRetrievalByOktaIdServiceMock.Object,
+                AuthorizationServiceMock.Object,
+                PermissionServiceMock.Object,
+                examinationRetrievalService.Object,
+                patientDetailsUpdateService.Object,
+                _locationParentsQueryServiceMock.Object);
+
+            Controller.ControllerContext = GetControllerContext();
+
+            var expectedPutPatientDetailsRequest = new PutPatientDetailsRequest();
+
+            // Act
+            var response = Controller.UpdatePatientDetails(expectedExaminationId, expectedPutPatientDetailsRequest).Result;
+
+            // Assert
+            var taskResult = response.Should().BeOfType<ActionResult<PutPatientDetailsResponse>>().Subject;
+            var okObjectResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
+            var okObjectResultValue = okObjectResult.Value.Should().BeAssignableTo<PutPatientDetailsResponse>().Subject;
+            okObjectResultValue.Header.Should().NotBeNull();
+            expectedExamination.CaseCompleted.Should().BeTrue();
         }
     }
 }
