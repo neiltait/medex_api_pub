@@ -39,22 +39,16 @@ namespace MedicalExaminer.Common.Services.Examination
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var urgencyScoreKey = DateTime.Now.UrgencyKey();
-
             var examinations = DatabaseAccess
                 .GetItemsAsync<Models.Examination>(ConnectionSettings, e => e.CaseCompleted == false)
                 .Result;
 
             foreach (var examination in examinations)
             {
-                if (examination.UrgencySort == null
-                    || examination.UrgencySort.ContainsKey(urgencyScoreKey) == false)
-                {
-                    examination.UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort);
+                examination.UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort);
 
-                    examination.LastModifiedBy = "UpdateExaminationUrgencySortService";
-                    examination.ModifiedAt = DateTimeOffset.UtcNow;
-                }
+                examination.LastModifiedBy = "UpdateExaminationUrgencySortService";
+                examination.ModifiedAt = DateTimeOffset.UtcNow;
 
                 await DatabaseAccess.UpdateItemAsync(ConnectionSettings, examination);
             }

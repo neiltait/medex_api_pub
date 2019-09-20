@@ -418,10 +418,11 @@ namespace MedicalExaminer.Models
 
         private static int CalculateCaseUrgencySortOrder(Examination examination, DateTime forDate)
         {
-            const int defaultScoreMultiplier = 100;
+            int defaultScoreMultiplier = (int)TimeSpan.FromDays(1).TotalSeconds;
 
-            var daysSinceCreated = (forDate.Date - examination.CreatedAt.Date).Days;
-            var sortOrder = Math.Max(0, Math.Min(defaultScoreMultiplier, daysSinceCreated));
+            // Count backwards from midnight at the end of the day.
+            var secondsSinceCreated = (int)(forDate.Date.AddDays(1) - examination.CreatedAt).TotalSeconds;
+            var sortOrder = Math.Max(0, Math.Min(defaultScoreMultiplier, secondsSinceCreated));
             var urgencyScore = CalculateCaseUrgencyScore(examination, forDate);
 
             sortOrder += urgencyScore * defaultScoreMultiplier;
@@ -511,20 +512,7 @@ namespace MedicalExaminer.Models
 
         private static bool CalculateReadyForScrutiny(this Examination examination)
         {
-            if (examination.CaseBreakdown.AdmissionNotes.Latest != null)
-            {
-                if (examination.CaseBreakdown.AdmissionNotes.Latest.ImmediateCoronerReferral.Value)
-                {
-                    return true;
-                }
-            }
-
-            if (examination.CaseBreakdown.MeoSummary.Latest != null)
-            {
-                return true;
-            }
-
-            return false;
+            return !examination.Unassigned;
         }
 
         private static bool CalculateScrutinyNotesPending(Examination examination)
