@@ -23,14 +23,14 @@ namespace MedicalExaminer.Common.Services.User
         }
 
         /// <inheritdoc/>
-        public override Task<MeUser> Handle(UserRetrievalByEmailQuery param)
+        public override async Task<MeUser> Handle(UserRetrievalByEmailQuery param)
         {
             if (param == null)
             {
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var result = GetItemAsync(x => x.Email == param.EmailAddress);
+            var result = await GetItemAsync(x => x.Email.ToLower() == param.EmailAddress.ToLower());
             return result;
         }
     }
