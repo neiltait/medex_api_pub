@@ -2254,7 +2254,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void CalculateCaseItemsCompleteStatus_When_No_Case_Items_Entered_Returns_Incomplete()
+        public void CalculateCaseItemsCompleteStatus_When_Case_Outcome_Summary_Is_IssueMCCD_And_No_Case_Items_Entered_Returns_Incomplete()
         {
             // Arrange
             var examination = new Examination
@@ -2267,7 +2267,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                     GpNotifiedStatus = null,
                     CoronerReferralSent = false,
                 },
-                CaseCompleted = true
+                CaseCompleted = false
             };
 
             // Act
@@ -2278,7 +2278,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void CalculateCaseItemsCompleteStatus_When_All_Case_Items_Entered_Returns_Complete()
+        public void CalculateCaseItemsCompleteStatus_When_Case_Outcome_Summary_Is_IssueMCCD_And_When_All_Case_Items_Entered_Returns_Complete()
         {
             // Arrange
             var examination = new Examination
@@ -2301,7 +2301,31 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void CalculateCaseItemsCompleteStatus_When_Any_Unknown_Case_Items_Entered_Returns_Unknown()
+        public void CalculateCaseItemsCompleteStatus_When_Case_Outcome_Summary_Is_IssueMCCD_And_When_Case_Not_Closed_Returns_Incomplete()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                CaseOutcome = new CaseOutcome
+                {
+                    CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
+                    MccdIssued = true,
+                    CremationFormStatus = CremationFormStatus.Yes,
+                    GpNotifiedStatus = GPNotified.GPNotified,
+                    CoronerReferralSent = false,
+                },
+                CaseCompleted = false
+            };
+
+            // Act
+            var additionalDetailsEntered = examination.CalculateCaseItemsCompleteStatus();
+
+            // Assert
+            additionalDetailsEntered.Should().Be(StatusBarResult.Incomplete);
+        }
+
+        [Fact]
+        public void CalculateCaseItemsCompleteStatus_When_Case_Outcome_Summary_Is_IssueMCCD_And_When_Any_Unknown_Case_Items_Entered_Returns_Unknown()
         {
             // Arrange
             var examination = new Examination
@@ -2314,7 +2338,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                     GpNotifiedStatus = GPNotified.GPNotified,
                     CoronerReferralSent = true,
                 },
-                CaseCompleted = true
+                CaseCompleted = false
             };
 
             // Act
@@ -2338,7 +2362,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                     GpNotifiedStatus = GPNotified.GPNotified,
                     CoronerReferralSent = false,
                 },
-                CaseCompleted = true
+                CaseCompleted = false
             };
 
             // Act
@@ -2373,7 +2397,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void CalculateCaseItemsCompleteStatus_When_Case_Not_Closed_Returns_Incomplete()
+        public void CalculateCaseItemsCompleteStatus_When_Refer_To_Coroner_And_CoronerReferralSent_Is_True_And_Case_Is_Not_Completed_Entered_Returns_Incomplete()
         {
             // Arrange
             var examination = new Examination
@@ -2381,10 +2405,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 CaseOutcome = new CaseOutcome
                 {
                     CaseOutcomeSummary = CaseOutcomeSummary.ReferToCoroner,
-                    MccdIssued = null,
-                    CremationFormStatus = null,
-                    GpNotifiedStatus = null,
-                    CoronerReferralSent = false,
+                    MccdIssued = true,
+                    CremationFormStatus = CremationFormStatus.Yes,
+                    GpNotifiedStatus = GPNotified.GPNotified,
+                    CoronerReferralSent = true,
                 },
                 CaseCompleted = false
             };

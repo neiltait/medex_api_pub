@@ -232,14 +232,10 @@ namespace MedicalExaminer.Models
 
         public static StatusBarResult CalculateCaseItemsCompleteStatus(this Examination examination)
         {
-            if (examination.CaseOutcome.CremationFormStatus == CremationFormStatus.Unknown)
-            {
-                return StatusBarResult.Unknown;
-            }
-
             if (examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner)
             {
-                if (examination.CaseOutcome.CoronerReferralSent)
+                if (examination.CaseOutcome.CoronerReferralSent
+                    && examination.CaseCompleted)
                 {
                     return StatusBarResult.Complete;
                 }
@@ -248,6 +244,11 @@ namespace MedicalExaminer.Models
             }
             else
             {
+                if (examination.CaseOutcome.CremationFormStatus == CremationFormStatus.Unknown)
+                {
+                    return StatusBarResult.Unknown;
+                }
+
                 if (examination.CaseOutcome.CremationFormStatus != null
                     && examination.CaseOutcome.MccdIssued != null
                     && examination.CaseOutcome.GpNotifiedStatus != null
