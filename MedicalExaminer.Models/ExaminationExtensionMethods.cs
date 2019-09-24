@@ -242,6 +242,24 @@ namespace MedicalExaminer.Models
 
                 return StatusBarResult.Incomplete;
             }
+            else if (examination.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.IssueMCCDWith100a)
+            {
+                if (examination.CaseOutcome.CremationFormStatus == CremationFormStatus.Unknown)
+                {
+                    return StatusBarResult.Unknown;
+                }
+
+                if (examination.CaseOutcome.CremationFormStatus != null
+                    && examination.CaseOutcome.MccdIssued != null
+                    && examination.CaseOutcome.GpNotifiedStatus != null
+                    && examination.CaseOutcome.CoronerReferralSent
+                    && examination.CaseCompleted)
+                {
+                    return StatusBarResult.Complete;
+                }
+
+                return StatusBarResult.Incomplete;
+            }
             else
             {
                 if (examination.CaseOutcome.CremationFormStatus == CremationFormStatus.Unknown)
