@@ -941,6 +941,86 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
+        public void Examination_To_PatientCard_Statuses_When_All_Required_Details_Entered_When_Refer_To_Coroner_100a()
+        {
+            // Arrange
+            var appointmentDate = DateTime.Now.AddDays(1);
+            var appointmentTime = new TimeSpan(10, 30, 00);
+            var representative = new Representative()
+            {
+                AppointmentDate = appointmentDate,
+                AppointmentTime = appointmentTime,
+                FullName = "bob",
+                Informed = InformedAtDeath.Yes,
+                PhoneNumber = "1234",
+                PresentAtDeath = PresentAtDeath.Unknown,
+                Relationship = "milk man"
+            };
+
+            var examination = GenerateExamination();
+            examination.GivenNames = "GivenNames";
+            examination.Surname = "Surname";
+            examination.DateOfBirth = new DateTime(2000, 01, 12);
+            examination.DateOfDeath = new DateTime(2019, 08, 12);
+            examination.NhsNumber = "1234567890";
+
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
+            {
+                Name = "ConsultantResponsible",
+                Role = "Consultant",
+                Organisation = "Organisation",
+                Phone = "01148394748",
+                Notes = "Notes",
+                GMCNumber = "G12345"
+            };
+            examination.MedicalTeam.Qap.Name = "Qap Name";
+            examination.Representatives = new[] { representative };
+            examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+            examination.ScrutinyConfirmed = true;
+
+            examination.CaseOutcome.CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCDWith100a;
+            examination.CaseOutcome.MccdIssued = true;
+            examination.CaseOutcome.CremationFormStatus = CremationFormStatus.Yes;
+            examination.CaseOutcome.GpNotifiedStatus = GPNotified.GPNotified;
+            examination.CaseOutcome.CoronerReferralSent = true;
+            examination.CaseCompleted = true;
+
+            // Action
+            var result = _mapper.Map<PatientCardItem>(examination);
+
+            // Assert
+            // Basic Details
+            result.BasicDetailsEntered.Should().Be(StatusBarResult.Complete);
+            result.NameEntered.Should().Be(StatusBarResult.Complete);
+            result.DobEntered.Should().Be(StatusBarResult.Complete);
+            result.DodEntered.Should().Be(StatusBarResult.Complete);
+            result.NhsNumberEntered.Should().Be(StatusBarResult.Complete);
+
+            // Additional Details
+            result.AdditionalDetailsEntered.Should().Be(StatusBarResult.Complete);
+            result.LatestAdmissionDetailsEntered.Should().Be(StatusBarResult.Complete);
+            result.DoctorInChargeEntered.Should().Be(StatusBarResult.Complete);
+            result.QapEntered.Should().Be(StatusBarResult.Complete);
+            result.BereavedInfoEntered.Should().Be(StatusBarResult.Complete);
+            result.MeAssigned.Should().Be(StatusBarResult.Complete);
+
+            // Scrutiny Complete
+            result.IsScrutinyCompleted.Should().Be(StatusBarResult.Complete);
+            result.PreScrutinyEventEntered.Should().Be(StatusBarResult.Complete);
+            result.QapDiscussionEventEntered.Should().Be(StatusBarResult.Complete);
+            result.BereavedDiscussionEventEntered.Should().Be(StatusBarResult.Complete);
+            result.MeScrutinyConfirmed.Should().Be(StatusBarResult.Complete);
+
+            // Case Items Complete
+            result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Complete);
+            result.MccdIssued.Should().Be(StatusBarResult.Complete);
+            result.CremationFormInfoEntered.Should().Be(StatusBarResult.Complete);
+            result.GpNotified.Should().Be(StatusBarResult.Complete);
+            result.SentToCoroner.Should().Be(StatusBarResult.Complete);
+            result.CaseClosed.Should().Be(StatusBarResult.Complete);
+        }
+
+        [Fact]
         public void Examination_To_PatientCard_Statuses_When_All_Required_Details_Entered_When_Not_Refer_To_Coroner()
         {
             // Arrange
