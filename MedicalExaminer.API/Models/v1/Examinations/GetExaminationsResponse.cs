@@ -17,6 +17,11 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// Count of Urgent Cases.
         /// </summary>
         public int CountOfUrgentCases { get; set; }
+        
+        /// <summary>
+        /// Count of cases filtered by case status, not really, filters
+        /// </summary>
+        public int CountOfFilteredCases { get; set; }
 
         /// <summary>
         /// Count Of Have Unknown Basic Details
@@ -62,10 +67,5 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         ///     List of Examinations.
         /// </summary>
         public IEnumerable<PatientCardItem> Examinations { get; set; }
-
-        /// <summary>
-        /// Count of cases filtered by case status, not really, filters
-        /// </summary>
-        public int CountOfFilteredCases { get; set; }
     }
 }
