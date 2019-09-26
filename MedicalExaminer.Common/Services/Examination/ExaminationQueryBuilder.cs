@@ -10,7 +10,7 @@ namespace MedicalExaminer.Common.Services.Examination
 {
     public class ExaminationsQueryExpressionBuilder
     {
-        public Expression<Func<Models.Examination, bool>> GetPredicate(ExaminationsRetrievalQuery queryObject)
+        public Expression<Func<Models.Examination, bool>> GetPredicate(ExaminationsRetrievalQuery queryObject, bool isDashboardCount)
         {
             var permissedLocationFilter = GetPermissedLocationPredicate(queryObject.PermissedLocations);
             var locationFilter = GetLocationPredicate(queryObject.FilterLocationId);
@@ -20,9 +20,13 @@ namespace MedicalExaminer.Common.Services.Examination
 
             var predicate = permissedLocationFilter
                 .And(locationFilter)
-                .And(caseStatusFilter)
                 .And(userIdFilter)
                 .And(openCases);
+
+            if (!isDashboardCount)
+            {
+                predicate = predicate.And(caseStatusFilter);
+            }
 
             return predicate;
         }

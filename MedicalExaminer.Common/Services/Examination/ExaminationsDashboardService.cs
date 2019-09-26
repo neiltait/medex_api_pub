@@ -43,10 +43,9 @@ namespace MedicalExaminer.Common.Services.Examination
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var baseQuery = GetBaseQuery(param);
+            var examinationCountQuery = GetBaseQuery(param, true); // this is all examinations
 
-            // Just get all the examinations once from cosmos
-            var examinations = (await GetItemsAsync(baseQuery)).ToList().AsQueryable();
+            var examinations = (await GetItemsAsync(examinationCountQuery)).ToList().AsQueryable();
 
             // Now do all the counting our side.
             var overView = new ExaminationsOverview
@@ -106,9 +105,9 @@ namespace MedicalExaminer.Common.Services.Examination
             }
         }
 
-        private Expression<Func<Models.Examination, bool>> GetBaseQuery(ExaminationsRetrievalQuery param)
+        private Expression<Func<Models.Examination, bool>> GetBaseQuery(ExaminationsRetrievalQuery param, bool isDashboardCount)
         {
-            return _baseQueryBuilder.GetPredicate(param);
+            return _baseQueryBuilder.GetPredicate(param, isDashboardCount);
         }
     }
 }
