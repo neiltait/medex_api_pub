@@ -129,7 +129,8 @@ namespace MedicalExaminer.API.Controllers
                 CountOfCasesPendingDiscussionWithQAP = dashboardOverview.CountOfPendingDiscussionWithQAP,
                 CountOfCasesPendingDiscussionWithRepresentative = dashboardOverview.CountOfPendingDiscussionWithRepresentative,
                 CountOfCasesHaveFinalCaseOutstandingOutcomes = dashboardOverview.CountOfHaveFinalCaseOutstandingOutcomes,
-                Examinations = examinations.Select(e => Mapper.Map<PatientCardItem>(e)).ToList()
+                Examinations = examinations.Select(e => Mapper.Map<PatientCardItem>(e)).ToList(),
+                CountOfFilteredCases = dashboardOverview.CountOfFilteredCases,
             };
 
             var locations = (await _locationRetrievalByQueryHandler.Handle(

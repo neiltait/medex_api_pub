@@ -59,7 +59,8 @@ namespace MedicalExaminer.Common.Services.Examination
                 CountOfPendingDiscussionWithRepresentative = GetCount(examinations, CaseStatus.PendingDiscussionWithRepresentative),
                 CountOfHaveFinalCaseOutstandingOutcomes = GetCount(examinations, CaseStatus.HaveFinalCaseOutstandingOutcomes),
                 TotalCases = examinations.Count(),
-                CountOfUrgentCases = GetCount(examinations, x => x.IsUrgent() && x.CaseCompleted == false)
+                CountOfUrgentCases = GetCount(examinations, x => x.IsUrgent() && x.CaseCompleted == false),
+                CountOfFilteredCases = param.FilterCaseStatus.HasValue ? GetCount(examinations, param.FilterCaseStatus.Value) : examinations.Count()
             };
 
             return overView;

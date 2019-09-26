@@ -51,5 +51,10 @@
         /// Count Of Have Final Case Outstanding Outcomes
         /// </summary>
         public int CountOfHaveFinalCaseOutstandingOutcomes { get; set; }
+
+        /// <summary>
+        /// Count of cases that meet the filtered status
+        /// </summary>
+        public int CountOfFilteredCases { get; set; }
     }
 }
