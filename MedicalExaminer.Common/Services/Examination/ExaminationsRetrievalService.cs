@@ -46,7 +46,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 throw new ArgumentNullException(nameof(param));
             }
 
-            var predicate = _examinationQueryBuilder.GetPredicate(param);
+            var predicate = _examinationQueryBuilder.GetPredicate(param, false);
             switch (param.FilterOrderBy)
             {
                 case ExaminationsOrderBy.Urgency:
