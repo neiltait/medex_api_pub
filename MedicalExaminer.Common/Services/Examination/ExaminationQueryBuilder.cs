@@ -18,22 +18,14 @@ namespace MedicalExaminer.Common.Services.Examination
             var userIdFilter = GetUserIdPredicate(queryObject.FilterUserId);
             var openCases = GetOpenCasesPredicate(queryObject.FilterOpenCases);
 
-            Expression<Func<Models.Examination, bool>> predicate = null;
+            var predicate = permissedLocationFilter
+                .And(locationFilter)
+                .And(userIdFilter)
+                .And(openCases);
 
-            if (isDashboardCount)
+            if (!isDashboardCount)
             {
-                predicate = permissedLocationFilter
-                .And(locationFilter)
-                .And(userIdFilter)
-                .And(openCases);
-            }
-            else
-            {
-                predicate = permissedLocationFilter
-                .And(locationFilter)
-                .And(caseStatusFilter)
-                .And(userIdFilter)
-                .And(openCases);
+                predicate = predicate.And(caseStatusFilter);
             }
 
             return predicate;
