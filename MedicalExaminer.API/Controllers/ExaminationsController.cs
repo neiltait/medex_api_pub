@@ -50,6 +50,8 @@ namespace MedicalExaminer.API.Controllers
 
         private readonly IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> _locationRetrievalByQueryHandler;
 
+        private readonly IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>> _locationsRetrievalByQueryHandler;
+
         private readonly IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> _usersRetrievalService;
 
         /// <summary>
@@ -77,7 +79,8 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview> examinationsDashboardService,
             IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService,
             IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler,
-            IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService)
+            IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
+            IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>> locationsRetrievalByQueryHandler)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _examinationCreationService = examinationCreationService;
@@ -86,6 +89,7 @@ namespace MedicalExaminer.API.Controllers
             _locationParentsService = locationParentsService;
             _locationRetrievalByQueryHandler = locationRetrievalByQueryHandler;
             _usersRetrievalService = usersRetrievalService;
+            _locationsRetrievalByQueryHandler = locationsRetrievalByQueryHandler;
         }
 
         /// <summary>
@@ -134,9 +138,18 @@ namespace MedicalExaminer.API.Controllers
             };
 
             var locations = (await _locationRetrievalByQueryHandler.Handle(
-                    new LocationsRetrievalByQuery(null, null, true, false, permissedLocations))).ToList();
+                    new LocationsRetrievalByQuery(null, null, true, true, permissedLocations))).ToList();
 
-            response.AddLookup(LocationFilterLookupKey, Mapper.Map<IEnumerable<Location>, IEnumerable<LocationLookup>>(locations));
+            var allLocations = (await _locationsRetrievalByQueryHandler.Handle(new LocationsParentsQuery(locations.Select(x => x.LocationId)))).ToList();
+
+            var flatternedLocations = allLocations.SelectMany(x => x.Value);
+            var distinctLocationIds = flatternedLocations.Select(x => x.LocationId).Distinct();
+            var distinctLocations = distinctLocationIds.Select(id => flatternedLocations.First(x => x.LocationId == id));
+            var orderedDistinctLocations = distinctLocations.OrderBy(x => x.NationalLocationId)
+                                .ThenBy(x => x.RegionLocationId)
+                                .ThenBy(x => x.TrustLocationId)
+                                .ThenBy(x => x.SiteLocationId).ToList();
+            response.AddLookup(LocationFilterLookupKey, Mapper.Map<IEnumerable<Location>, IEnumerable<LocationLookup>>(orderedDistinctLocations));
 
             response.AddLookup(UserFilterLookupKey, await GetUserLookupForLocations(locations));
 
