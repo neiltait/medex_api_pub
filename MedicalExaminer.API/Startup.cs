@@ -249,7 +249,7 @@ example:
         //    UpdateDiscussionOutcomes(serviceProvider);
         //    UpdateInvalidOrNullUserPermissionIds(serviceProvider);
         //    UpdateLocations(serviceProvider, locationMigrationSettings);
-            UpdateExaminationUrgencySort(serviceProvider, urgencySettings);
+        //    UpdateExaminationUrgencySort(serviceProvider, urgencySettings);
         }
 
         /// <summary>
