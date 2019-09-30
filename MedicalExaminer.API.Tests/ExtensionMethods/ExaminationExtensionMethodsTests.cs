@@ -1938,9 +1938,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         AppointmentDate = new DateTime(2019, 2, 24),
                         AppointmentTime = new TimeSpan(11, 30, 0),
                         FullName = "fullName",
-                        Informed = InformedAtDeath.Yes,
                         PhoneNumber = "123456789",
-                        PresentAtDeath = PresentAtDeath.Yes,
                         Relationship = "relationship",
                     }
                 },
@@ -2042,9 +2040,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         AppointmentDate = new DateTime(2019, 2, 24),
                         AppointmentTime = new TimeSpan(11, 30, 0),
                         FullName = "fullName",
-                        Informed = InformedAtDeath.Yes,
                         PhoneNumber = "123456789",
-                        PresentAtDeath = PresentAtDeath.Yes,
                         Relationship = "relationship",
                     }
                 },
