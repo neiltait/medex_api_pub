@@ -36,8 +36,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.ToolBox.MVC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.ToolBox.SeedDatabase", "MedicalExaminer.ToolBox.SeedDatabase\MedicalExaminer.ToolBox.SeedDatabase.csproj", "{36804121-9579-40FD-8451-2D8A2F4B2DC3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.ToolBox.SeedDatabase.AssertTests", "MedicalExaminer.ToolBox.SeedDatabase.AssertTests\MedicalExaminer.ToolBox.SeedDatabase.AssertTests.csproj", "{35FAF3EE-CA49-4A22-8963-950200732831}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalExaminer.ToolBox.TearDownDatabase", "MedicalExaminer.ToolBox.TearDownDatabase\MedicalExaminer.ToolBox.TearDownDatabase.csproj", "{7C2E3AB7-8348-4E37-86CE-8FEB7AC250F0}"
 EndProject
 Global
@@ -90,10 +88,6 @@ Global
 		{36804121-9579-40FD-8451-2D8A2F4B2DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36804121-9579-40FD-8451-2D8A2F4B2DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36804121-9579-40FD-8451-2D8A2F4B2DC3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{35FAF3EE-CA49-4A22-8963-950200732831}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35FAF3EE-CA49-4A22-8963-950200732831}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35FAF3EE-CA49-4A22-8963-950200732831}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35FAF3EE-CA49-4A22-8963-950200732831}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7C2E3AB7-8348-4E37-86CE-8FEB7AC250F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7C2E3AB7-8348-4E37-86CE-8FEB7AC250F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C2E3AB7-8348-4E37-86CE-8FEB7AC250F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
