@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using AutoMapper;
 using Cosmonaut;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
@@ -234,8 +235,6 @@ example:
             const string examinationsCollection = "Examinations";
             services.AddCosmosStore<Examination>(cosmonautClient, cosmosDbSettings.DatabaseId, examinationsCollection);
             services.AddCosmosStore<AuditEntry<Examination>>(cosmonautClient, cosmosDbSettings.DatabaseId, examinationsCollection.AuditCollection());
-            
-            // temporary fudges moved until after database exists...
         }
 
         /// <summary>
@@ -284,11 +283,13 @@ example:
                 var urgencySettings =
                     serviceProvider.GetRequiredService<IOptions<UrgencySettings>>();
 
-                // temporary fudges until the real migration framework is implemented.
-                UpdateDiscussionOutcomes(serviceProvider);
-                UpdateInvalidOrNullUserPermissionIds(serviceProvider);
-                UpdateLocations(serviceProvider, locationMigrationSettings.Value);
-                UpdateExaminationUrgencySort(serviceProvider, urgencySettings.Value);
+            // temporary fudges moved until after database exists...
+            // temporary fudges until the real migration framework is implemented.
+        // TODO: https://methods.atlassian.net/browse/MES-989
+        //    UpdateDiscussionOutcomes(serviceProvider);
+        //    UpdateInvalidOrNullUserPermissionIds(serviceProvider);
+        //    UpdateLocations(serviceProvider, locationMigrationSettings);
+        //    UpdateExaminationUrgencySort(serviceProvider, urgencySettings);
             }
 
             app.UseMiddleware<ResponseTimeMiddleware>();
@@ -567,21 +568,21 @@ example:
         private void UpdateLocations(IServiceProvider serviceProvider, LocationMigrationSettings locationMigrationSettings)
         {
             LocationMigrationService instance = serviceProvider.GetService<LocationMigrationService>();
-            var result = instance.Handle(_locationMigrationQueryLookup[locationMigrationSettings.Version]);
+            instance.Handle(_locationMigrationQueryLookup[locationMigrationSettings.Version]).Wait();
         }
 
         private void UpdateDiscussionOutcomes(IServiceProvider serviceProvider)
         {
             IAsyncQueryHandler<NullQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<NullQuery, bool>>();
 
-            instance.Handle(new NullQuery());
+            instance.Handle(new NullQuery()).Wait();
         }
 
         private void UpdateInvalidOrNullUserPermissionIds(IServiceProvider serviceProvider)
         {
             IAsyncQueryHandler<InvalidUserPermissionQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>>();
 
-            instance.Handle(new InvalidUserPermissionQuery());
+            instance.Handle(new InvalidUserPermissionQuery()).Wait();
         }
 
         private Dictionary<int, IMigrationQuery> _locationMigrationQueryLookup = new Dictionary<int, IMigrationQuery>
@@ -593,7 +594,7 @@ example:
         {
             IAsyncQueryHandler<UpdateExaminationUrgencySortQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<UpdateExaminationUrgencySortQuery, bool>>();
 
-            instance.Handle(new UpdateExaminationUrgencySortQuery());
+            instance.Handle(new UpdateExaminationUrgencySortQuery()).Wait();
         }
     }
 }

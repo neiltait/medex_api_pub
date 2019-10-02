@@ -96,9 +96,9 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public bool HaveBeenScrutinisedByME { get; set; }
 
         /// <summary>
-        /// Awaiting Admission Notes
+        /// Awaiting Additional Details
         /// </summary>
-        public bool PendingAdmissionNotes { get; set; }
+        public bool PendingAdditionalDetails { get; set; }
 
         /// <summary>
         /// Awaiting discussion with the QAP
@@ -123,107 +123,112 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Main Status flag: Basic Details Entered
         /// </summary>
-        public bool BasicDetailsEntered { get; set; } = false;
+        public StatusBarResult BasicDetailsEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: Patient Name Entered
         /// </summary>
-        public bool NameEntered { get; set; } = false;
+        public StatusBarResult NameEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: DOB Entered
         /// </summary>
-        public bool DobEntered { get; set; } = false;
+        public StatusBarResult DobEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: DOD Entered
         /// </summary>
-        public bool DodEntered { get; set; } = false;
+        public StatusBarResult DodEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: Nhs Number Entered
         /// </summary>
-        public bool NhsNumberEntered { get; set; } = false;
+        public StatusBarResult NhsNumberEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Main Status flag: Additional Details Entered
         /// </summary>
-        public bool AdditionalDetailsEntered { get; set; } = false;
+        public StatusBarResult AdditionalDetailsEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: Latest Admission Details Entered
         /// </summary>
-        public bool LatestAdmissionDetailsEntered { get; set; } = false;
+        public StatusBarResult LatestAdmissionDetailsEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: Doctor In Charge Entered
         /// </summary>
-        public bool DoctorInChargeEntered { get; set; } = false;
+        public StatusBarResult DoctorInChargeEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: Qap Entered
         /// </summary>
-        public bool QapEntered { get; set; } = false;
+        public StatusBarResult QapEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: Bereaved Info Entered
         /// </summary>
-        public bool BereavedInfoEntered { get; set; } = false;
+        public StatusBarResult BereavedInfoEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: ME Assigned
         /// </summary>
-        public bool MeAssigned { get; set; } = false;
+        public StatusBarResult MeAssigned { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Main Status flag: Is Scrutiny Completed
         /// </summary>
-        public bool IsScrutinyCompleted { get; set; } = false;
+        public StatusBarResult IsScrutinyCompleted { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: Pre-Scrutiny Event Entered
         /// </summary>
-        public bool PreScrutinyEventEntered { get; set; } = false;
+        public StatusBarResult PreScrutinyEventEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: QAP Discussion Event Entered
         /// </summary>
-        public bool QapDiscussionEventEntered { get; set; } = false;
+        public StatusBarResult QapDiscussionEventEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: Bereaved Discussion Event Entered
         /// </summary>
-        public bool BereavedDiscussionEventEntered { get; set; } = false;
+        public StatusBarResult BereavedDiscussionEventEntered { get; set; } = StatusBarResult.Incomplete;
+
+        /// <summary>
+        /// Status flag: ME confirmation of scrutiny
+        /// </summary>
+        public StatusBarResult MeScrutinyConfirmed { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Main Status flag: Is Case Items Completed
         /// </summary>
-        public bool? IsCaseItemsCompleted { get; set; } = false;
+        public StatusBarResult IsCaseItemsCompleted { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: MCCD Issued
         /// </summary>
-        public bool MccdIssued { get; set; } = false;
+        public StatusBarResult MccdIssued { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: Cremation Form Info Entered
         /// </summary>
-        public bool? CremationFormInfoEntered { get; set; } = false;
+        public StatusBarResult CremationFormInfoEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: GP Notified
         /// </summary>
-        public bool GpNotified { get; set; } = false;
+        public StatusBarResult GpNotified { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: Sent To Coroner
         /// </summary>
-        public bool SentToCoroner { get; set; } = false;
+        public StatusBarResult SentToCoroner { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Status flag: Case Closed?
         /// </summary>
-        public bool CaseClosed { get; set; } = false;
+        public StatusBarResult CaseClosed { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
         /// Case Outcome

@@ -18,11 +18,6 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         public bool CulturalPriority { get; set; }
 
         /// <summary>
-        ///     Further details regarding the patients gender.
-        /// </summary>
-        public string GenderDetails { get; set; }
-
-        /// <summary>
         ///     Is the case a faith priority?.
         /// </summary>
         public bool FaithPriority { get; set; }
@@ -56,6 +51,11 @@ namespace MedicalExaminer.API.Models.v1.PatientDetails
         ///     Location where the death occured.
         /// </summary>
         public string PlaceDeathOccured { get; set; }
+
+        /// <summary>
+        ///     Further details regarding the patients gender.
+        /// </summary>
+        public string GenderDetails { get; set; }
 
         /// <summary>
         ///     The medical examiners office responsible for investigating the death.

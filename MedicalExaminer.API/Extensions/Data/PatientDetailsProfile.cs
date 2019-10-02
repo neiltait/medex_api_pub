@@ -15,11 +15,10 @@ namespace MedicalExaminer.API.Extensions.Data
         /// </summary>
         public PatientDetailsProfile()
         {
-            CreateMap<PutPatientDetailsRequest, PatientDetails>()
-                .ForMember(patientDetails => patientDetails.Id, opt => opt.Ignore())
-                .ForMember(patientDetails => patientDetails.CaseCompleted, opt => opt.Ignore());
+            CreateMap<PutPatientDetailsRequest, PatientDetails>();
             CreateMap<PatientDetails, Examination>()
                 .ForMember(examination => examination.ExaminationId, opt => opt.Ignore())
+                .ForMember(examination => examination.CaseCompleted, opt => opt.Ignore())
                 .ForMember(examination => examination.MedicalExaminerOfficeResponsibleName, opt => opt.Ignore())
                 .ForMember(examination => examination.UrgencySort, opt => opt.Ignore())
                 .ForMember(examination => examination.LastAdmission, opt => opt.Ignore())

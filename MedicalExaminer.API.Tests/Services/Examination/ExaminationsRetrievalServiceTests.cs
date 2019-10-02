@@ -136,14 +136,14 @@ namespace MedicalExaminer.API.Tests.Services.Examination
             results.Should().NotBeNull();
             results.Count().Should().Be(9);
 
-            results.ElementAt(0).ExaminationId.Should().Be("examination9");
+            results.ElementAt(0).ExaminationId.Should().Be("examination7");
             results.ElementAt(1).ExaminationId.Should().Be("examination8");
-            results.ElementAt(2).ExaminationId.Should().Be("examination7");
+            results.ElementAt(2).ExaminationId.Should().Be("examination9");
             results.ElementAt(3).ExaminationId.Should().Be("examination6");
             results.ElementAt(4).ExaminationId.Should().Be("examination5");
-            results.ElementAt(5).ExaminationId.Should().Be("examination11");
+            results.ElementAt(5).ExaminationId.Should().Be("examination2");
             results.ElementAt(6).ExaminationId.Should().Be("examination10");
-            results.ElementAt(7).ExaminationId.Should().Be("examination2");
+            results.ElementAt(7).ExaminationId.Should().Be("examination11");
             results.ElementAt(8).ExaminationId.Should().Be("examination1");
         }
 

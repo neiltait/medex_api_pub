@@ -24,6 +24,7 @@ namespace MedicalExaminer.API.Tests.Mapper
     /// </summary>
     public class MapperExaminationProfileTests
     {
+        private static readonly DateTime NoneDate = Convert.ToDateTime("0001 - 01 - 01T00: 00:00");
         private const string ExaminationId = "expectedExaminationId";
         private const string AltLink = "altLink";
         private const bool CaseCompleted = true;
@@ -812,7 +813,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutcomesOutstanding.Should().Be(true);
-            result.PendingAdmissionNotes.Should().Be(true);
+            result.PendingAdditionalDetails.Should().Be(true);
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
@@ -853,14 +854,94 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutcomesOutstanding.Should().Be(true);
-            result.PendingAdmissionNotes.Should().Be(true);
+            result.PendingAdditionalDetails.Should().Be(true);
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
         }
 
         [Fact]
-        public void Examination_To_PatientCard_Statuses_When_All_Required_Details_Entered()
+        public void Examination_To_PatientCard_Statuses_When_All_Required_Details_Entered_When_Refer_To_Coroner()
+        {
+            // Arrange
+            var appointmentDate = DateTime.Now.AddDays(1);
+            var appointmentTime = new TimeSpan(10, 30, 00);
+            var representative = new Representative()
+            {
+                AppointmentDate = appointmentDate,
+                AppointmentTime = appointmentTime,
+                FullName = "bob",
+                Informed = InformedAtDeath.Yes,
+                PhoneNumber = "1234",
+                PresentAtDeath = PresentAtDeath.Unknown,
+                Relationship = "milk man"
+            };
+
+            var examination = GenerateExamination();
+            examination.GivenNames = "GivenNames";
+            examination.Surname = "Surname";
+            examination.DateOfBirth = new DateTime(2000, 01, 12);
+            examination.DateOfDeath = new DateTime(2019, 08, 12);
+            examination.NhsNumber = "1234567890";
+
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
+            {
+                Name = "ConsultantResponsible",
+                Role = "Consultant",
+                Organisation = "Organisation",
+                Phone = "01148394748",
+                Notes = "Notes",
+                GMCNumber = "G12345"
+            };
+            examination.MedicalTeam.Qap.Name = "Qap Name";
+            examination.Representatives = new[] { representative };
+            examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+            examination.ScrutinyConfirmed = true;
+
+            examination.CaseOutcome.CaseOutcomeSummary = CaseOutcomeSummary.ReferToCoroner;
+            examination.CaseOutcome.MccdIssued = true;
+            examination.CaseOutcome.CremationFormStatus = CremationFormStatus.Yes;
+            examination.CaseOutcome.GpNotifiedStatus = GPNotified.GPNotified;
+            examination.CaseOutcome.CoronerReferralSent = true;
+            examination.CaseCompleted = true;
+
+            // Action
+            var result = _mapper.Map<PatientCardItem>(examination);
+
+            // Assert
+            // Basic Details
+            result.BasicDetailsEntered.Should().Be(StatusBarResult.Complete);
+            result.NameEntered.Should().Be(StatusBarResult.Complete);
+            result.DobEntered.Should().Be(StatusBarResult.Complete);
+            result.DodEntered.Should().Be(StatusBarResult.Complete);
+            result.NhsNumberEntered.Should().Be(StatusBarResult.Complete);
+
+            // Additional Details
+            result.AdditionalDetailsEntered.Should().Be(StatusBarResult.Complete);
+            result.LatestAdmissionDetailsEntered.Should().Be(StatusBarResult.Complete);
+            result.DoctorInChargeEntered.Should().Be(StatusBarResult.Complete);
+            result.QapEntered.Should().Be(StatusBarResult.Complete);
+            result.BereavedInfoEntered.Should().Be(StatusBarResult.Complete);
+            result.MeAssigned.Should().Be(StatusBarResult.Complete);
+
+            // Scrutiny Complete
+            result.IsScrutinyCompleted.Should().Be(StatusBarResult.Complete);
+            result.PreScrutinyEventEntered.Should().Be(StatusBarResult.Complete);
+            result.QapDiscussionEventEntered.Should().Be(StatusBarResult.Complete);
+            result.BereavedDiscussionEventEntered.Should().Be(StatusBarResult.Complete);
+            result.MeScrutinyConfirmed.Should().Be(StatusBarResult.Complete);
+
+            // Case Items Complete
+            result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Complete);
+            result.MccdIssued.Should().Be(StatusBarResult.NotApplicable);
+            result.CremationFormInfoEntered.Should().Be(StatusBarResult.NotApplicable);
+            result.GpNotified.Should().Be(StatusBarResult.NotApplicable);
+            result.SentToCoroner.Should().Be(StatusBarResult.Complete);
+            result.CaseClosed.Should().Be(StatusBarResult.Complete);
+        }
+
+        [Fact]
+        public void Examination_To_PatientCard_Statuses_When_All_Required_Details_Entered_When_Not_Refer_To_Coroner()
         {
             // Arrange
             var appointmentDate = DateTime.Now.AddDays(1);
@@ -896,48 +977,28 @@ namespace MedicalExaminer.API.Tests.Mapper
             examination.Representatives = new[] { representative };
             examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
 
+            examination.CaseOutcome.CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD;
             examination.CaseOutcome.MccdIssued = true;
             examination.CaseOutcome.CremationFormStatus = CremationFormStatus.Yes;
             examination.CaseOutcome.GpNotifiedStatus = GPNotified.GPNotified;
-            examination.CaseOutcome.CoronerReferralSent = true;
+            examination.CaseOutcome.CoronerReferralSent = false;
             examination.CaseCompleted = true;
 
             // Action
             var result = _mapper.Map<PatientCardItem>(examination);
 
             // Assert
-            // Basic Details
-            result.BasicDetailsEntered.Should().BeTrue();
-            result.NameEntered.Should().BeTrue();
-            result.DobEntered.Should().BeTrue();
-            result.DodEntered.Should().BeTrue();
-            result.NhsNumberEntered.Should().BeTrue();
-
-            // Additional Details
-            result.AdditionalDetailsEntered.Should().BeTrue();
-            result.LatestAdmissionDetailsEntered.Should().BeTrue();
-            result.DoctorInChargeEntered.Should().BeTrue();
-            result.QapEntered.Should().BeTrue();
-            result.BereavedInfoEntered.Should().BeTrue();
-            result.MeAssigned.Should().BeTrue();
-
-            // Is Scrutiny Complete?
-            result.IsScrutinyCompleted.Should().BeTrue();
-            result.PreScrutinyEventEntered.Should().BeTrue();
-            result.QapDiscussionEventEntered.Should().BeTrue();
-            result.BereavedDiscussionEventEntered.Should().BeTrue();
-
-            // Is Case Items Complete?
-            result.IsCaseItemsCompleted.Should().BeTrue();
-            result.MccdIssued.Should().BeTrue();
-            result.CremationFormInfoEntered.Should().BeTrue();
-            result.GpNotified.Should().BeTrue();
-            result.SentToCoroner.Should().BeTrue();
-            result.CaseClosed.Should().BeTrue();
+            // Case Items Complete
+            result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Complete);
+            result.MccdIssued.Should().Be(StatusBarResult.Complete);
+            result.CremationFormInfoEntered.Should().Be(StatusBarResult.Complete);
+            result.GpNotified.Should().Be(StatusBarResult.Complete);
+            result.SentToCoroner.Should().Be(StatusBarResult.NotApplicable);
+            result.CaseClosed.Should().Be(StatusBarResult.Complete);
         }
 
         [Fact]
-        public void Examination_To_PatientCard_Statuses_When_Basic_Details_Not_Entered()
+        public void Examination_To_PatientCard_Statuses_When_Unknown_Basic_Details_Entered()
         {
             // Arrange
             var appointmentDate = DateTime.Now.AddDays(1);
@@ -956,8 +1017,8 @@ namespace MedicalExaminer.API.Tests.Mapper
             var examination = GenerateExamination();
             examination.GivenNames = null;
             examination.Surname = null;
-            examination.DateOfBirth = null;
-            examination.DateOfDeath = null;
+            examination.DateOfBirth = NoneDate;
+            examination.DateOfDeath = NoneDate;
             examination.NhsNumber = null;
 
             examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
@@ -983,11 +1044,11 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             // Assert
             // Basic Details
-            result.BasicDetailsEntered.Should().BeFalse();
-            result.NameEntered.Should().BeFalse();
-            result.DobEntered.Should().BeFalse();
-            result.DodEntered.Should().BeFalse();
-            result.NhsNumberEntered.Should().BeFalse();
+            result.BasicDetailsEntered.Should().Be(StatusBarResult.Unknown);
+            result.NameEntered.Should().Be(StatusBarResult.Unknown);
+            result.DobEntered.Should().Be(StatusBarResult.Unknown);
+            result.DodEntered.Should().Be(StatusBarResult.Unknown);
+            result.NhsNumberEntered.Should().Be(StatusBarResult.Unknown);
         }
 
         [Fact]
@@ -1030,12 +1091,12 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             // Assert
             // Additional Details
-            result.AdditionalDetailsEntered.Should().BeFalse();
-            result.LatestAdmissionDetailsEntered.Should().BeFalse();
-            result.DoctorInChargeEntered.Should().BeFalse();
-            result.QapEntered.Should().BeFalse();
-            result.BereavedInfoEntered.Should().BeFalse();
-            result.MeAssigned.Should().BeFalse();
+            result.AdditionalDetailsEntered.Should().Be(StatusBarResult.Incomplete);
+            result.LatestAdmissionDetailsEntered.Should().Be(StatusBarResult.Incomplete);
+            result.DoctorInChargeEntered.Should().Be(StatusBarResult.Incomplete);
+            result.QapEntered.Should().Be(StatusBarResult.Incomplete);
+            result.BereavedInfoEntered.Should().Be(StatusBarResult.Incomplete);
+            result.MeAssigned.Should().Be(StatusBarResult.Incomplete);
         }
 
         [Fact]
@@ -1074,6 +1135,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             examination.MedicalTeam.Qap.Name = "Qap Name";
             examination.Representatives = new[] { representative };
             examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+            examination.ScrutinyConfirmed = false;
 
             examination.CaseBreakdown.PreScrutiny.Latest = null;
             examination.CaseBreakdown.QapDiscussion.Latest = null;
@@ -1088,11 +1150,109 @@ namespace MedicalExaminer.API.Tests.Mapper
             var result = _mapper.Map<PatientCardItem>(examination);
 
             // Assert
-            // Is Scrutiny Complete?
-            result.IsScrutinyCompleted.Should().BeFalse();
-            result.PreScrutinyEventEntered.Should().BeFalse();
-            result.QapDiscussionEventEntered.Should().BeFalse();
-            result.BereavedDiscussionEventEntered.Should().BeFalse();
+            // Scrutiny Complete
+            result.IsScrutinyCompleted.Should().Be(StatusBarResult.Incomplete);
+            result.PreScrutinyEventEntered.Should().Be(StatusBarResult.Incomplete);
+            result.QapDiscussionEventEntered.Should().Be(StatusBarResult.Incomplete);
+            result.BereavedDiscussionEventEntered.Should().Be(StatusBarResult.Incomplete);
+            result.MeScrutinyConfirmed.Should().Be(StatusBarResult.Incomplete);
+        }
+
+        [Fact]
+        public void Examination_To_PatientCard_Statuses_When_Qap_And_Bereaved_Discussion_Are_Unable_To_Happen_Returns_Not_Applicable()
+        {
+            // Arrange
+            var appointmentDate = DateTime.Now.AddDays(1);
+            var appointmentTime = new TimeSpan(10, 30, 00);
+            var representative = new Representative()
+            {
+                AppointmentDate = appointmentDate,
+                AppointmentTime = appointmentTime,
+                FullName = "bob",
+                Informed = InformedAtDeath.Yes,
+                PhoneNumber = "1234",
+                PresentAtDeath = PresentAtDeath.Unknown,
+                Relationship = "milk man"
+            };
+
+            var examination = GenerateExamination();
+            examination.GivenNames = "GivenNames";
+            examination.Surname = "Surname";
+            examination.DateOfBirth = new DateTime(2000, 01, 12);
+            examination.DateOfDeath = new DateTime(2019, 08, 12);
+            examination.NhsNumber = "1234567890";
+
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
+            {
+                Name = "ConsultantResponsible",
+                Role = "Consultant",
+                Organisation = "Organisation",
+                Phone = "01148394748",
+                Notes = "Notes",
+                GMCNumber = "G12345"
+            };
+            examination.MedicalTeam.Qap.Name = "Qap Name";
+            examination.Representatives = new[] { representative };
+            examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+
+            examination.CaseBreakdown.PreScrutiny.Latest = null;
+            examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent
+            {
+                UserFullName = null,
+                UsersRole = null,
+                Created = null,
+                EventId = null,
+                UserId = null,
+                IsFinal = false,
+                ParticipantRole = null,
+                ParticipantOrganisation = null,
+                ParticipantPhoneNumber = null,
+                DateOfConversation = null,
+                TimeOfConversation = null,
+                DiscussionUnableHappen = true,
+                DiscussionDetails = null,
+                QapDiscussionOutcome = QapDiscussionOutcome.DiscussionUnableToHappen,
+                ParticipantName = null,
+                CauseOfDeath1a = null,
+                CauseOfDeath1b = null,
+                CauseOfDeath1c = null,
+                CauseOfDeath2 = null
+            };
+            examination.CaseBreakdown.BereavedDiscussion.Latest = new BereavedDiscussionEvent
+            {
+                UserFullName = null,
+                UsersRole = null,
+                Created = null,
+                EventId = null,
+                UserId = null,
+                IsFinal = false,
+                ParticipantFullName = null,
+                ParticipantRelationship = null,
+                ParticipantPhoneNumber = null,
+                PresentAtDeath = null,
+                InformedAtDeath = null,
+                DateOfConversation = null,
+                TimeOfConversation = null,
+                DiscussionUnableHappen = true,
+                DiscussionUnableHappenDetails = null,
+                DiscussionDetails = null,
+                BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted
+            };
+
+            examination.CaseOutcome.MccdIssued = true;
+            examination.CaseOutcome.CremationFormStatus = CremationFormStatus.Yes;
+            examination.CaseOutcome.GpNotifiedStatus = GPNotified.GPNotified;
+            examination.CaseOutcome.CoronerReferralSent = true;
+
+            // Action
+            var result = _mapper.Map<PatientCardItem>(examination);
+
+            // Assert
+            // Scrutiny Complete
+            result.IsScrutinyCompleted.Should().Be(StatusBarResult.Incomplete);
+            result.PreScrutinyEventEntered.Should().Be(StatusBarResult.Incomplete);
+            result.QapDiscussionEventEntered.Should().Be(StatusBarResult.NotApplicable);
+            result.BereavedDiscussionEventEntered.Should().Be(StatusBarResult.NotApplicable);
         }
 
         [Fact]
@@ -1132,6 +1292,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             examination.Representatives = new[] { representative };
             examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
 
+            examination.CaseOutcome.CaseOutcomeSummary = CaseOutcomeSummary.ReferToCoroner;
             examination.CaseOutcome.MccdIssued = null;
             examination.CaseOutcome.CremationFormStatus = null;
             examination.CaseOutcome.GpNotifiedStatus = null;
@@ -1142,13 +1303,13 @@ namespace MedicalExaminer.API.Tests.Mapper
             var result = _mapper.Map<PatientCardItem>(examination);
 
             // Assert
-            // Is Case Items Complete?
-            result.IsCaseItemsCompleted.Should().BeFalse();
-            result.MccdIssued.Should().BeFalse();
-            result.CremationFormInfoEntered.Should().BeFalse();
-            result.GpNotified.Should().BeFalse();
-            result.SentToCoroner.Should().BeFalse();
-            result.CaseClosed.Should().BeFalse();
+            // Case Items Complete
+            result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Incomplete);
+            result.MccdIssued.Should().Be(StatusBarResult.NotApplicable);
+            result.CremationFormInfoEntered.Should().Be(StatusBarResult.NotApplicable);
+            result.GpNotified.Should().Be(StatusBarResult.NotApplicable);
+            result.SentToCoroner.Should().Be(StatusBarResult.Incomplete);
+            result.CaseClosed.Should().Be(StatusBarResult.Incomplete);
         }
 
         [Fact]
@@ -1197,9 +1358,115 @@ namespace MedicalExaminer.API.Tests.Mapper
             var result = _mapper.Map<PatientCardItem>(examination);
 
             // Assert
-            // Is Case Items Complete?
-            result.IsCaseItemsCompleted.Should().BeNull();
-            result.CremationFormInfoEntered.Should().BeNull();
+            // Case Items Complete
+            result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Unknown);
+            result.CremationFormInfoEntered.Should().Be(StatusBarResult.Unknown);
+        }
+
+        [Fact]
+        public void Examination_To_PatientCard_Statuses_Case_Items_When_Refer_To_Coroner()
+        {
+            // Arrange
+            var appointmentDate = DateTime.Now.AddDays(1);
+            var appointmentTime = new TimeSpan(10, 30, 00);
+            var representative = new Representative()
+            {
+                AppointmentDate = appointmentDate,
+                AppointmentTime = appointmentTime,
+                FullName = "bob",
+                Informed = InformedAtDeath.Yes,
+                PhoneNumber = "1234",
+                PresentAtDeath = PresentAtDeath.Unknown,
+                Relationship = "milk man"
+            };
+
+            var examination = GenerateExamination();
+            examination.GivenNames = "GivenNames";
+            examination.Surname = "Surname";
+            examination.DateOfBirth = new DateTime(2000, 01, 12);
+            examination.DateOfDeath = new DateTime(2019, 08, 12);
+            examination.NhsNumber = "1234567890";
+
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
+            {
+                Name = "ConsultantResponsible",
+                Role = "Consultant",
+                Organisation = "Organisation",
+                Phone = "01148394748",
+                Notes = "Notes",
+                GMCNumber = "G12345"
+            };
+            examination.MedicalTeam.Qap.Name = "Qap Name";
+            examination.Representatives = new[] { representative };
+            examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+
+            examination.CaseOutcome.CaseOutcomeSummary = CaseOutcomeSummary.ReferToCoroner;
+            examination.CaseOutcome.CoronerReferralSent = false;
+
+            // Action
+            var result = _mapper.Map<PatientCardItem>(examination);
+
+            // Assert
+            // Case Items Complete
+            result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Incomplete);
+            result.MccdIssued.Should().Be(StatusBarResult.NotApplicable);
+            result.CremationFormInfoEntered.Should().Be(StatusBarResult.NotApplicable);
+            result.GpNotified.Should().Be(StatusBarResult.NotApplicable);
+            result.SentToCoroner.Should().Be(StatusBarResult.Incomplete);
+        }
+
+        [Fact]
+        public void Examination_To_PatientCard_Statuses_Case_Items_When_Not_Refer_To_Coroner()
+        {
+            // Arrange
+            var appointmentDate = DateTime.Now.AddDays(1);
+            var appointmentTime = new TimeSpan(10, 30, 00);
+            var representative = new Representative()
+            {
+                AppointmentDate = appointmentDate,
+                AppointmentTime = appointmentTime,
+                FullName = "bob",
+                Informed = InformedAtDeath.Yes,
+                PhoneNumber = "1234",
+                PresentAtDeath = PresentAtDeath.Unknown,
+                Relationship = "milk man"
+            };
+
+            var examination = GenerateExamination();
+            examination.GivenNames = "GivenNames";
+            examination.Surname = "Surname";
+            examination.DateOfBirth = new DateTime(2000, 01, 12);
+            examination.DateOfDeath = new DateTime(2019, 08, 12);
+            examination.NhsNumber = "1234567890";
+
+            examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional
+            {
+                Name = "ConsultantResponsible",
+                Role = "Consultant",
+                Organisation = "Organisation",
+                Phone = "01148394748",
+                Notes = "Notes",
+                GMCNumber = "G12345"
+            };
+            examination.MedicalTeam.Qap.Name = "Qap Name";
+            examination.Representatives = new[] { representative };
+            examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
+
+            examination.CaseOutcome.CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD;
+            examination.CaseOutcome.MccdIssued = null;
+            examination.CaseOutcome.CremationFormStatus = null;
+            examination.CaseOutcome.GpNotifiedStatus = null;
+
+            // Action
+            var result = _mapper.Map<PatientCardItem>(examination);
+
+            // Assert
+            // Case Items Complete
+            result.IsCaseItemsCompleted.Should().Be(StatusBarResult.Incomplete);
+            result.MccdIssued.Should().Be(StatusBarResult.Incomplete);
+            result.CremationFormInfoEntered.Should().Be(StatusBarResult.Incomplete);
+            result.GpNotified.Should().Be(StatusBarResult.Incomplete);
+            result.SentToCoroner.Should().Be(StatusBarResult.NotApplicable);
         }
 
         [Fact]
@@ -1242,7 +1509,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutcomesOutstanding.Should().Be(true);
-            result.PendingAdmissionNotes.Should().Be(true);
+            result.PendingAdditionalDetails.Should().Be(true);
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
@@ -1298,7 +1565,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutcomesOutstanding.Should().Be(true);
-            result.PendingAdmissionNotes.Should().Be(true);
+            result.PendingAdditionalDetails.Should().Be(true);
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
@@ -1352,7 +1619,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutcomesOutstanding.Should().Be(true);
-            result.PendingAdmissionNotes.Should().Be(true);
+            result.PendingAdditionalDetails.Should().Be(true);
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
@@ -1407,7 +1674,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.AdmissionNotesHaveBeenAdded.Should().Be(true);
             result.HaveBeenScrutinisedByME.Should().Be(true);
             result.HaveFinalCaseOutcomesOutstanding.Should().Be(true);
-            result.PendingAdmissionNotes.Should().Be(true);
+            result.PendingAdditionalDetails.Should().Be(true);
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
@@ -84,7 +85,7 @@ namespace MedicalExaminer.API.Controllers
         {
             var currentUser = await CurrentUser();
 
-            return PermissionService.LocationIdsWithPermission(currentUser, permission);
+            return PermissionService.LocationIdsWithPermission(currentUser, permission).Distinct();
         }
     }
 }

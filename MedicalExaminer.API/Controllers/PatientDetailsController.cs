@@ -117,23 +117,13 @@ namespace MedicalExaminer.API.Controllers
                 return NotFound(new PutPatientDetailsResponse());
             }
 
+            // Do they have update permission on the examination being updated
             if (!CanAsync(Permission.UpdateExamination, examination))
             {
                 return Forbid();
             }
 
             var patientDetails = Mapper.Map<PatientDetails>(putPatientDetailsRequest);
-
-            // TODO: Removed for now until we've decided what we want to happen if they change this and users are assigned.
-            //if (patientDetails.MedicalExaminerOfficeResponsible != examination.MedicalExaminerOfficeResponsible)
-            //{
-            //    if (examination.MedicalTeam.MedicalExaminerUserId != null ||
-            //        examination.MedicalTeam.MedicalExaminerOfficerUserId != null)
-            //    {
-            //        ModelState.AddModelError(nameof(PutPatientDetailsRequest.MedicalExaminerOfficeResponsible), "The medical examiner office is being changed while users are assigned. First un-assign users before changing the office.");
-            //        return BadRequest(new PutPatientDetailsResponse());
-            //    }
-            //}
 
             var locations = (await _locationParentsService.Handle(
                     new LocationParentsQuery(patientDetails.MedicalExaminerOfficeResponsible))).ToList();
@@ -142,6 +132,7 @@ namespace MedicalExaminer.API.Controllers
 
             locationPath.UpdateLocationPath(locations);
 
+            // Do they have permission at this location to update the examination. I.e. they're changing the Medical Examiner Office.
             if (!CanAsync(Permission.UpdateExamination, locationPath))
             {
                 return Forbid();
