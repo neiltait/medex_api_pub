@@ -283,6 +283,8 @@ example:
                 var urgencySettings =
                     serviceProvider.GetRequiredService<IOptions<UrgencySettings>>();
 
+            IServiceProvider serviceProvider = services.BuildServiceProvider();
+
             // temporary fudges moved until after database exists...
             // temporary fudges until the real migration framework is implemented.
         // TODO: https://methods.atlassian.net/browse/MES-989

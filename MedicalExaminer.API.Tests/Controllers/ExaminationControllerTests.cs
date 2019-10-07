@@ -33,13 +33,13 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> _locationRetrievalByQueryHandlerMock;
 
         private readonly Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>> _usersRetrievalServiceMock;
-
+        private readonly Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>> _locationsRetrievalByQueryMock;
 
         public ExaminationControllerTests()
             : base(setupAuthorize: false)
         {
             _createExaminationServiceMock = new Mock<IAsyncQueryHandler<CreateExaminationQuery, Examination>>(MockBehavior.Strict);
-
+            _locationsRetrievalByQueryMock = new Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>(MockBehavior.Strict);
             _examinationsRetrievalQueryServiceMock = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>>(MockBehavior.Strict);
 
             _examinationsDashboardServiceMock = new Mock<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>>(MockBehavior.Strict);
@@ -61,7 +61,8 @@ namespace MedicalExaminer.API.Tests.Controllers
                 _examinationsDashboardServiceMock.Object,
                 _locationParentsServiceMock.Object,
                 _locationRetrievalByQueryHandlerMock.Object,
-                _usersRetrievalServiceMock.Object);
+                _usersRetrievalServiceMock.Object,
+                _locationsRetrievalByQueryMock.Object);
             Controller.ControllerContext = GetControllerContext();
         }
 
@@ -115,6 +116,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(service => service.Handle(It.IsAny<UsersRetrievalQuery>()))
                 .Returns(Task.FromResult(users.AsEnumerable()));
 
+            _locationsRetrievalByQueryMock.Setup(service => service.Handle(It.IsAny<LocationsParentsQuery>()))
+                .Returns(Task.FromResult((IDictionary<string, IEnumerable<Location>>)(new Dictionary<string, IEnumerable<Location>>())));
+
             var request = new GetExaminationsRequest()
             {
             };
@@ -138,13 +142,16 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examination1 = new Examination();
             var examination2 = new Examination();
             IEnumerable<Examination> examinationsResult = new List<Examination> { examination1, examination2 };
+            var meOfficeLocation = new Location()
+            {
+                LocationId = "location1",
+                Name = "Name1",
+                IsMeOffice = true,
+            };
+
             var locations = new List<Location>
             {
-                new Location()
-                {
-                    LocationId = "location1",
-                    Name = "Name1"
-                },
+                meOfficeLocation,
                 new Location()
                 {
                     LocationId = "location2",
@@ -186,6 +193,12 @@ namespace MedicalExaminer.API.Tests.Controllers
             _usersRetrievalServiceMock
                 .Setup(service => service.Handle(It.IsAny<UsersRetrievalQuery>()))
                 .Returns(Task.FromResult(users.AsEnumerable()));
+
+            _locationsRetrievalByQueryMock.Setup(service => service.Handle(It.IsAny<LocationsParentsQuery>()))
+                .Returns(Task.FromResult((IDictionary<string, IEnumerable<Location>>)(new Dictionary<string, IEnumerable<Location>>()
+                {
+                    {meOfficeLocation.LocationId, new [] {meOfficeLocation } }
+                })));
 
             var request = new GetExaminationsRequest()
             {

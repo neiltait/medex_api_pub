@@ -249,7 +249,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             // Assert
             results.Should().NotBeNull();
-            Assert.Equal(9, results.Count());
+            Assert.Equal(0, results.Count());
         }
 
         [Fact]

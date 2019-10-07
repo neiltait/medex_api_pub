@@ -562,7 +562,8 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(patientCard => patientCard.SentToCoroner, opt => opt.MapFrom(
                     (source, dest, destMember, context) =>
                     {
-                        if (source.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner)
+                        if (source.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.ReferToCoroner
+                            || source.CaseOutcome.CaseOutcomeSummary == CaseOutcomeSummary.IssueMCCDWith100a)
                         {
                             if (source.CaseOutcome.CoronerReferralSent)
                             {
