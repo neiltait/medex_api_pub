@@ -14,6 +14,11 @@ namespace MedicalExaminer.API.Models.v1.Locations
         public bool AccessOnly { get; set; }
 
         /// <summary>
+        /// Filter by Permission to Create Examinations.
+        /// </summary>
+        public bool CreateExaminationOnly { get; set; }
+
+        /// <summary>
         /// Name.
         /// </summary>
         public string Name { get; set; }
