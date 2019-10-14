@@ -138,7 +138,7 @@ namespace MedicalExaminer.API.Controllers
             };
 
             var locations = (await _locationRetrievalByQueryHandler.Handle(
-                    new LocationsRetrievalByQuery(null, null, true, false, permissedLocations))).ToList();
+                    new LocationsRetrievalByQuery(null, null, false, false, permissedLocations))).ToList();
 
             var onlyMeOffices = locations.Where(l => l.IsMeOffice).ToList();
             var allLocations = (await _locationsRetrievalByQueryHandler.Handle(new LocationsParentsQuery(onlyMeOffices.Select(x => x.LocationId)))).ToList();
