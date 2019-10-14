@@ -112,3 +112,4 @@ steps:
   env:
     pswd: $(registryPassword)
   displayName: 'Build and push Docker image to Staging'
+  condition: and(succeeded(), ne(variables['registryPassword'], ''))
