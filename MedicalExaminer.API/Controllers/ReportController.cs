@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Models.v1.Report;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Authorization;
@@ -77,6 +78,74 @@ namespace MedicalExaminer.API.Controllers
             }
 
             return new OkObjectResult(Mapper.Map<GetCoronerReferralDownloadResponse>(examination));
+        }
+
+        /// <summary>
+        ///     Get the dto object for making the coroner referral report <see cref="GetCoronerReferralDownloadResponse" />.
+        /// </summary>
+        /// <param name="examinationId">The examination id to return reporting data for.</param>
+        /// <returns>A coroner referral download response</returns>
+        [HttpGet]
+        [Route("finance_download")]
+        public async Task<ActionResult<GetFinanceDownloadResponse>> GetFinanceDownload([FromQuery]GetFinanceDownloadRequest request)
+        {
+            //if (string.IsNullOrEmpty(examinationId))
+            //{
+            //    return new BadRequestObjectResult(nameof(examinationId));
+            //}
+
+            //var currentUser = await CurrentUser();
+            //var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, currentUser));
+
+            //if (examination == null)
+            //{
+            //    return new NotFoundResult();
+            //}
+
+            //if (!CanAsync(Permission.GetCoronerReferralDownload, examination))
+            //{
+            //    return Forbid();
+            //}
+
+            //if (!examination.ScrutinyConfirmed)
+            //{
+            //    return new BadRequestObjectResult("Scrutiny should be confirmed before downloading.");
+            //}
+
+            var rowOne = new ExaminationFinanceItem()
+            {
+                CaseClosed = new System.DateTime(2019, 10, 10),
+                CaseCreated = new System.DateTime(2019, 9, 10),
+                CremationFormFunding = true,
+                HasNhsNumber = true,
+                Id = "whocares",
+                MedicalExaminerId =  "medicalEaminer1",
+                NationalName = "National",
+                RegionName = "Region",
+                TrustName = "Trust",
+                SiteName = "Site"
+            };
+
+            var rowTwo = new ExaminationFinanceItem()
+            {
+                CaseClosed = null,
+                CaseCreated = new System.DateTime(2019, 9, 10),
+                CremationFormFunding = true,
+                HasNhsNumber = false,
+                Id = "whocares",
+                MedicalExaminerId = "medicalEaminer2",
+                NationalName = "National",
+                RegionName = "Region",
+                TrustName = "Trust",
+                SiteName = "Site"
+            };
+
+            var response = new GetFinanceDownloadResponse();
+            response.Data = new System.Collections.Generic.List<ExaminationFinanceItem>();
+            response.Data.Add(rowOne);
+            response.Data.Add(rowTwo);
+
+            return new OkObjectResult(response);
         }
     }
 }
