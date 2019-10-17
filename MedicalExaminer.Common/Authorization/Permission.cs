@@ -20,6 +20,7 @@
 
         GetLocations,
         GetLocation,
+        UpdateLocation,
 
         GetExaminations,
         GetExamination,
