@@ -815,6 +815,19 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
+            result.IsCremation.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Examination_To_PatientCard_IsCremation_When_ModeOfDisposal_Is_Cremation()
+        {
+            var examination = GenerateExamination();
+
+            examination.ModeOfDisposal = ModeOfDisposal.Cremation;
+
+            var result = _mapper.Map<PatientCardItem>(examination);
+
+            result.IsCremation.Should().BeTrue();
         }
 
         [Fact]
