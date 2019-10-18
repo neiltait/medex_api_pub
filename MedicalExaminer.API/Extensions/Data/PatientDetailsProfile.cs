@@ -2,6 +2,7 @@
 using AutoMapper;
 using MedicalExaminer.API.Models.v1.PatientDetails;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -49,7 +50,9 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.CoronerReferralSent, opt => opt.Ignore())
                 .ForMember(examination => examination.ScrutinyConfirmed, opt => opt.Ignore())
                 .ForMember(examination => examination.OutstandingCaseItemsCompleted, opt => opt.Ignore())
-                .ForMember(examination => examination.CaseOutcome, opt => opt.Ignore());
+                .ForMember(examination => examination.CaseOutcome, opt => opt.Ignore())
+                .ForMember(examination => examination.WaiveFee,
+                    opt => opt.MapFrom(patientDetails => patientDetails.ModeOfDisposal != ModeOfDisposal.Cremation));
         }
     }
 }
