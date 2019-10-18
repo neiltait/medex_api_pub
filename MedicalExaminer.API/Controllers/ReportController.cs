@@ -10,6 +10,7 @@ using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MedicalExaminer.API.Controllers
@@ -23,7 +24,7 @@ namespace MedicalExaminer.API.Controllers
     public class ReportController : AuthorizedBaseController
     {
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
-
+        private readonly IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>> _financeQuery;
         /// <summary>
         /// The report controller constructor
         /// </summary>
@@ -39,10 +40,12 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService,
-            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService) 
+            IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
+            IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>> financeQuery) 
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _examinationRetrievalService = examinationRetrievalService;
+            _financeQuery = financeQuery;
         }
 
         /// <summary>
@@ -89,79 +92,66 @@ namespace MedicalExaminer.API.Controllers
         [Route("finance_download")]
         public async Task<ActionResult<GetFinanceDownloadResponse>> GetFinanceDownload([FromQuery]GetFinanceDownloadRequest request)
         {
-            //if (string.IsNullOrEmpty(examinationId))
+            var results = await _financeQuery.Handle(new FinanceQuery(request.ExaminationsCreatedFrom, request.ExaminationsCreatedTo, request.LocationId));
+
+            //var rowOne = new ExaminationFinanceItem()
             //{
-            //    return new BadRequestObjectResult(nameof(examinationId));
-            //}
+            //    CaseClosed = new System.DateTime(2019, 10, 10),
+            //    CaseCreated = new System.DateTime(2019, 9, 10),
+            //    WaiverFee = true,
+            //    HasNhsNumber = true,
+            //    ExaminationId = "whocares",
+            //    MedicalExaminerId =  "medicalEaminer1",
+            //    NationalName = "National",
+            //    RegionName = "Region",
+            //    TrustName = "Trust",
+            //    SiteName = "Site",
+            //    ModeOfDisposal = MedicalExaminer.Models.Enums.ModeOfDisposal.Cremation
+            //};
 
-            //var currentUser = await CurrentUser();
-            //var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, currentUser));
-
-            //if (examination == null)
+            //var rowTwo = new ExaminationFinanceItem()
             //{
-            //    return new NotFoundResult();
-            //}
+            //    CaseClosed = null,
+            //    CaseCreated = new System.DateTime(2019, 9, 10),
+            //    WaiverFee = false,
+            //    HasNhsNumber = false,
+            //    ExaminationId = "whocares",
+            //    MedicalExaminerId = "medicalEaminer2",
+            //    NationalName = "National",
+            //    RegionName = "Region",
+            //    TrustName = "Trust",
+            //    SiteName = "Site",
+            //    ModeOfDisposal = MedicalExaminer.Models.Enums.ModeOfDisposal.Cremation
+            //};
 
-            //if (!CanAsync(Permission.GetCoronerReferralDownload, examination))
+            //var rowThree = new ExaminationFinanceItem()
             //{
-            //    return Forbid();
-            //}
+            //    CaseClosed = null,
+            //    CaseCreated = new System.DateTime(2019, 9, 10),
+            //    WaiverFee = null,
+            //    HasNhsNumber = false,
+            //    ExaminationId = "whocares",
+            //    MedicalExaminerId = "medicalEaminer2",
+            //    NationalName = "National",
+            //    RegionName = "Region",
+            //    TrustName = "Trust",
+            //    SiteName = "Site",
+            //    ModeOfDisposal = MedicalExaminer.Models.Enums.ModeOfDisposal.BuriedAtSea
+            //};
 
-            //if (!examination.ScrutinyConfirmed)
-            //{
-            //    return new BadRequestObjectResult("Scrutiny should be confirmed before downloading.");
-            //}
-
-            var rowOne = new ExaminationFinanceItem()
-            {
-                CaseClosed = new System.DateTime(2019, 10, 10),
-                CaseCreated = new System.DateTime(2019, 9, 10),
-                WaiverFee = true,
-                HasNhsNumber = true,
-                ExaminationId = "whocares",
-                MedicalExaminerId =  "medicalEaminer1",
-                NationalName = "National",
-                RegionName = "Region",
-                TrustName = "Trust",
-                SiteName = "Site",
-                ModeOfDisposal = MedicalExaminer.Models.Enums.ModeOfDisposal.Cremation
-            };
-
-            var rowTwo = new ExaminationFinanceItem()
-            {
-                CaseClosed = null,
-                CaseCreated = new System.DateTime(2019, 9, 10),
-                WaiverFee = false,
-                HasNhsNumber = false,
-                ExaminationId = "whocares",
-                MedicalExaminerId = "medicalEaminer2",
-                NationalName = "National",
-                RegionName = "Region",
-                TrustName = "Trust",
-                SiteName = "Site",
-                ModeOfDisposal = MedicalExaminer.Models.Enums.ModeOfDisposal.Cremation
-            };
-
-            var rowThree = new ExaminationFinanceItem()
-            {
-                CaseClosed = null,
-                CaseCreated = new System.DateTime(2019, 9, 10),
-                WaiverFee = null,
-                HasNhsNumber = false,
-                ExaminationId = "whocares",
-                MedicalExaminerId = "medicalEaminer2",
-                NationalName = "National",
-                RegionName = "Region",
-                TrustName = "Trust",
-                SiteName = "Site",
-                ModeOfDisposal = MedicalExaminer.Models.Enums.ModeOfDisposal.BuriedAtSea
-            };
+            //var response = new GetFinanceDownloadResponse();
+            //response.Data = new System.Collections.Generic.List<ExaminationFinanceItem>();
+            //response.Data.Add(rowOne);
+            //response.Data.Add(rowTwo);
+            //response.Data.Add(rowThree);
 
             var response = new GetFinanceDownloadResponse();
-            response.Data = new System.Collections.Generic.List<ExaminationFinanceItem>();
-            response.Data.Add(rowOne);
-            response.Data.Add(rowTwo);
-            response.Data.Add(rowThree);
+            response.Data = new List<ExaminationFinanceItem>();
+
+            foreach (var examination in results)
+            {
+                response.Data.Add(Mapper.Map<ExaminationFinanceItem>(examination));
+            }
 
             return new OkObjectResult(response);
         }

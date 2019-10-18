@@ -421,7 +421,8 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(finance => finance.RegionName, opt => opt.MapFrom(examination => examination.RegionLocationId))
                 .ForMember(finance => finance.SiteName, opt => opt.MapFrom(examination => examination.SiteLocationId))
                 .ForMember(finance => finance.TrustName, opt => opt.MapFrom(examination => examination.TrustLocationId))
-                .ForMember(finance => finance.WaiverFee, opt => opt.MapFrom(examination => examination.WaiveFee));
+                .ForMember(finance => finance.WaiverFee, opt => opt.MapFrom(examination => examination.WaiveFee))
+                .ForMember(finance => finance.CaseClosed, opt => opt.MapFrom(examination => examination.CaseBreakdown.CaseClosedEvent.DateCaseClosed));
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(patientCard => patientCard.IsCremation, opt => opt.MapFrom(examination => examination.ModeOfDisposal == ModeOfDisposal.Cremation))
                 .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0))

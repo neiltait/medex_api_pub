@@ -388,6 +388,10 @@ example:
                 .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
                     ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>, CreateEventService>();
+            services
+                .AddScoped<IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>>,
+                    FinanceService>();
+
 
             // Medical team services
             services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
