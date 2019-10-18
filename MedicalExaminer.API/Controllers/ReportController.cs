@@ -116,34 +116,52 @@ namespace MedicalExaminer.API.Controllers
             {
                 CaseClosed = new System.DateTime(2019, 10, 10),
                 CaseCreated = new System.DateTime(2019, 9, 10),
-                CremationFormFunding = true,
+                WaiverFee = true,
                 HasNhsNumber = true,
-                Id = "whocares",
+                ExaminationId = "whocares",
                 MedicalExaminerId =  "medicalEaminer1",
                 NationalName = "National",
                 RegionName = "Region",
                 TrustName = "Trust",
-                SiteName = "Site"
+                SiteName = "Site",
+                ModeOfDisposal = MedicalExaminer.Models.Enums.ModeOfDisposal.Cremation
             };
 
             var rowTwo = new ExaminationFinanceItem()
             {
                 CaseClosed = null,
                 CaseCreated = new System.DateTime(2019, 9, 10),
-                CremationFormFunding = true,
+                WaiverFee = false,
                 HasNhsNumber = false,
-                Id = "whocares",
+                ExaminationId = "whocares",
                 MedicalExaminerId = "medicalEaminer2",
                 NationalName = "National",
                 RegionName = "Region",
                 TrustName = "Trust",
-                SiteName = "Site"
+                SiteName = "Site",
+                ModeOfDisposal = MedicalExaminer.Models.Enums.ModeOfDisposal.Cremation
+            };
+
+            var rowThree = new ExaminationFinanceItem()
+            {
+                CaseClosed = null,
+                CaseCreated = new System.DateTime(2019, 9, 10),
+                WaiverFee = null,
+                HasNhsNumber = false,
+                ExaminationId = "whocares",
+                MedicalExaminerId = "medicalEaminer2",
+                NationalName = "National",
+                RegionName = "Region",
+                TrustName = "Trust",
+                SiteName = "Site",
+                ModeOfDisposal = MedicalExaminer.Models.Enums.ModeOfDisposal.BuriedAtSea
             };
 
             var response = new GetFinanceDownloadResponse();
             response.Data = new System.Collections.Generic.List<ExaminationFinanceItem>();
             response.Data.Add(rowOne);
             response.Data.Add(rowTwo);
+            response.Data.Add(rowThree);
 
             return new OkObjectResult(response);
         }

@@ -408,7 +408,9 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.ScrutinyConfirmed, opt => opt.Ignore())
                 .ForMember(examination => examination.OutstandingCaseItemsCompleted, opt => opt.Ignore())
                 .ForMember(examination => examination.CaseOutcome, opt => opt.Ignore())
-                .ForMember(examination => examination.CreatedBy, opt => opt.Ignore());
+                .ForMember(examination => examination.CreatedBy, opt => opt.Ignore())
+                .ForMember(examination => examination.WaiveFee, opt => opt.Ignore());
+
             CreateMap<Examination, ExaminationFinanceItem>()
                 .ForMember(finance => finance.CaseCreated, opt => opt.MapFrom(examination => examination.CreatedAt))
                 .ForMember(finance => finance.ExaminationId, opt => opt.MapFrom(examination => examination.ExaminationId))
@@ -419,7 +421,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(finance => finance.RegionName, opt => opt.MapFrom(examination => examination.RegionLocationId))
                 .ForMember(finance => finance.SiteName, opt => opt.MapFrom(examination => examination.SiteLocationId))
                 .ForMember(finance => finance.TrustName, opt => opt.MapFrom(examination => examination.TrustLocationId))
-                .ForMember(examination => examination.WaiveFee, opt => opt.Ignore());
+                .ForMember(finance => finance.WaiverFee, opt => opt.MapFrom(examination => examination.WaiveFee));
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(patientCard => patientCard.IsCremation, opt => opt.MapFrom(examination => examination.ModeOfDisposal == ModeOfDisposal.Cremation))
                 .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0))

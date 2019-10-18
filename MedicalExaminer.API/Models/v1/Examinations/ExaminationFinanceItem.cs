@@ -1,10 +1,11 @@
-﻿using System;
+﻿using MedicalExaminer.Models.Enums;
+using System;
 
 namespace MedicalExaminer.API.Models.v1.Examinations
 {
     public class ExaminationFinanceItem
     {
-        public string Id { get; set; }
+        public string ExaminationId { get; set; }
         public string SiteName { get; set; }
         public string TrustName { get; set; }
         public string RegionName { get; set; }
@@ -13,6 +14,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public DateTime CaseCreated { get; set; }
         public DateTime? CaseClosed { get; set; }
         public bool HasNhsNumber { get; set; }
-        public bool CremationFormFunding { get; set; }
+        public ModeOfDisposal ModeOfDisposal { get; set; }
+        public bool? WaiverFee { get; set; }
     }
 }
