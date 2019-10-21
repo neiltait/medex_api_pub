@@ -25,7 +25,6 @@ namespace MedicalExaminer.API.Controllers
     [ApiController]
     public class ReportController : AuthorizedBaseController
     {
-        private readonly string[] OrderedLabels = new string[] { "Examination Id",  };
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>> _financeQuery;
         private readonly IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>> _locationsRetrievalService;
@@ -98,6 +97,13 @@ namespace MedicalExaminer.API.Controllers
         [Route("finance_download")]
         public async Task<ActionResult<GetFinanceDownloadResponse>> GetFinanceDownload([FromQuery]GetFinanceDownloadRequest request)
         {
+            var currentUser = await CurrentUser();
+
+            if (!CanAsync(Permission.GetFinanceDownload))
+            {
+                return Forbid();
+            }
+
             var results = await _financeQuery.Handle(new FinanceQuery(request.ExaminationsCreatedFrom, request.ExaminationsCreatedTo, request.LocationId));
 
             var sites = results.Select(x => x.SiteLocationId).ToList();
@@ -119,7 +125,6 @@ namespace MedicalExaminer.API.Controllers
 
             foreach (var examination in results)
             {
-
                 response.Data.Add(Mapper.Map<ExaminationFinanceItem>(new ExaminationLocationItem()
                 {
                     Examination = examination,
