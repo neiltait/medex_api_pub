@@ -25,6 +25,7 @@ namespace MedicalExaminer.API.Controllers
     [ApiController]
     public class ReportController : AuthorizedBaseController
     {
+        private readonly string[] OrderedLabels = new string[] { "Examination Id",  };
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>> _financeQuery;
         private readonly IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>> _locationsRetrievalService;
