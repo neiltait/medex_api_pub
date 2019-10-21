@@ -51,8 +51,18 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.ScrutinyConfirmed, opt => opt.Ignore())
                 .ForMember(examination => examination.OutstandingCaseItemsCompleted, opt => opt.Ignore())
                 .ForMember(examination => examination.CaseOutcome, opt => opt.Ignore())
-                .ForMember(examination => examination.WaiveFee,
-                    opt => opt.MapFrom(patientDetails => patientDetails.ModeOfDisposal != ModeOfDisposal.Cremation));
+                .ForMember(examination => examination.WaiveFee, opt => opt.MapFrom((src, dest, destMember, context) =>
+                {
+                    if (dest.ModeOfDisposal == ModeOfDisposal.Cremation)
+                    {
+                        if (dest.WaiveFee != null)
+                        {
+                            return dest.WaiveFee;
+                        }
+                        return false;
+                    }
+                    return (bool?)null;
+                }));
         }
     }
 }

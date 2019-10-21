@@ -5,12 +5,14 @@ using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MedicalExaminer.API.Controllers
@@ -25,6 +27,7 @@ namespace MedicalExaminer.API.Controllers
     {
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>> _financeQuery;
+        private readonly IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>> _locationsRetrievalService;
         /// <summary>
         /// The report controller constructor
         /// </summary>
@@ -41,11 +44,13 @@ namespace MedicalExaminer.API.Controllers
             IAuthorizationService authorizationService,
             IPermissionService permissionService,
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
-            IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>> financeQuery) 
+            IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>> financeQuery,
+            IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>> locationsRetrievalService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _examinationRetrievalService = examinationRetrievalService;
             _financeQuery = financeQuery;
+            _locationsRetrievalService = locationsRetrievalService;
         }
 
         /// <summary>
@@ -94,62 +99,26 @@ namespace MedicalExaminer.API.Controllers
         {
             var results = await _financeQuery.Handle(new FinanceQuery(request.ExaminationsCreatedFrom, request.ExaminationsCreatedTo, request.LocationId));
 
-            //var rowOne = new ExaminationFinanceItem()
-            //{
-            //    CaseClosed = new System.DateTime(2019, 10, 10),
-            //    CaseCreated = new System.DateTime(2019, 9, 10),
-            //    WaiverFee = true,
-            //    HasNhsNumber = true,
-            //    ExaminationId = "whocares",
-            //    MedicalExaminerId =  "medicalEaminer1",
-            //    NationalName = "National",
-            //    RegionName = "Region",
-            //    TrustName = "Trust",
-            //    SiteName = "Site",
-            //    ModeOfDisposal = MedicalExaminer.Models.Enums.ModeOfDisposal.Cremation
-            //};
+            var sites = results.Select(x => x.SiteLocationId).ToList();
+            var trusts = results.Select(x => x.TrustLocationId).ToList();
+            var regions = results.Select(x => x.RegionLocationId).ToList();
+            var nationals = results.Select(x => x.NationalLocationId).ToList();
 
-            //var rowTwo = new ExaminationFinanceItem()
-            //{
-            //    CaseClosed = null,
-            //    CaseCreated = new System.DateTime(2019, 9, 10),
-            //    WaiverFee = false,
-            //    HasNhsNumber = false,
-            //    ExaminationId = "whocares",
-            //    MedicalExaminerId = "medicalEaminer2",
-            //    NationalName = "National",
-            //    RegionName = "Region",
-            //    TrustName = "Trust",
-            //    SiteName = "Site",
-            //    ModeOfDisposal = MedicalExaminer.Models.Enums.ModeOfDisposal.Cremation
-            //};
+            sites.AddRange(trusts);
+            sites.AddRange(regions);
+            sites.AddRange(nationals);
 
-            //var rowThree = new ExaminationFinanceItem()
-            //{
-            //    CaseClosed = null,
-            //    CaseCreated = new System.DateTime(2019, 9, 10),
-            //    WaiverFee = null,
-            //    HasNhsNumber = false,
-            //    ExaminationId = "whocares",
-            //    MedicalExaminerId = "medicalEaminer2",
-            //    NationalName = "National",
-            //    RegionName = "Region",
-            //    TrustName = "Trust",
-            //    SiteName = "Site",
-            //    ModeOfDisposal = MedicalExaminer.Models.Enums.ModeOfDisposal.BuriedAtSea
-            //};
+            var distinctLocations = sites.Distinct();
 
-            //var response = new GetFinanceDownloadResponse();
-            //response.Data = new System.Collections.Generic.List<ExaminationFinanceItem>();
-            //response.Data.Add(rowOne);
-            //response.Data.Add(rowTwo);
-            //response.Data.Add(rowThree);
+            var distinctLocationNames = await _locationsRetrievalService.Handle(new LocationsRetrievalByIdQuery(true, distinctLocations.ToArray()));
 
             var response = new GetFinanceDownloadResponse();
+
             response.Data = new List<ExaminationFinanceItem>();
 
             foreach (var examination in results)
             {
+
                 response.Data.Add(Mapper.Map<ExaminationFinanceItem>(examination));
             }
 

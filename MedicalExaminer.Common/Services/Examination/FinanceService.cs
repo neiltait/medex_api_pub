@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
-using MedicalExaminer.Models;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
@@ -13,6 +14,8 @@ namespace MedicalExaminer.Common.Services.Examination
     public class FinanceService : QueryHandler<FinanceQuery, IEnumerable<Models.Examination>>
     {
         private ExaminationsQueryExpressionBuilder _examinationQueryBuilder;
+
+
         public FinanceService(IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings,
             ExaminationsQueryExpressionBuilder examinationQueryBuilder)
@@ -25,7 +28,23 @@ namespace MedicalExaminer.Common.Services.Examination
         {
             var queryExpression = _examinationQueryBuilder.GetFinancePredicate(param);
 
-            return DatabaseAccess.GetItemsAsync(ConnectionSettings, queryExpression);
+            Expression<Func<Models.Examination, dynamic>> select = examination => new
+            {
+                id = examination.ExaminationId,
+                site_location_id = examination.SiteLocationId,
+                trust_location_id = examination.TrustLocationId,
+                region_location_id = examination.RegionLocationId,
+                national_location_id = examination.NationalLocationId,
+                medical_team = examination.MedicalTeam,
+                CreatedAt = examination.CreatedAt,
+                case_completed = examination.CaseCompleted,
+                nhs_number = examination.NhsNumber,
+                mode_of_disposal = examination.ModeOfDisposal,
+                waive_fee = examination.WaiveFee
+            };
+
+
+            return GetItemsAsync(queryExpression, select);
         }
     }
 }
