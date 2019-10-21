@@ -301,7 +301,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(caseOutcome => caseOutcome.MccdIssued, opt => opt.MapFrom(examination => examination.CaseOutcome.MccdIssued))
                 .ForMember(caseOutcome => caseOutcome.CremationFormStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.CremationFormStatus))
                 .ForMember(caseOutcome => caseOutcome.GpNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GpNotifiedStatus))
-                .ForMember(caseOutcome => caseOutcome.DateCaseClosed, opt => opt.Ignore());
+                .ForMember(caseOutcome => caseOutcome.DateCaseClosed, opt => opt.MapFrom(examination => examination.CaseOutcome.DateCaseClosed));
             CreateMap<Examination, GetCaseOutcomeResponse>()
                 .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
                 .ForMember(response => response.CaseMedicalExaminerFullName, opt => opt.MapFrom(new MedicalExaminerFullNameResolver()))
