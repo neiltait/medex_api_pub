@@ -417,6 +417,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(patientCard => patientCard.AppointmentTime, examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())))
                 .ForMember(patientCard => patientCard.CaseCreatedDate, opt => opt.MapFrom(examination => examination.CreatedAt))
                 .ForMember(patientCard => patientCard.LastAdmission, opt => opt.MapFrom(new AdmissionDateResolver()))
+                .ForMember(patientCard => patientCard.DateCaseClosed, opt => opt.MapFrom(examination => examination.CaseOutcome.DateCaseClosed))
                 .ForMember(patientCard => patientCard.CaseOutcome, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary))
                 .ForMember(patientCard => patientCard.NameEntered, opt => opt.MapFrom(
                     (source, dest, destMember, context) =>

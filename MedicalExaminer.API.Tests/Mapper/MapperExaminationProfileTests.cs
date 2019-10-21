@@ -156,7 +156,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             MccdIssued = true,
             GpNotifiedStatus = GPNotified.GPUnabledToBeNotified,
             CremationFormStatus = CremationFormStatus.Yes,
-            DateCaseClosed = DateTime.Now
+            DateCaseClosed = null
         };
 
         /// <summary>
@@ -816,6 +816,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
+            result.DateCaseClosed.Should().Be(caseOutcome.DateCaseClosed);
         }
 
         [Fact]
