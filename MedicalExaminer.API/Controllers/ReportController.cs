@@ -119,7 +119,11 @@ namespace MedicalExaminer.API.Controllers
             foreach (var examination in results)
             {
 
-                response.Data.Add(Mapper.Map<ExaminationFinanceItem>(examination));
+                response.Data.Add(Mapper.Map<ExaminationFinanceItem>(new ExaminationLocationItem()
+                {
+                    Examination = examination,
+                    Locations = distinctLocationNames
+                }));
             }
 
             return new OkObjectResult(response);

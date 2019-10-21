@@ -411,18 +411,26 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.CreatedBy, opt => opt.Ignore())
                 .ForMember(examination => examination.WaiveFee, opt => opt.Ignore());
 
-            CreateMap<Examination, ExaminationFinanceItem>()
-                .ForMember(finance => finance.CaseCreated, opt => opt.MapFrom(examination => examination.CreatedAt))
-                .ForMember(finance => finance.ExaminationId, opt => opt.MapFrom(examination => examination.ExaminationId))
-                .ForMember(finance => finance.HasNhsNumber, opt => opt.MapFrom(examination => !string.IsNullOrEmpty(examination.NhsNumber)))
-                .ForMember(finance => finance.MedicalExaminerId, opt => opt.MapFrom(examination => examination.MedicalTeam.MedicalExaminerUserId))
-                .ForMember(finance => finance.ModeOfDisposal, opt => opt.MapFrom(examination => examination.ModeOfDisposal))
-                .ForMember(finance => finance.NationalName, opt => opt.MapFrom(examination => examination.NationalLocationId))
-                .ForMember(finance => finance.RegionName, opt => opt.MapFrom(examination => examination.RegionLocationId))
-                .ForMember(finance => finance.SiteName, opt => opt.MapFrom(examination => examination.SiteLocationId))
-                .ForMember(finance => finance.TrustName, opt => opt.MapFrom(examination => examination.TrustLocationId))
-                .ForMember(finance => finance.WaiverFee, opt => opt.MapFrom(examination => examination.WaiveFee))
-                .ForMember(finance => finance.CaseClosed, opt => opt.MapFrom(examination => examination.CaseBreakdown.CaseClosedEvent.DateCaseClosed));
+            CreateMap<ExaminationLocationItem, ExaminationFinanceItem>()
+                .ForMember(finance => finance.CaseCreated, opt => opt.MapFrom(eli => eli.Examination.CreatedAt))
+                .ForMember(finance => finance.ExaminationId, opt => opt.MapFrom(eli => eli.Examination.ExaminationId))
+                .ForMember(finance => finance.HasNhsNumber, opt => opt.MapFrom(eli => !string.IsNullOrEmpty(eli.Examination.NhsNumber)))
+                .ForMember(finance => finance.MedicalExaminerId, opt => opt.MapFrom(eli => eli.Examination.MedicalTeam.MedicalExaminerUserId))
+                .ForMember(finance => finance.ModeOfDisposal, opt => opt.MapFrom(eli => eli.Examination.ModeOfDisposal))
+                .ForMember(finance => finance.NationalName, opt => opt.MapFrom((source, dest, destMember, context) => {
+                    return source.Locations.SingleOrDefault(x => x.LocationId == source.Examination.NationalLocationId).Name;
+                    }))
+                .ForMember(finance => finance.RegionName, opt => opt.MapFrom((source, dest, destMember, context) => {
+                    return source.Locations.SingleOrDefault(x => x.LocationId == source.Examination.RegionLocationId).Name;
+                }))
+                .ForMember(finance => finance.SiteName, opt => opt.MapFrom((source, dest, destMember, context) => {
+                    return source.Locations.SingleOrDefault(x => x.LocationId == source.Examination.SiteLocationId).Name;
+                }))
+                .ForMember(finance => finance.TrustName, opt => opt.MapFrom((source, dest, destMember, context) => {
+                    return source.Locations.SingleOrDefault(x => x.LocationId == source.Examination.TrustLocationId).Name;
+                }))
+                .ForMember(finance => finance.WaiverFee, opt => opt.MapFrom(eli => eli.Examination.WaiveFee))
+                .ForMember(finance => finance.CaseClosed, opt => opt.MapFrom(eli => eli.Examination.CaseBreakdown.CaseClosedEvent.DateCaseClosed));
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(patientCard => patientCard.IsCremation, opt => opt.MapFrom(examination => examination.ModeOfDisposal == ModeOfDisposal.Cremation))
                 .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0))
