@@ -32,5 +32,7 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
         public CremationFormStatus? CremationFormStatus { get; set; }
 
         public GPNotified? GpNotifiedStatus { get; set; }
+
+        public DateTime? DateCaseClosed { get; set; }
     }
 }

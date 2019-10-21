@@ -48,6 +48,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.ModifiedAt = DateTime.Now;
             examinationToUpdate.CaseCompleted = true;
             examinationToUpdate.CaseOutcome.CaseCompleted = true;
+            examinationToUpdate.CaseOutcome.DateCaseClosed = DateTime.Now;
 
             examinationToUpdate.CaseBreakdown.CaseClosedEvent = new CaseClosedEvent()
             {
