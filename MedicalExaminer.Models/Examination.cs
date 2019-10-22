@@ -454,7 +454,7 @@ namespace MedicalExaminer.Models
         /// Date Case Closed
         /// </summary>
         [JsonProperty(PropertyName = "date_case_closed")]
-        public DateTime? DateCaseClosed { get; set; }
+        public DateTime? DateCaseClosed { get; set; } = null;
 
         /// <summary>
         /// Case Outcome Items
