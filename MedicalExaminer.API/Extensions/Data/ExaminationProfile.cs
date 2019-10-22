@@ -316,6 +316,9 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(response => response.MccdIssued, opt => opt.MapFrom(examination => examination.CaseOutcome.MccdIssued))
                 .ForMember(response => response.CremationFormStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.CremationFormStatus))
                 .ForMember(response => response.GpNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GpNotifiedStatus));
+            CreateMap<Examination, PutCremationFeeWaiveResponse>()
+                .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
+                .ForMember(response => response.WaiveFee, opt => opt.MapFrom(examination => examination.WaiveFee));
             CreateMap<Examination, ExaminationItem>()
                 .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0));
             CreateMap<Examination, GetPatientDetailsResponse>()
