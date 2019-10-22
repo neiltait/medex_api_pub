@@ -71,11 +71,5 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "gp_notified_status")]
         public GPNotified? GpNotifiedStatus { get; set; }
-
-        /// <summary>
-        /// Date Case Closed
-        /// </summary>
-        [JsonProperty(PropertyName = "date_case_closed")]
-        public DateTime? DateCaseClosed { get; set; }
     }
 }
