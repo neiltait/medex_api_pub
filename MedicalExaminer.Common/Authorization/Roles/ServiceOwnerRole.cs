@@ -32,6 +32,7 @@ namespace MedicalExaminer.Common.Authorization.Roles
 
                 Permission.GetLocations,
                 Permission.GetLocation,
+                Permission.UpdateLocation,
 
                 Permission.GetExaminations,
                 Permission.GetExamination,
