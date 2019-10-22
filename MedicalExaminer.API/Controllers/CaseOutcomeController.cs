@@ -323,7 +323,7 @@ namespace MedicalExaminer.API.Controllers
 
             await _saveWaiveFeeService.Handle(new SaveWaiveFeeQuery(examinationId, user, putCremationFeeWaiver.WaiveFee));
 
-            return Ok(200);
+            return Ok();
         }
     }
 }

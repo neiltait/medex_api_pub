@@ -103,8 +103,9 @@ namespace MedicalExaminer.API.Controllers
             {
                 return Forbid();
             }
+            var permissedLocations = (await LocationsWithPermission(Permission.GetExaminations)).ToList();
 
-            var results = await _financeQuery.Handle(new FinanceQuery(request.ExaminationsCreatedFrom, request.ExaminationsCreatedTo, request.LocationId));
+            var results = await _financeQuery.Handle(new FinanceQuery(request.ExaminationsCreatedFrom, request.ExaminationsCreatedTo, request.LocationId, permissedLocations));
 
             var sites = results.Select(x => x.SiteLocationId).ToList();
             var trusts = results.Select(x => x.TrustLocationId).ToList();

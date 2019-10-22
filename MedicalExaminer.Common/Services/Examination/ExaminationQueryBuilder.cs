@@ -12,10 +12,11 @@ namespace MedicalExaminer.Common.Services.Examination
     {
         public Expression<Func<Models.Examination, bool>> GetFinancePredicate(FinanceQuery queryObject)
         {
+            var permissedLocationFilter = GetPermissedLocationPredicate(queryObject.PermissedLocation);
+            var locationFilter = GetLocationPredicate(queryObject.LocationId);
             var dateFromQuery = GetCaseCreatedFromQuery(queryObject.DateFrom);
             var dateToQuery = GetCaseCreatedToQuery(queryObject.DateTo);
-            var locationPredicate = GetLocationPredicate(queryObject.LocationId);
-            return dateFromQuery.And(dateToQuery).And(locationPredicate);
+            return dateFromQuery.And(dateToQuery).And(permissedLocationFilter).And(locationFilter);
         }
 
         private Expression<Func<Models.Examination, bool>> GetCaseCreatedFromQuery(DateTime dateFrom)
