@@ -79,8 +79,8 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             Assert.NotNull(result.Result);
             Assert.True(examination.CaseCompleted);
             Assert.Equal(examinationId, result.Result);
-            Assert.NotNull(examination.CaseOutcome.DateCaseClosed);
-            Assert.Equal(DateTime.Now.Date, examination.CaseOutcome.DateCaseClosed.Value.Date);
+            Assert.NotNull(examination.DateCaseClosed);
+            Assert.Equal(DateTime.Now.Date, examination.DateCaseClosed.Value.Date);
         }
     }
 }
