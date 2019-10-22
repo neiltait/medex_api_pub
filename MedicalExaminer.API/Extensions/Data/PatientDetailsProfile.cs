@@ -62,7 +62,7 @@ namespace MedicalExaminer.API.Extensions.Data
                         return false;
                     }
                     return (bool?)null;
-                }));
+                }))
                 .ForMember(examination => examination.DateCaseClosed, opt => opt.Ignore());
         }
     }
