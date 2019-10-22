@@ -3014,6 +3014,18 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
+        public void ExaminationWithNulls_To_FinanceReportItem()
+        {
+
+        }
+
+        [Fact]
+        public void ExaminationNoNulls_To_FinanceReportItem()
+        {
+
+        }
+
+        [Fact]
         public void QapDiscussionPrepopulated_Examination_To_Casebreakdown_No_LatestPreScrutinyDiscussion()
         {
             // Arrange
@@ -3071,6 +3083,21 @@ namespace MedicalExaminer.API.Tests.Mapper
             prepopulated.MedicalExaminer.Should().Be(expectedQapPrepopulated.MedicalExaminer);
             prepopulated.PreScrutinyStatus.Should().Be(expectedQapPrepopulated.PreScrutinyStatus);
             prepopulated.UserForLatestPrescrutiny.Should().Be(expectedQapPrepopulated.UserForLatestPrescrutiny);
+        }
+
+        private void AreEquivalent(ExaminationFinanceItem expected, ExaminationFinanceItem actual)
+        {
+            actual.CaseClosed.Should().Be(expected.CaseClosed);
+            actual.CaseCreated.Should().Be(expected.CaseCreated);
+            actual.ExaminationId.Should().Be(expected.ExaminationId);
+            actual.HasNhsNumber.Should().Be(expected.HasNhsNumber);
+            actual.MedicalExaminerId.Should().Be(expected.MedicalExaminerId);
+            actual.ModeOfDisposal.Should().Be(expected.ModeOfDisposal);
+            actual.NationalName.Should().Be(expected.NationalName);
+            actual.RegionName.Should().Be(expected.RegionName);
+            actual.SiteName.Should().Be(expected.SiteName);
+            actual.TrustName.Should().Be(expected.TrustName);
+            actual.WaiverFee.Should().Be(expected.WaiverFee);
         }
 
         private void AssertAllSourcePropertiesMappedForMap(TypeMap map)
