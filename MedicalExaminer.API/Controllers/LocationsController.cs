@@ -142,8 +142,8 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="isMEOffice">Set or unset is me office.</param>
         /// <returns></returns>
         [HttpPut]
-        [Route("is_me_office")]
-        public async Task<ActionResult> PutIsMEOffice(string locationId, bool isMEOffice)
+        [Route("{locationId}/is_me_office")]
+        public async Task<ActionResult> PutIsMeOffice(string locationId, [FromBody] bool isMeOffice)
         {
             if (string.IsNullOrEmpty(locationId))
             {
@@ -176,7 +176,7 @@ namespace MedicalExaminer.API.Controllers
             }
 
             // When clearing; if ANY cases have this location assigned return bad request. These could even be cases the current user might not have permission to.
-            if (isMEOffice == false)
+            if (isMeOffice == false)
             {
                 var examinations = await _examinationsRetrievalService.Handle(new ExaminationsRetrievalQuery(
                     null,
@@ -197,7 +197,7 @@ namespace MedicalExaminer.API.Controllers
             await _updateLocationIsMeOfficeService.Handle(new UpdateLocationIsMeOfficeQuery()
             {
                 LocationId = locationId,
-                IsMeOffice = isMEOffice,
+                IsMeOffice = isMeOffice,
             });
 
             return Ok();
