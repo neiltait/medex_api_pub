@@ -46,9 +46,14 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> _locationParentsService;
 
         /// <summary>
-        /// Examinations retrieval service.
+        /// Examination Retrieval Service.
         /// </summary>
         private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
+
+        /// <summary>
+        /// Update Location Is Me Office Service.
+        /// </summary>
+        private readonly IAsyncQueryHandler<UpdateLocationIsMeOfficeQuery, Location> _updateLocationIsMeOfficeService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocationsController"/> class.
@@ -71,12 +76,15 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> locationRetrievalByIdQueryHandler,
             IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler,
             IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService,
-            IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService)
+            IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
+            IAsyncQueryHandler<UpdateLocationIsMeOfficeQuery, Location> updateLocationIsMeOfficeService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _locationRetrievalByIdQueryHandler = locationRetrievalByIdQueryHandler;
             _locationRetrievalByQueryHandler = locationRetrievalByQueryHandler;
             _locationParentsService = locationParentsService;
+            _examinationsRetrievalService = examinationsRetrievalService;
+            _updateLocationIsMeOfficeService = updateLocationIsMeOfficeService;
             _examinationsRetrievalService = examinationsRetrievalService;
         }
 
@@ -167,29 +175,32 @@ namespace MedicalExaminer.API.Controllers
                 return Forbid();
             }
 
-            // When clearing; if any cases have this location assigned return bad request.
-            if(isMEOffice == false)
+            // When clearing; if ANY cases have this location assigned return bad request. These could even be cases the current user might not have permission to.
+            if (isMEOffice == false)
             {
-                var examinations = query();
+                var examinations = await _examinationsRetrievalService.Handle(new ExaminationsRetrievalQuery(
+                    null,
+                    null,
+                    locationId,
+                    null,
+                    1,
+                    1,
+                    null,
+                    true));
 
-                if( examinations.Count > 0 )
+                if (examinations.Any())
                 {
-                    return new BadRequestObjectResult("The location is currently being used.");
+                    return new BadRequestObjectResult("The location is currently in use.");
                 }
             }
 
-            location.IsMeOffice = isMEOffice;
-
-            if (examination.CalculateOutstandingCaseOutcomesCompleted())
+            await _updateLocationIsMeOfficeService.Handle(new UpdateLocationIsMeOfficeQuery()
             {
-                await _closeCaseService.Handle(new CloseCaseQuery(examinationId, user));
-                return Ok();
-            }
+                LocationId = locationId,
+                IsMeOffice = isMEOffice,
+            });
 
-
-            return BadRequest();
+            return Ok();
         }
-
-
     }
 }
