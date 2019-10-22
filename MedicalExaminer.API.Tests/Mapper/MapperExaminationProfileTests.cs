@@ -196,7 +196,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<ExaminationProfile>();
-                // cfg.AddProfile<CaseBreakdownProfile>();
             });
 
             _mapper = config.CreateMapper();
@@ -3016,7 +3015,48 @@ namespace MedicalExaminer.API.Tests.Mapper
         [Fact]
         public void ExaminationWithNulls_To_FinanceReportItem()
         {
+            // Arrange
 
+            var examination = new Examination()
+            {
+                ExaminationId = "examinationId",
+                DateCaseClosed = null,
+                CreatedAt = new DateTime(2019, 9, 1),
+                NhsNumber = null,
+                MedicalTeam = null,
+                ModeOfDisposal = ModeOfDisposal.Unknown,
+                NationalLocationId = null,
+                RegionLocationId = null,
+                SiteLocationId = null,
+                TrustLocationId = null,
+                WaiveFee = null
+            };
+
+            var examinationFinanceLocations = new ExaminationLocationItem()
+            {
+                Examination = examination,
+                Locations = new List<Location>()
+            };
+
+            var expectedFinanceReportItem = new ExaminationFinanceItem()
+            {
+                CaseClosed = null,
+                CaseCreated = new DateTime(2019, 9, 1),
+                ExaminationId = "examinationId",
+                HasNhsNumber = false,
+                MedicalExaminerId = null,
+                ModeOfDisposal = ModeOfDisposal.Unknown,
+                NationalName = null,
+                RegionName = null,
+                SiteName = null,
+                TrustName = null,
+                WaiverFee = null
+            };
+
+            // Act
+            var result = _mapper.Map<ExaminationFinanceItem>(examinationFinanceLocations);
+
+            AreEquivalent(expectedFinanceReportItem, result);
         }
 
         [Fact]
