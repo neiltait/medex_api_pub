@@ -36,6 +36,16 @@ namespace MedicalExaminer.API.Tests.Services.Finance
             Assert.Equal(1, results.Count());
         }
 
+        [Fact]
+        public virtual async Task NullParamThrowsError()
+        {
+            // Act
+            Action act = () => Service.Handle(null).GetAwaiter().GetResult();
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>();
+        }
+
         protected override MedicalExaminer.Models.Examination[] GetExamples()
         {
             var examination1 = new MedicalExaminer.Models.Examination()
