@@ -2,19 +2,14 @@
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
-using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
-using MedicalExaminer.Common.Services.Examination;
-using MedicalExaminer.Common.Settings;
-using MedicalExaminer.Models;
-using Microsoft.Extensions.Options;
 
 namespace MedicalExaminer.Common.Services.Location
 {
     /// <summary>
     /// Update Location Is ME Office Service.
     /// </summary>
-    public class UpdateLocationIsMeOfficeService : QueryHandler<UpdateLocationIsMeOfficeQuery, bool>
+    public class UpdateLocationIsMeOfficeService : QueryHandler<UpdateLocationIsMeOfficeQuery, Models.Location>
     {
         /// <summary>
         /// Initialise a new instance of <see cref="UpdateLocationIsMEOfficeService"/>.
@@ -30,7 +25,7 @@ namespace MedicalExaminer.Common.Services.Location
         }
 
         /// <inheritdoc/>
-        public override async Task<bool> Handle(UpdateLocationIsMeOfficeQuery param)
+        public override async Task<Models.Location> Handle(UpdateLocationIsMeOfficeQuery param)
         {
             if (param == null)
             {
@@ -41,9 +36,9 @@ namespace MedicalExaminer.Common.Services.Location
 
             location.IsMeOffice = param.IsMeOffice;
 
-            await DatabaseAccess.UpdateItemAsync(ConnectionSettings, location);
+            var result = await DatabaseAccess.UpdateItemAsync(ConnectionSettings, location);
 
-            return true;
+            return result;
         }
     }
 }
