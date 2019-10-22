@@ -97,7 +97,15 @@ namespace MedicalExaminer.API.Controllers
         [Route("finance_download")]
         public async Task<ActionResult<GetFinanceDownloadResponse>> GetFinanceDownload([FromQuery]GetFinanceDownloadRequest request)
         {
-            var results = await _financeQuery.Handle(new FinanceQuery(request.ExaminationsCreatedFrom, request.ExaminationsCreatedTo, request.LocationId));
+            var currentUser = await CurrentUser();
+
+            if (!CanAsync(Permission.GetFinanceDownload))
+            {
+                return Forbid();
+            }
+            var permissedLocations = (await LocationsWithPermission(Permission.GetExaminations)).ToList();
+
+            var results = await _financeQuery.Handle(new FinanceQuery(request.ExaminationsCreatedFrom, request.ExaminationsCreatedTo, request.LocationId, permissedLocations));
 
             var sites = results.Select(x => x.SiteLocationId).ToList();
             var trusts = results.Select(x => x.TrustLocationId).ToList();
@@ -118,8 +126,11 @@ namespace MedicalExaminer.API.Controllers
 
             foreach (var examination in results)
             {
-
-                response.Data.Add(Mapper.Map<ExaminationFinanceItem>(examination));
+                response.Data.Add(Mapper.Map<ExaminationFinanceItem>(new ExaminationLocationItem()
+                {
+                    Examination = examination,
+                    Locations = distinctLocationNames
+                }));
             }
 
             return new OkObjectResult(response);

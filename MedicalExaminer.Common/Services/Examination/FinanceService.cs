@@ -15,8 +15,8 @@ namespace MedicalExaminer.Common.Services.Examination
     {
         private ExaminationsQueryExpressionBuilder _examinationQueryBuilder;
 
-
-        public FinanceService(IDatabaseAccess databaseAccess,
+        public FinanceService(
+            IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings,
             ExaminationsQueryExpressionBuilder examinationQueryBuilder)
             : base(databaseAccess, connectionSettings)
@@ -26,6 +26,11 @@ namespace MedicalExaminer.Common.Services.Examination
 
         public override Task<IEnumerable<Models.Examination>> Handle(FinanceQuery param)
         {
+            if (param == null)
+            {
+                throw new ArgumentNullException(nameof(param));
+            }
+
             var queryExpression = _examinationQueryBuilder.GetFinancePredicate(param);
 
             Expression<Func<Models.Examination, dynamic>> select = examination => new
@@ -40,9 +45,9 @@ namespace MedicalExaminer.Common.Services.Examination
                 case_completed = examination.CaseCompleted,
                 nhs_number = examination.NhsNumber,
                 mode_of_disposal = examination.ModeOfDisposal,
-                waive_fee = examination.WaiveFee
+                waive_fee = examination.WaiveFee,
+                case_outcome = examination.CaseOutcome
             };
-
 
             return GetItemsAsync(queryExpression, select);
         }

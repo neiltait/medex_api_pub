@@ -70,6 +70,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         private const string CaseOfficer = "CaseOfficer";
         private const string AdmissionNotes = "admissionNotes";
         private TimeSpan AdmittedTime = new TimeSpan(12, 30, 01);
+        private DateTime? DateCaseClosed = null;
         private MeUser User0 = new MeUser()
         {
             UserId = "userId0",
@@ -780,6 +781,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             response.OutcomeOfRepresentativeDiscussion.Should().Be(examination.CaseBreakdown.BereavedDiscussion.Latest.BereavedDiscussionOutcome);
             response.OutcomeQapDiscussion.Should().Be(examination.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome);
             response.ScrutinyConfirmedOn.Should().Be(caseOutcome.ScrutinyConfirmedOn);
+            response.DateCaseClosed.Should().Be(DateCaseClosed);
         }
 
         [Fact]
@@ -799,7 +801,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.OutcomeOfRepresentativeDiscussion.Should().Be(caseOutcome.OutcomeOfRepresentativeDiscussion);
             result.OutcomeQapDiscussion.Should().Be(caseOutcome.OutcomeQapDiscussion);
             result.CaseCompleted.Should().Be(Completed);
-
         }
 
         [Fact]
@@ -1796,6 +1797,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 ExaminationId = ExaminationId,
                 CaseBreakdown = casebreakdown,
                 CaseOutcome = caseOutcome,
+                DateCaseClosed = DateCaseClosed,
                 AnyImplants = AnyImplants,
                 AnyPersonalEffects = AnyPersonalEffects,
                 ChildPriority = ChildPriority,
@@ -3025,6 +3027,18 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
+        public void ExaminationWithNulls_To_FinanceReportItem()
+        {
+
+        }
+
+        [Fact]
+        public void ExaminationNoNulls_To_FinanceReportItem()
+        {
+
+        }
+
+        [Fact]
         public void QapDiscussionPrepopulated_Examination_To_Casebreakdown_No_LatestPreScrutinyDiscussion()
         {
             // Arrange
@@ -3082,6 +3096,21 @@ namespace MedicalExaminer.API.Tests.Mapper
             prepopulated.MedicalExaminer.Should().Be(expectedQapPrepopulated.MedicalExaminer);
             prepopulated.PreScrutinyStatus.Should().Be(expectedQapPrepopulated.PreScrutinyStatus);
             prepopulated.UserForLatestPrescrutiny.Should().Be(expectedQapPrepopulated.UserForLatestPrescrutiny);
+        }
+
+        private void AreEquivalent(ExaminationFinanceItem expected, ExaminationFinanceItem actual)
+        {
+            actual.CaseClosed.Should().Be(expected.CaseClosed);
+            actual.CaseCreated.Should().Be(expected.CaseCreated);
+            actual.ExaminationId.Should().Be(expected.ExaminationId);
+            actual.HasNhsNumber.Should().Be(expected.HasNhsNumber);
+            actual.MedicalExaminerId.Should().Be(expected.MedicalExaminerId);
+            actual.ModeOfDisposal.Should().Be(expected.ModeOfDisposal);
+            actual.NationalName.Should().Be(expected.NationalName);
+            actual.RegionName.Should().Be(expected.RegionName);
+            actual.SiteName.Should().Be(expected.SiteName);
+            actual.TrustName.Should().Be(expected.TrustName);
+            actual.WaiverFee.Should().Be(expected.WaiverFee);
         }
 
         private void AssertAllSourcePropertiesMappedForMap(TypeMap map)
