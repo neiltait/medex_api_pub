@@ -178,8 +178,10 @@ namespace MedicalExaminer.API.Controllers
             // When clearing; if ANY cases have this location assigned return bad request. These could even be cases the current user might not have permission to.
             if (isMeOffice == false)
             {
+                var permissedLocations = new[] { locationId };
+
                 var examinations = await _examinationsRetrievalService.Handle(new ExaminationsRetrievalQuery(
-                    null,
+                    permissedLocations,
                     null,
                     locationId,
                     null,
