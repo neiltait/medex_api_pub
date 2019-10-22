@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
@@ -80,6 +79,8 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             Assert.NotNull(result.Result);
             Assert.True(examination.CaseCompleted);
             Assert.Equal(examinationId, result.Result);
+            Assert.NotNull(examination.CaseOutcome.DateCaseClosed);
+            Assert.Equal(DateTime.Now.Date, examination.CaseOutcome.DateCaseClosed.Value.Date);
         }
     }
 }

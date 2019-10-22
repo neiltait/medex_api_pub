@@ -155,7 +155,8 @@ namespace MedicalExaminer.API.Tests.Mapper
             OutcomeOfRepresentativeDiscussion = BereavedDiscussionOutcome.ConcernsAddressedWithoutCoroner,
             MccdIssued = true,
             GpNotifiedStatus = GPNotified.GPUnabledToBeNotified,
-            CremationFormStatus = CremationFormStatus.Yes
+            CremationFormStatus = CremationFormStatus.Yes,
+            DateCaseClosed = null
         };
 
         /// <summary>
@@ -786,7 +787,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.OutcomeOfRepresentativeDiscussion.Should().Be(caseOutcome.OutcomeOfRepresentativeDiscussion);
             result.OutcomeQapDiscussion.Should().Be(caseOutcome.OutcomeQapDiscussion);
             result.CaseCompleted.Should().Be(Completed);
-
+            result.DateCaseClosed.Should().Be(caseOutcome.DateCaseClosed);
         }
 
         [Fact]
@@ -828,6 +829,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             var result = _mapper.Map<PatientCardItem>(examination);
 
             result.IsCremation.Should().BeTrue();
+            result.DateCaseClosed.Should().Be(caseOutcome.DateCaseClosed);
         }
 
         [Fact]
