@@ -5,7 +5,7 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
     /// <summary>
     /// Put Cremation Fee Waive Response
     /// </summary>
-    public class PutCremationFeeWaiveResponse
+    public class PutCremationFeeWaiveResponse : ResponseBase
     {
         /// <summary>
         /// Patient card header

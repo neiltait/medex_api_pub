@@ -258,12 +258,12 @@ namespace MedicalExaminer.API.Controllers
         {
             if (string.IsNullOrEmpty(examinationId))
             {
-                return new BadRequestObjectResult(nameof(examinationId));
+                return new BadRequestObjectResult(new PutCremationFeeWaiveResponse());
             }
 
             if (!Guid.TryParse(examinationId, out _))
             {
-                return new BadRequestObjectResult(nameof(examinationId));
+                return new BadRequestObjectResult(new PutCremationFeeWaiveResponse());
             }
 
             var user = await CurrentUser();

@@ -707,6 +707,19 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
+        public void Examination_To_PutCremationFeeWaiveResponse()
+        {
+            // Arrange
+            var examination = GenerateExamination();
+
+            // Action
+            var response = _mapper.Map<PutCremationFeeWaiveResponse>(examination);
+
+            // Assert
+            response.WaiveFee.Should().Be(examination.WaiveFee);
+        }
+
+        [Fact]
         public void Examination_To_GetPatientDetailsResponse()
         {
             var examination = GenerateExamination();
