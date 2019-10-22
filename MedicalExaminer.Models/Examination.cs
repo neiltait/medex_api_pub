@@ -451,7 +451,7 @@ namespace MedicalExaminer.Models
         public bool OutstandingCaseItemsCompleted { get; set; } = false;
 
         /// <summary>
-        /// should the cremation fee be waivered?
+        /// should the cremation fee be waived?
         /// </summary>
         [JsonProperty(PropertyName = "waive_fee")]
         public bool? WaiveFee { get; set; } = null;
