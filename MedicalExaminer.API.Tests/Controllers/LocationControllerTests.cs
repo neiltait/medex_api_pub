@@ -33,7 +33,10 @@ namespace MedicalExaminer.API.Tests.Controllers
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object,
                 _locationRetrievalByIdMock.Object,
-                _locationRetrievalMock.Object);
+                _locationRetrievalMock.Object,
+                null,
+                null,
+                null);
         }
 
         [Fact]
