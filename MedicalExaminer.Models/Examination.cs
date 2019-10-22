@@ -455,6 +455,12 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "waive_fee")]
         public bool? WaiveFee { get; set; } = null;
+        
+        ///
+        /// Date Case Closed
+        /// </summary>
+        [JsonProperty(PropertyName = "date_case_closed")]
+        public DateTime? DateCaseClosed { get; set; } = null;
 
         /// <summary>
         /// Case Outcome Items
