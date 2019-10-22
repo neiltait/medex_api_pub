@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AutoMapper;
-using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Authorization;
@@ -11,6 +10,7 @@ using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,11 +25,12 @@ namespace MedicalExaminer.API.Controllers
     [ApiController]
     public class CaseOutcomeController : AuthorizedBaseController
     {
-        private IAsyncQueryHandler<CoronerReferralQuery, string> _coronerReferralService;
-        private IAsyncQueryHandler<CloseCaseQuery, string> _closeCaseService;
-        private IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
-        private IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> _saveOutstandingCaseItemsService;
-        private IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> _confirmationOfScrutinyService;
+        private readonly IAsyncQueryHandler<CoronerReferralQuery, string> _coronerReferralService;
+        private readonly IAsyncQueryHandler<CloseCaseQuery, string> _closeCaseService;
+        private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
+        private readonly IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> _saveOutstandingCaseItemsService;
+        private readonly IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> _confirmationOfScrutinyService;
+        private readonly IAsyncQueryHandler<SaveWaiveFeeQuery, string> _saveWaiveFeeService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CaseOutcomeController"/> class.
@@ -41,9 +42,10 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationRetrievalService">The examination retrieval service.</param>
         /// <param name="saveOutstandingCaseItemsService">The save outstanding case items service.</param>
         /// <param name="confirmationOfScrutinyService">The confirmation of scrutiny service.</param>
-        /// <param name="usersRetrievalByEmailService">The users retrieval by email service.</param>
+        /// <param name="usersRetrievalByOktaIdService">The users retrieval service.</param>
         /// <param name="authorizationService">The authorization service.</param>
         /// <param name="permissionService">The permission service.</param>
+        /// <param name="saveWaiveFeeService">The save waive fee service</param>
         public CaseOutcomeController(
             IMELogger logger,
             IMapper mapper,
@@ -53,6 +55,7 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> saveOutstandingCaseItemsService,
             IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> confirmationOfScrutinyService,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
+            IAsyncQueryHandler<SaveWaiveFeeQuery, string> saveWaiveFeeService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
@@ -62,6 +65,7 @@ namespace MedicalExaminer.API.Controllers
             _examinationRetrievalService = examinationRetrievalService;
             _saveOutstandingCaseItemsService = saveOutstandingCaseItemsService;
             _confirmationOfScrutinyService = confirmationOfScrutinyService;
+            _saveWaiveFeeService = saveWaiveFeeService;
         }
 
         /// <summary>
@@ -243,6 +247,7 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// Get Case Outcome details
         /// </summary>
+        /// <param name="examinationId">Examination ID</param>
         /// <returns>Case Outcome Details</returns>
         [HttpGet]
         public async Task<ActionResult<GetCaseOutcomeResponse>> GetCaseOutcome(string examinationId)
@@ -274,6 +279,51 @@ namespace MedicalExaminer.API.Controllers
             var result = Mapper.Map<GetCaseOutcomeResponse>(examination);
 
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Updates waive fee flag
+        /// </summary>
+        /// <param name="examinationId">Examination ID</param>
+        /// <param name="putCremationFeeWaiver">Put Cremation Fee Waive Request</param>
+        /// <returns>None</returns>
+        [HttpPut]
+        [Route("/{examinationId}/waive_fee")]
+        public async Task<ActionResult> PutWaiveFee(
+            string examinationId,
+            [FromBody] PutCremationFeeWaiveRequest putCremationFeeWaiver)
+        {
+            if (string.IsNullOrEmpty(examinationId))
+            {
+                return new BadRequestObjectResult(nameof(examinationId));
+            }
+
+            if (!Guid.TryParse(examinationId, out _))
+            {
+                return new BadRequestObjectResult(nameof(examinationId));
+            }
+
+            var user = await CurrentUser();
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+
+            if (examination == null)
+            {
+                return new NotFoundResult();
+            }
+
+            if (!CanAsync(Permission.UpdateExamination, examination))
+            {
+                return Forbid();
+            }
+
+            if (examination.ModeOfDisposal != ModeOfDisposal.Cremation)
+            {
+                return new BadRequestObjectResult("The fee cannot be waived as there is no fee.");
+            }
+
+            await _saveWaiveFeeService.Handle(new SaveWaiveFeeQuery(examinationId, user, putCremationFeeWaiver.WaiveFee));
+
+            return Ok(200);
         }
     }
 }
