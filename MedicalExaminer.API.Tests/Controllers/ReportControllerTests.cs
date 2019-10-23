@@ -116,56 +116,43 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public void GetFinanceDownload_ReturnsBadRequest_WhenNullFilter()
+        public void GetFinanceDownload_ReturnsResults_WhenExaminationsArePresent()
         {
             // Arrange
             SetupAuthorize(AuthorizationResult.Success());
-            var examination1 = new Examination();
-            var examination2 = new Examination();
+            var examination1 = new Examination()
+            {
+                SiteLocationId = "location1"
+            };
+            var examination2 = new Examination()
+            {
+                SiteLocationId = "location1"
+            };
+
+            var location = new Location()
+            {
+                LocationId = "location1",
+                Name = "location name"
+            };
+
+            IEnumerable<Location> locations = new List<Location>() { location };
             IEnumerable<Examination> examinationsResult = new List<Examination> { examination1, examination2 };
 
             _financeQuery
                 .Setup(service => service.Handle(It.IsAny<FinanceQuery>()))
                 .Returns(Task.FromResult(examinationsResult));
 
-            // Act
-            var response = Controller.GetFinanceDownload(new GetFinanceDownloadRequest()
-            {
-                ExaminationsCreatedFrom = DateTime.Now,
-                ExaminationsCreatedTo = DateTime.Now,
-                LocationId = null
-            }).Result;
+            _locationsRetrievalService.Setup(service => service.Handle(It.IsAny<LocationsRetrievalByIdQuery>())).
+                Returns(Task.FromResult(locations));
 
-            // Assert
-            var taskResult = response.Should().BeOfType<ActionResult<GetCoronerReferralDownloadResponse>>().Subject;
-            taskResult.Result.Should().BeAssignableTo<BadRequestObjectResult>();
-        }
-
-        [Fact]
-        public async void GetFinanceDownload_ReturnsResultNotFound_WhenNoExaminationFound()
-        {
-            // Arrange
-            SetupAuthorize(AuthorizationResult.Failed());
-
-            var mockMeUser = new MeUser()
-            {
-                UserId = "abcd"
-            };
-
-            var parentLocations = new List<Location>();
-
-            UsersRetrievalByOktaIdServiceMock.Setup(service => service.Handle(It.IsAny<UserRetrievalByOktaIdQuery>()))
-                .Returns(Task.FromResult(mockMeUser));
-
-         //   _financeQuery.Setup(service => service.Handle(It.IsAny<FinanceQuery>())).Returns(Task.FromResult(null));
-
-            var financeDownloadRequest = CreateGetFinanceDownloadRequest();
+            var financeRequest = CreateGetFinanceDownloadRequest();
 
             // Act
-            var response = await Controller.GetFinanceDownload(financeDownloadRequest);
+            var response = Controller.GetFinanceDownload(financeRequest).Result;
 
             // Assert
-            response.Result.Should().BeAssignableTo<NotFoundResult>();
+            var taskResult = response.Should().BeOfType<ActionResult<GetFinanceDownloadResponse>>().Subject;
+            taskResult.Result.Should().BeAssignableTo<OkObjectResult>();
         }
 
         [Fact]
@@ -186,8 +173,10 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             _examinationRetrievalQueryServiceMock.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>())).Returns(Task.FromResult(default(Examination)));
 
+            var financeDownloadRequest = CreateGetFinanceDownloadRequest();
+
             // Act
-            var response = await Controller.GetCoronerReferralDownload("examinationId");
+            var response = await Controller.GetFinanceDownload(financeDownloadRequest);
 
             // Assert
             response.Result.Should().BeAssignableTo<ForbidResult>();

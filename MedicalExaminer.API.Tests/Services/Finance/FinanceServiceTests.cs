@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cosmonaut;
 using FluentAssertions;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Services.Examination;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Services.Finance
@@ -17,6 +19,16 @@ namespace MedicalExaminer.API.Tests.Services.Finance
         MedicalExaminer.Models.Examination,
         FinanceService>
     {
+        protected override void ConfigureServices(IServiceCollection services)
+        {
+            services.AddTransient<ExaminationsQueryExpressionBuilder>();
+
+            var store = CosmosMocker.CreateCosmosStore(GetExamples());
+            services.AddTransient<ICosmosStore<MedicalExaminer.Models.Examination>>(s => store.Object);
+
+            base.ConfigureServices(services);
+        }
+
         [Fact]
         public virtual async Task DateRangeReturnsCorrectCount()
         {
