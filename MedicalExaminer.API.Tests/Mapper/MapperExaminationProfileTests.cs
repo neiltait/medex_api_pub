@@ -187,7 +187,6 @@ namespace MedicalExaminer.API.Tests.Mapper
         private string ParticipantName = "participantName";
         private string ParticipantOrganisation = "participantOrganisation";
 
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="MapperExaminationProfileTests" /> class.
         /// </summary>
@@ -196,9 +195,413 @@ namespace MedicalExaminer.API.Tests.Mapper
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<ExaminationProfile>();
+                cfg.AddProfile<PatientDetailsProfile>();
             });
 
             _mapper = config.CreateMapper();
+        }
+
+        [Fact]
+        public void PutPatientDetailsRequest_To_PatientDetails()
+        {
+            // Arrange
+            var putPatientDetailsRequest = new PutPatientDetailsRequest
+            {
+                CulturalPriority = false,
+                FaithPriority = false,
+                ChildPriority = false,
+                CoronerPriority = false,
+                OtherPriority = false,
+                PriorityDetails = null,
+                CoronerStatus = CoronerStatus.None,
+                PlaceDeathOccured = "PlaceDeathOccured",
+                GenderDetails = null,
+                MedicalExaminerOfficeResponsible = null,
+                Gender = ExaminationGender.Female,
+                DateOfBirth = new DateTime(2000, 10, 23),
+                DateOfDeath = new DateTime(2019, 10, 23),
+                NhsNumber = "38492894758",
+                HospitalNumber_1 = null,
+                HospitalNumber_2 = null,
+                HospitalNumber_3 = null,
+                TimeOfDeath = new TimeSpan(11, 00, 00),
+                Surname = "Surname",
+                GivenNames = "GivenNames",
+                PostCode = "PostCode",
+                HouseNameNumber = "HouseNameNumber",
+                Street = "Street",
+                Town = "Town",
+                County = "County",
+                Country = "Country",
+                LastOccupation = "LastOccupation",
+                OrganisationCareBeforeDeathLocationId = "OrganisationCareBeforeDeathLocationId",
+                ModeOfDisposal = ModeOfDisposal.Unknown,
+                AnyImplants = false,
+                ImplantDetails = null,
+                FuneralDirectors = "FuneralDirectors",
+                AnyPersonalEffects = false,
+                PersonalEffectDetails = null,
+                Representatives = null
+            };
+
+            var expectedPatientDetails = new PatientDetails
+            {
+                CulturalPriority = false,
+                FaithPriority = false,
+                ChildPriority = false,
+                CoronerPriority = false,
+                OtherPriority = false,
+                PriorityDetails = null,
+                CoronerStatus = CoronerStatus.None,
+                PlaceDeathOccured = "PlaceDeathOccured",
+                GenderDetails = null,
+                MedicalExaminerOfficeResponsible = null,
+                Gender = ExaminationGender.Female,
+                DateOfBirth = new DateTime(2000, 10, 23),
+                DateOfDeath = new DateTime(2019, 10, 23),
+                NhsNumber = "38492894758",
+                HospitalNumber_1 = null,
+                HospitalNumber_2 = null,
+                HospitalNumber_3 = null,
+                TimeOfDeath = new TimeSpan(11, 00, 00),
+                Surname = "Surname",
+                GivenNames = "GivenNames",
+                PostCode = "PostCode",
+                HouseNameNumber = "HouseNameNumber",
+                Street = "Street",
+                Town = "Town",
+                County = "County",
+                Country = "Country",
+                LastOccupation = "LastOccupation",
+                OrganisationCareBeforeDeathLocationId = "OrganisationCareBeforeDeathLocationId",
+                ModeOfDisposal = ModeOfDisposal.Unknown,
+                AnyImplants = false,
+                ImplantDetails = null,
+                FuneralDirectors = "FuneralDirectors",
+                AnyPersonalEffects = false,
+                PersonalEffectDetails = null,
+                Representatives = null
+            };
+
+            // Action
+            var result = _mapper.Map<PatientDetails>(putPatientDetailsRequest);
+
+            // Assert
+            IsEqual(expectedPatientDetails, result);
+        }
+
+        [Fact]
+        public void PatientDetails_To_Examination()
+        {
+            // Arrange
+            var patientDetails = new PatientDetails
+            {
+                CulturalPriority = false,
+                FaithPriority = false,
+                ChildPriority = false,
+                CoronerPriority = false,
+                OtherPriority = false,
+                PriorityDetails = null,
+                CoronerStatus = CoronerStatus.None,
+                PlaceDeathOccured = "PlaceDeathOccured",
+                GenderDetails = null,
+                MedicalExaminerOfficeResponsible = null,
+                Gender = ExaminationGender.Female,
+                DateOfBirth = new DateTime(2000, 10, 23),
+                DateOfDeath = new DateTime(2019, 10, 23),
+                NhsNumber = "38492894758",
+                HospitalNumber_1 = null,
+                HospitalNumber_2 = null,
+                HospitalNumber_3 = null,
+                TimeOfDeath = new TimeSpan(11, 00, 00),
+                Surname = "Surname",
+                GivenNames = "GivenNames",
+                PostCode = "PostCode",
+                HouseNameNumber = "HouseNameNumber",
+                Street = "Street",
+                Town = "Town",
+                County = "County",
+                Country = "Country",
+                LastOccupation = "LastOccupation",
+                OrganisationCareBeforeDeathLocationId = "OrganisationCareBeforeDeathLocationId",
+                ModeOfDisposal = ModeOfDisposal.Unknown,
+                AnyImplants = false,
+                ImplantDetails = null,
+                FuneralDirectors = "FuneralDirectors",
+                AnyPersonalEffects = false,
+                PersonalEffectDetails = null,
+                Representatives = null
+            };
+
+            var expectedExamination = new Examination
+            {
+                CulturalPriority = false,
+                FaithPriority = false,
+                ChildPriority = false,
+                CoronerPriority = false,
+                OtherPriority = false,
+                PriorityDetails = null,
+                CoronerStatus = CoronerStatus.None,
+                PlaceDeathOccured = "PlaceDeathOccured",
+                GenderDetails = null,
+                MedicalExaminerOfficeResponsible = null,
+                Gender = ExaminationGender.Female,
+                DateOfBirth = new DateTime(2000, 10, 23),
+                DateOfDeath = new DateTime(2019, 10, 23),
+                NhsNumber = "38492894758",
+                HospitalNumber_1 = null,
+                HospitalNumber_2 = null,
+                HospitalNumber_3 = null,
+                TimeOfDeath = new TimeSpan(11, 00, 00),
+                Surname = "Surname",
+                GivenNames = "GivenNames",
+                Postcode = "PostCode",
+                HouseNameNumber = "HouseNameNumber",
+                Street = "Street",
+                Town = "Town",
+                County = "County",
+                Country = "Country",
+                LastOccupation = "LastOccupation",
+                OrganisationCareBeforeDeathLocationId = "OrganisationCareBeforeDeathLocationId",
+                ModeOfDisposal = ModeOfDisposal.Unknown,
+                AnyImplants = false,
+                ImplantDetails = null,
+                FuneralDirectors = "FuneralDirectors",
+                AnyPersonalEffects = false,
+                PersonalEffectDetails = null,
+                Representatives = null,
+                LastModifiedBy = null,
+                ModifiedAt = default,
+                CreatedAt = default,
+                DeletedAt = null,
+                CreatedBy = null,
+                UrgencySort = null,
+                LastAdmission = null,
+                MedicalTeam = null,
+                CaseCompleted = false,
+                MedicalExaminerOfficeResponsibleName = null,
+                CaseBreakdown = null,
+                HaveUnknownBasicDetails = false,
+                AdmissionNotesHaveBeenAdded = false,
+                ReadyForMEScrutiny = false,
+                Unassigned = false,
+                HaveBeenScrutinisedByME = false,
+                PendingAdmissionNotes = false,
+                PendingAdditionalDetails = false,
+                PendingDiscussionWithQAP = false,
+                PendingDiscussionWithRepresentative = false,
+                PendingScrutinyNotes = false,
+                HaveFinalCaseOutcomesOutstanding = false,
+                ExaminationId = null,
+                NationalLocationId = null,
+                RegionLocationId = null,
+                TrustLocationId = null,
+                SiteLocationId = null,
+                ConfirmationOfScrutinyCompletedAt = null,
+                ConfirmationOfScrutinyCompletedBy = null,
+                CoronerReferralSent = false,
+                ScrutinyConfirmed = false,
+                OutstandingCaseItemsCompleted = false,
+                WaiveFee = null,
+                DateCaseClosed = null,
+                CaseOutcome = null
+            };
+
+            // Action
+            var result = _mapper.Map<Examination>(patientDetails);
+
+            // Assert
+            IsEqual(expectedExamination, result);
+        }
+
+        [Fact]
+        public void PatientDetails_To_Examination_WaiveFee_When_ModeOfDisposal_Is_Cremation_And_WaiveFee_Is_Already_True_Returns_True()
+        {
+            // Arrange
+            var examination = GenerateExamination();
+            examination.WaiveFee = true;
+
+            var patientDetails = new PatientDetails
+            {
+                ModeOfDisposal = ModeOfDisposal.Cremation
+            };
+
+            // Action
+            var result = _mapper.Map(patientDetails, examination);
+
+            // Assert
+            result.WaiveFee.Should().BeTrue();
+        }
+
+        [Fact]
+        public void PatientDetails_To_Examination_WaiveFee_When_ModeOfDisposal_Is_Cremation_And_WaiveFee_Is_Already_False_Returns_False()
+        {
+            // Arrange
+            var examination = GenerateExamination();
+            examination.WaiveFee = false;
+
+            var patientDetails = new PatientDetails
+            {
+                ModeOfDisposal = ModeOfDisposal.Cremation
+            };
+
+            // Action
+            var result = _mapper.Map(patientDetails, examination);
+
+            // Assert
+            result.WaiveFee.Should().BeFalse();
+        }
+
+        [Fact]
+        public void PatientDetails_To_Examination_WaiveFee_When_ModeOfDisposal_Is_Cremation_And_WaiveFee_Is_Already_Null_Returns_False()
+        {
+            // Arrange
+            var examination = GenerateExamination();
+            examination.WaiveFee = null;
+
+            var patientDetails = new PatientDetails
+            {
+                ModeOfDisposal = ModeOfDisposal.Cremation
+            };
+
+            // Action
+            var result = _mapper.Map(patientDetails, examination);
+
+            // Assert
+            result.WaiveFee.Should().BeFalse();
+        }
+
+        [Fact]
+        public void PatientDetails_To_Examination_WaiveFee_When_ModeOfDisposal_Is_Not_Cremation_Returns_Null()
+        {
+            // Arrange
+            var examination = GenerateExamination();
+            examination.ModeOfDisposal = ModeOfDisposal.Cremation;
+            examination.WaiveFee = true;
+
+            var patientDetails = new PatientDetails
+            {
+                ModeOfDisposal = ModeOfDisposal.Burial
+            };
+
+            // Action
+            var result = _mapper.Map(patientDetails, examination);
+
+            // Assert
+            result.WaiveFee.Should().BeNull();
+            result.ModeOfDisposal.Should().Be(patientDetails.ModeOfDisposal);
+        }
+
+        private bool IsEqual(Examination expected, Examination actual)
+        {
+            return expected.CulturalPriority == actual.CulturalPriority &&
+                   expected.FaithPriority == actual.FaithPriority &&
+                   expected.ChildPriority == actual.ChildPriority &&
+                   expected.CoronerPriority == actual.CoronerPriority &&
+                   expected.OtherPriority == actual.OtherPriority &&
+                   expected.PriorityDetails == actual.PriorityDetails &&
+                   expected.CoronerStatus == actual.CoronerStatus &&
+                   expected.PlaceDeathOccured == actual.PlaceDeathOccured &&
+                   expected.GenderDetails == actual.GenderDetails &&
+                   expected.MedicalExaminerOfficeResponsible == actual.MedicalExaminerOfficeResponsible &&
+                   expected.Gender == actual.Gender &&
+                   expected.DateOfBirth == actual.DateOfBirth &&
+                   expected.DateOfDeath == actual.DateOfDeath &&
+                   expected.NhsNumber == actual.NhsNumber &&
+                   expected.HospitalNumber_1 == actual.HospitalNumber_1 &&
+                   expected.HospitalNumber_2 == actual.HospitalNumber_2 &&
+                   expected.HospitalNumber_3 == actual.HospitalNumber_3 &&
+                   expected.TimeOfDeath == actual.TimeOfDeath &&
+                   expected.Surname == actual.Surname &&
+                   expected.GivenNames == actual.GivenNames &&
+                   expected.Postcode == actual.Postcode &&
+                   expected.HouseNameNumber == actual.HouseNameNumber &&
+                   expected.Street == actual.Street &&
+                   expected.Town == actual.Town &&
+                   expected.County == actual.County &&
+                   expected.Country == actual.Country &&
+                   expected.LastOccupation == actual.LastOccupation &&
+                   expected.OrganisationCareBeforeDeathLocationId == actual.OrganisationCareBeforeDeathLocationId &&
+                   expected.ModeOfDisposal == actual.ModeOfDisposal &&
+                   expected.AnyImplants == actual.AnyImplants &&
+                   expected.ImplantDetails == actual.ImplantDetails &&
+                   expected.FuneralDirectors == actual.FuneralDirectors &&
+                   expected.AnyPersonalEffects == actual.AnyPersonalEffects &&
+                   expected.PersonalEffectDetails == actual.PersonalEffectDetails &&
+                   expected.Representatives == actual.Representatives &&
+                   expected.LastModifiedBy == actual.LastModifiedBy &&
+                   expected.ModifiedAt == actual.ModifiedAt &&
+                   expected.CreatedAt == actual.CreatedAt &&
+                   expected.DeletedAt == actual.DeletedAt &&
+                   expected.CreatedBy == actual.CreatedBy &&
+                   expected.UrgencySort == actual.UrgencySort &&
+                   expected.LastAdmission == actual.LastAdmission &&
+                   expected.MedicalTeam == actual.MedicalTeam &&
+                   expected.CaseCompleted == actual.CaseCompleted &&
+                   expected.MedicalExaminerOfficeResponsibleName == actual.MedicalExaminerOfficeResponsibleName &&
+                   expected.CaseBreakdown == actual.CaseBreakdown &&
+                   expected.HaveUnknownBasicDetails == actual.HaveUnknownBasicDetails &&
+                   expected.AdmissionNotesHaveBeenAdded == actual.AdmissionNotesHaveBeenAdded &&
+                   expected.ReadyForMEScrutiny == actual.ReadyForMEScrutiny &&
+                   expected.Unassigned == actual.Unassigned &&
+                   expected.HaveBeenScrutinisedByME == actual.HaveBeenScrutinisedByME &&
+                   expected.PendingAdmissionNotes == actual.PendingAdmissionNotes &&
+                   expected.PendingAdditionalDetails == actual.PendingAdditionalDetails &&
+                   expected.PendingDiscussionWithQAP == actual.PendingDiscussionWithQAP &&
+                   expected.PendingDiscussionWithRepresentative == actual.PendingDiscussionWithRepresentative &&
+                   expected.PendingScrutinyNotes == actual.PendingScrutinyNotes &&
+                   expected.HaveFinalCaseOutcomesOutstanding == actual.HaveFinalCaseOutcomesOutstanding &&
+                   expected.ExaminationId == actual.ExaminationId &&
+                   expected.NationalLocationId == actual.NationalLocationId &&
+                   expected.RegionLocationId == actual.RegionLocationId &&
+                   expected.TrustLocationId == actual.TrustLocationId &&
+                   expected.SiteLocationId == actual.SiteLocationId &&
+                   expected.ConfirmationOfScrutinyCompletedAt == actual.ConfirmationOfScrutinyCompletedAt &&
+                   expected.ConfirmationOfScrutinyCompletedBy == actual.ConfirmationOfScrutinyCompletedBy &&
+                   expected.CoronerReferralSent == actual.CoronerReferralSent &&
+                   expected.ScrutinyConfirmed == actual.ScrutinyConfirmed &&
+                   expected.OutstandingCaseItemsCompleted == actual.OutstandingCaseItemsCompleted &&
+                   expected.WaiveFee == actual.WaiveFee &&
+                   expected.DateCaseClosed == actual.DateCaseClosed &&
+                   expected.CaseOutcome == actual.CaseOutcome;
+        }
+
+        private bool IsEqual(PatientDetails expected, PatientDetails actual)
+        {
+            return expected.CulturalPriority == actual.CulturalPriority &&
+                   expected.FaithPriority == actual.FaithPriority &&
+                   expected.ChildPriority == actual.ChildPriority &&
+                   expected.CoronerPriority == actual.CoronerPriority &&
+                   expected.OtherPriority == actual.OtherPriority &&
+                   expected.PriorityDetails == actual.PriorityDetails &&
+                   expected.CoronerStatus == actual.CoronerStatus &&
+                   expected.PlaceDeathOccured == actual.PlaceDeathOccured &&
+                   expected.GenderDetails == actual.GenderDetails &&
+                   expected.Gender == actual.Gender &&
+                   expected.DateOfBirth == actual.DateOfBirth &&
+                   expected.DateOfDeath == actual.DateOfDeath &&
+                   expected.NhsNumber == actual.NhsNumber &&
+                   expected.HospitalNumber_1 == actual.HospitalNumber_1 &&
+                   expected.HospitalNumber_2 == actual.HospitalNumber_2 &&
+                   expected.HospitalNumber_3 == actual.HospitalNumber_3 &&
+                   expected.TimeOfDeath == actual.TimeOfDeath &&
+                   expected.Surname == actual.Surname &&
+                   expected.GivenNames == actual.GivenNames &&
+                   expected.PostCode == actual.PostCode &&
+                   expected.HouseNameNumber == actual.HouseNameNumber &&
+                   expected.Street == actual.Street &&
+                   expected.Town == actual.Town &&
+                   expected.County == actual.County &&
+                   expected.Country == actual.Country &&
+                   expected.LastOccupation == actual.LastOccupation &&
+                   expected.OrganisationCareBeforeDeathLocationId == actual.OrganisationCareBeforeDeathLocationId &&
+                   expected.ModeOfDisposal == actual.ModeOfDisposal &&
+                   expected.AnyImplants == actual.AnyImplants &&
+                   expected.ImplantDetails == actual.ImplantDetails &&
+                   expected.FuneralDirectors == actual.FuneralDirectors &&
+                   expected.AnyPersonalEffects == actual.AnyPersonalEffects &&
+                   expected.PersonalEffectDetails == actual.PersonalEffectDetails &&
+                   expected.Representatives == actual.Representatives;
         }
 
         [Fact]
@@ -704,6 +1107,19 @@ namespace MedicalExaminer.API.Tests.Mapper
                 response.MedicalExaminerUserId == examination.MedicalTeam.MedicalExaminerUserId &&
                 response.MedicalExaminerOfficerUserId == examination.MedicalTeam.MedicalExaminerOfficerUserId &&
                 IsEqual(examination.MedicalTeam.ConsultantsOther[0], response.ConsultantsOther[0]);
+        }
+
+        [Fact]
+        public void Examination_To_PutCremationFeeWaiveResponse()
+        {
+            // Arrange
+            var examination = GenerateExamination();
+
+            // Action
+            var response = _mapper.Map<PutCremationFeeWaiveResponse>(examination);
+
+            // Assert
+            response.WaiveFee.Should().Be(examination.WaiveFee);
         }
 
         [Fact]

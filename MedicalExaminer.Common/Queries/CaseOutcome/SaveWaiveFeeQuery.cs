@@ -5,7 +5,7 @@ namespace MedicalExaminer.Common.Queries.CaseOutcome
     /// <summary>
     /// A query object to update the waiveFee property on the examination
     /// </summary>
-    public class SaveWaiveFeeQuery : IQuery<string>
+    public class SaveWaiveFeeQuery : IQuery<Models.Examination>
     {
         /// <summary>
         /// A constructor

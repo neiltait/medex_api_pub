@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace MedicalExaminer.Common.Services.CaseOutcome
 {
-    public class SaveWaiveFeeService : IAsyncQueryHandler<SaveWaiveFeeQuery, string>
+    public class SaveWaiveFeeService : IAsyncQueryHandler<SaveWaiveFeeQuery, Models.Examination>
     {
         private readonly IConnectionSettings _connectionSettings;
         private readonly IDatabaseAccess _databaseAccess;
@@ -26,7 +26,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             _urgencySettings = urgencySettings.Value;
         }
 
-        public async Task<string> Handle(SaveWaiveFeeQuery param)
+        public async Task<Models.Examination> Handle(SaveWaiveFeeQuery param)
         {
             if (string.IsNullOrEmpty(param.ExaminationId))
             {
@@ -53,7 +53,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate = examinationToUpdate.UpdateCaseStatus();
 
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);
-            return result.ExaminationId;
+            return result;
         }
     }
 }

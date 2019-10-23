@@ -390,7 +390,6 @@ example:
                 .AddScoped<IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>>,
                     FinanceService>();
 
-
             // Medical team services
             services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
 
@@ -399,7 +398,7 @@ example:
             services.AddScoped<IAsyncQueryHandler<CoronerReferralQuery, string>, CoronerReferralService>();
             services.AddScoped<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>, SaveOutstandingCaseItemsService>();
             services.AddScoped<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>, ConfirmationOfScrutinyService>();
-            services.AddScoped<IAsyncQueryHandler<SaveWaiveFeeQuery, string>, SaveWaiveFeeService>();
+            services.AddScoped<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>, SaveWaiveFeeService>();
 
             // Patient details services
             services
