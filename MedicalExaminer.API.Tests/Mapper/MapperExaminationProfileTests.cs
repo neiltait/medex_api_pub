@@ -70,6 +70,7 @@ namespace MedicalExaminer.API.Tests.Mapper
         private const string CaseOfficer = "CaseOfficer";
         private const string AdmissionNotes = "admissionNotes";
         private TimeSpan AdmittedTime = new TimeSpan(12, 30, 01);
+        private DateTime? DateCaseClosed = null;
         private MeUser User0 = new MeUser()
         {
             UserId = "userId0",
@@ -767,6 +768,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             response.OutcomeOfRepresentativeDiscussion.Should().Be(examination.CaseBreakdown.BereavedDiscussion.Latest.BereavedDiscussionOutcome);
             response.OutcomeQapDiscussion.Should().Be(examination.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome);
             response.ScrutinyConfirmedOn.Should().Be(caseOutcome.ScrutinyConfirmedOn);
+            response.DateCaseClosed.Should().Be(DateCaseClosed);
         }
 
         [Fact]
@@ -786,7 +788,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.OutcomeOfRepresentativeDiscussion.Should().Be(caseOutcome.OutcomeOfRepresentativeDiscussion);
             result.OutcomeQapDiscussion.Should().Be(caseOutcome.OutcomeQapDiscussion);
             result.CaseCompleted.Should().Be(Completed);
-
         }
 
         [Fact]
@@ -1770,6 +1771,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 ExaminationId = ExaminationId,
                 CaseBreakdown = casebreakdown,
                 CaseOutcome = caseOutcome,
+                DateCaseClosed = DateCaseClosed,
                 AnyImplants = AnyImplants,
                 AnyPersonalEffects = AnyPersonalEffects,
                 ChildPriority = ChildPriority,
