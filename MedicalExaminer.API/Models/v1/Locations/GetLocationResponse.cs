@@ -33,6 +33,11 @@ namespace MedicalExaminer.API.Models.v1.Locations
         public bool IsActive { get; set; }
 
         /// <summary>
+        /// Is this location an ME Office.
+        /// </summary>
+        public bool IsMeOffice { get; set; }
+
+        /// <summary>
         ///     Identifies location as one of site, trust, region or national
         /// </summary>
         public LocationType Type { get; set; }
