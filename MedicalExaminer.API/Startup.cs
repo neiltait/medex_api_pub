@@ -430,6 +430,9 @@ example:
             services
                 .AddScoped<IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>>, LocationsRetrievalByIdService
                 >();
+            services
+                .AddScoped<IAsyncQueryHandler<UpdateLocationIsMeOfficeQuery, Location>, UpdateLocationIsMeOfficeService
+                >();
         }
 
         /// <summary>

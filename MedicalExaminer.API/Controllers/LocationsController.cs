@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,7 +7,10 @@ using AutoMapper;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Locations;
 using MedicalExaminer.API.Services;
+using MedicalExaminer.Common.Extensions.Models;
 using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.CaseOutcome;
+using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
@@ -36,6 +40,21 @@ namespace MedicalExaminer.API.Controllers
         /// Location Retrieval by Query.
         /// </summary>
         private readonly IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> _locationRetrievalByQueryHandler;
+        
+        /// <summary>
+        /// Location Parents Service.
+        /// </summary>
+        private readonly IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> _locationParentsService;
+
+        /// <summary>
+        /// Examination Retrieval Service.
+        /// </summary>
+        private readonly IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> _examinationsRetrievalService;
+
+        /// <summary>
+        /// Update Location Is Me Office Service.
+        /// </summary>
+        private readonly IAsyncQueryHandler<UpdateLocationIsMeOfficeQuery, Location> _updateLocationIsMeOfficeService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocationsController"/> class.
@@ -47,6 +66,8 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="permissionService">Permission Service.</param>
         /// <param name="locationRetrievalByIdQueryHandler">Location Retrieval By Id Query Handler.</param>
         /// <param name="locationRetrievalByQueryHandler">Location Retrieval By Query Handler.</param>
+        /// <param name="locationParentsService">Location Parents service.</param>
+        /// <param name="examinationsRetrievalService">Examinations retrieval service.</param>
         public LocationsController(
             IMELogger logger,
             IMapper mapper,
@@ -54,11 +75,18 @@ namespace MedicalExaminer.API.Controllers
             IAuthorizationService authorizationService,
             IPermissionService permissionService,
             IAsyncQueryHandler<LocationRetrievalByIdQuery, Location> locationRetrievalByIdQueryHandler,
-            IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler)
+            IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler,
+            IAsyncQueryHandler<LocationParentsQuery, IEnumerable<Location>> locationParentsService,
+            IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>> examinationsRetrievalService,
+            IAsyncQueryHandler<UpdateLocationIsMeOfficeQuery, Location> updateLocationIsMeOfficeService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _locationRetrievalByIdQueryHandler = locationRetrievalByIdQueryHandler;
             _locationRetrievalByQueryHandler = locationRetrievalByQueryHandler;
+            _locationParentsService = locationParentsService;
+            _examinationsRetrievalService = examinationsRetrievalService;
+            _updateLocationIsMeOfficeService = updateLocationIsMeOfficeService;
+            _examinationsRetrievalService = examinationsRetrievalService;
         }
 
         /// <summary>
@@ -115,6 +143,76 @@ namespace MedicalExaminer.API.Controllers
             {
                 return NotFound(new GetLocationResponse());
             }
+        }
+
+        /// <summary>
+        /// Set whether location is ME office.
+        /// </summary>
+        /// <param name="locationId">Location to change.</param>
+        /// <param name="isMEOffice">Set or unset is me office.</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{locationId}/is_me_office")]
+        public async Task<ActionResult> PutIsMeOffice(string locationId, [FromBody] bool isMeOffice)
+        {
+            if (string.IsNullOrEmpty(locationId))
+            {
+                return new BadRequestObjectResult(nameof(locationId));
+            }
+
+            if (!Guid.TryParse(locationId, out _))
+            {
+                return new BadRequestObjectResult(nameof(locationId));
+            }
+
+            var user = await CurrentUser();
+
+            var location =
+                await _locationRetrievalByIdQueryHandler.Handle(new LocationRetrievalByIdQuery(locationId));
+
+            if (location == null)
+            {
+                return new NotFoundResult();
+            }
+
+            var locationDocument = (await
+                    _locationParentsService.Handle(
+                        new LocationParentsQuery(location.LocationId)))
+                .ToLocationPath();
+
+            if (!CanAsync(Permission.UpdateLocation, locationDocument))
+            {
+                return Forbid();
+            }
+
+            // When clearing; if ANY cases have this location assigned return bad request. These could even be cases the current user might not have permission to.
+            if (isMeOffice == false)
+            {
+                var permissedLocations = new[] { locationId };
+
+                var examinations = await _examinationsRetrievalService.Handle(new ExaminationsRetrievalQuery(
+                    permissedLocations,
+                    null,
+                    locationId,
+                    null,
+                    1,
+                    1,
+                    null,
+                    true));
+
+                if (examinations.Any())
+                {
+                    return new BadRequestObjectResult("The location is currently in use.");
+                }
+            }
+
+            await _updateLocationIsMeOfficeService.Handle(new UpdateLocationIsMeOfficeQuery()
+            {
+                LocationId = locationId,
+                IsMeOffice = isMeOffice,
+            });
+
+            return Ok();
         }
     }
 }
