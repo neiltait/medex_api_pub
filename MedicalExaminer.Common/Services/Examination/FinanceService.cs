@@ -13,7 +13,7 @@ namespace MedicalExaminer.Common.Services.Examination
     /// </summary>
     public class FinanceService : QueryHandler<FinanceQuery, IEnumerable<Models.Examination>>
     {
-        private ExaminationsQueryExpressionBuilder _examinationQueryBuilder;
+        private readonly ExaminationsQueryExpressionBuilder _examinationQueryBuilder;
 
         public FinanceService(
             IDatabaseAccess databaseAccess,
