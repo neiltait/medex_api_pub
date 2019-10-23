@@ -35,3 +35,16 @@ body {
         display: none;
     }
 }
+
+.location-tree li a.office {
+    color: red;
+}
+
+.location-tree li {
+    background: e0e0e0;
+}
+
+.location-tree ul.users {
+    border: 1px dashed #a0a0a0;
+    font-size: 80%;
+}

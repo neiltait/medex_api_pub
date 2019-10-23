@@ -1,0 +1,60 @@
+﻿
+@using MedicalExaminer.ToolBox.Common.Dtos
+@using Microsoft.AspNetCore.Html
+@model MedicalExaminer.ToolBox.Common.Dtos.LocationResponse
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@functions {
+
+    public IHtmlContent RenderNode(LocationNode node)
+    {
+        var result = new HtmlContentBuilder();
+
+        var cls = "";
+        if (node.IsMeOffice) cls += "office";
+        result.AppendHtml($@"<li><a class='{cls}' href='#'>{node.Name}</a>");
+
+        if (node.Users.Any())
+        {
+            result.AppendHtml("<ul class='users'>");
+            foreach (var user in node.Users)
+            {
+                cls = "";
+                result.AppendHtml($@"<li class='{cls}'>User: <a href='#user-{user.UserId}'>{user.FullName}</a></li>");
+            }
+            result.AppendHtml("</ul>");
+        }
+
+        if (node.Children.Any())
+        {
+            result.AppendHtml("<ul>");
+            foreach (var child in node.Children)
+            {
+                result.AppendHtml(RenderNode(child));
+            }
+            result.AppendHtml("</ul>");
+        }
+
+        result.AppendHtml("</li>");
+
+        return result;
+    }
+
+}
+
+
+<h2>Locations</h2>
+
+<div class="location-tree">
+    @{
+        foreach (var root in Model.Roots)
+        {
+            <ul>
+                @RenderNode(root)
+            </ul>
+        }
+    }
+</div>
