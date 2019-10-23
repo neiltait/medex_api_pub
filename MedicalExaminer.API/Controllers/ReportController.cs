@@ -11,6 +11,7 @@ using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -103,6 +104,7 @@ namespace MedicalExaminer.API.Controllers
             {
                 return Forbid();
             }
+
             var permissedLocations = (await LocationsWithPermission(Permission.GetExaminations)).ToList();
 
             var results = await _financeQuery.Handle(new FinanceQuery(request.ExaminationsCreatedFrom, request.ExaminationsCreatedTo, request.LocationId, permissedLocations));

@@ -9,6 +9,7 @@ using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
@@ -128,7 +129,12 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(examinationsResult));
 
             // Act
-            var response = Controller.GetFinanceDownload(null).Result;
+            var response = Controller.GetFinanceDownload(new GetFinanceDownloadRequest()
+            {
+                ExaminationsCreatedFrom = DateTime.Now,
+                ExaminationsCreatedTo = DateTime.Now,
+                LocationId = null
+            }).Result;
 
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<GetCoronerReferralDownloadResponse>>().Subject;
