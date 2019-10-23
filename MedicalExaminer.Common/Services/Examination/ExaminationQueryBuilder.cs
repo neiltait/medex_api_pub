@@ -10,6 +10,25 @@ namespace MedicalExaminer.Common.Services.Examination
 {
     public class ExaminationsQueryExpressionBuilder
     {
+        public Expression<Func<Models.Examination, bool>> GetFinancePredicate(FinanceQuery queryObject)
+        {
+            var permissedLocationFilter = GetPermissedLocationPredicate(queryObject.PermissedLocation);
+            var locationFilter = GetLocationPredicate(queryObject.LocationId);
+            var dateFromQuery = GetCaseCreatedFromQuery(queryObject.DateFrom);
+            var dateToQuery = GetCaseCreatedToQuery(queryObject.DateTo);
+            return dateFromQuery.And(dateToQuery).And(permissedLocationFilter).And(locationFilter);
+        }
+
+        private Expression<Func<Models.Examination, bool>> GetCaseCreatedFromQuery(DateTime dateFrom)
+        {
+            return examination => examination.CreatedAt >= dateFrom;
+        }
+
+        private Expression<Func<Models.Examination, bool>> GetCaseCreatedToQuery(DateTime dateTo)
+        {
+            return examination => examination.CreatedAt <= dateTo;
+        }
+
         public Expression<Func<Models.Examination, bool>> GetPredicate(ExaminationsRetrievalQuery queryObject, bool isDashboardCount)
         {
             var permissedLocationFilter = GetPermissedLocationPredicate(queryObject.PermissedLocations);
@@ -102,4 +121,6 @@ namespace MedicalExaminer.Common.Services.Examination
             return predicate;
         }
     }
+
+
 }

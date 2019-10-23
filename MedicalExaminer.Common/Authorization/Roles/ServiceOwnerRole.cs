@@ -37,7 +37,9 @@ namespace MedicalExaminer.Common.Authorization.Roles
                 Permission.GetExamination,
 
                 Permission.GetProfile,
-                Permission.UpdateProfile);
+                Permission.UpdateProfile,
+
+                Permission.GetFinanceDownload);
         }
     }
 }
