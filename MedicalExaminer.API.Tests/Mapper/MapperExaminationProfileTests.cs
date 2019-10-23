@@ -3060,9 +3060,138 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
+        public void ExaminationNoNulls_LocationNotFound_To_FinanceReportItem()
+        {
+            var examination = new Examination()
+            {
+                ExaminationId = "examinationId",
+                DateCaseClosed = new DateTime(2019, 9, 7),
+                CreatedAt = new DateTime(2019, 9, 1),
+                NhsNumber = "12345678910",
+                MedicalTeam = new MedicalTeam()
+                {
+                    MedicalExaminerUserId = "MedicalExaminerUserId"
+                },
+                ModeOfDisposal = ModeOfDisposal.Cremation,
+                NationalLocationId = "NationalLocationId",
+                RegionLocationId = "RegionLocationId",
+                SiteLocationId = "SiteLocationId",
+                TrustLocationId = "TrustLocationId",
+                WaiveFee = true
+            };
+
+            var examinationFinanceLocations = new ExaminationLocationItem()
+            {
+                Examination = examination,
+                Locations = new List<Location>()
+                {
+                    new Location()
+                    {
+                        LocationId = "NationalLocationId",
+                        Name = "NationalName"
+                    },
+                    new Location()
+                    {
+                        LocationId = "RegionLocationId",
+                        Name = "RegionName"
+                    },
+                    new Location()
+                    {
+                        LocationId = "SiteLocationId",
+                        Name = "SiteName"
+                    },
+                }
+            };
+
+            var expectedFinanceReportItem = new ExaminationFinanceItem()
+            {
+                CaseClosed = new DateTime(2019, 9, 7),
+                CaseCreated = new DateTime(2019, 9, 1),
+                ExaminationId = "examinationId",
+                HasNhsNumber = true,
+                MedicalExaminerId = "MedicalExaminerUserId",
+                ModeOfDisposal = ModeOfDisposal.Cremation,
+                NationalName = "NationalName",
+                RegionName = "RegionName",
+                SiteName = "SiteName",
+                TrustName = null,
+                WaiverFee = true
+            };
+
+            // Act
+            var result = _mapper.Map<ExaminationFinanceItem>(examinationFinanceLocations);
+
+            AreEquivalent(expectedFinanceReportItem, result);
+        }
+
+        [Fact]
         public void ExaminationNoNulls_To_FinanceReportItem()
         {
+            var examination = new Examination()
+            {
+                ExaminationId = "examinationId",
+                DateCaseClosed = new DateTime(2019, 9, 7),
+                CreatedAt = new DateTime(2019, 9, 1),
+                NhsNumber = "12345678910",
+                MedicalTeam = new MedicalTeam()
+                {
+                    MedicalExaminerUserId = "MedicalExaminerUserId"
+                },
+                ModeOfDisposal = ModeOfDisposal.Cremation,
+                NationalLocationId = "NationalLocationId",
+                RegionLocationId = "RegionLocationId",
+                SiteLocationId = "SiteLocationId",
+                TrustLocationId = "TrustLocationId",
+                WaiveFee = true
+            };
 
+            var examinationFinanceLocations = new ExaminationLocationItem()
+            {
+                Examination = examination,
+                Locations = new List<Location>()
+                {
+                    new Location()
+                    {
+                        LocationId = "NationalLocationId",
+                        Name = "NationalName"
+                    },
+                    new Location()
+                    {
+                        LocationId = "RegionLocationId",
+                        Name = "RegionName"
+                    },
+                    new Location()
+                    {
+                        LocationId = "SiteLocationId",
+                        Name = "SiteName"
+                    },
+                    new Location()
+                    {
+                        LocationId = "TrustLocationId",
+                        Name = "TrustName"
+                    },
+                }
+            };
+
+            var expectedFinanceReportItem = new ExaminationFinanceItem()
+            {
+                CaseClosed = new DateTime(2019, 9, 7),
+                CaseCreated = new DateTime(2019, 9, 1),
+                ExaminationId = "examinationId",
+                HasNhsNumber = true,
+                MedicalExaminerId = "MedicalExaminerUserId",
+                ModeOfDisposal = ModeOfDisposal.Cremation,
+                NationalName = "NationalName",
+                RegionName = "RegionName",
+                SiteName = "SiteName",
+                TrustName = "TrustName",
+                WaiverFee = true
+            };
+
+            // Act
+            var result = _mapper.Map<ExaminationFinanceItem>(examinationFinanceLocations);
+
+            AreEquivalent(expectedFinanceReportItem, result);
         }
 
         [Fact]
