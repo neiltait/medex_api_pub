@@ -241,15 +241,6 @@ example:
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
-
-            IServiceProvider serviceProvider = services.BuildServiceProvider();
-
-            // temporary fudges until the real migration framework is implemented.
-        // TODO: https://methods.atlassian.net/browse/MES-989
-        //    UpdateDiscussionOutcomes(serviceProvider);
-        //    UpdateInvalidOrNullUserPermissionIds(serviceProvider);
-        //    UpdateLocations(serviceProvider, locationMigrationSettings);
-        //    UpdateExaminationUrgencySort(serviceProvider, urgencySettings);
         }
 
         /// <summary>
@@ -556,38 +547,6 @@ example:
             services.AddScoped<IAuthorizationHandler, PermissionHandler>();
             services.AddScoped<IAuthorizationHandler, DocumentPermissionHandler>();
             services.AddScoped<IPermissionService, PermissionService>();
-        }
-
-        private void UpdateLocations(IServiceProvider serviceProvider, LocationMigrationSettings locationMigrationSettings)
-        {
-            LocationMigrationService instance = serviceProvider.GetService<LocationMigrationService>();
-            instance.Handle(_locationMigrationQueryLookup[locationMigrationSettings.Version]).Wait();
-        }
-
-        private void UpdateDiscussionOutcomes(IServiceProvider serviceProvider)
-        {
-            IAsyncQueryHandler<NullQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<NullQuery, bool>>();
-
-            instance.Handle(new NullQuery()).Wait();
-        }
-
-        private void UpdateInvalidOrNullUserPermissionIds(IServiceProvider serviceProvider)
-        {
-            IAsyncQueryHandler<InvalidUserPermissionQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>>();
-
-            instance.Handle(new InvalidUserPermissionQuery()).Wait();
-        }
-
-        private Dictionary<int, IMigrationQuery> _locationMigrationQueryLookup = new Dictionary<int, IMigrationQuery>
-        {
-            {1, new LocationMigrationQueryV1() }
-        };
-
-        private void UpdateExaminationUrgencySort(IServiceProvider serviceProvider, UrgencySettings urgencySettings)
-        {
-            IAsyncQueryHandler<UpdateExaminationUrgencySortQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<UpdateExaminationUrgencySortQuery, bool>>();
-
-            instance.Handle(new UpdateExaminationUrgencySortQuery()).Wait();
         }
     }
 }
