@@ -10,13 +10,13 @@ using Microsoft.Extensions.Options;
 
 namespace MedicalExaminer.Common.Services.CaseOutcome
 {
-    public class CloseCaseService : IAsyncQueryHandler<CloseCaseQuery, string>
+    public class SaveWaiveFeeService : IAsyncQueryHandler<SaveWaiveFeeQuery, Models.Examination>
     {
         private readonly IConnectionSettings _connectionSettings;
         private readonly IDatabaseAccess _databaseAccess;
         private readonly UrgencySettings _urgencySettings;
 
-        public CloseCaseService(
+        public SaveWaiveFeeService(
             IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings,
             IOptions<UrgencySettings> urgencySettings)
@@ -26,7 +26,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             _urgencySettings = urgencySettings.Value;
         }
 
-        public async Task<string> Handle(CloseCaseQuery param)
+        public async Task<Models.Examination> Handle(SaveWaiveFeeQuery param)
         {
             if (string.IsNullOrEmpty(param.ExaminationId))
             {
@@ -46,26 +46,14 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
 
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
-            examinationToUpdate.CaseCompleted = true;
-            examinationToUpdate.CaseOutcome.CaseCompleted = true;
-            examinationToUpdate.DateCaseClosed = DateTime.Now;
 
-            examinationToUpdate.CaseBreakdown.CaseClosedEvent = new CaseClosedEvent()
-            {
-                CaseOutcome = examinationToUpdate.CaseOutcome.CaseOutcomeSummary.Value,
-                Created = DateTime.Now,
-                DateCaseClosed = DateTime.Now,
-                EventId = Guid.NewGuid().ToString(),
-                UserFullName = param.User.FullName(),
-                UserId = param.User.UserId,
-                UsersRole = param.User.Role()?.ToString()
-            };
+            examinationToUpdate.WaiveFee = param.WaiveFee;
 
             examinationToUpdate = examinationToUpdate.UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort);
             examinationToUpdate = examinationToUpdate.UpdateCaseStatus();
 
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);
-            return result.ExaminationId;
+            return result;
         }
     }
 }

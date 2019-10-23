@@ -231,9 +231,19 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public StatusBarResult CaseClosed { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
+        /// Date Case Closed
+        /// </summary>
+        public DateTime? DateCaseClosed { get; set; }
+
+        /// <summary>
         /// Case Outcome
         /// </summary>
         public CaseOutcomeSummary? CaseOutcome { get; set; }
+
+        /// <summary>
+        /// Is Cremation
+        /// </summary>
+        public bool IsCremation { get; set; }
 
     }
 }

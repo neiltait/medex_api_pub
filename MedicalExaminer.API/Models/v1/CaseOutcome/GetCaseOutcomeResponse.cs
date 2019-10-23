@@ -1,7 +1,6 @@
 ﻿using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.Models.Enums;
 using System;
-using MedicalExaminer.Models;
 
 namespace MedicalExaminer.API.Models.v1.CaseOutcome
 {
@@ -32,5 +31,8 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
         public CremationFormStatus? CremationFormStatus { get; set; }
 
         public GPNotified? GpNotifiedStatus { get; set; }
+
+        public bool? WaiveFee { get; set; }
+        public DateTime? DateCaseClosed { get; set; }
     }
 }

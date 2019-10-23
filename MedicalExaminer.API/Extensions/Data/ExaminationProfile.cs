@@ -315,7 +315,13 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(response => response.ScrutinyConfirmedOn, opt => opt.MapFrom(examination => examination.CaseOutcome.ScrutinyConfirmedOn))
                 .ForMember(response => response.MccdIssued, opt => opt.MapFrom(examination => examination.CaseOutcome.MccdIssued))
                 .ForMember(response => response.CremationFormStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.CremationFormStatus))
-                .ForMember(response => response.GpNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GpNotifiedStatus));
+                .ForMember(response => response.GpNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GpNotifiedStatus))
+                .ForMember(response => response.DateCaseClosed, opt => opt.MapFrom(examination => examination.DateCaseClosed));
+            CreateMap<Examination, PutCremationFeeWaiveResponse>()
+                .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
+                .ForMember(response => response.WaiveFee, opt => opt.MapFrom(examination => examination.WaiveFee))
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<Examination, ExaminationItem>()
                 .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0));
             CreateMap<Examination, GetPatientDetailsResponse>()
@@ -407,14 +413,43 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.CoronerReferralSent, opt => opt.Ignore())
                 .ForMember(examination => examination.ScrutinyConfirmed, opt => opt.Ignore())
                 .ForMember(examination => examination.OutstandingCaseItemsCompleted, opt => opt.Ignore())
+                .ForMember(examination => examination.DateCaseClosed, opt => opt.Ignore())
                 .ForMember(examination => examination.CaseOutcome, opt => opt.Ignore())
-                .ForMember(examination => examination.CreatedBy, opt => opt.Ignore());
+                .ForMember(examination => examination.CreatedBy, opt => opt.Ignore())
+                .ForMember(examination => examination.WaiveFee, opt => opt.Ignore());
+
+            CreateMap<ExaminationLocationItem, ExaminationFinanceItem>()
+                .ForMember(finance => finance.CaseCreated, opt => opt.MapFrom(eli => eli.Examination.CreatedAt))
+                .ForMember(finance => finance.ExaminationId, opt => opt.MapFrom(eli => eli.Examination.ExaminationId))
+                .ForMember(finance => finance.HasNhsNumber, opt => opt.MapFrom(eli => !string.IsNullOrEmpty(eli.Examination.NhsNumber)))
+                .ForMember(finance => finance.MedicalExaminerId, opt => opt.MapFrom(eli => eli.Examination.MedicalTeam.MedicalExaminerUserId))
+                .ForMember(finance => finance.ModeOfDisposal, opt => opt.MapFrom(eli => eli.Examination.ModeOfDisposal))
+                .ForMember(finance => finance.NationalName, opt => opt.MapFrom((source, dest, destMember, context) =>
+                {
+                    return source.Locations.SingleOrDefault(x => x.LocationId == source.Examination.NationalLocationId)?.Name;
+                }))
+                .ForMember(finance => finance.RegionName, opt => opt.MapFrom((source, dest, destMember, context) =>
+                {
+                    return source.Locations.SingleOrDefault(x => x.LocationId == source.Examination.RegionLocationId)?.Name;
+                }))
+                .ForMember(finance => finance.SiteName, opt => opt.MapFrom((source, dest, destMember, context) =>
+                {
+                    return source.Locations.SingleOrDefault(x => x.LocationId == source.Examination.SiteLocationId)?.Name;
+                }))
+                .ForMember(finance => finance.TrustName, opt => opt.MapFrom((source, dest, destMember, context) =>
+                {
+                    return source.Locations.SingleOrDefault(x => x.LocationId == source.Examination.TrustLocationId)?.Name;
+                }))
+                .ForMember(finance => finance.WaiverFee, opt => opt.MapFrom(eli => eli.Examination.WaiveFee))
+                .ForMember(finance => finance.CaseClosed, opt => opt.MapFrom(eli => eli.Examination.DateCaseClosed));
             CreateMap<Examination, PatientCardItem>()
+                .ForMember(patientCard => patientCard.IsCremation, opt => opt.MapFrom(examination => examination.ModeOfDisposal == ModeOfDisposal.Cremation))
                 .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0))
                 .ForMember(patientCard => patientCard.AppointmentDate, examination => examination.MapFrom(new AppointmentDateResolver(new AppointmentFinder())))
                 .ForMember(patientCard => patientCard.AppointmentTime, examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())))
                 .ForMember(patientCard => patientCard.CaseCreatedDate, opt => opt.MapFrom(examination => examination.CreatedAt))
                 .ForMember(patientCard => patientCard.LastAdmission, opt => opt.MapFrom(new AdmissionDateResolver()))
+                .ForMember(patientCard => patientCard.DateCaseClosed, opt => opt.MapFrom(examination => examination.DateCaseClosed))
                 .ForMember(patientCard => patientCard.CaseOutcome, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary))
                 .ForMember(patientCard => patientCard.NameEntered, opt => opt.MapFrom(
                     (source, dest, destMember, context) =>

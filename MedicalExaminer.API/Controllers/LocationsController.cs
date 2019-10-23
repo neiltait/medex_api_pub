@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -98,7 +99,16 @@ namespace MedicalExaminer.API.Controllers
         {
             IEnumerable<string> permissedLocations = null;
 
-            if (request.AccessOnly)
+            if (request == null)
+            {
+                return BadRequest(new GetLocationsResponse());
+            }
+
+            if (request.CreateExaminationOnly)
+            {
+                permissedLocations = await LocationsWithPermission(Permission.CreateExamination);
+            }
+            else if (request.AccessOnly)
             {
                 permissedLocations = await LocationsWithPermission(Permission.GetLocation);
             }

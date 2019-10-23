@@ -5,7 +5,6 @@ using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
-using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;

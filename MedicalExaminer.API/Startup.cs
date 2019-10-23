@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using AutoMapper;
 using Cosmonaut;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
@@ -241,15 +239,6 @@ example:
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
-
-            IServiceProvider serviceProvider = services.BuildServiceProvider();
-
-            // temporary fudges until the real migration framework is implemented.
-        // TODO: https://methods.atlassian.net/browse/MES-989
-        //    UpdateDiscussionOutcomes(serviceProvider);
-        //    UpdateInvalidOrNullUserPermissionIds(serviceProvider);
-        //    UpdateLocations(serviceProvider, locationMigrationSettings);
-        //    UpdateExaminationUrgencySort(serviceProvider, urgencySettings);
         }
 
         /// <summary>
@@ -388,6 +377,9 @@ example:
                 .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
                     ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<CreateEventQuery, EventCreationResult>, CreateEventService>();
+            services
+                .AddScoped<IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>>,
+                    FinanceService>();
 
             // Medical team services
             services.AddScoped<IAsyncUpdateDocumentHandler, MedicalTeamUpdateService>();
@@ -395,12 +387,9 @@ example:
             // Case Outcome Services
             services.AddScoped<IAsyncQueryHandler<CloseCaseQuery, string>, CloseCaseService>();
             services.AddScoped<IAsyncQueryHandler<CoronerReferralQuery, string>, CoronerReferralService>();
-            services
-                .AddScoped<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>, SaveOutstandingCaseItemsService
-                >();
-            services
-                .AddScoped<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>, ConfirmationOfScrutinyService
-                >();
+            services.AddScoped<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>, SaveOutstandingCaseItemsService>();
+            services.AddScoped<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>, ConfirmationOfScrutinyService>();
+            services.AddScoped<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>, SaveWaiveFeeService>();
 
             // Patient details services
             services
@@ -559,38 +548,6 @@ example:
             services.AddScoped<IAuthorizationHandler, PermissionHandler>();
             services.AddScoped<IAuthorizationHandler, DocumentPermissionHandler>();
             services.AddScoped<IPermissionService, PermissionService>();
-        }
-
-        private void UpdateLocations(IServiceProvider serviceProvider, LocationMigrationSettings locationMigrationSettings)
-        {
-            LocationMigrationService instance = serviceProvider.GetService<LocationMigrationService>();
-            instance.Handle(_locationMigrationQueryLookup[locationMigrationSettings.Version]).Wait();
-        }
-
-        private void UpdateDiscussionOutcomes(IServiceProvider serviceProvider)
-        {
-            IAsyncQueryHandler<NullQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<NullQuery, bool>>();
-
-            instance.Handle(new NullQuery()).Wait();
-        }
-
-        private void UpdateInvalidOrNullUserPermissionIds(IServiceProvider serviceProvider)
-        {
-            IAsyncQueryHandler<InvalidUserPermissionQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<InvalidUserPermissionQuery, bool>>();
-
-            instance.Handle(new InvalidUserPermissionQuery()).Wait();
-        }
-
-        private Dictionary<int, IMigrationQuery> _locationMigrationQueryLookup = new Dictionary<int, IMigrationQuery>
-        {
-            {1, new LocationMigrationQueryV1() }
-        };
-
-        private void UpdateExaminationUrgencySort(IServiceProvider serviceProvider, UrgencySettings urgencySettings)
-        {
-            IAsyncQueryHandler<UpdateExaminationUrgencySortQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<UpdateExaminationUrgencySortQuery, bool>>();
-
-            instance.Handle(new UpdateExaminationUrgencySortQuery()).Wait();
         }
     }
 }

@@ -75,6 +75,7 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
             await CreateCollection();
             LoadImportFile();
             ValidateLocations();
+            UpdateVersions();
             UpdateLocationPaths();
             await LoadLocations();
         }
@@ -151,6 +152,14 @@ namespace MedicalExaminer.ReferenceDataLoader.Loaders
         {
             var locationsChecker = new LocationsChecker(_locations);
             locationsChecker.RunAllChecks();
+        }
+
+        private void UpdateVersions()
+        {
+            foreach (var location in _locations)
+            {
+                location.Version = 1;
+            }
         }
 
         private void UpdateLocationPaths()

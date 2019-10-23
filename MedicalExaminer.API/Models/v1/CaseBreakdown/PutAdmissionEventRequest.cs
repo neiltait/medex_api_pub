@@ -1,6 +1,6 @@
-﻿using MedicalExaminer.API.Attributes;
+﻿using System;
+using MedicalExaminer.API.Attributes;
 using MedicalExaminer.Models.Enums;
-using System;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
