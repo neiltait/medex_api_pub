@@ -26,7 +26,7 @@ namespace MedicalExaminer.Common.Services.Examination
 
         private Expression<Func<Models.Examination, bool>> GetCaseCreatedToQuery(DateTime dateTo)
         {
-            return examination => examination.CreatedAt <= dateTo;
+            return examination => examination.CreatedAt < dateTo.AddDays(1);
         }
 
         public Expression<Func<Models.Examination, bool>> GetPredicate(ExaminationsRetrievalQuery queryObject, bool isDashboardCount)
