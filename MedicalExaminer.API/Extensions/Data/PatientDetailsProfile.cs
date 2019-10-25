@@ -63,7 +63,11 @@ namespace MedicalExaminer.API.Extensions.Data
                     }
                     return (bool?)null;
                 }))
-                .ForMember(examination => examination.DateCaseClosed, opt => opt.Ignore());
+                .ForMember(examination => examination.DateCaseClosed, opt => opt.Ignore())
+                .ForMember(examination => examination.VoidedDate, opt => opt.Ignore())
+                .ForMember(examination => examination.VoidReason, opt => opt.Ignore())
+                .ForMember(examination => examination.VoidUserId, opt => opt.Ignore())
+                .ForMember(examination => examination.IsVoid, opt => opt.Ignore());
         }
     }
 }

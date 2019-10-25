@@ -455,12 +455,36 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "waive_fee")]
         public bool? WaiveFee { get; set; } = null;
-        
-        ///
+
+        /// <summary>
         /// Date Case Closed
         /// </summary>
         [JsonProperty(PropertyName = "date_case_closed")]
         public DateTime? DateCaseClosed { get; set; } = null;
+
+        /// <summary>
+        /// Reason for voiding the examination
+        /// </summary>
+        [JsonProperty(PropertyName = "void_reason")]
+        public string VoidReason { get; set; }
+
+        /// <summary>
+        /// Has the examination been voided
+        /// </summary>
+        [JsonProperty(PropertyName = "is_void")]
+        public bool IsVoid { get; set; }
+
+        /// <summary>
+        /// The users ID who void the examination
+        /// </summary>
+        [JsonProperty(PropertyName = "void_user_id")]
+        public string VoidUserId { get; set; }
+
+        /// <summary>
+        /// The date the examination was voided
+        /// </summary>
+        [JsonProperty(PropertyName = "voided_date")]
+        public DateTime VoidedDate { get; set; }
 
         /// <summary>
         /// Case Outcome Items
@@ -468,5 +492,7 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "case_outcome")]
         public CaseOutcome CaseOutcome { get; set; } = new CaseOutcome();
+
+
     }
 }
