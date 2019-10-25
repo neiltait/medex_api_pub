@@ -288,7 +288,8 @@ namespace MedicalExaminer.API.Extensions.Data
                     return container;
                 }))
                 .ForMember(cbi => cbi.PatientDeathEvent, opt => opt.MapFrom(src => src.CaseBreakdown.DeathEvent))
-                .ForMember(cbi => cbi.CaseClosed, opt => opt.MapFrom(src => src.CaseBreakdown.CaseClosedEvent));
+                .ForMember(cbi => cbi.CaseClosed, opt => opt.MapFrom(src => src.CaseBreakdown.CaseClosedEvent))
+                .ForMember(cbi => cbi.VoidEvent, opt => opt.MapFrom(src => src.CaseBreakdown.VoidEvent));
             CreateMap<Examination, CaseOutcome>()
                 .ForMember(caseOutcome => caseOutcome.CaseMedicalExaminerFullName, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseMedicalExaminerFullName))
                 .ForMember(caseOutcome => caseOutcome.CaseCompleted, opt => opt.MapFrom(examination => examination.CaseCompleted))

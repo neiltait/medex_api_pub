@@ -14,6 +14,7 @@ namespace MedicalExaminer.Models.Enums
         QapDiscussion,
         Admission,
         PatientDied,
-        CaseClosed
+        CaseClosed,
+        CaseVoid,
     }
 }
