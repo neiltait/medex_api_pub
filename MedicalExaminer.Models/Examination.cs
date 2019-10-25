@@ -334,13 +334,13 @@ namespace MedicalExaminer.Models
         /// Have the admission notes been added
         /// </summary>
         [JsonProperty(PropertyName = "admission_notes_have_been_added")]
-        public bool AdmissionNotesHaveBeenAdded { get; set; } = false;
+        public bool AdmissionNotesHaveBeenAdded { get; set; }
 
         /// <summary>
         /// is the examination ready for medical examiner scrutiny
         /// </summary>
         [JsonProperty(PropertyName = "ready_for_me_scrutiny")]
-        public bool ReadyForMEScrutiny { get; set; } = false;
+        public bool ReadyForMEScrutiny { get; set; }
 
         /// <summary>
         /// is the case currently unassigned
@@ -352,7 +352,7 @@ namespace MedicalExaminer.Models
         /// has the case been scrutinised by the medical examiner
         /// </summary>
         [JsonProperty(PropertyName = "have_been_scrutinised_by_me")]
-        public bool HaveBeenScrutinisedByME { get; set; } = false;
+        public bool HaveBeenScrutinisedByME { get; set; }
 
         /// <summary>
         /// have admission notes been added for the examination
@@ -436,31 +436,31 @@ namespace MedicalExaminer.Models
         /// has the coroners referral been sent?
         /// </summary>
         [JsonProperty(PropertyName = "coroner_referral_sent")]
-        public bool CoronerReferralSent { get; set; } = false;
+        public bool CoronerReferralSent { get; set; }
 
         /// <summary>
         /// has the Scrutiny been confirmed?
         /// </summary>
         [JsonProperty(PropertyName = "scrutiny_confirmed")]
-        public bool ScrutinyConfirmed { get; set; } = false;
+        public bool ScrutinyConfirmed { get; set; }
 
         /// <summary>
         /// have the outstanding case items been completed?
         /// </summary>
         [JsonProperty(PropertyName = "outstanding_case_items_completed")]
-        public bool OutstandingCaseItemsCompleted { get; set; } = false;
+        public bool OutstandingCaseItemsCompleted { get; set; }
 
         /// <summary>
         /// should the cremation fee be waived?
         /// </summary>
         [JsonProperty(PropertyName = "waive_fee")]
-        public bool? WaiveFee { get; set; } = null;
+        public bool? WaiveFee { get; set; }
 
         /// <summary>
         /// Date Case Closed
         /// </summary>
         [JsonProperty(PropertyName = "date_case_closed")]
-        public DateTime? DateCaseClosed { get; set; } = null;
+        public DateTime? DateCaseClosed { get; set; }
 
         /// <summary>
         /// Reason for voiding the examination

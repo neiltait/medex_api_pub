@@ -283,8 +283,11 @@ namespace MedicalExaminer.API.Controllers
                 return Forbid();
             }
 
-            await _voidCaseService.Handle(new VoidCaseQuery(examinationId, user, putVoidCaseRequest.VoidReason));
-            return Ok();
+            var result = await _voidCaseService.Handle(new VoidCaseQuery(examinationId, user, putVoidCaseRequest.VoidReason));
+
+            var response = Mapper.Map<PutVoidCaseResponse>(result);
+
+            return Ok(response);
         }
 
         /// <summary>
