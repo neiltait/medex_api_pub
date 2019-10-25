@@ -4,7 +4,16 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
     public class CaseBreakDownItem
     {
+        /// <summary>
+        /// event in the instance where the case is voided.
+        /// </summary>
+        public VoidEventItem VoidEvent { get; set; }
+
+        /// <summary>
+        /// the event signifying the patients death
+        /// </summary>
         public PatientDeathEventItem PatientDeathEvent { get; set; }
+
         /// <summary>
         /// Case breakdown other events
         /// </summary>
