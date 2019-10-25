@@ -31,6 +31,7 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> _saveOutstandingCaseItemsService;
         private readonly IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> _confirmationOfScrutinyService;
         private readonly IAsyncQueryHandler<SaveWaiveFeeQuery, Examination> _saveWaiveFeeService;
+        private readonly IAsyncQueryHandler<VoidCaseQuery, Examination> _voidCaseService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CaseOutcomeController"/> class.
@@ -43,6 +44,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="saveOutstandingCaseItemsService">The save outstanding case items service.</param>
         /// <param name="confirmationOfScrutinyService">The confirmation of scrutiny service.</param>
         /// <param name="usersRetrievalByOktaIdService">The users retrieval service.</param>
+        /// <param name="voidCaseService">The void case service</param>
         /// <param name="authorizationService">The authorization service.</param>
         /// <param name="permissionService">The permission service.</param>
         /// <param name="saveWaiveFeeService">The save waive fee service</param>
@@ -56,6 +58,7 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> confirmationOfScrutinyService,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAsyncQueryHandler<SaveWaiveFeeQuery, Examination> saveWaiveFeeService,
+            IAsyncQueryHandler<VoidCaseQuery, Examination> voidCaseService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
@@ -66,6 +69,7 @@ namespace MedicalExaminer.API.Controllers
             _saveOutstandingCaseItemsService = saveOutstandingCaseItemsService;
             _confirmationOfScrutinyService = confirmationOfScrutinyService;
             _saveWaiveFeeService = saveWaiveFeeService;
+            _voidCaseService = voidCaseService;
         }
 
         /// <summary>
@@ -196,8 +200,8 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// Closing a case
         /// </summary>
-        /// <param name="examinationId"></param>
-        /// <returns></returns>
+        /// <param name="examinationId">Examination ID</param>
+        /// <returns>None</returns>
         [HttpPut]
         [Route("close_case")]
         public async Task<ActionResult> PutCloseCase(string examinationId)
@@ -242,6 +246,45 @@ namespace MedicalExaminer.API.Controllers
             }
 
             return BadRequest();
+        }
+
+        /// <summary>
+        /// Voiding a case
+        /// </summary>
+        /// <param name="examinationId">Examination ID</param>
+        /// <param name="putVoidCaseRequest">Put Void Case Request</param>
+        /// <returns>Put Void Case Response</returns>
+        [HttpPut]
+        [Route("close_case")]
+        public async Task<ActionResult<PutVoidCaseResponse>> PutVoidCase(
+            string examinationId,
+            [FromBody] PutVoidCaseRequest putVoidCaseRequest)
+        {
+            if (string.IsNullOrEmpty(examinationId))
+            {
+                return new BadRequestObjectResult(nameof(examinationId));
+            }
+
+            if (!Guid.TryParse(examinationId, out _))
+            {
+                return new BadRequestObjectResult(nameof(examinationId));
+            }
+
+            var user = await CurrentUser();
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+
+            if (examination == null)
+            {
+                return new NotFoundResult();
+            }
+
+            if (!CanAsync(Permission.VoidExamination, examination))
+            {
+                return Forbid();
+            }
+
+            await _voidCaseService.Handle(new VoidCaseQuery(examinationId, user, putVoidCaseRequest.VoidReason));
+            return Ok();
         }
 
         /// <summary>

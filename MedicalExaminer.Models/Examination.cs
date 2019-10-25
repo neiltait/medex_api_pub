@@ -484,7 +484,7 @@ namespace MedicalExaminer.Models
         /// The date the examination was voided
         /// </summary>
         [JsonProperty(PropertyName = "voided_date")]
-        public DateTime VoidedDate { get; set; }
+        public DateTime? VoidedDate { get; set; }
 
         /// <summary>
         /// Case Outcome Items
@@ -492,7 +492,5 @@ namespace MedicalExaminer.Models
         [Required]
         [JsonProperty(PropertyName = "case_outcome")]
         public CaseOutcome CaseOutcome { get; set; } = new CaseOutcome();
-
-
     }
 }
