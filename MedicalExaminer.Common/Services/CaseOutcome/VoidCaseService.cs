@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
@@ -52,16 +50,15 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.IsVoid = true;
             examinationToUpdate.VoidedDate = DateTime.Now;
 
-            //examinationToUpdate.CaseBreakdown.CaseClosedEvent = new CaseClosedEvent()
-            //{
-            //    CaseOutcome = examinationToUpdate.CaseOutcome.CaseOutcomeSummary.Value,
-            //    Created = DateTime.Now,
-            //    DateCaseClosed = DateTime.Now,
-            //    EventId = Guid.NewGuid().ToString(),
-            //    UserFullName = param.User.FullName(),
-            //    UserId = param.User.UserId,
-            //    UsersRole = param.User.Role()?.ToString()
-            //};
+            examinationToUpdate.CaseBreakdown.VoidEvent = new VoidEvent
+            {
+                VoidReason = examinationToUpdate.VoidReason,
+                Created = DateTime.Now,
+                EventId = Guid.NewGuid().ToString(),
+                UserFullName = param.User.FullName(),
+                UserId = param.User.UserId,
+                UsersRole = param.User.Role()?.ToString()
+            };
 
             examinationToUpdate =
                 examinationToUpdate.UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort);

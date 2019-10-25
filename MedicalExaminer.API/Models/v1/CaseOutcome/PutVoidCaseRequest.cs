@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MedicalExaminer.API.Models.v1.CaseOutcome
 {
@@ -13,6 +10,7 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
         /// <summary>
         /// Reason for voiding the examination
         /// </summary>
+        [Required]
         public string VoidReason { get; set; }
     }
 }

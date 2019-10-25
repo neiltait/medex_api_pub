@@ -255,7 +255,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="putVoidCaseRequest">Put Void Case Request</param>
         /// <returns>Put Void Case Response</returns>
         [HttpPut]
-        [Route("close_case")]
+        [Route("void_case")]
         public async Task<ActionResult<PutVoidCaseResponse>> PutVoidCase(
             string examinationId,
             [FromBody] PutVoidCaseRequest putVoidCaseRequest)
