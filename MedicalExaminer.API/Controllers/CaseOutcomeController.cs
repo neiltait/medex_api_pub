@@ -251,7 +251,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="putCremationFeeWaiver">Put Cremation Fee Waive Request</param>
         /// <returns>None</returns>
         [HttpPut]
-        [Route("/{examinationId}/waive_fee")]
+        [Route("waive_fee")]
         public async Task<ActionResult<PutCremationFeeWaiveResponse>> PutWaiveFee(
             string examinationId,
             [FromBody] PutCremationFeeWaiveRequest putCremationFeeWaiver)
