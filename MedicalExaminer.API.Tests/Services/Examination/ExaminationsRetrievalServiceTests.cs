@@ -37,7 +37,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.Unassigned,
-                "", null, 1, 10, "", true);
+                "", null, 1, 10, "", OpenClosedCases.Open);
 
             // Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -52,7 +52,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.ReadyForMEScrutiny,
-                "", null, 1, 10, "", true);
+                "", null, 1, 10, "", OpenClosedCases.Open);
 
             // Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -75,7 +75,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 1,
                 10,
                 string.Empty,
-                true);
+                OpenClosedCases.Open);
 
             // Act
             var results = (await Service.Handle(examinationsDashboardQuery)).ToList();
@@ -90,7 +90,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), null,
-                "", null, 1, 10, "", true);
+                "", null, 1, 10, "", OpenClosedCases.Open);
 
             // Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -105,7 +105,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), null,
-                "", null, 1, 10, "", true);
+                "", null, 1, 10, "", OpenClosedCases.Open);
 
             // Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -127,7 +127,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 1,
                 10,
                 "",
-                true);
+                OpenClosedCases.Open);
 
             // Act
             var results = (await Service.Handle(examinationsDashboardQuery)).ToList();
@@ -152,7 +152,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), null,
-                "", null, 1, 10, "", false);
+                "", null, 1, 10, "", OpenClosedCases.ClosedOrVoid);
 
             // Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -167,7 +167,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.PendingAdditionalDetails,
-                "", null, 1, 10, "", true);
+                "", null, 1, 10, "", OpenClosedCases.Open);
 
             // Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -182,7 +182,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.HaveBeenScrutinisedByME,
-                "", null, 1, 10, "", true);
+                "", null, 1, 10, "", OpenClosedCases.Open);
 
             // Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -197,7 +197,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.HaveUnknownBasicDetails,
-                "", null, 1, 10, "", true);
+                "", null, 1, 10, "", OpenClosedCases.Open);
 
             // Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -212,7 +212,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.PendingDiscussionWithQAP,
-                "", null, 1, 10, "", true);
+                "", null, 1, 10, "", OpenClosedCases.Open);
 
             // Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -227,7 +227,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.PendingDiscussionWithRepresentative,
-                "", null, 1, 10, "", true);
+                "", null, 1, 10, "", OpenClosedCases.Open);
 
             // Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -242,7 +242,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
         {
             // Arrange
             var examinationsDashboardQuery = new ExaminationsRetrievalQuery(PermissedLocations(), CaseStatus.HaveFinalCaseOutstandingOutcomes,
-                "", null, 1, 10, "", true);
+                "", null, 1, 10, "", OpenClosedCases.Open);
 
             // Act
             var results = await Service.Handle(examinationsDashboardQuery);
@@ -265,7 +265,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 1,
                 10,
                 string.Empty,
-                true);
+                OpenClosedCases.Open);
 
             // Act
             var results = (await Service.Handle(examinationsDashboardQuery)).ToList();
@@ -288,7 +288,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 1,
                 10,
                 string.Empty,
-                true);
+                OpenClosedCases.Open);
 
             // Act
             var results = (await Service.Handle(examinationsDashboardQuery)).ToList();
