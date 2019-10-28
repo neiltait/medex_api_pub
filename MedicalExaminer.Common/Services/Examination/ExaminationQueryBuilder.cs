@@ -75,9 +75,17 @@ namespace MedicalExaminer.Common.Services.Examination
                 || locationList.Contains(examination.SiteLocationId);
         }
 
-        private Expression<Func<Models.Examination, bool>> GetOpenCasesPredicate(bool paramFilterOpenCases)
+        private Expression<Func<Models.Examination, bool>> GetOpenCasesPredicate(OpenClosedCases paramFilterOpenCases)
         {
-            return examination => examination.CaseCompleted == !paramFilterOpenCases;
+            switch (paramFilterOpenCases)
+            {
+                case OpenClosedCases.OpenAndNotVoid:
+                    return examination => examination.CaseCompleted == false && examination.IsVoid == false;
+                case OpenClosedCases.ClosedOrVoid:
+                    return examination => examination.CaseCompleted == true || examination.IsVoid == true;
+                default:
+                    return examination => examination.CaseCompleted == false && examination.IsVoid == false;
+            }
         }
 
         private Expression<Func<Models.Examination, bool>> GetCaseStatusPredicate(CaseStatus? paramFilterCaseStatus)
