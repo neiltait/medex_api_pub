@@ -198,7 +198,7 @@ namespace MedicalExaminer.API.Controllers
                     1,
                     1,
                     null,
-                    MedicalExaminer.Models.Enums.OpenClosedCases.OpenAndNotVoid));
+                    MedicalExaminer.Models.Enums.OpenClosedCases.Open));
 
                 if (examinations.Any())
                 {

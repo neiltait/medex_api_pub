@@ -2,7 +2,7 @@
 {
     public enum OpenClosedCases
     {
-        OpenAndNotVoid,
+        Open,
         ClosedOrVoid
     }
 }

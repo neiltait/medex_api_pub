@@ -79,7 +79,7 @@ namespace MedicalExaminer.Common.Services.Examination
         {
             switch (paramFilterOpenCases)
             {
-                case OpenClosedCases.OpenAndNotVoid:
+                case OpenClosedCases.Open:
                     return examination => examination.CaseCompleted == false && examination.IsVoid == false;
                 case OpenClosedCases.ClosedOrVoid:
                     return examination => examination.CaseCompleted == true || examination.IsVoid == true;
