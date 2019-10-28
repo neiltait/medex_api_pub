@@ -159,7 +159,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
 
             // Assert
             results.Should().NotBeNull();
-            Assert.Single(results);
+            Assert.Equal(3, results.Count());
         }
 
         [Fact]
@@ -311,6 +311,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 NationalLocationId = "expectedLocation",
                 CreatedAt = dateTimeNow,
                 PendingAdditionalDetails = false,
+                IsVoid = false,
             };
 
             var examination2 = new MedicalExaminer.Models.Examination()
@@ -321,6 +322,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 RegionLocationId = "expectedLocation",
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(1)),
                 PendingAdditionalDetails = false,
+                IsVoid = false,
             };
 
             var examination4 = new MedicalExaminer.Models.Examination()
@@ -328,6 +330,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 ExaminationId = "examination4",
                 CaseCompleted = true,
                 PendingAdditionalDetails = false,
+                IsVoid = false,
             };
 
             var examination5 = new MedicalExaminer.Models.Examination()
@@ -338,6 +341,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CreatedAt = dateTimeNow,
                 OtherPriority = true,
                 PendingAdditionalDetails = false,
+                IsVoid = false,
             };
 
             var examination6 = new MedicalExaminer.Models.Examination()
@@ -348,6 +352,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 SiteLocationId = "expectedLocation",
                 OtherPriority = true,
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(1)),
+                IsVoid = false,
             };
 
             var examination7 = new MedicalExaminer.Models.Examination()
@@ -358,6 +363,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 OtherPriority = true,
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(6)),
                 PendingAdditionalDetails = false,
+                IsVoid = false,
             };
 
             var examination8 = new MedicalExaminer.Models.Examination()
@@ -368,6 +374,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 OtherPriority = true,
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(7)),
                 PendingAdditionalDetails = false,
+                IsVoid = false,
             };
 
             var examination9 = new MedicalExaminer.Models.Examination()
@@ -378,6 +385,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 OtherPriority = true,
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(8)),
                 PendingAdditionalDetails = false,
+                IsVoid = false,
             };
 
             var examination10 = new MedicalExaminer.Models.Examination()
@@ -387,6 +395,7 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 HaveBeenScrutinisedByME = true,
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(2)),
                 PendingAdditionalDetails = false,
+                IsVoid = false,
             };
 
             var examination11 = new MedicalExaminer.Models.Examination()
@@ -397,6 +406,29 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(3)),
                 HaveUnknownBasicDetails = true,
                 PendingAdditionalDetails = false,
+                IsVoid = false,
+            };
+
+            var examination12 = new MedicalExaminer.Models.Examination()
+            {
+                ExaminationId = "examination12",
+                ReadyForMEScrutiny = true,
+                CaseCompleted = false,
+                RegionLocationId = "expectedLocation",
+                CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(1)),
+                PendingAdditionalDetails = false,
+                IsVoid = true,
+            };
+
+            var examination13 = new MedicalExaminer.Models.Examination()
+            {
+                ExaminationId = "examination13",
+                ReadyForMEScrutiny = true,
+                CaseCompleted = true,
+                RegionLocationId = "expectedLocation",
+                CreatedAt = dateTimeNow.Subtract(TimeSpan.FromDays(1)),
+                PendingAdditionalDetails = false,
+                IsVoid = true,
             };
 
             var examinations = new[]
@@ -410,7 +442,9 @@ namespace MedicalExaminer.API.Tests.Services.Examination
                 examination8,
                 examination9,
                 examination10,
-                examination11
+                examination11,
+                examination12,
+                examination13,
             };
 
             SetSiteLocationIdOnExaminations(examinations);
