@@ -370,7 +370,7 @@ example:
             services.AddScoped<IAsyncQueryHandler<UpdateExaminationUrgencySortQuery, bool>, UpdateExaminationUrgencySortService>();
             services.AddScoped<IAsyncQueryHandler<NullQuery, bool>, DiscussionOutcomesUpdateService>();
             services.AddScoped<LocationMigrationService, LocationMigrationService>();
-
+            services.AddScoped<IAsyncQueryHandler<DuplicateExaminationByNhsNumberRetrievalQuery, Examination>, DuplicateExaminationByNhsNumberService>();
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>, ExaminationRetrievalService>();
             services
