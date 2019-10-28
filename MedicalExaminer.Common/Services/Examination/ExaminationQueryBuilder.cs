@@ -84,7 +84,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 case OpenClosedCases.ClosedOrVoid:
                     return examination => examination.CaseCompleted == true || examination.IsVoid == true;
                 default:
-                    return examination => examination.CaseCompleted == false && examination.IsVoid == false;
+                    throw new ArgumentOutOfRangeException(nameof(paramFilterOpenCases), paramFilterOpenCases, null);
             }
         }
 
