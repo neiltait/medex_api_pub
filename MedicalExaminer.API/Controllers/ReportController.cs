@@ -105,7 +105,7 @@ namespace MedicalExaminer.API.Controllers
                 return Forbid();
             }
 
-            var permissedLocations = (await LocationsWithPermission(Permission.GetExaminations)).ToList();
+            var permissedLocations = (await LocationsWithPermission(Permission.GetFinanceDownload)).ToList();
 
             var results = await _financeQuery.Handle(new FinanceQuery(request.ExaminationsCreatedFrom, request.ExaminationsCreatedTo, request.LocationId, permissedLocations));
 

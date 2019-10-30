@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Models.Enums;
+using Microsoft.Azure.Documents.SystemFunctions;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
@@ -16,7 +17,8 @@ namespace MedicalExaminer.Common.Services.Examination
             var locationFilter = GetLocationPredicate(queryObject.LocationId);
             var dateFromQuery = GetCaseCreatedFromQuery(queryObject.DateFrom);
             var dateToQuery = GetCaseCreatedToQuery(queryObject.DateTo);
-            return dateFromQuery.And(dateToQuery).And(permissedLocationFilter).And(locationFilter);
+            Expression<Func<Models.Examination, bool>> voidCasesQuery = examination => !examination.IsVoid;
+            return dateFromQuery.And(dateToQuery).And(permissedLocationFilter).And(locationFilter).And(voidCasesQuery);
         }
 
         private Expression<Func<Models.Examination, bool>> GetCaseCreatedFromQuery(DateTime dateFrom)
@@ -75,9 +77,17 @@ namespace MedicalExaminer.Common.Services.Examination
                 || locationList.Contains(examination.SiteLocationId);
         }
 
-        private Expression<Func<Models.Examination, bool>> GetOpenCasesPredicate(bool paramFilterOpenCases)
+        private Expression<Func<Models.Examination, bool>> GetOpenCasesPredicate(OpenClosedCases paramFilterOpenCases)
         {
-            return examination => examination.CaseCompleted == !paramFilterOpenCases;
+            switch (paramFilterOpenCases)
+            {
+                case OpenClosedCases.Open:
+                    return examination => (examination.CaseCompleted == false && examination.IsVoid == false);
+                case OpenClosedCases.ClosedOrVoid:
+                    return examination => examination.CaseCompleted == true || examination.IsVoid == true;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(paramFilterOpenCases), paramFilterOpenCases, null);
+            }
         }
 
         private Expression<Func<Models.Examination, bool>> GetCaseStatusPredicate(CaseStatus? paramFilterCaseStatus)

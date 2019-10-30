@@ -264,6 +264,38 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
+        public void Close_Case_Then_Urgency_Sort_Is_Reset()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                CaseCompleted = true
+            };
+
+            // Act
+            var result = examination.UpdateCaseUrgencySort(1);
+
+            // Assert
+            result.UrgencySort.Count.Should().Be(0);
+        }
+
+        [Fact]
+        public void Void_Case_Then_Urgency_Sort_Is_Reset()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                IsVoid = true
+            };
+
+            // Act
+            var result = examination.UpdateCaseUrgencySort(1);
+
+            // Assert
+            result.UrgencySort.Count.Should().Be(0);
+        }
+
+        [Fact]
         public void No_AdmissionNotes_Case_Status_PendingAdmissionNotes_True()
         {
             // Arrange
