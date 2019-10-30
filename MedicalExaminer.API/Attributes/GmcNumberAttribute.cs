@@ -10,7 +10,7 @@ namespace MedicalExaminer.API.Attributes
     /// </summary>
     public sealed class GmcNumberAttribute : ValidationAttribute
     {
-        // TODO: Confirm length and whether we can do the spaces?
+        // TODO: Confirm length and whether we can do the spaces? https://methods.atlassian.net/browse/MES-1158
         private readonly string patternMatch = "^[0-9 ]{0,100}$";
 
         /// <inheritdoc/>
