@@ -65,6 +65,20 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForAllOtherMembers(meUser => meUser.Ignore());
             CreateMap<PutUserRequest, UserUpdateEmail>()
                 .ForMember(dest => dest.UserId, opt => opt.Ignore());
+            CreateMap<MeUser, GetProfileResponse>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(request => request.UserId))
+                .ForMember(dest => dest.GmcNumber, opt => opt.MapFrom(request => request.GmcNumber))
+                .ForAllOtherMembers(x => x.Ignore());
+            CreateMap<MeUser, PutProfileResponse>()
+                .ForMember(meUser => meUser.UserId, opt => opt.MapFrom(request => request.UserId))
+                .ForMember(meUser => meUser.GmcNumber, opt => opt.MapFrom(request => request.GmcNumber))
+                .ForAllOtherMembers(meUser => meUser.Ignore());
+            CreateMap<PutProfileRequest, UserUpdateProfile>()
+                .ForMember(dest => dest.UserId, opt => opt.Ignore());
+            CreateMap<UserUpdateProfile, MeUser>()
+                .ForMember(meUser => meUser.UserId, opt => opt.MapFrom(request => request.UserId))
+                .ForMember(meUser => meUser.GmcNumber, opt => opt.MapFrom(request => request.GmcNumber))
+                .ForAllOtherMembers(meUser => meUser.Ignore());
         }
     }
 }
