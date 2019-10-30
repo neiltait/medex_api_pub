@@ -10,6 +10,12 @@ namespace MedicalExaminer.Models
     public class Examination : Record,  IExamination, ILocationPath
     {
         /// <summary>
+        /// the examination version number
+        /// </summary>
+        [JsonProperty(PropertyName = "version")]
+        public int Version { get; set; }
+
+        /// <summary>
         /// Pre calculated Sort orders for the next N-days.
         /// </summary>
         /// <remarks>Configured by property in UrgencySettings</remarks>

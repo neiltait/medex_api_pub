@@ -239,6 +239,16 @@ example:
                 new Uri(cosmosDbSettings.URL),
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
+
+            IServiceProvider serviceProvider = services.BuildServiceProvider();
+            UpdateExaminationUrgencySort(serviceProvider);
+        }
+
+        private void UpdateExaminationUrgencySort(IServiceProvider serviceProvider)
+        {
+            IAsyncQueryHandler<NullQuery, bool> instance = serviceProvider.GetService<IAsyncQueryHandler<NullQuery, bool>>();
+
+            instance.Handle(new NullQuery()).Wait();
         }
 
         /// <summary>
@@ -368,7 +378,7 @@ example:
                 .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, IEnumerable<Examination>>,
                     ExaminationsRetrievalService>();
             services.AddScoped<IAsyncQueryHandler<UpdateExaminationUrgencySortQuery, bool>, UpdateExaminationUrgencySortService>();
-            services.AddScoped<IAsyncQueryHandler<NullQuery, bool>, DiscussionOutcomesUpdateService>();
+            services.AddScoped<IAsyncQueryHandler<NullQuery, bool>, ExaminationMigrationService>();
             services.AddScoped<LocationMigrationService, LocationMigrationService>();
             services.AddScoped<IAsyncQueryHandler<DuplicateExaminationByNhsNumberRetrievalQuery, Examination>, DuplicateExaminationByNhsNumberService>();
             services

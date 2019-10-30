@@ -429,7 +429,8 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.VoidedDate, opt => opt.Ignore())
                 .ForMember(examination => examination.VoidReason, opt => opt.Ignore())
                 .ForMember(examination => examination.VoidUserId, opt => opt.Ignore())
-                .ForMember(examination => examination.IsVoid, opt => opt.Ignore());
+                .ForMember(examination => examination.IsVoid, opt => opt.Ignore())
+                .ForMember(examination => examination.Version, opt => opt.Ignore());
 
             CreateMap<ExaminationLocationItem, ExaminationFinanceItem>()
                 .ForMember(finance => finance.CaseCreated, opt => opt.MapFrom(eli => eli.Examination.CreatedAt))

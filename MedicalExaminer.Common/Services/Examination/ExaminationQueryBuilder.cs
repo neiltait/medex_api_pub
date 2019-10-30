@@ -17,7 +17,7 @@ namespace MedicalExaminer.Common.Services.Examination
             var locationFilter = GetLocationPredicate(queryObject.LocationId);
             var dateFromQuery = GetCaseCreatedFromQuery(queryObject.DateFrom);
             var dateToQuery = GetCaseCreatedToQuery(queryObject.DateTo);
-            Expression<Func<Models.Examination, bool>> voidCasesQuery = examination => !examination.IsVoid || !examination.IsVoid.IsDefined();
+            Expression<Func<Models.Examination, bool>> voidCasesQuery = examination => !examination.IsVoid;
             return dateFromQuery.And(dateToQuery).And(permissedLocationFilter).And(locationFilter).And(voidCasesQuery);
         }
 
@@ -82,8 +82,7 @@ namespace MedicalExaminer.Common.Services.Examination
             switch (paramFilterOpenCases)
             {
                 case OpenClosedCases.Open:
-                    return examination => (examination.CaseCompleted == false && examination.IsVoid == false) 
-                    || (examination.CaseCompleted == false && !examination.IsVoid.IsDefined());
+                    return examination => (examination.CaseCompleted == false && examination.IsVoid == false);
                 case OpenClosedCases.ClosedOrVoid:
                     return examination => examination.CaseCompleted == true || examination.IsVoid == true;
                 default:
