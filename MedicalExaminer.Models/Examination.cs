@@ -13,7 +13,7 @@ namespace MedicalExaminer.Models
         /// the examination version number
         /// </summary>
         [JsonProperty(PropertyName = "version")]
-        public int Version { get; set; }
+        public int Version { get; set; } = 1;
 
         /// <summary>
         /// Pre calculated Sort orders for the next N-days.
