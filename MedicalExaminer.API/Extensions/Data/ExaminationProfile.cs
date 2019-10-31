@@ -248,6 +248,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(prepopulated => prepopulated.GmcNumberOfUserForLatestPrescrutiny, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.GmcNumber));
 
             CreateMap<Examination, CaseBreakDownItem>()
+                .ForMember(cbi => cbi.VoidEvent, opt => opt.MapFrom(src => src.CaseBreakdown.VoidEvent))
                 .ForMember(cbi => cbi.AdmissionNotes, opt => opt.MapFrom((source, destination, destinationMember, context) =>
                 {
                     var container = EventContainerMapping<AdmissionEvent, NullPrepopulated>(source.CaseBreakdown.AdmissionNotes, context);
@@ -291,7 +292,8 @@ namespace MedicalExaminer.API.Extensions.Data
                     return container;
                 }))
                 .ForMember(cbi => cbi.PatientDeathEvent, opt => opt.MapFrom(src => src.CaseBreakdown.DeathEvent))
-                .ForMember(cbi => cbi.CaseClosed, opt => opt.MapFrom(src => src.CaseBreakdown.CaseClosedEvent));
+                .ForMember(cbi => cbi.CaseClosed, opt => opt.MapFrom(src => src.CaseBreakdown.CaseClosedEvent))
+                ;
             CreateMap<Examination, CaseOutcome>()
                 .ForMember(caseOutcome => caseOutcome.CaseMedicalExaminerFullName, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseMedicalExaminerFullName))
                 .ForMember(caseOutcome => caseOutcome.CaseCompleted, opt => opt.MapFrom(examination => examination.CaseCompleted))
@@ -311,6 +313,8 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore())
                 .ForMember(response => response.CaseCompleted, opt => opt.MapFrom(examination => examination.CaseCompleted))
+                .ForMember(response => response.IsVoid, opt => opt.MapFrom(examination => examination.IsVoid))
+                .ForMember(response => response.VoidedDate, opt => opt.MapFrom(examination => examination.VoidedDate))
                 .ForMember(response => response.CaseOutcomeSummary, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary))
                 .ForMember(response => response.OutcomeOfPrescrutiny, opt => opt.MapFrom(new PreScrutinyOutcomeResolver()))
                 .ForMember(response => response.OutcomeOfRepresentativeDiscussion, opt => opt.MapFrom(new RepresentativeDiscussionOutcomeResolver()))
@@ -323,6 +327,11 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<Examination, PutCremationFeeWaiveResponse>()
                 .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
                 .ForMember(response => response.WaiveFee, opt => opt.MapFrom(examination => examination.WaiveFee))
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
+            CreateMap<Examination, PutVoidCaseResponse>()
+                .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
+                .ForMember(response => response.VoidedDate, opt => opt.MapFrom(examination => examination.VoidedDate))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<Examination, ExaminationItem>()
@@ -419,7 +428,12 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.DateCaseClosed, opt => opt.Ignore())
                 .ForMember(examination => examination.CaseOutcome, opt => opt.Ignore())
                 .ForMember(examination => examination.CreatedBy, opt => opt.Ignore())
-                .ForMember(examination => examination.WaiveFee, opt => opt.Ignore());
+                .ForMember(examination => examination.WaiveFee, opt => opt.Ignore())
+                .ForMember(examination => examination.VoidedDate, opt => opt.Ignore())
+                .ForMember(examination => examination.VoidReason, opt => opt.Ignore())
+                .ForMember(examination => examination.VoidUserId, opt => opt.Ignore())
+                .ForMember(examination => examination.IsVoid, opt => opt.Ignore())
+                .ForMember(examination => examination.Version, opt => opt.Ignore());
 
             CreateMap<ExaminationLocationItem, ExaminationFinanceItem>()
                 .ForMember(finance => finance.CaseCreated, opt => opt.MapFrom(eli => eli.Examination.CreatedAt))

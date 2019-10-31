@@ -18,6 +18,12 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
 
         public bool CaseCompleted { get; set; }
 
+        public DateTime? DateCaseClosed { get; set; }
+
+        public bool IsVoid { get; set; }
+
+        public DateTime? VoidedDate { get; set; }
+
         public DateTime? ScrutinyConfirmedOn { get; set; }
 
         public bool CoronerReferralSent { get; set; }
@@ -33,6 +39,5 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
         public GPNotified? GpNotifiedStatus { get; set; }
 
         public bool? WaiveFee { get; set; }
-        public DateTime? DateCaseClosed { get; set; }
     }
 }

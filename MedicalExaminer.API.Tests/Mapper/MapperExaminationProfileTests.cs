@@ -673,6 +673,61 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
+        public void Examination_To_GetCaseBreakdowResponse_When_Case_Is_Void()
+        {
+            var examination = GenerateExamination();
+            var dateVoid = new DateTime(2019, 10, 28);
+            examination.IsVoid = true;
+            examination.VoidedDate = dateVoid;
+            examination.VoidReason = "some reason or other";
+            examination.VoidUserId = "userId0";
+
+            examination.CaseBreakdown.VoidEvent = new VoidEvent()
+            {
+                Created = dateVoid,
+                EventId = "voidEventId",
+                UserFullName = "Barry",
+                UserId = "B477Y",
+                UsersRole = "Something",
+                VoidReason = "some reason or other"
+            };
+
+            var expectedVoidEvent = new VoidEventItem
+            {
+                Created = dateVoid,
+                EventId = "voidEventId",
+                UserFullName = "Barry",
+                UserId = "B477Y",
+                UsersRole = "Something",
+                VoidReason = "some reason or other"
+            };
+
+            var result = _mapper.Map<CaseBreakDownItem>(examination, opt => opt.Items["user"] = User0);
+
+            IsEquivalent(expectedVoidEvent, result.VoidEvent);
+        }
+
+        [Fact]
+        public void Examination_To_GetCaseBreakdowResponse_When_Case_Is_Not_Void()
+        {
+            var examination = GenerateExamination();
+
+            var result = _mapper.Map<CaseBreakDownItem>(examination, opt => opt.Items["user"] = User0);
+
+            result.VoidEvent.Should().BeNull();
+        }
+
+        private void IsEquivalent(VoidEventItem expectedVoidEvent, VoidEventItem voidEvent)
+        {
+            voidEvent.VoidReason.Should().Be(expectedVoidEvent.VoidReason);
+            voidEvent.UsersRole.Should().Be(expectedVoidEvent.UsersRole);
+            voidEvent.UserId.Should().Be(expectedVoidEvent.UserId);
+            voidEvent.UserFullName.Should().Be(expectedVoidEvent.UserFullName);
+            voidEvent.Created.Should().Be(expectedVoidEvent.Created);
+            voidEvent.EventId.Should().Be(expectedVoidEvent.EventId);
+        }
+
+        [Fact]
         public void Examination_To_GetCaseBreakdowResponse_When_PreScrutiny_Is_Complete_And_Qap_Is_Unable_To_Happen()
         {
             var examination = GenerateExamination();
