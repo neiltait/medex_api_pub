@@ -223,6 +223,7 @@ namespace MedicalExaminer.API.Controllers
         {
             theEvent.UserId = user.UserId;
             theEvent.UserFullName = user.FullName();
+            theEvent.GmcNumber = user.GmcNumber;
             theEvent.UsersRole = user.UsersRoleIn(new[] { UserRoles.MedicalExaminer, UserRoles.MedicalExaminerOfficer }).ToString();
             return theEvent;
         }

@@ -19,6 +19,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(admissionEvent => admissionEvent.UserId, opt => opt.Ignore())
                 .ForMember(admissionEvent => admissionEvent.Created, opt => opt.Ignore())
                 .ForMember(admissionEvent => admissionEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(admissionEvent => admissionEvent.GmcNumber, opt => opt.Ignore())
                 .ForMember(admissionEvent => admissionEvent.UsersRole, opt => opt.Ignore());
 
             CreateMap<AdmissionEvent, AdmissionEventItem>();

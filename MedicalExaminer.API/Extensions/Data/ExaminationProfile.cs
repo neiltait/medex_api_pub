@@ -628,7 +628,8 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(deathEvent => deathEvent.UserId, opt => opt.MapFrom(examination => examination.LastModifiedBy))
                 .ForMember(deathEvent => deathEvent.EventId, opt => opt.Ignore())
                 .ForMember(deathEvent => deathEvent.UsersRole, opt => opt.Ignore())
-                .ForMember(deathEvent => deathEvent.UserFullName, opt => opt.Ignore());
+                .ForMember(deathEvent => deathEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(deathEvent => deathEvent.GmcNumber, opt => opt.Ignore());
         }
 
         private bool? UseQap(CaseBreakDown caseBreakdown)
