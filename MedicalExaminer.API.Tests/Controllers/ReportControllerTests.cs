@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -22,7 +23,8 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>> _examinationRetrievalQueryServiceMock;
         private readonly Mock<IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>>> _financeQuery;
         private readonly Mock<IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>>> _locationsRetrievalService;
-
+        private readonly Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>> _locationsParentsServiceMock;
+        private readonly Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> _locationRetrievalByQueryHandlerMock;
 
         public ReportControllerTests()
             : base(setupAuthorize: false)
@@ -31,6 +33,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             _examinationRetrievalQueryServiceMock = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>(MockBehavior.Strict);
             _financeQuery = new Mock<IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>>>(MockBehavior.Strict);
             _locationsRetrievalService = new Mock<IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>>>(MockBehavior.Strict);
+            _locationsParentsServiceMock = new Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>(MockBehavior.Strict);
+            _locationRetrievalByQueryHandlerMock = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>(MockBehavior.Strict);
 
             Controller = new ReportController(
                 LoggerMock.Object,
@@ -40,7 +44,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 PermissionServiceMock.Object,
                 _examinationRetrievalQueryServiceMock.Object,
                 _financeQuery.Object,
-                _locationsRetrievalService.Object);
+                _locationsRetrievalService.Object,
+                _locationsParentsServiceMock.Object,
+                _locationRetrievalByQueryHandlerMock.Object);
             Controller.ControllerContext = GetControllerContext();
         }
 
@@ -180,6 +186,25 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Assert
             response.Result.Should().BeAssignableTo<ForbidResult>();
+        }
+
+        [Fact]
+        public async void GetFinanceDownloadLocations_ReturnsLocations()
+        {
+            // Arrange
+            var locations = new List<Location> { };
+            _locationRetrievalByQueryHandlerMock
+                .Setup(service => service.Handle(It.IsAny<LocationsRetrievalByQuery>()))
+                .Returns(Task.FromResult(locations.AsEnumerable()));
+
+            _locationsParentsServiceMock.Setup(service => service.Handle(It.IsAny<LocationsParentsQuery>()))
+                .Returns(Task.FromResult((IDictionary<string, IEnumerable<Location>>)(new Dictionary<string, IEnumerable<Location>>())));
+
+            // Act
+            var response = await Controller.GetFinanceDownloadLocations();
+
+            // Assert
+            response.Result.Should().BeAssignableTo<OkObjectResult>();
         }
 
         private GetFinanceDownloadRequest CreateGetFinanceDownloadRequest()

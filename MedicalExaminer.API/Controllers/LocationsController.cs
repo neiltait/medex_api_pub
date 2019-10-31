@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.Locations;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Extensions.Models;
 using MedicalExaminer.Common.Loggers;
-using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
@@ -40,7 +37,7 @@ namespace MedicalExaminer.API.Controllers
         /// Location Retrieval by Query.
         /// </summary>
         private readonly IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> _locationRetrievalByQueryHandler;
-        
+
         /// <summary>
         /// Location Parents Service.
         /// </summary>
@@ -68,6 +65,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="locationRetrievalByQueryHandler">Location Retrieval By Query Handler.</param>
         /// <param name="locationParentsService">Location Parents service.</param>
         /// <param name="examinationsRetrievalService">Examinations retrieval service.</param>
+        /// <param name="updateLocationIsMeOfficeService">Update location is me office service.</param>
         public LocationsController(
             IMELogger logger,
             IMapper mapper,
