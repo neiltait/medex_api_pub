@@ -49,5 +49,10 @@ namespace MedicalExaminer.Models
         /// the users full name that added the latest pre scrutiny
         /// </summary>
         public string UserForLatestPrescrutiny { get; set; }
+
+        /// <summary>
+        /// GMC Number Of User For Latest Pre-scrutiny
+        /// </summary>
+        public string GmcNumberOfUserForLatestPrescrutiny { get; set; }
     }
 }
