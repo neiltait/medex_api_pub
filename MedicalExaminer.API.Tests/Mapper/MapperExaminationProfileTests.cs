@@ -1109,19 +1109,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 IsEqual(examination.MedicalTeam.ConsultantsOther[0], response.ConsultantsOther[0]);
         }
 
-        [Fact]
-        public void Examination_To_PutCremationFeeWaiveResponse()
-        {
-            // Arrange
-            var examination = GenerateExamination();
-
-            // Action
-            var response = _mapper.Map<PutCremationFeeWaiveResponse>(examination);
-
-            // Assert
-            response.WaiveFee.Should().Be(examination.WaiveFee);
-        }
-
+        
         [Fact]
         public void Examination_To_GetPatientDetailsResponse()
         {
