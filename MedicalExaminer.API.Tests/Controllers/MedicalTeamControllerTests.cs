@@ -7,7 +7,6 @@ using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.Common.Queries.Examination;
-using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -94,7 +93,11 @@ namespace MedicalExaminer.API.Tests.Controllers
             var emptyResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             var examinationIdReturned = (GetMedicalTeamResponse)emptyResult.Value;
             examinationIdReturned.MedicalExaminerUserId.Should().BeNull();
+            examinationIdReturned.MedicalExaminerFullName.Should().BeNull();
+            examinationIdReturned.MedicalExaminerGmcNumber.Should().BeNull();
             examinationIdReturned.MedicalExaminerOfficerUserId.Should().BeNull();
+            examinationIdReturned.MedicalExaminerOfficerFullName.Should().BeNull();
+            examinationIdReturned.MedicalExaminerOfficerGmcNumber.Should().BeNull();
             examinationIdReturned.NursingTeamInformation.Should().BeNull();
         }
 
@@ -123,14 +126,29 @@ namespace MedicalExaminer.API.Tests.Controllers
         {
             // Arrange
             SetupAuthorize(AuthorizationResult.Success());
-            var expectedNursingTeamInformation = "expectedNursingTeamInformation";
+            var nursingTeamInformation = "NursingTeamInformation";
+            var medicalExaminerUserId = "MedicalExaminerUserId";
+            var medicalExaminerFullName = "MedicalExaminerFullName";
+            var medicalExaminerGmcNumber = "MedicalExaminerGmcNumber";
+            var medicalExaminerOfficerUserId = "MedicalExaminerOfficerUserId";
+            var medicalExaminerOfficerFullName = "MedicalExaminerOfficerFullName";
+            var medicalExaminerOfficerGmcNumber = "MedicalExaminerOfficerGmcNumber";
+
             var examinationId = Guid.NewGuid().ToString();
             var examination = new Examination
             {
                 ExaminationId = examinationId,
-                MedicalTeam = new MedicalTeam()
+                MedicalTeam = new MedicalTeam
                 {
-                    NursingTeamInformation = expectedNursingTeamInformation
+                    GeneralPractitioner = null,
+                    Qap = null,
+                    NursingTeamInformation = nursingTeamInformation,
+                    MedicalExaminerUserId = medicalExaminerUserId,
+                    MedicalExaminerFullName = medicalExaminerFullName,
+                    MedicalExaminerGmcNumber = medicalExaminerGmcNumber,
+                    MedicalExaminerOfficerUserId = medicalExaminerOfficerUserId,
+                    MedicalExaminerOfficerFullName = medicalExaminerOfficerFullName,
+                    MedicalExaminerOfficerGmcNumber = medicalExaminerOfficerGmcNumber
                 }
             };
 
@@ -144,7 +162,13 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Assert
             var taskResult = response.Should().BeOfType<ActionResult<GetMedicalTeamResponse>>().Subject;
             var okResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
-            ((GetMedicalTeamResponse)okResult.Value).NursingTeamInformation.Should().Be(expectedNursingTeamInformation);
+            ((GetMedicalTeamResponse)okResult.Value).NursingTeamInformation.Should().Be(nursingTeamInformation);
+            ((GetMedicalTeamResponse)okResult.Value).MedicalExaminerUserId.Should().Be(medicalExaminerUserId);
+            ((GetMedicalTeamResponse)okResult.Value).MedicalExaminerFullName.Should().Be(medicalExaminerFullName);
+            ((GetMedicalTeamResponse)okResult.Value).MedicalExaminerGmcNumber.Should().Be(medicalExaminerGmcNumber);
+            ((GetMedicalTeamResponse)okResult.Value).MedicalExaminerOfficerUserId.Should().Be(medicalExaminerOfficerUserId);
+            ((GetMedicalTeamResponse)okResult.Value).MedicalExaminerOfficerFullName.Should().Be(medicalExaminerOfficerFullName);
+            ((GetMedicalTeamResponse)okResult.Value).MedicalExaminerOfficerGmcNumber.Should().Be(medicalExaminerOfficerGmcNumber);
             ((GetMedicalTeamResponse)okResult.Value).Header.Should().NotBe(null);
         }
 

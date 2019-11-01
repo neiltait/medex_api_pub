@@ -30,6 +30,8 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
 
         public string CaseMedicalExaminerFullName { get; set; }
 
+        public string CaseMedicalExaminerGmcNumber { get; set; }
+
         public string CaseMedicalExaminerId { get; set; }
 
         public bool? MccdIssued { get; set; }

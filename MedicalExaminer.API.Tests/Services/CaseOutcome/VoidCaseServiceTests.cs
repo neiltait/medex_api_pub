@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
@@ -13,11 +15,11 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Services.CaseOutcome
 {
-    public class CloseCaseServiceTests
+    public class VoidCaseServiceTests
     {
         private readonly Mock<IOptions<UrgencySettings>> _urgencySettingsMock;
 
-        public CloseCaseServiceTests()
+        public VoidCaseServiceTests()
         {
             _urgencySettingsMock = new Mock<IOptions<UrgencySettings>>(MockBehavior.Strict);
             _urgencySettingsMock
@@ -29,10 +31,10 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
         }
 
         /// <summary>
-        /// Close Case When Outstanding Case Items Are CaseCompleted
+        /// Void Case When Outstanding Case Items Are CaseCompleted
         /// </summary>
         [Fact]
-        public void Close_Case_When_Outstanding_Case_Items_Completed_Marks_Examination_Completed_And_Returns_ExaminationID()
+        public void Void_Case_Marks_Examination_IsVoid_And_Returns_Examination()
         {
             // Arrange
             var examinationId = Guid.NewGuid().ToString();
@@ -65,7 +67,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
                 GmcNumber = "GmcNumber"
             };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var query = new CloseCaseQuery(examinationId, user);
+            var query = new VoidCaseQuery(examinationId, user, "Void Reason");
             var dbAccess = new Mock<IDatabaseAccess>();
 
             dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(
@@ -77,21 +79,21 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
                 connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
-            var sut = new CloseCaseService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
+            var sut = new VoidCaseService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
 
             // Assert
             Assert.NotNull(result.Result);
-            Assert.True(examination.CaseCompleted);
-            Assert.Equal(examinationId, result.Result);
-            Assert.NotNull(examination.DateCaseClosed);
-            Assert.Equal(DateTime.Now.Date, examination.DateCaseClosed.Value.Date);
-            Assert.NotNull(examination.CaseBreakdown.CaseClosedEvent);
-            Assert.Equal(user.FirstName + " " + user.LastName, examination.CaseBreakdown.CaseClosedEvent.UserFullName);
-            Assert.Equal(user.UserId, examination.CaseBreakdown.CaseClosedEvent.UserId);
-            Assert.Equal(user.GmcNumber, examination.CaseBreakdown.CaseClosedEvent.GmcNumber);
+            Assert.True(examination.IsVoid);
+            Assert.Equal(examination, result.Result);
+            Assert.NotNull(examination.VoidedDate);
+            Assert.Equal(DateTime.Now.Date, examination.VoidedDate.Value.Date);
+            Assert.NotNull(examination.CaseBreakdown.VoidEvent);
+            Assert.Equal(user.FirstName + " " + user.LastName, examination.CaseBreakdown.VoidEvent.UserFullName);
+            Assert.Equal(user.UserId, examination.CaseBreakdown.VoidEvent.UserId);
+            Assert.Equal(user.GmcNumber, examination.CaseBreakdown.VoidEvent.GmcNumber);
         }
     }
 }
