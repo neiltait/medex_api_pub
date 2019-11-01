@@ -137,7 +137,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             SetupAuthorize(AuthorizationResult.Success());
             var expectedLocation = new LocationLookup { LocationId = "location1", Name = "Name1" };
-            var expectedUser = new UserLookup { UserId = "user1", FullName = "User 1" };
+            var expectedUser = new UserLookup { UserId = "user1", FullName = "User 1", GmcNumber = "GmcNumber1" };
 
             var examination1 = new Examination();
             var examination2 = new Examination();
@@ -163,6 +163,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 new MeUser()
                 {
                     UserId = "user1",
+                    GmcNumber = "GmcNumber1",
                     FirstName = "User",
                     LastName = "1",
                     Permissions = new List<MEUserPermission>()
