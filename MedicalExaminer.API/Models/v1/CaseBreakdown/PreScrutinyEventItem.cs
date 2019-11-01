@@ -12,6 +12,11 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         public string UserFullName { get; set; }
 
         /// <summary>
+        /// GMC Number
+        /// </summary>
+        public string GmcNumber { get; set; }
+
+        /// <summary>
         /// Users Role
         /// </summary>
         public string UsersRole { get; set; }

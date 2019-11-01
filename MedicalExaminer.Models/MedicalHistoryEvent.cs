@@ -9,11 +9,19 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Users full name
         /// </summary>
+        [JsonProperty(PropertyName = "users_full_name")]
         public string UserFullName { get; set; }
+
+        /// <summary>
+        /// GMC Number
+        /// </summary>
+        [JsonProperty(PropertyName = "gmc_number")]
+        public string GmcNumber { get; set; }
 
         /// <summary>
         /// Users Role
         /// </summary>
+        [JsonProperty(PropertyName = "users_role")]
         public string UsersRole { get; set; }
 
         /// <summary>
