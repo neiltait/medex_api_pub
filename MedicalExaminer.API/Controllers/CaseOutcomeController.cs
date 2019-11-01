@@ -245,53 +245,6 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
-        /// Updates waive fee flag
-        /// </summary>
-        /// <param name="examinationId">Examination ID</param>
-        /// <param name="putCremationFeeWaiver">Put Cremation Fee Waive Request</param>
-        /// <returns>None</returns>
-        [HttpPut]
-        [Route("/{examinationId}/waive_fee")]
-        public async Task<ActionResult<PutCremationFeeWaiveResponse>> PutWaiveFee(
-            string examinationId,
-            [FromBody] PutCremationFeeWaiveRequest putCremationFeeWaiver)
-        {
-            if (string.IsNullOrEmpty(examinationId))
-            {
-                return new BadRequestObjectResult(new PutCremationFeeWaiveResponse());
-            }
-
-            if (!Guid.TryParse(examinationId, out _))
-            {
-                return new BadRequestObjectResult(new PutCremationFeeWaiveResponse());
-            }
-
-            var user = await CurrentUser();
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
-
-            if (examination == null)
-            {
-                return new NotFoundResult();
-            }
-
-            if (!CanAsync(Permission.UpdateExamination, examination))
-            {
-                return Forbid();
-            }
-
-            if (examination.ModeOfDisposal != ModeOfDisposal.Cremation)
-            {
-                return new BadRequestObjectResult("The fee cannot be waived as there is no fee.");
-            }
-
-            var result = await _saveWaiveFeeService.Handle(new SaveWaiveFeeQuery(examinationId, user, putCremationFeeWaiver.WaiveFee));
-
-            var response = Mapper.Map<PutCremationFeeWaiveResponse>(result);
-
-            return Ok(response);
-        }
-
-        /// <summary>
         /// Get Case Outcome details
         /// </summary>
         /// <param name="examinationId">Examination ID</param>
