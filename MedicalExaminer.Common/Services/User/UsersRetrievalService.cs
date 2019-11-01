@@ -41,6 +41,7 @@ namespace MedicalExaminer.Common.Services.User
                     id = user.UserId,
                     first_name = user.FirstName,
                     last_name = user.LastName,
+                    gmc_number = user.GmcNumber,
                     permissions = user.Permissions,
                 });
             }

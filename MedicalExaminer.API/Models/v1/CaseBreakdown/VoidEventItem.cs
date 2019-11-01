@@ -37,6 +37,11 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         public string UserFullName { get; set; }
 
         /// <summary>
+        /// GMC Number
+        /// </summary>
+        public string GmcNumber { get; set; }
+
+        /// <summary>
         /// The users role that added the event
         /// </summary>
         public string UsersRole { get; set; }

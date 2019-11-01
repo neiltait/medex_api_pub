@@ -229,7 +229,9 @@ namespace MedicalExaminer.API.Extensions.Data
                 }))
                 .ForMember(dest => dest.QAPNameForLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.ParticipantName))
                 .ForMember(dest => dest.UserForLatestPrescrutiny, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.UserFullName))
-                .ForMember(dest => dest.UserForLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.UserFullName));
+                .ForMember(dest => dest.GmcNumberOfUserForLatestPrescrutiny, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.GmcNumber))
+                .ForMember(dest => dest.UserForLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.UserFullName))
+                .ForMember(dest => dest.GmcNumberOfUserForLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.GmcNumber));
             CreateMap<Examination, QapDiscussionPrepopulated>()
                 .ForMember(prepopulated => prepopulated.Qap, opt => opt.MapFrom(source => source.MedicalTeam.Qap))
                 .ForMember(prepopulated => prepopulated.CauseOfDeath1a, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a))
@@ -242,7 +244,8 @@ namespace MedicalExaminer.API.Extensions.Data
                         source.CaseBreakdown.PreScrutiny.Latest == null
                             ? PreScrutinyStatus.PrescrutinyNotHappened
                             : PreScrutinyStatus.PrescrutinyHappened))
-                .ForMember(prepopulated => prepopulated.UserForLatestPrescrutiny, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.UserFullName));
+                .ForMember(prepopulated => prepopulated.UserForLatestPrescrutiny, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.UserFullName))
+                .ForMember(prepopulated => prepopulated.GmcNumberOfUserForLatestPrescrutiny, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.GmcNumber));
 
             CreateMap<Examination, CaseBreakDownItem>()
                 .ForMember(cbi => cbi.VoidEvent, opt => opt.MapFrom(src => src.CaseBreakdown.VoidEvent))
@@ -642,7 +645,8 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(deathEvent => deathEvent.UserId, opt => opt.MapFrom(examination => examination.LastModifiedBy))
                 .ForMember(deathEvent => deathEvent.EventId, opt => opt.Ignore())
                 .ForMember(deathEvent => deathEvent.UsersRole, opt => opt.Ignore())
-                .ForMember(deathEvent => deathEvent.UserFullName, opt => opt.Ignore());
+                .ForMember(deathEvent => deathEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(deathEvent => deathEvent.GmcNumber, opt => opt.Ignore());
         }
 
         private bool? UseQap(CaseBreakDown caseBreakdown)

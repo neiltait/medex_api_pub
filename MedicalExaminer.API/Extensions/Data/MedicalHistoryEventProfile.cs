@@ -19,6 +19,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(medicalHistoryEvent => medicalHistoryEvent.UserId, opt => opt.Ignore())
                 .ForMember(medicalHistoryEvent => medicalHistoryEvent.Created, opt => opt.Ignore())
                 .ForMember(medicalHistoryEvent => medicalHistoryEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(medicalHistoryEvent => medicalHistoryEvent.GmcNumber, opt => opt.Ignore())
                 .ForMember(medicalHistoryEvent => medicalHistoryEvent.UsersRole, opt => opt.Ignore());
         }
     }

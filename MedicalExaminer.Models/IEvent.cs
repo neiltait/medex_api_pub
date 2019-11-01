@@ -1,5 +1,5 @@
-﻿using MedicalExaminer.Models.Enums;
-using System;
+﻿using System;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Models
 {
@@ -14,6 +14,8 @@ namespace MedicalExaminer.Models
         string UserId { get; set; }
 
         string UserFullName { get; set; }
+
+        string GmcNumber { get; set; }
 
         string UsersRole { get; set; }
 

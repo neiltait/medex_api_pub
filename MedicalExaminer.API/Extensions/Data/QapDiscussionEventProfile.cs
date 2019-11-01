@@ -21,6 +21,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(qapDiscussionEvent => qapDiscussionEvent.UserId, opt => opt.Ignore())
                 .ForMember(qapDiscussionEvent => qapDiscussionEvent.Created, opt => opt.Ignore())
                 .ForMember(qapDiscussionEvent => qapDiscussionEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(qapDiscussionEvent => qapDiscussionEvent.GmcNumber, opt => opt.Ignore())
                 .ForMember(qapDiscussionEvent => qapDiscussionEvent.UsersRole, opt => opt.Ignore())
                 .ForMember(qapDiscussionEvent => qapDiscussionEvent.QapDiscussionOutcome, opt => opt.MapFrom(
                     (src, dest, destMember, context) => src.DiscussionUnableHappen ? QapDiscussionOutcome.DiscussionUnableToHappen : src.QapDiscussionOutcome));
