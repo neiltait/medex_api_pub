@@ -418,7 +418,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(finance => finance.ExaminationId, opt => opt.MapFrom(eli => eli.Examination.ExaminationId))
                 .ForMember(finance => finance.HasNhsNumber, opt => opt.MapFrom(eli => !string.IsNullOrEmpty(eli.Examination.NhsNumber)))
                 .ForMember(finance => finance.MedicalExaminerId, opt => opt.MapFrom(eli => eli.Examination.MedicalTeam.MedicalExaminerUserId))
-                .ForMember(finance => finance.ModeOfDisposal, opt => opt.MapFrom(eli => eli.Examination.ModeOfDisposal))
+                .ForMember(finance => finance.CremationFormStatus, opt => opt.MapFrom(eli => eli.Examination.CaseOutcome.CremationFormStatus))
                 .ForMember(finance => finance.NationalName, opt => opt.MapFrom((source, dest, destMember, context) =>
                 {
                     return source.Locations.SingleOrDefault(x => x.LocationId == source.Examination.NationalLocationId)?.Name;
@@ -438,7 +438,6 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(finance => finance.WaiverFee, opt => opt.MapFrom(eli => eli.Examination.WaiveFee))
                 .ForMember(finance => finance.CaseClosed, opt => opt.MapFrom(eli => eli.Examination.DateCaseClosed));
             CreateMap<Examination, PatientCardItem>()
-                .ForMember(patientCard => patientCard.IsCremation, opt => opt.MapFrom(examination => examination.ModeOfDisposal == ModeOfDisposal.Cremation))
                 .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0))
                 .ForMember(patientCard => patientCard.AppointmentDate, examination => examination.MapFrom(new AppointmentDateResolver(new AppointmentFinder())))
                 .ForMember(patientCard => patientCard.AppointmentTime, examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())))

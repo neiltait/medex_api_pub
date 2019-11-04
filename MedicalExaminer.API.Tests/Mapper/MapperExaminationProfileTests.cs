@@ -1141,19 +1141,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
-            result.IsCremation.Should().BeFalse();
-        }
-
-        [Fact]
-        public void Examination_To_PatientCard_IsCremation_When_ModeOfDisposal_Is_Cremation()
-        {
-            var examination = GenerateExamination();
-
-            examination.ModeOfDisposal = ModeOfDisposal.Cremation;
-
-            var result = _mapper.Map<PatientCardItem>(examination);
-
-            result.IsCremation.Should().BeTrue();
         }
 
         [Fact]
@@ -3350,7 +3337,10 @@ namespace MedicalExaminer.API.Tests.Mapper
                 CreatedAt = new DateTime(2019, 9, 1),
                 NhsNumber = null,
                 MedicalTeam = null,
-                ModeOfDisposal = ModeOfDisposal.Unknown,
+                CaseOutcome = new CaseOutcome
+                {
+                    CremationFormStatus = CremationFormStatus.Unknown
+                },
                 NationalLocationId = null,
                 RegionLocationId = null,
                 SiteLocationId = null,
@@ -3371,12 +3361,12 @@ namespace MedicalExaminer.API.Tests.Mapper
                 ExaminationId = "examinationId",
                 HasNhsNumber = false,
                 MedicalExaminerId = null,
-                ModeOfDisposal = ModeOfDisposal.Unknown,
                 NationalName = null,
                 RegionName = null,
                 SiteName = null,
                 TrustName = null,
-                WaiverFee = null
+                WaiverFee = null,
+                CremationFormStatus = CremationFormStatus.Unknown
             };
 
             // Act
@@ -3398,7 +3388,10 @@ namespace MedicalExaminer.API.Tests.Mapper
                 {
                     MedicalExaminerUserId = "MedicalExaminerUserId"
                 },
-                ModeOfDisposal = ModeOfDisposal.Cremation,
+                CaseOutcome = new CaseOutcome
+                {
+                    CremationFormStatus = CremationFormStatus.Yes
+                },
                 NationalLocationId = "NationalLocationId",
                 RegionLocationId = "RegionLocationId",
                 SiteLocationId = "SiteLocationId",
@@ -3436,7 +3429,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 ExaminationId = "examinationId",
                 HasNhsNumber = true,
                 MedicalExaminerId = "MedicalExaminerUserId",
-                ModeOfDisposal = ModeOfDisposal.Cremation,
+                CremationFormStatus = CremationFormStatus.Yes,
                 NationalName = "NationalName",
                 RegionName = "RegionName",
                 SiteName = "SiteName",
@@ -3463,12 +3456,15 @@ namespace MedicalExaminer.API.Tests.Mapper
                 {
                     MedicalExaminerUserId = "MedicalExaminerUserId"
                 },
-                ModeOfDisposal = ModeOfDisposal.Cremation,
                 NationalLocationId = "NationalLocationId",
                 RegionLocationId = "RegionLocationId",
                 SiteLocationId = "SiteLocationId",
                 TrustLocationId = "TrustLocationId",
-                WaiveFee = true
+                WaiveFee = true,
+                CaseOutcome = new CaseOutcome
+                {
+                    CremationFormStatus = CremationFormStatus.Unknown
+                }
             };
 
             var examinationFinanceLocations = new ExaminationLocationItem()
@@ -3506,7 +3502,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 ExaminationId = "examinationId",
                 HasNhsNumber = true,
                 MedicalExaminerId = "MedicalExaminerUserId",
-                ModeOfDisposal = ModeOfDisposal.Cremation,
+                CremationFormStatus = CremationFormStatus.Unknown,
                 NationalName = "NationalName",
                 RegionName = "RegionName",
                 SiteName = "SiteName",
@@ -3587,7 +3583,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             actual.ExaminationId.Should().Be(expected.ExaminationId);
             actual.HasNhsNumber.Should().Be(expected.HasNhsNumber);
             actual.MedicalExaminerId.Should().Be(expected.MedicalExaminerId);
-            actual.ModeOfDisposal.Should().Be(expected.ModeOfDisposal);
+            actual.CremationFormStatus.Should().Be(expected.CremationFormStatus);
             actual.NationalName.Should().Be(expected.NationalName);
             actual.RegionName.Should().Be(expected.RegionName);
             actual.SiteName.Should().Be(expected.SiteName);
