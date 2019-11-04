@@ -570,5 +570,127 @@ namespace MedicalExaminer.API.Tests.Controllers
             model.Errors.Count.Should().Be(1);
             model.Success.Should().BeFalse();
         }
+
+        [Fact]
+        public async Task GetProfile_ReturnsBadRequest_WhenModelStatisInvalid()
+        {
+            // Arrange
+            var userId = "userId";
+            Controller.ModelState.AddModelError("An", "Error");
+
+            // Act
+            var response = await Controller.GetProfile(userId);
+
+            // Assert
+            response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
+            var result = (BadRequestObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetProfileResponse>();
+            var model = (GetProfileResponse)result.Value;
+            model.Errors.Count.Should().Be(1);
+            model.Success.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task GetProfile_ReturnsNotFound_WhenUserNotFound()
+        {
+            // Arrange
+            const string userId = "userId";
+
+            _userRetrievalService
+                .Setup(up => up.Handle(It.IsAny<UserRetrievalByIdQuery>()))
+                .Returns(Task.FromResult((MeUser)null));
+
+            // Act
+            var response = await Controller.GetProfile(userId);
+
+            // Assert
+            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
+            var result = (NotFoundObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetProfileResponse>();
+            var model = (GetProfileResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.UserId.Should().Be(null);
+        }
+
+        [Fact]
+        public async Task GetProfile_ReturnsOk_WhenUserFound()
+        {
+            // Arrange
+            const string userId = "userId";
+
+            var user = new MeUser
+            {
+                UserId = userId,
+                Permissions = new MEUserPermission[0]
+            };
+
+            _userRetrievalService
+                .Setup(up => up.Handle(It.IsAny<UserRetrievalByIdQuery>()))
+                .Returns(Task.FromResult(user));
+
+            Controller.ControllerContext = GetControllerContext();
+
+            // Act
+            var response = await Controller.GetProfile(userId);
+
+            // Assert
+            response.Result.Should().BeAssignableTo<OkObjectResult>();
+            var result = (OkObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetProfileResponse>();
+            var model = (GetProfileResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+            model.UserId.Should().Be(userId);
+        }
+
+        [Fact]
+        public async Task GetProfile_ReturnsNotFound_WhenArgumentExceptionThrown()
+        {
+            // Arrange
+            const string userId = "userId";
+
+            _userRetrievalService
+                .Setup(up => up.Handle(It.IsAny<UserRetrievalByIdQuery>()))
+                .Throws<ArgumentException>();
+
+            // Act
+            var response = await Controller.GetProfile(userId);
+
+            // Assert
+            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
+            var result = (NotFoundObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetProfileResponse>();
+            var model = (GetProfileResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.UserId.Should().Be(null);
+        }
+
+        [Fact]
+        public async Task GetProfile_ReturnsNotFound_WhenNullReferenceExceptionThrown()
+        {
+            // Arrange
+            const string userId = "userId";
+
+            _userRetrievalService
+                .Setup(up => up.Handle(It.IsAny<UserRetrievalByIdQuery>()))
+                .Throws(CreateDocumentClientExceptionForTesting());
+
+            // Act
+            var response = await Controller.GetProfile(userId);
+
+            // Assert
+            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
+            var result = (NotFoundObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<GetProfileResponse>();
+            var model = (GetProfileResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.UserId.Should().Be(null);
+        }
     }
 }

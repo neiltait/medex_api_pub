@@ -241,7 +241,7 @@ namespace MedicalExaminer.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new GetUserResponse());
+                return BadRequest(new GetProfileResponse());
             }
 
             try
@@ -261,7 +261,7 @@ namespace MedicalExaminer.API.Controllers
             {
                 return NotFound(new GetProfileResponse());
             }
-            catch (NullReferenceException)
+            catch (DocumentClientException)
             {
                 return NotFound(new GetProfileResponse());
             }
