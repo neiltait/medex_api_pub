@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
+using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Services.CaseOutcome;
 using MedicalExaminer.Common.Settings;
@@ -89,7 +90,7 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
             Assert.NotNull(examination.DateCaseClosed);
             Assert.Equal(DateTime.Now.Date, examination.DateCaseClosed.Value.Date);
             Assert.NotNull(examination.CaseBreakdown.CaseClosedEvent);
-            Assert.Equal(user.FirstName + " " + user.LastName, examination.CaseBreakdown.CaseClosedEvent.UserFullName);
+            Assert.Equal(user.FullName(), examination.CaseBreakdown.CaseClosedEvent.UserFullName);
             Assert.Equal(user.UserId, examination.CaseBreakdown.CaseClosedEvent.UserId);
             Assert.Equal(user.GmcNumber, examination.CaseBreakdown.CaseClosedEvent.GmcNumber);
         }

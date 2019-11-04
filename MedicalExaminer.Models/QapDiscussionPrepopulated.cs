@@ -41,12 +41,12 @@ namespace MedicalExaminer.Models
         public string MedicalExaminerGmcNumber { get; set; }
 
         /// <summary>
-        /// has the prescrutiny occured
+        /// has the pre-scrutiny occured
         /// </summary>
         public PreScrutinyStatus PreScrutinyStatus { get; set; }
 
         /// <summary>
-        /// date of the latest prescrutiny
+        /// date of the latest pre-scrutiny
         /// </summary>
         public DateTime? DateOfLatestPreScrutiny { get; set; }
 
