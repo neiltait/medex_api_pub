@@ -10,7 +10,6 @@ using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,7 +29,6 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> _saveOutstandingCaseItemsService;
         private readonly IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> _confirmationOfScrutinyService;
-        private readonly IAsyncQueryHandler<SaveWaiveFeeQuery, Examination> _saveWaiveFeeService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CaseOutcomeController"/> class.
@@ -45,7 +43,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="usersRetrievalByOktaIdService">The users retrieval service.</param>
         /// <param name="authorizationService">The authorization service.</param>
         /// <param name="permissionService">The permission service.</param>
-        /// <param name="saveWaiveFeeService">The save waive fee service</param>
         public CaseOutcomeController(
             IMELogger logger,
             IMapper mapper,
@@ -55,7 +52,6 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> saveOutstandingCaseItemsService,
             IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> confirmationOfScrutinyService,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
-            IAsyncQueryHandler<SaveWaiveFeeQuery, Examination> saveWaiveFeeService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
@@ -65,7 +61,6 @@ namespace MedicalExaminer.API.Controllers
             _examinationRetrievalService = examinationRetrievalService;
             _saveOutstandingCaseItemsService = saveOutstandingCaseItemsService;
             _confirmationOfScrutinyService = confirmationOfScrutinyService;
-            _saveWaiveFeeService = saveWaiveFeeService;
         }
 
         /// <summary>

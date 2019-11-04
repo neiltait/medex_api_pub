@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
@@ -13,9 +11,7 @@ using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Documents.SystemFunctions;
 using Moq;
 using Xunit;
 
@@ -35,7 +31,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
-            var saveWaiveFeeService = new Mock<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -46,7 +41,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByOktaIdService.Object,
-                saveWaiveFeeService.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object);
 
@@ -73,7 +67,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var coronerReferralService = new Mock<IAsyncQueryHandler<CoronerReferralQuery, string>>();
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
-            var saveWaiveFeeService = new Mock<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -84,7 +77,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByOktaIdService.Object,
-                saveWaiveFeeService.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object);
 
@@ -119,7 +111,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>())).Returns(Task.FromResult(examination));
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-            var saveWaiveFeeService = new Mock<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -130,7 +121,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByOktaIdService.Object,
-                saveWaiveFeeService.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object);
 
@@ -156,7 +146,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-            var saveWaiveFeeService = new Mock<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -167,7 +156,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByOktaIdService.Object,
-                saveWaiveFeeService.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object);
 
@@ -199,7 +187,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-            var saveWaiveFeeService = new Mock<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -210,7 +197,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByOktaIdService.Object,
-                saveWaiveFeeService.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object);
 
@@ -259,7 +245,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(examination)).Verifiable();
 
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-            var saveWaiveFeeService = new Mock<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -270,7 +255,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByOktaIdService.Object,
-                saveWaiveFeeService.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object);
 
@@ -303,7 +287,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
 
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-            var saveWaiveFeeService = new Mock<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -314,7 +297,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByOktaIdService.Object,
-                saveWaiveFeeService.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object);
 
@@ -339,7 +321,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-            var saveWaiveFeeService = new Mock<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -350,7 +331,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByOktaIdService.Object,
-                saveWaiveFeeService.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object);
 
@@ -389,7 +369,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>())).Returns(Task.FromResult(examination)).Verifiable();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-            var saveWaiveFeeService = new Mock<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -400,7 +379,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByOktaIdService.Object,
-                saveWaiveFeeService.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object);
 
@@ -425,7 +403,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-            var saveWaiveFeeService = new Mock<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -436,7 +413,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByOktaIdService.Object,
-                saveWaiveFeeService.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object);
 
@@ -461,7 +437,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examinationRetrievalService = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-            var saveWaiveFeeService = new Mock<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -472,7 +447,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByOktaIdService.Object,
-                saveWaiveFeeService.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object);
 
@@ -515,7 +489,6 @@ namespace MedicalExaminer.API.Tests.Controllers
             examinationRetrievalService.Setup(service => service.Handle(It.IsAny<ExaminationRetrievalQuery>())).Returns(Task.FromResult(examination)).Verifiable();
             var saveOutstandingCaseItems = new Mock<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
-            var saveWaiveFeeService = new Mock<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>>();
 
             var sut = new CaseOutcomeController(
                 logger.Object,
@@ -526,7 +499,6 @@ namespace MedicalExaminer.API.Tests.Controllers
                 saveOutstandingCaseItems.Object,
                 confirmationOfScrutinyService.Object,
                 usersRetrievalByOktaIdService.Object,
-                saveWaiveFeeService.Object,
                 AuthorizationServiceMock.Object,
                 PermissionServiceMock.Object);
 
@@ -538,6 +510,5 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Assert
             var okResult = response.Should().BeAssignableTo<OkResult>().Subject;
         }
-
     }
 }

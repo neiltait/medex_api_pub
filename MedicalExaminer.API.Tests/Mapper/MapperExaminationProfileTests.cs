@@ -402,7 +402,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                 CoronerReferralSent = false,
                 ScrutinyConfirmed = false,
                 OutstandingCaseItemsCompleted = false,
-                WaiveFee = null,
                 DateCaseClosed = null,
                 CaseOutcome = null
             };
@@ -483,7 +482,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                    expected.CoronerReferralSent == actual.CoronerReferralSent &&
                    expected.ScrutinyConfirmed == actual.ScrutinyConfirmed &&
                    expected.OutstandingCaseItemsCompleted == actual.OutstandingCaseItemsCompleted &&
-                   expected.WaiveFee == actual.WaiveFee &&
                    expected.DateCaseClosed == actual.DateCaseClosed &&
                    expected.CaseOutcome == actual.CaseOutcome;
         }
@@ -3339,13 +3337,13 @@ namespace MedicalExaminer.API.Tests.Mapper
                 MedicalTeam = null,
                 CaseOutcome = new CaseOutcome
                 {
-                    CremationFormStatus = CremationFormStatus.Unknown
+                    CremationFormStatus = CremationFormStatus.Unknown,
+                    WaiveFee = null
                 },
                 NationalLocationId = null,
                 RegionLocationId = null,
                 SiteLocationId = null,
                 TrustLocationId = null,
-                WaiveFee = null
             };
 
             var examinationFinanceLocations = new ExaminationLocationItem()
@@ -3390,13 +3388,13 @@ namespace MedicalExaminer.API.Tests.Mapper
                 },
                 CaseOutcome = new CaseOutcome
                 {
-                    CremationFormStatus = CremationFormStatus.Yes
+                    CremationFormStatus = CremationFormStatus.Yes,
+                    WaiveFee = true
                 },
                 NationalLocationId = "NationalLocationId",
                 RegionLocationId = "RegionLocationId",
                 SiteLocationId = "SiteLocationId",
                 TrustLocationId = "TrustLocationId",
-                WaiveFee = true
             };
 
             var examinationFinanceLocations = new ExaminationLocationItem()
@@ -3460,10 +3458,10 @@ namespace MedicalExaminer.API.Tests.Mapper
                 RegionLocationId = "RegionLocationId",
                 SiteLocationId = "SiteLocationId",
                 TrustLocationId = "TrustLocationId",
-                WaiveFee = true,
                 CaseOutcome = new CaseOutcome
                 {
-                    CremationFormStatus = CremationFormStatus.Unknown
+                    CremationFormStatus = CremationFormStatus.Yes,
+                    WaiveFee = true,
                 }
             };
 
@@ -3502,7 +3500,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 ExaminationId = "examinationId",
                 HasNhsNumber = true,
                 MedicalExaminerId = "MedicalExaminerUserId",
-                CremationFormStatus = CremationFormStatus.Unknown,
+                CremationFormStatus = CremationFormStatus.Yes,
                 NationalName = "NationalName",
                 RegionName = "RegionName",
                 SiteName = "SiteName",

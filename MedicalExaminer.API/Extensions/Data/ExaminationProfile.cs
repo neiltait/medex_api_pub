@@ -300,6 +300,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(caseOutcome => caseOutcome.CoronerReferralSent, opt => opt.MapFrom(examination => examination.CoronerReferralSent))
                 .ForMember(caseOutcome => caseOutcome.MccdIssued, opt => opt.MapFrom(examination => examination.CaseOutcome.MccdIssued))
                 .ForMember(caseOutcome => caseOutcome.CremationFormStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.CremationFormStatus))
+                .ForMember(caseOutcome => caseOutcome.WaiveFee, opt => opt.MapFrom(examination => examination.CaseOutcome.WaiveFee))
                 .ForMember(caseOutcome => caseOutcome.GpNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GpNotifiedStatus));
             CreateMap<Examination, GetCaseOutcomeResponse>()
                 .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
@@ -315,6 +316,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(response => response.ScrutinyConfirmedOn, opt => opt.MapFrom(examination => examination.CaseOutcome.ScrutinyConfirmedOn))
                 .ForMember(response => response.MccdIssued, opt => opt.MapFrom(examination => examination.CaseOutcome.MccdIssued))
                 .ForMember(response => response.CremationFormStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.CremationFormStatus))
+                .ForMember(response => response.WaiveFee, opt => opt.MapFrom(examination => examination.CaseOutcome.WaiveFee))
                 .ForMember(response => response.GpNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GpNotifiedStatus))
                 .ForMember(response => response.DateCaseClosed, opt => opt.MapFrom(examination => examination.DateCaseClosed));
             CreateMap<Examination, ExaminationItem>()
@@ -410,8 +412,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.OutstandingCaseItemsCompleted, opt => opt.Ignore())
                 .ForMember(examination => examination.DateCaseClosed, opt => opt.Ignore())
                 .ForMember(examination => examination.CaseOutcome, opt => opt.Ignore())
-                .ForMember(examination => examination.CreatedBy, opt => opt.Ignore())
-                .ForMember(examination => examination.WaiveFee, opt => opt.Ignore());
+                .ForMember(examination => examination.CreatedBy, opt => opt.Ignore());
 
             CreateMap<ExaminationLocationItem, ExaminationFinanceItem>()
                 .ForMember(finance => finance.CaseCreated, opt => opt.MapFrom(eli => eli.Examination.CreatedAt))
@@ -435,7 +436,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 {
                     return source.Locations.SingleOrDefault(x => x.LocationId == source.Examination.TrustLocationId)?.Name;
                 }))
-                .ForMember(finance => finance.WaiverFee, opt => opt.MapFrom(eli => eli.Examination.WaiveFee))
+                .ForMember(finance => finance.WaiverFee, opt => opt.MapFrom(eli => eli.Examination.CaseOutcome.WaiveFee))
                 .ForMember(finance => finance.CaseClosed, opt => opt.MapFrom(eli => eli.Examination.DateCaseClosed));
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0))

@@ -33,6 +33,7 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
         public GPNotified? GpNotifiedStatus { get; set; }
 
         public bool? WaiveFee { get; set; }
+
         public DateTime? DateCaseClosed { get; set; }
     }
 }
