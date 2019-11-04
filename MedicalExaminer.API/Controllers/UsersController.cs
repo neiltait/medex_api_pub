@@ -4,13 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
-using MedicalExaminer.API.Models;
-using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.API.Services;
-using MedicalExaminer.Common.Extensions.Permission;
 using MedicalExaminer.Common.Loggers;
-using MedicalExaminer.Common.Queries.Location;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -23,7 +19,7 @@ using Permission = MedicalExaminer.Common.Authorization.Permission;
 namespace MedicalExaminer.API.Controllers
 {
     /// <summary>
-    ///     Users Controller
+    /// Users Controller
     /// </summary>
     /// <inheritdoc />
     [ApiVersion("1.0")]
@@ -32,13 +28,6 @@ namespace MedicalExaminer.API.Controllers
     [Authorize]
     public class UsersController : AuthorizedBaseController
     {
-        /// <summary>
-        /// Locations Parents Service.
-        /// </summary>
-        private readonly
-            IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>
-            _locationsParentsService;
-
         /// <summary>
         /// User Creation Service
         /// </summary>
@@ -60,11 +49,6 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<UserUpdateQuery, MeUser> _userUpdateService;
 
         /// <summary>
-        /// Locations Retrieval Service.
-        /// </summary>
-        private readonly IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> _locationsRetrievalService;
-
-        /// <summary>
         /// Okta Client.
         /// </summary>
         private readonly IOktaClient _oktaClient;
@@ -81,7 +65,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="userRetrievalByIdService">User retrieval service.</param>
         /// <param name="usersRetrievalService">Users retrieval service.</param>
         /// <param name="userUpdateService">The userToCreate update service</param>
-        /// <param name="locationsRetrievalService">Locations Retrieval Service.</param>
         /// <param name="oktaClient">Okta client.</param>
         public UsersController(
             IMELogger logger,
@@ -93,18 +76,14 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser> userRetrievalByIdService,
             IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
             IAsyncQueryHandler<UserUpdateQuery, MeUser> userUpdateService,
-            IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationsRetrievalService,
-            IOktaClient oktaClient,
-            IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>> locationsParentsService)
+            IOktaClient oktaClient)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
         {
             _userCreationService = userCreationService;
             _userRetrievalByIdService = userRetrievalByIdService;
             _usersRetrievalService = usersRetrievalService;
             _userUpdateService = userUpdateService;
-            _locationsRetrievalService = locationsRetrievalService;
             _oktaClient = oktaClient;
-            _locationsParentsService = locationsParentsService;
         }
 
         /// <summary>
@@ -248,6 +227,77 @@ namespace MedicalExaminer.API.Controllers
             catch (ArgumentException)
             {
                 return NotFound(new PutUserResponse());
+            }
+        }
+
+        /// <summary>
+        /// Get a user profile.
+        /// </summary>
+        /// <param name="meUserId">User Id.</param>
+        /// <returns>A GetProfileResponse.</returns>
+        [HttpGet("{meUserId}/profile")]
+        [AuthorizePermission(Permission.GetUsers)]
+        public async Task<ActionResult<GetProfileResponse>> GetProfile(string meUserId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new GetUserResponse());
+            }
+
+            try
+            {
+                var user = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(meUserId));
+                if (user == null)
+                {
+                    return NotFound(new GetProfileResponse());
+                }
+
+                var gur = new GetProfileResponse();
+                Mapper.Map(user, gur);
+
+                return Ok(gur);
+            }
+            catch (ArgumentException)
+            {
+                return NotFound(new GetProfileResponse());
+            }
+            catch (NullReferenceException)
+            {
+                return NotFound(new GetProfileResponse());
+            }
+        }
+
+        /// <summary>
+        /// Update a user profile.
+        /// </summary>
+        /// <param name="meUserId">User Id.</param>
+        /// <param name="putUser">The PutProfileRequest.</param>
+        /// <returns>A PutUserResponse.</returns>
+        [HttpPut("{meUserId}/profile")]
+        [AuthorizePermission(Permission.UpdateUser)]
+        public async Task<ActionResult<PutProfileResponse>> UpdateProfile(string meUserId, [FromBody] PutProfileRequest putUser)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new PutUserResponse());
+            }
+
+            var currentUser = await CurrentUser();
+
+            try
+            {
+                var userUpdateEmail = Mapper.Map<UserUpdateProfile>(putUser);
+                userUpdateEmail.UserId = meUserId;
+                var updatedUser = await _userUpdateService.Handle(new UserUpdateQuery(userUpdateEmail, currentUser));
+                return Ok(Mapper.Map<PutProfileResponse>(updatedUser));
+            }
+            catch (DocumentClientException)
+            {
+                return NotFound(new PutProfileResponse());
+            }
+            catch (ArgumentException)
+            {
+                return NotFound(new PutProfileResponse());
             }
         }
     }
