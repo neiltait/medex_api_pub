@@ -48,12 +48,16 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
 
             if (!string.IsNullOrEmpty(examination.MedicalTeam.MedicalExaminerUserId))
             {
-                examination.MedicalTeam.MedicalExaminerFullName = await GetFullName(examination.MedicalTeam.MedicalExaminerUserId);
+                var meUser = await GetUser(examination.MedicalTeam.MedicalExaminerUserId);
+                examination.MedicalTeam.MedicalExaminerFullName = meUser.FullName();
+                examination.MedicalTeam.MedicalExaminerGmcNumber = meUser.GmcNumber;
             }
 
             if (!string.IsNullOrEmpty(examination.MedicalTeam.MedicalExaminerOfficerUserId))
             {
-                examination.MedicalTeam.MedicalExaminerOfficerFullName = await GetFullName(examination.MedicalTeam.MedicalExaminerOfficerUserId);
+                var meoUser = await GetUser(examination.MedicalTeam.MedicalExaminerOfficerUserId);
+                examination.MedicalTeam.MedicalExaminerOfficerFullName = meoUser.FullName();
+                examination.MedicalTeam.MedicalExaminerOfficerGmcNumber = meoUser.GmcNumber;
             }
 
             examination = examination.UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort);
@@ -73,15 +77,14 @@ namespace MedicalExaminer.Common.Services.MedicalTeam
         /// <remarks>The user id can be null and in this case don't query and just return.</remarks>
         /// <param name="userId">The id of the user.</param>
         /// <returns>The full name or null</returns>
-        private async Task<string> GetFullName(string userId)
+        private async Task<MeUser> GetUser(string userId)
         {
             if (userId == null)
             {
                 return null;
             }
 
-            var me = await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(userId));
-            return me.FullName();
+            return await _userRetrievalByIdService.Handle(new UserRetrievalByIdQuery(userId));
         }
     }
 }

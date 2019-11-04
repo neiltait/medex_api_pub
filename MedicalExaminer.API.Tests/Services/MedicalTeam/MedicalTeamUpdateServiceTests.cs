@@ -201,6 +201,8 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             // Assert
             result.MedicalTeam.MedicalExaminerFullName.Should().BeNull();
             result.MedicalTeam.MedicalExaminerOfficerFullName.Should().BeNull();
+            result.MedicalTeam.MedicalExaminerGmcNumber.Should().BeNull();
+            result.MedicalTeam.MedicalExaminerOfficerGmcNumber.Should().BeNull();
 
             userRetrievalByIdService
                 .Verify(x => x.Handle(It.IsAny<UserRetrievalByIdQuery>()), Times.Never);
@@ -218,6 +220,8 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             const string lastName = "lastName";
             var medicalExaminerFullName = $"{medicalExaminer} {lastName}";
             var medicalExaminerOfficerFullName = $"{medicalExaminerOfficer} {lastName}";
+            var medicalExaminerGmcNumber = "medicalExaminerGmcNumber";
+            var medicalExaminerOfficerGmcNumber = "medicalExaminerOfficerGmcNumber";
             const string medicalExaminerUserId = "medicalExaminerUserId";
             const string medicalExaminerOfficerUserId = "medicalExaminerOfficerUserId";
 
@@ -232,7 +236,9 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                 MedicalTeam = new MedicalExaminer.Models.MedicalTeam
                 {
                     MedicalExaminerUserId = medicalExaminerUserId,
-                    MedicalExaminerOfficerUserId = medicalExaminerOfficerUserId
+                    MedicalExaminerGmcNumber = medicalExaminerGmcNumber,
+                    MedicalExaminerOfficerUserId = medicalExaminerOfficerUserId,
+                    MedicalExaminerOfficerGmcNumber = medicalExaminerOfficerGmcNumber
                 }
             };
 
@@ -245,14 +251,16 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
                 .Returns(Task.FromResult(new MeUser
                 {
                     FirstName = medicalExaminer,
-                    LastName = lastName
+                    LastName = lastName,
+                    GmcNumber = medicalExaminerGmcNumber
                 }));
             userRetrievalByIdService
                 .Setup(x => x.Handle(It.Is<UserRetrievalByIdQuery>(query => query.UserId == medicalExaminerOfficerUserId)))
                 .Returns(Task.FromResult(new MeUser
                 {
                     FirstName = medicalExaminerOfficer,
-                    LastName = lastName
+                    LastName = lastName,
+                    GmcNumber = medicalExaminerOfficerGmcNumber
                 }));
 
             dbAccess
@@ -271,6 +279,8 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             // Assert
             result.MedicalTeam.MedicalExaminerFullName.Should().Be(medicalExaminerFullName);
             result.MedicalTeam.MedicalExaminerOfficerFullName.Should().Be(medicalExaminerOfficerFullName);
+            result.MedicalTeam.MedicalExaminerGmcNumber.Should().Be(medicalExaminerGmcNumber);
+            result.MedicalTeam.MedicalExaminerOfficerGmcNumber.Should().Be(medicalExaminerOfficerGmcNumber);
         }
 
         /// <summary>
@@ -333,6 +343,8 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             // Assert
             result.MedicalTeam.MedicalExaminerFullName.Should().BeNull();
             result.MedicalTeam.MedicalExaminerOfficerFullName.Should().BeNull();
+            result.MedicalTeam.MedicalExaminerGmcNumber.Should().BeNull();
+            result.MedicalTeam.MedicalExaminerOfficerGmcNumber.Should().BeNull();
         }
 
         /// <summary>
@@ -395,6 +407,8 @@ namespace MedicalExaminer.API.Tests.Services.MedicalTeam
             // Assert
             result.MedicalTeam.MedicalExaminerFullName.Should().BeNull();
             result.MedicalTeam.MedicalExaminerOfficerFullName.Should().BeNull();
+            result.MedicalTeam.MedicalExaminerGmcNumber.Should().BeNull();
+            result.MedicalTeam.MedicalExaminerOfficerGmcNumber.Should().BeNull();
         }
     }
 }

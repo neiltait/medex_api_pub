@@ -2009,6 +2009,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 {
                     MedicalExaminerUserId = "MedicalExaminerUserId",
                     MedicalExaminerFullName = "MedicalExaminerFullName",
+                    MedicalExaminerGmcNumber = "MedicalExaminerGmcNumber",
                     ConsultantResponsible = new ClinicalProfessional
                     {
                         Name = "ConsultantResponsibleName",
@@ -2069,6 +2070,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 MedicalTeam = new MedicalTeam
                 {
                     MedicalExaminerUserId = null,
+                    MedicalExaminerGmcNumber = null,
                     MedicalExaminerFullName = null,
                     ConsultantResponsible = null,
                     Qap = null,
@@ -2112,6 +2114,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 {
                     MedicalExaminerUserId = "MedicalExaminerUserId",
                     MedicalExaminerFullName = "MedicalExaminerFullName",
+                    MedicalExaminerGmcNumber = "MedicalExaminerGmcNumber",
                     ConsultantResponsible = new ClinicalProfessional
                     {
                         Name = "ConsultantResponsibleName",
@@ -2173,6 +2176,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 {
                     MedicalExaminerUserId = null,
                     MedicalExaminerFullName = null,
+                    MedicalExaminerGmcNumber = null,
                     ConsultantResponsible = null,
                     Qap = null,
                 },

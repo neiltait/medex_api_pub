@@ -17,6 +17,11 @@ namespace MedicalExaminer.Models
         public string MedicalExaminer { get; set; }
 
         /// <summary>
+        /// name of medical examiner
+        /// </summary>
+        public string MedicalExaminerGmcNumber { get; set; }
+
+        /// <summary>
         /// enum in [PrescrutinyHappened, PrescrutinyNotHappened]
         /// </summary>
         public PreScrutinyStatus PreScrutinyStatus { get; set; }
