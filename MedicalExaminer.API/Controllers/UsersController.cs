@@ -295,7 +295,7 @@ namespace MedicalExaminer.API.Controllers
             {
                 return NotFound(new PutProfileResponse());
             }
-            catch (ArgumentException)
+            catch (InvalidOperationException)
             {
                 return NotFound(new PutProfileResponse());
             }

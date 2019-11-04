@@ -805,7 +805,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             _userUpdateService
                 .Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
-                .Throws<ArgumentException>();
+                .Throws<InvalidOperationException>();
 
             Controller.ControllerContext = GetControllerContext();
 
