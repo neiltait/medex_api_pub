@@ -52,9 +52,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 _userRetrievalService.Object,
                 _usersRetrievalService.Object,
                 _userUpdateService.Object,
-                _locationsService.Object,
-                _mockOktaClient.Object,
-                _locationsParentsServiceMock.Object);
+                _mockOktaClient.Object);
         }
 
         /// <summary>
