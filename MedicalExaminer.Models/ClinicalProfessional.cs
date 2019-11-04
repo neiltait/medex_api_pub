@@ -24,5 +24,28 @@ namespace MedicalExaminer.Models
         [JsonProperty(PropertyName = "gmc_number")]
         public string GMCNumber { get; set; }
 
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Clinical Professional 1a
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death_1a")]
+        public string CauseOfDeath1a { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Clinical Professional 1b
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death_1b")]
+        public string CauseOfDeath1b { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Clinical Professional 1c
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death_1c")]
+        public string CauseOfDeath1c { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Clinical Professional 2
+        /// </summary>
+        [JsonProperty(PropertyName = "cause_of_death_2")]
+        public string CauseOfDeath2 { get; set; }
     }
 }
