@@ -572,7 +572,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetProfile_ReturnsBadRequest_WhenModelStatisInvalid()
+        public async Task GetProfile_ReturnsBadRequest_WhenModelStateIsInvalid()
         {
             // Arrange
             var userId = "userId";
@@ -670,7 +670,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetProfile_ReturnsNotFound_WhenNullReferenceExceptionThrown()
+        public async Task GetProfile_ReturnsNotFound_WhenDocumentClientExceptionThrown()
         {
             // Arrange
             const string userId = "userId";
@@ -687,6 +687,136 @@ namespace MedicalExaminer.API.Tests.Controllers
             var result = (NotFoundObjectResult)response.Result;
             result.Value.Should().BeAssignableTo<GetProfileResponse>();
             var model = (GetProfileResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.UserId.Should().Be(null);
+        }
+
+        [Fact]
+        public async Task UpdateProfile_ReturnsBadRequest_WhenModelStateIsInvalid()
+        {
+            // Arrange
+            var userId = "userId";
+            Controller.ModelState.AddModelError("An", "Error");
+            var request = new PutProfileRequest()
+            {
+                GmcNumber = "gmcNumber"
+            };
+
+            // Act
+            var response = await Controller.UpdateProfile(userId, request);
+
+            // Assert
+            response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
+            var result = (BadRequestObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<PutProfileResponse>();
+            var model = (PutProfileResponse)result.Value;
+            model.Errors.Count.Should().Be(1);
+            model.Success.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task UpdateProfile_ReturnsOk_WhenUserUpdated()
+        {
+            // Arrange
+            const string userId = "userId";
+
+            var user = new MeUser
+            {
+                UserId = userId,
+                Permissions = new MEUserPermission[0]
+            };
+            var request = new PutProfileRequest()
+            {
+                GmcNumber = "gmcNumber"
+            };
+
+            _userUpdateService
+                .Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
+                .Returns(Task.FromResult(user));
+
+            Controller.ControllerContext = GetControllerContext();
+
+            // Act
+            var response = await Controller.UpdateProfile(userId, request);
+
+            // Assert
+            response.Result.Should().BeAssignableTo<OkObjectResult>();
+            var result = (OkObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<PutProfileResponse>();
+            var model = (PutProfileResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+            model.UserId.Should().Be(userId);
+        }
+
+        [Fact]
+        public async Task UpdateProfile_ReturnsNotFound_WhenDocumentClientExceptionThrown()
+        {
+            // Arrange
+            const string userId = "userId";
+
+            var user = new MeUser
+            {
+                UserId = userId,
+                Permissions = new MEUserPermission[0]
+            };
+            var request = new PutProfileRequest()
+            {
+                GmcNumber = "gmcNumber"
+            };
+
+            _userUpdateService
+                .Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
+                .Throws(CreateDocumentClientExceptionForTesting());
+
+            Controller.ControllerContext = GetControllerContext();
+
+            // Act
+            var response = await Controller.UpdateProfile(userId, request);
+
+            // Assert
+            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
+            var result = (NotFoundObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<PutProfileResponse>();
+            var model = (PutProfileResponse)result.Value;
+            model.Errors.Count.Should().Be(0);
+            model.Success.Should().BeTrue();
+
+            model.UserId.Should().Be(null);
+        }
+
+        [Fact]
+        public async Task UpdateProfile_ReturnsNotFound_WhenArgumentExceptionThrown()
+        {
+            // Arrange
+            const string userId = "userId";
+
+            var user = new MeUser
+            {
+                UserId = userId,
+                Permissions = new MEUserPermission[0]
+            };
+            var request = new PutProfileRequest()
+            {
+                GmcNumber = "gmcNumber"
+            };
+
+            _userUpdateService
+                .Setup(up => up.Handle(It.IsAny<UserUpdateQuery>()))
+                .Throws<ArgumentException>();
+
+            Controller.ControllerContext = GetControllerContext();
+
+            // Act
+            var response = await Controller.UpdateProfile(userId, request);
+
+            // Assert
+            response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
+            var result = (NotFoundObjectResult)response.Result;
+            result.Value.Should().BeAssignableTo<PutProfileResponse>();
+            var model = (PutProfileResponse)result.Value;
             model.Errors.Count.Should().Be(0);
             model.Success.Should().BeTrue();
 

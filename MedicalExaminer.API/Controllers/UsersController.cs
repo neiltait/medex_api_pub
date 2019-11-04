@@ -279,7 +279,7 @@ namespace MedicalExaminer.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new PutUserResponse());
+                return BadRequest(new PutProfileResponse());
             }
 
             var currentUser = await CurrentUser();
