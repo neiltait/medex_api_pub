@@ -3568,7 +3568,8 @@ namespace MedicalExaminer.API.Tests.Mapper
             var examinationFinanceLocations = new ExaminationLocationItem()
             {
                 Examination = examination,
-                Locations = new List<Location>()
+                Locations = new List<Location>(),
+                Users = new List<MeUser>()
             };
 
             var expectedFinanceReportItem = new ExaminationFinanceItem()
@@ -3633,7 +3634,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                         LocationId = "SiteLocationId",
                         Name = "SiteName"
                     },
-                }
+                },
+                Users = new List<MeUser>()
             };
 
             var expectedFinanceReportItem = new ExaminationFinanceItem()
@@ -3703,7 +3705,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                         LocationId = "TrustLocationId",
                         Name = "TrustName"
                     },
-                }
+                },
+                Users = new List<MeUser>()
             };
 
             var expectedFinanceReportItem = new ExaminationFinanceItem()

@@ -37,5 +37,25 @@ namespace MedicalExaminer.API.Models.v1.MedicalTeams
         /// The clinical professionals GMC Number
         /// </summary>
         public string GMCNumber { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Clinical Professional 1a
+        /// </summary>
+        public string CauseOfDeath1a { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Clinical Professional 1b
+        /// </summary>
+        public string CauseOfDeath1b { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Clinical Professional 1c
+        /// </summary>
+        public string CauseOfDeath1c { get; set; }
+
+        /// <summary>
+        /// Possible cause of death established during scrutiny by Clinical Professional 2
+        /// </summary>
+        public string CauseOfDeath2 { get; set; }
     }
 }
