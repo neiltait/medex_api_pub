@@ -123,7 +123,7 @@ namespace MedicalExaminer.Models
                 throw new ArgumentNullException(nameof(examination));
             }
 
-            if (examination.CaseCompleted)
+            if (examination.CaseCompleted || examination.IsVoid)
             {
                 examination.UrgencySort = new Dictionary<string, int>();
                 return examination;

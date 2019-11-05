@@ -1,6 +1,6 @@
-﻿using MedicalExaminer.Models;
+﻿using System;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using System;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
@@ -10,6 +10,11 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         /// Users full name
         /// </summary>
         public string UserFullName { get; set; }
+
+        /// <summary>
+        /// GMC Number
+        /// </summary>
+        public string GmcNumber { get; set; }
 
         /// <summary>
         /// Users Role

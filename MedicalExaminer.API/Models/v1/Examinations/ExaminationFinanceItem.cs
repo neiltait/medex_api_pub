@@ -11,6 +11,8 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public string RegionName { get; set; }
         public string NationalName { get; set; }
         public string MedicalExaminerId { get; set; }
+        public string MeGmcNumber { get; set; }
+        public string MeoGmcNumber { get; set; }
         public DateTime CaseCreated { get; set; }
         public DateTime? CaseClosed { get; set; }
         public bool HasNhsNumber { get; set; }

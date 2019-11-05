@@ -9,11 +9,19 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Users full name
         /// </summary>
+        [JsonProperty(PropertyName = "user_full_name")]
         public string UserFullName { get; set; }
+
+        /// <summary>
+        /// GMC Number
+        /// </summary>
+        [JsonProperty(PropertyName = "gmc_number")]
+        public string GmcNumber { get; set; }
 
         /// <summary>
         /// Users Role
         /// </summary>
+        [JsonProperty(PropertyName = "users_role")]
         public string UsersRole { get; set; }
 
         /// <summary>
@@ -45,7 +53,7 @@ namespace MedicalExaminer.Models
         /// </summary>
         [JsonProperty(PropertyName = "is_final")]
         public bool IsFinal { get; set; }
-                
+
         /// <summary>
         /// the type of event this is
         /// </summary>

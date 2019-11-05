@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
-using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Services.CaseOutcome;
 using MedicalExaminer.Common.Settings;
@@ -14,11 +13,11 @@ using Xunit;
 
 namespace MedicalExaminer.API.Tests.Services.CaseOutcome
 {
-    public class CloseCaseServiceTests
+    public class ConfirmationOfScrutinyServiceTests
     {
         private readonly Mock<IOptions<UrgencySettings>> _urgencySettingsMock;
 
-        public CloseCaseServiceTests()
+        public ConfirmationOfScrutinyServiceTests()
         {
             _urgencySettingsMock = new Mock<IOptions<UrgencySettings>>(MockBehavior.Strict);
             _urgencySettingsMock
@@ -30,43 +29,25 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
         }
 
         /// <summary>
-        /// Close Case When Outstanding Case Items Are CaseCompleted
+        /// Confirm scrutiny
         /// </summary>
         [Fact]
-        public void Close_Case_When_Outstanding_Case_Items_Completed_Marks_Examination_Completed_And_Returns_ExaminationID()
+        public void Confirmation_Of_Scrutiny_Marks_ScrutinyConfirmed_To_True_And_Returns_ScrutinyConfirmedOn_DateTime()
         {
             // Arrange
             var examinationId = Guid.NewGuid().ToString();
             var caseOutcome = new MedicalExaminer.Models.CaseOutcome
             {
-                CaseMedicalExaminerFullName = "ME Full Name",
-                ScrutinyConfirmedOn = new DateTime(2019, 6, 20),
-                OutcomeQapDiscussion = QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP,
-                OutcomeOfPrescrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
-                OutcomeOfRepresentativeDiscussion = BereavedDiscussionOutcome.CauseOfDeathAccepted,
-                CaseCompleted = false,
-                CaseOutcomeSummary = CaseOutcomeSummary.IssueMCCD,
-                MccdIssued = true,
-                CremationFormStatus = CremationFormStatus.Yes,
-                GpNotifiedStatus = GPNotified.GPNotified,
-                CoronerReferralSent = false
+                ScrutinyConfirmedOn = null
             };
             var examination = new MedicalExaminer.Models.Examination
             {
                 ExaminationId = examinationId,
                 ScrutinyConfirmed = false,
-                OutstandingCaseItemsCompleted = true,
                 CaseOutcome = caseOutcome
             };
-            var user = new MeUser
-            {
-                UserId = "UserId",
-                FirstName = "FirstName",
-                LastName = "LastName",
-                GmcNumber = "GmcNumber"
-            };
             var connectionSettings = new Mock<IExaminationConnectionSettings>();
-            var query = new CloseCaseQuery(examinationId, user);
+            var query = new ConfirmationOfScrutinyQuery(examinationId, new MeUser());
             var dbAccess = new Mock<IDatabaseAccess>();
 
             dbAccess.Setup(db => db.GetItemByIdAsync<MedicalExaminer.Models.Examination>(
@@ -78,21 +59,15 @@ namespace MedicalExaminer.API.Tests.Services.CaseOutcome
                 connectionSettings.Object,
                 It.IsAny<MedicalExaminer.Models.Examination>())).Returns(Task.FromResult(examination)).Verifiable();
 
-            var sut = new CloseCaseService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
+            var sut = new ConfirmationOfScrutinyService(dbAccess.Object, connectionSettings.Object, _urgencySettingsMock.Object);
 
             // Act
             var result = sut.Handle(query);
 
             // Assert
             Assert.NotNull(result.Result);
-            Assert.True(examination.CaseCompleted);
-            Assert.Equal(examinationId, result.Result);
-            Assert.NotNull(examination.DateCaseClosed);
-            Assert.Equal(DateTime.Now.Date, examination.DateCaseClosed.Value.Date);
-            Assert.NotNull(examination.CaseBreakdown.CaseClosedEvent);
-            Assert.Equal(user.FullName(), examination.CaseBreakdown.CaseClosedEvent.UserFullName);
-            Assert.Equal(user.UserId, examination.CaseBreakdown.CaseClosedEvent.UserId);
-            Assert.Equal(user.GmcNumber, examination.CaseBreakdown.CaseClosedEvent.GmcNumber);
+            Assert.True(examination.ScrutinyConfirmed);
+            Assert.NotNull(examination.CaseOutcome.ScrutinyConfirmedOn);
         }
     }
 }

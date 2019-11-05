@@ -4,6 +4,8 @@
     {
         public DeathEvent DeathEvent { get; set; }
 
+        public VoidEvent VoidEvent { get; set; }
+
         public BaseEventContainter<OtherEvent> OtherEvents { get; set; } = new OtherEventContainer();
 
         public BaseEventContainter<PreScrutinyEvent> PreScrutiny { get; set; } = new PreScrutinyEventContainer();

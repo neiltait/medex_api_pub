@@ -170,9 +170,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 userRetrievalService.Object,
                 usersRetrievalService.Object,
                 userUpdateService.Object,
-                locationsService.Object,
-                null,
-                locationsParentsServiceMock.Object);
+                null);
         }
 
         [Fact]

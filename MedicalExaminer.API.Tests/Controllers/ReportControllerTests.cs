@@ -23,6 +23,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         private readonly Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>> _examinationRetrievalQueryServiceMock;
         private readonly Mock<IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>>> _financeQuery;
         private readonly Mock<IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>>> _locationsRetrievalService;
+        private readonly Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>> _usersRetrievalService;
         private readonly Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>> _locationsParentsServiceMock;
         private readonly Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>> _locationRetrievalByQueryHandlerMock;
 
@@ -33,6 +34,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             _examinationRetrievalQueryServiceMock = new Mock<IAsyncQueryHandler<ExaminationRetrievalQuery, Examination>>(MockBehavior.Strict);
             _financeQuery = new Mock<IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>>>(MockBehavior.Strict);
             _locationsRetrievalService = new Mock<IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>>>(MockBehavior.Strict);
+            _usersRetrievalService = new Mock<IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>>>(MockBehavior.Strict);
             _locationsParentsServiceMock = new Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>(MockBehavior.Strict);
             _locationRetrievalByQueryHandlerMock = new Mock<IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>>>(MockBehavior.Strict);
 
@@ -45,6 +47,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 _examinationRetrievalQueryServiceMock.Object,
                 _financeQuery.Object,
                 _locationsRetrievalService.Object,
+                _usersRetrievalService.Object,
                 _locationsParentsServiceMock.Object,
                 _locationRetrievalByQueryHandlerMock.Object);
             Controller.ControllerContext = GetControllerContext();
@@ -140,16 +143,20 @@ namespace MedicalExaminer.API.Tests.Controllers
                 LocationId = "location1",
                 Name = "location name"
             };
-
+            
             IEnumerable<Location> locations = new List<Location>() { location };
+            IEnumerable<MeUser> users = new List<MeUser>();
             IEnumerable<Examination> examinationsResult = new List<Examination> { examination1, examination2 };
 
             _financeQuery
                 .Setup(service => service.Handle(It.IsAny<FinanceQuery>()))
                 .Returns(Task.FromResult(examinationsResult));
 
-            _locationsRetrievalService.Setup(service => service.Handle(It.IsAny<LocationsRetrievalByIdQuery>())).
-                Returns(Task.FromResult(locations));
+            _locationsRetrievalService.Setup(service => service.Handle(It.IsAny<LocationsRetrievalByIdQuery>()))
+                .Returns(Task.FromResult(locations));
+
+            _usersRetrievalService.Setup(service => service.Handle(It.IsAny<UsersRetrievalQuery>()))
+                .Returns(Task.FromResult(users));
 
             var financeRequest = CreateGetFinanceDownloadRequest();
 

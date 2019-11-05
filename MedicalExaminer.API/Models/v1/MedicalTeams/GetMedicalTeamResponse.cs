@@ -53,8 +53,18 @@ namespace MedicalExaminer.API.Models.v1.MedicalTeams
         public string MedicalExaminerFullName { get; set; }
 
         /// <summary>
+        ///     Medical Examiner GMC Number.
+        /// </summary>
+        public string MedicalExaminerGmcNumber { get; set; }
+
+        /// <summary>
         ///     Medical Examiner Officer full name.
         /// </summary>
         public string MedicalExaminerOfficerFullName { get; set; }
+
+        /// <summary>
+        ///     Medical Examiner GMC Number.
+        /// </summary>
+        public string MedicalExaminerOfficerGmcNumber { get; set; }
     }
 }

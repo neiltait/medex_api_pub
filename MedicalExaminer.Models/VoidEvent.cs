@@ -4,52 +4,40 @@ using Newtonsoft.Json;
 
 namespace MedicalExaminer.Models
 {
-    public class DeathEvent : IEvent
+    public class VoidEvent : IEvent
     {
         /// <summary>
-        /// Date the patient died
+        /// the reason for voiding the examination.
         /// </summary>
-        [JsonProperty(PropertyName = "date_of_death")]
-        public DateTime? DateOfDeath { get; set; }
+        [JsonProperty(PropertyName = "void_reason")]
+        public string VoidReason { get; set; }
 
         /// <summary>
-        /// time the patient died
-        /// </summary>
-        [JsonProperty(PropertyName = "time_of_death")]
-        public TimeSpan? TimeOfDeath { get; set; }
-
-        /// <summary>
-        /// event type
+        /// the event type
         /// </summary>
         [JsonProperty(PropertyName = "event_type")]
-        public EventType EventType => EventType.PatientDied;
+        public EventType EventType => EventType.CaseVoid;
 
         /// <summary>
-        /// event id
+        /// the id of the event
         /// </summary>
         [JsonProperty(PropertyName = "event_id")]
         public string EventId { get; set; }
 
         /// <summary>
-        /// is the event a draft or a final version
+        /// Is the event final, not a draft
         /// </summary>
         [JsonProperty(PropertyName = "is_final")]
         public bool IsFinal => true;
 
         /// <summary>
-        /// user id that created the event
+        /// the users id that added the event
         /// </summary>
         [JsonProperty(PropertyName = "user_id")]
         public string UserId { get; set; }
 
         /// <summary>
-        /// the date the event was created.
-        /// </summary>
-        [JsonProperty(PropertyName = "created")]
-        public DateTime? Created { get; set; }
-
-        /// <summary>
-        /// Users full name
+        /// the users full name that added the event
         /// </summary>
         [JsonProperty(PropertyName = "user_full_name")]
         public string UserFullName { get; set; }
@@ -61,9 +49,15 @@ namespace MedicalExaminer.Models
         public string GmcNumber { get; set; }
 
         /// <summary>
-        /// Users Role
+        /// The users role that added the event
         /// </summary>
         [JsonProperty(PropertyName = "users_role")]
         public string UsersRole { get; set; }
+
+        /// <summary>
+        /// Date the event was added
+        /// </summary>
+        [JsonProperty(PropertyName = "created")]
+        public DateTime? Created { get; set; }
     }
 }
