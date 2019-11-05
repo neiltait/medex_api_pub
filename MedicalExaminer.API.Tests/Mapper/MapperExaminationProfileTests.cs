@@ -1317,6 +1317,19 @@ namespace MedicalExaminer.API.Tests.Mapper
                 GMCNumber = "G12345"
             };
             examination.MedicalTeam.Qap.Name = "Qap Name";
+            examination.MedicalTeam.Qap = new ClinicalProfessional
+            {
+                Name = "QapName",
+                Role = "QapRole",
+                Organisation = "QapOrg",
+                Phone = "01123848389",
+                Notes = "Notes",
+                GMCNumber = "GMCNumber",
+                CauseOfDeath1a = "CauseOfDeath1a",
+                CauseOfDeath1b = "CauseOfDeath1b",
+                CauseOfDeath1c = "CauseOfDeath1c",
+                CauseOfDeath2 = "CauseOfDeath2"
+            };
             examination.Representatives = new[] { representative };
             examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
             examination.ScrutinyConfirmed = true;
@@ -1344,6 +1357,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.LatestAdmissionDetailsEntered.Should().Be(StatusBarResult.Complete);
             result.DoctorInChargeEntered.Should().Be(StatusBarResult.Complete);
             result.QapEntered.Should().Be(StatusBarResult.Complete);
+            result.QapOriginalCodEntered.Should().Be(StatusBarResult.Complete);
             result.BereavedInfoEntered.Should().Be(StatusBarResult.Complete);
             result.MeAssigned.Should().Be(StatusBarResult.Complete);
 
@@ -1394,7 +1408,21 @@ namespace MedicalExaminer.API.Tests.Mapper
                 Notes = "Notes",
                 GMCNumber = "G12345"
             };
-            examination.MedicalTeam.Qap.Name = "Qap Name";
+
+            examination.MedicalTeam.Qap = new ClinicalProfessional
+            {
+                Name = "QapName",
+                Role = "QapRole",
+                Organisation = "QapOrg",
+                Phone = "01123848389",
+                Notes = "Notes",
+                GMCNumber = "GMCNumber",
+                CauseOfDeath1a = "CauseOfDeath1a",
+                CauseOfDeath1b = "CauseOfDeath1b",
+                CauseOfDeath1c = "CauseOfDeath1c",
+                CauseOfDeath2 = "CauseOfDeath2"
+            };
+
             examination.Representatives = new[] { representative };
             examination.MedicalTeam.MedicalExaminerUserId = "MedicalExaminerUserId";
             examination.ScrutinyConfirmed = true;
@@ -1422,6 +1450,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.LatestAdmissionDetailsEntered.Should().Be(StatusBarResult.Complete);
             result.DoctorInChargeEntered.Should().Be(StatusBarResult.Complete);
             result.QapEntered.Should().Be(StatusBarResult.Complete);
+            result.QapOriginalCodEntered.Should().Be(StatusBarResult.Complete);
             result.BereavedInfoEntered.Should().Be(StatusBarResult.Complete);
             result.MeAssigned.Should().Be(StatusBarResult.Complete);
 
@@ -1571,6 +1600,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             examination.NhsNumber = "1234567890";
 
             examination.CaseBreakdown.AdmissionNotes.Latest = null;
+            examination.CaseBreakdown.QapDiscussion.Latest = null;
             examination.MedicalTeam.ConsultantResponsible = null;
             examination.MedicalTeam.Qap.Name = null;
             examination.Representatives = null;
@@ -1590,6 +1620,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.LatestAdmissionDetailsEntered.Should().Be(StatusBarResult.Incomplete);
             result.DoctorInChargeEntered.Should().Be(StatusBarResult.Incomplete);
             result.QapEntered.Should().Be(StatusBarResult.Incomplete);
+            result.QapOriginalCodEntered.Should().Be(StatusBarResult.Incomplete);
             result.BereavedInfoEntered.Should().Be(StatusBarResult.Incomplete);
             result.MeAssigned.Should().Be(StatusBarResult.Incomplete);
         }

@@ -2028,7 +2028,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void CalculateAdditionalDetailsEnteredStatus_When_All_Additional_Details_Returns_True()
+        public void CalculateAdditionalDetailsEnteredStatus_When_All_Additional_Details_And_With_Med_Team_QAP_Only_COD_Returns_True()
         {
             // Arrange
             var examination = new Examination
@@ -2066,6 +2066,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         Phone = "12345678",
                         Notes = "Notes",
                         GMCNumber = "GMCNumber",
+                        CauseOfDeath1a = "CauseOfDeath1a",
+                        CauseOfDeath1b = "CauseOfDeath1b",
+                        CauseOfDeath1c = "CauseOfDeath1c",
+                        CauseOfDeath2 = "CauseOfDeath2",
                     }
                 },
 
@@ -2085,6 +2089,109 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             UserId = "userId",
                             UsersRole = "usersRole",
                             UserFullName = "usersFullName",
+                        }
+                    },
+                    QapDiscussion = new QapDiscussionEventContainer
+                    {
+                        Latest = null
+                    }
+                }
+            };
+
+            // Act
+            var additionalDetailsEntered = examination.CalculateAdditionalDetailsEnteredStatus();
+
+            // Assert
+            additionalDetailsEntered.Should().Be(StatusBarResult.Complete);
+        }
+
+        [Fact]
+        public void CalculateAdditionalDetailsEnteredStatus_When_All_Additional_Details_With_QAP_Discussion_Only_COD_Returns_True()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                Representatives = new List<Representative>
+                {
+                    new Representative
+                    {
+                        AppointmentDate = new DateTime(2019, 2, 24),
+                        AppointmentTime = new TimeSpan(11, 30, 0),
+                        FullName = "fullName",
+                        PhoneNumber = "123456789",
+                        Relationship = "relationship",
+                    }
+                },
+
+                MedicalTeam = new MedicalTeam
+                {
+                    MedicalExaminerUserId = "MedicalExaminerUserId",
+                    MedicalExaminerFullName = "MedicalExaminerFullName",
+                    ConsultantResponsible = new ClinicalProfessional
+                    {
+                        Name = "ConsultantResponsibleName",
+                        Role = "ConsultantResponsible",
+                        Organisation = "Organisation",
+                        Phone = "12345678",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber",
+                    },
+                    Qap = new ClinicalProfessional
+                    {
+                        Name = "QapName",
+                        Role = "Qap",
+                        Organisation = "Organisation",
+                        Phone = "12345678",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber",
+                        CauseOfDeath1a = null,
+                        CauseOfDeath1b = null,
+                        CauseOfDeath1c = null,
+                        CauseOfDeath2 = null,
+                    }
+                },
+
+                CaseBreakdown = new CaseBreakDown
+                {
+                    AdmissionNotes = new AdmissionNotesEventContainer
+                    {
+                        Latest = new AdmissionEvent
+                        {
+                            AdmittedDate = DateTime.Now,
+                            AdmittedTime = new TimeSpan(12, 12, 12),
+                            Created = DateTime.Now,
+                            EventId = "2",
+                            ImmediateCoronerReferral = false,
+                            IsFinal = true,
+                            Notes = "Notes",
+                            UserId = "userId",
+                            UsersRole = "usersRole",
+                            UserFullName = "usersFullName",
+                        }
+                    },
+                    QapDiscussion = new QapDiscussionEventContainer
+                    {
+                        Latest = new QapDiscussionEvent
+                        {
+                            UserFullName = "UserFullName",
+                            UsersRole = "UsersRole",
+                            Created = DateTime.Now,
+                            EventId = "EventId",
+                            UserId = "UserId",
+                            IsFinal = true,
+                            ParticipantRole = "ParticipantRole",
+                            ParticipantOrganisation = "ParticipantOrganisation",
+                            ParticipantPhoneNumber = "011483778287",
+                            DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(11, 00, 00),
+                            DiscussionUnableHappen = false,
+                            DiscussionDetails = null,
+                            QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                            ParticipantName = "ParticipantName",
+                            CauseOfDeath1a = "CauseOfDeath1a",
+                            CauseOfDeath1b = "CauseOfDeath1b",
+                            CauseOfDeath1c = "CauseOfDeath1",
+                            CauseOfDeath2 = "CauseOfDeath2"
                         }
                     }
                 }
