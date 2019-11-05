@@ -423,6 +423,15 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(finance => finance.ExaminationId, opt => opt.MapFrom(eli => eli.Examination.ExaminationId))
                 .ForMember(finance => finance.HasNhsNumber, opt => opt.MapFrom(eli => !string.IsNullOrEmpty(eli.Examination.NhsNumber)))
                 .ForMember(finance => finance.MedicalExaminerId, opt => opt.MapFrom(eli => eli.Examination.MedicalTeam.MedicalExaminerUserId))
+
+                .ForMember(finance => finance.MeGmcNumber, opt => opt.MapFrom((source, dest, destMember, context) =>
+                {
+                    return source.Users.SingleOrDefault(u => u.UserId == source.Examination.MedicalTeam.MedicalExaminerUserId)?.GmcNumber;
+                }))
+                .ForMember(finance => finance.MeoGmcNumber, opt => opt.MapFrom((source, dest, destMember, context) =>
+                {
+                    return source.Users.SingleOrDefault(u => u.UserId == source.Examination.MedicalTeam.MedicalExaminerOfficerUserId)?.GmcNumber;
+                }))
                 .ForMember(finance => finance.ModeOfDisposal, opt => opt.MapFrom(eli => eli.Examination.ModeOfDisposal))
                 .ForMember(finance => finance.NationalName, opt => opt.MapFrom((source, dest, destMember, context) =>
                 {
