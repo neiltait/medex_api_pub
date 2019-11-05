@@ -130,7 +130,9 @@ namespace MedicalExaminer.API.Tests.Mapper
             MedicalExaminerUserId = "Medical Examiner User Id",
             MedicalExaminerFullName = "Medical Examiner Full Name",
             MedicalExaminerOfficerUserId = "Medical Examiner Officer UserId",
-            MedicalExaminerOfficerFullName = "Medical Examiner Officer FullName"
+            MedicalExaminerOfficerFullName = "Medical Examiner Officer FullName",
+            MedicalExaminerGmcNumber = "MedicalExaminerGmcNumber",
+            MedicalExaminerOfficerGmcNumber = "MedicalExaminerOfficerGmcNumber"
         };
 
         private readonly IEnumerable<Representative> Representatives = new List<Representative>
@@ -572,13 +574,16 @@ namespace MedicalExaminer.API.Tests.Mapper
             {
                 Representatives = examination.Representatives,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyHappened,
                 DateOfLatestPreScrutiny = examination.CaseBreakdown.PreScrutiny.Latest.Created,
                 UserForLatestPrescrutiny = examination.CaseBreakdown.PreScrutiny.Latest.UserFullName,
+                GmcNumberOfUserForLatestPrescrutiny = examination.CaseBreakdown.PreScrutiny.Latest.GmcNumber,
                 QAPDiscussionStatus = QAPDiscussionStatus.HappenedNoRevision,
                 DateOfLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.DateOfConversation,
                 UserForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.UserFullName,
                 QAPNameForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.ParticipantName,
+                GmcNumberOfUserForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.GmcNumber,
                 CauseOfDeath1a = examination.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1a,
                 CauseOfDeath1b = examination.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1b,
                 CauseOfDeath1c = examination.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1c,
@@ -591,6 +596,64 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
+        public void Examination_To_GetCaseBreakdowResponse_When_Case_Is_Void()
+        {
+            var examination = GenerateExamination();
+            var dateVoid = new DateTime(2019, 10, 28);
+            examination.IsVoid = true;
+            examination.VoidedDate = dateVoid;
+            examination.VoidReason = "some reason or other";
+            examination.VoidUserId = "userId0";
+
+            examination.CaseBreakdown.VoidEvent = new VoidEvent()
+            {
+                Created = dateVoid,
+                EventId = "voidEventId",
+                UserFullName = "Barry",
+                GmcNumber = "GmcNumber",
+                UserId = "B477Y",
+                UsersRole = "Something",
+                VoidReason = "some reason or other"
+            };
+
+            var expectedVoidEvent = new VoidEventItem
+            {
+                Created = dateVoid,
+                EventId = "voidEventId",
+                UserFullName = "Barry",
+                GmcNumber = "GmcNumber",
+                UserId = "B477Y",
+                UsersRole = "Something",
+                VoidReason = "some reason or other"
+            };
+
+            var result = _mapper.Map<CaseBreakDownItem>(examination, opt => opt.Items["user"] = User0);
+
+            IsEquivalent(expectedVoidEvent, result.VoidEvent);
+        }
+
+        [Fact]
+        public void Examination_To_GetCaseBreakdowResponse_When_Case_Is_Not_Void()
+        {
+            var examination = GenerateExamination();
+
+            var result = _mapper.Map<CaseBreakDownItem>(examination, opt => opt.Items["user"] = User0);
+
+            result.VoidEvent.Should().BeNull();
+        }
+
+        private void IsEquivalent(VoidEventItem expectedVoidEvent, VoidEventItem voidEvent)
+        {
+            voidEvent.VoidReason.Should().Be(expectedVoidEvent.VoidReason);
+            voidEvent.UsersRole.Should().Be(expectedVoidEvent.UsersRole);
+            voidEvent.UserId.Should().Be(expectedVoidEvent.UserId);
+            voidEvent.UserFullName.Should().Be(expectedVoidEvent.UserFullName);
+            voidEvent.GmcNumber.Should().Be(expectedVoidEvent.GmcNumber);
+            voidEvent.Created.Should().Be(expectedVoidEvent.Created);
+            voidEvent.EventId.Should().Be(expectedVoidEvent.EventId);
+        }
+
+        [Fact]
         public void Examination_To_GetCaseBreakdowResponse_When_PreScrutiny_Is_Complete_And_Qap_Is_Unable_To_Happen()
         {
             var examination = GenerateExamination();
@@ -600,12 +663,15 @@ namespace MedicalExaminer.API.Tests.Mapper
             {
                 Representatives = examination.Representatives,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyHappened,
                 DateOfLatestPreScrutiny = examination.CaseBreakdown.PreScrutiny.Latest.Created,
                 UserForLatestPrescrutiny = examination.CaseBreakdown.PreScrutiny.Latest.UserFullName,
+                GmcNumberOfUserForLatestPrescrutiny = examination.CaseBreakdown.PreScrutiny.Latest.GmcNumber,
                 QAPDiscussionStatus = QAPDiscussionStatus.CouldNotHappen,
                 DateOfLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.DateOfConversation,
                 UserForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.UserFullName,
+                GmcNumberOfUserForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.GmcNumber,
                 QAPNameForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.ParticipantName,
                 CauseOfDeath1a = examination.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a,
                 CauseOfDeath1b = examination.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1b,
@@ -628,12 +694,15 @@ namespace MedicalExaminer.API.Tests.Mapper
             {
                 Representatives = examination.Representatives,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyHappened,
                 DateOfLatestPreScrutiny = examination.CaseBreakdown.PreScrutiny.Latest.Created,
                 UserForLatestPrescrutiny = examination.CaseBreakdown.PreScrutiny.Latest.UserFullName,
+                GmcNumberOfUserForLatestPrescrutiny = examination.CaseBreakdown.PreScrutiny.Latest.GmcNumber,
                 QAPDiscussionStatus = QAPDiscussionStatus.NoRecord,
                 DateOfLatestQAPDiscussion = null,
                 UserForLatestQAPDiscussion = null,
+                GmcNumberOfUserForLatestQAPDiscussion = null,
                 QAPNameForLatestQAPDiscussion = null,
                 CauseOfDeath1a = examination.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a,
                 CauseOfDeath1b = examination.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1b,
@@ -656,12 +725,15 @@ namespace MedicalExaminer.API.Tests.Mapper
             {
                 Representatives = examination.Representatives,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyNotHappened,
                 DateOfLatestPreScrutiny = null,
                 UserForLatestPrescrutiny = null,
+                GmcNumberOfUserForLatestPrescrutiny = null,
                 QAPDiscussionStatus = QAPDiscussionStatus.HappenedNoRevision,
                 DateOfLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.DateOfConversation,
                 UserForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.UserFullName,
+                GmcNumberOfUserForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.GmcNumber,
                 QAPNameForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.ParticipantName,
                 CauseOfDeath1a = examination.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1a,
                 CauseOfDeath1b = examination.CaseBreakdown.QapDiscussion.Latest.CauseOfDeath1b,
@@ -685,12 +757,15 @@ namespace MedicalExaminer.API.Tests.Mapper
             {
                 Representatives = examination.Representatives,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyNotHappened,
                 DateOfLatestPreScrutiny = null,
                 UserForLatestPrescrutiny = null,
+                GmcNumberOfUserForLatestPrescrutiny = null,
                 QAPDiscussionStatus = QAPDiscussionStatus.CouldNotHappen,
                 DateOfLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.DateOfConversation,
                 UserForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.UserFullName,
+                GmcNumberOfUserForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.GmcNumber,
                 QAPNameForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.ParticipantName,
                 CauseOfDeath1a = null,
                 CauseOfDeath1b = null,
@@ -714,6 +789,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             {
                 Representatives = examination.Representatives,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyNotHappened,
                 DateOfLatestPreScrutiny = null,
                 UserForLatestPrescrutiny = null,
@@ -742,12 +818,15 @@ namespace MedicalExaminer.API.Tests.Mapper
             {
                 Representatives = examination.Representatives,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyHappened,
                 DateOfLatestPreScrutiny = examination.CaseBreakdown.PreScrutiny.Latest.Created,
                 UserForLatestPrescrutiny = examination.CaseBreakdown.PreScrutiny.Latest.UserFullName,
+                GmcNumberOfUserForLatestPrescrutiny = examination.CaseBreakdown.PreScrutiny.Latest.GmcNumber,
                 QAPDiscussionStatus = QAPDiscussionStatus.HappenedNoRevision,
                 DateOfLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.DateOfConversation,
                 UserForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.UserFullName,
+                GmcNumberOfUserForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.GmcNumber,
                 QAPNameForLatestQAPDiscussion = examination.CaseBreakdown.QapDiscussion.Latest.ParticipantName,
                 CauseOfDeath1a = examination.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a,
                 CauseOfDeath1b = examination.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1b,
@@ -1082,7 +1161,8 @@ namespace MedicalExaminer.API.Tests.Mapper
             var response = _mapper.Map<GetCaseOutcomeResponse>(examination);
 
             response.CaseCompleted.Should().Be(Completed);
-            response.CaseMedicalExaminerFullName.Should().Be(caseOutcome.CaseMedicalExaminerFullName);
+            response.CaseMedicalExaminerFullName.Should().Be(medicalTeam.MedicalExaminerFullName);
+            response.CaseMedicalExaminerGmcNumber.Should().Be(medicalTeam.MedicalExaminerGmcNumber);
             response.CaseOutcomeSummary.Should().Be(caseOutcome.CaseOutcomeSummary);
             response.CremationFormStatus.Should().Be(caseOutcome.CremationFormStatus);
             response.GpNotifiedStatus.Should().Be(caseOutcome.GpNotifiedStatus);
@@ -1585,6 +1665,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             examination.CaseBreakdown.QapDiscussion.Latest = new QapDiscussionEvent
             {
                 UserFullName = null,
+                GmcNumber = null,
                 UsersRole = null,
                 Created = null,
                 EventId = null,
@@ -1607,6 +1688,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             examination.CaseBreakdown.BereavedDiscussion.Latest = new BereavedDiscussionEvent
             {
                 UserFullName = null,
+                GmcNumber = null,
                 UsersRole = null,
                 Created = null,
                 EventId = null,
@@ -2325,7 +2407,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                         MedicalExaminerThoughts = MedicalExaminerThoughts,
                         OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a,
                         UserId = User0.UserId,
-                        UserFullName = User0.FullName()
+                        UserFullName = User0.FullName(),
+                        GmcNumber = User0.GmcNumber
                     },
                     History = new[]
                     {
@@ -2343,7 +2426,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                             MedicalExaminerThoughts = MedicalExaminerThoughts,
                             OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.ReferToCoronerFor100a,
                             UserId = User0.UserId,
-                            UserFullName = User0.FullName()
+                            UserFullName = User0.FullName(),
+                            GmcNumber = User0.GmcNumber
                         }
                     }
                 },
@@ -2367,29 +2451,32 @@ namespace MedicalExaminer.API.Tests.Mapper
                         ParticipantName = ParticipantName,
                         ParticipantOrganisation = ParticipantOrganisation,
                         ParticipantPhoneNumber = ParticipantPhoneNumber,
-                        UserFullName = User0.FullName()
+                        UserFullName = User0.FullName(),
+                        GmcNumber = User0.GmcNumber
                     },
                     History = new[]
                     {
                         new QapDiscussionEvent()
-                    {
-                        EventId = "QapDiscussionEventId",
-                        IsFinal = true,
-                        UserId = User0.UserId,
-                        DiscussionDetails = discussionDetails,
-                        CauseOfDeath1a = CauseOfDeath1a,
-                        CauseOfDeath1b = CauseOfDeath1b,
-                        CauseOfDeath1c = CauseOfDeath1c,
-                        CauseOfDeath2 = CauseOfDeath2,
-                        DiscussionUnableHappen = false,
-                        QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
-                        ParticipantRole = ParticipantRoll,
-                        DateOfConversation = dateOfConversation,
-                        TimeOfConversation = timeOfConversation,
-                        ParticipantName = ParticipantName,
-                        ParticipantOrganisation = ParticipantOrganisation,
-                        ParticipantPhoneNumber = ParticipantPhoneNumber
-                    }
+                        {
+                            EventId = "QapDiscussionEventId",
+                            IsFinal = true,
+                            UserId = User0.UserId,
+                            DiscussionDetails = discussionDetails,
+                            CauseOfDeath1a = CauseOfDeath1a,
+                            CauseOfDeath1b = CauseOfDeath1b,
+                            CauseOfDeath1c = CauseOfDeath1c,
+                            CauseOfDeath2 = CauseOfDeath2,
+                            DiscussionUnableHappen = false,
+                            QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                            ParticipantRole = ParticipantRoll,
+                            DateOfConversation = dateOfConversation,
+                            TimeOfConversation = timeOfConversation,
+                            ParticipantName = ParticipantName,
+                            ParticipantOrganisation = ParticipantOrganisation,
+                            ParticipantPhoneNumber = ParticipantPhoneNumber,
+                            UserFullName = User0.FullName(),
+                            GmcNumber = User0.GmcNumber
+                        }
                     }
                 }
             };
@@ -2474,6 +2561,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     Notes = "the admission notes",
                     RouteOfAdmission = RouteOfAdmission.AccidentAndEmergency,
                     UserFullName = "userFullName",
+                    GmcNumber = "GmcNumber",
                     UserId = "userId",
                     UsersRole = "userRole"
                 },
@@ -2494,6 +2582,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     PresentAtDeath = PresentAtDeath.Yes,
                     TimeOfConversation = new TimeSpan(13, 13, 0),
                     UserFullName = "userFullName",
+                    GmcNumber = "GmcNumber",
                     UserId = "userId",
                     UsersRole = "usersRole"
                 },
@@ -2609,6 +2698,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     Notes = "the admission notes",
                     RouteOfAdmission = RouteOfAdmission.AccidentAndEmergency,
                     UserFullName = "userFullName",
+                    GmcNumber = "GmcNumber",
                     UserId = "userId",
                     UsersRole = "userRole"
                 },
@@ -2629,6 +2719,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     PresentAtDeath = PresentAtDeath.Yes,
                     TimeOfConversation = new TimeSpan(13, 13, 0),
                     UserFullName = "userFullName",
+                    GmcNumber = "GmcNumber",
                     UserId = "userId",
                     UsersRole = "usersRole"
                 },
@@ -2699,6 +2790,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     Notes = "the admission notes",
                     RouteOfAdmission = RouteOfAdmission.AccidentAndEmergency,
                     UserFullName = "userFullName",
+                    GmcNumber = "GmcNumber",
                     UserId = "userId",
                     UsersRole = "userRole"
                 },
@@ -2719,6 +2811,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     PresentAtDeath = PresentAtDeath.Yes,
                     TimeOfConversation = new TimeSpan(13, 13, 0),
                     UserFullName = "userFullName",
+                    GmcNumber = "GmcNumber",
                     UserId = "userId",
                     UsersRole = "usersRole"
                 },
@@ -2763,8 +2856,9 @@ namespace MedicalExaminer.API.Tests.Mapper
                     IsFinal = true,
                     MedicalExaminerThoughts = "musings",
                     OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
-                    UserFullName = "bob marley",
-                    UserId = "BobMarley",
+                    UserFullName = "UserFullName",
+                    GmcNumber = "GmcNumber",
+                    UserId = "UserId",
                     UsersRole = "MedicalExaminer"
                 };
             }
@@ -2790,7 +2884,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                     ParticipantRole = "SomeRole",
                     QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathProvidedByQAP,
                     TimeOfConversation = null,
-                    UserFullName = "The Tax Man",
+                    UserFullName = "UserFullName",
+                    GmcNumber = "GmcNumber",
                     UserId = "TaxMan",
                     UsersRole = "Tax Man"
                 };
@@ -2864,6 +2959,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     Notes = "the admission notes",
                     RouteOfAdmission = RouteOfAdmission.AccidentAndEmergency,
                     UserFullName = "userFullName",
+                    GmcNumber = "GmcNumber",
                     UserId = "userId",
                     UsersRole = "userRole"
                 };
@@ -2913,6 +3009,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                     PresentAtDeath = PresentAtDeath.Yes,
                     TimeOfConversation = new TimeSpan(13, 13, 0),
                     UserFullName = "userFullName",
+                    GmcNumber = "GmcNumber",
                     UserId = "userId",
                     UsersRole = "usersRole"
                 };
@@ -3011,6 +3108,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                     GeneralPractitioner = gp,
                     MedicalExaminerFullName = generalDetails ? "medicalExaminerName" : null,
                     MedicalExaminerOfficerFullName = generalDetails ? "medicalExaminerOfficerName" : null,
+                    MedicalExaminerGmcNumber = generalDetails ? "MedicalExaminerGmcNumber" : null,
+                    MedicalExaminerOfficerGmcNumber = generalDetails ? "MedicalExaminerOfficerGmcNumber" : null,
                     MedicalExaminerOfficerUserId = generalDetails ? "medicalExaminerOfficerId" : null,
                     MedicalExaminerUserId = generalDetails ? "medicalExaminerId" : null,
                     NursingTeamInformation = null,
@@ -3097,11 +3196,14 @@ namespace MedicalExaminer.API.Tests.Mapper
                 DateOfLatestPreScrutiny = null,
                 DateOfLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.DateOfConversation,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyNotHappened,
                 QAPDiscussionStatus = QAPDiscussionStatus.HappenedNoRevision,
                 QAPNameForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.ParticipantName,
                 UserForLatestPrescrutiny = null,
-                UserForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.UserFullName
+                GmcNumberOfUserForLatestPrescrutiny = null,
+                UserForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.UserFullName,
+                GmcNumberOfUserForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.GmcNumber
             };
 
             // Act
@@ -3131,11 +3233,14 @@ namespace MedicalExaminer.API.Tests.Mapper
                 DateOfLatestPreScrutiny = casebreakdown.PreScrutiny.Latest.Created,
                 DateOfLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.DateOfConversation,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyHappened,
                 QAPDiscussionStatus = QAPDiscussionStatus.HappenedNoRevision,
                 QAPNameForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.ParticipantName,
                 UserForLatestPrescrutiny = casebreakdown.PreScrutiny.Latest.UserFullName,
-                UserForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.UserFullName
+                GmcNumberOfUserForLatestPrescrutiny = casebreakdown.PreScrutiny.Latest.GmcNumber,
+                UserForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.UserFullName,
+                GmcNumberOfUserForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.GmcNumber
             };
 
             // Act
@@ -3167,11 +3272,14 @@ namespace MedicalExaminer.API.Tests.Mapper
                 DateOfLatestPreScrutiny = casebreakdown.PreScrutiny.Latest.Created,
                 DateOfLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.DateOfConversation,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyHappened,
                 QAPDiscussionStatus = QAPDiscussionStatus.HappenedWithRevisions,
                 QAPNameForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.ParticipantName,
                 UserForLatestPrescrutiny = casebreakdown.PreScrutiny.Latest.UserFullName,
-                UserForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.UserFullName
+                GmcNumberOfUserForLatestPrescrutiny = casebreakdown.PreScrutiny.Latest.GmcNumber,
+                UserForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.UserFullName,
+                GmcNumberOfUserForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.GmcNumber
             };
 
             // Act
@@ -3204,11 +3312,14 @@ namespace MedicalExaminer.API.Tests.Mapper
                 DateOfLatestPreScrutiny = casebreakdown.PreScrutiny.Latest.Created,
                 DateOfLatestQAPDiscussion = null,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyHappened,
                 QAPDiscussionStatus = QAPDiscussionStatus.NoRecord,
                 QAPNameForLatestQAPDiscussion = null,
                 UserForLatestPrescrutiny = casebreakdown.PreScrutiny.Latest.UserFullName,
-                UserForLatestQAPDiscussion = null
+                GmcNumberOfUserForLatestPrescrutiny = casebreakdown.PreScrutiny.Latest.GmcNumber,
+                UserForLatestQAPDiscussion = null,
+                GmcNumberOfUserForLatestQAPDiscussion = null
             };
 
             // Act
@@ -3241,11 +3352,14 @@ namespace MedicalExaminer.API.Tests.Mapper
                 DateOfLatestPreScrutiny = casebreakdown.PreScrutiny.Latest.Created,
                 DateOfLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.DateOfConversation,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyHappened,
                 QAPDiscussionStatus = QAPDiscussionStatus.CouldNotHappen,
                 QAPNameForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.ParticipantName,
                 UserForLatestPrescrutiny = casebreakdown.PreScrutiny.Latest.UserFullName,
-                UserForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.UserFullName
+                GmcNumberOfUserForLatestPrescrutiny = casebreakdown.PreScrutiny.Latest.GmcNumber,
+                UserForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.UserFullName,
+                GmcNumberOfUserForLatestQAPDiscussion = casebreakdown.QapDiscussion.Latest.GmcNumber
             };
 
             // Act
@@ -3279,6 +3393,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 DateOfLatestPreScrutiny = null,
                 DateOfLatestQAPDiscussion = null,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyNotHappened,
                 QAPDiscussionStatus = QAPDiscussionStatus.NoRecord,
                 QAPNameForLatestQAPDiscussion = null,
@@ -3312,8 +3427,10 @@ namespace MedicalExaminer.API.Tests.Mapper
                 CauseOfDeath2 = casebreakdown.PreScrutiny.Latest.CauseOfDeath2,
                 DateOfLatestPreScrutiny = casebreakdown.PreScrutiny.Latest.Created,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyHappened,
                 UserForLatestPrescrutiny = casebreakdown.PreScrutiny.Latest.UserFullName,
+                GmcNumberOfUserForLatestPrescrutiny = casebreakdown.PreScrutiny.Latest.GmcNumber
             };
 
             // Act
@@ -3349,7 +3466,8 @@ namespace MedicalExaminer.API.Tests.Mapper
             var examinationFinanceLocations = new ExaminationLocationItem()
             {
                 Examination = examination,
-                Locations = new List<Location>()
+                Locations = new List<Location>(),
+                Users = new List<MeUser>()
             };
 
             var expectedFinanceReportItem = new ExaminationFinanceItem()
@@ -3417,7 +3535,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                         LocationId = "SiteLocationId",
                         Name = "SiteName"
                     },
-                }
+                },
+                Users = new List<MeUser>()
             };
 
             var expectedFinanceReportItem = new ExaminationFinanceItem()
@@ -3490,7 +3609,8 @@ namespace MedicalExaminer.API.Tests.Mapper
                         LocationId = "TrustLocationId",
                         Name = "TrustName"
                     },
-                }
+                },
+                Users = new List<MeUser>()
             };
 
             var expectedFinanceReportItem = new ExaminationFinanceItem()
@@ -3535,6 +3655,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 CauseOfDeath2 = null,
                 DateOfLatestPreScrutiny = null,
                 MedicalExaminer = examination.MedicalTeam.MedicalExaminerFullName,
+                MedicalExaminerGmcNumber = examination.MedicalTeam.MedicalExaminerGmcNumber,
                 PreScrutinyStatus = PreScrutinyStatus.PrescrutinyNotHappened,
                 UserForLatestPrescrutiny = null,
             };

@@ -34,13 +34,16 @@ namespace MedicalExaminer.API.Tests.Services.Users
             var user1 = results.Single(user => user.UserId == "userId1");
             user1.FirstName.Should().Be("barry");
             user1.LastName.Should().Be("stow");
+            user1.GmcNumber.Should().Be("GmcNumber1");
             var user2 = results.Single(user => user.UserId == "userId2");
             user2.FirstName.Should().Be("john");
             user2.LastName.Should().Be("battye");
+            user2.GmcNumber.Should().Be("GmcNumber2");
 
             if (!forLookup)
             {
                 results.First(u => u.UserId == "userId1").Email.Should().Be("email1");
+                results.First(u => u.UserId == "userId1").GmcNumber.Should().Be("GmcNumber1");
             }
         }
 
@@ -53,14 +56,17 @@ namespace MedicalExaminer.API.Tests.Services.Users
                     UserId = "userId1",
                     Email = "email1",
                     FirstName = "barry",
-                    LastName = "stow"
+                    LastName = "stow",
+                    GmcNumber = "GmcNumber1"
                 },
                 new MeUser
                 {
                     UserId = "userId2",
                     Email = "email2",
                     FirstName = "john",
-                    LastName = "battye"
+                    LastName = "battye",
+                    GmcNumber = "GmcNumber2"
+
                 },
             };
         }

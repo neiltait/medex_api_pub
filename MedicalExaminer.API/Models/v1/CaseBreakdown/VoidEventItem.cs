@@ -1,43 +1,38 @@
-﻿using MedicalExaminer.Models;
+﻿using System;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
-using System;
 
 namespace MedicalExaminer.API.Models.v1.CaseBreakdown
 {
-    public class CaseClosedEventItem : IEvent
+    public class VoidEventItem : IEvent
     {
         /// <summary>
-        /// Date the patient died
+        /// the reason for voiding the examination.
         /// </summary>
-        public DateTime? DateCaseClosed { get; set; }
+        public string VoidReason { get; set; }
 
         /// <summary>
-        /// event type
+        /// the event type
         /// </summary>
-        public EventType EventType => EventType.CaseClosed;
+        public EventType EventType => EventType.CaseVoid;
 
         /// <summary>
-        /// event id
+        /// the id of the event
         /// </summary>
         public string EventId { get; set; }
 
         /// <summary>
-        /// is the event a draft or a final version
+        /// Is the event final, not a draft
         /// </summary>
         public bool IsFinal => true;
 
         /// <summary>
-        /// user id that created the event
+        /// the users id that added the event
         /// </summary>
         public string UserId { get; set; }
 
         /// <summary>
-        /// the date the event was created.
-        /// </summary>
-        public DateTime? Created { get; set; }
-
-        /// <summary>
-        /// Users full name
+        /// the users full name that added the event
         /// </summary>
         public string UserFullName { get; set; }
 
@@ -47,13 +42,13 @@ namespace MedicalExaminer.API.Models.v1.CaseBreakdown
         public string GmcNumber { get; set; }
 
         /// <summary>
-        /// Users Role
+        /// The users role that added the event
         /// </summary>
         public string UsersRole { get; set; }
 
         /// <summary>
-        /// Case Outcome
+        /// Date the event was added
         /// </summary>
-        public CaseOutcomeSummary CaseOutcome { get; set; }
+        public DateTime? Created { get; set; }
     }
 }

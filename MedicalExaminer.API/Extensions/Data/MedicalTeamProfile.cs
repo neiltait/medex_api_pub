@@ -16,7 +16,9 @@ namespace MedicalExaminer.API.Extensions.Data
         {
             CreateMap<PutMedicalTeamRequest, MedicalTeam>()
                 .ForMember(medicalTeam => medicalTeam.MedicalExaminerOfficerFullName, opt => opt.Ignore())
-                .ForMember(medicalTeam => medicalTeam.MedicalExaminerFullName, opt => opt.Ignore());
+                .ForMember(medicalTeam => medicalTeam.MedicalExaminerOfficerGmcNumber, opt => opt.Ignore())
+                .ForMember(medicalTeam => medicalTeam.MedicalExaminerFullName, opt => opt.Ignore())
+                .ForMember(medicalTeam => medicalTeam.MedicalExaminerGmcNumber, opt => opt.Ignore());
             CreateMap<ClinicalProfessional, ClinicalProfessionalItem>();
         }
     }

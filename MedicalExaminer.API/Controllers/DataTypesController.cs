@@ -276,6 +276,16 @@ namespace MedicalExaminer.API.Controllers
         }
 
         /// <summary>
+        /// Returns all Pre Scrutiny Statuses
+        /// </summary>
+        /// <returns>Dictionary of Pre Scrutiny Statuses</returns>
+        [HttpGet("case_open_closed")]
+        public ActionResult GetCaseOpenClosed()
+        {
+            return Ok(GetDictionary(typeof(OpenClosedCases)));
+        }
+
+        /// <summary>
         /// Get Dictionary.
         /// </summary>
         /// <param name="enumeratorType">Type.</param>

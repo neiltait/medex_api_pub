@@ -30,6 +30,7 @@ namespace MedicalExaminer.API.Controllers
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>> _financeQuery;
         private readonly IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>> _locationsRetrievalService;
+        private readonly IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> _usersRetrievalService;
 
         /// <summary>
         /// Location Parents Service.
@@ -44,12 +45,15 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         /// The report controller constructor
         /// </summary>
-        /// <param name="logger"></param>
-        /// <param name="mapper"></param>
-        /// <param name="usersRetrievalByOktaIdService"></param>
-        /// <param name="authorizationService"></param>
-        /// <param name="permissionService"></param>
-        /// <param name="examinationRetrievalService"></param>
+        /// <param name="logger">Logger.</param>
+        /// <param name="mapper">Mapper.</param>
+        /// <param name="usersRetrievalByOktaIdService">Users retrieval by okta id service.</param>
+        /// <param name="authorizationService">Authorization service.</param>
+        /// <param name="permissionService">Permission service.</param>
+        /// <param name="examinationRetrievalService">Examination Retrieval service.</param>
+        /// <param name="financeQuery">Finance service.</param>
+        /// <param name="locationsRetrievalService">Locations retrieval service.</param>
+        /// <param name="usersRetrievalService">Users retrieval service</param>
         public ReportController(
             IMELogger logger,
             IMapper mapper,
@@ -59,6 +63,7 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> examinationRetrievalService,
             IAsyncQueryHandler<FinanceQuery, IEnumerable<Examination>> financeQuery,
             IAsyncQueryHandler<LocationsRetrievalByIdQuery, IEnumerable<Location>> locationsRetrievalService,
+            IAsyncQueryHandler<UsersRetrievalQuery, IEnumerable<MeUser>> usersRetrievalService,
             IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>> locationsParentsService,
             IAsyncQueryHandler<LocationsRetrievalByQuery, IEnumerable<Location>> locationRetrievalByQueryHandler)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
@@ -66,6 +71,7 @@ namespace MedicalExaminer.API.Controllers
             _examinationRetrievalService = examinationRetrievalService;
             _financeQuery = financeQuery;
             _locationsRetrievalService = locationsRetrievalService;
+            _usersRetrievalService = usersRetrievalService;
             _locationsParentsService = locationsParentsService;
             _locationRetrievalByQueryHandler = locationRetrievalByQueryHandler;
         }
@@ -142,12 +148,15 @@ namespace MedicalExaminer.API.Controllers
 
             response.Data = new List<ExaminationFinanceItem>();
 
+            var users = (await _usersRetrievalService.Handle(new UsersRetrievalQuery(false, null))).ToList();
+
             foreach (var examination in results)
             {
                 response.Data.Add(Mapper.Map<ExaminationFinanceItem>(new ExaminationLocationItem()
                 {
                     Examination = examination,
-                    Locations = distinctLocationNames
+                    Locations = distinctLocationNames,
+                    Users = users,
                 }));
             }
 

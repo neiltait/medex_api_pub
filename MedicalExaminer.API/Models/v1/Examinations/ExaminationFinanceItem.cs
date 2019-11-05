@@ -40,6 +40,16 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public string MedicalExaminerId { get; set; }
 
         /// <summary>
+        /// ME GMC Number
+        /// </summary>
+        public string MeGmcNumber { get; set; }
+
+        /// <summary>
+        /// MEO GMC Number
+        /// </summary>
+        public string MeoGmcNumber { get; set; }
+
+        /// <summary>
         /// Date case Created
         /// </summary>
         public DateTime CaseCreated { get; set; }
