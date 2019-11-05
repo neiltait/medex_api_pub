@@ -237,7 +237,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A GetProfileResponse.</returns>
         [HttpGet("{meUserId}/profile")]
         [AuthorizePermission(Permission.GetUsers)]
-        public async Task<ActionResult<GetProfileResponse>> GetProfile(string meUserId)
+        public async Task<ActionResult<GetProfileResponse>> GetUserProfile(string meUserId)
         {
             if (!ModelState.IsValid)
             {
@@ -275,7 +275,7 @@ namespace MedicalExaminer.API.Controllers
         /// <returns>A PutUserResponse.</returns>
         [HttpPut("{meUserId}/profile")]
         [AuthorizePermission(Permission.UpdateUser)]
-        public async Task<ActionResult<PutProfileResponse>> UpdateProfile(string meUserId, [FromBody] PutProfileRequest putUser)
+        public async Task<ActionResult<PutProfileResponse>> UpdateUserProfile(string meUserId, [FromBody] PutProfileRequest putUser)
         {
             if (!ModelState.IsValid)
             {

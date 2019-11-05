@@ -572,14 +572,14 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetProfile_ReturnsBadRequest_WhenModelStateIsInvalid()
+        public async Task GetUserProfile_ReturnsBadRequest_WhenModelStateIsInvalid()
         {
             // Arrange
             var userId = "userId";
             Controller.ModelState.AddModelError("An", "Error");
 
             // Act
-            var response = await Controller.GetProfile(userId);
+            var response = await Controller.GetUserProfile(userId);
 
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
@@ -591,7 +591,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetProfile_ReturnsNotFound_WhenUserNotFound()
+        public async Task GetUserProfile_ReturnsNotFound_WhenUserNotFound()
         {
             // Arrange
             const string userId = "userId";
@@ -601,7 +601,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult((MeUser)null));
 
             // Act
-            var response = await Controller.GetProfile(userId);
+            var response = await Controller.GetUserProfile(userId);
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -615,7 +615,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetProfile_ReturnsOk_WhenUserFound()
+        public async Task GetUserProfile_ReturnsOk_WhenUserFound()
         {
             // Arrange
             const string userId = "userId";
@@ -633,7 +633,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await Controller.GetProfile(userId);
+            var response = await Controller.GetUserProfile(userId);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
@@ -646,7 +646,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetProfile_ReturnsNotFound_WhenArgumentExceptionThrown()
+        public async Task GetUserProfile_ReturnsNotFound_WhenArgumentExceptionThrown()
         {
             // Arrange
             const string userId = "userId";
@@ -656,7 +656,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Throws<ArgumentException>();
 
             // Act
-            var response = await Controller.GetProfile(userId);
+            var response = await Controller.GetUserProfile(userId);
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -670,7 +670,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetProfile_ReturnsNotFound_WhenDocumentClientExceptionThrown()
+        public async Task GetUserProfile_ReturnsNotFound_WhenDocumentClientExceptionThrown()
         {
             // Arrange
             const string userId = "userId";
@@ -680,7 +680,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Throws(CreateDocumentClientExceptionForTesting());
 
             // Act
-            var response = await Controller.GetProfile(userId);
+            var response = await Controller.GetUserProfile(userId);
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -705,7 +705,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
 
             // Act
-            var response = await Controller.UpdateProfile(userId, request);
+            var response = await Controller.UpdateUserProfile(userId, request);
 
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
@@ -739,7 +739,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await Controller.UpdateProfile(userId, request);
+            var response = await Controller.UpdateUserProfile(userId, request);
 
             // Assert
             response.Result.Should().BeAssignableTo<OkObjectResult>();
@@ -774,7 +774,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await Controller.UpdateProfile(userId, request);
+            var response = await Controller.UpdateUserProfile(userId, request);
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
@@ -810,7 +810,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             Controller.ControllerContext = GetControllerContext();
 
             // Act
-            var response = await Controller.UpdateProfile(userId, request);
+            var response = await Controller.UpdateUserProfile(userId, request);
 
             // Assert
             response.Result.Should().BeAssignableTo<NotFoundObjectResult>();
