@@ -399,7 +399,6 @@ example:
             services.AddScoped<IAsyncQueryHandler<CoronerReferralQuery, string>, CoronerReferralService>();
             services.AddScoped<IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string>, SaveOutstandingCaseItemsService>();
             services.AddScoped<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>, ConfirmationOfScrutinyService>();
-            services.AddScoped<IAsyncQueryHandler<SaveWaiveFeeQuery, Examination>, SaveWaiveFeeService>();
             services.AddScoped<IAsyncQueryHandler<VoidCaseQuery, Examination>, VoidCaseService>();
 
             // Patient details services

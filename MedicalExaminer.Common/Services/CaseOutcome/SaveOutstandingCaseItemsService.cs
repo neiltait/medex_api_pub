@@ -53,6 +53,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
 
             examinationToUpdate.CaseOutcome.MccdIssued = param.CaseOutcome.MccdIssued;
             examinationToUpdate.CaseOutcome.CremationFormStatus = param.CaseOutcome.CremationFormStatus;
+            examinationToUpdate.CaseOutcome.WaiveFee = param.CaseOutcome.WaiveFee;
             examinationToUpdate.CaseOutcome.GpNotifiedStatus = param.CaseOutcome.GpNotifiedStatus;
 
             examinationToUpdate.OutstandingCaseItemsCompleted = examinationToUpdate.CalculateOutstandingCaseOutcomesCompleted();

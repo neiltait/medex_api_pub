@@ -10,7 +10,6 @@ using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
-using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,11 +26,10 @@ namespace MedicalExaminer.API.Controllers
     {
         private readonly IAsyncQueryHandler<CoronerReferralQuery, string> _coronerReferralService;
         private readonly IAsyncQueryHandler<CloseCaseQuery, string> _closeCaseService;
+        private readonly IAsyncQueryHandler<VoidCaseQuery, Examination> _voidCaseService;
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> _saveOutstandingCaseItemsService;
         private readonly IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> _confirmationOfScrutinyService;
-        private readonly IAsyncQueryHandler<SaveWaiveFeeQuery, Examination> _saveWaiveFeeService;
-        private readonly IAsyncQueryHandler<VoidCaseQuery, Examination> _voidCaseService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CaseOutcomeController"/> class.
@@ -47,7 +45,6 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="voidCaseService">The void case service</param>
         /// <param name="authorizationService">The authorization service.</param>
         /// <param name="permissionService">The permission service.</param>
-        /// <param name="saveWaiveFeeService">The save waive fee service</param>
         public CaseOutcomeController(
             IMELogger logger,
             IMapper mapper,
@@ -57,7 +54,6 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> saveOutstandingCaseItemsService,
             IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> confirmationOfScrutinyService,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
-            IAsyncQueryHandler<SaveWaiveFeeQuery, Examination> saveWaiveFeeService,
             IAsyncQueryHandler<VoidCaseQuery, Examination> voidCaseService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService)
@@ -68,7 +64,6 @@ namespace MedicalExaminer.API.Controllers
             _examinationRetrievalService = examinationRetrievalService;
             _saveOutstandingCaseItemsService = saveOutstandingCaseItemsService;
             _confirmationOfScrutinyService = confirmationOfScrutinyService;
-            _saveWaiveFeeService = saveWaiveFeeService;
             _voidCaseService = voidCaseService;
         }
 
@@ -286,53 +281,6 @@ namespace MedicalExaminer.API.Controllers
             var result = await _voidCaseService.Handle(new VoidCaseQuery(examinationId, user, putVoidCaseRequest.VoidReason));
 
             var response = Mapper.Map<PutVoidCaseResponse>(result);
-
-            return Ok(response);
-        }
-
-        /// <summary>
-        /// Updates waive fee flag
-        /// </summary>
-        /// <param name="examinationId">Examination ID</param>
-        /// <param name="putCremationFeeWaiver">Put Cremation Fee Waive Request</param>
-        /// <returns>None</returns>
-        [HttpPut]
-        [Route("waive_fee")]
-        public async Task<ActionResult<PutCremationFeeWaiveResponse>> PutWaiveFee(
-            string examinationId,
-            [FromBody] PutCremationFeeWaiveRequest putCremationFeeWaiver)
-        {
-            if (string.IsNullOrEmpty(examinationId))
-            {
-                return new BadRequestObjectResult(new PutCremationFeeWaiveResponse());
-            }
-
-            if (!Guid.TryParse(examinationId, out _))
-            {
-                return new BadRequestObjectResult(new PutCremationFeeWaiveResponse());
-            }
-
-            var user = await CurrentUser();
-            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
-
-            if (examination == null)
-            {
-                return new NotFoundResult();
-            }
-
-            if (!CanAsync(Permission.UpdateExamination, examination))
-            {
-                return Forbid();
-            }
-
-            if (examination.ModeOfDisposal != ModeOfDisposal.Cremation)
-            {
-                return new BadRequestObjectResult("The fee cannot be waived as there is no fee.");
-            }
-
-            var result = await _saveWaiveFeeService.Handle(new SaveWaiveFeeQuery(examinationId, user, putCremationFeeWaiver.WaiveFee));
-
-            var response = Mapper.Map<PutCremationFeeWaiveResponse>(result);
 
             return Ok(response);
         }

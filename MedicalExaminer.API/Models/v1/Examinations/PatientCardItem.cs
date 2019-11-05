@@ -246,11 +246,6 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public CaseOutcomeSummary? CaseOutcome { get; set; }
 
         /// <summary>
-        /// Is Cremation
-        /// </summary>
-        public bool IsCremation { get; set; }
-
-        /// <summary>
         /// Has the examination been voided
         /// </summary>
         public bool IsVoid { get; set; }

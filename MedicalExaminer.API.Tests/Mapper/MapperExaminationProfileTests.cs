@@ -204,6 +204,21 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
+        public void Examination_To_PutVoidCaseResponse()
+        {
+            // Arrange
+            var examination = GenerateExamination();
+            examination.IsVoid = true;
+            examination.VoidedDate = DateTime.Now;
+
+            // Action
+            var result = _mapper.Map<PutVoidCaseResponse>(examination);
+
+            // Assert
+            result.VoidedDate.Should().NotBeNull();
+        }
+
+        [Fact]
         public void PutPatientDetailsRequest_To_PatientDetails()
         {
             // Arrange
@@ -404,7 +419,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                 CoronerReferralSent = false,
                 ScrutinyConfirmed = false,
                 OutstandingCaseItemsCompleted = false,
-                WaiveFee = null,
                 DateCaseClosed = null,
                 CaseOutcome = null
             };
@@ -414,84 +428,6 @@ namespace MedicalExaminer.API.Tests.Mapper
 
             // Assert
             IsEqual(expectedExamination, result);
-        }
-
-        [Fact]
-        public void PatientDetails_To_Examination_WaiveFee_When_ModeOfDisposal_Is_Cremation_And_WaiveFee_Is_Already_True_Returns_True()
-        {
-            // Arrange
-            var examination = GenerateExamination();
-            examination.WaiveFee = true;
-
-            var patientDetails = new PatientDetails
-            {
-                ModeOfDisposal = ModeOfDisposal.Cremation
-            };
-
-            // Action
-            var result = _mapper.Map(patientDetails, examination);
-
-            // Assert
-            result.WaiveFee.Should().BeTrue();
-        }
-
-        [Fact]
-        public void PatientDetails_To_Examination_WaiveFee_When_ModeOfDisposal_Is_Cremation_And_WaiveFee_Is_Already_False_Returns_False()
-        {
-            // Arrange
-            var examination = GenerateExamination();
-            examination.WaiveFee = false;
-
-            var patientDetails = new PatientDetails
-            {
-                ModeOfDisposal = ModeOfDisposal.Cremation
-            };
-
-            // Action
-            var result = _mapper.Map(patientDetails, examination);
-
-            // Assert
-            result.WaiveFee.Should().BeFalse();
-        }
-
-        [Fact]
-        public void PatientDetails_To_Examination_WaiveFee_When_ModeOfDisposal_Is_Cremation_And_WaiveFee_Is_Already_Null_Returns_False()
-        {
-            // Arrange
-            var examination = GenerateExamination();
-            examination.WaiveFee = null;
-
-            var patientDetails = new PatientDetails
-            {
-                ModeOfDisposal = ModeOfDisposal.Cremation
-            };
-
-            // Action
-            var result = _mapper.Map(patientDetails, examination);
-
-            // Assert
-            result.WaiveFee.Should().BeFalse();
-        }
-
-        [Fact]
-        public void PatientDetails_To_Examination_WaiveFee_When_ModeOfDisposal_Is_Not_Cremation_Returns_Null()
-        {
-            // Arrange
-            var examination = GenerateExamination();
-            examination.ModeOfDisposal = ModeOfDisposal.Cremation;
-            examination.WaiveFee = true;
-
-            var patientDetails = new PatientDetails
-            {
-                ModeOfDisposal = ModeOfDisposal.Burial
-            };
-
-            // Action
-            var result = _mapper.Map(patientDetails, examination);
-
-            // Assert
-            result.WaiveFee.Should().BeNull();
-            result.ModeOfDisposal.Should().Be(patientDetails.ModeOfDisposal);
         }
 
         private bool IsEqual(Examination expected, Examination actual)
@@ -563,7 +499,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                    expected.CoronerReferralSent == actual.CoronerReferralSent &&
                    expected.ScrutinyConfirmed == actual.ScrutinyConfirmed &&
                    expected.OutstandingCaseItemsCompleted == actual.OutstandingCaseItemsCompleted &&
-                   expected.WaiveFee == actual.WaiveFee &&
                    expected.DateCaseClosed == actual.DateCaseClosed &&
                    expected.CaseOutcome == actual.CaseOutcome;
         }
@@ -1189,19 +1124,6 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
-        public void Examination_To_PutCremationFeeWaiveResponse()
-        {
-            // Arrange
-            var examination = GenerateExamination();
-
-            // Action
-            var response = _mapper.Map<PutCremationFeeWaiveResponse>(examination);
-
-            // Assert
-            response.WaiveFee.Should().Be(examination.WaiveFee);
-        }
-
-        [Fact]
         public void Examination_To_GetPatientDetailsResponse()
         {
             var examination = GenerateExamination();
@@ -1311,19 +1233,6 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.PendingDiscussionWithQAP.Should().Be(true);
             result.PendingDiscussionWithRepresentative.Should().Be(true);
             result.Unassigned.Should().Be(true);
-            result.IsCremation.Should().BeFalse();
-        }
-
-        [Fact]
-        public void Examination_To_PatientCard_IsCremation_When_ModeOfDisposal_Is_Cremation()
-        {
-            var examination = GenerateExamination();
-
-            examination.ModeOfDisposal = ModeOfDisposal.Cremation;
-
-            var result = _mapper.Map<PatientCardItem>(examination);
-
-            result.IsCremation.Should().BeTrue();
         }
 
         [Fact]
@@ -3588,12 +3497,15 @@ namespace MedicalExaminer.API.Tests.Mapper
                 CreatedAt = new DateTime(2019, 9, 1),
                 NhsNumber = null,
                 MedicalTeam = null,
-                ModeOfDisposal = ModeOfDisposal.Unknown,
+                CaseOutcome = new CaseOutcome
+                {
+                    CremationFormStatus = CremationFormStatus.Unknown,
+                    WaiveFee = null
+                },
                 NationalLocationId = null,
                 RegionLocationId = null,
                 SiteLocationId = null,
                 TrustLocationId = null,
-                WaiveFee = null
             };
 
             var examinationFinanceLocations = new ExaminationLocationItem()
@@ -3610,12 +3522,12 @@ namespace MedicalExaminer.API.Tests.Mapper
                 ExaminationId = "examinationId",
                 HasNhsNumber = false,
                 MedicalExaminerId = null,
-                ModeOfDisposal = ModeOfDisposal.Unknown,
                 NationalName = null,
                 RegionName = null,
                 SiteName = null,
                 TrustName = null,
-                WaiverFee = null
+                WaiverFee = null,
+                CremationFormCompleted = CremationFormStatus.Unknown
             };
 
             // Act
@@ -3637,12 +3549,15 @@ namespace MedicalExaminer.API.Tests.Mapper
                 {
                     MedicalExaminerUserId = "MedicalExaminerUserId"
                 },
-                ModeOfDisposal = ModeOfDisposal.Cremation,
+                CaseOutcome = new CaseOutcome
+                {
+                    CremationFormStatus = CremationFormStatus.Yes,
+                    WaiveFee = true
+                },
                 NationalLocationId = "NationalLocationId",
                 RegionLocationId = "RegionLocationId",
                 SiteLocationId = "SiteLocationId",
                 TrustLocationId = "TrustLocationId",
-                WaiveFee = true
             };
 
             var examinationFinanceLocations = new ExaminationLocationItem()
@@ -3676,7 +3591,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 ExaminationId = "examinationId",
                 HasNhsNumber = true,
                 MedicalExaminerId = "MedicalExaminerUserId",
-                ModeOfDisposal = ModeOfDisposal.Cremation,
+                CremationFormCompleted = CremationFormStatus.Yes,
                 NationalName = "NationalName",
                 RegionName = "RegionName",
                 SiteName = "SiteName",
@@ -3703,12 +3618,15 @@ namespace MedicalExaminer.API.Tests.Mapper
                 {
                     MedicalExaminerUserId = "MedicalExaminerUserId"
                 },
-                ModeOfDisposal = ModeOfDisposal.Cremation,
                 NationalLocationId = "NationalLocationId",
                 RegionLocationId = "RegionLocationId",
                 SiteLocationId = "SiteLocationId",
                 TrustLocationId = "TrustLocationId",
-                WaiveFee = true
+                CaseOutcome = new CaseOutcome
+                {
+                    CremationFormStatus = CremationFormStatus.Yes,
+                    WaiveFee = true,
+                }
             };
 
             var examinationFinanceLocations = new ExaminationLocationItem()
@@ -3747,7 +3665,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 ExaminationId = "examinationId",
                 HasNhsNumber = true,
                 MedicalExaminerId = "MedicalExaminerUserId",
-                ModeOfDisposal = ModeOfDisposal.Cremation,
+                CremationFormCompleted = CremationFormStatus.Yes,
                 NationalName = "NationalName",
                 RegionName = "RegionName",
                 SiteName = "SiteName",
@@ -3829,7 +3747,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             actual.ExaminationId.Should().Be(expected.ExaminationId);
             actual.HasNhsNumber.Should().Be(expected.HasNhsNumber);
             actual.MedicalExaminerId.Should().Be(expected.MedicalExaminerId);
-            actual.ModeOfDisposal.Should().Be(expected.ModeOfDisposal);
+            actual.CremationFormCompleted.Should().Be(expected.CremationFormCompleted);
             actual.NationalName.Should().Be(expected.NationalName);
             actual.RegionName.Should().Be(expected.RegionName);
             actual.SiteName.Should().Be(expected.SiteName);
