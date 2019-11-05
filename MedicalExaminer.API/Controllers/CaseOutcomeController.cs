@@ -26,6 +26,7 @@ namespace MedicalExaminer.API.Controllers
     {
         private readonly IAsyncQueryHandler<CoronerReferralQuery, string> _coronerReferralService;
         private readonly IAsyncQueryHandler<CloseCaseQuery, string> _closeCaseService;
+        private readonly IAsyncQueryHandler<VoidCaseQuery, Examination> _voidCaseService;
         private readonly IAsyncQueryHandler<ExaminationRetrievalQuery, Examination> _examinationRetrievalService;
         private readonly IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> _saveOutstandingCaseItemsService;
         private readonly IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> _confirmationOfScrutinyService;
@@ -53,6 +54,7 @@ namespace MedicalExaminer.API.Controllers
             IAsyncQueryHandler<SaveOutstandingCaseItemsQuery, string> saveOutstandingCaseItemsService,
             IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination> confirmationOfScrutinyService,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
+            IAsyncQueryHandler<VoidCaseQuery, Examination> voidCaseService,
             IAuthorizationService authorizationService,
             IPermissionService permissionService)
             : base(logger, mapper, usersRetrievalByOktaIdService, authorizationService, permissionService)
@@ -62,6 +64,7 @@ namespace MedicalExaminer.API.Controllers
             _examinationRetrievalService = examinationRetrievalService;
             _saveOutstandingCaseItemsService = saveOutstandingCaseItemsService;
             _confirmationOfScrutinyService = confirmationOfScrutinyService;
+            _voidCaseService = voidCaseService;
         }
 
         /// <summary>
@@ -238,6 +241,48 @@ namespace MedicalExaminer.API.Controllers
             }
 
             return BadRequest();
+        }
+
+        /// <summary>
+        /// Voiding a case
+        /// </summary>
+        /// <param name="examinationId">Examination ID</param>
+        /// <param name="putVoidCaseRequest">Put Void Case Request</param>
+        /// <returns>Put Void Case Response</returns>
+        [HttpPut]
+        [Route("void_case")]
+        public async Task<ActionResult<PutVoidCaseResponse>> PutVoidCase(
+            string examinationId,
+            [FromBody] PutVoidCaseRequest putVoidCaseRequest)
+        {
+            if (string.IsNullOrEmpty(examinationId))
+            {
+                return new BadRequestObjectResult(new PutVoidCaseResponse());
+            }
+
+            if (!Guid.TryParse(examinationId, out _))
+            {
+                return new BadRequestObjectResult(new PutVoidCaseResponse());
+            }
+
+            var user = await CurrentUser();
+            var examination = await _examinationRetrievalService.Handle(new ExaminationRetrievalQuery(examinationId, user));
+
+            if (examination == null)
+            {
+                return new NotFoundResult();
+            }
+
+            if (!CanAsync(Permission.VoidExamination, examination))
+            {
+                return Forbid();
+            }
+
+            var result = await _voidCaseService.Handle(new VoidCaseQuery(examinationId, user, putVoidCaseRequest.VoidReason));
+
+            var response = Mapper.Map<PutVoidCaseResponse>(result);
+
+            return Ok(response);
         }
 
         /// <summary>

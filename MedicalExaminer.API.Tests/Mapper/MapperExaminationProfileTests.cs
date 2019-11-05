@@ -204,6 +204,21 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
+        public void Examination_To_PutVoidCaseResponse()
+        {
+            // Arrange
+            var examination = GenerateExamination();
+            examination.IsVoid = true;
+            examination.VoidedDate = DateTime.Now;
+
+            // Action
+            var result = _mapper.Map<PutVoidCaseResponse>(examination);
+
+            // Assert
+            result.VoidedDate.Should().NotBeNull();
+        }
+
+        [Fact]
         public void PutPatientDetailsRequest_To_PatientDetails()
         {
             // Arrange
@@ -1108,7 +1123,6 @@ namespace MedicalExaminer.API.Tests.Mapper
                 IsEqual(examination.MedicalTeam.ConsultantsOther[0], response.ConsultantsOther[0]);
         }
 
-        
         [Fact]
         public void Examination_To_GetPatientDetailsResponse()
         {
@@ -3482,7 +3496,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 SiteName = null,
                 TrustName = null,
                 WaiverFee = null,
-                CremationFormStatus = CremationFormStatus.Unknown
+                CremationFormCompleted = CremationFormStatus.Unknown
             };
 
             // Act
@@ -3546,7 +3560,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 ExaminationId = "examinationId",
                 HasNhsNumber = true,
                 MedicalExaminerId = "MedicalExaminerUserId",
-                CremationFormStatus = CremationFormStatus.Yes,
+                CremationFormCompleted = CremationFormStatus.Yes,
                 NationalName = "NationalName",
                 RegionName = "RegionName",
                 SiteName = "SiteName",
@@ -3620,7 +3634,7 @@ namespace MedicalExaminer.API.Tests.Mapper
                 ExaminationId = "examinationId",
                 HasNhsNumber = true,
                 MedicalExaminerId = "MedicalExaminerUserId",
-                CremationFormStatus = CremationFormStatus.Yes,
+                CremationFormCompleted = CremationFormStatus.Yes,
                 NationalName = "NationalName",
                 RegionName = "RegionName",
                 SiteName = "SiteName",
@@ -3702,7 +3716,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             actual.ExaminationId.Should().Be(expected.ExaminationId);
             actual.HasNhsNumber.Should().Be(expected.HasNhsNumber);
             actual.MedicalExaminerId.Should().Be(expected.MedicalExaminerId);
-            actual.CremationFormStatus.Should().Be(expected.CremationFormStatus);
+            actual.CremationFormCompleted.Should().Be(expected.CremationFormCompleted);
             actual.NationalName.Should().Be(expected.NationalName);
             actual.RegionName.Should().Be(expected.RegionName);
             actual.SiteName.Should().Be(expected.SiteName);

@@ -294,8 +294,7 @@ namespace MedicalExaminer.API.Extensions.Data
                     return container;
                 }))
                 .ForMember(cbi => cbi.PatientDeathEvent, opt => opt.MapFrom(src => src.CaseBreakdown.DeathEvent))
-                .ForMember(cbi => cbi.CaseClosed, opt => opt.MapFrom(src => src.CaseBreakdown.CaseClosedEvent))
-                ;
+                .ForMember(cbi => cbi.CaseClosed, opt => opt.MapFrom(src => src.CaseBreakdown.CaseClosedEvent));
             CreateMap<Examination, CaseOutcome>()
                 .ForMember(caseOutcome => caseOutcome.CaseMedicalExaminerFullName, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseMedicalExaminerFullName))
                 .ForMember(caseOutcome => caseOutcome.CaseCompleted, opt => opt.MapFrom(examination => examination.CaseCompleted))
@@ -329,6 +328,11 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(response => response.WaiveFee, opt => opt.MapFrom(examination => examination.CaseOutcome.WaiveFee))
                 .ForMember(response => response.GpNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GpNotifiedStatus))
                 .ForMember(response => response.DateCaseClosed, opt => opt.MapFrom(examination => examination.DateCaseClosed));
+            CreateMap<Examination, PutVoidCaseResponse>()
+                .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
+                .ForMember(response => response.VoidedDate, opt => opt.MapFrom(examination => examination.VoidedDate))
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<Examination, ExaminationItem>()
                 .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0));
             CreateMap<Examination, GetPatientDetailsResponse>()
@@ -436,7 +440,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(finance => finance.ExaminationId, opt => opt.MapFrom(eli => eli.Examination.ExaminationId))
                 .ForMember(finance => finance.HasNhsNumber, opt => opt.MapFrom(eli => !string.IsNullOrEmpty(eli.Examination.NhsNumber)))
                 .ForMember(finance => finance.MedicalExaminerId, opt => opt.MapFrom(eli => eli.Examination.MedicalTeam.MedicalExaminerUserId))
-                .ForMember(finance => finance.CremationFormStatus, opt => opt.MapFrom(eli => eli.Examination.CaseOutcome.CremationFormStatus))
+                .ForMember(finance => finance.CremationFormCompleted, opt => opt.MapFrom(eli => eli.Examination.CaseOutcome.CremationFormStatus))
                 .ForMember(finance => finance.MeGmcNumber, opt => opt.MapFrom((source, dest, destMember, context) =>
                 {
                     return source.Users.SingleOrDefault(u => u.UserId == source.Examination.MedicalTeam.MedicalExaminerUserId)?.GmcNumber;

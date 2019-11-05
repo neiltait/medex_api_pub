@@ -67,7 +67,7 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         /// <summary>
         /// Has a cremation form been completed (Yes, No, Unknown)
         /// </summary>
-        public CremationFormStatus? CremationFormStatus { get; set; }
+        public CremationFormStatus? CremationFormCompleted { get; set; }
 
         /// <summary>
         /// Indicate whether the fee can be waived 
