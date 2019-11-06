@@ -61,6 +61,7 @@ namespace MedicalExaminer.API.Controllers
                 EmailAddress = meUser.Email,
                 FirstName = meUser.FirstName,
                 LastName = meUser.LastName,
+                GmcNumber = meUser.GmcNumber,
                 Role = meUser.Permissions?.Select(p => p.UserRole).ToArray(),
                 Permissions = _rolePermissions.PermissionsForRoles(
                     meUser.Permissions?.Select(p => p.UserRole).ToList()),

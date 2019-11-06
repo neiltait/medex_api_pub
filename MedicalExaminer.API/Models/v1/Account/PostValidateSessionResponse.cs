@@ -30,6 +30,11 @@ namespace MedicalExaminer.API.Models.v1.Account
         public string EmailAddress { get; set; }
 
         /// <summary>
+        /// Current user's GMC Number.
+        /// </summary>
+        public string GmcNumber { get; set; }
+
+        /// <summary>
         /// Role.
         /// </summary>
         /// <remarks>All roles the user has, for display purposes</remarks>
