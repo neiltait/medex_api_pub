@@ -158,6 +158,9 @@ namespace MedicalExaminer.Models
             examination.PendingScrutinyNotes = CalculateScrutinyNotesPending(examination);
             examination.HaveFinalCaseOutcomesOutstanding = !CalculateOutstandingCaseOutcomesCompleted(examination);
             examination.CaseOutcome.CaseOutcomeSummary = CalculateScrutinyOutcome(examination);
+            examination.CaseOutcome.OutcomeOfPrescrutiny = examination.CaseBreakdown.PreScrutiny?.Latest?.OutcomeOfPreScrutiny;
+            examination.CaseOutcome.OutcomeOfRepresentativeDiscussion = examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome;
+            examination.CaseOutcome.OutcomeQapDiscussion = examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome;
 
             return examination;
         }

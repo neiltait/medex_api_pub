@@ -58,7 +58,6 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             isUrgent.Should().BeFalse();
         }
 
-
         [Fact]
         public void UpdateDraftEventForUserReturnsDraft()
         {
@@ -195,7 +194,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             // Arrange / Act
             Action act = () => ExaminationExtensionMethods.UpdateCaseUrgencySort(null, 0);
-            
+
             // Assert
             act.Should().Throw<ArgumentNullException>();
         }
@@ -730,6 +729,101 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             examination.MedicalTeam.ConsultantResponsible = new ClinicalProfessional();
             examination = examination.UpdateCaseStatus();
             Assert.False(examination.ScrutinyConfirmed);
+        }
+
+        [Fact]
+        public void Event_Outcomes_Of_Three_Sources_Of_Scrutiny_Updated_On_Case_Outcome()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                CaseBreakdown = new CaseBreakDown
+                {
+                    PreScrutiny = new PreScrutinyEventContainer
+                    {
+                        Latest = new PreScrutinyEvent
+                        {
+                            UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
+                            UsersRole = "UsersRole",
+                            Created = DateTime.Now,
+                            EventId = "EventId",
+                            UserId = "UserId",
+                            MedicalExaminerThoughts = "MedicalExaminerThoughts",
+                            IsFinal = true,
+                            CircumstancesOfDeath = OverallCircumstancesOfDeath.Expected,
+                            CauseOfDeath1a = null,
+                            CauseOfDeath1b = null,
+                            CauseOfDeath1c = null,
+                            CauseOfDeath2 = null,
+                            OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
+                            ClinicalGovernanceReview = null,
+                            ClinicalGovernanceReviewText = null
+                        }
+                    },
+                    QapDiscussion = new QapDiscussionEventContainer
+                    {
+                        Latest = new QapDiscussionEvent
+                        {
+                            UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
+                            UsersRole = "UsersRole",
+                            Created = DateTime.Now,
+                            EventId = "EventId",
+                            UserId = "UserId",
+                            IsFinal = true,
+                            ParticipantRole = "ParticipantRole",
+                            ParticipantOrganisation = "ParticipantOrganisation",
+                            ParticipantPhoneNumber = "ParticipantPhoneNumber",
+                            DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(11, 00, 00),
+                            DiscussionUnableHappen = false,
+                            DiscussionDetails = null,
+                            QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                            ParticipantName = "ParticipantName",
+                            CauseOfDeath1a = null,
+                            CauseOfDeath1b = null,
+                            CauseOfDeath1c = null,
+                            CauseOfDeath2 = null
+                        }
+                    },
+                    BereavedDiscussion = new BereavedDiscussionEventContainer
+                    {
+                        Latest = new BereavedDiscussionEvent
+                        {
+                            UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
+                            UsersRole = "UsersRole",
+                            Created = DateTime.Now,
+                            EventId = "EventId",
+                            UserId = "UserId",
+                            IsFinal = true,
+                            ParticipantFullName = "ParticipantFullName",
+                            ParticipantRelationship = "ParticipantRelationship",
+                            ParticipantPhoneNumber = "ParticipantPhoneNumber",
+                            PresentAtDeath = PresentAtDeath.Yes,
+                            InformedAtDeath = InformedAtDeath.Yes,
+                            DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(09, 00, 00),
+                            DiscussionUnableHappen = false,
+                            DiscussionUnableHappenDetails = null,
+                            DiscussionDetails = "DiscussionDetails",
+                            BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted
+                        }
+                    }
+                }
+            };
+
+            // Action
+            examination = examination.UpdateCaseStatus();
+
+            // Assert
+            examination.CaseOutcome.OutcomeOfPrescrutiny.Should()
+                .Be(examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny);
+            examination.CaseOutcome.OutcomeQapDiscussion.Should()
+                .Be(examination.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome);
+            examination.CaseOutcome.OutcomeOfRepresentativeDiscussion.Should()
+                .Be(examination.CaseBreakdown.BereavedDiscussion.Latest.BereavedDiscussionOutcome);
         }
 
         private Examination SetAssigned(Examination examination)
