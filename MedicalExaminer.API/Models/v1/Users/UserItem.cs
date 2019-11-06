@@ -24,5 +24,10 @@
         ///     The User's email address.
         /// </summary>
         public string Email { get; set; }
+
+        /// <summary>
+        /// The User's GMC Number.
+        /// </summary>
+        public string GmcNumber { get; set; }
     }
 }
