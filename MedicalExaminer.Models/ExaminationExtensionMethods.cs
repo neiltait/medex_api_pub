@@ -437,12 +437,12 @@ namespace MedicalExaminer.Models
             return dateTime.Date.ToString("yyyy_MM_dd");
         }
 
-        private static bool QapOriginalCodEntered(this Examination examination)
+        public static bool QapOriginalCodEntered(this Examination examination)
         {
-            var qapCodEnteredMedTeam = examination.MedicalTeam?.Qap.CauseOfDeath1a != null
-                                       || examination.MedicalTeam?.Qap.CauseOfDeath1b != null
-                                       || examination.MedicalTeam?.Qap.CauseOfDeath1c != null
-                                       || examination.MedicalTeam?.Qap.CauseOfDeath2 != null;
+            var qapCodEnteredMedTeam = examination.MedicalTeam?.Qap?.CauseOfDeath1a != null
+                                       || examination.MedicalTeam?.Qap?.CauseOfDeath1b != null
+                                       || examination.MedicalTeam?.Qap?.CauseOfDeath1c != null
+                                       || examination.MedicalTeam?.Qap?.CauseOfDeath2 != null;
 
             var qapCodEnteredQapDiscussion = examination.CaseBreakdown.QapDiscussion.Latest?.CauseOfDeath1a != null
                                              || examination.CaseBreakdown.QapDiscussion.Latest?.CauseOfDeath1b != null
