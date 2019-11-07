@@ -34,7 +34,8 @@ namespace MedicalExaminer.Common.Authorization.Roles
                 Permission.OtherEvent,
                 Permission.AdmissionEvent,
                 Permission.MedicalHistoryEvent,
-                Permission.GetCoronerReferralDownload);
+                Permission.GetCoronerReferralDownload,
+                Permission.VoidExamination);
         }
     }
 }
