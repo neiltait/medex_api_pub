@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.Models;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.API.Extensions.Data
 {
@@ -21,7 +22,8 @@ namespace MedicalExaminer.API.Extensions.Data
             CreateMap<PutOutstandingCaseItemsRequest, CaseOutcome>()
                  .ForMember(caseOutcome => caseOutcome.MccdIssued, opt => opt.MapFrom(request => request.MccdIssued))
                  .ForMember(caseOutcome => caseOutcome.CremationFormStatus, opt => opt.MapFrom(request => request.CremationFormStatus))
-                 .ForMember(caseOutcome => caseOutcome.WaiveFee, opt => opt.MapFrom(request => request.WaiveFee))
+                 .ForMember(caseOutcome => caseOutcome.WaiveFee, opt => opt.MapFrom((source, dest, destMember, context) => 
+                     source.CremationFormStatus != CremationFormStatus.Yes ? null : source.WaiveFee))
                  .ForMember(caseOutcome => caseOutcome.GpNotifiedStatus, opt => opt.MapFrom(request => request.GpNotifiedStatus))
                  .ForAllOtherMembers(caseOutcome => caseOutcome.Ignore());
         }
