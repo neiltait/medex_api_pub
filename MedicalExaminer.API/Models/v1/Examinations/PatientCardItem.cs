@@ -166,6 +166,11 @@ namespace MedicalExaminer.API.Models.v1.Examinations
         public StatusBarResult QapEntered { get; set; } = StatusBarResult.Incomplete;
 
         /// <summary>
+        /// Status flag: Qap's original COD Entered
+        /// </summary>
+        public StatusBarResult QapOriginalCodEntered { get; set; } = StatusBarResult.Incomplete;
+
+        /// <summary>
         /// Status flag: Bereaved Info Entered
         /// </summary>
         public StatusBarResult BereavedInfoEntered { get; set; } = StatusBarResult.Incomplete;

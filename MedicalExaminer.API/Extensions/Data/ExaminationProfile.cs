@@ -507,9 +507,11 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(patientCard => patientCard.LatestAdmissionDetailsEntered, opt => opt.MapFrom(
                     (source, dest, destMember, context) => source.CaseBreakdown.AdmissionNotes.Latest != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
                 .ForMember(patientCard => patientCard.DoctorInChargeEntered, opt => opt.MapFrom(
-                    (source, dest, destMember, context) =>source.MedicalTeam.ConsultantResponsible?.Name != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
+                    (source, dest, destMember, context) => source.MedicalTeam.ConsultantResponsible?.Name != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
                 .ForMember(patientCard => patientCard.QapEntered, opt => opt.MapFrom(
                     (source, dest, destMember, context) => source.MedicalTeam.Qap?.Name != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
+                .ForMember(patientCard => patientCard.QapOriginalCodEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.QapOriginalCodEntered() ? StatusBarResult.Complete : StatusBarResult.Incomplete))
                 .ForMember(patientCard => patientCard.BereavedInfoEntered, opt => opt.MapFrom(
                     (source, dest, destMember, context) => source.Representatives?.FirstOrDefault()?.FullName != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
                 .ForMember(patientCard => patientCard.MeAssigned, opt => opt.MapFrom(
