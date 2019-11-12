@@ -212,8 +212,7 @@ namespace MedicalExaminer.Models
                 && examination.MedicalTeam?.ConsultantResponsible?.Name != null
                 && examination.MedicalTeam?.Qap?.Name != null
                 && examination.Representatives?.FirstOrDefault()?.FullName != null
-                && examination.MedicalTeam?.MedicalExaminerUserId != null
-                && QapOriginalCodEntered(examination))
+                && examination.MedicalTeam?.MedicalExaminerUserId != null)
             {
                 return StatusBarResult.Complete;
             }
@@ -435,21 +434,6 @@ namespace MedicalExaminer.Models
         public static string UrgencyKey(this DateTime dateTime)
         {
             return dateTime.Date.ToString("yyyy_MM_dd");
-        }
-
-        public static bool QapOriginalCodEntered(this Examination examination)
-        {
-            var qapCodEnteredMedTeam = examination.MedicalTeam?.Qap?.CauseOfDeath1a != null
-                                       || examination.MedicalTeam?.Qap?.CauseOfDeath1b != null
-                                       || examination.MedicalTeam?.Qap?.CauseOfDeath1c != null
-                                       || examination.MedicalTeam?.Qap?.CauseOfDeath2 != null;
-
-            var qapCodEnteredQapDiscussion = examination.CaseBreakdown.QapDiscussion.Latest?.CauseOfDeath1a != null
-                                             || examination.CaseBreakdown.QapDiscussion.Latest?.CauseOfDeath1b != null
-                                             || examination.CaseBreakdown.QapDiscussion.Latest?.CauseOfDeath1c != null
-                                             || examination.CaseBreakdown.QapDiscussion.Latest?.CauseOfDeath2 != null;
-
-            return qapCodEnteredMedTeam || qapCodEnteredQapDiscussion;
         }
 
         private static int CalculateCaseUrgencySortOrder(Examination examination, DateTime forDate)
