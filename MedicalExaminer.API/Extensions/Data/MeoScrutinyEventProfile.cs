@@ -16,6 +16,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(meoSummaryEvent => meoSummaryEvent.UserId, opt => opt.Ignore())
                 .ForMember(meoSummaryEvent => meoSummaryEvent.Created, opt => opt.Ignore())
                 .ForMember(meoSummaryEvent => meoSummaryEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(meoSummaryEvent => meoSummaryEvent.GmcNumber, opt => opt.Ignore())
                 .ForMember(meoSummaryEvent => meoSummaryEvent.UsersRole, opt => opt.Ignore());
         }
     }

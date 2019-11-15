@@ -3,14 +3,14 @@
 namespace MedicalExaminer.API.Models.v1.CaseOutcome
 {
     /// <summary>
-    /// Put Cremation Fee Waive Request
+    /// Put Void Case Request
     /// </summary>
-    public class PutCremationFeeWaiveRequest
+    public class PutVoidCaseRequest
     {
         /// <summary>
-        /// Waive Fee
+        /// Reason for voiding the examination
         /// </summary>
         [Required]
-        public bool WaiveFee { get; set; }
+        public string VoidReason { get; set; }
     }
 }

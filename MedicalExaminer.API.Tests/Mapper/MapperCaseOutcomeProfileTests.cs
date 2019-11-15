@@ -41,19 +41,59 @@ namespace MedicalExaminer.API.Tests.Mapper
         }
 
         [Fact]
-        public void PutOutstandingCaseItemsRequest_To_CaseOutcome()
+        public void PutOutstandingCaseItemsRequest_To_CaseOutcome_When_CremationFormStatus_Is_Yes()
         {
             var putOutstandingCaseItemsRequest = new PutOutstandingCaseItemsRequest
             {
                 MccdIssued = true,
                 CremationFormStatus = CremationFormStatus.Yes,
+                WaiveFee = true,
                 GpNotifiedStatus = GPNotified.GPNotified
             };
 
             var outstandingCaseItems = _mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
 
-            outstandingCaseItems.MccdIssued.Should().Be(true);
+            outstandingCaseItems.MccdIssued.Should().BeTrue();
             outstandingCaseItems.CremationFormStatus.Should().Be(CremationFormStatus.Yes);
+            outstandingCaseItems.WaiveFee.Should().BeTrue();
+            outstandingCaseItems.GpNotifiedStatus.Should().Be(GPNotified.GPNotified);
+        }
+
+        [Fact]
+        public void PutOutstandingCaseItemsRequest_To_CaseOutcome_When_CremationFormStatus_Is_No()
+        {
+            var putOutstandingCaseItemsRequest = new PutOutstandingCaseItemsRequest
+            {
+                MccdIssued = true,
+                CremationFormStatus = CremationFormStatus.No,
+                WaiveFee = true,
+                GpNotifiedStatus = GPNotified.GPNotified
+            };
+
+            var outstandingCaseItems = _mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
+
+            outstandingCaseItems.MccdIssued.Should().BeTrue();
+            outstandingCaseItems.CremationFormStatus.Should().Be(CremationFormStatus.No);
+            outstandingCaseItems.WaiveFee.Should().BeNull();
+            outstandingCaseItems.GpNotifiedStatus.Should().Be(GPNotified.GPNotified);
+        }
+
+        [Fact]
+        public void PutOutstandingCaseItemsRequest_To_CaseOutcome_When_CremationFormStatus_Is_Unknown()
+        {
+            var putOutstandingCaseItemsRequest = new PutOutstandingCaseItemsRequest
+            {
+                MccdIssued = true,
+                CremationFormStatus = CremationFormStatus.Unknown,
+                WaiveFee = true,
+                GpNotifiedStatus = GPNotified.GPNotified
+            };
+
+            var outstandingCaseItems = _mapper.Map<CaseOutcome>(putOutstandingCaseItemsRequest);
+
+            outstandingCaseItems.MccdIssued.Should().BeTrue();
+            outstandingCaseItems.CremationFormStatus.Should().Be(CremationFormStatus.Unknown);
+            outstandingCaseItems.WaiveFee.Should().BeNull();
             outstandingCaseItems.GpNotifiedStatus.Should().Be(GPNotified.GPNotified);
         }
     }

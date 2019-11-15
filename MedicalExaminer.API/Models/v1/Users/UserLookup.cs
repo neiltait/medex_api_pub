@@ -15,5 +15,10 @@
         /// Display Name
         /// </summary>
         public string FullName { get; set; }
+
+        /// <summary>
+        /// GMC Number
+        /// </summary>
+        public string GmcNumber { get; set; }
     }
 }

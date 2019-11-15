@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -95,8 +94,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             var examination1 = new Examination();
             var examination2 = new Examination();
             IEnumerable<Examination> examinationsResult = new List<Examination> { examination1, examination2 };
-            var locations = new List<Location> { };
-            var users = new List<MeUser> { };
+            var locations = new List<Location>();
+            var users = new List<MeUser>();
 
             var examinationOverview = new ExaminationsOverview();
 
@@ -117,11 +116,9 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(users.AsEnumerable()));
 
             _locationsRetrievalByQueryMock.Setup(service => service.Handle(It.IsAny<LocationsParentsQuery>()))
-                .Returns(Task.FromResult((IDictionary<string, IEnumerable<Location>>)(new Dictionary<string, IEnumerable<Location>>())));
+                .Returns(Task.FromResult((IDictionary<string, IEnumerable<Location>>)new Dictionary<string, IEnumerable<Location>>()));
 
-            var request = new GetExaminationsRequest()
-            {
-            };
+            var request = new GetExaminationsRequest();
 
             // Act
             var response = Controller.GetExaminations(request).Result;
@@ -137,22 +134,22 @@ namespace MedicalExaminer.API.Tests.Controllers
             // Arrange
             SetupAuthorize(AuthorizationResult.Success());
             var expectedLocation = new LocationLookup { LocationId = "location1", Name = "Name1" };
-            var expectedUser = new UserLookup { UserId = "user1", FullName = "User 1" };
+            var expectedUser = new UserLookup { UserId = "user1", FullName = "User 1", GmcNumber = "GmcNumber1" };
 
             var examination1 = new Examination();
             var examination2 = new Examination();
             IEnumerable<Examination> examinationsResult = new List<Examination> { examination1, examination2 };
-            var meOfficeLocation = new Location()
+            var meOfficeLocation = new Location
             {
                 LocationId = "location1",
                 Name = "Name1",
-                IsMeOffice = true,
+                IsMeOffice = true
             };
 
             var locations = new List<Location>
             {
                 meOfficeLocation,
-                new Location()
+                new Location
                 {
                     LocationId = "location2",
                     Name = "Name2"
@@ -160,17 +157,18 @@ namespace MedicalExaminer.API.Tests.Controllers
             };
             var users = new List<MeUser>
             {
-                new MeUser()
+                new MeUser
                 {
                     UserId = "user1",
+                    GmcNumber = "GmcNumber1",
                     FirstName = "User",
                     LastName = "1",
-                    Permissions = new List<MEUserPermission>()
+                    Permissions = new List<MEUserPermission>
                     {
-                        new MEUserPermission()
+                        new MEUserPermission
                         {
                             LocationId = "location1",
-                            UserRole = UserRoles.MedicalExaminer,
+                            UserRole = UserRoles.MedicalExaminer
                         }
                     }
                 }
@@ -195,14 +193,12 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Returns(Task.FromResult(users.AsEnumerable()));
 
             _locationsRetrievalByQueryMock.Setup(service => service.Handle(It.IsAny<LocationsParentsQuery>()))
-                .Returns(Task.FromResult((IDictionary<string, IEnumerable<Location>>)(new Dictionary<string, IEnumerable<Location>>()
+                .Returns(Task.FromResult((IDictionary<string, IEnumerable<Location>>)new Dictionary<string, IEnumerable<Location>>
                 {
-                    {meOfficeLocation.LocationId, new [] {meOfficeLocation } }
-                })));
+                    { meOfficeLocation.LocationId, new[] { meOfficeLocation } }
+                }));
 
-            var request = new GetExaminationsRequest()
-            {
-            };
+            var request = new GetExaminationsRequest();
 
             // Act
             var response = Controller.GetExaminations(request).Result;
@@ -231,7 +227,7 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             // Act
             var response = Controller.CreateExamination(CreateValidNewCaseRequest()).Result;
-            
+
             // Assert
             response.Result.Should().BeAssignableTo<BadRequestObjectResult>();
             var result = (BadRequestObjectResult) response.Result;
@@ -252,7 +248,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(ecs => ecs.Handle(It.IsAny<CreateExaminationQuery>()))
                 .Returns(Task.FromResult(examination));
 
-            var mockMeUser = new MeUser()
+            var mockMeUser = new MeUser
             {
                 UserId = "abcd"
             };
@@ -288,7 +284,7 @@ namespace MedicalExaminer.API.Tests.Controllers
                 .Setup(ecs => ecs.Handle(It.IsAny<CreateExaminationQuery>()))
                 .Returns(Task.FromResult(examination));
 
-            var mockMeUser = new MeUser()
+            var mockMeUser = new MeUser
             {
                 UserId = "abcd"
             };

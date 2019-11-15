@@ -53,8 +53,12 @@ namespace MedicalExaminer.API.Tests.Controllers
         [Fact]
         public async void ValidateSession_ReturnsSession_WhenSessionValid()
         {
+            var firstName = "firstName";
+            var gmcNumber = "gmcNumber";
             var user = new MeUser()
             {
+                FirstName = firstName,
+                GmcNumber = gmcNumber,
                 Permissions = new List<MEUserPermission>()
                 {
                     new MEUserPermission()
@@ -80,6 +84,8 @@ namespace MedicalExaminer.API.Tests.Controllers
             var okRequestResult = taskResult.Result.Should().BeAssignableTo<OkObjectResult>().Subject;
             var result = okRequestResult.Value.Should().BeAssignableTo<PostValidateSessionResponse>().Subject;
             result.Role.Contains(UserRoles.MedicalExaminer).Should().BeTrue();
+            result.FirstName.Should().Be(firstName);
+            result.GmcNumber.Should().Be(gmcNumber);
 
             _mockRolePermissions
                 .Verify(rp => rp.PermissionsForRoles(It.IsAny<IEnumerable<UserRoles>>()));

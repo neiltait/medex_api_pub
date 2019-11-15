@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 
@@ -15,7 +14,7 @@ namespace MedicalExaminer.Common.Queries.Examination
         public readonly int FilterPageNumber;
         public readonly int FilterPageSize;
         public readonly string FilterUserId;
-        public readonly bool FilterOpenCases;
+        public readonly OpenClosedCases FilterOpenCases;
 
         public ExaminationsRetrievalQuery(
             IEnumerable<string> permissedLocations,
@@ -25,7 +24,7 @@ namespace MedicalExaminer.Common.Queries.Examination
             int filterPageNumber,
             int filterPageSize,
             string filterUserId,
-            bool filterOpenCases)
+            OpenClosedCases filterOpenCases)
         {
             PermissedLocations = permissedLocations;
             FilterCaseStatus = filterCaseStatus;

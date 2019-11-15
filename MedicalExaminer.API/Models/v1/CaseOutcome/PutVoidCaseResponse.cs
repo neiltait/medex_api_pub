@@ -1,11 +1,12 @@
-﻿using MedicalExaminer.API.Models.v1.Examinations;
+﻿using System;
+using MedicalExaminer.API.Models.v1.Examinations;
 
 namespace MedicalExaminer.API.Models.v1.CaseOutcome
 {
     /// <summary>
-    /// Put Cremation Fee Waive Response
+    /// Response for void case
     /// </summary>
-    public class PutCremationFeeWaiveResponse : ResponseBase
+    public class PutVoidCaseResponse : ResponseBase
     {
         /// <summary>
         /// Patient card header
@@ -15,6 +16,6 @@ namespace MedicalExaminer.API.Models.v1.CaseOutcome
         /// <summary>
         /// Should the cremation fee be waived?
         /// </summary>
-        public bool? WaiveFee { get; set; }
+        public DateTime? VoidedDate { get; set; }
     }
 }

@@ -57,6 +57,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
                 DateCaseClosed = DateTime.Now,
                 EventId = Guid.NewGuid().ToString(),
                 UserFullName = param.User.FullName(),
+                GmcNumber = param.User.GmcNumber,
                 UserId = param.User.UserId,
                 UsersRole = param.User.Role()?.ToString()
             };

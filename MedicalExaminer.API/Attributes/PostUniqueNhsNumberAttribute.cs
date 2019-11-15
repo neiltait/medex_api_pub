@@ -28,13 +28,13 @@ namespace MedicalExaminer.API.Attributes
                 return ValidationResult.Success;
             }
 
-            var examinationPersistence = (IAsyncQueryHandler<ExaminationByNhsNumberRetrievalQuery, Examination>)context.GetService(typeof(IAsyncQueryHandler<ExaminationByNhsNumberRetrievalQuery, Examination>));
+            var examinationPersistence = (IAsyncQueryHandler<DuplicateExaminationByNhsNumberRetrievalQuery, Examination>)context.GetService(typeof(IAsyncQueryHandler<DuplicateExaminationByNhsNumberRetrievalQuery, Examination>));
             if (examinationPersistence == null)
             {
                 throw new NullReferenceException("examination persistence is null");
             }
 
-            var existingExamination = examinationPersistence.Handle(new ExaminationByNhsNumberRetrievalQuery(nhsNumber)).Result;
+            var existingExamination = examinationPersistence.Handle(new DuplicateExaminationByNhsNumberRetrievalQuery(nhsNumber)).Result;
 
             return existingExamination != null
                 ? new ValidationResultEnumCodes(SystemValidationErrors.Duplicate)

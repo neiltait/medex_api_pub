@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Common.Services.Examination
 {
@@ -44,8 +45,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 CreatedAt = examination.CreatedAt,
                 case_completed = examination.CaseCompleted,
                 nhs_number = examination.NhsNumber,
-                mode_of_disposal = examination.ModeOfDisposal,
-                waive_fee = examination.WaiveFee,
+                waive_fee = examination.CaseOutcome.WaiveFee,
                 case_outcome = examination.CaseOutcome
             };
 

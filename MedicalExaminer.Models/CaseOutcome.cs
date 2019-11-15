@@ -67,6 +67,12 @@ namespace MedicalExaminer.Models
         public CremationFormStatus? CremationFormStatus { get; set; }
 
         /// <summary>
+        /// should the cremation fee be waived?
+        /// </summary>
+        [JsonProperty(PropertyName = "waive_fee")]
+        public bool? WaiveFee { get; set; } = null;
+
+        /// <summary>
         /// GP Notified Status
         /// </summary>
         [JsonProperty(PropertyName = "gp_notified_status")]

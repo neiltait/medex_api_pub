@@ -2,22 +2,19 @@
 
 namespace MedicalExaminer.Common.Queries.CaseOutcome
 {
-    /// <summary>
-    /// A query object to update the waiveFee property on the examination
-    /// </summary>
-    public class SaveWaiveFeeQuery : IQuery<Models.Examination>
+    public class VoidCaseQuery : IQuery<Models.Examination>
     {
         /// <summary>
         /// A constructor
         /// </summary>
         /// <param name="examinationId">The Examination ID</param>
         /// <param name="user">The user that called the endpoint</param>
-        /// <param name="waiveFee">Should the fee be waived?</param>
-        public SaveWaiveFeeQuery(string examinationId, MeUser user, bool waiveFee)
+        /// <param name="voidReason">Reason for voiding the case</param>
+        public VoidCaseQuery(string examinationId, MeUser user, string voidReason)
         {
             ExaminationId = examinationId;
             User = user;
-            WaiveFee = waiveFee;
+            VoidReason = voidReason;
         }
 
         /// <summary>
@@ -31,8 +28,8 @@ namespace MedicalExaminer.Common.Queries.CaseOutcome
         public MeUser User { get; }
 
         /// <summary>
-        /// Should the fee be waived?
+        /// Reason for voiding the examination
         /// </summary>
-        public bool WaiveFee { get; }
+        public string VoidReason { get; set; }
     }
 }

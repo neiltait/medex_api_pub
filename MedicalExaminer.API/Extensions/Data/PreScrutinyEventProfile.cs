@@ -19,6 +19,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(preScrutinyEvent => preScrutinyEvent.UserId, opt => opt.Ignore())
                 .ForMember(preScrutinyEvent => preScrutinyEvent.Created, opt => opt.Ignore())
                 .ForMember(preScrutinyEvent => preScrutinyEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(preScrutinyEvent => preScrutinyEvent.GmcNumber, opt => opt.Ignore())
                 .ForMember(preScrutinyEvent => preScrutinyEvent.UsersRole, opt => opt.Ignore());
         }
     }

@@ -29,6 +29,7 @@
         AssignExaminationToMedicalExaminer,
         UpdateExamination,
         UpdateExaminationState,
+        VoidExamination,
 
         AddEventToExamination,
         GetExaminationEvents,

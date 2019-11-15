@@ -51,6 +51,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 UserId = param.Examination.CreatedBy,
                 UsersRole = param.User.UsersRoleIn(new[] { UserRoles.MedicalExaminer, UserRoles.MedicalExaminerOfficer }).ToString(),
                 UserFullName = param.User.FullName(),
+                GmcNumber = param.User.GmcNumber,
                 EventId = Guid.NewGuid().ToString()
             };
             param.Examination.UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort);

@@ -123,7 +123,7 @@ namespace MedicalExaminer.Models
                 throw new ArgumentNullException(nameof(examination));
             }
 
-            if (examination.CaseCompleted)
+            if (examination.CaseCompleted || examination.IsVoid)
             {
                 examination.UrgencySort = new Dictionary<string, int>();
                 return examination;
@@ -158,6 +158,9 @@ namespace MedicalExaminer.Models
             examination.PendingScrutinyNotes = CalculateScrutinyNotesPending(examination);
             examination.HaveFinalCaseOutcomesOutstanding = !CalculateOutstandingCaseOutcomesCompleted(examination);
             examination.CaseOutcome.CaseOutcomeSummary = CalculateScrutinyOutcome(examination);
+            examination.CaseOutcome.OutcomeOfPrescrutiny = examination.CaseBreakdown.PreScrutiny?.Latest?.OutcomeOfPreScrutiny;
+            examination.CaseOutcome.OutcomeOfRepresentativeDiscussion = examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome;
+            examination.CaseOutcome.OutcomeQapDiscussion = examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome;
 
             return examination;
         }
@@ -446,9 +449,7 @@ namespace MedicalExaminer.Models
 
         public static string UrgencyKey(this DateTime dateTime)
         {
-            return dateTime
-                .Date
-                .ToString("yyyy_MM_dd");
+            return dateTime.Date.ToString("yyyy_MM_dd");
         }
 
         private static int CalculateCaseUrgencySortOrder(Examination examination, DateTime forDate)

@@ -10,13 +10,13 @@ using Microsoft.Extensions.Options;
 
 namespace MedicalExaminer.Common.Services.CaseOutcome
 {
-    public class SaveWaiveFeeService : IAsyncQueryHandler<SaveWaiveFeeQuery, Models.Examination>
+    public class VoidCaseService : IAsyncQueryHandler<VoidCaseQuery, Models.Examination>
     {
         private readonly IConnectionSettings _connectionSettings;
         private readonly IDatabaseAccess _databaseAccess;
         private readonly UrgencySettings _urgencySettings;
 
-        public SaveWaiveFeeService(
+        public VoidCaseService(
             IDatabaseAccess databaseAccess,
             IExaminationConnectionSettings connectionSettings,
             IOptions<UrgencySettings> urgencySettings)
@@ -26,7 +26,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             _urgencySettings = urgencySettings.Value;
         }
 
-        public async Task<Models.Examination> Handle(SaveWaiveFeeQuery param)
+        public async Task<Models.Examination> Handle(VoidCaseQuery param)
         {
             if (string.IsNullOrEmpty(param.ExaminationId))
             {
@@ -46,10 +46,23 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
 
             examinationToUpdate.LastModifiedBy = param.User.UserId;
             examinationToUpdate.ModifiedAt = DateTime.Now;
+            examinationToUpdate.VoidReason = param.VoidReason;
+            examinationToUpdate.IsVoid = true;
+            examinationToUpdate.VoidedDate = DateTime.Now;
 
-            examinationToUpdate.WaiveFee = param.WaiveFee;
+            examinationToUpdate.CaseBreakdown.VoidEvent = new VoidEvent
+            {
+                VoidReason = examinationToUpdate.VoidReason,
+                Created = DateTime.Now,
+                EventId = Guid.NewGuid().ToString(),
+                UserFullName = param.User.FullName(),
+                GmcNumber = param.User.GmcNumber,
+                UserId = param.User.UserId,
+                UsersRole = param.User.Role()?.ToString()
+            };
 
-            examinationToUpdate = examinationToUpdate.UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort);
+            examinationToUpdate =
+                examinationToUpdate.UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort);
             examinationToUpdate = examinationToUpdate.UpdateCaseStatus();
 
             var result = await _databaseAccess.UpdateItemAsync(_connectionSettings, examinationToUpdate);

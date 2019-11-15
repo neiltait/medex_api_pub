@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MedicalExaminer.Models.Enums;
+﻿using MedicalExaminer.Models.Enums;
 
 namespace MedicalExaminer.Common.Authorization.Roles
 {
@@ -29,17 +26,13 @@ namespace MedicalExaminer.Common.Authorization.Roles
                 Permission.CreateUserPermission,
                 Permission.UpdateUserPermission,
                 Permission.DeleteUserPermission,
-
                 Permission.GetLocations,
                 Permission.GetLocation,
                 Permission.UpdateLocation,
-
                 Permission.GetExaminations,
                 Permission.GetExamination,
-
                 Permission.GetProfile,
                 Permission.UpdateProfile,
-
                 Permission.GetFinanceDownload);
         }
     }
