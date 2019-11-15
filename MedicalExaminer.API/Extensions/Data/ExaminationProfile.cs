@@ -515,15 +515,26 @@ namespace MedicalExaminer.API.Extensions.Data
 
                         return StatusBarResult.Complete;
                     }))
-                .ForMember(patientCard => patientCard.NhsNumberEntered, opt => opt.MapFrom((source, dest, destMember, context) => string.IsNullOrEmpty(source.NhsNumber) ? StatusBarResult.Unknown : StatusBarResult.Complete))
-                .ForMember(patientCard => patientCard.BasicDetailsEntered, opt => opt.MapFrom((source, dest, destMember, context) => source.CalculateBasicDetailsEnteredStatus()))
-                .ForMember(patientCard => patientCard.LatestAdmissionDetailsEntered, opt => opt.MapFrom((source, dest, destMember, context) => source.CaseBreakdown.AdmissionNotes.Latest != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
-                .ForMember(patientCard => patientCard.DoctorInChargeEntered, opt => opt.MapFrom((source, dest, destMember, context) => source.MedicalTeam.ConsultantResponsible?.Name != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
-                .ForMember(patientCard => patientCard.QapEntered, opt => opt.MapFrom((source, dest, destMember, context) => source.MedicalTeam.Qap?.Name != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
-                .ForMember(patientCard => patientCard.BereavedInfoEntered, opt => opt.MapFrom((source, dest, destMember, context) => source.Representatives?.FirstOrDefault()?.FullName != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
-                .ForMember(patientCard => patientCard.MeAssigned, opt => opt.MapFrom((source, dest, destMember, context) => source.MedicalTeam.MedicalExaminerUserId != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
-                .ForMember(patientCard => patientCard.AdditionalDetailsEntered, opt => opt.MapFrom((source, dest, destMember, context) => source.CalculateAdditionalDetailsEnteredStatus()))
-                .ForMember(patientCard => patientCard.PreScrutinyEventEntered, opt => opt.MapFrom((source, dest, destMember, context) => source.CaseBreakdown.PreScrutiny.Latest != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
+                .ForMember(patientCard => patientCard.NhsNumberEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => string.IsNullOrEmpty(source.NhsNumber) ? StatusBarResult.Unknown : StatusBarResult.Complete))
+                .ForMember(patientCard => patientCard.BasicDetailsEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CalculateBasicDetailsEnteredStatus()))
+                .ForMember(patientCard => patientCard.LatestAdmissionDetailsEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CaseBreakdown.AdmissionNotes.Latest != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
+                .ForMember(patientCard => patientCard.DoctorInChargeEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.MedicalTeam.ConsultantResponsible?.Name != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
+                .ForMember(patientCard => patientCard.QapEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.MedicalTeam.Qap?.Name != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
+                .ForMember(patientCard => patientCard.QapOriginalCodEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.QapOriginalCodEntered() ? StatusBarResult.Complete : StatusBarResult.Incomplete))
+                .ForMember(patientCard => patientCard.BereavedInfoEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.Representatives?.FirstOrDefault()?.FullName != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
+                .ForMember(patientCard => patientCard.MeAssigned, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.MedicalTeam.MedicalExaminerUserId != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
+                .ForMember(patientCard => patientCard.AdditionalDetailsEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CalculateAdditionalDetailsEnteredStatus()))
+                .ForMember(patientCard => patientCard.PreScrutinyEventEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.CaseBreakdown.PreScrutiny.Latest != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
                 .ForMember(patientCard => patientCard.QapDiscussionEventEntered, opt => opt.MapFrom(
                     (source, dest, destMember, context) =>
                     {

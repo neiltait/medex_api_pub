@@ -1346,6 +1346,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.LatestAdmissionDetailsEntered.Should().Be(StatusBarResult.Complete);
             result.DoctorInChargeEntered.Should().Be(StatusBarResult.Complete);
             result.QapEntered.Should().Be(StatusBarResult.Complete);
+            result.QapOriginalCodEntered.Should().Be(StatusBarResult.Complete);
             result.BereavedInfoEntered.Should().Be(StatusBarResult.Complete);
             result.MeAssigned.Should().Be(StatusBarResult.Complete);
 
@@ -1438,6 +1439,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.LatestAdmissionDetailsEntered.Should().Be(StatusBarResult.Complete);
             result.DoctorInChargeEntered.Should().Be(StatusBarResult.Complete);
             result.QapEntered.Should().Be(StatusBarResult.Complete);
+            result.QapOriginalCodEntered.Should().Be(StatusBarResult.Complete);
             result.BereavedInfoEntered.Should().Be(StatusBarResult.Complete);
             result.MeAssigned.Should().Be(StatusBarResult.Complete);
 
@@ -1607,6 +1609,7 @@ namespace MedicalExaminer.API.Tests.Mapper
             result.LatestAdmissionDetailsEntered.Should().Be(StatusBarResult.Incomplete);
             result.DoctorInChargeEntered.Should().Be(StatusBarResult.Incomplete);
             result.QapEntered.Should().Be(StatusBarResult.Incomplete);
+            result.QapOriginalCodEntered.Should().Be(StatusBarResult.Incomplete);
             result.BereavedInfoEntered.Should().Be(StatusBarResult.Incomplete);
             result.MeAssigned.Should().Be(StatusBarResult.Incomplete);
         }

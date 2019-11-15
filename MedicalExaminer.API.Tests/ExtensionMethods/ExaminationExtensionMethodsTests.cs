@@ -2193,22 +2193,21 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             var examination = new Examination
             {
                 Representatives = new List<Representative>
-                {
-                    new Representative
-                    {
-                        AppointmentDate = new DateTime(2019, 2, 24),
-                        AppointmentTime = new TimeSpan(11, 30, 0),
-                        FullName = "fullName",
-                        PhoneNumber = "123456789",
-                        Relationship = "relationship",
-                    }
-                },
+        {
+            new Representative
+            {
+                AppointmentDate = new DateTime(2019, 2, 24),
+                AppointmentTime = new TimeSpan(11, 30, 0),
+                FullName = "fullName",
+                PhoneNumber = "123456789",
+                Relationship = "relationship",
+            }
+        },
 
                 MedicalTeam = new MedicalTeam
                 {
                     MedicalExaminerUserId = "MedicalExaminerUserId",
                     MedicalExaminerFullName = "MedicalExaminerFullName",
-                    MedicalExaminerGmcNumber = "MedicalExaminerGmcNumber",
                     ConsultantResponsible = new ClinicalProfessional
                     {
                         Name = "ConsultantResponsibleName",
@@ -2249,7 +2248,6 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             UserId = "userId",
                             UsersRole = "usersRole",
                             UserFullName = "usersFullName",
-                            GmcNumber = "GmcNumber",
                         }
                     },
                     QapDiscussion = new QapDiscussionEventContainer
