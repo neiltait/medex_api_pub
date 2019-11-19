@@ -59,5 +59,40 @@ namespace MedicalExaminer.Models
         /// GMC Number Of User For Latest Pre-scrutiny
         /// </summary>
         public string GmcNumberOfUserForLatestPrescrutiny { get; set; }
+
+        /// <summary>
+        /// Has the qap cause of death been entered.
+        /// </summary>
+        public StatusBarResult QapCodEntered { get; set; }
+
+        /// <summary>
+        /// The name of the QAP.
+        /// </summary>
+        public string UserForQapOriginalCauseOfDeath { get; set; }
+
+        /// <summary>
+        /// Date of the original Cause of death established by the QAP.
+        /// </summary>
+        public DateTime? DateOfQapOriginalCauseOfDeath { get; set; }
+
+        /// <summary>
+        /// Original cause of death established by QAP 1a
+        /// </summary>
+        public string QapOriginalCauseOfDeath1a { get; set; }
+
+        /// <summary>
+        /// Original cause of death established by QAP 1b
+        /// </summary>
+        public string QapOriginalCauseOfDeath1b { get; set; }
+
+        /// <summary>
+        /// Original cause of death established by QAP 1c
+        /// </summary>
+        public string QapOriginalCauseOfDeath1c { get; set; }
+
+        /// <summary>
+        /// Original cause of death established by QAP 2
+        /// </summary>
+        public string QapOriginalCauseOfDeath2 { get; set; }
     }
 }
