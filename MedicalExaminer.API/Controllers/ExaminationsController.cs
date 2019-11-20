@@ -136,9 +136,10 @@ namespace MedicalExaminer.API.Controllers
             };
 
             var locations = (await _locationRetrievalByQueryHandler.Handle(
-                    new LocationsRetrievalByQuery(null, null, true, true, permissedLocations))).ToList();
+                    new LocationsRetrievalByQuery(null, null, false, false, permissedLocations))).ToList();
 
-            var allLocations = (await _locationsRetrievalByQueryHandler.Handle(new LocationsParentsQuery(locations.Select(x => x.LocationId)))).ToList();
+            var onlyMeOffices = locations.Where(l => l.IsMeOffice).ToList();
+            var allLocations = (await _locationsRetrievalByQueryHandler.Handle(new LocationsParentsQuery(onlyMeOffices.Select(x => x.LocationId)))).ToList();
 
             var flatternedLocations = allLocations.SelectMany(x => x.Value);
             var distinctLocationIds = flatternedLocations.Select(x => x.LocationId).Distinct();

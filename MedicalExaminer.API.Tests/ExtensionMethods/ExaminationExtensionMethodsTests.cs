@@ -58,7 +58,6 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             isUrgent.Should().BeFalse();
         }
 
-
         [Fact]
         public void UpdateDraftEventForUserReturnsDraft()
         {
@@ -195,7 +194,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         {
             // Arrange / Act
             Action act = () => ExaminationExtensionMethods.UpdateCaseUrgencySort(null, 0);
-            
+
             // Assert
             act.Should().Throw<ArgumentNullException>();
         }
@@ -261,6 +260,38 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
 
             // Assert
             result.IsUrgent().Should().BeTrue();
+        }
+
+        [Fact]
+        public void Close_Case_Then_Urgency_Sort_Is_Reset()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                CaseCompleted = true
+            };
+
+            // Act
+            var result = examination.UpdateCaseUrgencySort(1);
+
+            // Assert
+            result.UrgencySort.Count.Should().Be(0);
+        }
+
+        [Fact]
+        public void Void_Case_Then_Urgency_Sort_Is_Reset()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                IsVoid = true
+            };
+
+            // Act
+            var result = examination.UpdateCaseUrgencySort(1);
+
+            // Assert
+            result.UrgencySort.Count.Should().Be(0);
         }
 
         [Fact]
@@ -700,6 +731,101 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
             Assert.False(examination.ScrutinyConfirmed);
         }
 
+        [Fact]
+        public void Event_Outcomes_Of_Three_Sources_Of_Scrutiny_Updated_On_Case_Outcome()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                CaseBreakdown = new CaseBreakDown
+                {
+                    PreScrutiny = new PreScrutinyEventContainer
+                    {
+                        Latest = new PreScrutinyEvent
+                        {
+                            UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
+                            UsersRole = "UsersRole",
+                            Created = DateTime.Now,
+                            EventId = "EventId",
+                            UserId = "UserId",
+                            MedicalExaminerThoughts = "MedicalExaminerThoughts",
+                            IsFinal = true,
+                            CircumstancesOfDeath = OverallCircumstancesOfDeath.Expected,
+                            CauseOfDeath1a = null,
+                            CauseOfDeath1b = null,
+                            CauseOfDeath1c = null,
+                            CauseOfDeath2 = null,
+                            OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
+                            ClinicalGovernanceReview = null,
+                            ClinicalGovernanceReviewText = null
+                        }
+                    },
+                    QapDiscussion = new QapDiscussionEventContainer
+                    {
+                        Latest = new QapDiscussionEvent
+                        {
+                            UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
+                            UsersRole = "UsersRole",
+                            Created = DateTime.Now,
+                            EventId = "EventId",
+                            UserId = "UserId",
+                            IsFinal = true,
+                            ParticipantRole = "ParticipantRole",
+                            ParticipantOrganisation = "ParticipantOrganisation",
+                            ParticipantPhoneNumber = "ParticipantPhoneNumber",
+                            DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(11, 00, 00),
+                            DiscussionUnableHappen = false,
+                            DiscussionDetails = null,
+                            QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                            ParticipantName = "ParticipantName",
+                            CauseOfDeath1a = null,
+                            CauseOfDeath1b = null,
+                            CauseOfDeath1c = null,
+                            CauseOfDeath2 = null
+                        }
+                    },
+                    BereavedDiscussion = new BereavedDiscussionEventContainer
+                    {
+                        Latest = new BereavedDiscussionEvent
+                        {
+                            UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
+                            UsersRole = "UsersRole",
+                            Created = DateTime.Now,
+                            EventId = "EventId",
+                            UserId = "UserId",
+                            IsFinal = true,
+                            ParticipantFullName = "ParticipantFullName",
+                            ParticipantRelationship = "ParticipantRelationship",
+                            ParticipantPhoneNumber = "ParticipantPhoneNumber",
+                            PresentAtDeath = PresentAtDeath.Yes,
+                            InformedAtDeath = InformedAtDeath.Yes,
+                            DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(09, 00, 00),
+                            DiscussionUnableHappen = false,
+                            DiscussionUnableHappenDetails = null,
+                            DiscussionDetails = "DiscussionDetails",
+                            BereavedDiscussionOutcome = BereavedDiscussionOutcome.CauseOfDeathAccepted
+                        }
+                    }
+                }
+            };
+
+            // Action
+            examination = examination.UpdateCaseStatus();
+
+            // Assert
+            examination.CaseOutcome.OutcomeOfPrescrutiny.Should()
+                .Be(examination.CaseBreakdown.PreScrutiny.Latest.OutcomeOfPreScrutiny);
+            examination.CaseOutcome.OutcomeQapDiscussion.Should()
+                .Be(examination.CaseBreakdown.QapDiscussion.Latest.QapDiscussionOutcome);
+            examination.CaseOutcome.OutcomeOfRepresentativeDiscussion.Should()
+                .Be(examination.CaseBreakdown.BereavedDiscussion.Latest.BereavedDiscussionOutcome);
+        }
+
         private Examination SetAssigned(Examination examination)
         {
             examination.MedicalTeam.MedicalExaminerOfficerUserId = "medicalExaminerOfficer";
@@ -857,6 +983,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             MedicalExaminerThoughts = "MedicalExaminerThoughts",
                             OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
                             UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
                             UserId = "userId",
                             UsersRole = "UsersRole"
                         }
@@ -874,7 +1001,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Notes = "Notes",
                             UserId = "userId",
                             UsersRole = "usersRole",
-                            UserFullName = "usersFullName"
+                            UserFullName = "usersFullName",
+                            GmcNumber = "GmcNumber",
                         }
                     },
                     MeoSummary = new MeoSummaryEventContainer
@@ -882,6 +1010,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         Latest = new MeoSummaryEvent
                         {
                             UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
                             UsersRole = "UsersRole",
                             EventId = "EventId",
                             UserId = "UserId",
@@ -911,6 +1040,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Created = DateTime.Now,
                             QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                             UserFullName = "user full name",
+                            GmcNumber = "GmcNumber",
                             UserId = "userId",
                             UsersRole = "user role"
                         }
@@ -930,6 +1060,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             IsFinal = true,
                             UserId = "userId",
                             UserFullName = "user full name",
+                            GmcNumber = "GmcNumber",
                             UsersRole = "users role",
                             ParticipantFullName = "ParticipantFullName",
                             ParticipantPhoneNumber = "ParticipantPhoneNumber",
@@ -974,6 +1105,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             MedicalExaminerThoughts = "MedicalExaminerThoughts",
                             OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
                             UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
                             UserId = "userId",
                             UsersRole = "UsersRole"
                         }
@@ -991,7 +1123,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Notes = "Notes",
                             UserId = "userId",
                             UsersRole = "usersRole",
-                            UserFullName = "usersFullName"
+                            UserFullName = "usersFullName",
+                            GmcNumber = "GmcNumber",
                         }
                     },
                     MeoSummary = new MeoSummaryEventContainer
@@ -999,6 +1132,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         Latest = new MeoSummaryEvent
                         {
                             UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
                             UsersRole = "UsersRole",
                             EventId = "EventId",
                             UserId = "UserId",
@@ -1028,6 +1162,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Created = DateTime.Now,
                             QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                             UserFullName = "user full name",
+                            GmcNumber = "GmcNumber",
                             UserId = "userId",
                             UsersRole = "user role"
                         }
@@ -1047,6 +1182,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             IsFinal = true,
                             UserId = "userId",
                             UserFullName = "user full name",
+                            GmcNumber = "GmcNumber",
                             UsersRole = "users role",
                             ParticipantFullName = "ParticipantFullName",
                             ParticipantPhoneNumber = "ParticipantPhoneNumber",
@@ -1100,6 +1236,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             MedicalExaminerThoughts = "MedicalExaminerThoughts",
                             OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
                             UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
                             UserId = "userId",
                             UsersRole = "UsersRole"
                         }
@@ -1117,7 +1254,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Notes = "Notes",
                             UserId = "userId",
                             UsersRole = "usersRole",
-                            UserFullName = "usersFullName"
+                            UserFullName = "usersFullName",
+                            GmcNumber = "GmcNumber",
                         }
                     },
                     MeoSummary = new MeoSummaryEventContainer
@@ -1125,6 +1263,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         Latest = new MeoSummaryEvent
                         {
                             UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
                             UsersRole = "UsersRole",
                             EventId = "EventId",
                             UserId = "UserId",
@@ -1154,6 +1293,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Created = DateTime.Now,
                             QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                             UserFullName = "user full name",
+                            GmcNumber = "GmcNumber",
                             UserId = "userId",
                             UsersRole = "user role"
                         }
@@ -1204,6 +1344,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             MedicalExaminerThoughts = "MedicalExaminerThoughts",
                             OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
                             UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
                             UserId = "userId",
                             UsersRole = "UsersRole"
                         }
@@ -1221,7 +1362,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Notes = "Notes",
                             UserId = "userId",
                             UsersRole = "usersRole",
-                            UserFullName = "usersFullName"
+                            UserFullName = "usersFullName",
+                            GmcNumber = "GmcNumber",
                         }
                     },
                     MeoSummary = new MeoSummaryEventContainer
@@ -1229,6 +1371,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         Latest = new MeoSummaryEvent
                         {
                             UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
                             UsersRole = "UsersRole",
                             EventId = "EventId",
                             UserId = "UserId",
@@ -1252,6 +1395,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             IsFinal = true,
                             UserId = "userId",
                             UserFullName = "user full name",
+                            GmcNumber = "GmcNumber",
                             UsersRole = "users role",
                             ParticipantFullName = "ParticipantFullName",
                             ParticipantPhoneNumber = "ParticipantPhoneNumber",
@@ -1305,6 +1449,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             MedicalExaminerThoughts = "MedicalExaminerThoughts",
                             OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
                             UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
                             UserId = "userId",
                             UsersRole = "UsersRole"
                         }
@@ -1314,6 +1459,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         Latest = new MeoSummaryEvent
                         {
                             UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
                             UsersRole = "UsersRole",
                             EventId = "EventId",
                             UserId = "UserId",
@@ -1343,6 +1489,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Created = DateTime.Now,
                             QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                             UserFullName = "user full name",
+                            GmcNumber = "GmcNumber",
                             UserId = "userId",
                             UsersRole = "user role"
                         }
@@ -1362,6 +1509,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             IsFinal = true,
                             UserId = "userId",
                             UserFullName = "user full name",
+                            GmcNumber = "GmcNumber",
                             UsersRole = "users role",
                             ParticipantFullName = "ParticipantFullName",
                             ParticipantPhoneNumber = "ParticipantPhoneNumber",
@@ -1411,7 +1559,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Notes = "Notes",
                             UserId = "userId",
                             UsersRole = "usersRole",
-                            UserFullName = "usersFullName"
+                            UserFullName = "usersFullName",
+                            GmcNumber = "GmcNumber",
                         }
                     },
                     MeoSummary = new MeoSummaryEventContainer
@@ -1419,6 +1568,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         Latest = new MeoSummaryEvent
                         {
                             UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
                             UsersRole = "UsersRole",
                             EventId = "EventId",
                             UserId = "UserId",
@@ -1448,6 +1598,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Created = DateTime.Now,
                             QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                             UserFullName = "user full name",
+                            GmcNumber = "GmcNumber",
                             UserId = "userId",
                             UsersRole = "user role"
                         }
@@ -1467,6 +1618,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             IsFinal = true,
                             UserId = "userId",
                             UserFullName = "user full name",
+                            GmcNumber = "GmcNumber",
                             UsersRole = "users role",
                             ParticipantFullName = "ParticipantFullName",
                             ParticipantPhoneNumber = "ParticipantPhoneNumber",
@@ -1511,6 +1663,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             MedicalExaminerThoughts = "MedicalExaminerThoughts",
                             OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
                             UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
                             UserId = "userId",
                             UsersRole = "UsersRole"
                         }
@@ -1528,7 +1681,8 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Notes = "Notes",
                             UserId = "userId",
                             UsersRole = "usersRole",
-                            UserFullName = "usersFullName"
+                            UserFullName = "usersFullName",
+                            GmcNumber = "GmcNumber",
                         }
                     },
                     QapDiscussion = new QapDiscussionEventContainer
@@ -1552,6 +1706,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Created = DateTime.Now,
                             QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                             UserFullName = "user full name",
+                            GmcNumber = "GmcNumber",
                             UserId = "userId",
                             UsersRole = "user role"
                         }
@@ -1571,6 +1726,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             IsFinal = true,
                             UserId = "userId",
                             UserFullName = "user full name",
+                            GmcNumber = "GmcNumber",
                             UsersRole = "users role",
                             ParticipantFullName = "ParticipantFullName",
                             ParticipantPhoneNumber = "ParticipantPhoneNumber",
@@ -1947,6 +2103,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 {
                     MedicalExaminerUserId = "MedicalExaminerUserId",
                     MedicalExaminerFullName = "MedicalExaminerFullName",
+                    MedicalExaminerGmcNumber = "MedicalExaminerGmcNumber",
                     ConsultantResponsible = new ClinicalProfessional
                     {
                         Name = "ConsultantResponsibleName",
@@ -1983,6 +2140,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             UserId = "userId",
                             UsersRole = "usersRole",
                             UserFullName = "usersFullName",
+                            GmcNumber = "GmcNumber",
                         }
                     }
                 }
@@ -2006,6 +2164,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 MedicalTeam = new MedicalTeam
                 {
                     MedicalExaminerUserId = null,
+                    MedicalExaminerGmcNumber = null,
                     MedicalExaminerFullName = null,
                     ConsultantResponsible = null,
                     Qap = null,
@@ -2028,7 +2187,85 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
         }
 
         [Fact]
-        public void CalculateAdditionalDetailsEnteredStatus_When_All_Additional_Details_Returns_True()
+        public void CalculateAdditionalDetailsEnteredStatus_When_All_Additional_Details_And_With_Med_Team_QAP_Only_COD_Returns_True()
+        {
+            // Arrange
+            var examination = new Examination
+            {
+                Representatives = new List<Representative>
+        {
+            new Representative
+            {
+                AppointmentDate = new DateTime(2019, 2, 24),
+                AppointmentTime = new TimeSpan(11, 30, 0),
+                FullName = "fullName",
+                PhoneNumber = "123456789",
+                Relationship = "relationship",
+            }
+        },
+
+                MedicalTeam = new MedicalTeam
+                {
+                    MedicalExaminerUserId = "MedicalExaminerUserId",
+                    MedicalExaminerFullName = "MedicalExaminerFullName",
+                    ConsultantResponsible = new ClinicalProfessional
+                    {
+                        Name = "ConsultantResponsibleName",
+                        Role = "ConsultantResponsible",
+                        Organisation = "Organisation",
+                        Phone = "12345678",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber",
+                    },
+                    Qap = new ClinicalProfessional
+                    {
+                        Name = "QapName",
+                        Role = "Qap",
+                        Organisation = "Organisation",
+                        Phone = "12345678",
+                        Notes = "Notes",
+                        GMCNumber = "GMCNumber",
+                        CauseOfDeath1a = "CauseOfDeath1a",
+                        CauseOfDeath1b = "CauseOfDeath1b",
+                        CauseOfDeath1c = "CauseOfDeath1c",
+                        CauseOfDeath2 = "CauseOfDeath2",
+                    }
+                },
+
+                CaseBreakdown = new CaseBreakDown
+                {
+                    AdmissionNotes = new AdmissionNotesEventContainer
+                    {
+                        Latest = new AdmissionEvent
+                        {
+                            AdmittedDate = DateTime.Now,
+                            AdmittedTime = new TimeSpan(12, 12, 12),
+                            Created = DateTime.Now,
+                            EventId = "2",
+                            ImmediateCoronerReferral = false,
+                            IsFinal = true,
+                            Notes = "Notes",
+                            UserId = "userId",
+                            UsersRole = "usersRole",
+                            UserFullName = "usersFullName",
+                        }
+                    },
+                    QapDiscussion = new QapDiscussionEventContainer
+                    {
+                        Latest = null
+                    }
+                }
+            };
+
+            // Act
+            var additionalDetailsEntered = examination.CalculateAdditionalDetailsEnteredStatus();
+
+            // Assert
+            additionalDetailsEntered.Should().Be(StatusBarResult.Complete);
+        }
+
+        [Fact]
+        public void CalculateAdditionalDetailsEnteredStatus_When_All_Additional_Details_With_QAP_Discussion_Only_COD_Returns_True()
         {
             // Arrange
             var examination = new Examination
@@ -2066,6 +2303,10 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                         Phone = "12345678",
                         Notes = "Notes",
                         GMCNumber = "GMCNumber",
+                        CauseOfDeath1a = null,
+                        CauseOfDeath1b = null,
+                        CauseOfDeath1c = null,
+                        CauseOfDeath2 = null,
                     }
                 },
 
@@ -2085,6 +2326,31 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             UserId = "userId",
                             UsersRole = "usersRole",
                             UserFullName = "usersFullName",
+                        }
+                    },
+                    QapDiscussion = new QapDiscussionEventContainer
+                    {
+                        Latest = new QapDiscussionEvent
+                        {
+                            UserFullName = "UserFullName",
+                            UsersRole = "UsersRole",
+                            Created = DateTime.Now,
+                            EventId = "EventId",
+                            UserId = "UserId",
+                            IsFinal = true,
+                            ParticipantRole = "ParticipantRole",
+                            ParticipantOrganisation = "ParticipantOrganisation",
+                            ParticipantPhoneNumber = "011483778287",
+                            DateOfConversation = DateTime.Now,
+                            TimeOfConversation = new TimeSpan(11, 00, 00),
+                            DiscussionUnableHappen = false,
+                            DiscussionDetails = null,
+                            QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
+                            ParticipantName = "ParticipantName",
+                            CauseOfDeath1a = "CauseOfDeath1a",
+                            CauseOfDeath1b = "CauseOfDeath1b",
+                            CauseOfDeath1c = "CauseOfDeath1",
+                            CauseOfDeath2 = "CauseOfDeath2"
                         }
                     }
                 }
@@ -2109,6 +2375,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                 {
                     MedicalExaminerUserId = null,
                     MedicalExaminerFullName = null,
+                    MedicalExaminerGmcNumber = null,
                     ConsultantResponsible = null,
                     Qap = null,
                 },
@@ -2188,6 +2455,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             MedicalExaminerThoughts = "MedicalExaminerThoughts",
                             OutcomeOfPreScrutiny = OverallOutcomeOfPreScrutiny.IssueAnMccd,
                             UserFullName = "UserFullName",
+                            GmcNumber = "GmcNumber",
                             UserId = "userId",
                             UsersRole = "UsersRole",
                         }
@@ -2213,6 +2481,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             Created = DateTime.Now,
                             QapDiscussionOutcome = QapDiscussionOutcome.MccdCauseOfDeathAgreedByQAPandME,
                             UserFullName = "user full name",
+                            GmcNumber = "GmcNumber",
                             UserId = "userId",
                             UsersRole = "user role",
                         }
@@ -2232,6 +2501,7 @@ namespace MedicalExaminer.API.Tests.ExtensionMethods
                             IsFinal = true,
                             UserId = "userId",
                             UserFullName = "user full name",
+                            GmcNumber = "GmcNumber",
                             UsersRole = "users role",
                             ParticipantFullName = "ParticipantFullName",
                             ParticipantPhoneNumber = "ParticipantPhoneNumber",

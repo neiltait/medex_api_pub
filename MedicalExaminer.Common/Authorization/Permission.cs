@@ -20,6 +20,7 @@
 
         GetLocations,
         GetLocation,
+        UpdateLocation,
 
         GetExaminations,
         GetExamination,
@@ -28,6 +29,7 @@
         AssignExaminationToMedicalExaminer,
         UpdateExamination,
         UpdateExaminationState,
+        VoidExamination,
 
         AddEventToExamination,
         GetExaminationEvents,
@@ -44,6 +46,8 @@
         AdmissionEvent,
         MedicalHistoryEvent,
         PreScrutinyEvent,
+
         GetCoronerReferralDownload,
+        GetFinanceDownload,
     }
 }

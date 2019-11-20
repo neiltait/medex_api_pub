@@ -40,7 +40,7 @@ namespace MedicalExaminer.Models
         /// user id that created the event
         /// </summary>
         [JsonProperty(PropertyName = "user_id")]
-        public string UserId {get; set;}
+        public string UserId { get; set; }
 
         /// <summary>
         /// the date the event was created.
@@ -51,11 +51,19 @@ namespace MedicalExaminer.Models
         /// <summary>
         /// Users full name
         /// </summary>
+        [JsonProperty(PropertyName = "user_full_name")]
         public string UserFullName { get; set; }
+
+        /// <summary>
+        /// GMC Number
+        /// </summary>
+        [JsonProperty(PropertyName = "gmc_number")]
+        public string GmcNumber { get; set; }
 
         /// <summary>
         /// Users Role
         /// </summary>
+        [JsonProperty(PropertyName = "users_role")]
         public string UsersRole { get; set; }
     }
 }

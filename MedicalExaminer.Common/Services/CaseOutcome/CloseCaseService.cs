@@ -48,6 +48,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
             examinationToUpdate.ModifiedAt = DateTime.Now;
             examinationToUpdate.CaseCompleted = true;
             examinationToUpdate.CaseOutcome.CaseCompleted = true;
+            examinationToUpdate.DateCaseClosed = DateTime.Now;
 
             examinationToUpdate.CaseBreakdown.CaseClosedEvent = new CaseClosedEvent()
             {
@@ -56,6 +57,7 @@ namespace MedicalExaminer.Common.Services.CaseOutcome
                 DateCaseClosed = DateTime.Now,
                 EventId = Guid.NewGuid().ToString(),
                 UserFullName = param.User.FullName(),
+                GmcNumber = param.User.GmcNumber,
                 UserId = param.User.UserId,
                 UsersRole = param.User.Role()?.ToString()
             };

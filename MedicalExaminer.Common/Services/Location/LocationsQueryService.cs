@@ -73,24 +73,20 @@ namespace MedicalExaminer.Common.Services.Location
         /// <returns>The Predicate.</returns>
         private Expression<Func<Models.Location, bool>> GetPredicate(LocationsRetrievalByQuery param)
         {
-            Expression<Func<Models.Location, bool>> predicate;
+            Expression<Func<Models.Location, bool>> predicate = x => true;
 
-            if (param.Name == null && param.ParentId == null)
+            if (param.Name != null)
             {
-                predicate = location => true;
+                predicate = predicate.And(x => x.Name == param.Name);
             }
-            else if (param.Name == null)
+
+            if (param.ParentId != null)
             {
-                predicate = location => location.ParentId == param.ParentId;
-            }
-            else if (param.ParentId == null)
-            {
-                predicate = location => location.Name == param.Name;
-            }
-            else
-            {
-                predicate = location => location.Name == param.Name
-                                        && location.ParentId == param.ParentId;
+                // An empty guid takes the place of null allowing us to have no filter, or filter by null.
+                var parentId = param.ParentId == Guid.Empty.ToString()
+                    ? null
+                    : param.ParentId;
+                predicate = predicate.And(x => x.ParentId == parentId);
             }
 
             if (param.OnlyMeOffices)

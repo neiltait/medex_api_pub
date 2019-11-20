@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <IsPackable>false</IsPackable>
     <CodeAnalysisRuleSet>..\Analyzers\Analyzers.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
     <!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
   </PropertyGroup>
 
@@ -33,10 +34,6 @@
   
   <ItemGroup>
     <AdditionalFiles Include="..\Analyzers\stylecop.json" Link="stylecop.json" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Services\CaseOutcome\" />
   </ItemGroup>
   
   <ItemGroup>

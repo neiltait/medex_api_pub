@@ -123,7 +123,7 @@ namespace MedicalExaminer.Models
                 throw new ArgumentNullException(nameof(examination));
             }
 
-            if (examination.CaseCompleted)
+            if (examination.CaseCompleted || examination.IsVoid)
             {
                 examination.UrgencySort = new Dictionary<string, int>();
                 return examination;
@@ -158,6 +158,9 @@ namespace MedicalExaminer.Models
             examination.PendingScrutinyNotes = CalculateScrutinyNotesPending(examination);
             examination.HaveFinalCaseOutcomesOutstanding = !CalculateOutstandingCaseOutcomesCompleted(examination);
             examination.CaseOutcome.CaseOutcomeSummary = CalculateScrutinyOutcome(examination);
+            examination.CaseOutcome.OutcomeOfPrescrutiny = examination.CaseBreakdown.PreScrutiny?.Latest?.OutcomeOfPreScrutiny;
+            examination.CaseOutcome.OutcomeOfRepresentativeDiscussion = examination.CaseBreakdown.BereavedDiscussion?.Latest?.BereavedDiscussionOutcome;
+            examination.CaseOutcome.OutcomeQapDiscussion = examination.CaseBreakdown.QapDiscussion?.Latest?.QapDiscussionOutcome;
 
             return examination;
         }
@@ -209,12 +212,28 @@ namespace MedicalExaminer.Models
                 && examination.MedicalTeam?.ConsultantResponsible?.Name != null
                 && examination.MedicalTeam?.Qap?.Name != null
                 && examination.Representatives?.FirstOrDefault()?.FullName != null
-                && examination.MedicalTeam?.MedicalExaminerUserId != null)
+                && examination.MedicalTeam?.MedicalExaminerUserId != null
+                && QapOriginalCodEntered(examination))
             {
                 return StatusBarResult.Complete;
             }
 
             return StatusBarResult.Incomplete;
+        }
+
+        public static bool QapOriginalCodEntered(this Examination examination)
+        {
+            var qapCodEnteredMedTeam = examination.MedicalTeam?.Qap?.CauseOfDeath1a != null
+                                       || examination.MedicalTeam?.Qap?.CauseOfDeath1b != null
+                                       || examination.MedicalTeam?.Qap?.CauseOfDeath1c != null
+                                       || examination.MedicalTeam?.Qap?.CauseOfDeath2 != null;
+
+            var qapCodEnteredQapDiscussion = examination.CaseBreakdown.QapDiscussion.Latest?.CauseOfDeath1a != null
+                                             || examination.CaseBreakdown.QapDiscussion.Latest?.CauseOfDeath1b != null
+                                             || examination.CaseBreakdown.QapDiscussion.Latest?.CauseOfDeath1c != null
+                                             || examination.CaseBreakdown.QapDiscussion.Latest?.CauseOfDeath2 != null;
+
+            return qapCodEnteredMedTeam || qapCodEnteredQapDiscussion;
         }
 
         public static StatusBarResult CalculateScrutinyCompleteStatus(this Examination examination)
@@ -430,9 +449,7 @@ namespace MedicalExaminer.Models
 
         public static string UrgencyKey(this DateTime dateTime)
         {
-            return dateTime
-                .Date
-                .ToString("yyyy_MM_dd");
+            return dateTime.Date.ToString("yyyy_MM_dd");
         }
 
         private static int CalculateCaseUrgencySortOrder(Examination examination, DateTime forDate)

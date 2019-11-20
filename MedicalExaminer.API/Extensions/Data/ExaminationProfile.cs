@@ -203,6 +203,7 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(dest => dest.DateOfLatestPreScrutiny, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.Created))
                 .ForMember(dest => dest.DateOfLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.DateOfConversation))
                 .ForMember(dest => dest.MedicalExaminer, opt => opt.MapFrom(source => source.MedicalTeam.MedicalExaminerFullName))
+                .ForMember(dest => dest.MedicalExaminerGmcNumber, opt => opt.MapFrom(source => source.MedicalTeam.MedicalExaminerGmcNumber))
                 .ForMember(dest => dest.PreScrutinyStatus, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest == null ? PreScrutinyStatus.PrescrutinyNotHappened : PreScrutinyStatus.PrescrutinyHappened))
                 .ForMember(dest => dest.QAPDiscussionStatus, opt => opt.MapFrom((source, dest, destMember, context) =>
                 {
@@ -229,22 +230,34 @@ namespace MedicalExaminer.API.Extensions.Data
                 }))
                 .ForMember(dest => dest.QAPNameForLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.ParticipantName))
                 .ForMember(dest => dest.UserForLatestPrescrutiny, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.UserFullName))
-                .ForMember(dest => dest.UserForLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.UserFullName));
+                .ForMember(dest => dest.GmcNumberOfUserForLatestPrescrutiny, opt => opt.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.GmcNumber))
+                .ForMember(dest => dest.UserForLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.UserFullName))
+                .ForMember(dest => dest.GmcNumberOfUserForLatestQAPDiscussion, opt => opt.MapFrom(source => source.CaseBreakdown.QapDiscussion.Latest.GmcNumber));
             CreateMap<Examination, QapDiscussionPrepopulated>()
                 .ForMember(prepopulated => prepopulated.Qap, opt => opt.MapFrom(source => source.MedicalTeam.Qap))
                 .ForMember(prepopulated => prepopulated.CauseOfDeath1a, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1a))
                 .ForMember(prepopulated => prepopulated.CauseOfDeath1b, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1b))
                 .ForMember(prepopulated => prepopulated.CauseOfDeath1c, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath1c))
                 .ForMember(prepopulated => prepopulated.CauseOfDeath2, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.CauseOfDeath2))
-                .ForMember(prepopulated => prepopulated.MedicalExaminer, cbd => cbd.MapFrom(source => source.MedicalTeam.MedicalExaminerFullName)) 
+                .ForMember(prepopulated => prepopulated.MedicalExaminer, cbd => cbd.MapFrom(source => source.MedicalTeam.MedicalExaminerFullName))
+                .ForMember(prepopulated => prepopulated.MedicalExaminerGmcNumber, cbd => cbd.MapFrom(source => source.MedicalTeam.MedicalExaminerGmcNumber))
                 .ForMember(prepopulated => prepopulated.DateOfLatestPreScrutiny, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.Created))
                 .ForMember(prepopulated => prepopulated.PreScrutinyStatus, cbd => cbd.MapFrom(source =>
                         source.CaseBreakdown.PreScrutiny.Latest == null
                             ? PreScrutinyStatus.PrescrutinyNotHappened
                             : PreScrutinyStatus.PrescrutinyHappened))
-                .ForMember(prepopulated => prepopulated.UserForLatestPrescrutiny, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.UserFullName));
+                .ForMember(prepopulated => prepopulated.UserForLatestPrescrutiny, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.UserFullName))
+                .ForMember(prepopulated => prepopulated.GmcNumberOfUserForLatestPrescrutiny, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.GmcNumber))
+                .ForMember(prepopulated => prepopulated.QapCodEntered, opt => opt.MapFrom( source => source.QapOriginalCodEntered() ? StatusBarResult.Complete : StatusBarResult.Incomplete))
+                .ForMember(prepopulated => prepopulated.UserForQapOriginalCauseOfDeath, cbd => cbd.MapFrom(source => source.MedicalTeam.Qap.Name))
+                .ForMember(prepopulated => prepopulated.DateOfQapOriginalCauseOfDeath, cbd => cbd.MapFrom(source => source.ModifiedAt))
+                .ForMember(prepopulated => prepopulated.QapOriginalCauseOfDeath1a, cbd => cbd.MapFrom(source => source.MedicalTeam.Qap.CauseOfDeath1a))
+                .ForMember(prepopulated => prepopulated.QapOriginalCauseOfDeath1b, cbd => cbd.MapFrom(source => source.MedicalTeam.Qap.CauseOfDeath1b))
+                .ForMember(prepopulated => prepopulated.QapOriginalCauseOfDeath1c, cbd => cbd.MapFrom(source => source.MedicalTeam.Qap.CauseOfDeath1c))
+                .ForMember(prepopulated => prepopulated.QapOriginalCauseOfDeath2, cbd => cbd.MapFrom(source => source.MedicalTeam.Qap.CauseOfDeath2));
 
             CreateMap<Examination, CaseBreakDownItem>()
+                .ForMember(cbi => cbi.VoidEvent, opt => opt.MapFrom(src => src.CaseBreakdown.VoidEvent))
                 .ForMember(cbi => cbi.AdmissionNotes, opt => opt.MapFrom((source, destination, destinationMember, context) =>
                 {
                     var container = EventContainerMapping<AdmissionEvent, NullPrepopulated>(source.CaseBreakdown.AdmissionNotes, context);
@@ -300,14 +313,18 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(caseOutcome => caseOutcome.CoronerReferralSent, opt => opt.MapFrom(examination => examination.CoronerReferralSent))
                 .ForMember(caseOutcome => caseOutcome.MccdIssued, opt => opt.MapFrom(examination => examination.CaseOutcome.MccdIssued))
                 .ForMember(caseOutcome => caseOutcome.CremationFormStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.CremationFormStatus))
+                .ForMember(caseOutcome => caseOutcome.WaiveFee, opt => opt.MapFrom(examination => examination.CaseOutcome.WaiveFee))
                 .ForMember(caseOutcome => caseOutcome.GpNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GpNotifiedStatus));
             CreateMap<Examination, GetCaseOutcomeResponse>()
                 .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
                 .ForMember(response => response.CaseMedicalExaminerFullName, opt => opt.MapFrom(new MedicalExaminerFullNameResolver()))
+                .ForMember(response => response.CaseMedicalExaminerGmcNumber, opt => opt.MapFrom(examination => examination.MedicalTeam.MedicalExaminerGmcNumber))
                 .ForMember(response => response.CaseMedicalExaminerId, opt => opt.MapFrom(new MedicalExaminerIdResolver()))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore())
                 .ForMember(response => response.CaseCompleted, opt => opt.MapFrom(examination => examination.CaseCompleted))
+                .ForMember(response => response.IsVoid, opt => opt.MapFrom(examination => examination.IsVoid))
+                .ForMember(response => response.VoidedDate, opt => opt.MapFrom(examination => examination.VoidedDate))
                 .ForMember(response => response.CaseOutcomeSummary, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary))
                 .ForMember(response => response.OutcomeOfPrescrutiny, opt => opt.MapFrom(new PreScrutinyOutcomeResolver()))
                 .ForMember(response => response.OutcomeOfRepresentativeDiscussion, opt => opt.MapFrom(new RepresentativeDiscussionOutcomeResolver()))
@@ -315,7 +332,14 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(response => response.ScrutinyConfirmedOn, opt => opt.MapFrom(examination => examination.CaseOutcome.ScrutinyConfirmedOn))
                 .ForMember(response => response.MccdIssued, opt => opt.MapFrom(examination => examination.CaseOutcome.MccdIssued))
                 .ForMember(response => response.CremationFormStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.CremationFormStatus))
-                .ForMember(response => response.GpNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GpNotifiedStatus));
+                .ForMember(response => response.WaiveFee, opt => opt.MapFrom(examination => examination.CaseOutcome.WaiveFee))
+                .ForMember(response => response.GpNotifiedStatus, opt => opt.MapFrom(examination => examination.CaseOutcome.GpNotifiedStatus))
+                .ForMember(response => response.DateCaseClosed, opt => opt.MapFrom(examination => examination.DateCaseClosed));
+            CreateMap<Examination, PutVoidCaseResponse>()
+                .ForMember(response => response.Header, opt => opt.MapFrom(examination => examination))
+                .ForMember(response => response.VoidedDate, opt => opt.MapFrom(examination => examination.VoidedDate))
+                .ForMember(response => response.Errors, opt => opt.Ignore())
+                .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<Examination, ExaminationItem>()
                 .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0));
             CreateMap<Examination, GetPatientDetailsResponse>()
@@ -344,7 +368,9 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(response => response.NursingTeamInformation, opt => opt.MapFrom(examination => examination.MedicalTeam.NursingTeamInformation))
                 .ForMember(response => response.Qap, opt => opt.MapFrom(examination => examination.MedicalTeam.Qap))
                 .ForMember(response => response.MedicalExaminerFullName, opt => opt.MapFrom(examination => examination.MedicalTeam.MedicalExaminerFullName))
+                .ForMember(response => response.MedicalExaminerGmcNumber, opt => opt.MapFrom(examination => examination.MedicalTeam.MedicalExaminerGmcNumber))
                 .ForMember(response => response.MedicalExaminerOfficerFullName, opt => opt.MapFrom(examination => examination.MedicalTeam.MedicalExaminerOfficerFullName))
+                .ForMember(response => response.MedicalExaminerOfficerGmcNumber, opt => opt.MapFrom(examination => examination.MedicalTeam.MedicalExaminerOfficerGmcNumber))
                 .ForMember(response => response.Errors, opt => opt.Ignore())
                 .ForMember(response => response.Lookups, opt => opt.Ignore());
             CreateMap<Examination, GetCaseBreakdownResponse>()
@@ -407,14 +433,54 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(examination => examination.CoronerReferralSent, opt => opt.Ignore())
                 .ForMember(examination => examination.ScrutinyConfirmed, opt => opt.Ignore())
                 .ForMember(examination => examination.OutstandingCaseItemsCompleted, opt => opt.Ignore())
+                .ForMember(examination => examination.DateCaseClosed, opt => opt.Ignore())
                 .ForMember(examination => examination.CaseOutcome, opt => opt.Ignore())
-                .ForMember(examination => examination.CreatedBy, opt => opt.Ignore());
+                .ForMember(examination => examination.CreatedBy, opt => opt.Ignore())
+                .ForMember(examination => examination.VoidedDate, opt => opt.Ignore())
+                .ForMember(examination => examination.VoidReason, opt => opt.Ignore())
+                .ForMember(examination => examination.VoidUserId, opt => opt.Ignore())
+                .ForMember(examination => examination.IsVoid, opt => opt.Ignore())
+                .ForMember(examination => examination.Version, opt => opt.Ignore());
+
+            CreateMap<ExaminationLocationItem, ExaminationFinanceItem>()
+                .ForMember(finance => finance.CaseCreated, opt => opt.MapFrom(eli => eli.Examination.CreatedAt))
+                .ForMember(finance => finance.ExaminationId, opt => opt.MapFrom(eli => eli.Examination.ExaminationId))
+                .ForMember(finance => finance.HasNhsNumber, opt => opt.MapFrom(eli => !string.IsNullOrEmpty(eli.Examination.NhsNumber)))
+                .ForMember(finance => finance.MedicalExaminerId, opt => opt.MapFrom(eli => eli.Examination.MedicalTeam.MedicalExaminerUserId))
+                .ForMember(finance => finance.CremationFormCompleted, opt => opt.MapFrom(eli => eli.Examination.CaseOutcome.CremationFormStatus))
+                .ForMember(finance => finance.MeGmcNumber, opt => opt.MapFrom((source, dest, destMember, context) =>
+                {
+                    return source.Users.SingleOrDefault(u => u.UserId == source.Examination.MedicalTeam.MedicalExaminerUserId)?.GmcNumber;
+                }))
+                .ForMember(finance => finance.MeoGmcNumber, opt => opt.MapFrom((source, dest, destMember, context) =>
+                {
+                    return source.Users.SingleOrDefault(u => u.UserId == source.Examination.MedicalTeam.MedicalExaminerOfficerUserId)?.GmcNumber;
+                }))
+                .ForMember(finance => finance.NationalName, opt => opt.MapFrom((source, dest, destMember, context) =>
+                {
+                    return source.Locations.SingleOrDefault(x => x.LocationId == source.Examination.NationalLocationId)?.Name;
+                }))
+                .ForMember(finance => finance.RegionName, opt => opt.MapFrom((source, dest, destMember, context) =>
+                {
+                    return source.Locations.SingleOrDefault(x => x.LocationId == source.Examination.RegionLocationId)?.Name;
+                }))
+                .ForMember(finance => finance.SiteName, opt => opt.MapFrom((source, dest, destMember, context) =>
+                {
+                    return source.Locations.SingleOrDefault(x => x.LocationId == source.Examination.SiteLocationId)?.Name;
+                }))
+                .ForMember(finance => finance.TrustName, opt => opt.MapFrom((source, dest, destMember, context) =>
+                {
+                    return source.Locations.SingleOrDefault(x => x.LocationId == source.Examination.TrustLocationId)?.Name;
+                }))
+                .ForMember(finance => finance.WaiverFee, opt => opt.MapFrom(eli => eli.Examination.CaseOutcome.WaiveFee))
+                .ForMember(finance => finance.CaseClosed, opt => opt.MapFrom(eli => eli.Examination.DateCaseClosed));
             CreateMap<Examination, PatientCardItem>()
                 .ForMember(response => response.UrgencyScore, opt => opt.MapFrom(examination => examination.IsUrgent() ? 1 : 0))
                 .ForMember(patientCard => patientCard.AppointmentDate, examination => examination.MapFrom(new AppointmentDateResolver(new AppointmentFinder())))
                 .ForMember(patientCard => patientCard.AppointmentTime, examination => examination.MapFrom(new AppointmentTimeResolver(new AppointmentFinder())))
                 .ForMember(patientCard => patientCard.CaseCreatedDate, opt => opt.MapFrom(examination => examination.CreatedAt))
                 .ForMember(patientCard => patientCard.LastAdmission, opt => opt.MapFrom(new AdmissionDateResolver()))
+                .ForMember(patientCard => patientCard.DateCaseClosed, opt => opt.MapFrom(examination => examination.DateCaseClosed))
                 .ForMember(patientCard => patientCard.CaseOutcome, opt => opt.MapFrom(examination => examination.CaseOutcome.CaseOutcomeSummary))
                 .ForMember(patientCard => patientCard.NameEntered, opt => opt.MapFrom(
                     (source, dest, destMember, context) =>
@@ -463,9 +529,11 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(patientCard => patientCard.LatestAdmissionDetailsEntered, opt => opt.MapFrom(
                     (source, dest, destMember, context) => source.CaseBreakdown.AdmissionNotes.Latest != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
                 .ForMember(patientCard => patientCard.DoctorInChargeEntered, opt => opt.MapFrom(
-                    (source, dest, destMember, context) =>source.MedicalTeam.ConsultantResponsible?.Name != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
+                    (source, dest, destMember, context) => source.MedicalTeam.ConsultantResponsible?.Name != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
                 .ForMember(patientCard => patientCard.QapEntered, opt => opt.MapFrom(
                     (source, dest, destMember, context) => source.MedicalTeam.Qap?.Name != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
+                .ForMember(patientCard => patientCard.QapOriginalCodEntered, opt => opt.MapFrom(
+                    (source, dest, destMember, context) => source.QapOriginalCodEntered() ? StatusBarResult.Complete : StatusBarResult.Incomplete))
                 .ForMember(patientCard => patientCard.BereavedInfoEntered, opt => opt.MapFrom(
                     (source, dest, destMember, context) => source.Representatives?.FirstOrDefault()?.FullName != null ? StatusBarResult.Complete : StatusBarResult.Incomplete))
                 .ForMember(patientCard => patientCard.MeAssigned, opt => opt.MapFrom(
@@ -504,10 +572,8 @@ namespace MedicalExaminer.API.Extensions.Data
 
                         return StatusBarResult.Incomplete;
                     }))
-                .ForMember(patientCard => patientCard.MeScrutinyConfirmed, opt => opt.MapFrom(
-                    (source, dest, destMember, context) => source.ScrutinyConfirmed ? StatusBarResult.Complete : StatusBarResult.Incomplete))
-                .ForMember(patientCard => patientCard.IsScrutinyCompleted, opt => opt.MapFrom(
-                    (source, dest, destMember, context) => source.CalculateScrutinyCompleteStatus()))
+                .ForMember(patientCard => patientCard.MeScrutinyConfirmed, opt => opt.MapFrom((source, dest, destMember, context) => source.ScrutinyConfirmed ? StatusBarResult.Complete : StatusBarResult.Incomplete))
+                .ForMember(patientCard => patientCard.IsScrutinyCompleted, opt => opt.MapFrom((source, dest, destMember, context) => source.CalculateScrutinyCompleteStatus()))
                 .ForMember(patientCard => patientCard.MccdIssued, opt => opt.MapFrom(
                     (source, dest, destMember, context) =>
                     {
@@ -584,8 +650,7 @@ namespace MedicalExaminer.API.Extensions.Data
                         }
                         return StatusBarResult.Incomplete;
                     }))
-                .ForMember(patientCard => patientCard.IsCaseItemsCompleted, opt => opt.MapFrom(
-                    (source, dest, destMember, context) => source.CalculateCaseItemsCompleteStatus()));
+                .ForMember(patientCard => patientCard.IsCaseItemsCompleted, opt => opt.MapFrom((source, dest, destMember, context) => source.CalculateCaseItemsCompleteStatus()));
 
             CreateMap<Representative, RepresentativeItem>();
             CreateMap<Examination, DeathEvent>()
@@ -593,7 +658,8 @@ namespace MedicalExaminer.API.Extensions.Data
                 .ForMember(deathEvent => deathEvent.UserId, opt => opt.MapFrom(examination => examination.LastModifiedBy))
                 .ForMember(deathEvent => deathEvent.EventId, opt => opt.Ignore())
                 .ForMember(deathEvent => deathEvent.UsersRole, opt => opt.Ignore())
-                .ForMember(deathEvent => deathEvent.UserFullName, opt => opt.Ignore());
+                .ForMember(deathEvent => deathEvent.UserFullName, opt => opt.Ignore())
+                .ForMember(deathEvent => deathEvent.GmcNumber, opt => opt.Ignore());
         }
 
         private bool? UseQap(CaseBreakDown caseBreakdown)

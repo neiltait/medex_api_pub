@@ -5,7 +5,6 @@ using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Extensions.MeUser;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
-using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Settings;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
@@ -52,6 +51,7 @@ namespace MedicalExaminer.Common.Services.Examination
                 UserId = param.Examination.CreatedBy,
                 UsersRole = param.User.UsersRoleIn(new[] { UserRoles.MedicalExaminer, UserRoles.MedicalExaminerOfficer }).ToString(),
                 UserFullName = param.User.FullName(),
+                GmcNumber = param.User.GmcNumber,
                 EventId = Guid.NewGuid().ToString()
             };
             param.Examination.UpdateCaseUrgencySort(_urgencySettings.DaysToPreCalculateUrgencySort);
