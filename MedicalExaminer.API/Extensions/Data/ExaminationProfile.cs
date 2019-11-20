@@ -247,7 +247,14 @@ namespace MedicalExaminer.API.Extensions.Data
                             ? PreScrutinyStatus.PrescrutinyNotHappened
                             : PreScrutinyStatus.PrescrutinyHappened))
                 .ForMember(prepopulated => prepopulated.UserForLatestPrescrutiny, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.UserFullName))
-                .ForMember(prepopulated => prepopulated.GmcNumberOfUserForLatestPrescrutiny, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.GmcNumber));
+                .ForMember(prepopulated => prepopulated.GmcNumberOfUserForLatestPrescrutiny, cbd => cbd.MapFrom(source => source.CaseBreakdown.PreScrutiny.Latest.GmcNumber))
+                .ForMember(prepopulated => prepopulated.QapCodEntered, opt => opt.MapFrom( source => source.QapOriginalCodEntered() ? StatusBarResult.Complete : StatusBarResult.Incomplete))
+                .ForMember(prepopulated => prepopulated.UserForQapOriginalCauseOfDeath, cbd => cbd.MapFrom(source => source.MedicalTeam.Qap.Name))
+                .ForMember(prepopulated => prepopulated.DateOfQapOriginalCauseOfDeath, cbd => cbd.MapFrom(source => source.ModifiedAt))
+                .ForMember(prepopulated => prepopulated.QapOriginalCauseOfDeath1a, cbd => cbd.MapFrom(source => source.MedicalTeam.Qap.CauseOfDeath1a))
+                .ForMember(prepopulated => prepopulated.QapOriginalCauseOfDeath1b, cbd => cbd.MapFrom(source => source.MedicalTeam.Qap.CauseOfDeath1b))
+                .ForMember(prepopulated => prepopulated.QapOriginalCauseOfDeath1c, cbd => cbd.MapFrom(source => source.MedicalTeam.Qap.CauseOfDeath1c))
+                .ForMember(prepopulated => prepopulated.QapOriginalCauseOfDeath2, cbd => cbd.MapFrom(source => source.MedicalTeam.Qap.CauseOfDeath2));
 
             CreateMap<Examination, CaseBreakDownItem>()
                 .ForMember(cbi => cbi.VoidEvent, opt => opt.MapFrom(src => src.CaseBreakdown.VoidEvent))
