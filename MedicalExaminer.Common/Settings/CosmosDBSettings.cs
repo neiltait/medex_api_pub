@@ -19,5 +19,11 @@
         /// Database Id.
         /// </summary>
         public string DatabaseId { get; set; }
+
+        /// <summary>
+        /// Bypass SSL certificate check
+        /// </summary>
+        /// <remarks>Used on the emulator which has a self signed cert.</remarks>
+        public bool BypassSsl { get; set; }
     }
 }

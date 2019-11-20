@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AutoMapper;
-using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.CaseBreakdown;
 using MedicalExaminer.API.Models.v1.Examinations;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Extensions.MeUser;
-using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -35,7 +34,7 @@ namespace MedicalExaminer.API.Controllers
         /// Initialise a new instance of <see cref="CaseBreakdownController"/>.
         /// </summary>
         public CaseBreakdownController(
-            IMELogger logger,
+            IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> logger,
             IMapper mapper,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,

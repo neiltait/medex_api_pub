@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Models.v1.Account;
 using MedicalExaminer.Common.Authorization;
-using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -32,7 +32,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="usersRetrievalByOktaIdService">User Retrieval By Okta Id Service.</param>
         /// <param name="rolePermissions">Role Permissions.</param>
         public AccountController(
-            IMELogger logger,
+            IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> logger,
             IMapper mapper,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IRolePermissions rolePermissions)

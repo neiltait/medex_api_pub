@@ -11,8 +11,8 @@ using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Services;
-using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Reporting;
 using MedicalExaminer.Common.Services;
@@ -141,13 +141,14 @@ namespace MedicalExaminer.API.Tests.Controllers
 
     public class ControllerActionFilterTests
     {
-        private readonly MELoggerMocker _mockLogger;
+        private readonly Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>> _mockLogger;
         private readonly UsersController _controller;
         private readonly Mock<IMapper> _mapper;
 
         public ControllerActionFilterTests()
         {
-            _mockLogger = new MELoggerMocker();
+            _mockLogger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
+
             _mapper = new Mock<IMapper>();
             var createUserService = new Mock<IAsyncQueryHandler<CreateUserQuery, MeUser>>();
             var userRetrievalService = new Mock<IAsyncQueryHandler<UserRetrievalByIdQuery, MeUser>>();
@@ -161,7 +162,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var locationsParentsServiceMock = new Mock<IAsyncQueryHandler<LocationsParentsQuery, IDictionary<string, IEnumerable<Location>>>>();
 
             _controller = new UsersController(
-                _mockLogger,
+                _mockLogger.Object,
                 _mapper.Object,
                 usersRetrievalByOktaIdServiceMock.Object,
                 authorizationServiceMock.Object,
@@ -176,7 +177,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         [Fact]
         public void OnActionExecuted_DoesNothing()
         {
-            var controllerActionFilter = new ControllerActionFilter(_mockLogger, new RequestChargeService());
+            var controllerActionFilter = new ControllerActionFilter(_mockLogger.Object, new RequestChargeService());
             var actionContext = new ActionContext
             {
                 HttpContext = new MockHttpContext(),
@@ -205,7 +206,7 @@ namespace MedicalExaminer.API.Tests.Controllers
             var expectedUserId = "expectedUserId";
             var expectedControllerName = "expectedControllerName";
             var expectedActionName = "expectedActionName";
-            var controllerActionFilter = new ControllerActionFilter(_mockLogger, new RequestChargeService());
+            var controllerActionFilter = new ControllerActionFilter(_mockLogger.Object, new RequestChargeService());
             var actionContext = new ActionContext
             {
                 HttpContext = new MockHttpContext(),
@@ -232,10 +233,14 @@ namespace MedicalExaminer.API.Tests.Controllers
             var actionExecutedContext =
                 new ActionExecutedContext(actionContext, filters, _controller);
 
+            LogMessageActionDefault logEntry = null;
+            _mockLogger
+                .Setup(ml => ml.Handle(It.IsAny<CreateMELoggerQuery>()))
+                .Callback((CreateMELoggerQuery query) => { logEntry = query.LogEntry; });
+
             controllerActionFilter.OnActionExecuting(actionExecutingContext);
 
             controllerActionFilter.OnActionExecuted(actionExecutedContext);
-            var logEntry = _mockLogger.LogEntry;
 
             logEntry.UserId.Should().Be(expectedUserId);
             logEntry.UserIsAuthenticated.Should().BeFalse();

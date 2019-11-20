@@ -5,8 +5,8 @@ using AutoMapper;
 using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.API.Services;
-using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -80,7 +80,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="locationsRetrievalService">Locations Retrieval Service.</param>
         /// <param name="oktaClient">Okta client.</param>
         public ProfileController(
-            IMELogger logger,
+            IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> logger,
             IMapper mapper,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,

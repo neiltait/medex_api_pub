@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Services;
-using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -28,7 +28,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="authorizationService">Authorization Service.</param>
         /// <param name="permissionService">Permission Service.</param>
         protected AuthorizedBaseController(
-            IMELogger logger,
+            IAsyncQueryHandler<CreateMELoggerQuery,LogMessageActionDefault> logger,
             IMapper mapper,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,

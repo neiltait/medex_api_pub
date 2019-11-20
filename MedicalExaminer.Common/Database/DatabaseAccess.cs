@@ -7,9 +7,11 @@ using System.Net;
 using System.Threading.Tasks;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Reporting;
+using MedicalExaminer.Common.Settings;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
+using Microsoft.Extensions.Options;
 
 namespace MedicalExaminer.Common.Database
 {
@@ -23,14 +25,19 @@ namespace MedicalExaminer.Common.Database
 
         private readonly RequestChargeService _requestChargeService;
 
+        private readonly bool _bypassSsl;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseAccess"/> class.
         /// </summary>
         /// <param name="documentClientFactory">The document client factory.</param>
-        public DatabaseAccess(IDocumentClientFactory documentClientFactory, RequestChargeService requestChargeService)
+        /// <param name="requestChargeService">Request charge service.</param>
+        /// <param name="cosmosOptions">Cosmos options.</param>
+        public DatabaseAccess(IDocumentClientFactory documentClientFactory, RequestChargeService requestChargeService, IOptions<CosmosDbSettings> cosmosOptions)
         {
             _documentClientFactory = documentClientFactory;
             _requestChargeService = requestChargeService;
+            _bypassSsl = cosmosOptions.Value.BypassSsl;
         }
 
         /// <summary>
@@ -56,7 +63,7 @@ namespace MedicalExaminer.Common.Database
 
         private IDocumentClient GetClient(IClientSettings connectionSettings)
         {
-            return _documentClientFactory.CreateClient(connectionSettings);
+            return _documentClientFactory.CreateClient(connectionSettings, _bypassSsl);
         }
 
         public async Task<T> CreateItemAsync<T>(IConnectionSettings connectionSettings, T item, bool disableAutomaticIdGeneration = false)
@@ -81,7 +88,7 @@ namespace MedicalExaminer.Common.Database
         private void AddAuditEntry<T>(IConnectionSettings connectionSettings, T item)
         {
             var auditConnectionSettings = connectionSettings.ToAuditSettings();
-            var auditClient = _documentClientFactory.CreateClient(auditConnectionSettings);
+            var auditClient = _documentClientFactory.CreateClient(auditConnectionSettings, _bypassSsl);
 
             var auditEntry = new AuditEntry<T>(item);
             auditClient.CreateDocumentAsync(

@@ -4,9 +4,9 @@ using AutoMapper;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
-using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -23,7 +23,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async void GetCaseOutcome_When_Called_With_Id_Not_Found_Returns_NotFound()
         {
             // Arrange
-            var logger = new Mock<IMELogger>();
+            var logger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
@@ -61,7 +61,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public void PutConfirmationOfScrutiny_When_Called_With_Invalid_Case_Id_Returns_Not_Found()
         {
             // Arrange
-            var logger = new Mock<IMELogger>();
+            var logger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var confirmationOfScrutinyService = new Mock<IAsyncQueryHandler<ConfirmationOfScrutinyQuery, Examination>>();
@@ -99,7 +99,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public void GetCaseOutcome_When_Called_With_Valid_Id_Returns_Expected_Type()
         {
             // Arrange
-            var logger = new Mock<IMELogger>();
+            var logger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
             var mapper = new Mock<IMapper>();
             var examination = new Examination
             {
@@ -144,7 +144,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async void PutOutstandingCaseItems_When_Called_With_No_Case_Id_Returns_Bad_Request()
         {
             // Arrange
-            var logger = new Mock<IMELogger>();
+            var logger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
@@ -187,7 +187,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async void PutOutstandingCaseItems_When_Called_With_Invalid_Case_Id_Returns_Bad_Request()
         {
             // Arrange
-            var logger = new Mock<IMELogger>();
+            var logger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
@@ -230,7 +230,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async void PutOutstandingCaseItems_When_Called_With_Valid_Examination_Id_Returns_Ok()
         {
             // Arrange
-            var logger = new Mock<IMELogger>();
+            var logger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
             var mapper = new Mock<IMapper>();
             var examination = new Examination
             {
@@ -290,7 +290,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async void PutCoronerReferral_When_Called_With_No_Case_Id_Returns_Bad_Request()
         {
             // Arrange
-            var logger = new Mock<IMELogger>();
+            var logger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
@@ -326,7 +326,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async void PutCoronerReferral_When_Called_With_Invalid_Case_Id_Returns_Bad_Request()
         {
             // Arrange
-            var logger = new Mock<IMELogger>();
+            var logger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
@@ -362,7 +362,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async void PutCoronerReferral_When_Called_With_Valid_Examination_Id_Returns_Ok()
         {
             // Arrange
-            var logger = new Mock<IMELogger>();
+            var logger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
             var mapper = new Mock<IMapper>();
             var caseOutcome = new CaseOutcome
             {
@@ -412,7 +412,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async void PutCloseCase_When_Called_With_No_Case_Id_Returns_Bad_Request()
         {
             // Arrange
-            var logger = new Mock<IMELogger>();
+            var logger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
@@ -448,7 +448,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async void PutCloseCase_When_Called_With_Invalid_Case_Id_Returns_Bad_Request()
         {
             // Arrange
-            var logger = new Mock<IMELogger>();
+            var logger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
             var mapper = new Mock<IMapper>();
             var usersRetrievalByOktaIdService = new Mock<IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser>>();
             var closeCaseService = new Mock<IAsyncQueryHandler<CloseCaseQuery, string>>();
@@ -483,7 +483,7 @@ namespace MedicalExaminer.API.Tests.Controllers
         public async void PutCloseCase_When_Called_With_Valid_Examination_Id_Returns_Ok()
         {
             // Arrange
-            var logger = new Mock<IMELogger>();
+            var logger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
             var mapper = new Mock<IMapper>();
             var caseOutcome = new CaseOutcome
             {

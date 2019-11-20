@@ -14,18 +14,17 @@ using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.API.Services.Implementations;
-using MedicalExaminer.Common;
 using MedicalExaminer.Common.Authorization;
 using MedicalExaminer.Common.Authorization.Roles;
 using MedicalExaminer.Common.ConnectionSettings;
 using MedicalExaminer.Common.Database;
 using MedicalExaminer.Common.Extensions;
-using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries;
 using MedicalExaminer.Common.Queries.CaseBreakdown;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.PatientDetails;
 using MedicalExaminer.Common.Queries.Permissions;
 using MedicalExaminer.Common.Queries.User;
@@ -36,6 +35,7 @@ using MedicalExaminer.Common.Services.CaseOutcome;
 using MedicalExaminer.Common.Services.Examination;
 using MedicalExaminer.Common.Services.Location;
 using MedicalExaminer.Common.Services.MedicalTeam;
+using MedicalExaminer.Common.Services.MELogger;
 using MedicalExaminer.Common.Services.PatientDetails;
 using MedicalExaminer.Common.Services.Permissions;
 using MedicalExaminer.Common.Services.User;
@@ -158,8 +158,6 @@ example:
             services.AddExaminationValidation();
             services.AddApiVersioning(config => { config.ReportApiVersions = true; });
 
-
-
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(options =>
             {
@@ -220,28 +218,18 @@ example:
                 options.AddSecurityRequirement(security);
             });
 
-            // Logger.
-            services.AddScoped<IMELogger, MELogger>();
-
- 
             services.AddScoped<ControllerActionFilter>();
 
-            var cosmosSettings = new CosmosStoreSettings(
-                cosmosDbSettings.DatabaseId,
-                new Uri(cosmosDbSettings.URL),
-                cosmosDbSettings.PrimaryKey);
+            // Can be any service, we just need the database id and uri.
+            var serviceProvider = services.BuildServiceProvider();
+            var userConnectionSettings = serviceProvider.GetRequiredService<IUserConnectionSettings>();
+            var documentClientFactory = serviceProvider.GetRequiredService<IDocumentClientFactory>();
+            var documentClient = documentClientFactory.CreateClient(userConnectionSettings, cosmosDbSettings.BypassSsl);
+            var cosmonautClient = new CosmonautClient(documentClient);
 
             const string examinationsCollection = "Examinations";
-            services.AddCosmosStore<Examination>(cosmosSettings, examinationsCollection);
-            services.AddCosmosStore<AuditEntry<Examination>>(cosmosSettings, examinationsCollection.AuditCollection());
-
-            services.AddScoped<IMeLoggerPersistence>(s => new MeLoggerPersistence(
-                new Uri(cosmosDbSettings.URL),
-                cosmosDbSettings.PrimaryKey,
-                cosmosDbSettings.DatabaseId));
-
-            IServiceProvider serviceProvider = services.BuildServiceProvider();
-            UpdateExaminationUrgencySort(serviceProvider);
+            services.AddCosmosStore<Examination>(cosmonautClient, cosmosDbSettings.DatabaseId, examinationsCollection);
+            services.AddCosmosStore<AuditEntry<Examination>>(cosmonautClient, cosmosDbSettings.DatabaseId, examinationsCollection.AuditCollection());
         }
 
         private void UpdateExaminationUrgencySort(IServiceProvider serviceProvider)
@@ -283,12 +271,29 @@ example:
             // Ensure collections available
             using (var scope = app.ApplicationServices.CreateScope())
             {
+                var serviceProvider = scope.ServiceProvider;
                 var databaseAccess = scope.ServiceProvider.GetRequiredService<IDatabaseAccess>();
 
                 databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<ILocationConnectionSettings>());
                 databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IExaminationConnectionSettings>());
                 databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserConnectionSettings>());
                 databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IUserSessionConnectionSettings>());
+                databaseAccess.EnsureCollectionAvailable(app.ApplicationServices.GetRequiredService<IMELoggerConnectionSettings>());
+
+                var locationMigrationSettings =
+                    serviceProvider.GetRequiredService<IOptions<LocationMigrationSettings>>();
+                var urgencySettings =
+                    serviceProvider.GetRequiredService<IOptions<UrgencySettings>>();
+
+            // temporary fudges moved until after database exists...
+            // temporary fudges until the real migration framework is implemented.
+        // TODO: https://methods.atlassian.net/browse/MES-989
+        //    UpdateDiscussionOutcomes(serviceProvider);
+        //    UpdateInvalidOrNullUserPermissionIds(serviceProvider);
+        //    UpdateLocations(serviceProvider, locationMigrationSettings);
+        //    UpdateExaminationUrgencySort(serviceProvider, urgencySettings);
+
+                UpdateExaminationUrgencySort(serviceProvider);
             }
 
             app.UseMiddleware<ResponseTimeMiddleware>();
@@ -366,8 +371,15 @@ example:
                 cosmosDbSettings.PrimaryKey,
                 cosmosDbSettings.DatabaseId));
 
+            services.AddSingleton<IMELoggerConnectionSettings>(s => new MELoggerConnectionSettings(
+                new Uri(cosmosDbSettings.URL),
+                cosmosDbSettings.PrimaryKey,
+                cosmosDbSettings.DatabaseId));
+
             // Examination services
             services.AddScoped(s => new ExaminationsQueryExpressionBuilder());
+            services
+                .AddScoped<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>, CreateMELoggerService>();
             services
                 .AddScoped<IAsyncQueryHandler<ExaminationsRetrievalQuery, ExaminationsOverview>,
                     ExaminationsDashboardService>();

@@ -6,8 +6,6 @@ namespace MedicalExaminer.Common.Database
 {
     public interface IDocumentClientFactory
     {
-        IDocumentClient CreateClient(IClientSettings connectionSettings);
-        ICosmosStore<TEntity> CreateCosmosStore<TEntity>(IConnectionSettings connectionSettings)
-            where TEntity : class;
+        IDocumentClient CreateClient(IClientSettings connectionSettings, bool bypassSsl);
     }
 }

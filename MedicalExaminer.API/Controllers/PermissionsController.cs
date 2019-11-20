@@ -10,8 +10,8 @@ using MedicalExaminer.API.Models.v1.Permissions;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Extensions.Models;
 using MedicalExaminer.Common.Extensions.Permission;
-using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -73,7 +73,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="locationRetrievalService">Location Retrieval Service.</param>
         /// <param name="locationsRetrievalByIdService">Locations Retrieval By Id Service.</param>
         public PermissionsController(
-            IMELogger logger,
+            IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> logger,
             IMapper mapper,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,

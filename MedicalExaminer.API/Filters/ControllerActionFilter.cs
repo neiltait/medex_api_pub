@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using MedicalExaminer.API.Controllers;
-using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Reporting;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -18,7 +19,7 @@ namespace MedicalExaminer.API.Filters
         /// <summary>
         /// Logger.
         /// </summary>
-        private readonly IMELogger _logger;
+        private readonly IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> _logger;
 
         private readonly RequestChargeService _requestChargeService;
 
@@ -30,7 +31,7 @@ namespace MedicalExaminer.API.Filters
         /// Initialise a new instance of <see cref="ControllerActionFilter"/>.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        public ControllerActionFilter(IMELogger logger, RequestChargeService requestChargeService)
+        public ControllerActionFilter(IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> logger, RequestChargeService requestChargeService)
         {
             _logger = logger;
             _requestChargeService = requestChargeService;
@@ -61,7 +62,7 @@ namespace MedicalExaminer.API.Filters
             var remoteIp = remoteIpAddress == null ? "Unknown" : remoteIpAddress.ToString();
             var totalRus = _requestChargeService.RequestCharges.Sum(i => i.Charge);
 
-            _logger.Log(
+            _logger.Handle(new CreateMELoggerQuery(new LogMessageActionDefault(
                 userId,
                 userAuthenticationType,
                 userIsAuthenticated,
@@ -70,7 +71,8 @@ namespace MedicalExaminer.API.Filters
                 _parameters,
                 remoteIp,
                 _timestamp,
-                totalRus);
+                totalRus
+            )));
         }
 
         /// <summary>

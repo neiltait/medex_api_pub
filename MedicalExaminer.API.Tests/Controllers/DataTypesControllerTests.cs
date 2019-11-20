@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
 using MedicalExaminer.API.Controllers;
-using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.MELogger;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using Xunit;
 
 namespace MedicalExaminer.API.Tests.Controllers
@@ -11,8 +14,8 @@ namespace MedicalExaminer.API.Tests.Controllers
     {
         public DataTypesControllerTests()
         {
-            var mockLogger = new MELoggerMocker();
-            _controller = new DataTypesController(mockLogger, Mapper);
+            var mockLogger = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
+            _controller = new DataTypesController(mockLogger.Object, Mapper);
         }
 
         private readonly DataTypesController _controller;

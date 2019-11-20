@@ -4,9 +4,9 @@ using AutoMapper;
 using MedicalExaminer.API.Models.v1.CaseOutcome;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Authorization;
-using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.CaseOutcome;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -46,7 +46,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="authorizationService">The authorization service.</param>
         /// <param name="permissionService">The permission service.</param>
         public CaseOutcomeController(
-            IMELogger logger,
+            IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> logger,
             IMapper mapper,
             IAsyncQueryHandler<CoronerReferralQuery, string> coronerReferralService,
             IAsyncQueryHandler<CloseCaseQuery, string> closeCaseService,

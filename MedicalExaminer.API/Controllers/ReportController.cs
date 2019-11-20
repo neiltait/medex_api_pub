@@ -1,21 +1,21 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using MedicalExaminer.API.Models.v1.Examinations;
+using MedicalExaminer.API.Models.v1.Locations;
 using MedicalExaminer.API.Models.v1.Report;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Authorization;
-using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MedicalExaminer.API.Models.v1.Locations;
 
 namespace MedicalExaminer.API.Controllers
 {
@@ -55,7 +55,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="locationsRetrievalService">Locations retrieval service.</param>
         /// <param name="usersRetrievalService">Users retrieval service</param>
         public ReportController(
-            IMELogger logger,
+            IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> logger,
             IMapper mapper,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,

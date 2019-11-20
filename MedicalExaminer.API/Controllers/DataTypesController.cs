@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using AutoMapper;
-using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.MELogger;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +22,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="logger">Instance of ILogger</param>
         /// <param name="mapper">Instance of IMapper</param>
-        public DataTypesController(IMELogger logger, IMapper mapper)
+        public DataTypesController(IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> logger, IMapper mapper)
             : base(logger, mapper)
         {
         }

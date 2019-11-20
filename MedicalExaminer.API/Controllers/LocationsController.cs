@@ -6,9 +6,9 @@ using AutoMapper;
 using MedicalExaminer.API.Models.v1.Locations;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Extensions.Models;
-using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
 using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
@@ -67,7 +67,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="examinationsRetrievalService">Examinations retrieval service.</param>
         /// <param name="updateLocationIsMeOfficeService">Update location is me office service.</param>
         public LocationsController(
-            IMELogger logger,
+            IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> logger,
             IMapper mapper,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,

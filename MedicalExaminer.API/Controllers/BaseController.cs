@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using MedicalExaminer.API.Extensions.Models;
 using MedicalExaminer.API.Models.v1;
-using MedicalExaminer.Common.Loggers;
+using MedicalExaminer.Common.Queries.MELogger;
+using MedicalExaminer.Common.Services;
+using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +23,7 @@ namespace MedicalExaminer.API.Controllers
         /// </summary>
         /// <param name="logger">The MELogger.</param>
         /// <param name="mapper">The Mapper.</param>
-        protected BaseController(IMELogger logger, IMapper mapper)
+        protected BaseController(IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> logger, IMapper mapper)
         {
             Logger = logger;
             Mapper = mapper;
@@ -30,7 +32,7 @@ namespace MedicalExaminer.API.Controllers
         /// <summary>
         ///     Logger.
         /// </summary>
-        public IMELogger Logger { get; set; }
+        public IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> Logger { get; set; }
 
         /// <summary>
         ///     Mapper.

@@ -42,6 +42,7 @@ namespace MedicalExaminer.ToolBox.Common.Extensions
 
             services.AddScoped<ImpersonateUserService>();
             services.AddScoped<GenerateConfigurationService>();
+            services.AddScoped<ImportDocumentService>();
             services.AddScoped<GetLocationTreeService>();
 
             return services;

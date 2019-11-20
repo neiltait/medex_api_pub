@@ -2,20 +2,18 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization.ExaminationContext;
-using MedicalExaminer.API.Filters;
 using MedicalExaminer.API.Models.v1.MedicalTeams;
 using MedicalExaminer.API.Models.v1.Users;
 using MedicalExaminer.API.Services;
 using MedicalExaminer.Common.Authorization;
-using MedicalExaminer.Common.Loggers;
 using MedicalExaminer.Common.Queries.Examination;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Queries.User;
 using MedicalExaminer.Common.Services;
 using MedicalExaminer.Models;
 using MedicalExaminer.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Permission = MedicalExaminer.Common.Authorization.Permission;
 
 namespace MedicalExaminer.API.Controllers
@@ -59,7 +57,7 @@ namespace MedicalExaminer.API.Controllers
         /// <param name="medicalTeamUpdateService">Medical Team Update Service.</param>
         /// <param name="usersRetrievalByRoleLocationQueryService">Users Retrieval by Role Location Query Service.</param>
         public MedicalTeamController(
-            IMELogger logger,
+            IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault> logger,
             IMapper mapper,
             IAsyncQueryHandler<UserRetrievalByOktaIdQuery, MeUser> usersRetrievalByOktaIdService,
             IAuthorizationService authorizationService,

@@ -26,7 +26,7 @@ namespace MedicalExaminer.API.Tests.Services
         public static Mock<IDocumentClientFactory> CreateClientFactory(Mock<IDocumentClient> client)
         {
             var clientFactory = new Mock<IDocumentClientFactory>();
-            clientFactory.Setup(x => x.CreateClient(It.IsAny<IConnectionSettings>()))
+            clientFactory.Setup(x => x.CreateClient(It.IsAny<IConnectionSettings>(), false))
                 .Returns(client.Object);
 
             return clientFactory;

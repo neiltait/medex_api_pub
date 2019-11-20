@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace MedicalExaminer.Common.Loggers
+namespace MedicalExaminer.Models
 {
     /// <summary>
     ///     Log message for before controller action has executed

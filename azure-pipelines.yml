@@ -18,8 +18,32 @@ pool:
   
 variables:
   buildConfiguration: 'Release'
+  imageName: 'medex-api:$(Build.SourceBranchName)-$(Build.BuildId)'
+  latestName: 'medex-api:$(Build.SourceBranchName)-latest'
+  dockerId: medexFrontendStaging
 
 steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: 3.7
+    architecture: 'x64'
+
+- task: PythonScript@0
+  displayName: 'Export project path'
+  inputs:
+    scriptSource: 'inline'
+    script: |
+      """Search all subdirectories for `MedicalExaminer.API`."""
+      from glob import iglob
+      from os import path
+      # Python >= 3.5
+      medexApi = next(iglob(path.join('**', 'MedicalExaminer.API'), recursive=True), None)
+      if not medexApi:
+          raise SystemExit('Could not find the API project')
+      project_location = path.dirname(path.abspath(medexApi))
+      print('Found API project in', project_location)
+      print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
+
 - task: DotNetCoreCLI@2
   displayName: Restore
   inputs:
@@ -77,3 +101,15 @@ steps:
   inputs:
     PathtoPublish: '$(build.artifactstagingdirectory)'
 
+- script: |
+    pushd '$(projectRoot)'
+    docker build -f ./MedicalExaminer.API/Dockerfile -t $(dockerId).azurecr.io/$(imageName) .
+    docker login -u $(dockerId) -p $pswd $(dockerId).azurecr.io
+    docker push $(dockerId).azurecr.io/$(imageName)
+    docker build -f ./MedicalExaminer.API/Dockerfile -t $(dockerId).azurecr.io/$(latestName) .
+    docker login -u $(dockerId) -p $pswd $(dockerId).azurecr.io
+    docker push $(dockerId).azurecr.io/$(latestName)
+  env:
+    pswd: $(registryPassword)
+  displayName: 'Build and push Docker image to Staging'
+  condition: and(succeeded(), ne(variables['registryPassword'], ''))

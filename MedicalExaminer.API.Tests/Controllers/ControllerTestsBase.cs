@@ -2,20 +2,16 @@
 using System.Net;
 using System.Reflection;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using AutoMapper;
 using MedicalExaminer.API.Authorization;
 using MedicalExaminer.API.Controllers;
 using MedicalExaminer.API.Extensions.Data;
-using MedicalExaminer.Common.Loggers;
-using MedicalExaminer.Common.Queries.Location;
+using MedicalExaminer.Common.Queries.MELogger;
 using MedicalExaminer.Common.Services;
-using MedicalExaminer.Common.Services.Location;
 using MedicalExaminer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents;
-using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
 namespace MedicalExaminer.API.Tests.Controllers
@@ -38,13 +34,13 @@ namespace MedicalExaminer.API.Tests.Controllers
 
             Mapper = mapperConfiguration.CreateMapper();
 
-            LoggerMock = new Mock<IMELogger>();
+            LoggerMock = new Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>>();
         }
 
         /// <summary>
         /// Logger Mock.
         /// </summary>
-        public Mock<IMELogger> LoggerMock { get; set; }
+        public Mock<IAsyncQueryHandler<CreateMELoggerQuery, LogMessageActionDefault>> LoggerMock { get; set; }
 
         /// <summary>
         ///     Real AutoMapper.
