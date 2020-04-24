@@ -33,7 +33,8 @@ namespace MedicalExaminer.Common.Authorization.Roles
                 Permission.GetExamination,
                 Permission.GetProfile,
                 Permission.UpdateProfile,
-                Permission.GetFinanceDownload);
+                Permission.GetFinanceDownload,
+                Permission.GetCoronerReferralDownload);
         }
     }
 }
