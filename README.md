@@ -9,6 +9,8 @@ You now have 3 options for running the API depending on your requirements.
 
 Make sure to select the startup project as `MedicalExaminer.API` and run as normal
 
+For the front end to access the API via the docker.for.windows host name you need to update your IIS host settings to allow the site to run on both "localhost" and "docker.for.windows"; This is done via the application hosts config file on your local machine.
+
 ### Running the API via Visual Studio using Docker
 
 Make sure to select the startup project as `docker-compose` and run as normal.
